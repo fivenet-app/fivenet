@@ -62,11 +62,11 @@ function togglePasswordVisibility() {
 
 <template>
     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
-        <UFormGroup name="username" :label="$t('common.username')">
+        <UFormField name="username" :label="$t('common.username')">
             <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup name="password" :label="$t('common.password')">
+        <UFormField name="password" :label="$t('common.password')">
             <UInput
                 v-model="state.password"
                 :type="passwordVisibility ? 'text' : 'password'"
@@ -76,7 +76,7 @@ function togglePasswordVisibility() {
             >
                 <template #trailing>
                     <UButton
-                        color="gray"
+                        color="neutral"
                         variant="link"
                         :icon="passwordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
                         :padded="false"
@@ -84,7 +84,7 @@ function togglePasswordVisibility() {
                     />
                 </template>
             </UInput>
-        </UFormGroup>
+        </UFormField>
 
         <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
             {{ $t('common.login') }}
@@ -96,12 +96,12 @@ function togglePasswordVisibility() {
             </p>
 
             <template v-else>
-                <UDivider :label="$t('common.or')" orientation="horizontal" class="mt-2" />
+                <USeparator :label="$t('common.or')" orientation="horizontal" class="mt-2" />
 
                 <div v-for="provider in login.providers" :key="provider.name">
                     <UButton
                         block
-                        color="white"
+                        color="neutral"
                         :external="true"
                         :to="`/api/oauth2/login/${provider.name}`"
                         :disabled="!canSubmit"

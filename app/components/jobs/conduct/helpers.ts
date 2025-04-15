@@ -1,7 +1,7 @@
-import type { BadgeColor } from '#ui/types';
+import type { BadgeProps } from '#ui/types';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 
-export function conductTypesToBadgeColor(status: ConductType | undefined): BadgeColor {
+export function conductTypesToBadgeColor(status: ConductType | undefined): BadgeProps['color'] {
     switch (status) {
         case ConductType.NEUTRAL:
             return 'gray';

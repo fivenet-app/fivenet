@@ -3,16 +3,15 @@ import SuperUserJobSelection from '~/components/partials/SuperUserJobSelection.v
 import { useAuthStore } from '~/stores/auth';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 
-const { isDashboardSearchModalOpen } = useUIState();
-const { metaSymbol } = useShortcuts();
-
 const { can, activeChar, username, isSuperuser } = useAuth();
 
 const { t } = useI18n();
 
 const authStore = useAuthStore();
 
-const modal = useModal();
+const overlay = useOverlay();
+
+const langSwitcherModal = overlay.create(LanguageSwitcherModal, {});
 
 const items = computed(() => [
     [
@@ -36,14 +35,14 @@ const items = computed(() => [
         {
             label: t('common.commandpalette'),
             icon: 'i-mdi-terminal',
-            shortcuts: [metaSymbol.value, 'K'],
-            click: () => (isDashboardSearchModalOpen.value = true),
+            shortcuts: ['meta', 'K'],
+            onClick: () => console.log('isDashboardSearchModalOpen'),
         },
         can(['CanBeSuper', 'SuperUser']).value
             ? {
                   label: `${t('common.superuser')}: ${isSuperuser.value ? t('common.enabled') : t('common.disabled')}`,
                   icon: 'i-mdi-square-root',
-                  click: () => authStore.setSuperUserMode(!isSuperuser.value),
+                  onClick: () => authStore.setSuperUserMode(!isSuperuser.value),
               }
             : undefined,
         isSuperuser.value
@@ -51,13 +50,13 @@ const items = computed(() => [
                   slot: 'job',
                   label: 'Select Job',
                   icon: 'i-mdi-briefcase',
-                  click: ($event: Event) => $event.preventDefault(),
+                  onClick: ($event: Event) => $event.preventDefault(),
               }
             : undefined,
         {
             label: t('components.language_switcher.title'),
             icon: 'i-mdi-translate',
-            click: () => modal.open(LanguageSwitcherModal, {}),
+            onClick: () => langSwitcherModal.open(),
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
     [
@@ -84,28 +83,28 @@ const open = ref(false);
 </script>
 
 <template>
-    <UDropdown
+    <UDropdownMenu
         v-model:open="open"
         :items="items"
-        :ui="{ width: 'w-full', item: { disabled: 'cursor-text select-text' } }"
+        :ui="{ width: 'w-full' }"
         :popper="{ strategy: 'absolute', placement: 'top' }"
         class="w-full"
         mode="hover"
     >
         <UChip
             class="w-full"
-            color="red"
+            color="error"
             :text="$t('common.superuser')"
             position="top-left"
             :show="isSuperuser"
             :ui="{ base: 'top-0 left-1/2' }"
         >
             <UButton
-                color="gray"
+                color="neutral"
                 variant="ghost"
                 class="w-full"
                 :label="name"
-                :class="[open && 'bg-gray-50 dark:bg-gray-800']"
+                :class="[open && 'bg-neutral-50 dark:bg-neutral-800']"
                 @click="open = !open"
                 @touchstart.passive="open = !open"
             >
@@ -122,8 +121,8 @@ const open = ref(false);
         <template #account>
             <div class="truncate text-left">
                 <p>{{ $t('components.UserDropdown.signed_in_as') }}</p>
-                <p class="truncate font-medium text-gray-900 dark:text-white">{{ username }}</p>
-                <p v-if="activeChar" class="truncate font-medium text-gray-900 dark:text-white">
+                <p class="truncate font-medium text-neutral-900 dark:text-white">{{ username }}</p>
+                <p v-if="activeChar" class="truncate font-medium text-neutral-900 dark:text-white">
                     {{ activeChar.jobLabel
                     }}<template v-if="activeChar.job !== game.unemployedJobName"> - {{ activeChar.jobGradeLabel }}</template>
                 </p>
@@ -133,5 +132,5 @@ const open = ref(false);
         <template v-if="isSuperuser" #job>
             <SuperUserJobSelection />
         </template>
-    </UDropdown>
+    </UDropdownMenu>
 </template>

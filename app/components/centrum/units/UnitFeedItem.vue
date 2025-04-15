@@ -23,13 +23,13 @@ const { goto } = useLivemapStore();
                 'absolute left-0 top-0 flex w-6 justify-center',
             ]"
         >
-            <div class="w-px bg-gray-200" />
+            <div class="w-px bg-neutral-200" />
         </div>
         <template v-if="item.status === StatusUnit.USER_ADDED">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon name="i-mdi-account-plus" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-neutral-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
 
@@ -47,15 +47,15 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-neutral-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.USER_REMOVED">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon name="i-mdi-account-remove" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-neutral-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
 
@@ -73,15 +73,15 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-neutral-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.UNAVAILABLE">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon name="i-mdi-stop" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-neutral-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
 
@@ -99,15 +99,15 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-neutral-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.AVAILABLE">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon name="i-mdi-play" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-neutral-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
 
@@ -125,15 +125,15 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-neutral-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.ON_BREAK">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon name="i-mdi-coffee" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-neutral-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
 
@@ -151,15 +151,15 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-neutral-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.BUSY">
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon name="i-mdi-briefcase" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-neutral-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.BUSY') }}
 
@@ -177,15 +177,15 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-neutral-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else>
-            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
+            <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-neutral-300">
                 <UIcon name="i-mdi-help" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-neutral-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
 
@@ -203,7 +203,7 @@ const { goto } = useLivemapStore();
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-neutral-200">
                 <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>

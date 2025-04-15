@@ -129,7 +129,7 @@ const { game } = useAppConfig();
                 </UButton>
 
                 <UForm ref="form" :schema="schema" :state="state" class="flex w-full flex-row gap-2" @submit="refresh()">
-                    <UFormGroup name="days" :label="$t('common.time_ago.day', 2)" class="flex-1">
+                    <UFormField name="days" :label="$t('common.time_ago.day', 2)" class="flex-1">
                         <UInput
                             v-model="state.days"
                             name="days"
@@ -138,7 +138,7 @@ const { game } = useAppConfig();
                             :max="31"
                             :placeholder="$t('common.time_ago.day', 2)"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </UForm>
             </div>
         </template>
@@ -161,7 +161,7 @@ const { game } = useAppConfig();
         class="flex-1"
     >
         <template #name-data="{ row: colleague }">
-            <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">
+            <div class="inline-flex items-center gap-1 text-neutral-900 dark:text-white">
                 <ProfilePictureImg
                     :src="colleague.avatar?.url"
                     :name="`${colleague.firstname} ${colleague.lastname}`"

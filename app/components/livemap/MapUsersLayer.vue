@@ -129,7 +129,7 @@ const playerMarkersFiltered = computedAsync(async () =>
                 <template #trailing>
                     <UButton
                         v-show="playerQueryRaw !== ''"
-                        color="gray"
+                        color="neutral"
                         variant="link"
                         icon="i-mdi-close"
                         :padded="false"

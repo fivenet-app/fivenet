@@ -71,7 +71,7 @@ const showRadioFrequency = ref(false);
                             <div class="flex flex-col gap-2">
                                 <div class="flex items-center justify-center text-lg font-bold">
                                     <span
-                                        :class="showRadioFrequency ? '' : 'blur'"
+                                        :class="showRadioFrequency ? '' : 'blur-xs'"
                                         @click="showRadioFrequency = !showRadioFrequency"
                                         >{{ jobProps?.radioFrequency }}.00</span
                                     >

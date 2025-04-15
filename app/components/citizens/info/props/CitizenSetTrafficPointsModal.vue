@@ -86,23 +86,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="reason" :label="$t('common.reason')" required>
+                    <UFormField name="reason" :label="$t('common.reason')" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="trafficInfractionPoints" :label="$t('common.traffic_infraction_points')">
+                    <UFormField name="trafficInfractionPoints" :label="$t('common.traffic_infraction_points')">
                         <UInput
                             v-model="state.trafficInfractionPoints"
                             type="number"
@@ -110,7 +116,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :max="9999999"
                             :placeholder="$t('common.traffic_infraction_points')"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
@@ -123,7 +129,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             type="submit"
                             block
                             class="flex-1"
-                            color="red"
+                            color="error"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
                             @click="state.reset = true"
@@ -131,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>

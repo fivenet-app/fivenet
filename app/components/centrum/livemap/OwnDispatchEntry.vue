@@ -57,7 +57,7 @@ useIntervalFn(
             :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', background: dispatchTimeStyle.class }"
         >
             <UButton
-                color="red"
+                color="error"
                 :padded="false"
                 class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
                 @click="

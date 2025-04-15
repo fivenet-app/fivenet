@@ -132,7 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -143,7 +143,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
@@ -165,24 +171,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     />
 
                     <template v-else>
-                        <UFormGroup name="title" :label="$t('common.name')" class="flex-1" required>
+                        <UFormField name="title" :label="$t('common.name')" class="flex-1" required>
                             <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
+                        <UFormField name="color" :label="$t('common.color')" class="flex-1">
                             <ColorPickerTW v-model="state.color" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                        <UFormField name="description" :label="$t('common.description')" class="flex-1">
                             <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             name="private"
                             :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
                             class="flex-1"
                         >
-                            <UToggle
+                            <USwitch
                                 v-model="state.private"
                                 :disabled="
                                     !canDo.privateCalendar ||
@@ -190,29 +196,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     (!props.calendarId && hasPrivateCalendar)
                                 "
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup v-if="canDo.publicCalendar" name="public" :label="$t('common.public')" class="flex-1">
-                            <UToggle v-model="state.public" />
-                        </UFormGroup>
+                        <UFormField v-if="canDo.publicCalendar" name="public" :label="$t('common.public')" class="flex-1">
+                            <USwitch v-model="state.public" />
+                        </UFormField>
 
-                        <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
-                            <UToggle v-model="state.closed" />
-                        </UFormGroup>
+                        <UFormField name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                            <USwitch v-model="state.closed" />
+                        </UFormField>
 
-                        <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
+                        <UFormField name="access" :label="$t('common.access')" class="flex-1">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
                                 :target-id="calendarId ?? 0"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </template>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

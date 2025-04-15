@@ -21,11 +21,11 @@ const response = useVModel(props, 'modelValue', emit);
 <template>
     <div v-if="modelValue?.question" class="flex flex-1 justify-between gap-2 py-4">
         <div v-if="modelValue?.question.data!.data.oneofKind === 'separator'">
-            <UDivider class="mb-2 mt-2 text-xl">
+            <USeparator class="mb-2 mt-2 text-xl">
                 <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
                     {{ modelValue?.question.title }}
                 </h4>
-            </UDivider>
+            </USeparator>
 
             <p>{{ modelValue?.question.description }}</p>
         </div>
@@ -77,7 +77,7 @@ const response = useVModel(props, 'modelValue', emit);
                             ? 'solid'
                             : 'outline'
                     "
-                    color="red"
+                    color="error"
                     :label="$t('common.no')"
                     block
                     class="w-20"
@@ -133,14 +133,14 @@ const response = useVModel(props, 'modelValue', emit);
                 <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
             </div>
 
-            <UFormGroup name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required class="flex-1">
+            <UFormField name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required class="flex-1">
                 <URadioGroup
                     v-model="response.response.response.singleChoice.choice"
                     :name="modelValue?.question.data!.data.singleChoice.choices.join(':')"
                     :options="modelValue?.question.data!.data.singleChoice?.choices"
                     :disabled="disabled"
                 />
-            </UFormGroup>
+            </UFormField>
         </div>
 
         <div
@@ -169,7 +169,7 @@ const response = useVModel(props, 'modelValue', emit);
                 </UBadge>
             </div>
 
-            <UFormGroup :label="$t('common.option', 2)" required class="flex-1"> </UFormGroup>
+            <UFormField :label="$t('common.option', 2)" required class="flex-1"> </UFormField>
             <div class="flex flex-1 flex-col gap-2">
                 <UCheckbox
                     v-for="choice in modelValue?.question.data.data.multipleChoice.choices"

@@ -47,7 +47,7 @@ const grouped = computedAsync(async () => {
 <template>
     <div class="flex h-full grow flex-col overflow-y-auto px-1">
         <div class="flex justify-between">
-            <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
+            <h2 class="inline-flex items-center text-base font-semibold leading-6 text-neutral-100">
                 {{ $t('common.unit', 2) }}
 
                 <UTooltip

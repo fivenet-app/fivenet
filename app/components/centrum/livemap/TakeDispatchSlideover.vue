@@ -95,7 +95,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -104,7 +104,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                         {{ $t('components.centrum.take_dispatch.title') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -124,7 +124,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                     </div>
                                 </dt>
                                 <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                    <UFormGroup name="search">
+                                    <UFormField name="search">
                                         <UInput
                                             v-model="queryDispatches"
                                             type="text"
@@ -132,7 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                             :placeholder="$t('common.search')"
                                             leading-icon="i-mdi-search"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
                                 </dd>
                             </div>
 
@@ -178,7 +178,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 
                     <UButton
                         class="flex-1"
-                        color="red"
+                        color="error"
                         :disabled="!canTakeDispatch || !canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"

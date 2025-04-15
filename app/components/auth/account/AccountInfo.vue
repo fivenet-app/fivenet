@@ -66,10 +66,10 @@ const selectedTab = computed({
     get() {
         const index = items.value.findIndex((item) => item.slot === route.query.tab);
         if (index === -1) {
-            return 0;
+            return '0';
         }
 
-        return index;
+        return index.toString();
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
@@ -101,11 +101,11 @@ const selectedTab = computed({
             <UTabs v-else v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
                 <template #accountInfo>
                     <UDashboardPanelContent>
-                        <UDashboardSection
+                        <UPageCard
                             :title="$t('components.auth.AccountInfo.title')"
                             :description="$t('components.auth.AccountInfo.subtitle')"
                         >
-                            <UFormGroup
+                            <UFormField
                                 name="username"
                                 :label="$t('common.username')"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -120,9 +120,9 @@ const selectedTab = computed({
                                         :value="account.account?.username"
                                     />
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="license"
                                 :label="$t('components.auth.AccountInfo.license')"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -134,9 +134,9 @@ const selectedTab = computed({
                                     </span>
                                     <CopyToClipboardButton v-if="account.account?.license" :value="account.account?.license" />
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="change_username"
                                 :label="$t('components.auth.AccountInfo.change_username')"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -145,9 +145,9 @@ const selectedTab = computed({
                                 <UButton @click="modal.open(ChangeUsernameModal, {})">
                                     {{ $t('components.auth.AccountInfo.change_username_button') }}
                                 </UButton>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="change_password"
                                 :label="$t('components.auth.AccountInfo.change_password')"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -156,8 +156,8 @@ const selectedTab = computed({
                                 <UButton @click="modal.open(ChangePasswordModal, {})">
                                     {{ $t('components.auth.AccountInfo.change_password_button') }}
                                 </UButton>
-                            </UFormGroup>
-                        </UDashboardSection>
+                            </UFormField>
+                        </UPageCard>
                     </UDashboardPanelContent>
                 </template>
 

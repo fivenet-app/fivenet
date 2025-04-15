@@ -23,16 +23,16 @@ const { username } = storeToRefs(authStore);
         <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
 
         <div class="w-full flex-1">
-            <ULandingHero
+            <UPageHero
                 :title="$t('pages.notfound.page_not_found')"
                 :description="$t('pages.notfound.fun_error')"
-                :links="[
+                :items="[
                     {
                         label: $t('common.back'),
                         icon: 'i-mdi-arrow-back',
                         size: 'lg',
                         color: 'gray',
-                        click: () => useRouter().back(),
+                        onClick: () => useRouter().back(),
                     },
                     username
                         ? {
@@ -46,7 +46,7 @@ const { username } = storeToRefs(authStore);
             >
                 <template #headline>
                     <UBadge
-                        color="gray"
+                        color="neutral"
                         variant="solid"
                         size="lg"
                         @click="
@@ -57,7 +57,7 @@ const { username } = storeToRefs(authStore);
                         >{{ $t('pages.notfound.error') }}</UBadge
                     >
                 </template>
-            </ULandingHero>
+            </UPageHero>
         </div>
     </div>
 </template>

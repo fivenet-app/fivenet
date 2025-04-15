@@ -80,20 +80,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :state="state" :schema="schema" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.jobs.self_service.set_profile_picture') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
                     <div>
-                        <UFormGroup name="avatar" class="flex-1" :label="$t('common.avatar')">
+                        <UFormField name="avatar" class="flex-1" :label="$t('common.avatar')">
                             <NotSupportedTabletBlock v-if="nuiEnabled" />
                             <UInput
                                 v-else
@@ -103,7 +109,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 accept="image/jpeg,image/jpg,image/png"
                                 @change="state.avatar = $event"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </div>
 
                     <div class="flex flex-1 items-center">
@@ -119,14 +125,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
                         <UButton
                             type="submit"
                             block
-                            color="red"
+                            color="error"
                             class="flex-1"
                             :disabled="nuiEnabled || !canSubmit || !activeChar?.avatar"
                             :loading="!canSubmit"

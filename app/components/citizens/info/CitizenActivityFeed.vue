@@ -90,7 +90,7 @@ watchDebounced(query, async () => refresh(), {
     <UAlert
         v-if="userId === activeChar?.userId && !attr('CitizenStoreService.ListUserActivity', 'Fields', 'Own').value"
         variant="subtle"
-        color="red"
+        color="error"
         icon="i-mdi-denied"
         :title="$t('components.citizens.CitizenInfoActivityFeed.own.title')"
         :description="$t('components.citizens.CitizenInfoActivityFeed.own.message')"
@@ -98,7 +98,7 @@ watchDebounced(query, async () => refresh(), {
 
     <div v-else>
         <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
-            <UFormGroup name="types" :label="$t('common.type', 2)" class="flex-1 grow">
+            <UFormField name="types" :label="$t('common.type', 2)" class="flex-1 grow">
                 <ClientOnly>
                     <USelectMenu
                         v-model="query.types"
@@ -126,11 +126,11 @@ watchDebounced(query, async () => refresh(), {
                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="&nbsp;">
+            <UFormField label="&nbsp;">
                 <SortButton v-model="sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
-            </UFormGroup>
+            </UFormField>
         </UForm>
 
         <div class="relative mt-2 flex-1">
@@ -151,11 +151,11 @@ watchDebounced(query, async () => refresh(), {
             />
 
             <div v-else>
-                <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                <ul role="list" class="divide-y divide-neutral-100 dark:divide-neutral-800">
                     <li
                         v-for="activity in data?.activity"
                         :key="activity.id"
-                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white py-2 dark:border-gray-900"
+                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white py-2 dark:border-neutral-900"
                     >
                         <CitizenActivityFeedEntry :activity="activity" />
                     </li>

@@ -182,7 +182,7 @@ function changeQuestionType(qt: string): void {
     <UForm v-if="question" :schema="schema" :state="question" class="flex items-center gap-2">
         <UIcon name="i-mdi-drag-horizontal" class="size-7" />
 
-        <UFormGroup name="data.data.oneofKind">
+        <UFormField name="data.data.oneofKind">
             <ClientOnly>
                 <USelectMenu
                     v-model="question.data!.data.oneofKind"
@@ -209,23 +209,23 @@ function changeQuestionType(qt: string): void {
                     <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <div class="flex flex-1 flex-col gap-2 p-4">
             <div class="flex flex-1 flex-col gap-2">
-                <UFormGroup name="title" :label="$t('common.title')" required>
+                <UFormField name="title" :label="$t('common.title')" required>
                     <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                <UFormField name="description" :label="$t('common.description')" class="flex-1">
                     <UTextarea v-model="question.description" type="text" :rows="3" :placeholder="$t('common.description')" />
-                </UFormGroup>
+                </UFormField>
             </div>
             <div class="flex-1">
                 <template v-if="question.data!.data.oneofKind === 'separator'">
-                    <UDivider class="mb-2 mt-2 text-xl">
+                    <USeparator class="mb-2 mt-2 text-xl">
                         <h4 class="text-xl">{{ question.title }}</h4>
-                    </UDivider>
+                    </USeparator>
 
                     <p class="mb-2">{{ question.description }}</p>
                 </template>
@@ -250,7 +250,7 @@ function changeQuestionType(qt: string): void {
                     <div class="flex flex-col gap-2">
                         <UButtonGroup>
                             <UButton color="green" :label="$t('common.yes')" disabled />
-                            <UButton color="red" :label="$t('common.no')" disabled />
+                            <UButton color="error" :label="$t('common.no')" disabled />
                         </UButtonGroup>
                     </div>
                 </template>
@@ -258,23 +258,23 @@ function changeQuestionType(qt: string): void {
                 <template v-else-if="question.data!.data.oneofKind === 'freeText'">
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2">
-                            <UFormGroup name="data.data.freeText.minLength" :label="$t('common.min')" class="flex-1">
+                            <UFormField name="data.data.freeText.minLength" :label="$t('common.min')" class="flex-1">
                                 <UInput
                                     v-model="question.data!.data.freeText.minLength"
                                     type="number"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup name="data.data.freeText.maxLength" :label="$t('common.max')" class="flex-1">
+                            <UFormField name="data.data.freeText.maxLength" :label="$t('common.max')" class="flex-1">
                                 <UInput
                                     v-model="question.data!.data.freeText.maxLength"
                                     type="number"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
                                 />
-                            </UFormGroup>
+                            </UFormField>
                         </div>
 
                         <UTextarea disabled :rows="5" />
@@ -283,7 +283,7 @@ function changeQuestionType(qt: string): void {
 
                 <template v-else-if="question.data!.data.oneofKind === 'singleChoice'">
                     <div class="flex flex-col gap-2">
-                        <UFormGroup
+                        <UFormField
                             name="data.data.singleChoices.choices"
                             :label="$t('common.option', 2)"
                             required
@@ -297,13 +297,13 @@ function changeQuestionType(qt: string): void {
                                 >
                                     <UIcon name="i-mdi-drag-horizontal" class="size-6" />
                                     <URadio disabled />
-                                    <UFormGroup :name="`data.data.singleChoices.choices.${idx}`">
+                                    <UFormField :name="`data.data.singleChoices.choices.${idx}`">
                                         <UInput
                                             v-model="question.data!.data.singleChoice.choices[idx]"
                                             type="text"
                                             class="w-full"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
                                     <UTooltip :text="$t('components.qualifications.remove_option')">
                                         <UButton
@@ -324,22 +324,22 @@ function changeQuestionType(qt: string): void {
                                     @click="question.data!.data.singleChoice.choices.push('')"
                                 />
                             </UTooltip>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
 
                 <template v-else-if="question.data!.data.oneofKind === 'multipleChoice'">
                     <div class="flex flex-col gap-2">
-                        <UFormGroup name="data.data.multipleChoice.limit" :label="$t('common.max')">
+                        <UFormField name="data.data.multipleChoice.limit" :label="$t('common.max')">
                             <UInput
                                 v-model="question.data!.data.multipleChoice.limit"
                                 type="number"
                                 :min="1"
                                 :max="question.data!.data.multipleChoice.choices.length"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup :label="$t('common.option', 2)" required class="flex-1">
+                        <UFormField :label="$t('common.option', 2)" required class="flex-1">
                             <VueDraggable v-model="question.data!.data.multipleChoice.choices" class="flex flex-col gap-2">
                                 <div
                                     v-for="(_, idx) in question.data!.data.multipleChoice?.choices"
@@ -374,7 +374,7 @@ function changeQuestionType(qt: string): void {
                                     @click="question.data!.data.multipleChoice.choices.push('')"
                                 />
                             </UTooltip>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
 
@@ -382,13 +382,13 @@ function changeQuestionType(qt: string): void {
                     v-if="question.data!.data.oneofKind !== 'separator' && question.data!.data.oneofKind !== 'image'"
                     class="mt-2 flex flex-row gap-2"
                 >
-                    <UFormGroup name="answer.answerKey" :label="$t('common.answer_key')" class="flex-1">
+                    <UFormField name="answer.answerKey" :label="$t('common.answer_key')" class="flex-1">
                         <UTextarea v-model="question.answer!.answerKey" :placeholder="$t('common.answer_key')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="points" :label="$t('common.points', 2)" class="max-w-24">
+                    <UFormField name="points" :label="$t('common.points', 2)" class="max-w-24">
                         <UInput v-model="question.points" type="number" name="points" :placeholder="$t('common.points', 2)" />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </div>
         </div>

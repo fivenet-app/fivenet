@@ -71,18 +71,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :prevent-close="!canSubmit">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.auth.ChangePasswordModal.change_password') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
-                <UFormGroup name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
+                <UFormField name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
                     <UInput
                         v-model="state.currentPassword"
                         name="currentPassword"
@@ -93,7 +99,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     >
                         <template #trailing>
                             <UButton
-                                color="gray"
+                                color="neutral"
                                 variant="link"
                                 :icon="currentPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
                                 :padded="false"
@@ -101,9 +107,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             />
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
+                <UFormField name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
                     <UInput
                         v-model="state.newPassword"
                         name="newPassword"
@@ -114,7 +120,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     >
                         <template #trailing>
                             <UButton
-                                color="gray"
+                                color="neutral"
                                 variant="link"
                                 :icon="newPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
                                 :padded="false"
@@ -123,11 +129,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </template>
                     </UInput>
                     <PasswordStrengthMeter :input="state.newPassword" class="mt-2" />
-                </UFormGroup>
+                </UFormField>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

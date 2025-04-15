@@ -231,7 +231,7 @@ defineExpose({
                                     class="flex-initial"
                                     variant="link"
                                     icon="i-mdi-trash-can"
-                                    color="red"
+                                    color="error"
                                     @click="
                                         modal.open(ConfirmModal, {
                                             confirm: async () => deleteQualificationResult(result.id),

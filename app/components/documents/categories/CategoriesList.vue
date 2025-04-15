@@ -62,7 +62,7 @@ const modal = useModal();
             <UButtonGroup class="inline-flex">
                 <UButton
                     v-if="can('DocStoreService.CreateCategory').value"
-                    color="gray"
+                    color="neutral"
                     trailing-icon="i-mdi-plus"
                     @click="
                         modal.open(CategoriesModal, {

@@ -170,7 +170,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                     <UButton
                         variant="link"
                         icon="i-mdi-trash-can"
-                        color="red"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteFile(file.name),
@@ -180,7 +180,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                 </UTooltip>
             </template>
             <template #name-data="{ row: file }">
-                <span class="text-gray-900 dark:text-white">
+                <span class="text-neutral-900 dark:text-white">
                     {{ file.name }}
                 </span>
             </template>

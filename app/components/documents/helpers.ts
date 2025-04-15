@@ -1,4 +1,4 @@
-import type { BadgeColor, ButtonColor } from '#ui/types';
+import type { BadgeProps, ButtonProps } from '#ui/types';
 import type { Perms } from '~~/gen/ts/perms';
 import type { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
@@ -89,7 +89,7 @@ export function refToIcon(ref: DocReference): string {
     }
 }
 
-export function refToColor(ref: DocReference): ButtonColor {
+export function refToColor(ref: DocReference): ButtonProps['color'] {
     switch (ref) {
         case DocReference.LINKED:
             return 'blue';
@@ -104,7 +104,7 @@ export function refToColor(ref: DocReference): ButtonColor {
     }
 }
 
-export function refToBadge(ref: DocReference): BadgeColor {
+export function refToBadge(ref: DocReference): BadgeProps['color'] {
     switch (ref) {
         case DocReference.LINKED:
             return 'blue';
@@ -134,7 +134,7 @@ export function relationToIcon(ref: DocRelation): string {
     }
 }
 
-export function relationToColor(ref: DocRelation): ButtonColor {
+export function relationToColor(ref: DocRelation): ButtonProps['color'] {
     switch (ref) {
         case DocRelation.MENTIONED:
             return 'blue';
@@ -147,7 +147,7 @@ export function relationToColor(ref: DocRelation): ButtonColor {
     }
 }
 
-export function relationToBadge(ref: DocRelation): BadgeColor {
+export function relationToBadge(ref: DocRelation): BadgeProps['color'] {
     switch (ref) {
         case DocRelation.MENTIONED:
             return 'blue';

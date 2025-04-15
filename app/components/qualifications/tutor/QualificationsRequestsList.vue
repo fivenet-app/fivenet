@@ -260,7 +260,7 @@ defineExpose({
                                 <UButton
                                     variant="link"
                                     icon="i-mdi-trash-can"
-                                    color="red"
+                                    color="error"
                                     @click="
                                         modal.open(ConfirmModal, {
                                             confirm: async () =>

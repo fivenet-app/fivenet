@@ -71,13 +71,13 @@ watch(pages, async () => {
                 </template>
 
                 <template #right>
-                    <UButton v-if="can('WikiService.CreatePage')" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
+                    <UButton v-if="can('WikiService.CreatePage')" color="neutral" trailing-icon="i-mdi-plus" to="/wiki/create">
                         {{ $t('common.page') }}
                     </UButton>
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar class="!flex lg:!hidden">
+            <UDashboardToolbar class="flex! lg:hidden!">
                 <template #default>
                     <PageSearch />
                 </template>

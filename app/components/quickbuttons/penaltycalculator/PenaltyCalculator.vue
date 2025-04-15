@@ -213,7 +213,7 @@ const columns = [
                 />
 
                 <div v-else>
-                    <UFormGroup name="search">
+                    <UFormField name="search">
                         <UInput
                             v-model="querySearchRaw"
                             type="text"
@@ -224,7 +224,7 @@ const columns = [
                             <template #trailing>
                                 <UButton
                                     v-show="querySearchRaw !== ''"
-                                    color="gray"
+                                    color="neutral"
                                     variant="link"
                                     icon="i-mdi-close"
                                     :padded="false"
@@ -232,7 +232,7 @@ const columns = [
                                 />
                             </template>
                         </UInput>
-                    </UFormGroup>
+                    </UFormField>
 
                     <dl class="mt-4">
                         <UAccordion multiple :items="filteredLawBooks">
@@ -248,7 +248,7 @@ const columns = [
                                     >
                                         <template #name-data="{ row: law }">
                                             <div class="inline-flex items-center gap-2">
-                                                <span class="whitespace-pre-line text-gray-900 dark:text-white">
+                                                <span class="whitespace-pre-line text-neutral-900 dark:text-white">
                                                     {{ law.name }}
                                                 </span>
 
@@ -289,7 +289,7 @@ const columns = [
             </div>
         </div>
 
-        <UDivider :label="$t('common.result')" />
+        <USeparator :label="$t('common.result')" />
 
         <div class="flow-root">
             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -323,7 +323,7 @@ const columns = [
                 <UButton icon="i-mdi-content-copy" class="flex-1" @click="copySummary()">
                     {{ $t('common.copy') }}
                 </UButton>
-                <UButton trailing-icon="i-mdi-clear-outline" color="red" @click="reset()">
+                <UButton trailing-icon="i-mdi-clear-outline" color="error" @click="reset()">
                     {{ $t('common.reset') }}
                 </UButton>
             </UButtonGroup>

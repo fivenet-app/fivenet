@@ -41,11 +41,11 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
 </script>
 
 <template>
-    <UFormGroup name="attachments" :label="$t('common.attachment', 2)">
+    <UFormField name="attachments" :label="$t('common.attachment', 2)">
         <div class="flex flex-col gap-1">
             <div v-for="(_, idx) in attachments" :key="idx" class="flex items-center gap-1">
                 <template v-if="attachments[idx]?.data.oneofKind === 'document'">
-                    <UFormGroup :name="`attachments.${idx}.data.documentId`" class="flex-1">
+                    <UFormField :name="`attachments.${idx}.data.documentId`" class="flex-1">
                         <USelectMenu
                             option-attribute="title"
                             :disabled="!canSubmit"
@@ -72,7 +72,7 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
 
                             <template #empty> {{ $t('common.not_found', [$t('common.document', 2)]) }} </template>
                         </USelectMenu>
-                    </UFormGroup>
+                    </UFormField>
                 </template>
 
                 <UButton
@@ -101,5 +101,5 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
             icon="i-mdi-information-outline"
             :description="$t('components.mailer.ThreadAttachmentsForm.document_title_warning')"
         />
-    </UFormGroup>
+    </UFormField>
 </template>

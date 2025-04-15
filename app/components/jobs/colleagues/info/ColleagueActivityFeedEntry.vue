@@ -57,7 +57,7 @@ withDefaults(
                                     :key="label.name"
                                     :style="{ backgroundColor: label.color }"
                                     class="justify-between gap-2 line-through"
-                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                     size="xs"
                                 >
                                     {{ label.name }}
@@ -68,7 +68,7 @@ withDefaults(
                                     :key="label.name"
                                     :style="{ backgroundColor: label.color }"
                                     class="justify-between gap-2"
-                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                     size="xs"
                                 >
                                     {{ label.name }}
@@ -89,7 +89,7 @@ withDefaults(
                         </template>
                     </template>
                 </h3>
-                <p class="text-sm text-gray-400">
+                <p class="text-sm text-neutral-400">
                     <GenericTime :value="activity.createdAt" type="long" />
                 </p>
             </div>

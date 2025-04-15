@@ -189,7 +189,7 @@ defineShortcuts({
     <UDashboardToolbar>
         <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
             <div class="flex gap-2">
-                <UFormGroup name="name" :label="$t('common.search')" class="flex-1">
+                <UFormField name="name" :label="$t('common.search')" class="flex-1">
                     <UInput
                         ref="input"
                         v-model="query.name"
@@ -204,24 +204,24 @@ defineShortcuts({
                             <UKbd value="/" />
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     name="absent"
                     :label="$t('common.absent')"
                     class="flex flex-initial flex-col"
                     :ui="{ container: 'flex-1 flex' }"
                 >
                     <div class="flex flex-1 items-center">
-                        <UToggle v-model="query.absent">
+                        <USwitch v-model="query.absent">
                             <span class="sr-only">
                                 {{ $t('common.absent') }}
                             </span>
-                        </UToggle>
+                        </USwitch>
                     </div>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup v-if="jobsService.cardView" :label="$t('common.sort_by')">
+                <UFormField v-if="jobsService.cardView" :label="$t('common.sort_by')">
                     <SortButton
                         v-model="sort"
                         :fields="[
@@ -229,9 +229,9 @@ defineShortcuts({
                             { label: $t('common.name'), value: 'name' },
                         ]"
                     />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     v-if="
                         can('JobsService.ManageColleagueLabels').value ||
                         attr('JobsService.GetColleague', 'Types', 'Labels').value
@@ -247,21 +247,21 @@ defineShortcuts({
                     />
 
                     <UTooltip v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value" :text="$t('common.stats')">
-                        <UButton icon="i-mdi-chart-donut" color="white" @click="modal.open(ColleaguesLabelStatsModal, {})" />
+                        <UButton icon="i-mdi-chart-donut" color="neutral" @click="modal.open(ColleaguesLabelStatsModal, {})" />
                     </UTooltip>
-                </UFormGroup>
+                </UFormField>
             </div>
 
             <UAccordion
                 class="mt-2"
-                color="white"
+                color="neutral"
                 variant="soft"
                 size="sm"
                 :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
             >
                 <template #search>
                     <div class="flex flex-row flex-wrap gap-2">
-                        <UFormGroup
+                        <UFormField
                             v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value"
                             name="labels"
                             :label="$t('common.label', 2)"
@@ -308,40 +308,40 @@ defineShortcuts({
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             name="namePrefix"
                             :label="$t('common.prefix')"
                             class="flex flex-col"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <UInput v-model="query.namePrefix" type="text" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             name="nameSuffix"
                             :label="$t('common.suffix')"
                             class="flex flex-col"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <UInput v-model="query.nameSuffix" type="text" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             name="cards"
                             :label="$t('common.card_view')"
                             class="flex flex-initial flex-col"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <div class="flex flex-1 items-center">
-                                <UToggle v-model="jobsService.cardView">
+                                <USwitch v-model="jobsService.cardView">
                                     <span class="sr-only">
                                         {{ $t('common.card_view') }}
                                     </span>
-                                </UToggle>
+                                </USwitch>
                             </div>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
             </UAccordion>
@@ -366,7 +366,7 @@ defineShortcuts({
             class="flex-1"
         >
             <template #name-data="{ row: colleague }">
-                <div class="inline-flex items-center text-gray-900 dark:text-white">
+                <div class="inline-flex items-center text-neutral-900 dark:text-white">
                     <ProfilePictureImg
                         :src="colleague?.avatar?.url"
                         :name="`${colleague.firstname} ${colleague.lastname}`"
@@ -542,7 +542,7 @@ defineShortcuts({
                                         :style="{ backgroundColor: label.color }"
                                         class="justify-between gap-2"
                                         :class="
-                                            isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'
+                                            isColourBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'
                                         "
                                         size="xs"
                                         :ui="{ padding: { xs: 'px-2 py-1' } }"

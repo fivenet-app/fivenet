@@ -342,10 +342,10 @@ const selectedTab = computed({
     get() {
         const index = items.findIndex((item) => item.slot === route.query.tab);
         if (index === -1) {
-            return 0;
+            return '0';
         }
 
-        return index;
+        return index.toString();
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
@@ -366,7 +366,7 @@ const categoriesLoading = ref(false);
         <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
             <template #right>
                 <UButton
-                    color="black"
+                    color="neutral"
                     icon="i-mdi-arrow-left"
                     :to="templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`"
                 >
@@ -396,7 +396,7 @@ const categoriesLoading = ref(false);
                 <template #details>
                     <UContainer class="mt-2 w-full overflow-y-scroll">
                         <div>
-                            <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
+                            <UFormField name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
                                 <UInput
                                     v-model="state.weight"
                                     type="number"
@@ -405,13 +405,13 @@ const categoriesLoading = ref(false);
                                     :max="999999"
                                     :placeholder="$t('common.weight')"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
+                            <UFormField name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
                                 <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="description"
                                 :label="`${$t('common.template')} ${$t('common.description')}`"
                                 required
@@ -422,21 +422,21 @@ const categoriesLoading = ref(false);
                                     :rows="4"
                                     :label="$t('common.description')"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row" required>
+                            <UFormField name="color" :label="$t('common.color')" class="flex-1 flex-row" required>
                                 <div class="flex flex-1 gap-1">
                                     <ColorPickerTW v-model="state.color" class="flex-1" />
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
+                            <UFormField name="icon" :label="$t('common.icon')" class="flex-1">
                                 <div class="flex flex-1 gap-1">
                                     <IconSelectMenu v-model="state.icon" class="flex-1" :fallback-icon="FileOutlineIcon" />
 
                                     <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
 
                         <div class="my-2">
@@ -500,11 +500,11 @@ const categoriesLoading = ref(false);
                             link-target="_blank"
                         />
 
-                        <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
+                        <UFormField name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
                             <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="category" :label="$t('common.category', 1)">
+                        <UFormField name="category" :label="$t('common.category', 1)">
                             <ClientOnly>
                                 <UInputMenu
                                     v-model="state.category"
@@ -537,13 +537,13 @@ const categoriesLoading = ref(false);
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
                                 </UInputMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
+                        <UFormField name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
                             <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             name="content"
                             :label="`${$t('common.content')} ${$t('common.template')}`"
                             required
@@ -553,10 +553,10 @@ const categoriesLoading = ref(false);
                             <ClientOnly>
                                 <TiptapEditor
                                     v-model="state.content"
-                                    class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                    class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                                 />
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
                     </UContainer>
                 </template>
             </UTabs>

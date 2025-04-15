@@ -83,7 +83,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </UAlert>
 
-        <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
+        <UFormField name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
             <UInput
                 v-model="state.registrationToken"
                 type="text"
@@ -93,9 +93,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 autocomplete="registrationToken"
                 :placeholder="$t('components.auth.ForgotPassword.registration_token')"
             />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup name="password" :label="$t('common.password')">
+        <UFormField name="password" :label="$t('common.password')">
             <UInput
                 v-model="state.password"
                 :type="passwordVisibility ? 'text' : 'password'"
@@ -105,7 +105,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             >
                 <template #trailing>
                     <UButton
-                        color="gray"
+                        color="neutral"
                         variant="link"
                         :icon="passwordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
                         :padded="false"
@@ -114,7 +114,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
             </UInput>
             <PasswordStrengthMeter :input="state.password" class="mt-2" />
-        </UFormGroup>
+        </UFormField>
 
         <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
             {{ $t('components.auth.ForgotPassword.submit_button') }}

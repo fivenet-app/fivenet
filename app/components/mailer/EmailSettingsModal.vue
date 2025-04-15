@@ -59,29 +59,35 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('common.settings') }} - {{ selectedEmail?.email }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div class="flex flex-col gap-2">
-                    <UFormGroup name="emails" class="flex-1" :label="$t('common.blocklist')">
+                    <UFormField name="emails" class="flex-1" :label="$t('common.blocklist')">
                         <div class="flex flex-col gap-1">
                             <div v-for="(_, idx) in state.emails" :key="idx" class="flex items-center gap-1">
-                                <UFormGroup :name="`emails.${idx}`" class="flex-1">
+                                <UFormField :name="`emails.${idx}`" class="flex-1">
                                     <UInput
                                         v-model="state.emails[idx]"
                                         type="text"
                                         :placeholder="$t('common.mail')"
                                         :disabled="disabled || !canManage"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
                                 <UButton
                                     :ui="{ rounded: 'rounded-full' }"
@@ -100,18 +106,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :class="state.emails.length ? 'mt-2' : ''"
                             @click="state.emails.push('')"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup :label="$t('common.address_book')">
+                    <UFormField :label="$t('common.address_book')">
                         <UButton
                             :label="$t('components.mailer.settings.clear_address_book')"
-                            color="red"
+                            color="error"
                             icon="i-mdi-bookmark-remove"
                             @click="addressBook.length = 0"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
+                    <UFormField name="signature" class="flex-1" :label="$t('common.signature')">
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.signature"
@@ -119,12 +125,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 wrapper-class="min-h-44"
                             />
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

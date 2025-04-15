@@ -89,7 +89,7 @@ const contentAccessTypes: AccessType[] = [
                     v-if="can('DocStoreService.CreateTemplate').value"
                     block
                     class="flex-1"
-                    color="white"
+                    color="neutral"
                     trailing-icon="i-mdi-print-preview"
                     @click="
                         modal.open(TemplatePreviewModal, {
@@ -115,7 +115,7 @@ const contentAccessTypes: AccessType[] = [
                     block
                     class="flex-1"
                     trailing-icon="i-mdi-trash-can"
-                    color="red"
+                    color="error"
                     @click="
                         modal.open(ConfirmModal, {
                             confirm: async () => deleteTemplate(templateId),
@@ -162,7 +162,7 @@ const contentAccessTypes: AccessType[] = [
                 <div class="mb-6 mt-4 flow-root">
                     <div class="-my-2 mx-0 overflow-x-auto">
                         <div class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.template', 2) }} {{ $t('common.weight') }}
                             </h3>
                             <div class="my-2">
@@ -171,7 +171,7 @@ const contentAccessTypes: AccessType[] = [
                         </div>
 
                         <div v-if="template.jobAccess" class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.template', 2) }} {{ $t('common.access') }}
                             </h3>
                             <div class="my-2">
@@ -190,7 +190,7 @@ const contentAccessTypes: AccessType[] = [
                         </div>
 
                         <div class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.content') }} {{ $t('common.title') }}
                             </h3>
                             <div class="my-2">
@@ -206,7 +206,7 @@ const contentAccessTypes: AccessType[] = [
                         </div>
 
                         <div v-if="template.state">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.content') }} {{ $t('common.state') }}
                             </h3>
                             <div class="my-2">
@@ -221,7 +221,7 @@ const contentAccessTypes: AccessType[] = [
                         </div>
 
                         <div v-if="template.category">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.category') }}
                             </h3>
                             <div class="my-2">
@@ -230,7 +230,7 @@ const contentAccessTypes: AccessType[] = [
                         </div>
 
                         <div class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.content') }}
                             </h3>
                             <div class="my-2">
@@ -246,12 +246,12 @@ const contentAccessTypes: AccessType[] = [
                         </div>
 
                         <div v-if="reqs">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.schema') }}
                             </h3>
                             <div class="my-2">
                                 <ul
-                                    class="mb-2 max-w-md list-inside list-disc space-y-1 text-sm font-medium text-gray-100 dark:text-gray-300"
+                                    class="mb-2 max-w-md list-inside list-disc space-y-1 text-sm font-medium text-neutral-100 dark:text-neutral-300"
                                 >
                                     <li v-if="reqs.users">
                                         <TemplateRequirementsList name="User" :specs="reqs.users!" />
@@ -267,7 +267,7 @@ const contentAccessTypes: AccessType[] = [
                         </div>
 
                         <div v-if="template.contentAccess" class="my-2">
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.access') }}
                             </h3>
                             <div class="my-2">
@@ -286,7 +286,7 @@ const contentAccessTypes: AccessType[] = [
                             {{ $t('common.none', [$t('common.workflow')]) }}
                         </div>
                         <div v-else>
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.auto_close') }}
                             </h3>
 
@@ -311,7 +311,7 @@ const contentAccessTypes: AccessType[] = [
                                 >
                             </div>
 
-                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                            <h3 class="block text-base font-medium leading-6 text-neutral-100">
                                 {{ $t('common.reminder', 2) }}
                             </h3>
 

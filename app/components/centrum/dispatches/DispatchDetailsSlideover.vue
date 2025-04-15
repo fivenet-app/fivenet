@@ -92,7 +92,7 @@ watch(dispatch, () => {
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -108,7 +108,7 @@ watch(dispatch, () => {
                             <UButton
                                 variant="link"
                                 icon="i-mdi-trash-can"
-                                color="red"
+                                color="error"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => dispatch && deleteDispatch(dispatch.id),
@@ -118,11 +118,11 @@ watch(dispatch, () => {
                         </UTooltip>
                     </div>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
-            <div class="divide-y divide-gray-100 dark:divide-gray-800">
+            <div class="divide-y divide-neutral-100 dark:divide-neutral-800">
                 <div>
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -204,7 +204,10 @@ watch(dispatch, () => {
                                     {{ $t('common.units', dispatch.units.length) }}
                                 </span>
                                 <div v-else class="mb-1 rounded-md bg-neutral-100 dark:bg-base-900">
-                                    <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">
+                                    <ul
+                                        role="list"
+                                        class="divide-y divide-neutral-100 text-sm font-medium dark:divide-neutral-800"
+                                    >
                                         <li
                                             v-for="unit in dispatch.units"
                                             :key="unit.unitId"
@@ -305,7 +308,7 @@ watch(dispatch, () => {
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UButton
-                                    class="rounded px-2 py-1 text-sm font-semibold"
+                                    class="rounded-xs px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
                                     @click="modal.open(DispatchStatusUpdateModal, { dispatchId: dispatch.id })"
                                 >
@@ -339,7 +342,7 @@ watch(dispatch, () => {
             </div>
 
             <template #footer>
-                <UButton color="black" block @click="isOpen = false">
+                <UButton color="neutral" block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

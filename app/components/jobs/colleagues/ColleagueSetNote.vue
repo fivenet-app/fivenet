@@ -96,7 +96,7 @@ const editing = ref(false);
             <UButton
                 v-else
                 icon="i-mdi-cancel"
-                color="red"
+                color="error"
                 @click="
                     state.note = modelValue ?? '';
                     editing = false;
@@ -105,18 +105,18 @@ const editing = ref(false);
         </div>
 
         <div class="flex flex-1 flex-col gap-2 sm:flex-row">
-            <UFormGroup name="note" class="flex-1" :label="$t('common.note')">
+            <UFormField name="note" class="flex-1" :label="$t('common.note')">
                 <UTextarea v-if="editing" v-model="state.note" block :rows="6" :maxrows="10" name="note" />
                 <p v-else class="prose dark:prose-invert whitespace-pre-wrap text-base-800 dark:text-base-300">
                     {{ modelValue ?? $t('common.na') }}
                 </p>
-            </UFormGroup>
+            </UFormField>
         </div>
 
         <template v-if="editing">
-            <UFormGroup name="reason" :label="$t('common.reason')" required>
+            <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" type="text" :disabled="!changed" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit || !changed" :loading="!canSubmit">
                 {{ $t('common.save') }}

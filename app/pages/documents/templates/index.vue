@@ -34,7 +34,7 @@ async function selected(t: TemplateShort | undefined): Promise<void> {
                         <UButton
                             v-if="can('DocStoreService.CreateTemplate').value"
                             :to="{ name: 'documents-templates-create' }"
-                            color="gray"
+                            color="neutral"
                             trailing-icon="i-mdi-plus"
                         >
                             {{ $t('pages.documents.templates.create_template') }}

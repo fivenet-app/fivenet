@@ -11,14 +11,14 @@ const clipboardStore = useClipboardStore();
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
                         {{ $t('components.clipboard.clipboard_modal.title') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -32,11 +32,11 @@ const clipboardStore = useClipboardStore();
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 
-                    <UButton block class="flex-1" color="red" @click="clipboardStore.clear()">
+                    <UButton block class="flex-1" color="error" @click="clipboardStore.clear()">
                         {{ $t('components.clipboard.clipboard_modal.clear') }}
                     </UButton>
                 </UButtonGroup>

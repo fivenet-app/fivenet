@@ -11,11 +11,11 @@ defineProps<{
 
 <template>
     <li
-        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex justify-between border-white px-2 py-2 sm:px-4 dark:border-gray-900"
+        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex justify-between border-white px-2 py-2 sm:px-4 dark:border-neutral-900"
     >
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
-                <p class="text-sm font-semibold leading-6 text-gray-100">
+                <p class="text-sm font-semibold leading-6 text-neutral-100">
                     <ULink :to="{ name: 'qualifications-id', params: { id: result.qualificationId } }">
                         <span class="absolute inset-x-0 -top-px bottom-0" />
                         {{ result.qualification?.abbreviation }}: {{ result.qualification?.title }}

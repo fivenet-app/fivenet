@@ -102,7 +102,7 @@ const editing = ref(false);
             <UButton
                 v-else
                 icon="i-mdi-cancel"
-                color="red"
+                color="error"
                 @click="
                     state.prefix = namePrefix;
                     state.suffix = nameSuffix;
@@ -112,20 +112,20 @@ const editing = ref(false);
         </div>
 
         <div class="flex flex-col gap-2 sm:flex-row">
-            <UFormGroup name="prefix" :label="$t('common.prefix')">
+            <UFormField name="prefix" :label="$t('common.prefix')">
                 <UInput v-if="editing" v-model="state.prefix" type="text" />
                 <span v-else>{{ namePrefix ?? $t('common.na') }}</span>
-            </UFormGroup>
-            <UFormGroup name="suffix" :label="$t('common.suffix')">
+            </UFormField>
+            <UFormField name="suffix" :label="$t('common.suffix')">
                 <UInput v-if="editing" v-model="state.suffix" type="text" />
                 <span v-else>{{ nameSuffix ?? $t('common.na') }}</span>
-            </UFormGroup>
+            </UFormField>
         </div>
 
         <template v-if="editing">
-            <UFormGroup name="reason" :label="$t('common.reason')" required>
+            <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" type="text" :disabled="!changed" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton type="submit" block icon="i-mdi-content-save" :disabled="!changed || !canSubmit" :loading="!canSubmit">
                 {{ $t('common.save') }}

@@ -105,7 +105,7 @@ onBeforeMount(() => {
                 <template #trailing>
                     <UButton
                         v-show="dispatchQueryRaw !== ''"
-                        color="gray"
+                        color="neutral"
                         variant="link"
                         icon="i-mdi-close"
                         :padded="false"

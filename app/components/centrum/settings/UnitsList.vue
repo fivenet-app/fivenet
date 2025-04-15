@@ -99,7 +99,7 @@ const columns = [
             <UButton
                 v-if="can('CentrumService.CreateOrUpdateUnit').value"
                 trailing-icon="i-mdi-plus"
-                color="gray"
+                color="neutral"
                 @click="
                     modal.open(UnitCreateOrUpdateModal, {
                         onCreated: async () => refresh(),
@@ -121,7 +121,7 @@ const columns = [
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.unit', 2)]) }"
     >
         <template #name-data="{ row: unit }">
-            <div class="text-gray-900 dark:text-white">
+            <div class="text-neutral-900 dark:text-white">
                 {{ unit.name }}
             </div>
         </template>
@@ -157,7 +157,7 @@ const columns = [
                     <UButton
                         variant="link"
                         icon="i-mdi-trash-can"
-                        color="red"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteUnit(unit.id),

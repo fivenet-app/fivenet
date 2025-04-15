@@ -41,7 +41,7 @@ const { attr, can } = useAuth();
         <div class="w-full grow lg:flex lg:flex-col">
             <div class="flex-1 px-4 py-5 sm:p-0">
                 <dl class="space-y-4 sm:space-y-0 xl:grid xl:grid-cols-2">
-                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                    <div class="border-b border-neutral-100 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800">
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.date_of_birth') }}
                         </dt>
@@ -50,7 +50,7 @@ const { attr, can } = useAuth();
                         </dd>
                     </div>
 
-                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                    <div class="border-b border-neutral-100 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800">
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.phone_number') }}
                         </dt>
@@ -59,7 +59,7 @@ const { attr, can } = useAuth();
                         </dd>
                     </div>
 
-                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                    <div class="border-b border-neutral-100 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800">
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.mail') }}
                         </dt>
@@ -68,7 +68,7 @@ const { attr, can } = useAuth();
                         </dd>
                     </div>
 
-                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                    <div class="border-b border-neutral-100 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800">
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.name') }}
                         </dt>
@@ -93,7 +93,7 @@ const { attr, can } = useAuth();
                     <!-- Labels -->
                     <div
                         v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value"
-                        class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                        class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-neutral-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800"
                     >
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.label', 2) }}
@@ -121,7 +121,7 @@ const { attr, can } = useAuth();
                                             :style="{ backgroundColor: label.color }"
                                             class="justify-between gap-2"
                                             :class="
-                                                isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'
+                                                isColourBright(hexToRgb(label.color, RGBBlack)!) ? 'text-black!' : 'text-white!'
                                             "
                                             size="md"
                                         >
@@ -136,7 +136,7 @@ const { attr, can } = useAuth();
                     <!-- Note -->
                     <div
                         v-if="attr('JobsService.GetColleague', 'Types', 'Note').value"
-                        class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                        class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-neutral-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-neutral-800"
                     >
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                             {{ $t('common.note') }}

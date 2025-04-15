@@ -12,23 +12,23 @@ export function dispatchStatusToFillColor(status: StatusDispatch | undefined): s
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
-            return '!text-error-600';
+            return 'text-error-600!';
         case StatusDispatch.EN_ROUTE:
-            return '!text-info-500';
+            return 'text-info-500!';
         case StatusDispatch.ON_SCENE:
-            return '!text-info-700';
+            return 'text-info-700!';
         case StatusDispatch.NEED_ASSISTANCE:
-            return '!text-warn-600';
+            return 'text-warn-600!';
         case StatusDispatch.COMPLETED:
-            return '!text-success-600';
+            return 'text-success-600!';
         case StatusDispatch.CANCELLED:
-            return '!text-success-800';
+            return 'text-success-800!';
         case StatusDispatch.ARCHIVED:
-            return '!text-base-600';
+            return 'text-base-600!';
         case StatusDispatch.UNIT_ACCEPTED:
-            return '!text-info-600';
+            return 'text-info-600!';
         default:
-            return '!text-info-500';
+            return 'text-info-500!';
     }
 }
 
@@ -38,23 +38,23 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
         case StatusDispatch.UNIT_DECLINED:
-            return '!bg-error-600';
+            return 'bg-error-600!';
         case StatusDispatch.EN_ROUTE:
-            return '!bg-info-500';
+            return 'bg-info-500!';
         case StatusDispatch.ON_SCENE:
-            return '!bg-info-700';
+            return 'bg-info-700!';
         case StatusDispatch.NEED_ASSISTANCE:
-            return '!bg-warn-600';
+            return 'bg-warn-600!';
         case StatusDispatch.COMPLETED:
-            return '!bg-success-600';
+            return 'bg-success-600!';
         case StatusDispatch.CANCELLED:
-            return '!bg-success-800';
+            return 'bg-success-800!';
         case StatusDispatch.ARCHIVED:
-            return '!bg-background';
+            return 'bg-background!';
         case StatusDispatch.UNIT_ACCEPTED:
-            return '!bg-info-600';
+            return 'bg-info-600!';
         default:
-            return '!bg-info-500';
+            return 'bg-info-500!';
     }
 }
 
@@ -73,16 +73,16 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
         case StatusUnit.ON_BREAK:
         case StatusUnit.USER_ADDED:
         case StatusUnit.USER_REMOVED:
-            return '!bg-info-500';
+            return 'bg-info-500!';
         case StatusUnit.AVAILABLE:
-            return '!bg-success-600';
+            return 'bg-success-600!';
         case StatusUnit.BUSY:
-            return '!bg-warn-600';
+            return 'bg-warn-600!';
         case StatusUnit.UNSPECIFIED:
         case StatusUnit.UNKNOWN:
         case StatusUnit.UNAVAILABLE:
         default:
-            return '!bg-error-600';
+            return 'bg-error-600!';
     }
 }
 
@@ -169,16 +169,16 @@ export function dispatchTimeToTextColorSidebar(
     if (over <= 0.15) {
         return { ping: false, class: '' };
     } else if (over <= 0.2) {
-        return { ping: false, class: '!bg-orange-300' };
+        return { ping: false, class: 'bg-orange-300!' };
     } else if (over <= 0.3) {
-        return { ping: false, class: '!bg-yellow-300' };
+        return { ping: false, class: 'bg-yellow-300!' };
     } else if (over <= 0.5) {
-        return { ping: false, class: '!bg-orange-500' };
+        return { ping: false, class: 'bg-orange-500!' };
     } else if (over <= 0.8) {
-        return { ping: true, class: '!bg-red-400' };
+        return { ping: true, class: 'bg-red-400!' };
     }
 
-    return { ping: true, class: '!bg-red-700' };
+    return { ping: true, class: 'bg-red-700!' };
 }
 
 export function checkUnitAccess(unitAccess: UnitAccess | undefined, level: UnitAccessLevel): boolean {

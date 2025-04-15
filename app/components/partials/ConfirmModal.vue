@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonColor } from '#ui/types';
+import type { ButtonProps } from '#ui/types';
 
 withDefaults(
     defineProps<{
@@ -8,7 +8,7 @@ withDefaults(
         cancel?: () => Promise<unknown> | unknown;
         confirm: () => Promise<unknown> | unknown;
         icon?: string;
-        color?: ButtonColor;
+        color?: ButtonProps['color'];
         iconClass?: string;
     }>(),
     {
@@ -25,7 +25,7 @@ const { isOpen } = useModal();
 </script>
 
 <template>
-    <UDashboardModal
+    <UModal
         :title="title ?? $t('components.partials.confirm_dialog.title')"
         :description="description ?? $t('components.partials.confirm_dialog.description')"
         :icon="icon"
@@ -45,7 +45,7 @@ const { isOpen } = useModal();
                 "
             />
             <UButton
-                color="white"
+                color="neutral"
                 :label="$t('common.cancel')"
                 @click="
                     if (cancel) {
@@ -55,5 +55,5 @@ const { isOpen } = useModal();
                 "
             />
         </template>
-    </UDashboardModal>
+    </UModal>
 </template>

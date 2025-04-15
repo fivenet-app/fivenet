@@ -94,7 +94,7 @@ const accordionItems = computed(() =>
         <template #right>
             <PartialsBackButton fallback-to="/wiki" />
 
-            <UButton v-if="can('WikiService.CreatePage').value" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
+            <UButton v-if="can('WikiService.CreatePage').value" color="neutral" trailing-icon="i-mdi-plus" to="/wiki/create">
                 {{ $t('common.page') }}
             </UButton>
         </template>
@@ -106,7 +106,7 @@ const accordionItems = computed(() =>
                 <slot name="left" />
             </template>
 
-            <UBreadcrumb class="pb-2 pt-4" :links="breadcrumbs" />
+            <UBreadcrumb class="pb-2 pt-4" :items="breadcrumbs" />
 
             <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
             <DataErrorBlock
@@ -116,16 +116,16 @@ const accordionItems = computed(() =>
                 :retry="refresh"
             />
             <template v-else-if="!page">
-                <ULandingHero
+                <UPageHero
                     :title="$t('pages.notfound.page_not_found')"
                     :description="$t('pages.notfound.fun_error')"
-                    :links="[
+                    :items="[
                         {
                             label: $t('common.back'),
                             icon: 'i-mdi-arrow-back',
                             size: 'md',
                             color: 'gray',
-                            click: () => useRouter().back(),
+                            onClick: () => useRouter().back(),
                         },
                         { label: $t('common.wiki'), icon: 'i-mdi-home', size: 'md', to: '/wiki' },
                     ]"
@@ -133,7 +133,7 @@ const accordionItems = computed(() =>
                 >
                     <template #headline>
                         <UBadge
-                            color="gray"
+                            color="neutral"
                             variant="solid"
                             size="lg"
                             @click="
@@ -144,7 +144,7 @@ const accordionItems = computed(() =>
                             >{{ $t('pages.notfound.error') }}</UBadge
                         >
                     </template>
-                </ULandingHero>
+                </UPageHero>
             </template>
 
             <template v-else>
@@ -161,7 +161,7 @@ const accordionItems = computed(() =>
                             "
                             :text="$t('common.edit')"
                         >
-                            <UButton color="white" icon="i-mdi-pencil" @click="$emit('edit')" />
+                            <UButton color="neutral" icon="i-mdi-pencil" @click="$emit('edit')" />
                         </UTooltip>
 
                         <UTooltip
@@ -185,7 +185,7 @@ const accordionItems = computed(() =>
 
                     <template v-if="page.meta.updatedAt || page.meta.deletedAt" #description>
                         <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                            <UBadge v-if="page.meta.createdAt" color="black" class="inline-flex gap-1" size="md">
+                            <UBadge v-if="page.meta.createdAt" color="neutral" class="inline-flex gap-1" size="md">
                                 <UIcon name="i-mdi-calendar" class="size-5" />
                                 <span>
                                     {{ $t('common.created') }}
@@ -193,7 +193,7 @@ const accordionItems = computed(() =>
                                 </span>
                             </UBadge>
 
-                            <UBadge v-if="page.meta.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                            <UBadge v-if="page.meta.updatedAt" color="neutral" class="inline-flex gap-1" size="md">
                                 <UIcon name="i-mdi-calendar-edit" class="size-5" />
                                 <span>
                                     {{ $t('common.updated') }}
@@ -209,7 +209,7 @@ const accordionItems = computed(() =>
                                 </span>
                             </UBadge>
 
-                            <UBadge v-if="page.meta.public" color="black" class="inline-flex gap-1" size="md">
+                            <UBadge v-if="page.meta.public" color="neutral" class="inline-flex gap-1" size="md">
                                 <UIcon name="i-mdi-earth" class="size-5" />
                                 <span>
                                     {{ $t('common.public') }}
@@ -227,7 +227,7 @@ const accordionItems = computed(() =>
                     </div>
                 </UPageBody>
 
-                <UDivider class="mb-4" />
+                <USeparator class="mb-4" />
 
                 <UAccordion multiple :items="accordionItems" :unmount="true" class="print:hidden">
                     <template #access>
@@ -257,9 +257,9 @@ const accordionItems = computed(() =>
             </template>
 
             <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
-                <PageSearch class="mb-2 !flex lg:!hidden" />
+                <PageSearch class="flex! lg:hidden! mb-2" />
 
-                <UContentToc :title="$t('common.toc')" :links="tocLinks" />
+                <UContentToc :title="$t('common.toc')" :items="tocLinks" />
             </template>
         </UPage>
     </UDashboardPanelContent>

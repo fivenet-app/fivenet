@@ -138,25 +138,31 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('common.request', 2) }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
                     <template v-if="canDo.create">
-                        <UFormGroup name="reason" :label="$t('common.reason')" required>
+                        <UFormField name="reason" :label="$t('common.reason')" required>
                             <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                        </UFormGroup>
+                        </UFormField>
 
                         <div class="my-2">
-                            <UFormGroup name="requestsType" :label="$t('common.type', 2)" class="flex-1">
+                            <UFormField name="requestsType" :label="$t('common.type', 2)" class="flex-1">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.requestType"
@@ -191,16 +197,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </template>
 
                     <div>
-                        <ul v-if="loading" role="list" class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500">
+                        <ul
+                            v-if="loading"
+                            role="list"
+                            class="mb-6 divide-y divide-neutral-800 rounded-md dark:divide-neutral-500"
+                        >
                             <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">
                                 <div class="flex min-w-0 gap-x-2 px-2">
                                     <div class="min-w-0 flex-auto">
-                                        <p class="text-base font-semibold leading-6 text-gray-100">
+                                        <p class="text-base font-semibold leading-6 text-neutral-100">
                                             <USkeleton class="h-8 w-[325px]" />
                                         </p>
                                         <p class="mt-1 flex gap-1 text-sm leading-5">
@@ -240,7 +250,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :message="$t('common.not_found', [$t('common.request', 2)])"
                         />
 
-                        <ul v-else role="list" class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500">
+                        <ul v-else role="list" class="mb-6 divide-y divide-neutral-800 rounded-md dark:divide-neutral-500">
                             <DocumentRequestsListEntry
                                 v-for="request in requests.requests"
                                 :key="request.id"
@@ -255,7 +265,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

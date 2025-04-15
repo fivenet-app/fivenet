@@ -68,7 +68,7 @@ async function deleteMarker(id: number): Promise<void> {
                     <UButton
                         variant="link"
                         icon="i-mdi-trash-can"
-                        color="red"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteMarker(marker.id),

@@ -67,7 +67,7 @@ function changeColumn(col: string): void {
                 square
                 trailing
                 :icon="sort.direction === 'asc' ? ui.table.default.sortAscIcon : ui.table.default.sortDescIcon"
-                color="gray"
+                color="neutral"
                 variant="ghost"
                 @click="toggleDirection"
             />

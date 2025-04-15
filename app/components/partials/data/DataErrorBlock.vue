@@ -30,7 +30,7 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
 
 <template>
     <UAlert
-        color="red"
+        color="error"
         icon="i-mdi-close-circle"
         class="relative my-2 block w-full min-w-60"
         :title="
@@ -51,7 +51,7 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
                           color: 'red',
                           label: retryMessage ?? $t('common.retry'),
                           disabled: disabled,
-                          click: async () => {
+                          onClick: async () => {
                               start();
                               retry && retry();
                           },

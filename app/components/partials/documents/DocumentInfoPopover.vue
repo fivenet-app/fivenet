@@ -135,7 +135,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="loading && !document" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="loading && !document" class="flex flex-col gap-2 text-neutral-900 dark:text-white">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
@@ -144,7 +144,7 @@ watchOnce(opened, async () => {
                     </div>
                 </div>
 
-                <div v-else-if="document" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="document" class="flex flex-col gap-2 text-neutral-900 dark:text-white">
                     <UButton variant="link" :padded="false" :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }">
                         <DocumentCategoryBadge v-if="document?.category" :category="document?.category" size="xs" />
 

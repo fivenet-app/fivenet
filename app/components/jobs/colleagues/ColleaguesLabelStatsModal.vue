@@ -50,7 +50,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
         <UCard
             :ui="{
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
                 header: {
                     base: 'h-[var(--header-height)]',
                     padding: 'p-4',
@@ -71,7 +71,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
                         {{ $t('common.label', 2) }} - {{ $t('common.total_count') }}: {{ totalCount }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -101,7 +101,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 
@@ -117,26 +117,26 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
     --vis-crosshair-line-stroke-color: rgb(var(--color-primary-500));
     --vis-crosshair-circle-stroke-color: #fff;
 
-    --vis-axis-grid-color: rgb(var(--color-gray-200));
-    --vis-axis-tick-color: rgb(var(--color-gray-200));
-    --vis-axis-tick-label-color: rgb(var(--color-gray-400));
+    --vis-axis-grid-color: rgb(var(--color-neutral-200));
+    --vis-axis-tick-color: rgb(var(--color-neutral-200));
+    --vis-axis-tick-label-color: rgb(var(--color-neutral-400));
 
     --vis-tooltip-background-color: #fff;
-    --vis-tooltip-border-color: rgb(var(--color-gray-200));
-    --vis-tooltip-text-color: rgb(var(--color-gray-900));
+    --vis-tooltip-border-color: rgb(var(--color-neutral-200));
+    --vis-tooltip-text-color: rgb(var(--color-neutral-900));
 }
 
 .dark {
     .unovis-xy-container {
         --vis-crosshair-line-stroke-color: rgb(var(--color-primary-400));
-        --vis-crosshair-circle-stroke-color: rgb(var(--color-gray-900));
+        --vis-crosshair-circle-stroke-color: rgb(var(--color-neutral-900));
 
-        --vis-axis-grid-color: rgb(var(--color-gray-800));
-        --vis-axis-tick-color: rgb(var(--color-gray-800));
-        --vis-axis-tick-label-color: rgb(var(--color-gray-400));
+        --vis-axis-grid-color: rgb(var(--color-neutral-800));
+        --vis-axis-tick-color: rgb(var(--color-neutral-800));
+        --vis-axis-tick-label-color: rgb(var(--color-neutral-400));
 
-        --vis-tooltip-background-color: rgb(var(--color-gray-900));
-        --vis-tooltip-border-color: rgb(var(--color-gray-800));
+        --vis-tooltip-background-color: rgb(var(--color-neutral-900));
+        --vis-tooltip-border-color: rgb(var(--color-neutral-800));
         --vis-tooltip-text-color: #fff;
     }
 }

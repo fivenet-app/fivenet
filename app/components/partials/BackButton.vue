@@ -28,5 +28,5 @@ async function goBack(): Promise<void> {
 </script>
 
 <template>
-    <UButton color="black" icon="i-mdi-arrow-back" :to="to" :label="$t('common.back')" @click="goBack" />
+    <UButton color="neutral" icon="i-mdi-arrow-back" :to="to" :label="$t('common.back')" @click="goBack" />
 </template>

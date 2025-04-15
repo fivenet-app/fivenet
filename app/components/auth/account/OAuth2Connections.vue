@@ -18,7 +18,7 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
 
 <template>
     <UDashboardPanelContent>
-        <UDashboardSection
+        <UPageCard
             :title="$t('components.auth.OAuth2Connections.title')"
             :description="$t('components.auth.OAuth2Connections.subtitle')"
         >
@@ -31,6 +31,6 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
                     @disconnected="$emit('disconnected', $event)"
                 />
             </UPageGrid>
-        </UDashboardSection>
+        </UPageCard>
     </UDashboardPanelContent>
 </template>

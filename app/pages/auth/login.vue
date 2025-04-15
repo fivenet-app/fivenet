@@ -31,12 +31,12 @@ const logger = useLogger('🔑 Auth');
 
 const items = [
     {
-        slot: 'login',
+        slot: 'login' as const,
         label: t('components.auth.LoginForm.title'),
         icon: 'i-mdi-login',
     },
     {
-        slot: 'forgotPassword',
+        slot: 'forgotPassword' as const,
         label: t('components.auth.LoginForm.forgot_password'),
         icon: 'i-mdi-forgot-password',
     },
@@ -49,10 +49,10 @@ const selectedTab = computed({
     get() {
         const index = items.findIndex((item) => item.slot === route.query.tab);
         if (index === -1) {
-            return 0;
+            return '0';
         }
 
-        return index;
+        return index.toString();
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
@@ -91,25 +91,26 @@ const canSubmit = ref(true);
 </script>
 
 <template>
-    <UCard class="w-full max-w-md bg-white/75 backdrop-blur dark:bg-white/5">
+    <UCard class="backdrop-blur-xs w-full max-w-md bg-white/75 dark:bg-white/5">
         <div class="space-y-4">
             <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
-            <UTabs v-model="selectedTab" :items="items" class="w-full">
+            <UTabs v-model="selectedTab" :items="items" class="w-full" :disabled="!canSubmit">
                 <template #login>
                     <LoginForm v-model="canSubmit" />
                 </template>
+
                 <template #forgotPassword>
                     <ForgotPasswordForm v-model="canSubmit" @toggle="selectedTab = 0" />
                 </template>
             </UTabs>
 
             <div v-if="login.signupEnabled" class="space-y-4">
-                <UDivider orientation="horizontal" />
+                <USeparator orientation="horizontal" />
 
                 <UButton
                     block
-                    color="gray"
+                    color="neutral"
                     trailing-icon="i-mdi-account-plus"
                     :to="{ name: 'auth-registration' }"
                     :disabled="!canSubmit"

@@ -40,10 +40,10 @@ const selectedTab = computed({
     get() {
         const index = items.findIndex((item) => item.slot === route.query.tab);
         if (index === -1) {
-            return 0;
+            return '0';
         }
 
-        return index;
+        return index.toString();
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
@@ -61,7 +61,7 @@ const selectedTab = computed({
                         v-if="can('QualificationsService.CreateQualification').value"
                         :to="{ name: 'qualifications-create' }"
                         trailing-icon="i-mdi-plus"
-                        color="gray"
+                        color="neutral"
                     >
                         {{ $t('components.qualifications.create_new_qualification') }}
                     </UButton>

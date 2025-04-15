@@ -35,7 +35,7 @@ const groupedLayers = computed(() => {
                     size="xl"
                     icon="i-mdi-layers-triple"
                     class="border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
-                    :ui="{ icon: { base: '!size-8' } }"
+                    :ui="{ icon: { base: 'size-8!' } }"
                 />
 
                 <template #panel>
@@ -43,18 +43,21 @@ const groupedLayers = computed(() => {
                         <p v-if="Object.keys(groupedLayers).length === 0" class="truncate">
                             {{ $t('common.layers', 0) }}
                         </p>
-                        <div v-else class="grid auto-cols-auto grid-flow-col divide-x divide-gray-100 dark:divide-gray-800">
+                        <div
+                            v-else
+                            class="grid auto-cols-auto grid-flow-col divide-x divide-neutral-100 dark:divide-neutral-800"
+                        >
                             <div
                                 v-for="(category, key) in groupedLayers"
                                 :key="key"
                                 class="grid min-w-0 grid-flow-row auto-rows-min gap-1 px-1"
                             >
-                                <p class="truncate text-sm font-bold text-gray-900 dark:text-white">
+                                <p class="truncate text-sm font-bold text-neutral-900 dark:text-white">
                                     {{ livemapLayerCategories.find((c) => c.key === key)?.label ?? $t('common.na') }}
                                 </p>
 
                                 <div v-for="layer in category" :key="layer.key" class="inline-flex gap-1 overflow-y-hidden">
-                                    <UToggle v-model="layer.visible" />
+                                    <USwitch v-model="layer.visible" />
                                     <span class="truncate hover:line-clamp-2">{{ layer.label }}</span>
                                 </div>
                             </div>

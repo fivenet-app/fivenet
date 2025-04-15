@@ -118,7 +118,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                         <div class="max-h-full overflow-y-auto">
                             <div class="mb-2 px-2">
                                 <UForm :schema="schema" :state="query" class="flex flex-row gap-2" @submit="refresh()">
-                                    <UFormGroup name="postal" :label="$t('common.postal')" class="flex-1">
+                                    <UFormField name="postal" :label="$t('common.postal')" class="flex-1">
                                         <UInput
                                             ref="input"
                                             v-model="query.postal"
@@ -130,8 +130,8 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                                                 <UKbd value="/" />
                                             </template>
                                         </UInput>
-                                    </UFormGroup>
-                                    <UFormGroup name="id" :label="$t('common.id')" class="flex-1">
+                                    </UFormField>
+                                    <UFormField name="id" :label="$t('common.id')" class="flex-1">
                                         <UInput
                                             v-model="query.id"
                                             type="text"
@@ -140,7 +140,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                                             :max="99999999999"
                                             :placeholder="$t('common.id')"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
                                 </UForm>
                             </div>
 
@@ -174,11 +174,11 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 <style scoped>
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: rgb(var(--color-neutral-800));
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
     min-height: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: rgb(var(--color-neutral-800));
 }
 </style>

@@ -152,7 +152,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     class="flex-1"
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
-                    color="red"
+                    color="error"
                     :variant="ownEntry?.response === RsvpResponses.NO ? 'soft' : 'solid'"
                     @click="onSubmitThrottle(RsvpResponses.NO)"
                 >
@@ -164,7 +164,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 <UButton
                     v-if="ownEntry && showRemove"
                     icon="i-mdi-calendar-remove"
-                    color="white"
+                    color="neutral"
                     @click="
                         modal.open(ConfirmModal, {
                             confirm: async () => rsvpCalendarEntry(RsvpResponses.NO, true),

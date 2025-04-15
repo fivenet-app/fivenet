@@ -278,7 +278,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         v-if="can('RectorService.DeleteRole').value"
                         variant="link"
                         icon="i-mdi-trash-can"
-                        color="red"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteRole(role!.id),
@@ -287,7 +287,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     />
                 </div>
 
-                <UDivider :label="$t('common.permission', 2)" class="mb-1" />
+                <USeparator :label="$t('common.permission', 2)" class="mb-1" />
 
                 <div class="flex flex-col gap-2">
                     <UButton
@@ -303,7 +303,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
                         <template #item="{ item: category }">
-                            <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                            <div class="flex flex-col divide-y divide-neutral-100 dark:divide-neutral-800">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"
@@ -311,7 +311,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 >
                                     <div class="flex flex-row items-center gap-2">
                                         <div class="flex-1">
-                                            <p :title="`${$t('common.id')}: ${perm.id}`" class="text-gray-900 dark:text-white">
+                                            <p
+                                                :title="`${$t('common.id')}: ${perm.id}`"
+                                                class="text-neutral-900 dark:text-white"
+                                            >
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </p>
                                             <p class="text-base-500">
@@ -328,7 +331,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             />
 
                                             <UButton
-                                                color="black"
+                                                color="neutral"
                                                 :variant="
                                                     !permStates.has(perm.id) || permStates.get(perm.id) === undefined
                                                         ? 'solid'
@@ -339,7 +342,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             />
 
                                             <UButton
-                                                color="red"
+                                                color="error"
                                                 :variant="
                                                     permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
                                                         ? 'solid'

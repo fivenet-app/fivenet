@@ -419,10 +419,10 @@ const selectedTab = computed({
     get() {
         const index = items.findIndex((item) => item.slot === route.query.tab);
         if (index === -1) {
-            return 0;
+            return '0';
         }
 
-        return index;
+        return index.toString();
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
@@ -506,7 +506,7 @@ logger.info(
                     <UDashboardToolbar>
                         <template #default>
                             <div class="flex w-full flex-col gap-2">
-                                <UFormGroup name="title" :label="$t('common.title')" required>
+                                <UFormField name="title" :label="$t('common.title')" required>
                                     <UInput
                                         v-model="state.title"
                                         type="text"
@@ -514,10 +514,10 @@ logger.info(
                                         :placeholder="$t('common.title')"
                                         :disabled="!canEdit || !canDo.edit"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
                                 <div class="flex flex-row gap-2">
-                                    <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
+                                    <UFormField name="category" :label="$t('common.category', 1)" class="flex-1">
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="state.category"
@@ -588,20 +588,20 @@ logger.info(
                                                 </template>
                                             </USelectMenu>
                                         </ClientOnly>
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
+                                    <UFormField name="state" :label="$t('common.state')" class="flex-1">
                                         <UInput
                                             v-model="state.state"
                                             type="text"
                                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                                             :disabled="!canEdit || !canDo.edit"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
-                                        <UToggle v-model="state.closed" :disabled="!canDo.edit" />
-                                    </UFormGroup>
+                                    <UFormField name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
+                                        <USwitch v-model="state.closed" :disabled="!canDo.edit" />
+                                    </UFormField>
                                 </div>
                             </div>
                         </template>
@@ -620,7 +620,7 @@ logger.info(
                         @close="openReferenceManager = false"
                     />
 
-                    <UFormGroup
+                    <UFormField
                         v-if="canDo.edit"
                         name="content"
                         class="flex flex-1 overflow-y-hidden"
@@ -631,7 +631,7 @@ logger.info(
                             <TiptapEditor
                                 v-model="state.content"
                                 :disabled="!canEdit || !canDo.edit"
-                                class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                                 rounded="rounded-none"
                             >
                                 <template #footer>
@@ -642,10 +642,10 @@ logger.info(
                                 </template>
                             </TiptapEditor>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
                     <UDashboardToolbar
-                        class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                        class="flex shrink-0 justify-between border-b-0 border-t border-neutral-200 px-3 py-3.5 dark:border-neutral-700"
                     >
                         <UButtonGroup v-if="canDo.edit" class="inline-flex w-full">
                             <UButton
@@ -674,7 +674,7 @@ logger.info(
 
                 <template #access>
                     <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
-                        <h2 class="text- text-gray-900 dark:text-white">
+                        <h2 class="text- text-neutral-900 dark:text-white">
                             {{ $t('common.access') }}
                         </h2>
 

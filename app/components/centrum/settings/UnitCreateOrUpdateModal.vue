@@ -131,7 +131,7 @@ onMounted(async () => updateUnitInForm());
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -143,29 +143,35 @@ onMounted(async () => updateUnitInForm());
                             </template>
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
+                    <UFormField name="name" :label="$t('common.name')" class="flex-1">
                         <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="initials" :label="$t('common.initials')" class="flex-1">
+                    <UFormField name="initials" :label="$t('common.initials')" class="flex-1">
                         <UInput v-model="state.initials" name="initials" type="text" :placeholder="$t('common.initials')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                    <UFormField name="description" :label="$t('common.description')" class="flex-1">
                         <UInput
                             v-model="state.description"
                             name="description"
                             type="text"
                             :placeholder="$t('common.description')"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="attributes" :label="$t('common.attributes', 2)" class="flex-1">
+                    <UFormField name="attributes" :label="$t('common.attributes', 2)" class="flex-1">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.attributes"
@@ -191,13 +197,13 @@ onMounted(async () => updateUnitInForm());
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
+                    <UFormField name="color" :label="$t('common.color')" class="flex-1">
                         <ColorPickerClient v-model="state.color" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         name="homePostal"
                         :label="`${$t('common.department')} ${$t('common.postal_code')}`"
                         class="flex-1"
@@ -208,9 +214,9 @@ onMounted(async () => updateUnitInForm());
                             type="text"
                             :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="access" :label="$t('common.access')">
+                    <UFormField name="access" :label="$t('common.access')">
                         <AccessManager
                             v-model:jobs="state.access.jobs"
                             v-model:qualifications="state.access.qualifications"
@@ -225,12 +231,12 @@ onMounted(async () => updateUnitInForm());
                                 { type: 'qualification', name: $t('common.qualification', 2) },
                             ]"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

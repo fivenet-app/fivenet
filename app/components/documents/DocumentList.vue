@@ -130,7 +130,7 @@ defineShortcuts({
 <template>
     <UDashboardToolbar>
         <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
-            <UFormGroup name="title" :label="$t('common.search')">
+            <UFormField name="title" :label="$t('common.search')">
                 <UInput
                     ref="inputRef"
                     v-model="query.title"
@@ -145,22 +145,22 @@ defineShortcuts({
                         <UKbd value="/" />
                     </template>
                 </UInput>
-            </UFormGroup>
+            </UFormField>
 
             <UAccordion
                 class="mt-2"
-                color="white"
+                color="neutral"
                 variant="soft"
                 size="sm"
                 :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
             >
                 <template #search>
                     <div class="flex flex-row flex-wrap gap-1">
-                        <UFormGroup class="flex-1" name="documentIds" :label="`${$t('common.document')} ${$t('common.id')}`">
+                        <UFormField class="flex-1" name="documentIds" :label="`${$t('common.document')} ${$t('common.id')}`">
                             <UInput v-model="query.documentIds" type="text" name="documentIds" placeholder="DOC-..." block />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
+                        <UFormField class="flex-1" name="category" :label="$t('common.category', 1)">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.categories"
@@ -224,9 +224,9 @@ defineShortcuts({
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
+                        <UFormField class="flex-1" name="creator" :label="$t('common.creator')">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.creators"
@@ -267,11 +267,11 @@ defineShortcuts({
                                     <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
 
                     <div class="flex flex-row flex-wrap gap-2">
-                        <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
+                        <UFormField name="closed" :label="$t('common.close', 2)" class="flex-1">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.closed"
@@ -288,7 +288,7 @@ defineShortcuts({
                                                     color="green"
                                                     class="size-4"
                                                 />
-                                                <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
+                                                <UIcon v-else name="i-mdi-lock" color="error" class="size-4" />
                                             </template>
 
                                             {{
@@ -309,7 +309,7 @@ defineShortcuts({
                                                     color="green"
                                                     class="size-4"
                                                 />
-                                                <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
+                                                <UIcon v-else name="i-mdi-lock" color="error" class="size-4" />
                                             </template>
 
                                             {{ option.label }}
@@ -317,9 +317,9 @@ defineShortcuts({
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
+                        <UFormField class="flex-1" name="date" :label="$t('common.time_range')">
                             <DateRangePickerPopoverClient
                                 v-model="query.date"
                                 class="flex-1"
@@ -332,9 +332,9 @@ defineShortcuts({
                                     clearable: true,
                                 }"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup :label="$t('common.sort_by')" class="flex-1 grow-0 basis-40">
+                        <UFormField :label="$t('common.sort_by')" class="flex-1 grow-0 basis-40">
                             <SortButton
                                 v-model="sort"
                                 :fields="[
@@ -342,7 +342,7 @@ defineShortcuts({
                                     { label: $t('common.title'), value: 'title' },
                                 ]"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
             </UAccordion>
@@ -361,7 +361,7 @@ defineShortcuts({
         <div v-else-if="data?.documents || loading" class="relative overflow-x-auto">
             <ul
                 role="list"
-                class="my-1 flex flex-initial flex-col divide-y divide-gray-100 dark:divide-gray-800"
+                class="my-1 flex flex-initial flex-col divide-y divide-neutral-100 dark:divide-neutral-800"
                 :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
             >
                 <template v-if="loading">

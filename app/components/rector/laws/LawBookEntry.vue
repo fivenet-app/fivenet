@@ -197,7 +197,7 @@ const editing = ref(props.startInEdit);
                         <UButton
                             variant="link"
                             icon="i-mdi-trash-can"
-                            color="red"
+                            color="error"
                             @click="
                                 modal.open(ConfirmModal, {
                                     confirm: async () => deleteLawBook(lawBook!.id),
@@ -214,7 +214,7 @@ const editing = ref(props.startInEdit);
                 </div>
 
                 <UTooltip :text="$t('pages.rector.laws.add_new_law')">
-                    <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLaw">
+                    <UButton color="neutral" trailing-icon="i-mdi-plus" @click="addLaw">
                         {{ $t('pages.rector.laws.add_new_law') }}
                     </UButton>
                 </UTooltip>
@@ -241,18 +241,18 @@ const editing = ref(props.startInEdit);
                     />
                 </UTooltip>
 
-                <UFormGroup name="name" :label="$t('common.law_book')" class="flex-initial">
+                <UFormField name="name" :label="$t('common.law_book')" class="flex-initial">
                     <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law_book')" />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup name="description" :label="$t('common.description')" class="flex-auto">
+                <UFormField name="description" :label="$t('common.description')" class="flex-auto">
                     <UInput
                         v-model="state.description"
                         name="description"
                         type="text"
                         :placeholder="$t('common.description')"
                     />
-                </UFormGroup>
+                </UFormField>
             </UForm>
         </template>
         <UTable
@@ -289,7 +289,7 @@ const editing = ref(props.startInEdit);
                     <UButton
                         variant="link"
                         icon="i-mdi-trash-can"
-                        color="red"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteLaw(law.id),
@@ -300,7 +300,7 @@ const editing = ref(props.startInEdit);
             </template>
 
             <template #crime-data="{ row: law }">
-                <span class="truncate text-gray-900 dark:text-white">
+                <span class="truncate text-neutral-900 dark:text-white">
                     {{ law.name }}
                 </span>
             </template>

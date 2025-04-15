@@ -18,25 +18,25 @@ const schema = z.object({
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
                         {{ $t('common.setting', 2) }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
             <UForm :schema="schema" :state="livemap">
-                <UFormGroup name="centerSelectedMarker" :label="$t('components.livemap.center_selected_marker')">
-                    <UToggle v-model="livemap.centerSelectedMarker">
+                <UFormField name="centerSelectedMarker" :label="$t('components.livemap.center_selected_marker')">
+                    <USwitch v-model="livemap.centerSelectedMarker">
                         <span class="sr-only">{{ $t('components.livemap.center_selected_marker') }}</span>
-                    </UToggle>
-                </UFormGroup>
+                    </USwitch>
+                </UFormField>
 
-                <UFormGroup name="markerSize" :label="$t('components.livemap.settings.marker_size')">
+                <UFormField name="markerSize" :label="$t('components.livemap.settings.marker_size')">
                     <URange
                         v-model="livemap.markerSize"
                         class="my-auto h-1.5 w-full cursor-grab rounded-full"
@@ -45,29 +45,29 @@ const schema = z.object({
                         :step="2"
                     />
                     <span class="text-sm">{{ livemap.markerSize }}</span>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup name="showUnitNames" :label="$t('components.livemap.show_unit_names')">
-                    <UToggle v-model="livemap.showUnitNames">
+                <UFormField name="showUnitNames" :label="$t('components.livemap.show_unit_names')">
+                    <USwitch v-model="livemap.showUnitNames">
                         <span class="sr-only">{{ $t('components.livemap.show_unit_names') }}</span>
-                    </UToggle>
-                </UFormGroup>
+                    </USwitch>
+                </UFormField>
 
-                <UFormGroup name="showUnitStatus" :label="$t('components.livemap.show_unit_status')">
-                    <UToggle v-model="livemap.showUnitStatus">
+                <UFormField name="showUnitStatus" :label="$t('components.livemap.show_unit_status')">
+                    <USwitch v-model="livemap.showUnitStatus">
                         <span class="sr-only">{{ $t('components.livemap.show_unit_status') }}</span>
-                    </UToggle>
-                </UFormGroup>
+                    </USwitch>
+                </UFormField>
 
-                <UFormGroup name="showAllDispatches" :label="$t('components.livemap.show_all_dispatches')">
-                    <UToggle v-model="livemap.showAllDispatches">
+                <UFormField name="showAllDispatches" :label="$t('components.livemap.show_all_dispatches')">
+                    <USwitch v-model="livemap.showAllDispatches">
                         <span class="sr-only">{{ $t('components.livemap.show_all_dispatches') }}</span>
-                    </UToggle>
-                </UFormGroup>
+                    </USwitch>
+                </UFormField>
             </UForm>
 
             <template #footer>
-                <UButton block class="flex-1" color="black" @click="isOpen = false">
+                <UButton block class="flex-1" color="neutral" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

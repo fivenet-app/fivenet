@@ -93,7 +93,7 @@ function addToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
         description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -105,10 +105,10 @@ const selectedTab = computed({
     get() {
         const index = items.findIndex((item) => item.slot === route.query.tab);
         if (index === -1) {
-            return 0;
+            return '0';
         }
 
-        return index;
+        return index.toString();
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
@@ -124,7 +124,7 @@ const isOpen = ref(false);
 <template>
     <UDashboardPage>
         <UDashboardPanel
-            class="shrink-0 border-b border-gray-200 lg:w-[--width] lg:border-b-0 lg:border-r dark:border-gray-800"
+            class="lg:w-(--width) shrink-0 border-b border-neutral-200 lg:border-b-0 lg:border-r dark:border-neutral-800"
             grow
         >
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
@@ -180,7 +180,7 @@ const isOpen = ref(false);
                                     {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
                                 </UBadge>
 
-                                <UBadge v-if="user?.props?.wanted" color="red">
+                                <UBadge v-if="user?.props?.wanted" color="error">
                                     {{ $t('common.wanted').toUpperCase() }}
                                 </UBadge>
                             </div>
@@ -239,9 +239,9 @@ const isOpen = ref(false);
             <UDashboardPanelContent>
                 <div class="flex flex-1 flex-col">
                     <template v-if="user">
-                        <UDashboardSection
+                        <UPageCard
                             :ui="{
-                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
+                                wrapper: 'divide-y divide-transparent! space-y-0 *:pt-2 *:first:pt-2 *:first:pt-0 mb-6',
                             }"
                             :title="$t('common.action', 2)"
                         >
@@ -259,20 +259,20 @@ const isOpen = ref(false);
                                 @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
                                 @update:mug-shot="user.props!.mugShot = $event"
                             />
-                        </UDashboardSection>
+                        </UPageCard>
 
-                        <UDashboardSection
+                        <UPageCard
                             v-if="
                                 can('CitizenStoreService.GetUser').value &&
                                 attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Labels').value
                             "
                             :ui="{
-                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
+                                wrapper: 'divide-y divide-transparent! space-y-0 *:pt-2 *:first:pt-2 *:first:pt-0 mb-6',
                             }"
                             :title="$t('common.label', 2)"
                         >
                             <CitizenSetLabels v-model="user.props!.labels" :user-id="user.userId" />
-                        </UDashboardSection>
+                        </UPageCard>
                     </template>
                 </div>
             </UDashboardPanelContent>

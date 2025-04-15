@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonColor, FormSubmitEvent } from '#ui/types';
+import type { ButtonProps, FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 
 const props = withDefaults(
@@ -9,7 +9,7 @@ const props = withDefaults(
         cancel?: () => Promise<unknown> | unknown;
         confirm: (reason: string) => Promise<unknown>;
         icon?: string;
-        color?: ButtonColor;
+        color?: ButtonProps['color'];
         iconClass?: string;
     }>(),
     {
@@ -62,7 +62,7 @@ const { isOpen } = useModal();
             <div class="flex flex-shrink-0 items-center gap-x-1.5 px-4 py-4 sm:px-4">
                 <UButton type="submit" :color="color" :label="$t('common.confirm')" />
                 <UButton
-                    color="white"
+                    color="neutral"
                     :label="$t('common.cancel')"
                     @click="
                         if (cancel) {

@@ -241,7 +241,7 @@ async function copyRole(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.clipboard.copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -329,7 +329,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         v-if="isSuperuser"
                         variant="link"
                         icon="i-mdi-trash-can"
-                        color="red"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteFaction(role!.id),
@@ -338,7 +338,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     />
                 </div>
 
-                <UDivider :label="$t('common.attributes', 2)" class="mb-1" />
+                <USeparator :label="$t('common.attributes', 2)" class="mb-1" />
 
                 <div class="flex flex-col gap-2">
                     <div class="flex flex-row gap-1">
@@ -353,16 +353,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </UButton>
 
                         <UPopover>
-                            <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">
+                            <UButton :disabled="changed" color="neutral" icon="i-mdi-form-textarea">
                                 {{ $t('common.paste') }}
                             </UButton>
 
                             <template #panel>
                                 <div class="p-4">
                                     <UForm :state="state" :schema="schema" class="flex flex-col gap-1" @submit="pasteRole">
-                                        <UFormGroup name="input">
+                                        <UFormField name="input">
                                             <UInput v-model="state.input" type="text" name="input" />
-                                        </UFormGroup>
+                                        </UFormField>
 
                                         <UButton type="submit">
                                             {{ $t('common.save') }}
@@ -372,14 +372,14 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </template>
                         </UPopover>
 
-                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="white" @click="copyRole">
+                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="neutral" @click="copyRole">
                             {{ $t('common.copy') }}
                         </UButton>
                     </div>
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
                         <template #item="{ item: category }">
-                            <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                            <div class="flex flex-col divide-y divide-neutral-100 dark:divide-neutral-800">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"
@@ -387,7 +387,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 >
                                     <div class="flex flex-row items-center gap-2">
                                         <div class="flex-1">
-                                            <p :title="`${$t('common.id')}: ${perm.id}`" class="text-gray-900 dark:text-white">
+                                            <p
+                                                :title="`${$t('common.id')}: ${perm.id}`"
+                                                class="text-neutral-900 dark:text-white"
+                                            >
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </p>
                                             <p class="text-base-500">
@@ -403,7 +406,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 @click="updatePermissionState(perm.id, true)"
                                             />
                                             <UButton
-                                                color="red"
+                                                color="error"
                                                 :variant="
                                                     permStates.get(perm.id) === undefined || !permStates.get(perm.id)
                                                         ? 'solid'

@@ -75,19 +75,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('common.reminder') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup
+                    <UFormField
                         name="reminderTime"
                         :label="$t('common.time')"
                         class="grid items-center gap-2"
@@ -104,21 +110,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 disabledDates: [{ start: null, end: subDays(new Date(), 1) }],
                             }"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         name="message"
                         :label="$t('common.message')"
                         class="grid items-center gap-2"
                         :ui="{ container: '' }"
                     >
                         <UInput v-model="state.message" type="text" :placeholder="$t('common.message')" />
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

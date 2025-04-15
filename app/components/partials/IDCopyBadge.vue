@@ -38,7 +38,7 @@ function copyDocumentIDToClipboard(): void {
         notifications.add({
             title: props.title,
             description: props.content,
-            timeout: 3250,
+            duration: 3250,
             type: NotificationType.INFO,
         });
     }

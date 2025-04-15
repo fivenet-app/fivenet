@@ -12,15 +12,17 @@ const { username } = storeToRefs(authStore);
 
 const { website } = useAppConfig();
 
-const links = computed(() =>
+const items = computed(() =>
     [
         !username.value
             ? {
                   label: t('common.home'),
+                  icon: 'i-mdi-home',
                   to: '/',
               }
             : {
                   label: t('common.overview'),
+                  icon: 'i-mdi-overview',
                   to: '/overview',
               },
         website.statsPage
@@ -32,36 +34,35 @@ const links = computed(() =>
             : undefined,
         {
             label: t('common.about'),
+            icon: 'i-mdi-information',
             to: '/about',
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const modal = useModal();
+const overlay = useOverlay();
+const langSwitcherModal = overlay.create(LanguageSwitcherModal, {});
 </script>
 
 <template>
-    <UHeader :links="links">
-        <template #logo>
+    <UHeader>
+        <template #title>
             <FiveNetLogo class="h-10 w-auto" />
         </template>
 
+        <UNavigationMenu :items="items" />
+
         <template #right>
-            <UButton
-                :label="$t('common.language')"
-                icon="i-mdi-translate"
-                color="gray"
-                @click="modal.open(LanguageSwitcherModal, {})"
-            />
+            <UButton :label="$t('common.language')" icon="i-mdi-translate" color="neutral" @click="langSwitcherModal.open()" />
 
             <template v-if="!username">
-                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
+                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="neutral" to="/auth/login" />
                 <UButton
                     v-if="appConfig.login.signupEnabled"
                     :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"
                     trailing
-                    color="black"
+                    color="neutral"
                     to="/auth/registration"
                     class="hidden lg:flex"
                 />

@@ -73,7 +73,7 @@ const modal = useModal();
                         :style="provider.name === 'discord' && { color: '#7289da' }"
                     />
 
-                    <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    <div class="flex items-center gap-1.5 text-base font-semibold text-neutral-900 dark:text-white">
                         {{ provider.label }}
                     </div>
                 </UButton>
@@ -81,7 +81,7 @@ const modal = useModal();
                 <div v-if="account" class="flex items-center justify-between">
                     <UButton
                         icon="i-mdi-close-circle"
-                        color="red"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => disconnectOAuth2Connection(provider),

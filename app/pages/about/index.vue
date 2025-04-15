@@ -74,7 +74,7 @@ const faqs = [
                                         <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                             {{ $t('components.about.introduction.title') }}
                                         </h1>
-                                        <p class="mt-6 text-xl leading-8 text-gray-100">
+                                        <p class="mt-6 text-xl leading-8 text-neutral-100">
                                             {{ $t('components.about.introduction.content') }}
                                         </p>
                                     </div>
@@ -84,7 +84,7 @@ const faqs = [
                                 class="-ml-12 -mt-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden"
                             >
                                 <img
-                                    class="bg-background w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
+                                    class="bg-background w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-neutral-400/10 sm:w-[57rem]"
                                     src="/images/screenshots/overview.png"
                                     alt="FiveNet Overview - Screenshot"
                                 />
@@ -93,12 +93,12 @@ const faqs = [
                                 class="lg:col-span-2 lg:col-start-1 lg:row-start-2 lg:mx-auto lg:grid lg:w-full lg:max-w-7xl lg:grid-cols-2 lg:gap-x-8 lg:px-8"
                             >
                                 <div class="lg:pr-4">
-                                    <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
+                                    <div class="max-w-xl text-base leading-7 text-neutral-100 lg:max-w-lg">
                                         <ul role="list" class="mt-8 space-y-8">
                                             <li class="flex gap-x-3">
                                                 <UIcon name="i-mdi-magnify" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
-                                                    <span class="font-semibold text-gray-200">{{
+                                                    <span class="font-semibold text-neutral-200">{{
                                                         $t('components.about.introduction.feature_one.title')
                                                     }}</span>
                                                     {{ $t('components.about.introduction.feature_one.content') }}
@@ -107,7 +107,7 @@ const faqs = [
                                             <li class="flex gap-x-3">
                                                 <UIcon name="i-mdi-lock" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
-                                                    <span class="font-semibold text-gray-200">{{
+                                                    <span class="font-semibold text-neutral-200">{{
                                                         $t('components.about.introduction.feature_two.title')
                                                     }}</span>
                                                     {{ $t('components.about.introduction.feature_two.content') }}
@@ -116,7 +116,7 @@ const faqs = [
                                             <li class="flex gap-x-3">
                                                 <UIcon name="i-mdi-map" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
-                                                    <span class="font-semibold text-gray-200">{{
+                                                    <span class="font-semibold text-neutral-200">{{
                                                         $t('components.about.introduction.feature_three.title')
                                                     }}</span>
                                                     {{ $t('components.about.introduction.feature_three.content') }}
@@ -141,7 +141,7 @@ const faqs = [
                                             <UContainer>
                                                 <!-- eslint-disable vue/no-v-html -->
                                                 <p
-                                                    class="text-base leading-7 text-gray-900 dark:text-white"
+                                                    class="text-base leading-7 text-neutral-900 dark:text-white"
                                                     v-html="faq.content"
                                                 ></p>
                                             </UContainer>

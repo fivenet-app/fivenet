@@ -87,7 +87,7 @@ function onClickNext() {
     <div class="@container">
         <div
             class="@md:flex-row flex justify-between gap-1 px-3 py-3 md:items-center"
-            :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
+            :class="!disableBorder ? 'border-t border-neutral-200 dark:border-neutral-700' : ''"
         >
             <div v-if="!hideText" class="flex flex-col items-center gap-2">
                 <I18nT
@@ -162,15 +162,15 @@ function onClickNext() {
                 <UButtonGroup v-else>
                     <UButton
                         :label="$t('common.previous')"
-                        color="gray"
+                        color="neutral"
                         icon="i-mdi-chevron-left"
                         :disabled="!canGoFirstOrPrev || loading"
                         @click="onClickPrev"
                     />
-                    <UButton :label="currentPage.toString()" color="white" disabled />
+                    <UButton :label="currentPage.toString()" color="neutral" disabled />
                     <UButton
                         :label="$t('common.next')"
-                        color="gray"
+                        color="neutral"
                         :disabled="!canGoLastOrNext || loading"
                         trailing
                         trailing-icon="i-mdi-chevron-right"

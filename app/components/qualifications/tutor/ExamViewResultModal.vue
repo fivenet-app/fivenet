@@ -117,7 +117,7 @@ const correctCount = ref(0);
                             class="flex flex-col gap-2"
                         >
                             <div class="flex flex-col gap-2 md:flex-row">
-                                <UFormGroup :label="$t('common.corrected')">
+                                <UFormField :label="$t('common.corrected')">
                                     <div class="flex flex-col md:items-center">
                                         <UCheckbox
                                             v-model="
@@ -125,9 +125,9 @@ const correctCount = ref(0);
                                             "
                                         />
                                     </div>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup :label="$t('common.points', 2)">
+                                <UFormField :label="$t('common.points', 2)">
                                     <UInput
                                         v-model="data.grading!.responses[getGradingIndex(question.question.questionId)]!.points"
                                         type="number"
@@ -136,7 +136,7 @@ const correctCount = ref(0);
                                         :max="question.question.question?.points"
                                         class="max-w-24"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </div>
 
                             <div v-if="question.question.question?.answer?.answerKey" class="inline-flex flex-col gap-2">
@@ -158,7 +158,7 @@ const correctCount = ref(0);
                     </p>
                 </div>
 
-                <UDivider v-if="!viewOnly" class="mb-4 mt-2" />
+                <USeparator v-if="!viewOnly" class="mb-4 mt-2" />
             </template>
         </QualificationResultTutorForm>
     </UModal>

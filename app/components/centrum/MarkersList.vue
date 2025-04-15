@@ -71,10 +71,10 @@ const columns = [
 <template>
     <div class="flex size-full grow flex-col overflow-y-auto px-1">
         <div class="flex justify-between">
-            <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6 text-gray-100">
+            <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6 text-neutral-100">
                 {{ $t('common.marker', 2) }}
             </h2>
-            <h2 class="text-base font-semibold text-gray-100">
+            <h2 class="text-base font-semibold text-neutral-100">
                 {{ $t('common.count') }}:
                 {{ [...markersMarkers.values()].length }}
             </h2>
@@ -101,7 +101,7 @@ const columns = [
                                 v-if="can('LivemapperService.DeleteMarker').value"
                                 variant="link"
                                 icon="i-mdi-trash-can"
-                                color="red"
+                                color="error"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => deleteMarker(marker.id),

@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UCard
                 :ui="{
                     ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                    divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
                     base: 'flex flex-1 flex-col',
                     body: { base: 'flex flex-1 flex-col' },
                 }"
@@ -126,14 +126,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('components.mailer.create_thread') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div class="mx-auto">
-                    <div class="flex w-full max-w-screen-xl flex-1 flex-col">
+                    <div class="max-w-(--breakpoint-xl) flex w-full flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
-                            <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
+                            <UFormField name="sender" :label="$t('common.sender')" class="w-full flex-1">
                                 <ClientOnly>
                                     <UInput
                                         v-if="emails.length === 1"
@@ -172,7 +178,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                                 <UBadge
                                                     v-if="selectedEmail?.deactivated"
-                                                    color="red"
+                                                    color="error"
                                                     size="xs"
                                                     :label="$t('common.disabled')"
                                                 />
@@ -196,7 +202,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                             <UBadge
                                                 v-if="selectedEmail?.deactivated"
-                                                color="red"
+                                                color="error"
                                                 size="xs"
                                                 :label="$t('common.disabled')"
                                             />
@@ -209,9 +215,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup name="title" :label="$t('common.title')" class="w-full flex-1">
+                            <UFormField name="title" :label="$t('common.title')" class="w-full flex-1">
                                 <UInput
                                     v-model="state.title"
                                     type="text"
@@ -224,7 +230,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <template #trailing>
                                         <UButton
                                             v-show="state.title !== ''"
-                                            color="gray"
+                                            color="neutral"
                                             variant="link"
                                             icon="i-mdi-close"
                                             :padded="false"
@@ -232,9 +238,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
                                     </template>
                                 </UInput>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.recipient', 2)">
+                            <UFormField name="recipients" class="w-full flex-1" :label="$t('common.recipient', 2)">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.recipients"
@@ -274,20 +280,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         size="sm"
                                         orientation="horizontal"
                                     >
-                                        <UButton variant="solid" color="gray" :label="recipient.label" />
+                                        <UButton variant="solid" color="neutral" :label="recipient.label" />
 
                                         <UButton
                                             variant="outline"
                                             icon="i-mdi-close"
-                                            color="red"
+                                            color="error"
                                             @click="state.recipients.splice(idx, 1)"
                                         />
                                     </UButtonGroup>
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
 
-                        <UFormGroup
+                        <UFormField
                             name="content"
                             :label="$t('common.message')"
                             class="flex flex-1 flex-col"
@@ -312,7 +318,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     wrapper-class="min-h-96"
                                 />
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
                         <ThreadAttachmentsForm
                             v-if="can('DocStoreService.ListDocuments').value"
@@ -324,7 +330,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton block class="flex-1" color="black" @click="isOpen = false">
+                        <UButton block class="flex-1" color="neutral" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

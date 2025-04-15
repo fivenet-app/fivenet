@@ -104,7 +104,7 @@ const items = [
 
 <template>
     <UPage>
-        <ULandingHero
+        <UPageHero
             :title="$t('components.internet.pages.nic_registrar.title')"
             :description="$t('components.internet.pages.nic_registrar.description')"
             :ui="{
@@ -112,7 +112,7 @@ const items = [
             }"
         />
 
-        <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">
+        <UPageSection :ui="{ wrapper: 'py-6 sm:py-6' }">
             <UTabs :items="items" :unmount="true">
                 <template #search>
                     <UForm
@@ -121,7 +121,7 @@ const items = [
                         class="mb-2 flex place-content-center gap-1"
                         @submit="onSubmitThrottle"
                     >
-                        <UFormGroup name="search">
+                        <UFormField name="search">
                             <UInput
                                 v-model="state.search"
                                 type="text"
@@ -129,9 +129,9 @@ const items = [
                                 size="xl"
                                 :placeholder="$t('common.domain', 1)"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="tldId">
+                        <UFormField name="tldId">
                             <USelectMenu
                                 v-model="state.tldId"
                                 :disabled="!tlds || tlds?.length === 0"
@@ -158,16 +158,16 @@ const items = [
                                     {{ $t('common.not_found', [$t('common.tld', 2)]) }}
                                 </template>
                             </USelectMenu>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup>
+                        <UFormField>
                             <UButton
                                 type="submit"
                                 :label="$t('components.internet.pages.nic_registrar.search.button')"
                                 trailing-icon="i-mdi-search"
                                 size="xl"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </UForm>
 
                     <DataErrorBlock v-if="error" :error="error" />
@@ -175,7 +175,7 @@ const items = [
                         <UAlert
                             v-if="!domainAvailability.transferable && !domainAvailability.available"
                             icon="i-mdi-information-outline"
-                            color="red"
+                            color="error"
                             :title="$t('components.internet.pages.nic_registrar.search.not_available.title')"
                             :description="$t('components.internet.pages.nic_registrar.search.not_available.description')"
                         />
@@ -203,22 +203,22 @@ const items = [
                     <DomainList />
                 </template>
             </UTabs>
-        </ULandingSection>
+        </UPageSection>
 
-        <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">
+        <UPageSection :ui="{ wrapper: 'py-6 sm:py-6' }">
             <UPageGrid :ui="{ wrapper: 'sm:grid-cols-2 xl:grid-cols-2' }">
-                <ULandingCard
+                <UPageCard
                     icon="i-mdi-build"
                     :title="$t('components.internet.pages.nic_registrar.cards.builder.title')"
                     :description="$t('components.internet.pages.nic_registrar.cards.builder.description')"
                 />
 
-                <ULandingCard
+                <UPageCard
                     icon="i-mdi-user-access-control"
                     :title="$t('components.internet.pages.nic_registrar.cards.access.title')"
                     :description="$t('components.internet.pages.nic_registrar.cards.access.description')"
                 />
             </UPageGrid>
-        </ULandingSection>
+        </UPageSection>
     </UPage>
 </template>

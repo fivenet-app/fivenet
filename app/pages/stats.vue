@@ -121,9 +121,9 @@ onBeforeMount(async () => {
                         </div>
                     </div>
 
-                    <ULandingSection>
+                    <UPageSection>
                         <UPageGrid>
-                            <ULandingCard
+                            <UPageCard
                                 v-for="(stat, key) in stats?.stats"
                                 :key="key"
                                 :title="$t(`pages.stats.stats.${key}`)"
@@ -131,7 +131,7 @@ onBeforeMount(async () => {
                             >
                                 <template #description>
                                     <p
-                                        class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
+                                        class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white"
                                     >
                                         <USkeleton v-if="loading || stat?.value === undefined" class="h-8 w-[175px]" />
                                         <ClientOnly v-else>
@@ -147,9 +147,9 @@ onBeforeMount(async () => {
                                         </ClientOnly>
                                     </p>
                                 </template>
-                            </ULandingCard>
+                            </UPageCard>
                         </UPageGrid>
-                    </ULandingSection>
+                    </UPageSection>
                 </div>
             </div>
         </UDashboardPanel>

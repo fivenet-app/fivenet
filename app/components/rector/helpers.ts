@@ -1,7 +1,7 @@
-import type { BadgeColor } from '#ui/types';
+import type { BadgeProps } from '#ui/types';
 import { EventType } from '~~/gen/ts/resources/rector/audit';
 
-export function eventTypeToBadgeColor(et: EventType): BadgeColor {
+export function eventTypeToBadgeColor(et: EventType): BadgeProps['color'] {
     switch (et) {
         case EventType.ERRORED:
             return 'orange';

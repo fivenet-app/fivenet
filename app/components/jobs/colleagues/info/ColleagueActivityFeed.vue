@@ -109,7 +109,7 @@ watchDebounced(query, async () => refresh(), {
 <template>
     <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
         <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
-            <UFormGroup v-if="userId === undefined" name="colleagues" :label="$t('common.search')" class="flex-1">
+            <UFormField v-if="userId === undefined" name="colleagues" :label="$t('common.search')" class="flex-1">
                 <ClientOnly>
                     <USelectMenu
                         v-model="query.colleagues"
@@ -150,10 +150,10 @@ watchDebounced(query, async () => refresh(), {
                         <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
             <div v-else class="flex-1" />
 
-            <UFormGroup
+            <UFormField
                 v-if="accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
                 name="types"
                 :label="$t('common.type', 2)"
@@ -185,11 +185,11 @@ watchDebounced(query, async () => refresh(), {
                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="&nbsp;">
+            <UFormField label="&nbsp;">
                 <SortButton v-model="sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
-            </UFormGroup>
+            </UFormField>
         </UForm>
     </UDashboardToolbar>
 
@@ -209,7 +209,7 @@ watchDebounced(query, async () => refresh(), {
         />
 
         <div v-else-if="loading || data?.activity">
-            <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+            <ul role="list" class="divide-y divide-neutral-100 dark:divide-neutral-800">
                 <template v-if="loading">
                     <li v-for="idx in 10" :key="idx" class="px-2 py-4">
                         <div class="flex space-x-3">
@@ -245,7 +245,7 @@ watchDebounced(query, async () => refresh(), {
                     <li
                         v-for="activity in data?.activity"
                         :key="activity.id"
-                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
+                        class="hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-neutral-900"
                     >
                         <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
                     </li>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Group } from '#ui/types';
+import type { CommandPaletteGroup, CommandPaletteItem } from '#ui/types';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
 import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
@@ -20,7 +20,7 @@ const { can, activeChar, jobProps, isSuperuser } = useAuth();
 
 const { isHelpSlideoverOpen } = useDashboard();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const { website } = useAppConfig();
 
@@ -200,7 +200,7 @@ const footerLinks = computed(() =>
         {
             label: t('common.help'),
             icon: 'i-mdi-question-mark-circle-outline',
-            click: () => (isHelpSlideoverOpen.value = true),
+            onClick: () => (isHelpSlideoverOpen.value = true),
         },
         {
             label: t('common.about'),
@@ -212,12 +212,12 @@ const footerLinks = computed(() =>
 
 const groups = computed(() => [
     {
-        key: 'links',
+        id: 'links',
         label: t('common.goto'),
         commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
     },
     {
-        key: 'ids',
+        id: 'ids',
         label: t('common.id', 2),
         commands: [
             {
@@ -277,7 +277,7 @@ const groups = computed(() => [
         },
     },
     {
-        key: 'search',
+        id: 'search',
         label: t('common.search'),
         commands: [
             {
@@ -368,6 +368,8 @@ const groups = computed(() => [
     },
 ]);
 
+const clipboardModal = overlay.create(ClipboardModal, {});
+
 const clipboardLink = computed(() =>
     [
         activeChar.value &&
@@ -375,13 +377,15 @@ const clipboardLink = computed(() =>
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',
-                  click: () => modal.open(ClipboardModal, {}),
+                  onClick: () => clipboardModal.open(),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const { isDashboardSidebarSlideoverOpen } = useUIState();
+const penaltyCalculatorModal = overlay.create(PenaltyCalculatorModal, {});
+const bodyCheckupModal = overlay.create(BodyCheckupModal, {});
+const mathCalculatorModal = overlay.create(MathCalculatorModal, {});
 
 const quickAccessButtons = computed(() =>
     [
@@ -389,30 +393,21 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-gavel',
-                  click: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(PenaltyCalculatorModal);
-                  },
+                  onClick: () => penaltyCalculatorModal.open(),
               }
             : undefined,
         jobProps.value?.quickButtons?.bodyCheckup || isSuperuser.value
             ? {
                   label: t('components.bodycheckup.title'),
                   icon: 'i-mdi-human',
-                  click: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(BodyCheckupModal, {});
-                  },
+                  onClick: () => bodyCheckupModal.open(),
               }
             : undefined,
         jobProps.value?.quickButtons?.mathCalculator || isSuperuser.value
             ? {
                   label: t('components.mathcalculator.title'),
                   icon: 'i-mdi-calculator',
-                  click: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(MathCalculatorModal, {});
-                  },
+                  onClick: () => mathCalculatorModal.open(),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -420,9 +415,9 @@ const quickAccessButtons = computed(() =>
 </script>
 
 <template>
-    <UDashboardLayout>
-        <UDashboardPanel id="mainleftsidebar" :width="225" :resizable="{ min: 175, max: 275 }" collapsible>
-            <UDashboardNavbar class="!border-transparent" :ui="{ left: 'flex-1' }">
+    <UDashboardGroup>
+        <UDashboardPanel id="mainleftsidebar" resizable :width="225" :min-size="175" :max-size="275">
+            <UDashboardNavbar class="border-transparent!" :ui="{ left: 'flex-1' }">
                 <template #left>
                     <TopLogoDropdown />
                 </template>
@@ -433,25 +428,25 @@ const quickAccessButtons = computed(() =>
                     <UDashboardSearchButton :label="$t('common.search_field')" />
                 </template>
 
-                <UDashboardSidebarLinks :links="links" />
+                <UNavigationMenu :items="links" />
 
                 <template v-if="clipboardLink.length > 0">
-                    <UDivider />
+                    <USeparator />
 
-                    <UDashboardSidebarLinks :links="clipboardLink" />
+                    <UNavigationMenu :items="clipboardLink" />
                 </template>
 
                 <template v-if="quickAccessButtons">
-                    <UDivider />
+                    <USeparator />
 
-                    <UDashboardSidebarLinks :links="quickAccessButtons" />
+                    <UNavigationMenu :items="quickAccessButtons" />
                 </template>
 
                 <div class="flex-1" />
 
-                <UDashboardSidebarLinks :links="footerLinks" />
+                <UNavigationMenu :items="footerLinks" />
 
-                <UDivider class="sticky bottom-0" />
+                <USeparator class="sticky bottom-0" />
 
                 <template #footer>
                     <UserDropdown />
@@ -480,8 +475,8 @@ const quickAccessButtons = computed(() =>
                     queryLabel: $t('commandpalette.empty.title'),
                 }"
                 :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
-                :groups="groups as Group[]"
+                :groups="groups as CommandPaletteGroup<CommandPaletteItem>[]"
             />
         </ClientOnly>
-    </UDashboardLayout>
+    </UDashboardGroup>
 </template>

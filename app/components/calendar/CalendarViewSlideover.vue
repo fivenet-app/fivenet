@@ -42,7 +42,7 @@ const calendar = computed(() => data.value?.calendar);
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -72,7 +72,7 @@ const calendar = computed(() => data.value?.calendar);
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-trash-can"
-                                color="red"
+                                color="error"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => calendarStore.deleteCalendar(calendar?.id!),
@@ -81,7 +81,13 @@ const calendar = computed(() => data.value?.calendar);
                             />
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </div>
             </template>
@@ -100,7 +106,7 @@ const calendar = computed(() => data.value?.calendar);
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge :closed="calendar.closed" />
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UBadge color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-account" class="size-5" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
@@ -108,7 +114,7 @@ const calendar = computed(() => data.value?.calendar);
                             </span>
                         </UBadge>
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UBadge color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon :name="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'" class="size-5" />
                             <span>
                                 {{
@@ -147,7 +153,7 @@ const calendar = computed(() => data.value?.calendar);
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

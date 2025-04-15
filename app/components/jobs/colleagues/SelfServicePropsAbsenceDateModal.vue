@@ -118,24 +118,30 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.jobs.self_service.set_absence_date') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="neutral"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isOpen = false"
+                        />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="reason" :label="$t('common.reason')" required>
+                    <UFormField name="reason" :label="$t('common.reason')" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="flex flex-col gap-1 sm:flex-row">
-                        <UFormGroup class="flex-1" name="absenceBegin" :label="$t('common.from')">
+                        <UFormField class="flex-1" name="absenceBegin" :label="$t('common.from')">
                             <PartialsDatePickerPopover
                                 v-model="state.absenceBegin"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
@@ -146,9 +152,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     ],
                                 }"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup class="flex-1" name="absenceEnd" :label="$t('common.to')">
+                        <UFormField class="flex-1" name="absenceEnd" :label="$t('common.to')">
                             <DatePickerPopoverClient
                                 v-model="state.absenceEnd"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
@@ -159,20 +165,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     ],
                                 }"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
                         <UButton
                             type="submit"
                             block
-                            color="red"
+                            color="error"
                             class="flex-1"
                             :disabled="!canSubmit || (!userProps?.absenceBegin && !userProps?.absenceEnd)"
                             :loading="!canSubmit"

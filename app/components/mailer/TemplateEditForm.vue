@@ -84,20 +84,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UForm
             :state="state"
             :schema="schema"
-            class="mx-auto flex max-w-screen-xl flex-1 flex-col gap-y-2"
+            class="max-w-(--breakpoint-xl) mx-auto flex flex-1 flex-col gap-y-2"
             @submit="onSubmitThrottle"
         >
             <UButtonGroup class="mb-2 flex">
                 <UButton type="submit" class="flex-1" icon="i-mdi-pencil" :label="$t('common.save')" />
 
-                <UButton icon="i-mdi-cancel" color="red" :label="$t('common.cancel')" @click="$emit('close')" />
+                <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close')" />
             </UButtonGroup>
 
-            <UFormGroup name="title" :label="$t('common.name')">
+            <UFormField name="title" :label="$t('common.name')">
                 <UInput v-model="state.title" type="text" />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 name="content"
                 class="flex flex-1 overflow-y-hidden"
                 :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
@@ -106,11 +106,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <ClientOnly>
                     <TiptapEditor
                         v-model="state.content"
-                        class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                        class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                         wrapper-class="min-h-80"
                     />
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
         </UForm>
     </div>
 </template>
