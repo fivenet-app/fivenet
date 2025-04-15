@@ -186,8 +186,8 @@ importers:
         specifier: 2.4.0
         version: 2.4.0(vue@3.5.13(typescript@5.8.3))
       vue-timeline-chart:
-        specifier: 2.12.0
-        version: 2.12.0(vue@3.5.13(typescript@5.8.3))
+        specifier: 3.0.1
+        version: 3.0.1(vue@3.5.13(typescript@5.8.3))
       vue3-colorpicker:
         specifier: 2.3.0
         version: 2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@13.1.0(vue@3.5.13(typescript@5.8.3)))(gradient-parser@1.0.2)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1(vue@3.5.13(typescript@5.8.3)))(vue@3.5.13(typescript@5.8.3))
@@ -6883,8 +6883,8 @@ packages:
     peerDependencies:
       vue: ^3.2.0
 
-  vue-timeline-chart@2.12.0:
-    resolution: {integrity: sha512-hV4yt5BlbBczwpjMya55ajK/+f6gRmsXZhQ7FX5819/hgA5OBy0zjMob7tDDPz53XK93+OVgyU6YMHU/VUvoUQ==}
+  vue-timeline-chart@3.0.1:
+    resolution: {integrity: sha512-VjgUcEUMKFNxbi+RV4P18SuJ6hY9mT1UiBJ1G1v/kwUvINscYyXZITCBVKUe8Ku2wtAxR0PBiGwZLOfoVa+A9w==}
     engines: {node: '>=18.12.0'}
     peerDependencies:
       vue: ^3.0.0
@@ -14843,7 +14843,7 @@ snapshots:
     dependencies:
       vue: 3.5.13(typescript@5.8.3)
 
-  vue-timeline-chart@2.12.0(vue@3.5.13(typescript@5.8.3)):
+  vue-timeline-chart@3.0.1(vue@3.5.13(typescript@5.8.3)):
     dependencies:
       vue: 3.5.13(typescript@5.8.3)
 
