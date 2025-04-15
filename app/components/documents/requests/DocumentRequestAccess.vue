@@ -28,7 +28,7 @@ const modal = useModal();
                     variant: 'solid',
                     color: 'primary',
                     label: $t('components.documents.document_request_access.callback_message'),
-                    click: () =>
+                    onClick: () =>
                         modal.open(DocumentRequestAccessModal, {
                             documentId: documentId,
                         }),

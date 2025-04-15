@@ -56,13 +56,13 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
                     </UTooltip>
                 </div>
 
-                <p class="text-base font-semibold leading-none text-gray-900 dark:text-white">DSP-{{ status.dispatchId }}</p>
+                <p class="text-base font-semibold leading-none text-neutral-900 dark:text-white">DSP-{{ status.dispatchId }}</p>
 
-                <UBadge class="rounded font-semibold" :class="dispatchStatusColor" size="xs">
+                <UBadge class="rounded-xs font-semibold" :class="dispatchStatusColor" size="xs">
                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status.status ?? 0]}`) }}
                 </UBadge>
 
-                <div v-if="dispatch" class="text-gray-900 dark:text-white">
+                <div v-if="dispatch" class="text-neutral-900 dark:text-white">
                     <p class="text-sm font-medium leading-none">
                         {{ $t('common.unit', 2) }}
                     </p>

@@ -7,7 +7,7 @@ const { doNotDisturb } = storeToRefs(notifications);
 
 <template>
     <div class="inline-flex items-center gap-2">
-        <UToggle
+        <USwitch
             v-model="doNotDisturb"
             size="lg"
             color="red"
@@ -15,7 +15,7 @@ const { doNotDisturb } = storeToRefs(notifications);
             off-icon="i-mdi-do-not-disturb-off-outline"
         />
 
-        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">
+        <span class="text-sm font-medium text-neutral-700 dark:text-neutral-200">
             {{ $t('components.notifications.do_not_disturb') }}
         </span>
     </div>

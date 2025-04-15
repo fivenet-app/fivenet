@@ -98,13 +98,13 @@ const input = useTemplateRef('input');
 
 <template>
     <UDashboardToolbar
-        :ui="{ wrapper: 'min-h-[41px] bg-gray-100 dark:bg-gray-800 p-0 gap-x-0', container: 'gap-x-0 gap-y-0 mx-1' }"
+        :ui="{ wrapper: 'min-h-[41px] bg-neutral-100 dark:bg-neutral-800 p-0 gap-x-0', container: 'gap-x-0 gap-y-0 mx-1' }"
     >
         <UForm :schema="schema" :state="state" class="flex flex-1 items-center gap-1" @submit="onSubmitThrottle">
             <UButtonGroup>
                 <UButton
                     variant="ghost"
-                    color="white"
+                    color="neutral"
                     icon="i-mdi-chevron-left"
                     :disabled="tab.history.length === 0 || status === 'pending'"
                     @click="internetStore.back()"
@@ -113,14 +113,14 @@ const input = useTemplateRef('input');
                 <UButton
                     :disabled="tab.domain === urlHomePage || status === 'pending'"
                     variant="ghost"
-                    color="white"
+                    color="neutral"
                     icon="i-mdi-home"
                     @click="goToPage(urlHomePage)"
                 />
 
                 <UButton
                     variant="ghost"
-                    color="white"
+                    color="neutral"
                     icon="i-mdi-refresh"
                     :disabled="status === 'pending'"
                     :loading="status === 'pending'"

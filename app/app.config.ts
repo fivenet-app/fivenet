@@ -59,8 +59,10 @@ export default defineAppConfig({
 
     // Nuxt UI and UI Pro config
     ui: {
-        primary: 'blue',
-        gray: 'neutral',
+        colors: {
+            primary: 'blue',
+            neutral: 'neutral',
+        },
 
         button: {
             default: {
@@ -111,7 +113,7 @@ export default defineAppConfig({
                 },
             },
             tr: {
-                base: 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
+                base: 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-neutral-900',
             },
             td: {
                 padding: 'px-1.5 py-1.5',

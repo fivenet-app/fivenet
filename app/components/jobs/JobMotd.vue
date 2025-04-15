@@ -97,9 +97,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
             </template>
             <template v-else>
-                <UFormGroup name="motd" class="w-full">
+                <UFormField name="motd" class="w-full">
                     <UTextarea v-model="state.motd" :rows="2" :maxrows="6" name="motd" />
-                </UFormGroup>
+                </UFormField>
             </template>
         </div>
     </UForm>

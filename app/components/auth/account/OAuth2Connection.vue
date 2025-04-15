@@ -73,7 +73,7 @@ const modal = useModal();
                         :style="provider.name === 'discord' && { color: '#7289da' }"
                     />
 
-                    <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    <div class="flex items-center gap-1.5 text-base font-semibold text-neutral-900 dark:text-white">
                         {{ provider.label }}
                     </div>
                 </UButton>

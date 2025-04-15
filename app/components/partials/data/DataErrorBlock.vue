@@ -51,7 +51,7 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
                           color: 'red',
                           label: retryMessage ?? $t('common.retry'),
                           disabled: disabled,
-                          click: async () => {
+                          onClick: async () => {
                               start();
                               retry && retry();
                           },

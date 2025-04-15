@@ -93,7 +93,7 @@ function addToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
         description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -124,7 +124,7 @@ const isOpen = ref(false);
 <template>
     <UDashboardPage>
         <UDashboardPanel
-            class="shrink-0 border-b border-gray-200 lg:w-[--width] lg:border-b-0 lg:border-r dark:border-gray-800"
+            class="lg:w-(--width) shrink-0 border-b border-neutral-200 lg:border-b-0 lg:border-r dark:border-neutral-800"
             grow
         >
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
@@ -241,7 +241,7 @@ const isOpen = ref(false);
                     <template v-if="user">
                         <UDashboardSection
                             :ui="{
-                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
+                                wrapper: 'divide-y divide-transparent! space-y-0 *:pt-2 *:first:pt-2 *:first:pt-0 mb-6',
                             }"
                             :title="$t('common.action', 2)"
                         >
@@ -267,7 +267,7 @@ const isOpen = ref(false);
                                 attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Labels').value
                             "
                             :ui="{
-                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
+                                wrapper: 'divide-y divide-transparent! space-y-0 *:pt-2 *:first:pt-2 *:first:pt-0 mb-6',
                             }"
                             :title="$t('common.label', 2)"
                         >

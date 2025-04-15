@@ -12,11 +12,11 @@ defineProps<{
 
 <template>
     <li
-        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex justify-between border-white px-2 py-2 sm:px-4 dark:border-gray-900"
+        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex justify-between border-white px-2 py-2 sm:px-4 dark:border-neutral-900"
     >
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
-                <p class="text-sm font-semibold leading-6 text-gray-100">
+                <p class="text-sm font-semibold leading-6 text-neutral-100">
                     <ULink
                         :to="{ name: 'qualifications-id', params: { id: qualification.id } }"
                         class="inline-flex items-center gap-2"
@@ -24,7 +24,7 @@ defineProps<{
                         <span class="absolute inset-x-0 -top-px bottom-0" />
                         <span>{{ qualification.abbreviation }}: {{ qualification.title }}</span>
 
-                        <UBadge v-if="qualification.public" color="black" class="inline-flex gap-1" size="xs">
+                        <UBadge v-if="qualification.public" color="neutral" class="inline-flex gap-1" size="xs">
                             <UIcon name="i-mdi-earth" class="size-5" />
                             <span>
                                 {{ $t('common.public') }}

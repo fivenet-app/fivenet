@@ -35,6 +35,8 @@ export default defineNuxtConfig({
         spaLoadingTemplateLocation: 'body',
     },
 
+    css: ['~/assets/css/main.css'],
+
     site: {
         indexable: false,
     },

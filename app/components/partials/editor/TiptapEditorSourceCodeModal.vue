@@ -17,7 +17,7 @@ const content = useVModel(props, 'content', emit);
         <UCard
             :ui="{
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
                 base: 'flex flex-1 flex-col',
                 body: { base: 'flex flex-1 flex-col' },
             }"
@@ -32,13 +32,13 @@ const content = useVModel(props, 'content', emit);
                 </div>
             </template>
 
-            <div class="mx-auto flex w-full max-w-screen-xl flex-1 flex-col">
+            <div class="max-w-(--breakpoint-xl) mx-auto flex w-full flex-1 flex-col">
                 <UTextarea v-model="content" autoresize class="flex flex-1 flex-col" :ui="{ base: 'flex-1' }" />
             </div>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                    <UButton block class="flex-1" color="neutral" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

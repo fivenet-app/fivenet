@@ -38,15 +38,16 @@ watch(tab, () => updateQuery(), { deep: true });
                 :ui="{
                     wrapper: 'p-0 gap-x-0',
                     container:
-                        'gap-x-0 gap-y-0 justify-stretch items-stretch h-full flex flex-row p-0 px bg-gray-100 dark:bg-gray-800 overflow-x-hidden',
+                        'gap-x-0 gap-y-0 justify-stretch items-stretch h-full flex flex-row p-0 px bg-neutral-100 dark:bg-neutral-800 overflow-x-hidden',
                 }"
             >
-                <UDashboardNavbarToggle class="px-4 py-2" />
+                <UDashboardSidebarToggle class="px-4 py-2" />
 
-                <UHorizontalNavigation
-                    :links="[tab]"
+                <UNavigationMenu
+                    orientation="horizontal"
+                    :items="[tab]"
                     :ui="{
-                        container: 'flex-1 divide-x divide-gray-200 dark:divide-gray-600',
+                        container: 'flex-1 divide-x divide-neutral-200 dark:divide-neutral-600',
                         inner: 'flex-1',
                         base: 'justify-center',
                         wrapper: 'overflow-x-auto h-[60px]',
@@ -56,14 +57,14 @@ watch(tab, () => updateQuery(), { deep: true });
                         <span
                             class="text-primary relative truncate text-left"
                             :class="[
-                                'after:bg-primary-500 dark:after:bg-primary-400 text-gray-900 after:rounded-full dark:text-white',
+                                'after:bg-primary-500 dark:after:bg-primary-400 text-neutral-900 after:rounded-full dark:text-white',
                             ]"
                         >
                             <span class="sr-only"> Current page: </span>
                             {{ link.label === '' ? $t('common.home') : link.label }}
                         </span>
                     </template>
-                </UHorizontalNavigation>
+                </UNavigationMenu>
             </UDashboardToolbar>
 
             <UDashboardPanelContent class="p-0">

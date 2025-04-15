@@ -87,7 +87,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UCard
             :ui="{
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
                 base: 'flex flex-1 flex-col',
                 body: { base: 'flex flex-1 flex-col' },
             }"
@@ -104,9 +104,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <div>
                 <UForm :schema="schema" :state="imageState" @submit="onSubmitThrottle">
-                    <UFormGroup :label="$t('common.url')">
+                    <UFormField :label="$t('common.url')">
                         <UInput v-model="imageState.url" type="text" />
-                    </UFormGroup>
+                    </UFormField>
 
                     <UButtonGroup class="mt-2 w-full">
                         <UButton
@@ -120,13 +120,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UButtonGroup>
                 </UForm>
 
-                <UDivider :label="$t('common.or')" orientation="horizontal" class="mb-2 mt-2" />
+                <USeparator :label="$t('common.or')" orientation="horizontal" class="mb-2 mt-2" />
 
                 <ULink class="w-full" @click="chooseFiles">
                     <div ref="dropZoneRef" class="flex w-full items-center justify-center">
                         <label
                             for="dropzone-file"
-                            class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+                            class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-neutral-300 bg-neutral-100 hover:bg-neutral-200 dark:border-neutral-600 dark:bg-neutral-800 dark:hover:border-neutral-600 dark:hover:bg-neutral-700"
                         >
                             <div class="flex flex-col items-center justify-center pb-6 pt-5">
                                 <UIcon
@@ -135,11 +135,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :class="!canSubmit && 'animate-spin'"
                                 />
 
-                                <p class="mb-2 text-base text-gray-500 dark:text-gray-400">
+                                <p class="mb-2 text-base text-neutral-500 dark:text-neutral-400">
                                     <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
                                     {{ $t('common.file_drag_n_drop') }}
                                 </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('common.allowed_file_types') }}</p>
+                                <p class="text-sm text-neutral-500 dark:text-neutral-400">
+                                    {{ $t('common.allowed_file_types') }}
+                                </p>
                             </div>
                         </label>
                     </div>
@@ -148,7 +150,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                    <UButton block class="flex-1" color="neutral" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

@@ -68,7 +68,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
@@ -93,11 +93,11 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                     icon="i-mdi-calendar"
                 />
 
-                <ul v-else role="list" class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                <ul v-else role="list" class="my-1 flex flex-col divide-y divide-neutral-100 dark:divide-neutral-800">
                     <li
                         v-for="calendar in data?.calendars"
                         :key="calendar.id"
-                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 flex flex-initial items-center justify-between gap-1 border-white py-1 dark:border-gray-900"
+                        class="hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10 flex flex-initial items-center justify-between gap-1 border-white py-1 dark:border-neutral-900"
                     >
                         <div class="inline-flex gap-1">
                             <UBadge :color="calendar.color as BadgeColor" :ui="{ rounded: 'rounded-full' }" size="lg" />
@@ -126,7 +126,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

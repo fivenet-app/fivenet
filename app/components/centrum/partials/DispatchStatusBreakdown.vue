@@ -64,7 +64,7 @@ defineOptions({
     <UPopover class="flex-1">
         <UButton
             v-bind="$attrs"
-            :ui="{ icon: { base: 'max-md:!hidden' } }"
+            :ui="{ icon: { base: 'max-md:hidden!' } }"
             variant="ghost"
             class="items-center"
             trailing-icon="i-mdi-chevron-down"

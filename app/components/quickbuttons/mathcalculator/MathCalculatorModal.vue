@@ -36,7 +36,7 @@ const containerPosition = computed(() => {
 
             <UButtonGroup class="my-auto flex-initial" orientation="vertical">
                 <UButton icon="i-mdi-arrow-up-bold" @click="position = 'top'" />
-                <UButton color="black" icon="i-mdi-format-vertical-align-center" @click="position = 'middle'" />
+                <UButton color="neutral" icon="i-mdi-format-vertical-align-center" @click="position = 'middle'" />
                 <UButton icon="i-mdi-arrow-down-bold" @click="position = 'bottom'" />
             </UButtonGroup>
         </div>

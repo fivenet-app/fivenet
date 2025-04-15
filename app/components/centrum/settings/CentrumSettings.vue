@@ -201,21 +201,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :title="$t('components.centrum.settings.title')"
                             :description="$t('components.centrum.settings.description')"
                         >
-                            <UFormGroup
+                            <UFormField
                                 name="enabled"
                                 :label="$t('common.enabled')"
                                 class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
-                                <UToggle
+                                <USwitch
                                     v-model="state.enabled"
                                     name="enabled"
                                     :disabled="!isSuperuser"
                                     :placeholder="$t('common.enabled')"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="mode"
                                 :label="$t('common.mode')"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -241,9 +241,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="fallbackMode"
                                 :label="$t('common.fallback_mode')"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -269,7 +269,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
                         </UDashboardSection>
                     </UDashboardPanelContent>
                 </template>
@@ -281,7 +281,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :description="$t('components.centrum.settings.predefined.description')"
                         >
                             <!-- Predefined Unit Status Reason -->
-                            <UFormGroup
+                            <UFormField
                                 name="unitStatus"
                                 :label="`${$t('common.unit')} ${$t('common.status')}`"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -293,14 +293,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :key="idx"
                                         class="flex items-center gap-1"
                                     >
-                                        <UFormGroup :name="`unitStatus.${idx}`" :ui="{ container: '' }" class="flex-1">
+                                        <UFormField :name="`unitStatus.${idx}`" :ui="{ container: '' }" class="flex-1">
                                             <UInput
                                                 v-model="state.predefinedStatus.unitStatus[idx]"
                                                 type="text"
                                                 class="w-full flex-1"
                                                 :placeholder="$t('common.reason')"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
 
                                         <UTooltip :text="$t('common.delete')">
                                             <UButton
@@ -321,10 +321,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         @click="state.predefinedStatus.unitStatus.push('')"
                                     />
                                 </UTooltip>
-                            </UFormGroup>
+                            </UFormField>
 
                             <!-- Predefined Dispatch Status Reason -->
-                            <UFormGroup
+                            <UFormField
                                 name="dispatchStatus"
                                 :label="`${$t('common.dispatches')} ${$t('common.status')}`"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -336,14 +336,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :key="idx"
                                         class="flex items-center gap-1"
                                     >
-                                        <UFormGroup :name="`dispatchStatus.${idx}`" :ui="{ container: '' }" class="flex-1">
+                                        <UFormField :name="`dispatchStatus.${idx}`" :ui="{ container: '' }" class="flex-1">
                                             <UInput
                                                 v-model="state.predefinedStatus.dispatchStatus[idx]"
                                                 type="text"
                                                 class="w-full flex-1"
                                                 :placeholder="$t('common.reason')"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
 
                                         <UTooltip :text="$t('common.delete')">
                                             <UButton
@@ -365,7 +365,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         @click="state.predefinedStatus.dispatchStatus.push('')"
                                     />
                                 </UTooltip>
-                            </UFormGroup>
+                            </UFormField>
                         </UDashboardSection>
                     </UDashboardPanelContent>
                 </template>
@@ -377,7 +377,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :description="$t('components.centrum.settings.timings.description')"
                         >
                             <!-- Timings -->
-                            <UFormGroup
+                            <UFormField
                                 name="timings.dispatchMaxWait"
                                 :label="$t('components.centrum.settings.timings.dispatch_max_wait')"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -389,18 +389,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="timings.requireUnit"
                                 :label="$t('components.centrum.settings.timings.require_unit')"
                                 class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
-                                <UToggle v-model="state.timings.requireUnit" />
-                            </UFormGroup>
+                                <USwitch v-model="state.timings.requireUnit" />
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 name="timings.requireUnitReminderSeconds"
                                 :label="$t('components.centrum.settings.timings.require_unit_reminder_seconds')"
                                 class="grid grid-cols-2 items-center gap-2"
@@ -412,7 +412,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
                                 />
-                            </UFormGroup>
+                            </UFormField>
                         </UDashboardSection>
                     </UDashboardPanelContent>
                 </template>

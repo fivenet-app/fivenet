@@ -274,7 +274,7 @@ const isOpen = ref(false);
 
 <template>
     <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
+        <UDashboardPanel class="shrink-0 border-b border-neutral-200 lg:border-b-0 lg:border-r dark:border-neutral-800" grow>
             <UDashboardNavbar :title="$t('common.calendar')">
                 <template #right>
                     <UButtonGroup
@@ -314,7 +314,7 @@ const isOpen = ref(false);
                     <div class="flex flex-1 items-center justify-between">
                         <UPopover :popper="{ placement: 'bottom-end', offsetDistance: 10 }">
                             <UButton
-                                color="white"
+                                color="neutral"
                                 icon="i-mdi-calendar"
                                 trailing-icon="i-mdi-chevron-down"
                                 :loading="calendarsLoading"
@@ -407,7 +407,7 @@ const isOpen = ref(false);
 
                     <template v-else>
                         <template v-for="calendarEntries in groupedCalendarEntries" :key="calendarEntries.key">
-                            <UDivider>
+                            <USeparator>
                                 <div class="inline-flex items-center gap-1">
                                     <span class="text-lg font-semibold">
                                         {{ $d(calendarEntries.date, 'date') }}
@@ -420,7 +420,7 @@ const isOpen = ref(false);
                                         :label="$t('common.today')"
                                     />
                                 </div>
-                            </UDivider>
+                            </USeparator>
 
                             <ul role="list">
                                 <li v-for="attr in calendarEntries.entries.past" :key="attr.key">
@@ -452,7 +452,7 @@ const isOpen = ref(false);
                                 </li>
 
                                 <li>
-                                    <UDivider
+                                    <USeparator
                                         v-if="
                                             calendarEntries.isToday &&
                                             (calendarEntries.entries.past.length > 0 ||
@@ -503,8 +503,10 @@ const isOpen = ref(false);
                 </UContainer>
             </div>
 
-            <div class="flex justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
-                <UFormGroup
+            <div
+                class="flex justify-between border-b-0 border-t border-neutral-200 px-3 py-3.5 xl:hidden dark:border-neutral-700"
+            >
+                <UFormField
                     :label="$t('common.view')"
                     :ui="{ container: '', label: { base: 'hidden md:inline-flex' } }"
                     class="flex flex-row items-center gap-2"
@@ -526,7 +528,7 @@ const isOpen = ref(false);
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
                 <UButton
                     icon="i-mdi-refresh"
@@ -545,7 +547,7 @@ const isOpen = ref(false);
             </div>
         </UDashboardPanel>
 
-        <UDashboardPanel v-model="isOpen" collapsible side="right" class="!hidden max-w-64 flex-1 xl:!flex">
+        <UDashboardPanel v-model="isOpen" collapsible side="right" class="hidden! xl:flex! max-w-64 flex-1">
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup
@@ -616,9 +618,9 @@ const isOpen = ref(false);
 
                 <div class="flex-1" />
 
-                <UDivider class="sticky bottom-0" />
+                <USeparator class="sticky bottom-0" />
 
-                <UFormGroup :label="$t('common.view')" class="flex flex-row items-center gap-2">
+                <UFormField :label="$t('common.view')" class="flex flex-row items-center gap-2">
                     <ClientOnly>
                         <USelectMenu v-model="view" :options="viewOptions" value-attribute="value" class="min-w-44">
                             <template #label>
@@ -636,7 +638,7 @@ const isOpen = ref(false);
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
                 <UTooltip :text="$t('common.refresh')" class="inline-flex w-full">
                     <UButton

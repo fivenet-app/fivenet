@@ -25,7 +25,7 @@ const leeway = computed(() => props.reduction / 100);
                     <div class="flex gap-1 truncate">
                         <UIcon name="i-mdi-attach-money" class="text-primary h-10 w-10" />
 
-                        <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-neutral-900 dark:text-white">
                             {{ $t('common.fine') }}
                         </div>
                     </div>
@@ -37,7 +37,7 @@ const leeway = computed(() => props.reduction / 100);
                             <span class="text-4xl font-semibold tracking-tight">
                                 {{ summary.fine.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') }}
                             </span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">$</span>
+                            <span class="text-sm text-neutral-500 dark:text-neutral-400">$</span>
                         </div>
 
                         <span v-if="leeway > 0 && summary.fine > 0"> ($-{{ (summary.fine * leeway).toFixed(0) }}) </span>
@@ -57,7 +57,7 @@ const leeway = computed(() => props.reduction / 100);
                     <div class="flex gap-1 truncate">
                         <UIcon name="i-mdi-clock" class="text-primary h-10 w-10" />
 
-                        <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-neutral-900 dark:text-white">
                             {{ $t('common.detention_time') }}
                         </div>
                     </div>
@@ -69,7 +69,7 @@ const leeway = computed(() => props.reduction / 100);
                             <span class="text-4xl font-semibold tracking-tight">
                                 {{ summary.detentionTime }}
                             </span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">
+                            <span class="text-sm text-neutral-500 dark:text-neutral-400">
                                 {{ $t('common.time_ago.month', summary.detentionTime) }}
                             </span>
                         </div>
@@ -94,7 +94,7 @@ const leeway = computed(() => props.reduction / 100);
                     <div class="flex gap-1 truncate">
                         <UIcon name="i-mdi-car" class="text-primary h-10 w-10" />
 
-                        <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-neutral-900 dark:text-white">
                             {{ $t('common.traffic_infraction_points', 2) }}
                         </div>
                     </div>
@@ -106,7 +106,7 @@ const leeway = computed(() => props.reduction / 100);
                             <span class="text-4xl font-semibold tracking-tight">
                                 {{ summary.stvoPoints }}
                             </span>
-                            <span class="text-sm text-gray-500 dark:text-gray-400">
+                            <span class="text-sm text-neutral-500 dark:text-neutral-400">
                                 {{ $t('common.points', summary.stvoPoints) }}
                             </span>
                         </div>
@@ -131,7 +131,7 @@ const leeway = computed(() => props.reduction / 100);
                     <div class="flex gap-1 truncate">
                         <UIcon name="i-mdi-equal" class="text-primary h-10 w-10" />
 
-                        <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-neutral-900 dark:text-white">
                             {{ $t('common.total_count') }}
                         </div>
                     </div>

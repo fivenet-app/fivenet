@@ -20,7 +20,7 @@ const year = new Date().getFullYear();
 </script>
 
 <template>
-    <UFooter :links="footerLinks">
+    <UFooter :items="footerLinks">
         <template #left>
             <FiveNetLogo class="mr-1 h-auto w-8" />
 

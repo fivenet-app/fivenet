@@ -39,7 +39,7 @@ function refresh(): void {
 
 <template>
     <UContainer class="mt-4">
-        <ULandingCard
+        <UPageCard
             v-if="modelValue"
             :title="$t('components.internet.not_found.title')"
             icon="i-mdi-information-outline"
@@ -51,17 +51,17 @@ function refresh(): void {
             </template>
 
             <div class="flex justify-between gap-2">
-                <UButton :label="$t('common.back')" color="black" icon="i-mdi-arrow-back" @click="internetStore.back()" />
+                <UButton :label="$t('common.back')" color="neutral" icon="i-mdi-arrow-back" @click="internetStore.back()" />
 
                 <UButton
                     :label="$t('common.refresh')"
-                    color="white"
+                    color="neutral"
                     icon="i-mdi-refresh"
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
                     @click="refresh"
                 />
             </div>
-        </ULandingCard>
+        </UPageCard>
     </UContainer>
 </template>

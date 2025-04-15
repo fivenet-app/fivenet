@@ -95,7 +95,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -124,7 +124,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                     </div>
                                 </dt>
                                 <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                    <UFormGroup name="search">
+                                    <UFormField name="search">
                                         <UInput
                                             v-model="queryDispatches"
                                             type="text"
@@ -132,7 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                             :placeholder="$t('common.search')"
                                             leading-icon="i-mdi-search"
                                         />
-                                    </UFormGroup>
+                                    </UFormField>
                                 </dd>
                             </div>
 

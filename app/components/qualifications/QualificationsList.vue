@@ -70,7 +70,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                 </h3>
 
                 <UForm :schema="schema" :state="query" @submit="refresh">
-                    <UFormGroup name="search">
+                    <UFormField name="search">
                         <UInput
                             v-model="query.search"
                             type="text"
@@ -78,7 +78,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                             :placeholder="$t('common.search')"
                             leading-icon="i-mdi-search"
                         />
-                    </UFormGroup>
+                    </UFormField>
                 </UForm>
 
                 <SortButton v-model="sort" :fields="[{ label: $t('common.id'), value: 'id' }]" />
@@ -99,7 +99,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                 icon="i-mdi-school"
             />
 
-            <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+            <ul v-else role="list" class="divide-y divide-neutral-100 dark:divide-neutral-800">
                 <QualificationsListEntry
                     v-for="qualification in data?.qualifications"
                     :key="qualification.id"

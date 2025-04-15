@@ -44,7 +44,7 @@ const isOpen = ref(false);
 
 <template>
     <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
+        <UDashboardPanel class="shrink-0 border-b border-neutral-200 lg:border-b-0 lg:border-r dark:border-neutral-800" grow>
             <UDashboardNavbar :title="$t('pages.documents.title')">
                 <template #right>
                     <UButtonGroup class="inline-flex 2xl:hidden">
@@ -100,11 +100,11 @@ const isOpen = ref(false);
             side="right"
             class="max-w-72"
             breakpoint="2xl"
-            :ui="{ collapsible: 'lg:!hidden 2xl:!flex', slideover: 'lg:!flex 2xl:hidden' }"
+            :ui="{ collapsible: 'lg:hidden! 2xl:flex!', slideover: 'lg:flex! 2xl:hidden' }"
         >
             <UDashboardNavbar>
                 <template #toggle>
-                    <UDashboardNavbarToggle class="lg:block 2xl:hidden" />
+                    <UDashboardSidebarToggle class="lg:block 2xl:hidden" />
                 </template>
 
                 <template #right>
@@ -137,7 +137,7 @@ const isOpen = ref(false);
             <UDashboardPanelContent class="p-2">
                 <UDashboardSection
                     :ui="{
-                        wrapper: 'divide-y space-y-0 *:pt-2 first:*:pt-2 first:*:pt-2 mb-6',
+                        wrapper: 'divide-y space-y-0 *:pt-2 *:first:pt-2 *:first:pt-2 mb-6',
                     }"
                     :title="$t('common.pinned_document', 2)"
                 >

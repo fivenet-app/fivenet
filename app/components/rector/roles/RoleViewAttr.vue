@@ -241,7 +241,7 @@ const { game } = useAppConfig();
                                 :key="value"
                                 class="flex flex-initial flex-row flex-nowrap gap-1"
                             >
-                                <UToggle
+                                <USwitch
                                     :name="value"
                                     :model-value="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
                                     @update:model-value="toggleStringListValue(value)"
@@ -274,7 +274,7 @@ const { game } = useAppConfig();
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap gap-1"
                             >
-                                <UToggle
+                                <USwitch
                                     :name="job.name"
                                     :model-value="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
                                     @update:model-value="toggleJobListValue(job.name)"
@@ -305,7 +305,7 @@ const { game } = useAppConfig();
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                             >
-                                <UToggle
+                                <USwitch
                                     :name="job.name"
                                     :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
                                     @update:model-value="toggleJobGradeValue(job, $event)"
@@ -334,7 +334,7 @@ const { game } = useAppConfig();
                                     >
                                         <template #label>
                                             <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
-                                                <span class="truncate text-gray-900 dark:text-white">{{
+                                                <span class="truncate text-neutral-900 dark:text-white">{{
                                                     job.grades.find(
                                                         (g) =>
                                                             currentValue.validValues.oneofKind === 'jobGradeList' &&

@@ -115,7 +115,7 @@ watch(state, () => {
                     :key="attribute.name"
                     :style="{ backgroundColor: attribute.color }"
                     class="justify-between gap-2"
-                    :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                    :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                     size="lg"
                 >
                     <span class="truncate">
@@ -130,8 +130,8 @@ watch(state, () => {
                         :ui="{ rounded: 'rounded-full' }"
                         :class="
                             isColourBright(hexToRgb(attribute.color, RGBBlack)!)
-                                ? '!bg-white/20 !text-black'
-                                : '!bg-black/20 !text-white'
+                                ? 'bg-white/20! text-black!'
+                                : 'bg-black/20! text-white!'
                         "
                         @click="
                             changed = true;
@@ -142,7 +142,7 @@ watch(state, () => {
             </div>
         </template>
 
-        <UFormGroup v-if="canDo.set && can('CompletorService.CompleteCitizenLabels').value" name="labels">
+        <UFormField v-if="canDo.set && can('CompletorService.CompleteCitizenLabels').value" name="labels">
             <ClientOnly>
                 <USelectMenu
                     v-model="state.labels"
@@ -169,7 +169,7 @@ watch(state, () => {
                     <template #option="{ option }">
                         <span
                             class="truncate"
-                            :class="isColourBright(hexToRgb(option.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                            :class="isColourBright(hexToRgb(option.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                             :style="{ backgroundColor: option.color }"
                             >{{ option.name }}</span
                         >
@@ -184,12 +184,12 @@ watch(state, () => {
                     </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <template v-if="changed">
-            <UFormGroup name="reason" :label="$t('common.reason')" required>
+            <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" type="text" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
                 {{ $t('common.save') }}

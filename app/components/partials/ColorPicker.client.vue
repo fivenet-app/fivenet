@@ -42,7 +42,7 @@ const open = ref(false);
         <UButton
             v-bind="$attrs"
             variant="outline"
-            color="white"
+            color="neutral"
             :disabled="disabled"
             :block="block"
             :icon="!hideIcon ? 'i-mdi-palette' : ''"
@@ -54,7 +54,7 @@ const open = ref(false);
         />
 
         <UModal v-model="open">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -78,7 +78,7 @@ const open = ref(false);
                 </div>
 
                 <template #footer>
-                    <UButton color="black" block class="flex-1" @click="open = false">
+                    <UButton color="neutral" block class="flex-1" @click="open = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </template>
@@ -90,7 +90,7 @@ const open = ref(false);
         <UButton
             v-bind="$attrs"
             variant="outline"
-            color="white"
+            color="neutral"
             :disabled="disabled"
             :block="block"
             :icon="!hideIcon ? 'i-mdi-palette' : ''"

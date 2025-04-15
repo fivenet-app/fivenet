@@ -200,7 +200,7 @@ const footerLinks = computed(() =>
         {
             label: t('common.help'),
             icon: 'i-mdi-question-mark-circle-outline',
-            click: () => (isHelpSlideoverOpen.value = true),
+            onClick: () => (isHelpSlideoverOpen.value = true),
         },
         {
             label: t('common.about'),
@@ -375,7 +375,7 @@ const clipboardLink = computed(() =>
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',
-                  click: () => modal.open(ClipboardModal, {}),
+                  onClick: () => modal.open(ClipboardModal, {}),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -389,7 +389,7 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-gavel',
-                  click: () => {
+                  onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
                       modal.open(PenaltyCalculatorModal);
                   },
@@ -399,7 +399,7 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.bodycheckup.title'),
                   icon: 'i-mdi-human',
-                  click: () => {
+                  onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
                       modal.open(BodyCheckupModal, {});
                   },
@@ -409,7 +409,7 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.mathcalculator.title'),
                   icon: 'i-mdi-calculator',
-                  click: () => {
+                  onClick: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
                       modal.open(MathCalculatorModal, {});
                   },
@@ -420,9 +420,9 @@ const quickAccessButtons = computed(() =>
 </script>
 
 <template>
-    <UDashboardLayout>
+    <UDashboardGroup>
         <UDashboardPanel id="mainleftsidebar" :width="225" :resizable="{ min: 175, max: 275 }" collapsible>
-            <UDashboardNavbar class="!border-transparent" :ui="{ left: 'flex-1' }">
+            <UDashboardNavbar class="border-transparent!" :ui="{ left: 'flex-1' }">
                 <template #left>
                     <TopLogoDropdown />
                 </template>
@@ -433,25 +433,25 @@ const quickAccessButtons = computed(() =>
                     <UDashboardSearchButton :label="$t('common.search_field')" />
                 </template>
 
-                <UDashboardSidebarLinks :links="links" />
+                <UDashboardSidebarLinks :items="links" />
 
                 <template v-if="clipboardLink.length > 0">
-                    <UDivider />
+                    <USeparator />
 
-                    <UDashboardSidebarLinks :links="clipboardLink" />
+                    <UDashboardSidebarLinks :items="clipboardLink" />
                 </template>
 
                 <template v-if="quickAccessButtons">
-                    <UDivider />
+                    <USeparator />
 
-                    <UDashboardSidebarLinks :links="quickAccessButtons" />
+                    <UDashboardSidebarLinks :items="quickAccessButtons" />
                 </template>
 
                 <div class="flex-1" />
 
-                <UDashboardSidebarLinks :links="footerLinks" />
+                <UDashboardSidebarLinks :items="footerLinks" />
 
-                <UDivider class="sticky bottom-0" />
+                <USeparator class="sticky bottom-0" />
 
                 <template #footer>
                     <UserDropdown />
@@ -483,5 +483,5 @@ const quickAccessButtons = computed(() =>
                 :groups="groups as Group[]"
             />
         </ClientOnly>
-    </UDashboardLayout>
+    </UDashboardGroup>
 </template>

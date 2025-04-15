@@ -33,11 +33,11 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
 
         toast.add({
             id: uuidv4(),
-            color: 'green',
+            color: 'success',
             icon: 'i-mdi-check-network',
             title: t('notifications.grpc_errors.available.title'),
             description: t('notifications.grpc_errors.available.content'),
-            timeout: timeouts.notification,
+            duration: timeouts.notification,
         });
 
         overlayRef.value?.blur();
@@ -49,16 +49,12 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
         notificationId.value = uuidv4();
         toast.add({
             id: notificationId.value,
-            color: 'red',
+            color: 'error',
             icon: 'i-mdi-close-network',
             title: t('notifications.grpc_errors.unavailable.title'),
             description: t('notifications.grpc_errors.unavailable.content'),
-            timeout: 0,
-
-            closeButton: {
-                disabled: true,
-            },
-
+            duration: 0,
+            close: false,
             actions: [
                 {
                     label: t('common.retrying'),
@@ -70,7 +66,7 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
                 {
                     label: t('common.refresh'),
                     icon: 'i-mdi-reload',
-                    click: () => reloadNuxtApp({}),
+                    onClick: () => reloadNuxtApp({}),
                 },
             ],
         });
@@ -102,10 +98,10 @@ useTimeoutFn(() => {
     <div
         v-if="notificationId && !hideOverlay"
         ref="overlayRef"
-        class="relative z-[999999]"
+        class="z-999999 relative"
         :class="hideOverlay && 'pointer-events-none'"
     >
-        <div class="fixed inset-0 bg-gray-200/75 transition-opacity dark:bg-gray-800/75" />
+        <div class="fixed inset-0 bg-neutral-200/75 transition-opacity dark:bg-neutral-800/75" />
 
         <div class="fixed inset-0 overflow-y-auto">
             <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">

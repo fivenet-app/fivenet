@@ -315,7 +315,7 @@ async function checkup(): Promise<void> {
         title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
         description: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
         type: NotificationType.INFO,
-        timeout: 15000,
+        duration: 15000,
         callback: () => attentionDebouncedPlay(),
     });
 
@@ -331,7 +331,7 @@ function sendRequireUnitNotification(): void {
         title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
         description: { key: 'notifications.centrum.unitUpdated.require_unit.content', parameters: {} },
         type: NotificationType.WARNING,
-        timeout: 12500,
+        duration: 12500,
     });
 
     attentionSound.play();
@@ -611,7 +611,7 @@ defineShortcuts({
                                                         <li v-if="getSortedOwnDispatches.length === 0">
                                                             <UButton
                                                                 variant="soft"
-                                                                color="white"
+                                                                color="neutral"
                                                                 icon="i-mdi-car-emergency"
                                                                 block
                                                             >
@@ -649,7 +649,7 @@ defineShortcuts({
                             <span v-if="open && getOwnUnit !== undefined" class="fixed bottom-2 right-1/2 z-30 inline-flex">
                                 <UChip
                                     :ui="{
-                                        base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
+                                        base: 'absolute rounded-full ring-0 ring-white dark:ring-neutral-900 flex items-center justify-center text-white dark:text-neutral-900 font-medium whitespace-nowrap animate-ping duration-750',
                                     }"
                                     position="top-left"
                                     size="xl"

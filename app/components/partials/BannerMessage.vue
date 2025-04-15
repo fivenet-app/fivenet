@@ -34,10 +34,10 @@ function onClose() {
                 <UIcon :name="message.icon ?? 'i-mdi-information-outline'" class="size-6" />
 
                 <!-- eslint-disable-next-line vue/no-v-html -->
-                <p class="font-medium text-gray-900 dark:text-white" v-html="message.title"></p>
+                <p class="font-medium text-neutral-900 dark:text-white" v-html="message.title"></p>
             </div>
 
-            <UButton variant="link" icon="i-mdi-close" color="white" class="self-end" @click="onClose" />
+            <UButton variant="link" icon="i-mdi-close" color="neutral" class="self-end" @click="onClose" />
         </div>
     </div>
 </template>

@@ -206,7 +206,7 @@ onBeforeMount(async () => {
                 :ui="{
                     wrapper: 'p-0 gap-x-0',
                     container:
-                        'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-gray-100 p-0 px-1 dark:bg-gray-800 min-w-0',
+                        'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-neutral-100 p-0 px-1 dark:bg-neutral-800 min-w-0',
                 }"
             >
                 <ClientOnly>
@@ -311,7 +311,7 @@ onBeforeMount(async () => {
                 </div>
 
                 <UDashboardToolbar
-                    class="flex justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                    class="flex justify-between border-b-0 border-t border-neutral-200 px-3 py-3.5 dark:border-neutral-700"
                 >
                     <template #left>
                         <UTooltip :text="$t('common.settings')">
@@ -344,9 +344,9 @@ onBeforeMount(async () => {
             <template v-if="selectedThread">
                 <UDashboardNavbar>
                     <template #toggle>
-                        <UDashboardNavbarToggle icon="i-mdi-close" />
+                        <UDashboardSidebarToggle icon="i-mdi-close" />
 
-                        <UDivider orientation="vertical" class="mx-1.5 lg:hidden" />
+                        <USeparator orientation="vertical" class="mx-1.5 lg:hidden" />
                     </template>
 
                     <template #left>
@@ -475,7 +475,7 @@ onBeforeMount(async () => {
 
             <div
                 v-else
-                class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
+                class="hidden flex-1 flex-col items-center justify-center gap-2 text-neutral-400 lg:flex dark:text-neutral-500"
             >
                 <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
                 <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>

@@ -61,7 +61,7 @@ const columns = [
             :empty-state="{ icon: 'i-mdi-domain', label: $t('common.not_found', [$t('common.domain', 2)]) }"
         >
             <template #name-data="{ row }">
-                <p class="text-gray-900 dark:text-white">{{ row.name }}.{{ row.tld.name }}</p>
+                <p class="text-neutral-900 dark:text-white">{{ row.name }}.{{ row.tld.name }}</p>
             </template>
 
             <template #active-data="{ row }">

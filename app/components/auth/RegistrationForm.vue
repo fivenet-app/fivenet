@@ -96,7 +96,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :actions="[
                     {
                         label: $t('common.open'),
-                        click: () => openTokenMgmt(),
+                        onClick: () => openTokenMgmt(),
                     },
                 ]"
             >
@@ -109,7 +109,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
             </UAlert>
 
-            <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
+            <UFormField name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
                 <UInput
                     v-model="state.registrationToken"
                     type="text"
@@ -119,13 +119,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     autocomplete="registrationToken"
                     :placeholder="$t('components.auth.ForgotPassword.registration_token')"
                 />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup name="username" :label="$t('common.username')">
+            <UFormField name="username" :label="$t('common.username')">
                 <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup name="password" :label="$t('common.password')">
+            <UFormField name="password" :label="$t('common.password')">
                 <UInput
                     v-model="state.password"
                     :type="passwordVisibility ? 'text' : 'password'"
@@ -144,7 +144,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
                 </UInput>
                 <PasswordStrengthMeter :input="state.password" class="mt-2" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                 {{ $t('components.auth.RegistrationForm.submit_button') }}

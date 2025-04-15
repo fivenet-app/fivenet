@@ -272,7 +272,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UDashboardNavbar :title="$t('common.wiki')">
             <template #right>
                 <UButton
-                    color="black"
+                    color="neutral"
                     icon="i-mdi-arrow-left"
                     :disabled="!canSubmit"
                     @click="createPage ? navigateTo({ name: 'wiki' }) : $emit('close')"
@@ -309,7 +309,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UDashboardToolbar>
                         <template #default>
                             <div class="flex w-full flex-col gap-2">
-                                <UFormGroup
+                                <UFormField
                                     v-if="!(modelValue?.meta?.createdAt && modelValue?.parentId === undefined)"
                                     name="meta.parentId"
                                     :label="$t('common.parent_page')"
@@ -344,20 +344,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <template #empty> {{ $t('common.not_found', [$t('common.page', 2)]) }} </template>
                                         </USelectMenu>
                                     </ClientOnly>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup name="meta.title" :label="$t('common.title')">
+                                <UFormField name="meta.title" :label="$t('common.title')">
                                     <UInput v-model="state.meta.title" size="xl" />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup name="meta.description" :label="$t('common.description')">
+                                <UFormField name="meta.description" :label="$t('common.description')">
                                     <UTextarea v-model="state.meta.description" />
-                                </UFormGroup>
+                                </UFormField>
                             </div>
                         </template>
                     </UDashboardToolbar>
 
-                    <UFormGroup
+                    <UFormField
                         name="content"
                         class="flex flex-1 overflow-y-hidden"
                         :ui="{ container: 'flex flex-1 mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
@@ -366,13 +366,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.content"
-                                class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                                 rounded="rounded-none"
                             >
                                 <template #linkModal="{ state: linkState }">
-                                    <UDivider :label="$t('common.or')" orientation="horizontal" class="mt-1" />
+                                    <USeparator :label="$t('common.or')" orientation="horizontal" class="mt-1" />
 
-                                    <UFormGroup name="url" :label="`${$t('common.wiki')} ${$t('common.page')}`" class="w-full">
+                                    <UFormField name="url" :label="`${$t('common.wiki')} ${$t('common.page')}`" class="w-full">
                                         <ClientOnly>
                                             <USelectMenu
                                                 label-attribute="title"
@@ -393,37 +393,37 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 </template>
                                             </USelectMenu>
                                         </ClientOnly>
-                                    </UFormGroup>
+                                    </UFormField>
                                 </template>
                             </TiptapEditor>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
                     <UDashboardToolbar
-                        class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                        class="flex shrink-0 justify-between border-b-0 border-t border-neutral-200 px-3 py-3.5 dark:border-neutral-700"
                     >
                         <div class="flex flex-1 gap-2">
-                            <UFormGroup name="public" :label="$t('common.public')" class="flex-1">
-                                <UToggle v-model="state.meta.public" :disabled="!canDo.public" />
-                            </UFormGroup>
+                            <UFormField name="public" :label="$t('common.public')" class="flex-1">
+                                <USwitch v-model="state.meta.public" :disabled="!canDo.public" />
+                            </UFormField>
 
-                            <UFormGroup name="closed" :label="`${$t('common.toc', 2)}?`" class="flex-1">
-                                <UToggle v-model="state.meta.toc" />
-                            </UFormGroup>
+                            <UFormField name="closed" :label="`${$t('common.toc', 2)}?`" class="flex-1">
+                                <USwitch v-model="state.meta.toc" />
+                            </UFormField>
                         </div>
                     </UDashboardToolbar>
                 </template>
 
                 <template #access>
                     <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
-                        <UFormGroup name="access" :label="$t('common.access')">
+                        <UFormField name="access" :label="$t('common.access')">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
                                 v-model:users="state.access.users"
                                 :target-id="page.id ?? 0"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </template>
             </UTabs>

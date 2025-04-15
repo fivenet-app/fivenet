@@ -66,7 +66,7 @@ async function doCall(): Promise<void> {
                 <span v-if="showLabel" class="truncate">{{ $t('common.call') }}</span>
             </UButton>
 
-            <span v-if="!hideNumber" class="inline-flex gap-1" :class="[streamerMode ? 'blur' : '']">
+            <span v-if="!hideNumber" class="inline-flex gap-1" :class="[streamerMode ? 'blur-xs' : '']">
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{ part }}</span>
             </span>
         </template>

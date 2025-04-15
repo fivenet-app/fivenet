@@ -112,20 +112,20 @@ const canSubmit = ref(true);
         <template #default>
             <UForm :schema="schema" :state="query" class="flex-1" @submit="refresh()">
                 <div class="flex flex-row gap-2">
-                    <UFormGroup
+                    <UFormField
                         name="includeRead"
                         :label="$t('components.notifications.include_read')"
                         class="flex flex-initial flex-col"
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <UToggle v-model="query.includeRead">
+                            <USwitch v-model="query.includeRead">
                                 <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
-                            </UToggle>
+                            </USwitch>
                         </div>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="categories" :label="$t('common.category', 2)" class="flex-1">
+                    <UFormField name="categories" :label="$t('common.category', 2)" class="flex-1">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.categories"
@@ -149,9 +149,9 @@ const canSubmit = ref(true);
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup label="&nbsp;" class="flex-initial">
+                    <UFormField label="&nbsp;" class="flex-initial">
                         <UButton
                             icon="i-mdi-notification-clear-all"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
@@ -159,7 +159,7 @@ const canSubmit = ref(true);
                         >
                             {{ $t('components.notifications.mark_all_read') }}
                         </UButton>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </UForm>
         </template>
@@ -180,11 +180,11 @@ const canSubmit = ref(true);
                 icon="i-mdi-bell"
             />
 
-            <ul v-else role="list" class="flex flex-1 flex-col divide-y divide-gray-100 dark:divide-gray-800">
+            <ul v-else role="list" class="flex flex-1 flex-col divide-y divide-neutral-100 dark:divide-neutral-800">
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"
-                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 sm:px-4 dark:border-gray-900"
+                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 sm:px-4 dark:border-neutral-900"
                 >
                     <UIcon :name="notificationCategoryToIcon(not.category)" class="size-6" />
 
@@ -210,7 +210,7 @@ const canSubmit = ref(true);
                                 </span>
                             </h3>
 
-                            <p class="flex text-sm leading-6 text-gray-200">
+                            <p class="flex text-sm leading-6 text-neutral-200">
                                 {{ $t(not.content!.key, not.content?.parameters ?? {}) }}
                             </p>
                         </div>

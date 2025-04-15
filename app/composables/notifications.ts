@@ -1,4 +1,4 @@
-import type { NotificationAction } from '#ui/types';
+import type { ButtonProps } from '#ui/types';
 import type { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -9,7 +9,7 @@ export const NotificationTypes: NotificationType[] = [
     NotificationType.SUCCESS,
 ];
 
-export interface NotificationActionI18n extends Omit<NotificationAction, 'label'> {
+export interface NotificationActionI18n extends Omit<ButtonProps, 'label'> {
     label: TranslateItem;
 }
 
@@ -17,7 +17,7 @@ export interface Notification {
     id?: number;
     title: TranslateItem;
     description: TranslateItem;
-    timeout?: number;
+    duration?: number;
     type?: NotificationType;
     category?: NotificationCategory;
     data?: Data;

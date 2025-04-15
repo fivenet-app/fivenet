@@ -64,7 +64,7 @@ export const ImageResize = Image.extend({
 
                 $postionController.setAttribute(
                     'class',
-                    'absolute top-0 left-1/2 h-7 z-[999] flex justify-between items-center px-1 py-0.5 gap-2 cursor-pointer bg-gray-200 dark:bg-gray-600',
+                    'absolute top-0 left-1/2 h-7 z-999 flex justify-between items-center px-1 py-0.5 gap-2 cursor-pointer bg-neutral-200 dark:bg-neutral-600',
                 );
                 $postionController.setAttribute(
                     'style',

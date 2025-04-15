@@ -61,7 +61,7 @@ watch(labels, () => (state.labels = labels.value ?? []));
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -72,7 +72,7 @@ watch(labels, () => (state.labels = labels.value ?? []));
                     </div>
                 </template>
 
-                <UFormGroup
+                <UFormField
                     v-if="state && can('CitizenStoreService.ManageCitizenLabels').value"
                     name="citizenAttributes.list"
                     class="grid items-center gap-2"
@@ -80,7 +80,7 @@ watch(labels, () => (state.labels = labels.value ?? []));
                 >
                     <div class="flex flex-col gap-1">
                         <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
-                            <UFormGroup :name="`labels.${idx}.name`" class="flex-1">
+                            <UFormField :name="`labels.${idx}.name`" class="flex-1">
                                 <UInput
                                     v-model="state.labels[idx]!.name"
                                     :name="`labels.${idx}.name`"
@@ -88,15 +88,15 @@ watch(labels, () => (state.labels = labels.value ?? []));
                                     class="w-full flex-1"
                                     :placeholder="$t('common.label', 1)"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup :name="`labels.${idx}.color`">
+                            <UFormField :name="`labels.${idx}.color`">
                                 <ColorPickerClient
                                     v-model="state.labels[idx]!.color"
                                     :name="`labels.${idx}.color`"
                                     class="min-w-16"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
                             <UButton
                                 :ui="{ rounded: 'rounded-full' }"
@@ -114,11 +114,11 @@ watch(labels, () => (state.labels = labels.value ?? []));
                         :class="state.labels.length ? 'mt-2' : ''"
                         @click="state.labels.push({ id: 0, name: '', color: '#ffffff' })"
                     />
-                </UFormGroup>
+                </UFormField>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

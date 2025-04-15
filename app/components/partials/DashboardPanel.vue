@@ -9,7 +9,7 @@
         <slot />
 
         <slot name="handle" :on-drag="onDrag">
-            <UDashboardPanelHandle v-if="resizable && !grow" @mousedown="onDrag" />
+            <UDashboardResizeHandle v-if="resizable && !grow" @mousedown="onDrag" />
         </slot>
     </div>
 
@@ -35,7 +35,7 @@ import type { PropType } from 'vue';
 
 const config = {
     wrapper: 'flex-col items-stretch relative w-full',
-    border: 'border-b lg:border-b-0 lg:border-r border-gray-200 dark:border-gray-800 lg:w-[--width] shrink-0',
+    border: 'border-b lg:border-b-0 lg:border-r border-neutral-200 dark:border-neutral-800 lg:w-(--width) shrink-0',
     grow: 'flex-1',
     collapsible: 'hidden lg:flex',
     slideover: 'lg:hidden',

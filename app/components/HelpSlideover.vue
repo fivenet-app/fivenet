@@ -147,13 +147,13 @@ const filteredCategories = computed(() => {
             <UInput v-model="query" icon="i-mdi-search" :placeholder="$t('common.search_field')" autofocus color="gray" />
 
             <div v-for="(category, index) in filteredCategories" :key="index">
-                <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
+                <p class="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">
                     {{ category.title }}
                 </p>
 
                 <div class="space-y-2">
                     <div v-for="(item, i) in category.items" :key="i" class="flex items-center justify-between">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ item.name }}</span>
+                        <span class="text-sm text-neutral-500 dark:text-neutral-400">{{ item.name }}</span>
 
                         <div class="flex shrink-0 items-center justify-end gap-0.5">
                             <UKbd v-for="(shortcut, j) in item.shortcuts" :key="j">

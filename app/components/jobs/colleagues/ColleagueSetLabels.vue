@@ -141,7 +141,7 @@ const editing = ref(false);
                     :key="attribute.name"
                     :style="{ backgroundColor: attribute.color }"
                     class="justify-between gap-2"
-                    :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                    :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                     size="lg"
                 >
                     <span class="truncate">
@@ -156,8 +156,8 @@ const editing = ref(false);
                         :ui="{ rounded: 'rounded-full' }"
                         :class="
                             isColourBright(hexToRgb(attribute.color, RGBBlack)!)
-                                ? '!bg-white/20 !text-black'
-                                : '!bg-black/20 !text-white'
+                                ? 'bg-white/20! text-black!'
+                                : 'bg-black/20! text-white!'
                         "
                         @click="
                             changed = true;
@@ -168,7 +168,7 @@ const editing = ref(false);
             </template>
         </div>
 
-        <UFormGroup v-if="editing" name="labels">
+        <UFormField v-if="editing" name="labels">
             <ClientOnly>
                 <USelectMenu
                     v-model="state.labels"
@@ -201,12 +201,12 @@ const editing = ref(false);
                     </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <template v-if="editing">
-            <UFormGroup name="reason" :label="$t('common.reason')" required>
+            <UFormField name="reason" :label="$t('common.reason')" required>
                 <UInput v-model="state.reason" type="text" :disabled="!changed" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton type="submit" icon="i-mdi-content-save" :disabled="!changed || !canSubmit" :loading="!canSubmit">
                 {{ $t('common.save') }}

@@ -99,7 +99,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -111,11 +111,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <UFormGroup name="reason" :label="$t('common.reason')" required>
+                    <UFormField name="reason" :label="$t('common.reason')" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="mugShot" :label="$t('common.image')">
+                    <UFormField name="mugShot" :label="$t('common.image')">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UInput
@@ -126,7 +126,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 @change="state.mugShot = $event"
                             />
                         </template>
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="mt-4 flex flex-1 items-center">
                         <GenericImg
@@ -157,7 +157,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton block class="flex-1" color="black" @click="isOpen = false">
+                        <UButton block class="flex-1" color="neutral" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>

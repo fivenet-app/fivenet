@@ -35,7 +35,7 @@ function copyEmail(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.email_address_copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.email_address_copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -62,7 +62,7 @@ function copyEmail(): void {
                     <UButton icon="i-mdi-content-copy" :label="$t('common.copy')" variant="link" @click="copyEmail" />
                 </div>
 
-                <div class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div class="flex flex-col gap-2 text-neutral-900 dark:text-white">
                     <div class="flex flex-col gap-1 text-sm font-normal">
                         <p>
                             <span class="font-semibold">{{ $t('common.mail') }}:</span>

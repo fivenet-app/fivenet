@@ -51,7 +51,7 @@ async function getTemplate(): Promise<Template> {
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <!-- eslint-disable vue/no-v-html -->
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
@@ -83,7 +83,7 @@ async function getTemplate(): Promise<Template> {
                         </h2>
                     </div>
 
-                    <UDivider class="mb-4" />
+                    <USeparator class="mb-4" />
 
                     <div>
                         <label class="mb-2 block text-sm text-xl font-medium leading-6">
@@ -95,7 +95,7 @@ async function getTemplate(): Promise<Template> {
                         </p>
                     </div>
 
-                    <UDivider class="mb-4" />
+                    <USeparator class="mb-4" />
 
                     <label class="mb-2 block text-sm text-xl font-medium leading-6">
                         {{ $t('common.content') }}
@@ -141,7 +141,7 @@ async function getTemplate(): Promise<Template> {
             </div>
 
             <template #footer>
-                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

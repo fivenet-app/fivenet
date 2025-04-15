@@ -103,10 +103,10 @@ const creating = ref(false);
                 />
 
                 <div v-else class="flex flex-1 flex-col items-center">
-                    <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
+                    <div class="flex flex-1 flex-col items-center justify-center gap-2 text-neutral-400 dark:text-neutral-500">
                         <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
 
-                        <div class="text-center text-gray-900 dark:text-white">
+                        <div class="text-center text-neutral-900 dark:text-white">
                             <h3 class="text-lg font-bold">{{ $t('components.mailer.manage.title') }}</h3>
                             <p class="text-bas">{{ $t('components.mailer.manage.subtitle') }}</p>
                         </div>
@@ -153,7 +153,7 @@ const creating = ref(false);
                             <UButton
                                 :label="$t('common.back')"
                                 icon="i-mdi-arrow-back"
-                                color="black"
+                                color="neutral"
                                 @click="creating = false"
                             />
                         </template>
@@ -162,7 +162,7 @@ const creating = ref(false);
                     <UDashboardPanelContent>
                         <div class="flex flex-1 flex-col items-center">
                             <div
-                                class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500"
+                                class="flex flex-1 flex-col items-center justify-center gap-2 text-neutral-400 dark:text-neutral-500"
                             >
                                 <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
                                 <EmailCreateForm v-if="canCreate" :personal-email="false" @refresh="creating = false" />
@@ -174,15 +174,15 @@ const creating = ref(false);
                 <template v-else-if="selectedEmail">
                     <UDashboardNavbar>
                         <template #toggle>
-                            <UDashboardNavbarToggle icon="i-mdi-close" />
+                            <UDashboardSidebarToggle icon="i-mdi-close" />
 
-                            <UDivider orientation="vertical" class="mx-1.5 lg:hidden" />
+                            <USeparator orientation="vertical" class="mx-1.5 lg:hidden" />
                         </template>
 
                         <template #right>
                             <UButton
                                 class="hidden md:flex"
-                                color="black"
+                                color="neutral"
                                 icon="i-mdi-arrow-back"
                                 @click="selectedEmail = undefined"
                             >
@@ -236,7 +236,7 @@ const creating = ref(false);
 
                     <UDashboardPanelContent>
                         <div
-                            class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
+                            class="hidden flex-1 flex-col items-center justify-center gap-2 text-neutral-400 lg:flex dark:text-neutral-500"
                         >
                             <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
                             <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>

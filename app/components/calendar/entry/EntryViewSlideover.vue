@@ -51,7 +51,7 @@ function copyLinkToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -73,7 +73,7 @@ const canDo = computed(() => ({
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -136,7 +136,7 @@ const canDo = computed(() => ({
 
                 <template v-else>
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                        <UBadge color="black" class="inline-flex items-center gap-1" size="lg">
+                        <UBadge color="neutral" class="inline-flex items-center gap-1" size="lg">
                             <UIcon name="i-mdi-access-time" class="size-5" />
                             <span>
                                 {{ $t('common.date') }}
@@ -151,7 +151,7 @@ const canDo = computed(() => ({
                             </span>
                         </UBadge>
 
-                        <UBadge color="black" class="inline-flex items-center gap-1" size="md">
+                        <UBadge color="neutral" class="inline-flex items-center gap-1" size="md">
                             <UIcon name="i-mdi-calendar" class="size-5" />
                             <span>
                                 {{ $t('common.calendar') }}
@@ -165,7 +165,7 @@ const canDo = computed(() => ({
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge :closed="entry.closed" />
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UBadge color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-account" class="size-5" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
@@ -173,7 +173,7 @@ const canDo = computed(() => ({
                             </span>
                         </UBadge>
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UBadge color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-calendar" class="size-5" />
                             <span>
                                 {{ $t('common.created_at') }}
@@ -181,7 +181,7 @@ const canDo = computed(() => ({
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="entry.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                        <UBadge v-if="entry.updatedAt" color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-calendar-edit" class="size-5" />
                             <span>
                                 {{ $t('common.updated_at') }}
@@ -190,7 +190,7 @@ const canDo = computed(() => ({
                         </UBadge>
                     </div>
 
-                    <UDivider />
+                    <USeparator />
 
                     <template v-if="entry.rsvpOpen">
                         <EntryRSVPList
@@ -202,10 +202,10 @@ const canDo = computed(() => ({
                             :can-share="canDo.share"
                         />
 
-                        <UDivider />
+                        <USeparator />
                     </template>
 
-                    <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
+                    <div class="max-w-(--breakpoint-xl) mx-auto w-full break-words rounded-lg bg-neutral-100 dark:bg-base-900">
                         <HTMLContent v-if="entry.content?.content" class="px-4 py-2" :value="entry.content.content" />
                     </div>
                 </template>
@@ -213,7 +213,7 @@ const canDo = computed(() => ({
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

@@ -46,7 +46,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
         title: { key: 'notifications.language_switched.title', parameters: {} },
         description: { key: 'notifications.language_switched.content', parameters: { name: lang.name ?? lang.code } },
         type: NotificationType.SUCCESS,
-        timeout: 1650,
+        duration: 1650,
         callback: () => reloadNuxtApp({ persistState: false, force: true }),
     });
 }
@@ -54,7 +54,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
 
 <template>
     <UModal :prevent-close="preventClose">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
@@ -83,7 +83,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
             </UPageGrid>
 
             <template #footer>
-                <UButton block class="flex-1" color="black" :disabled="preventClose" @click="isOpen = false">
+                <UButton block class="flex-1" color="neutral" :disabled="preventClose" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

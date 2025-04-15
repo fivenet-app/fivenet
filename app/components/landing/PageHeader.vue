@@ -41,7 +41,7 @@ const modal = useModal();
 </script>
 
 <template>
-    <UHeader :links="links">
+    <UHeader :items="links">
         <template #logo>
             <FiveNetLogo class="h-10 w-auto" />
         </template>
@@ -61,7 +61,7 @@ const modal = useModal();
                     :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"
                     trailing
-                    color="black"
+                    color="neutral"
                     to="/auth/registration"
                     class="hidden lg:flex"
                 />

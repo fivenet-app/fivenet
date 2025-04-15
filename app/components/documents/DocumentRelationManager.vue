@@ -158,7 +158,7 @@ const columnsNew = [
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :model-value="open" @update:model-value="$emit('close')">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
@@ -268,7 +268,7 @@ const columnsNew = [
                     </template>
 
                     <template #new>
-                        <UFormGroup name="name" :label="$t('common.search')" class="mb-2">
+                        <UFormField name="name" :label="$t('common.search')" class="mb-2">
                             <UInput
                                 v-model="queryCitizens"
                                 type="text"
@@ -276,7 +276,7 @@ const columnsNew = [
                                 :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                                 leading-icon="i-mdi-search"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
                         <div>
                             <DataErrorBlock
@@ -335,7 +335,7 @@ const columnsNew = [
             </div>
 
             <template #footer>
-                <UButton block class="flex-1" color="black" @click="$emit('close')">
+                <UButton block class="flex-1" color="neutral" @click="$emit('close')">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

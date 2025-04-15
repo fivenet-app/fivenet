@@ -16,16 +16,16 @@ const workflow = useVModel(props, 'modelValue', emit);
 <template>
     <div class="flex flex-col gap-1">
         <!-- Auto Close -->
-        <UFormGroup name="workflow.autoClose" :label="$t('common.auto_close')">
-            <UToggle v-model="workflow.autoClose.autoClose" />
-        </UFormGroup>
+        <UFormField name="workflow.autoClose" :label="$t('common.auto_close')">
+            <USwitch v-model="workflow.autoClose.autoClose" />
+        </UFormField>
 
-        <UFormGroup
+        <UFormField
             name="workflow.autoClose.autoCloseSettings"
             :description="$t('components.documents.TemplateWorkflowEditor.auto_close.description')"
         >
             <div class="flex items-center gap-1">
-                <UFormGroup name="workflow.autoClose.autoCloseSettings.duration" :label="$t('common.time_ago.day', 2)">
+                <UFormField name="workflow.autoClose.autoCloseSettings.duration" :label="$t('common.time_ago.day', 2)">
                     <UInput
                         v-model="workflow.autoClose.autoCloseSettings.duration"
                         type="number"
@@ -35,12 +35,14 @@ const workflow = useVModel(props, 'modelValue', emit);
                         :placeholder="$t('common.duration')"
                     >
                         <template #trailing>
-                            <span class="text-xs text-gray-500 dark:text-gray-400">{{ $t('common.time_ago.day', 2) }}</span>
+                            <span class="text-xs text-neutral-500 dark:text-neutral-400">{{
+                                $t('common.time_ago.day', 2)
+                            }}</span>
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup
+                <UFormField
                     name="workflow.autoClose.autoCloseSettings.message"
                     :label="$t('common.message')"
                     class="grid flex-1 grid-cols-1 items-center"
@@ -52,16 +54,16 @@ const workflow = useVModel(props, 'modelValue', emit);
                         class="w-full flex-1"
                         :placeholder="$t('common.message')"
                     />
-                </UFormGroup>
+                </UFormField>
             </div>
-        </UFormGroup>
+        </UFormField>
 
         <!-- Reminders -->
-        <UFormGroup name="workflow.reminders.reminder" :label="$t('common.reminder')">
-            <UToggle v-model="workflow.reminders.reminder" />
-        </UFormGroup>
+        <UFormField name="workflow.reminders.reminder" :label="$t('common.reminder')">
+            <USwitch v-model="workflow.reminders.reminder" />
+        </UFormField>
 
-        <UFormGroup
+        <UFormField
             name="workflow.reminders.reminders"
             :label="$t('common.reminder', 2)"
             :description="$t('components.documents.TemplateWorkflowEditor.reminder.description')"
@@ -75,7 +77,7 @@ const workflow = useVModel(props, 'modelValue', emit);
                     >
                         <UIcon name="i-mdi-drag-horizontal" class="size-6" />
 
-                        <UFormGroup
+                        <UFormField
                             :name="`workflow.reminders.reminders.${idx}.duration`"
                             :label="$t('common.time_ago.day', 2)"
                             class="grid grid-cols-1 items-center"
@@ -90,14 +92,14 @@ const workflow = useVModel(props, 'modelValue', emit);
                                 :placeholder="$t('common.duration')"
                             >
                                 <template #trailing>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">{{
+                                    <span class="text-xs text-neutral-500 dark:text-neutral-400">{{
                                         $t('common.time_ago.day', 2)
                                     }}</span>
                                 </template>
                             </UInput>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup
+                        <UFormField
                             :name="`workflow.reminders.reminders.${idx}.message`"
                             :label="$t('common.message')"
                             class="grid flex-1 grid-cols-1 items-center"
@@ -109,15 +111,15 @@ const workflow = useVModel(props, 'modelValue', emit);
                                 class="w-full flex-1"
                                 :placeholder="$t('common.message')"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup label="&nbsp;">
+                        <UFormField label="&nbsp;">
                             <UButton
                                 :ui="{ rounded: 'rounded-full' }"
                                 icon="i-mdi-close"
                                 @click="workflow.reminders.reminderSettings.reminders.splice(idx, 1)"
                             />
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </VueDraggable>
             </div>
@@ -134,6 +136,6 @@ const workflow = useVModel(props, 'modelValue', emit);
                     })
                 "
             />
-        </UFormGroup>
+        </UFormField>
     </div>
 </template>

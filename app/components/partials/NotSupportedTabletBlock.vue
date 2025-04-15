@@ -22,7 +22,7 @@ const w = window;
                           icon: 'i-mdi-link-variant',
                           color: 'yellow',
                           variant: 'solid',
-                          click: () => openURLInWindow(w.location.href),
+                          onClick: () => openURLInWindow(w.location.href),
                       },
                   ]
                 : undefined

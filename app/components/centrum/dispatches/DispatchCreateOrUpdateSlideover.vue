@@ -79,7 +79,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         padding: 'px-1 py-2 sm:p-2',
                     },
                     ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                    divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
                 }"
             >
                 <template #header>
@@ -110,14 +110,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="message">
+                                <UFormField name="message">
                                     <UInput
                                         v-model="state.message"
                                         type="text"
                                         name="message"
                                         :placeholder="$t('common.message')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -127,14 +127,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="description">
+                                <UFormField name="description">
                                     <UInput
                                         v-model="state.description"
                                         type="text"
                                         name="description"
                                         :placeholder="$t('common.description')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -144,9 +144,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="anon">
+                                <UFormField name="anon">
                                     <UCheckbox v-model="state.anon" name="anon" :placeholder="$t('common.anon')" />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                     </dl>
@@ -161,7 +161,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UButton
                             block
                             class="flex-1"
-                            color="black"
+                            color="neutral"
                             @click="
                                 $emit('close');
                                 isOpen = false;

@@ -142,7 +142,7 @@ onBeforeMount(async () => {
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
@@ -229,7 +229,7 @@ onBeforeMount(async () => {
                     v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
                     class="inline-flex w-full"
                 >
-                    <UButton color="black" block class="flex-1" @click="goBackDialog">
+                    <UButton color="neutral" block class="flex-1" @click="goBackDialog">
                         {{ $t('common.go_back') }}
                     </UButton>
 
@@ -238,7 +238,7 @@ onBeforeMount(async () => {
                     </UButton>
                 </UButtonGroup>
 
-                <UButton v-else color="black" block class="flex-1" @click="closeDialog">
+                <UButton v-else color="neutral" block class="flex-1" @click="closeDialog">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

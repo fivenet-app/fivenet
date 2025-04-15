@@ -145,7 +145,7 @@ function addToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.document_added.title', parameters: {} },
         description: { key: 'notifications.clipboard.document_added.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -443,7 +443,7 @@ defineShortcuts({
                         </span>
                     </UBadge>
 
-                    <UBadge color="black" class="inline-flex gap-1" size="md">
+                    <UBadge color="neutral" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-comment-text-multiple" class="size-5" />
                         <span>
                             {{
@@ -456,7 +456,7 @@ defineShortcuts({
                 </div>
 
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                    <UBadge color="black" class="inline-flex gap-1" size="md">
+                    <UBadge color="neutral" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-account" class="size-5" />
                         <span class="inline-flex items-center gap-1">
                             <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
@@ -464,7 +464,7 @@ defineShortcuts({
                         </span>
                     </UBadge>
 
-                    <UBadge color="black" class="inline-flex gap-1" size="md">
+                    <UBadge color="neutral" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-calendar" class="size-5" />
                         <span>
                             {{ $t('common.created_at') }}
@@ -472,7 +472,7 @@ defineShortcuts({
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="doc.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                    <UBadge v-if="doc.updatedAt" color="neutral" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-calendar-edit" class="size-5" />
                         <span>
                             {{ $t('common.updated_at') }}
@@ -480,14 +480,14 @@ defineShortcuts({
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="doc.workflowState?.autoCloseTime" color="black" class="inline-flex gap-1" size="md">
+                    <UBadge v-if="doc.workflowState?.autoCloseTime" color="neutral" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-lock-clock" class="size-5" />
                         <span>
                             {{ $t('common.auto_close', 2) }}
                             <GenericTime :value="doc.workflowState.autoCloseTime" ago />
                         </span>
                     </UBadge>
-                    <UBadge v-else-if="doc.workflowState?.nextReminderTime" color="black" class="inline-flex gap-1" size="md">
+                    <UBadge v-else-if="doc.workflowState?.nextReminderTime" color="neutral" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-reminder" class="size-5" />
                         <span>
                             {{ $t('common.reminder') }}
@@ -495,7 +495,7 @@ defineShortcuts({
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="doc.workflowUser?.manualReminderTime" color="black" class="inline-flex gap-1" size="md">
+                    <UBadge v-if="doc.workflowUser?.manualReminderTime" color="neutral" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-reminder" class="size-5" />
                         <span>
                             {{ $t('common.reminder') }}
@@ -518,7 +518,7 @@ defineShortcuts({
                     {{ $t('common.content') }}
                 </h2>
 
-                <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
+                <div class="max-w-(--breakpoint-xl) mx-auto w-full break-words rounded-lg bg-neutral-100 dark:bg-base-900">
                     <HTMLContent v-if="doc.content?.content" class="px-4 py-2" :value="doc.content.content" />
                 </div>
             </div>

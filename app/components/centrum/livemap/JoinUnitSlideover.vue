@@ -73,7 +73,7 @@ const filteredUnits = computed(() => ({
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -90,7 +90,7 @@ const filteredUnits = computed(() => ({
 
             <div>
                 <div class="flex flex-col gap-1">
-                    <UFormGroup name="search" :label="$t('common.search')">
+                    <UFormField name="search" :label="$t('common.search')">
                         <UInput
                             v-model="queryUnit"
                             type="text"
@@ -98,7 +98,7 @@ const filteredUnits = computed(() => ({
                             :placeholder="$t('common.search')"
                             leading-icon="i-mdi-search"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="grid grid-cols-2 gap-2">
                         <UButton
@@ -165,7 +165,7 @@ const filteredUnits = computed(() => ({
                     >
                         {{ $t('common.leave') }}
                     </UButton>
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

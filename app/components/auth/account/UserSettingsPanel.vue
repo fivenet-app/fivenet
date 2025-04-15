@@ -91,46 +91,46 @@ onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path
                         <UColorModeSelect color="gray" />
                     </template>
 
-                    <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
+                    <UFormField name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
                         <ColorPickerTW v-model="design.ui.primary" name="primaryColor" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         name="grayColor"
                         :label="$t('components.auth.UserSettingsPanel.background_color')"
                         class="grid grid-cols-2 items-center gap-2"
                     >
                         <ColorPickerTW v-model="design.ui.gray" name="grayColor" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         name="streamerMode"
                         :label="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
                         :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
                         class="grid grid-cols-2 items-center gap-2"
                     >
-                        <UToggle v-model="streamerMode" name="streamerMode">
+                        <USwitch v-model="streamerMode" name="streamerMode">
                             <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
-                        </UToggle>
-                    </UFormGroup>
+                        </USwitch>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         name="designDocumentsListStyle"
                         :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
                         class="grid grid-cols-2 items-center gap-2"
                     >
                         <div class="inline-flex items-center gap-2 text-sm">
                             <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
-                            <UToggle v-model="designDocumentsListStyle">
+                            <USwitch v-model="designDocumentsListStyle">
                                 <span class="sr-only">{{
                                     $t('components.auth.UserSettingsPanel.documents_lists_style.title')
                                 }}</span>
-                            </UToggle>
+                            </USwitch>
                             <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
                         </div>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         name="selectedHomepage"
                         :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
                         class="grid grid-cols-2 items-center gap-2"
@@ -146,7 +146,7 @@ onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path
                         <p v-else class="text-sm">
                             {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
                         </p>
-                    </UFormGroup>
+                    </UFormField>
                 </UDashboardSection>
             </UDashboardPanelContent>
         </template>
@@ -161,21 +161,21 @@ onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path
                         <UButton icon="i-mdi-play" @click="notificationSound.play()" />
                     </template>
 
-                    <UFormGroup
+                    <UFormField
                         name="notificationsVolume"
                         :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
                         class="grid grid-cols-2 items-center gap-2"
                     >
                         <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
                         {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
-                    </UFormGroup>
+                    </UFormField>
                 </UDashboardSection>
 
                 <UDashboardSection
                     :title="$t('components.auth.UserSettingsPanel.calendar_notifications.title')"
                     :description="$t('components.auth.UserSettingsPanel.calendar_notifications.subtitle')"
                 >
-                    <UFormGroup
+                    <UFormField
                         name="calendarNotifications"
                         :label="$t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.name')"
                         class="grid grid-cols-2 items-center gap-2"
@@ -203,7 +203,7 @@ onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
                 </UDashboardSection>
             </UDashboardPanelContent>
         </template>

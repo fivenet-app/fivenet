@@ -377,31 +377,31 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.rector.app_config.auth.title')"
                                 :description="$t('components.rector.app_config.auth.description')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     name="auth.signupEnabled"
                                     :label="$t('components.rector.app_config.auth.sign_up')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle v-model="state.auth.signupEnabled">
+                                    <USwitch v-model="state.auth.signupEnabled">
                                         <span class="sr-only">
                                             {{ $t('components.rector.app_config.auth.sign_up') }}
                                         </span>
-                                    </UToggle>
-                                </UFormGroup>
+                                    </USwitch>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="auth.lastCharLock"
                                     :label="$t('components.rector.app_config.auth.last_char_lock')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle v-model="state.auth.lastCharLock">
+                                    <USwitch v-model="state.auth.lastCharLock">
                                         <span class="sr-only">
                                             {{ $t('components.rector.app_config.auth.last_char_lock') }}
                                         </span>
-                                    </UToggle>
-                                </UFormGroup>
+                                    </USwitch>
+                                </UFormField>
                             </UDashboardSection>
                         </UDashboardPanelContent>
                     </template>
@@ -412,7 +412,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.rector.app_config.perms.title')"
                                 :description="$t('components.rector.app_config.perms.description')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     name="perms.default"
                                     :label="$t('components.rector.app_config.perms.default_perms')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -420,7 +420,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 >
                                     <div class="flex flex-col gap-1">
                                         <div v-for="(_, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
-                                            <UFormGroup :name="`perms.default.${idx}.category`" class="flex-1">
+                                            <UFormField :name="`perms.default.${idx}.category`" class="flex-1">
                                                 <ClientOnly>
                                                     <USelectMenu
                                                         v-model="state.perms.default[idx]!.category"
@@ -437,9 +437,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         </template>
                                                     </USelectMenu>
                                                 </ClientOnly>
-                                            </UFormGroup>
+                                            </UFormField>
 
-                                            <UFormGroup :name="`perms.default.${idx}.name`" class="flex-1">
+                                            <UFormField :name="`perms.default.${idx}.name`" class="flex-1">
                                                 <USelectMenu
                                                     v-model="state.perms.default[idx]!.name"
                                                     searchable
@@ -460,7 +460,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         {{ $t('common.not_found', [$t('common.method')]) }}
                                                     </template>
                                                 </USelectMenu>
-                                            </UFormGroup>
+                                            </UFormField>
 
                                             <UButton
                                                 :ui="{ rounded: 'rounded-full' }"
@@ -477,7 +477,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :class="state.perms.default.length ? 'mt-2' : ''"
                                         @click="state.perms.default.push({ category: '', name: '' })"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </UDashboardSection>
                         </UDashboardPanelContent>
                     </template>
@@ -488,7 +488,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.rector.app_config.website.title')"
                                 :description="$t('components.rector.app_config.website.description')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     name="defaultLocale"
                                     :label="$t('common.default_lang')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -524,9 +524,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <span class="truncate">{{ locale.name }}</span>
                                         </template>
                                     </USelectMenu>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="website.links.privacyPolicy"
                                     :label="$t('common.privacy_policy')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -538,9 +538,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.privacy_policy')"
                                         maxlength="255"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="website.links.imprint"
                                     :label="$t('common.imprint')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -552,22 +552,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.imprint')"
                                         maxlength="255"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </UDashboardSection>
 
                             <UDashboardSection :title="$t('pages.stats.title')" :description="$t('pages.stats.subtitle')">
-                                <UFormGroup
+                                <UFormField
                                     name="website.statsPage"
                                     :label="$t('common.stats')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle v-model="state.website.statsPage">
+                                    <USwitch v-model="state.website.statsPage">
                                         <span class="sr-only">
                                             {{ $t('common.enabled') }}
                                         </span>
-                                    </UToggle>
-                                </UFormGroup>
+                                    </USwitch>
+                                </UFormField>
                             </UDashboardSection>
                         </UDashboardPanelContent>
                     </template>
@@ -578,7 +578,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.rector.app_config.job_info.title')"
                                 :description="$t('components.rector.app_config.job_info.description')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     name="jobInfo.unemployedJob.name"
                                     :label="`${$t('common.job')} ${$t('common.name')}`"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -590,9 +590,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.job')"
                                         maxlength="255"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="jobInfo.unemployedJob.grade"
                                     :label="$t('common.rank')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -607,9 +607,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.rank')"
                                         :label="$t('common.rank')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="jobInfo.publicJobs"
                                     :label="$t('components.rector.app_config.job_info.public_jobs')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -640,9 +640,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="jobInfo.hiddenJobs"
                                     :label="$t('components.rector.app_config.job_info.hidden_jobs')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -673,7 +673,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
-                                </UFormGroup>
+                                </UFormField>
                             </UDashboardSection>
                         </UDashboardPanelContent>
                     </template>
@@ -684,7 +684,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.rector.app_config.user_tracker.title')"
                                 :description="$t('components.rector.app_config.user_tracker.description')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     name="userTracker.refreshTime"
                                     :label="$t('components.rector.app_config.user_tracker.refresh_time')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -698,12 +698,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.duration')"
                                     >
                                         <template #trailing>
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                                            <span class="text-xs text-neutral-500 dark:text-neutral-400">s</span>
                                         </template>
                                     </UInput>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="userTracker.dbRefreshTime"
                                     :label="$t('components.rector.app_config.user_tracker.db_refresh_time')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -717,10 +717,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.duration')"
                                     >
                                         <template #trailing>
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                                            <span class="text-xs text-neutral-500 dark:text-neutral-400">s</span>
                                         </template>
                                     </UInput>
-                                </UFormGroup>
+                                </UFormField>
                             </UDashboardSection>
                         </UDashboardPanelContent>
                     </template>
@@ -731,20 +731,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('common.discord')"
                                 :description="$t('components.rector.app_config.discord.description')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     name="discordEnabled"
                                     :label="$t('common.enabled')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle v-model="state.discord.enabled">
+                                    <USwitch v-model="state.discord.enabled">
                                         <span class="sr-only">
                                             {{ $t('common.enabled') }}
                                         </span>
-                                    </UToggle>
-                                </UFormGroup>
+                                    </USwitch>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="discord.syncInterval"
                                     :label="$t('components.rector.app_config.discord.sync_interval')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -759,12 +759,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.duration')"
                                     >
                                         <template #trailing>
-                                            <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                                            <span class="text-xs text-neutral-500 dark:text-neutral-400">s</span>
                                         </template>
                                     </UInput>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="discord.inviteUrl"
                                     :label="$t('components.rector.app_config.discord.bot_invite_url')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -775,9 +775,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="discord.ignoredJobs"
                                     :label="$t('components.rector.app_config.discord.ignored_jobs')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -808,7 +808,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
-                                </UFormGroup>
+                                </UFormField>
                             </UDashboardSection>
 
                             <UDashboardSection
@@ -816,7 +816,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.rector.app_config.discord.bot_presence.title')"
                                 :description="$t('components.rector.app_config.discord.bot_presence.description')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     name="discord.botPresence.type"
                                     :label="$t('components.rector.app_config.discord.bot_presence.type')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -829,7 +829,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('components.rector.app_config.discord.bot_presence.type')"
                                     >
                                         <template #label>
-                                            <span class="truncate text-gray-900 dark:text-white">{{
+                                            <span class="truncate text-neutral-900 dark:text-white">{{
                                                 $t(
                                                     `enums.rector.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[state.discord.botPresence.type ?? 0]}`,
                                                 )
@@ -844,9 +844,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             }}</span>
                                         </template>
                                     </USelectMenu>
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="discord.botPresence.status"
                                     :label="$t('components.rector.app_config.discord.bot_presence.status')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -857,9 +857,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         :placeholder="$t('common.status')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="discord.botPresence.url"
                                     :label="$t('components.rector.app_config.discord.bot_presence.url')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -870,7 +870,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         :placeholder="$t('components.rector.app_config.discord.bot_presence.url')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </UDashboardSection>
                         </UDashboardPanelContent>
                     </template>
@@ -881,29 +881,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.rector.app_config.system.banner_message.title')"
                                 :description="$t('components.rector.app_config.system.banner_message.subtitle')"
                             >
-                                <UFormGroup
+                                <UFormField
                                     name="system.bannerMessageEnabled"
                                     :label="$t('common.enabled')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle v-model="state.system.bannerMessageEnabled">
+                                    <USwitch v-model="state.system.bannerMessageEnabled">
                                         <span class="sr-only">
                                             {{ $t('common.enabled') }}
                                         </span>
-                                    </UToggle>
-                                </UFormGroup>
+                                    </USwitch>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="system.bannerMessage.title"
                                     :label="$t('common.message')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
                                     <TiptapEditor v-model="state.system.bannerMessage.title" />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup
+                                <UFormField
                                     name="system.bannerMessage.expiresAt"
                                     :label="$t('common.expires_at')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -919,7 +919,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             disabledDates: [{ start: null, end: subDays(new Date(), 1) }],
                                         }"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </UDashboardSection>
                         </UDashboardPanelContent>
                     </template>

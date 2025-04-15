@@ -50,7 +50,7 @@ const links = [
             <UDashboardNavbar :title="$t('pages.jobs.title')" />
 
             <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
-                <UHorizontalNavigation :links="links" />
+                <UNavigationMenu orientation="horizontal" :items="links" />
             </UDashboardToolbar>
 
             <UDashboardPanelContent class="p-0">

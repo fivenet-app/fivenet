@@ -38,7 +38,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -88,7 +88,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UButton
-                                class="rounded px-2 py-1 text-sm font-semibold shadow-sm"
+                                class="rounded-xs shadow-2xs px-2 py-1 text-sm font-semibold"
                                 :class="unitStatusColors"
                                 :disabled="!checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                                 @click="
@@ -165,7 +165,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                 {{ $t('common.member', 0) }}
                             </span>
                             <div v-else class="rounded-md bg-neutral-100 dark:bg-base-900">
-                                <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">
+                                <ul role="list" class="divide-y divide-neutral-100 text-sm font-medium dark:divide-neutral-800">
                                     <li
                                         v-for="user in unit.users"
                                         :key="user.userId"
@@ -182,7 +182,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                 </ul>
                             </div>
 
-                            <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
+                            <span class="shadow-2xs isolate mt-2 inline-flex rounded-md">
                                 <UButton
                                     v-if="can('CentrumService.TakeControl').value"
                                     icon="i-mdi-pencil"
@@ -219,7 +219,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
             </div>
 
             <template #footer>
-                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

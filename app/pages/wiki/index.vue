@@ -77,7 +77,7 @@ watch(pages, async () => {
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar class="!flex lg:!hidden">
+            <UDashboardToolbar class="flex! lg:hidden!">
                 <template #default>
                     <PageSearch />
                 </template>
