@@ -4,10 +4,9 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 export default defineNuxtConfig({
     telemetry: false,
     ssr: false,
-    extends: [process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'],
 
     modules: [
-        '@nuxt/ui',
+        '@nuxt/ui-pro',
         '@pinia/nuxt',
         'pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
