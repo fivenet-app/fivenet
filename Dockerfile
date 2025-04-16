@@ -53,6 +53,8 @@ RUN apk --no-cache add ca-certificates tini tzdata && \
 COPY --from=nodebuilder /app/.output/public ./.output/public
 COPY --from=gobuilder /go/src/github.com/fivenet-app/fivenet/fivenet /usr/local/bin
 
+USER 2000
+
 EXPOSE 8080/tcp 7070/tcp
 
 ENTRYPOINT ["tini", "--", "fivenet"]
