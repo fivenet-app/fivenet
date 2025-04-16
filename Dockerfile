@@ -2,11 +2,14 @@
 
 # Frontend Build
 FROM docker.io/library/node:23.11.0-alpine3.20 AS nodebuilder
+
 ARG NUXT_UI_PRO_LICENSE
+
 WORKDIR /app
+
 COPY . ./
-RUN rm -rf ./.nuxt/ && \
-    find ./public/images/livemap/ \
+
+RUN find ./public/images/livemap/ \
         ! -path '*/tiles*' -and ! -path './public/images/livemap/' \
         -exec rm -rf {} + && \
     apk add --no-cache git && \
@@ -17,17 +20,36 @@ RUN rm -rf ./.nuxt/ && \
 
 # Backend Build
 FROM docker.io/library/golang:1.24.2 AS gobuilder
+
 WORKDIR /go/src/github.com/fivenet-app/fivenet/
+
 COPY . ./
+
 RUN apt-get update && \
     apt-get install -y git && \
     make build-go
 
 # Final Image
 FROM docker.io/library/alpine:3.21.3
+
 WORKDIR /app
+
+## Install required packages and create a non-root user
 RUN apk --no-cache add ca-certificates tini tzdata && \
+    addgroup \
+        --gid 2000 \
+        fivenet && \
+    adduser \
+        --uid 2000 \
+        --disabled-password \
+        --gecos "" \
+        --home "$(pwd)" \
+        --ingroup fivenet \
+        --no-create-home \
+        fivenet && \
     mkdir -p ./.output/public
+
+## Copy built files from the builder stages
 COPY --from=nodebuilder /app/.output/public ./.output/public
 COPY --from=gobuilder /go/src/github.com/fivenet-app/fivenet/fivenet /usr/local/bin
 
