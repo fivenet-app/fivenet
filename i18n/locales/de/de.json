@@ -1648,6 +1648,10 @@
                     "title": "Sie sind in keiner Einheit",
                     "content": "Bitte treten sie einer Einheit bei!"
                 }
+            },
+            "disabled": {
+                "title": "Leitstelle ist deaktiviert!",
+                "content": "Ihre Leitstelle ist nicht aktiviert, bitte kontaktieren Sie Ihre Fraktionsleitung."
             }
         },
         "components": {
