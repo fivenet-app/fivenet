@@ -24,6 +24,12 @@ sed \
     --expression 's~"version": "[0-9\.]+"~"version": "'"${VERSION}"'"~' \
         ./package.json
 
+sed \
+    --in-place \
+    --regexp-extended \
+    --expression 's~"version": "[0-9\.-]+"~"version": "'"${VERSION}-0"'"~' \
+        ./gen/ts/package.json
+
 git add --all
 
 git commit \
@@ -32,8 +38,8 @@ git commit \
     --message "version: bump to v${VERSION}"
 
 git push
-echo "Pushing the version bump commit and sleeping 60 seconds before tagging"
-sleep 60
+echo "Pushing the version bump commit and sleeping 1 second before tagging"
+sleep 1
 
 git tag "v${VERSION}"
 git push --tags
