@@ -293,7 +293,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </UDashboardNavbar>
 
-        <UDashboardPanelContent class="p-0">
+        <UDashboardPanelContent class="p-0 sm:pb-0">
             <UTabs
                 v-model="selectedTab"
                 :items="items"

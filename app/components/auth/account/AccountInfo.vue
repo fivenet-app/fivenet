@@ -85,7 +85,7 @@ const selectedTab = computed({
         </UDashboardPanelContent>
     </template>
     <template v-else>
-        <UDashboardPanelContent class="p-0">
+        <UDashboardPanelContent class="p-0 sm:pb-0">
             <DataPendingBlock
                 v-if="loading"
                 :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"

@@ -349,7 +349,7 @@ defineShortcuts({
         </UForm>
     </UDashboardToolbar>
 
-    <UDashboardPanelContent class="p-0">
+    <UDashboardPanelContent class="p-0 sm:pb-0">
         <DataErrorBlock
             v-if="error"
             :title="$t('common.unable_to_load', [$t('common.document', 2)])"

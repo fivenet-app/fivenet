@@ -251,7 +251,7 @@ const accordionItems = computed(() =>
             </template>
         </UDashboardToolbar>
 
-        <UDashboardPanelContent class="p-0">
+        <UDashboardPanelContent class="p-0 sm:pb-0">
             <UCard>
                 <template #header>
                     <div class="mb-4">

@@ -146,7 +146,7 @@ const input = useTemplateRef('input');
         </UForm>
     </UDashboardToolbar>
 
-    <UDashboardPanelContent class="p-0">
+    <UDashboardPanelContent class="p-0 sm:pb-0">
         <HomePage v-if="tab?.domain === urlHomePage || tab?.domain === ''" v-model="tab" />
         <template v-else-if="tab?.domain && localPages[tab.domain]">
             <component :is="localPages[tab.domain]" v-model="tab" />

@@ -66,7 +66,7 @@ watch(tab, () => updateQuery(), { deep: true });
                 </UHorizontalNavigation>
             </UDashboardToolbar>
 
-            <UDashboardPanelContent class="p-0">
+            <UDashboardPanelContent class="p-0 sm:pb-0">
                 <InternetTab v-model="tab" />
             </UDashboardPanelContent>
         </UDashboardPanel>

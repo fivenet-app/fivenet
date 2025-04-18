@@ -100,7 +100,7 @@ const accordionItems = computed(() =>
         </template>
     </UDashboardNavbar>
 
-    <UDashboardPanelContent class="p-0">
+    <UDashboardPanelContent class="p-0 sm:pb-0">
         <UPage class="px-8 py-2 pt-4">
             <template #left>
                 <slot name="left" />

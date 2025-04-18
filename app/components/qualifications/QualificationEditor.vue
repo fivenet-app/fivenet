@@ -368,7 +368,7 @@ const selectedTab = computed({
             </template>
         </UDashboardNavbar>
 
-        <UDashboardPanelContent class="p-0">
+        <UDashboardPanelContent class="p-0 sm:pb-0">
             <UTabs
                 v-model="selectedTab"
                 :items="items"

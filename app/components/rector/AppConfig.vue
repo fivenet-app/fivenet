@@ -356,7 +356,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </UDashboardNavbar>
 
-        <UDashboardPanelContent class="p-0">
+        <UDashboardPanelContent class="p-0 sm:pb-0">
             <div v-if="loading" class="space-y-1 px-4">
                 <USkeleton class="mb-6 h-11 w-full" />
                 <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />

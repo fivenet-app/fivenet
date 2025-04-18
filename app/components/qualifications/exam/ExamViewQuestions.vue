@@ -253,7 +253,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </template>
     </UDashboardToolbar>
 
-    <UDashboardPanelContent class="p-0">
+    <UDashboardPanelContent class="p-0 sm:pb-0">
         <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard :ui="{ rounded: '' }">
                 <UContainer>

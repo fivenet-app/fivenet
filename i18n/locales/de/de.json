@@ -2283,9 +2283,6 @@
         },
         "QualificationsService": {
             "category": "Qualifizierungen",
-            "CreateOrUpdateQualificationRequest": {
-                "description": "Erstellen und aktualisieren von Qualifizierungsanfragen"
-            },
             "ListQualifications": {
                 "key": "Auflisten von Qualifizierungen",
                 "description": "Auflisten verfügbarer Qualifizierungen"
@@ -2341,6 +2338,14 @@
         },
         "CalendarService": {
             "category": "Kalender",
+            "DeleteCalendar": {
+                "key": "Löschen von Kalendern",
+                "description": "Löschen von Kalendern."
+            },
+            "DeleteCalendarEntry": {
+                "key": "Löschen von Kalendereinträgen",
+                "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
+            },
             "CreateCalendar": {
                 "key": "Erstellen von Kalendern",
                 "description": "Verwalten von Kalendern.",
@@ -2351,18 +2356,6 @@
                 "attrs_types": {
                     "Fields": "Zugriff Fraktionseigene Kalender zu erstellen"
                 }
-            },
-            "DeleteCalendar": {
-                "key": "Löschen von Kalendern",
-                "description": "Löschen von Kalendern."
-            },
-            "CreateOrUpdateCalendarEntry": {
-                "key": "Erstellen und aktualisieren ",
-                "description": "Erstellen und aktualisieren von Kalendereinträgen (teilen von Einträgen benötigt Teilen-Zugriff und erstellen Editieren-Zugriff.)"
-            },
-            "DeleteCalendarEntry": {
-                "key": "Löschen von Kalendereinträgen",
-                "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
             }
         },
         "WikiService": {

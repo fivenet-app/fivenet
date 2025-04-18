@@ -128,7 +128,7 @@ const contentAccessTypes: AccessType[] = [
         </template>
     </UDashboardNavbar>
 
-    <UDashboardPanelContent class="p-0">
+    <UDashboardPanelContent class="p-0 sm:pb-0">
         <UContainer class="w-full">
             <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template', 2)])" />
             <DataErrorBlock

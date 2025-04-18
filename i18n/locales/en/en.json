@@ -2283,9 +2283,6 @@
         },
         "QualificationsService": {
             "category": "Qualifications",
-            "CreateOrUpdateQualificationRequest": {
-                "description": "Create or Update Qualification Request"
-            },
             "ListQualifications": {
                 "key": "List Qualifications",
                 "description": "List available qualifications"
@@ -2355,10 +2352,6 @@
             "DeleteCalendar": {
                 "key": "Delete calendars",
                 "description": "Delete calendars"
-            },
-            "CreateOrUpdateCalendarEntry": {
-                "key": "Create or update calendar entries",
-                "description": "Create or update calendar entries (sharing requires share access and creating requires edit access.)"
             },
             "DeleteCalendarEntry": {
                 "key": "Delete Calendar Entries",
