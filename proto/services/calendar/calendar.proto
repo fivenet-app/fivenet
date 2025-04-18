@@ -32,11 +32,19 @@ message GetCalendarResponse {
   resources.calendar.Calendar calendar = 1;
 }
 
-message CreateOrUpdateCalendarRequest {
+message CreateCalendarRequest {
   resources.calendar.Calendar calendar = 1 [(validate.rules).message.required = true];
 }
 
-message CreateOrUpdateCalendarResponse {
+message CreateCalendarResponse {
+  resources.calendar.Calendar calendar = 1;
+}
+
+message UpdateCalendarRequest {
+  resources.calendar.Calendar calendar = 1 [(validate.rules).message.required = true];
+}
+
+message UpdateCalendarResponse {
   resources.calendar.Calendar calendar = 1;
 }
 
@@ -149,8 +157,10 @@ service CalendarService {
   // @perm: Name=Any
   rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse);
   // @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
-  rpc CreateOrUpdateCalendar(CreateOrUpdateCalendarRequest) returns (CreateOrUpdateCalendarResponse);
-  // @perm
+  rpc CreateCalendar(CreateCalendarRequest) returns (CreateCalendarResponse);
+  // @perm: Name=Any
+  rpc UpdateCalendar(UpdateCalendarRequest) returns (UpdateCalendarResponse);
+  // @perm: Name=Any
   rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);
 
   // @perm: Name=Any
@@ -159,11 +169,11 @@ service CalendarService {
   rpc GetUpcomingEntries(GetUpcomingEntriesRequest) returns (GetUpcomingEntriesResponse);
   // @perm: Name=Any
   rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse);
-  // @perm
+  // @perm: Name=Any
   rpc CreateOrUpdateCalendarEntry(CreateOrUpdateCalendarEntryRequest) returns (CreateOrUpdateCalendarEntryResponse);
-  // @perm
+  // @perm: Name=Any
   rpc DeleteCalendarEntry(DeleteCalendarEntryRequest) returns (DeleteCalendarEntryResponse);
-  // @perm: Name=CreateOrUpdateCalendarEntry
+  // @perm: Name=Any
   rpc ShareCalendarEntry(ShareCalendarEntryRequest) returns (ShareCalendarEntryResponse);
 
   // @perm: Name=Any

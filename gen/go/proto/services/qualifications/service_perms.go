@@ -12,9 +12,12 @@ import (
 var PermsRemap = map[string]string{
 	// Service: QualificationsService
 	"QualificationsService/CreateOrUpdateQualificationRequest": "QualificationsService/ListQualifications",
+	"QualificationsService/CreateOrUpdateQualificationResult":  "QualificationsService/ListQualifications",
+	"QualificationsService/DeleteQualificationReq":             "QualificationsService/ListQualifications",
+	"QualificationsService/DeleteQualificationResult":          "QualificationsService/ListQualifications",
 	"QualificationsService/GetExamInfo":                        "QualificationsService/ListQualifications",
 	"QualificationsService/GetQualification":                   "QualificationsService/ListQualifications",
-	"QualificationsService/GetUserExam":                        "QualificationsService/CreateOrUpdateQualificationResult",
+	"QualificationsService/GetUserExam":                        "QualificationsService/ListQualifications",
 	"QualificationsService/ListQualificationRequests":          "QualificationsService/ListQualifications",
 	"QualificationsService/ListQualificationsResults":          "QualificationsService/ListQualifications",
 	"QualificationsService/SubmitExam":                         "QualificationsService/ListQualifications",
@@ -27,11 +30,6 @@ func init() {
 		// Service: QualificationsService
 		{
 			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceCreateOrUpdateQualificationResultPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceCreateQualificationPerm,
 			Attrs: []perms.Attr{
 				{
@@ -40,6 +38,7 @@ func init() {
 					ValidValues: []string{"Public"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,
@@ -51,21 +50,13 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceDeleteQualificationReqPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceDeleteQualificationResultPerm,
-			Attrs:    []perms.Attr{},
+			Order: 0,
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceListQualificationsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,
@@ -77,6 +68,7 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
+			Order: 0,
 		},
 	})
 }

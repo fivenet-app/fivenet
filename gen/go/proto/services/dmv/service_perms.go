@@ -16,6 +16,7 @@ func init() {
 			Category: permkeys.DMVServicePerm,
 			Name:     permkeys.DMVServiceListVehiclesPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 	})
 }

@@ -31,7 +31,7 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
-const { activeCalendarIds, currentDate, view, calendars, entries } = storeToRefs(calendarStore);
+const { activeCalendarIds, currentDate, view, calendars, entries, hasEditAccessToCalendar } = storeToRefs(calendarStore);
 
 const calRef = ref<InstanceType<typeof MonthCalendarClient> | null>(null);
 
@@ -278,14 +278,11 @@ const isOpen = ref(false);
             <UDashboardNavbar :title="$t('common.calendar')">
                 <template #right>
                     <UButtonGroup
-                        v-if="
-                            can('CalendarService.CreateOrUpdateCalendarEntry').value ||
-                            can('CalendarService.CreateOrUpdateCalendar').value
-                        "
+                        v-if="can('CalendarService.CreateCalendar').value || hasEditAccessToCalendar"
                         class="inline-flex w-full xl:hidden"
                     >
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendar').value"
+                            v-if="can('CalendarService.CreateCalendar').value"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
@@ -296,7 +293,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry').value && calendars.length > 0"
+                            v-if="hasEditAccessToCalendar"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
@@ -549,14 +546,11 @@ const isOpen = ref(false);
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup
-                        v-if="
-                            can('CalendarService.CreateOrUpdateCalendarEntry').value ||
-                            can('CalendarService.CreateOrUpdateCalendar').value
-                        "
+                        v-if="can('CalendarService.CreateCalendar').value || hasEditAccessToCalendar"
                         class="inline-flex w-full"
                     >
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendar').value"
+                            v-if="can('CalendarService.CreateCalendar').value"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
@@ -567,7 +561,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry').value"
+                            v-if="hasEditAccessToCalendar"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"

@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -186,7 +187,7 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 
 	split := strings.Split(comment, ";")
 
-	for i := 0; i < len(split); i++ {
+	for i := range split {
 		k, v, _ := strings.Cut(split[i], "=")
 		if v == "" {
 			continue
@@ -195,9 +196,17 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 		switch strings.ToLower(k) {
 		case "name":
 			perm.Name = v
-			continue
+
+		case "order":
+			order, err := strconv.ParseInt(v, 10, 32)
+			if err != nil {
+				return nil, err
+			}
+
+			perm.Order = int32(order)
+
 		case "attrs":
-			for _, v := range strings.Split(v, "|") {
+			for v := range strings.SplitSeq(v, "|") {
 				attrSplit := strings.Split(v, "/")
 				if len(attrSplit) <= 1 {
 					p.Fail("Invalid attrs value found: ", v)
@@ -217,7 +226,6 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 					Valid: validValue,
 				})
 			}
-			continue
 		}
 	}
 
@@ -267,6 +275,7 @@ func init() {
                 },
             {{- end }}
             },
+            Order: {{ $perm.Order }},
 		},
 		{{ end }}
 	{{- end }}
@@ -306,6 +315,7 @@ const (
 type Perm struct {
 	Name  string
 	Attrs []Attr
+	Order int32
 }
 
 type Attr struct {

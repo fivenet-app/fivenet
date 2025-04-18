@@ -54,13 +54,13 @@ type QualificationsServiceClient interface {
 	ListQualificationRequests(ctx context.Context, in *ListQualificationRequestsRequest, opts ...grpc.CallOption) (*ListQualificationRequestsResponse, error)
 	// @perm: Name=ListQualifications
 	CreateOrUpdateQualificationRequest(ctx context.Context, in *CreateOrUpdateQualificationRequestRequest, opts ...grpc.CallOption) (*CreateOrUpdateQualificationRequestResponse, error)
-	// @perm
+	// @perm: Name=ListQualifications
 	DeleteQualificationReq(ctx context.Context, in *DeleteQualificationReqRequest, opts ...grpc.CallOption) (*DeleteQualificationReqResponse, error)
 	// @perm: Name=ListQualifications
 	ListQualificationsResults(ctx context.Context, in *ListQualificationsResultsRequest, opts ...grpc.CallOption) (*ListQualificationsResultsResponse, error)
-	// @perm
+	// @perm: Name=ListQualifications
 	CreateOrUpdateQualificationResult(ctx context.Context, in *CreateOrUpdateQualificationResultRequest, opts ...grpc.CallOption) (*CreateOrUpdateQualificationResultResponse, error)
-	// @perm
+	// @perm: Name=ListQualifications
 	DeleteQualificationResult(ctx context.Context, in *DeleteQualificationResultRequest, opts ...grpc.CallOption) (*DeleteQualificationResultResponse, error)
 	// @perm: Name=ListQualifications
 	GetExamInfo(ctx context.Context, in *GetExamInfoRequest, opts ...grpc.CallOption) (*GetExamInfoResponse, error)
@@ -68,7 +68,7 @@ type QualificationsServiceClient interface {
 	TakeExam(ctx context.Context, in *TakeExamRequest, opts ...grpc.CallOption) (*TakeExamResponse, error)
 	// @perm: Name=ListQualifications
 	SubmitExam(ctx context.Context, in *SubmitExamRequest, opts ...grpc.CallOption) (*SubmitExamResponse, error)
-	// @perm: Name=CreateOrUpdateQualificationResult
+	// @perm: Name=ListQualifications
 	GetUserExam(ctx context.Context, in *GetUserExamRequest, opts ...grpc.CallOption) (*GetUserExamResponse, error)
 }
 
@@ -248,13 +248,13 @@ type QualificationsServiceServer interface {
 	ListQualificationRequests(context.Context, *ListQualificationRequestsRequest) (*ListQualificationRequestsResponse, error)
 	// @perm: Name=ListQualifications
 	CreateOrUpdateQualificationRequest(context.Context, *CreateOrUpdateQualificationRequestRequest) (*CreateOrUpdateQualificationRequestResponse, error)
-	// @perm
+	// @perm: Name=ListQualifications
 	DeleteQualificationReq(context.Context, *DeleteQualificationReqRequest) (*DeleteQualificationReqResponse, error)
 	// @perm: Name=ListQualifications
 	ListQualificationsResults(context.Context, *ListQualificationsResultsRequest) (*ListQualificationsResultsResponse, error)
-	// @perm
+	// @perm: Name=ListQualifications
 	CreateOrUpdateQualificationResult(context.Context, *CreateOrUpdateQualificationResultRequest) (*CreateOrUpdateQualificationResultResponse, error)
-	// @perm
+	// @perm: Name=ListQualifications
 	DeleteQualificationResult(context.Context, *DeleteQualificationResultRequest) (*DeleteQualificationResultResponse, error)
 	// @perm: Name=ListQualifications
 	GetExamInfo(context.Context, *GetExamInfoRequest) (*GetExamInfoResponse, error)
@@ -262,7 +262,7 @@ type QualificationsServiceServer interface {
 	TakeExam(context.Context, *TakeExamRequest) (*TakeExamResponse, error)
 	// @perm: Name=ListQualifications
 	SubmitExam(context.Context, *SubmitExamRequest) (*SubmitExamResponse, error)
-	// @perm: Name=CreateOrUpdateQualificationResult
+	// @perm: Name=ListQualifications
 	GetUserExam(context.Context, *GetUserExamRequest) (*GetUserExamResponse, error)
 	mustEmbedUnimplementedQualificationsServiceServer()
 }

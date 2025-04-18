@@ -100,7 +100,7 @@ type DocStoreServiceClient interface {
 	RemoveDocumentRelation(ctx context.Context, in *RemoveDocumentRelationRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationResponse, error)
 	// @perm: Name=ListDocuments
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
-	// @perm
+	// @perm: Name=ListDocuments
 	PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error)
 	// @perm: Name=PostComment
 	EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error)
@@ -558,7 +558,7 @@ type DocStoreServiceServer interface {
 	RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error)
 	// @perm: Name=ListDocuments
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
-	// @perm
+	// @perm: Name=ListDocuments
 	PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error)
 	// @perm: Name=PostComment
 	EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error)

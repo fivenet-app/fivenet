@@ -19,6 +19,7 @@ var PermsRemap = map[string]string{
 	"DocStoreService/GetDocumentRelations":    "DocStoreService/ListDocuments",
 	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
 	"DocStoreService/ListDocumentPins":        "DocStoreService/ListDocuments",
+	"DocStoreService/PostComment":             "DocStoreService/ListDocuments",
 	"DocStoreService/RemoveDocumentReference": "DocStoreService/AddDocumentReference",
 	"DocStoreService/RemoveDocumentRelation":  "DocStoreService/AddDocumentRelation",
 	"DocStoreService/SetDocumentAccess":       "DocStoreService/CreateDocument",
@@ -35,11 +36,13 @@ func init() {
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceAddDocumentReferencePerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceAddDocumentRelationPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
@@ -51,16 +54,19 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceCreateCategoryPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceCreateDocumentPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
@@ -72,16 +78,19 @@ func init() {
 					ValidValues: []string{"Access", "Closure", "Update", "Deletion", "OwnerChange"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceCreateTemplatePerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceDeleteCategoryPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
@@ -93,6 +102,7 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
@@ -104,56 +114,67 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceDeleteDocumentReqPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceDeleteTemplatePerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListCategoriesPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListDocumentActivityPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListDocumentReqsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListDocumentsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListTemplatesPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListUserDocumentsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServicePostCommentPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceSetDocumentReminderPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
@@ -165,11 +186,13 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceToggleDocumentPinPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
@@ -181,6 +204,7 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
+			Order: 0,
 		},
 	})
 }

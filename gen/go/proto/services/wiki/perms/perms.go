@@ -15,5 +15,4 @@ const (
 	WikiServiceDeletePagePerm            perms.Name = "DeletePage"
 	WikiServiceListPageActivityPerm      perms.Name = "ListPageActivity"
 	WikiServiceListPagesPerm             perms.Name = "ListPages"
-	WikiServiceUpdatePagePerm            perms.Name = "UpdatePage"
 )

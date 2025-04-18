@@ -200,7 +200,7 @@ export interface IDocStoreServiceClient {
      */
     getComments(input: GetCommentsRequest, options?: RpcOptions): UnaryCall<GetCommentsRequest, GetCommentsResponse>;
     /**
-     * @perm
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: PostComment(services.docstore.PostCommentRequest) returns (services.docstore.PostCommentResponse);
      */
@@ -489,7 +489,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<GetCommentsRequest, GetCommentsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: PostComment(services.docstore.PostCommentRequest) returns (services.docstore.PostCommentResponse);
      */

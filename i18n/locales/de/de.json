@@ -593,7 +593,42 @@
                 "previous": "Vorherige",
                 "next": "Nächste",
                 "replace": "Ersetzen",
-                "replace_all": "Alles ersetzen"
+                "replace_all": "Alles ersetzen",
+                "bold": "Fett",
+                "italic": "Kursiv",
+                "underline": "Unterstrichen",
+                "strike": "Durchgestrichen",
+                "superscript": "Hochgestellt",
+                "subscript": "Tiefgestellt",
+                "code": "Code",
+                "align_left": "Links ausrichten",
+                "align_center": "Zentriert ausrichten",
+                "align_right": "Rechts ausrichten",
+                "align_justify": "Blocksatz",
+                "font_family": "Schriftart",
+                "font_color": "Schriftfarbe",
+                "paragraph": "Absatz",
+                "header_1": "Überschrift 1",
+                "header_2": "Überschrift 2",
+                "header_3": "Überschrift 3",
+                "header_4": "Überschrift 4",
+                "header_5": "Überschrift 5",
+                "header_6": "Überschrift 6",
+                "highlight": "Hervorheben",
+                "highlight_color": "Hervorhebungsfarbe",
+                "bullet_list": "Aufzählungsliste",
+                "ordered_list": "Nummerierte Liste",
+                "task_list": "Aufgabenliste",
+                "image": "Bild",
+                "table": "Tabelle",
+                "link": "Link",
+                "code_block": "Codeblock",
+                "block_quote": "Blockzitat",
+                "horizontal_rule": "Horizontale Linie",
+                "search_and_replace": "Suchen und Ersetzen",
+                "undo": "Rückgängig",
+                "redo": "Wiederholen",
+                "source_code": "Quellcode"
             }
         },
         "clipboard": {
@@ -1969,10 +2004,6 @@
                     "Access": "Zugriff auf fraktionseigene Dokumente"
                 }
             },
-            "PostComment": {
-                "key": "Kommentar zum Dokument posten",
-                "description": "Dokumentkommentare posten."
-            },
             "CreateCategory": {
                 "key": "Dokumentenkategorie erstellen",
                 "description": "Dokumentenkategorien erstellen/ aktualisieren."
@@ -2303,27 +2334,15 @@
                 "key": "Auflisten von Qualifizierungsergebnissen",
                 "description": "Auflisten von Qualifizierungsergebnissen"
             },
-            "CreateOrUpdateQualificationResult": {
-                "key": "Erstellen und aktualisieren von Qualifizierungsergebnissen",
-                "description": "Erstellen und aktualisieren von Qualifizierungsergebnissen"
-            },
-            "DeleteQualificationResult": {
-                "key": "Löschen von Qualifizierungsergebnissen",
-                "description": "Löschen von Qualifizierungsergebnissen"
-            },
             "ListQualificationRequests": {
                 "key": "Auflisten von Qualifizierungsanfragen",
                 "description": "Auflisten von Qualifizierungsanfragen"
-            },
-            "DeleteQualificationReq": {
-                "key": "Löschen von Qualifizierungsanfragen",
-                "description": "Löschen von Qualifizierungsanfragen"
             }
         },
         "CalendarService": {
             "category": "Kalender",
-            "CreateOrUpdateCalendar": {
-                "key": "Erstellen und aktualisieren von Kalendern",
+            "CreateCalendar": {
+                "key": "Erstellen von Kalendern",
                 "description": "Verwalten von Kalendern.",
                 "attrs": {
                     "Job": "Kalender für Nutzer seinen Beruf",
@@ -2361,10 +2380,6 @@
                 "attrs_types": {
                     "Fields": "Zugriff auf spezielle Freigaben von Seiten"
                 }
-            },
-            "UpdatePage": {
-                "key": "Seiten aktualisieren",
-                "description": "Lexikon Seiten aktualisieren können."
             },
             "DeletePage": {
                 "key": "Seiten löschen",

@@ -45,16 +45,19 @@ func init() {
 					ValidValues: []string{"Job"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.MailerServicePerm,
 			Name:     permkeys.MailerServiceDeleteEmailPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.MailerServicePerm,
 			Name:     permkeys.MailerServiceListEmailsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 	})
 }

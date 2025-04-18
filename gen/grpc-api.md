@@ -141,16 +141,6 @@
   
     - [DocActivityType](#resources-documents-DocActivityType)
   
-- [resources/documents/templates.proto](#resources_documents_templates-proto)
-    - [ObjectSpecs](#resources-documents-ObjectSpecs)
-    - [Template](#resources-documents-Template)
-    - [TemplateData](#resources-documents-TemplateData)
-    - [TemplateJobAccess](#resources-documents-TemplateJobAccess)
-    - [TemplateRequirements](#resources-documents-TemplateRequirements)
-    - [TemplateSchema](#resources-documents-TemplateSchema)
-    - [TemplateShort](#resources-documents-TemplateShort)
-    - [TemplateUserAccess](#resources-documents-TemplateUserAccess)
-  
 - [resources/documents/workflow.proto](#resources_documents_workflow-proto)
     - [AutoCloseSettings](#resources-documents-AutoCloseSettings)
     - [Reminder](#resources-documents-Reminder)
@@ -164,6 +154,16 @@
     - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
   
     - [AccessLevel](#resources-documents-AccessLevel)
+  
+- [resources/documents/templates.proto](#resources_documents_templates-proto)
+    - [ObjectSpecs](#resources-documents-ObjectSpecs)
+    - [Template](#resources-documents-Template)
+    - [TemplateData](#resources-documents-TemplateData)
+    - [TemplateJobAccess](#resources-documents-TemplateJobAccess)
+    - [TemplateRequirements](#resources-documents-TemplateRequirements)
+    - [TemplateSchema](#resources-documents-TemplateSchema)
+    - [TemplateShort](#resources-documents-TemplateShort)
+    - [TemplateUserAccess](#resources-documents-TemplateUserAccess)
   
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
@@ -238,6 +238,9 @@
     - [AttributeValues](#resources-permissions-AttributeValues)
     - [JobGradeList](#resources-permissions-JobGradeList)
     - [JobGradeList.JobsEntry](#resources-permissions-JobGradeList-JobsEntry)
+    - [JobGradeMap](#resources-permissions-JobGradeMap)
+    - [JobGradeMap.JobsEntry](#resources-permissions-JobGradeMap-JobsEntry)
+    - [JobGrades](#resources-permissions-JobGrades)
     - [Permission](#resources-permissions-Permission)
     - [RawRoleAttribute](#resources-permissions-RawRoleAttribute)
     - [Role](#resources-permissions-Role)
@@ -267,13 +270,6 @@
     - [ExamResponses](#resources-qualifications-ExamResponses)
     - [ExamUser](#resources-qualifications-ExamUser)
   
-- [resources/qualifications/access.proto](#resources_qualifications_access-proto)
-    - [QualificationAccess](#resources-qualifications-QualificationAccess)
-    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
-    - [QualificationUserAccess](#resources-qualifications-QualificationUserAccess)
-  
-    - [AccessLevel](#resources-qualifications-AccessLevel)
-  
 - [resources/qualifications/qualifications.proto](#resources_qualifications_qualifications-proto)
     - [Qualification](#resources-qualifications-Qualification)
     - [QualificationDiscordSettings](#resources-qualifications-QualificationDiscordSettings)
@@ -286,6 +282,13 @@
     - [QualificationExamMode](#resources-qualifications-QualificationExamMode)
     - [RequestStatus](#resources-qualifications-RequestStatus)
     - [ResultStatus](#resources-qualifications-ResultStatus)
+  
+- [resources/qualifications/access.proto](#resources_qualifications_access-proto)
+    - [QualificationAccess](#resources-qualifications-QualificationAccess)
+    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
+    - [QualificationUserAccess](#resources-qualifications-QualificationUserAccess)
+  
+    - [AccessLevel](#resources-qualifications-AccessLevel)
   
 - [resources/rector/audit.proto](#resources_rector_audit-proto)
     - [AuditEntry](#resources-rector-AuditEntry)
@@ -317,10 +320,6 @@
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
     - [Job](#resources-users-Job)
     - [JobGrade](#resources-users-JobGrade)
-  
-- [resources/users/licenses.proto](#resources_users_licenses-proto)
-    - [License](#resources-users-License)
-    - [UserLicenses](#resources-users-UserLicenses)
   
 - [resources/users/props.proto](#resources_users_props-proto)
     - [UserProps](#resources-users-UserProps)
@@ -365,6 +364,10 @@
 - [resources/users/labels.proto](#resources_users_labels-proto)
     - [CitizenLabel](#resources-users-CitizenLabel)
     - [CitizenLabels](#resources-users-CitizenLabels)
+  
+- [resources/users/licenses.proto](#resources_users_licenses-proto)
+    - [License](#resources-users-License)
+    - [UserLicenses](#resources-users-UserLicenses)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -843,10 +846,10 @@
     - [RectorLawsService](#services-rector-RectorLawsService)
   
 - [services/calendar/calendar.proto](#services_calendar_calendar-proto)
+    - [CreateCalendarRequest](#services-calendar-CreateCalendarRequest)
+    - [CreateCalendarResponse](#services-calendar-CreateCalendarResponse)
     - [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest)
     - [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse)
-    - [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest)
-    - [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse)
     - [DeleteCalendarEntryRequest](#services-calendar-DeleteCalendarEntryRequest)
     - [DeleteCalendarEntryResponse](#services-calendar-DeleteCalendarEntryResponse)
     - [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest)
@@ -871,6 +874,8 @@
     - [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse)
     - [SubscribeToCalendarRequest](#services-calendar-SubscribeToCalendarRequest)
     - [SubscribeToCalendarResponse](#services-calendar-SubscribeToCalendarResponse)
+    - [UpdateCalendarRequest](#services-calendar-UpdateCalendarRequest)
+    - [UpdateCalendarResponse](#services-calendar-UpdateCalendarResponse)
   
     - [CalendarService](#services-calendar-CalendarService)
   
@@ -2881,180 +2886,6 @@ Wrapped translated message for the client @dbscanner: json
 
 
 
-<a name="resources_documents_templates-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/templates.proto
-
-
-
-<a name="resources-documents-ObjectSpecs"></a>
-
-### ObjectSpecs
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `required` | [bool](#bool) | optional |  |
-| `min` | [int32](#int32) | optional |  |
-| `max` | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-Template"></a>
-
-### Template
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `category` | [Category](#resources-documents-Category) |  | @gotags: alias:"category" |
-| `weight` | [uint32](#uint32) |  |  |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) |  | @sanitize |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-| `content_title` | [string](#string) |  | @gotags: alias:"content_title" |
-| `content` | [string](#string) |  | @gotags: alias:"content" |
-| `state` | [string](#string) |  | @gotags: alias:"state" |
-| `schema` | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
-| `creator_job` | [string](#string) |  |  |
-| `creator_job_label` | [string](#string) | optional |  |
-| `job_access` | [TemplateJobAccess](#resources-documents-TemplateJobAccess) | repeated |  |
-| `content_access` | [DocumentAccess](#resources-documents-DocumentAccess) |  | @gotags: alias:"access" |
-| `workflow` | [Workflow](#resources-documents-Workflow) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateData"></a>
-
-### TemplateData
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `activeChar` | [resources.users.User](#resources-users-User) |  |  |
-| `documents` | [DocumentShort](#resources-documents-DocumentShort) | repeated |  |
-| `users` | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
-| `vehicles` | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateJobAccess"></a>
-
-### TemplateJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"template_id" |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateRequirements"></a>
-
-### TemplateRequirements
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `documents` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-| `users` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-| `vehicles` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateSchema"></a>
-
-### TemplateSchema
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `requirements` | [TemplateRequirements](#resources-documents-TemplateRequirements) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateShort"></a>
-
-### TemplateShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `category` | [Category](#resources-documents-Category) |  | @gotags: alias:"category" |
-| `weight` | [uint32](#uint32) |  |  |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) |  | @sanitize |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-| `schema` | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
-| `creator_job` | [string](#string) |  |  |
-| `creator_job_label` | [string](#string) | optional |  |
-| `workflow` | [Workflow](#resources-documents-Workflow) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateUserAccess"></a>
-
-### TemplateUserAccess
-Dummy - DO NOT USE!
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_documents_workflow-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3235,6 +3066,180 @@ Dummy - DO NOT USE!
 | `ACCESS_LEVEL_ACCESS` | 5 |  |
 | `ACCESS_LEVEL_EDIT` | 6 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_documents_templates-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/templates.proto
+
+
+
+<a name="resources-documents-ObjectSpecs"></a>
+
+### ObjectSpecs
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `required` | [bool](#bool) | optional |  |
+| `min` | [int32](#int32) | optional |  |
+| `max` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-Template"></a>
+
+### Template
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `category` | [Category](#resources-documents-Category) |  | @gotags: alias:"category" |
+| `weight` | [uint32](#uint32) |  |  |
+| `title` | [string](#string) |  | @sanitize |
+| `description` | [string](#string) |  | @sanitize |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `content_title` | [string](#string) |  | @gotags: alias:"content_title" |
+| `content` | [string](#string) |  | @gotags: alias:"content" |
+| `state` | [string](#string) |  | @gotags: alias:"state" |
+| `schema` | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
+| `creator_job` | [string](#string) |  |  |
+| `creator_job_label` | [string](#string) | optional |  |
+| `job_access` | [TemplateJobAccess](#resources-documents-TemplateJobAccess) | repeated |  |
+| `content_access` | [DocumentAccess](#resources-documents-DocumentAccess) |  | @gotags: alias:"access" |
+| `workflow` | [Workflow](#resources-documents-Workflow) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateData"></a>
+
+### TemplateData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `activeChar` | [resources.users.User](#resources-users-User) |  |  |
+| `documents` | [DocumentShort](#resources-documents-DocumentShort) | repeated |  |
+| `users` | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+| `vehicles` | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateJobAccess"></a>
+
+### TemplateJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  | @gotags: alias:"template_id" |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateRequirements"></a>
+
+### TemplateRequirements
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `documents` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+| `users` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+| `vehicles` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateSchema"></a>
+
+### TemplateSchema
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirements` | [TemplateRequirements](#resources-documents-TemplateRequirements) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateShort"></a>
+
+### TemplateShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `category` | [Category](#resources-documents-Category) |  | @gotags: alias:"category" |
+| `weight` | [uint32](#uint32) |  |  |
+| `title` | [string](#string) |  | @sanitize |
+| `description` | [string](#string) |  | @sanitize |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `schema` | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
+| `creator_job` | [string](#string) |  |  |
+| `creator_job_label` | [string](#string) | optional |  |
+| `workflow` | [Workflow](#resources-documents-Workflow) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateUserAccess"></a>
+
+### TemplateUserAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -4202,6 +4207,7 @@ Dummy - DO NOT USE!
 | `string_list` | [StringList](#resources-permissions-StringList) |  |  |
 | `job_list` | [StringList](#resources-permissions-StringList) |  |  |
 | `job_grade_list` | [JobGradeList](#resources-permissions-JobGradeList) |  |  |
+| `job_grade_map` | [JobGradeMap](#resources-permissions-JobGradeMap) |  |  |
 
 
 
@@ -4239,6 +4245,52 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources-permissions-JobGradeMap"></a>
+
+### JobGradeMap
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobGradeMap.JobsEntry](#resources-permissions-JobGradeMap-JobsEntry) | repeated |  |
+
+
+
+
+
+
+<a name="resources-permissions-JobGradeMap-JobsEntry"></a>
+
+### JobGradeMap.JobsEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [JobGrades](#resources-permissions-JobGrades) |  |  |
+
+
+
+
+
+
+<a name="resources-permissions-JobGrades"></a>
+
+### JobGrades
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `grades` | [int32](#int32) | repeated |  |
+
+
+
+
+
+
 <a name="resources-permissions-Permission"></a>
 
 ### Permission
@@ -4253,6 +4305,7 @@ Dummy - DO NOT USE!
 | `name` | [string](#string) |  |  |
 | `guard_name` | [string](#string) |  |  |
 | `val` | [bool](#bool) |  |  |
+| `order` | [int32](#int32) | optional |  |
 
 
 
@@ -4704,86 +4757,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_qualifications_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/qualifications/access.proto
-
-
-
-<a name="resources-qualifications-QualificationAccess"></a>
-
-### QualificationAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationJobAccess"></a>
-
-### QualificationJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationUserAccess"></a>
-
-### QualificationUserAccess
-Dummy - DO NOT USE!
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-qualifications-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_REQUEST` | 3 |  |
-| `ACCESS_LEVEL_TAKE` | 4 |  |
-| `ACCESS_LEVEL_GRADE` | 5 |  |
-| `ACCESS_LEVEL_EDIT` | 6 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_qualifications_qualifications-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5011,6 +4984,86 @@ Dummy - DO NOT USE!
 | `RESULT_STATUS_PENDING` | 1 |  |
 | `RESULT_STATUS_FAILED` | 2 |  |
 | `RESULT_STATUS_SUCCESSFUL` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_qualifications_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/qualifications/access.proto
+
+
+
+<a name="resources-qualifications-QualificationAccess"></a>
+
+### QualificationAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationJobAccess"></a>
+
+### QualificationJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationUserAccess"></a>
+
+### QualificationUserAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-qualifications-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_REQUEST` | 3 |  |
+| `ACCESS_LEVEL_TAKE` | 4 |  |
+| `ACCESS_LEVEL_GRADE` | 5 |  |
+| `ACCESS_LEVEL_EDIT` | 6 |  |
 
 
  <!-- end enums -->
@@ -5415,54 +5468,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `job_name` | [string](#string) | optional |  |
 | `grade` | [int32](#int32) |  |  |
 | `label` | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_licenses-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/licenses.proto
-
-
-
-<a name="resources-users-License"></a>
-
-### License
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `type` | [string](#string) |  |  |
-| `label` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserLicenses"></a>
-
-### UserLicenses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `licenses` | [License](#resources-users-License) | repeated |  |
 
 
 
@@ -6124,6 +6129,54 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `list` | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_licenses-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/licenses.proto
+
+
+
+<a name="resources-users-License"></a>
+
+### License
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserLicenses"></a>
+
+### UserLicenses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `licenses` | [License](#resources-users-License) | repeated |  |
 
 
 
@@ -10461,7 +10514,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `AddDocumentRelation` | [AddDocumentRelationRequest](#services-docstore-AddDocumentRelationRequest) | [AddDocumentRelationResponse](#services-docstore-AddDocumentRelationResponse) | @perm |
 | `RemoveDocumentRelation` | [RemoveDocumentRelationRequest](#services-docstore-RemoveDocumentRelationRequest) | [RemoveDocumentRelationResponse](#services-docstore-RemoveDocumentRelationResponse) | @perm: Name=AddDocumentRelation |
 | `GetComments` | [GetCommentsRequest](#services-docstore-GetCommentsRequest) | [GetCommentsResponse](#services-docstore-GetCommentsResponse) | @perm: Name=ListDocuments |
-| `PostComment` | [PostCommentRequest](#services-docstore-PostCommentRequest) | [PostCommentResponse](#services-docstore-PostCommentResponse) | @perm |
+| `PostComment` | [PostCommentRequest](#services-docstore-PostCommentRequest) | [PostCommentResponse](#services-docstore-PostCommentResponse) | @perm: Name=ListDocuments |
 | `EditComment` | [EditCommentRequest](#services-docstore-EditCommentRequest) | [EditCommentResponse](#services-docstore-EditCommentResponse) | @perm: Name=PostComment |
 | `DeleteComment` | [DeleteCommentRequest](#services-docstore-DeleteCommentRequest) | [DeleteCommentResponse](#services-docstore-DeleteCommentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
 | `GetDocumentAccess` | [GetDocumentAccessRequest](#services-docstore-GetDocumentAccessRequest) | [GetDocumentAccessResponse](#services-docstore-GetDocumentAccessResponse) | @perm: Name=ListDocuments |
@@ -11988,14 +12041,14 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `DeleteQualification` | [DeleteQualificationRequest](#services-qualifications-DeleteQualificationRequest) | [DeleteQualificationResponse](#services-qualifications-DeleteQualificationResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
 | `ListQualificationRequests` | [ListQualificationRequestsRequest](#services-qualifications-ListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#services-qualifications-ListQualificationRequestsResponse) | @perm: Name=ListQualifications |
 | `CreateOrUpdateQualificationRequest` | [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest) | [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse) | @perm: Name=ListQualifications |
-| `DeleteQualificationReq` | [DeleteQualificationReqRequest](#services-qualifications-DeleteQualificationReqRequest) | [DeleteQualificationReqResponse](#services-qualifications-DeleteQualificationReqResponse) | @perm |
+| `DeleteQualificationReq` | [DeleteQualificationReqRequest](#services-qualifications-DeleteQualificationReqRequest) | [DeleteQualificationReqResponse](#services-qualifications-DeleteQualificationReqResponse) | @perm: Name=ListQualifications |
 | `ListQualificationsResults` | [ListQualificationsResultsRequest](#services-qualifications-ListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#services-qualifications-ListQualificationsResultsResponse) | @perm: Name=ListQualifications |
-| `CreateOrUpdateQualificationResult` | [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse) | @perm |
-| `DeleteQualificationResult` | [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse) | @perm |
+| `CreateOrUpdateQualificationResult` | [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse) | @perm: Name=ListQualifications |
+| `DeleteQualificationResult` | [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse) | @perm: Name=ListQualifications |
 | `GetExamInfo` | [GetExamInfoRequest](#services-qualifications-GetExamInfoRequest) | [GetExamInfoResponse](#services-qualifications-GetExamInfoResponse) | @perm: Name=ListQualifications |
 | `TakeExam` | [TakeExamRequest](#services-qualifications-TakeExamRequest) | [TakeExamResponse](#services-qualifications-TakeExamResponse) | @perm: Name=ListQualifications |
 | `SubmitExam` | [SubmitExamRequest](#services-qualifications-SubmitExamRequest) | [SubmitExamResponse](#services-qualifications-SubmitExamResponse) | @perm: Name=ListQualifications |
-| `GetUserExam` | [GetUserExamRequest](#services-qualifications-GetUserExamRequest) | [GetUserExamResponse](#services-qualifications-GetUserExamResponse) | @perm: Name=CreateOrUpdateQualificationResult |
+| `GetUserExam` | [GetUserExamRequest](#services-qualifications-GetUserExamRequest) | [GetUserExamResponse](#services-qualifications-GetUserExamResponse) | @perm: Name=ListQualifications |
 
  <!-- end services -->
 
@@ -12751,6 +12804,36 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-calendar-CreateCalendarRequest"></a>
+
+### CreateCalendarRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar` | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-CreateCalendarResponse"></a>
+
+### CreateCalendarResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar` | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
+
+
+
+
+
+
 <a name="services-calendar-CreateOrUpdateCalendarEntryRequest"></a>
 
 ### CreateOrUpdateCalendarEntryRequest
@@ -12776,36 +12859,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `entry` | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-CreateOrUpdateCalendarRequest"></a>
-
-### CreateOrUpdateCalendarRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `calendar` | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-CreateOrUpdateCalendarResponse"></a>
-
-### CreateOrUpdateCalendarResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `calendar` | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
 
 
 
@@ -13171,6 +13224,36 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+
+<a name="services-calendar-UpdateCalendarRequest"></a>
+
+### UpdateCalendarRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar` | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-UpdateCalendarResponse"></a>
+
+### UpdateCalendarResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `calendar` | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -13187,14 +13270,15 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----------- | ------------ | ------------- | ------------|
 | `ListCalendars` | [ListCalendarsRequest](#services-calendar-ListCalendarsRequest) | [ListCalendarsResponse](#services-calendar-ListCalendarsResponse) | @perm: Name=Any |
 | `GetCalendar` | [GetCalendarRequest](#services-calendar-GetCalendarRequest) | [GetCalendarResponse](#services-calendar-GetCalendarResponse) | @perm: Name=Any |
-| `CreateOrUpdateCalendar` | [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest) | [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse) | @perm: Attrs=Fields/StringList:[]string{"Job", "Public"} |
-| `DeleteCalendar` | [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest) | [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse) | @perm |
+| `CreateCalendar` | [CreateCalendarRequest](#services-calendar-CreateCalendarRequest) | [CreateCalendarResponse](#services-calendar-CreateCalendarResponse) | @perm: Attrs=Fields/StringList:[]string{"Job", "Public"} |
+| `UpdateCalendar` | [UpdateCalendarRequest](#services-calendar-UpdateCalendarRequest) | [UpdateCalendarResponse](#services-calendar-UpdateCalendarResponse) | @perm: Name=Any |
+| `DeleteCalendar` | [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest) | [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse) | @perm: Name=Any |
 | `ListCalendarEntries` | [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse) | @perm: Name=Any |
 | `GetUpcomingEntries` | [GetUpcomingEntriesRequest](#services-calendar-GetUpcomingEntriesRequest) | [GetUpcomingEntriesResponse](#services-calendar-GetUpcomingEntriesResponse) | @perm: Name=Any |
 | `GetCalendarEntry` | [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest) | [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse) | @perm: Name=Any |
-| `CreateOrUpdateCalendarEntry` | [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse) | @perm |
-| `DeleteCalendarEntry` | [DeleteCalendarEntryRequest](#services-calendar-DeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#services-calendar-DeleteCalendarEntryResponse) | @perm |
-| `ShareCalendarEntry` | [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse) | @perm: Name=CreateOrUpdateCalendarEntry |
+| `CreateOrUpdateCalendarEntry` | [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse) | @perm: Name=Any |
+| `DeleteCalendarEntry` | [DeleteCalendarEntryRequest](#services-calendar-DeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#services-calendar-DeleteCalendarEntryResponse) | @perm: Name=Any |
+| `ShareCalendarEntry` | [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse) | @perm: Name=Any |
 | `ListCalendarEntryRSVP` | [ListCalendarEntryRSVPRequest](#services-calendar-ListCalendarEntryRSVPRequest) | [ListCalendarEntryRSVPResponse](#services-calendar-ListCalendarEntryRSVPResponse) | @perm: Name=Any |
 | `RSVPCalendarEntry` | [RSVPCalendarEntryRequest](#services-calendar-RSVPCalendarEntryRequest) | [RSVPCalendarEntryResponse](#services-calendar-RSVPCalendarEntryResponse) | @perm: Name=Any |
 | `ListSubscriptions` | [ListSubscriptionsRequest](#services-calendar-ListSubscriptionsRequest) | [ListSubscriptionsResponse](#services-calendar-ListSubscriptionsResponse) | @perm: Name=Any |
@@ -14489,7 +14573,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ListPages` | [ListPagesRequest](#services-wiki-ListPagesRequest) | [ListPagesResponse](#services-wiki-ListPagesResponse) | @perm |
 | `GetPage` | [GetPageRequest](#services-wiki-GetPageRequest) | [GetPageResponse](#services-wiki-GetPageResponse) | @perm: Name=ListPages |
 | `CreatePage` | [CreatePageRequest](#services-wiki-CreatePageRequest) | [CreatePageResponse](#services-wiki-CreatePageResponse) | @perm: Attrs=Fields/StringList:[]string{"Public"} |
-| `UpdatePage` | [UpdatePageRequest](#services-wiki-UpdatePageRequest) | [UpdatePageResponse](#services-wiki-UpdatePageResponse) | @perm |
+| `UpdatePage` | [UpdatePageRequest](#services-wiki-UpdatePageRequest) | [UpdatePageResponse](#services-wiki-UpdatePageResponse) | @perm: Name=ListPages |
 | `DeletePage` | [DeletePageRequest](#services-wiki-DeletePageRequest) | [DeletePageResponse](#services-wiki-DeletePageResponse) | @perm |
 | `ListPageActivity` | [ListPageActivityRequest](#services-wiki-ListPageActivityRequest) | [ListPageActivityResponse](#services-wiki-ListPageActivityResponse) | @perm |
 

@@ -16,6 +16,7 @@ func init() {
 			Category: permkeys.AuthServicePerm,
 			Name:     permkeys.AuthServiceChooseCharacterPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 	})
 }

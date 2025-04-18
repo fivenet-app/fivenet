@@ -227,7 +227,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Results); i++ {
+	for i := range resp.Results {
 		if resp.Results[i].User != nil {
 			jobInfoFn(resp.Results[i].User)
 		}

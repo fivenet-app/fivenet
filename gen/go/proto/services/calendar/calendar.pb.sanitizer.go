@@ -3,6 +3,40 @@
 
 package calendar
 
+func (m *CreateCalendarRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Calendar
+	if m.Calendar != nil {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateCalendarResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Calendar
+	if m.Calendar != nil {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *CreateOrUpdateCalendarEntryRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -28,40 +62,6 @@ func (m *CreateOrUpdateCalendarEntryResponse) Sanitize() error {
 	// Field: Entry
 	if m.Entry != nil {
 		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *CreateOrUpdateCalendarRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Calendar
-	if m.Calendar != nil {
-		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *CreateOrUpdateCalendarResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Calendar
-	if m.Calendar != nil {
-		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -440,6 +440,40 @@ func (m *SubscribeToCalendarResponse) Sanitize() error {
 	// Field: Sub
 	if m.Sub != nil {
 		if v, ok := any(m.GetSub()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UpdateCalendarRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Calendar
+	if m.Calendar != nil {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UpdateCalendarResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Calendar
+	if m.Calendar != nil {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

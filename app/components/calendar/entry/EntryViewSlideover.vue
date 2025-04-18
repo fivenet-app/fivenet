@@ -41,7 +41,6 @@ const {
 } = useLazyAsyncData(`calendar-entry:${props.entryId}`, () => calendarStore.getCalendarEntry({ entryId: props.entryId }));
 
 const entry = computed(() => data.value?.entry);
-const access = computed(() => data.value?.entry?.calendar?.access);
 
 const color = computed(() => (entry.value?.calendar?.color ?? 'primary') as BadgeColor);
 
@@ -57,9 +56,9 @@ function copyLinkToClipboard(): void {
 }
 
 const canDo = computed(() => ({
-    share: checkCalendarAccess(access.value, entry.value?.creator, AccessLevel.SHARE),
-    edit: checkCalendarAccess(access.value, entry.value?.creator, AccessLevel.EDIT),
-    manage: checkCalendarAccess(access.value, entry.value?.creator, AccessLevel.MANAGE),
+    share: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.SHARE),
+    edit: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.EDIT),
+    manage: checkCalendarAccess(data.value?.entry?.calendar?.access, entry.value?.creator, AccessLevel.MANAGE),
 }));
 </script>
 
@@ -83,7 +82,7 @@ const canDo = computed(() => ({
                             <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
                             <UButton
-                                v-if="entry && can('CalendarService.CreateOrUpdateCalendarEntry').value && canDo.edit"
+                                v-if="entry && can('CalendarService.CreateCalendar').value && canDo.edit"
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-pencil"
@@ -96,7 +95,7 @@ const canDo = computed(() => ({
                             />
 
                             <UButton
-                                v-if="entry && can('CalendarService.DeleteCalendarEntry').value && canDo.manage"
+                                v-if="entry && canDo.manage"
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-trash-can"

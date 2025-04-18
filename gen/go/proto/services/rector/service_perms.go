@@ -42,36 +42,43 @@ func init() {
 			Category: permkeys.RectorServicePerm,
 			Name:     permkeys.RectorServiceCreateRolePerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.RectorServicePerm,
 			Name:     permkeys.RectorServiceDeleteRolePerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.RectorServicePerm,
 			Name:     permkeys.RectorServiceGetJobPropsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.RectorServicePerm,
 			Name:     permkeys.RectorServiceGetRolesPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.RectorServicePerm,
 			Name:     permkeys.RectorServiceSetJobPropsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.RectorServicePerm,
 			Name:     permkeys.RectorServiceUpdateRolePermsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.RectorServicePerm,
 			Name:     permkeys.RectorServiceViewAuditLogPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 	})
 }

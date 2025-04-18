@@ -11,7 +11,7 @@ import { useCalendarStore } from '~/stores/calendar';
 import { useNotificatorStore } from '~/stores/notificator';
 import { AccessLevel, type CalendarJobAccess, type CalendarUserAccess } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
+import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 
 const props = defineProps<{
     calendarId?: number;
@@ -29,8 +29,8 @@ const notifications = useNotificatorStore();
 const { maxAccessEntries } = useAppConfig();
 
 const canDo = computed(() => ({
-    privateCalendar: attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job').value,
-    publicCalendar: attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public').value,
+    privateCalendar: attr('CalendarService.CreateCalendar', 'Fields', 'Job').value,
+    publicCalendar: attr('CalendarService.CreateCalendar', 'Fields', 'Public').value,
 }));
 
 const schema = z.object({
@@ -74,7 +74,7 @@ const {
     },
 );
 
-async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCalendarResponse> {
+async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarResponse | UpdateCalendarResponse> {
     try {
         const response = await calendarStore.createOrUpdateCalendar({
             id: data.value?.calendar?.id ?? 0,

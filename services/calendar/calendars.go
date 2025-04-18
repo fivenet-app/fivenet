@@ -198,12 +198,12 @@ func (s *Server) GetCalendar(ctx context.Context, req *pbcalendar.GetCalendarReq
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	for i := 0; i < len(access.Jobs); i++ {
+	for i := range access.Jobs {
 		s.enricher.EnrichJobInfo(access.Jobs[i])
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(access.Users); i++ {
+	for i := range access.Users {
 		if access.Users[i].User != nil {
 			jobInfoFn(access.Users[i].User)
 		}
@@ -233,19 +233,19 @@ func (s *Server) getAccess(ctx context.Context, calendarId uint64) (*calendar.Ca
 	}, nil
 }
 
-func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *pbcalendar.CreateOrUpdateCalendarRequest) (*pbcalendar.CreateOrUpdateCalendarResponse, error) {
+func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalendarRequest) (*pbcalendar.CreateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateCalendar",
+		Method:  "CreateCalendar",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	fieldsAttr, err := s.p.Attr(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateOrUpdateCalendarPerm, permscalendar.CalendarServiceCreateOrUpdateCalendarFieldsPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -271,118 +271,69 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *pbcalendar.Cre
 
 	// Check if user has access to existing calendar
 	if req.Calendar.Id > 0 {
-		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Calendar.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	// Allow only one private calendar per user (job field will be null for private calendars)
+	if req.Calendar.Job == nil {
+		calendar, err := s.getCalendar(ctx, userInfo, jet.AND(
+			tCalendar.DeletedAt.IS_NULL(),
+			tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tCalendar.Job.IS_NULL(),
+		))
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
-		if !check {
-			return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+
+		if calendar != nil {
+			return nil, errorscalendar.ErrOnePrivateCal
 		}
-
-		calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)))
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-		req.Calendar.Job = calendar.Job
-
-		if req.Calendar.Description == nil {
-			empty := ""
-			req.Calendar.Description = &empty
-		}
-
-		if !slices.Contains(fields, "Public") && calendar.Public && req.Calendar.Public {
-			req.Calendar.Public = false
-		}
-
-		tCalendar := table.FivenetCalendar
-		stmt := tCalendar.
-			UPDATE(
-				tCalendar.Name,
-				tCalendar.Description,
-				tCalendar.Public,
-				tCalendar.Closed,
-				tCalendar.Color,
-			).
-			SET(
-				tCalendar.Name.SET(jet.String(req.Calendar.Name)),
-				tCalendar.Description.SET(jet.String(*req.Calendar.Description)),
-				tCalendar.Public.SET(jet.Bool(req.Calendar.Public)),
-				tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
-				tCalendar.Color.SET(jet.String(req.Calendar.Color)),
-			).
-			WHERE(jet.AND(
-				tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)),
-			))
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
-		// Allow only one private calendar per user (job field will be null for private calendars)
-		if req.Calendar.Job == nil {
-			calendar, err := s.getCalendar(ctx, userInfo, jet.AND(
-				tCalendar.DeletedAt.IS_NULL(),
-				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				tCalendar.Job.IS_NULL(),
-			))
-			if err != nil {
-				return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-			}
+		req.Calendar.Job = &userInfo.Job
+	}
 
-			if calendar != nil {
-				return nil, errorscalendar.ErrOnePrivateCal
-			}
-		} else {
-			req.Calendar.Job = &userInfo.Job
-		}
+	tCalendar := table.FivenetCalendar
+	stmt := tCalendar.
+		INSERT(
+			tCalendar.Job,
+			tCalendar.Name,
+			tCalendar.Description,
+			tCalendar.Public,
+			tCalendar.Closed,
+			tCalendar.Color,
+			tCalendar.CreatorID,
+			tCalendar.CreatorJob,
+		).
+		VALUES(
+			req.Calendar.Job,
+			req.Calendar.Name,
+			req.Calendar.Description,
+			req.Calendar.Public,
+			req.Calendar.Closed,
+			req.Calendar.Color,
+			userInfo.UserId,
+			userInfo.Job,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tCalendar.Name.SET(jet.String(req.Calendar.Name)),
+			tCalendar.Description.SET(jet.String("VALUES(`description`)")),
+			tCalendar.Public.SET(jet.Bool(req.Calendar.Public)),
+			tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
+			tCalendar.Color.SET(jet.String(req.Calendar.Color)),
+		)
 
-		tCalendar := table.FivenetCalendar
-		stmt := tCalendar.
-			INSERT(
-				tCalendar.Job,
-				tCalendar.Name,
-				tCalendar.Description,
-				tCalendar.Public,
-				tCalendar.Closed,
-				tCalendar.Color,
-				tCalendar.CreatorID,
-				tCalendar.CreatorJob,
-			).
-			VALUES(
-				req.Calendar.Job,
-				req.Calendar.Name,
-				req.Calendar.Description,
-				req.Calendar.Public,
-				req.Calendar.Closed,
-				req.Calendar.Color,
-				userInfo.UserId,
-				userInfo.Job,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tCalendar.Name.SET(jet.String(req.Calendar.Name)),
-				tCalendar.Description.SET(jet.String("VALUES(`description`)")),
-				tCalendar.Public.SET(jet.Bool(req.Calendar.Public)),
-				tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
-				tCalendar.Color.SET(jet.String(req.Calendar.Color)),
-			)
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
 
-		res, err := stmt.ExecContext(ctx, tx)
+	if req.Calendar.Id == 0 {
+		lastId, err := res.LastInsertId()
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 
-		if req.Calendar.Id == 0 {
-			lastId, err := res.LastInsertId()
-			if err != nil {
-				return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-			}
-
-			req.Calendar.Id = uint64(lastId)
-		}
-
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+		req.Calendar.Id = uint64(lastId)
 	}
 
 	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Calendar.Id, req.Calendar.Access.Jobs, req.Calendar.Access.Users, nil); err != nil {
@@ -394,12 +345,122 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *pbcalendar.Cre
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+
 	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.Calendar.Id)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	return &pbcalendar.CreateOrUpdateCalendarResponse{
+	return &pbcalendar.CreateCalendarResponse{
+		Calendar: calendar,
+	}, nil
+}
+
+func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalendarRequest) (*pbcalendar.UpdateCalendarResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
+		Method:  "UpdateCalendar",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	fieldsAttr, err := s.p.Attr(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+
+	if req.Calendar.Job != nil && !slices.Contains(fields, "Job") {
+		return nil, errorscalendar.ErrFailedQuery
+	}
+	if req.Calendar.Color == "" {
+		req.Calendar.Color = "blue"
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	// Check if user has access to existing calendar
+	if req.Calendar.Id < 0 {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Calendar.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
+	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)))
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	req.Calendar.Job = calendar.Job
+
+	if req.Calendar.Description == nil {
+		empty := ""
+		req.Calendar.Description = &empty
+	}
+
+	if !slices.Contains(fields, "Public") && calendar.Public && req.Calendar.Public {
+		req.Calendar.Public = false
+	}
+
+	tCalendar := table.FivenetCalendar
+	stmt := tCalendar.
+		UPDATE(
+			tCalendar.Name,
+			tCalendar.Description,
+			tCalendar.Public,
+			tCalendar.Closed,
+			tCalendar.Color,
+		).
+		SET(
+			tCalendar.Name.SET(jet.String(req.Calendar.Name)),
+			tCalendar.Description.SET(jet.String(*req.Calendar.Description)),
+			tCalendar.Public.SET(jet.Bool(req.Calendar.Public)),
+			tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
+			tCalendar.Color.SET(jet.String(req.Calendar.Color)),
+		).
+		WHERE(jet.AND(
+			tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)),
+		))
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+
+	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Calendar.Id, req.Calendar.Access.Jobs, req.Calendar.Access.Users, nil); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	calendar, err = s.getCalendar(ctx, userInfo, tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.Calendar.Id)))
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	return &pbcalendar.UpdateCalendarResponse{
 		Calendar: calendar,
 	}, nil
 }

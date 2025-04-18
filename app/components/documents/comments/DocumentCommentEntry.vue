@@ -10,9 +10,16 @@ import { useNotificatorStore } from '~/stores/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const props = defineProps<{
-    modelValue?: Comment;
-}>();
+const props = withDefaults(
+    defineProps<{
+        modelValue?: Comment;
+        canComment?: boolean;
+    }>(),
+    {
+        modelValue: undefined,
+        canComment: false,
+    },
+);
 
 const emit = defineEmits<{
     (e: 'update:modelValue', comment: Comment | undefined): void;
@@ -136,12 +143,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
 
                     <div v-if="comment.creatorId === activeChar?.userId || isSuperuser">
-                        <UButton
-                            v-if="can('DocStoreService.PostComment').value"
-                            variant="link"
-                            icon="i-mdi-pencil"
-                            @click="editing = true"
-                        />
+                        <UButton v-if="canComment" variant="link" icon="i-mdi-pencil" @click="editing = true" />
 
                         <UButton
                             v-if="can('DocStoreService.DeleteComment').value"
@@ -163,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </div>
         </div>
 
-        <div v-else-if="can('DocStoreService.PostComment').value" class="flex items-start space-x-4">
+        <div v-else-if="canComment" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
                 <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
                     <UFormGroup name="comment">

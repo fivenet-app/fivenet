@@ -193,14 +193,14 @@ service QualificationsService {
   rpc ListQualificationRequests(ListQualificationRequestsRequest) returns (ListQualificationRequestsResponse);
   // @perm: Name=ListQualifications
   rpc CreateOrUpdateQualificationRequest(CreateOrUpdateQualificationRequestRequest) returns (CreateOrUpdateQualificationRequestResponse);
-  // @perm
+  // @perm: Name=ListQualifications
   rpc DeleteQualificationReq(DeleteQualificationReqRequest) returns (DeleteQualificationReqResponse);
 
   // @perm: Name=ListQualifications
   rpc ListQualificationsResults(ListQualificationsResultsRequest) returns (ListQualificationsResultsResponse);
-  // @perm
+  // @perm: Name=ListQualifications
   rpc CreateOrUpdateQualificationResult(CreateOrUpdateQualificationResultRequest) returns (CreateOrUpdateQualificationResultResponse);
-  // @perm
+  // @perm: Name=ListQualifications
   rpc DeleteQualificationResult(DeleteQualificationResultRequest) returns (DeleteQualificationResultResponse);
 
   // @perm: Name=ListQualifications
@@ -209,6 +209,6 @@ service QualificationsService {
   rpc TakeExam(TakeExamRequest) returns (TakeExamResponse);
   // @perm: Name=ListQualifications
   rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse);
-  // @perm: Name=CreateOrUpdateQualificationResult
+  // @perm: Name=ListQualifications
   rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse);
 }

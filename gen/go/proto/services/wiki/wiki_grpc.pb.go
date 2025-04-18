@@ -37,7 +37,7 @@ type WikiServiceClient interface {
 	GetPage(ctx context.Context, in *GetPageRequest, opts ...grpc.CallOption) (*GetPageResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	CreatePage(ctx context.Context, in *CreatePageRequest, opts ...grpc.CallOption) (*CreatePageResponse, error)
-	// @perm
+	// @perm: Name=ListPages
 	UpdatePage(ctx context.Context, in *UpdatePageRequest, opts ...grpc.CallOption) (*UpdatePageResponse, error)
 	// @perm
 	DeletePage(ctx context.Context, in *DeletePageRequest, opts ...grpc.CallOption) (*DeletePageResponse, error)
@@ -123,7 +123,7 @@ type WikiServiceServer interface {
 	GetPage(context.Context, *GetPageRequest) (*GetPageResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	CreatePage(context.Context, *CreatePageRequest) (*CreatePageResponse, error)
-	// @perm
+	// @perm: Name=ListPages
 	UpdatePage(context.Context, *UpdatePageRequest) (*UpdatePageResponse, error)
 	// @perm
 	DeletePage(context.Context, *DeletePageRequest) (*DeletePageResponse, error)

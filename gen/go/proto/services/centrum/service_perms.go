@@ -31,46 +31,55 @@ func init() {
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceCreateDispatchPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceCreateOrUpdateUnitPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceDeleteDispatchPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceDeleteUnitPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceStreamPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceTakeControlPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceTakeDispatchPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceUpdateDispatchPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceUpdateSettingsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 	})
 }

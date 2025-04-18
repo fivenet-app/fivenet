@@ -23,6 +23,7 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.LivemapperServicePerm,
@@ -34,6 +35,7 @@ func init() {
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.LivemapperServicePerm,
@@ -48,6 +50,7 @@ func init() {
 					Type: permissions.JobGradeListAttributeType,
 				},
 			},
+			Order: 0,
 		},
 	})
 }

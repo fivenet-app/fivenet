@@ -4,10 +4,11 @@ import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { requestStatusToTextColor } from '~/components/qualifications/helpers';
+import { checkQualificationAccess, requestStatusToTextColor } from '~/components/qualifications/helpers';
 import QualificationRequestTutorModal from '~/components/qualifications/tutor/QualificationRequestTutorModal.vue';
 import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
-import { QualificationExamMode, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
+import { type Qualification, QualificationExamMode, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
     DeleteQualificationReqResponse,
     ListQualificationRequestsResponse,
@@ -16,7 +17,7 @@ import ExamViewResultModal from './ExamViewResultModal.vue';
 
 const props = withDefaults(
     defineProps<{
-        qualificationId?: number;
+        qualification: Qualification;
         status?: RequestStatus[];
         examMode?: QualificationExamMode;
     }>(),
@@ -35,8 +36,6 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
-const { can } = useAuth();
-
 const modal = useModal();
 
 const page = useRouteQuery('page', '1', { transform: Number });
@@ -53,8 +52,8 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `qualifications-requests-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualificationId}`,
-    () => listQualificationsRequests(props.qualificationId),
+    `qualifications-requests-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualification.id}`,
+    () => listQualificationsRequests(props.qualification.id),
     {
         watch: [sort],
     },
@@ -255,7 +254,7 @@ defineExpose({
                             </UTooltip>
 
                             <UTooltip
-                                v-if="can('QualificationsService.DeleteQualificationReq').value"
+                                v-if="checkQualificationAccess(qualification.access, qualification.creator, AccessLevel.EDIT)"
                                 :text="$t('common.delete')"
                             >
                                 <UButton

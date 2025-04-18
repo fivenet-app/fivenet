@@ -31,6 +31,7 @@ type Perm struct {
 	Category Category
 	Name     Name
 	Attrs    []Attr
+	Order    int32
 }
 
 type Attr struct {
@@ -64,7 +65,7 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 	}
 
 	for _, perm := range permsList {
-		permId, err := p.createOrUpdatePermission(ctx, perm.Category, perm.Name)
+		permId, err := p.createOrUpdatePermission(ctx, perm.Category, perm.Name, perm.Order)
 		if err != nil {
 			return fmt.Errorf("failed to create or update permission (category: %s, name: %s). %w", perm.Category, perm.Name, err)
 		}
@@ -155,7 +156,7 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 	return nil
 }
 
-func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category, name Name) (uint64, error) {
+func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category, name Name, order int32) (uint64, error) {
 	perm, err := p.loadPermissionFromDatabaseByGuard(ctx, BuildGuard(category, name))
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -164,8 +165,10 @@ func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category,
 	}
 
 	if perm != nil {
-		if Category(perm.Category) != category || Name(perm.Name) != name {
-			return perm.ID, fmt.Errorf("failed to update permission. %w", p.UpdatePermission(ctx, perm.ID, category, name))
+		if Category(perm.Category) != category || Name(perm.Name) != name || (perm.Order == nil || *perm.Order != order) {
+			if err := p.UpdatePermission(ctx, perm.ID, category, name); err != nil {
+				return perm.ID, fmt.Errorf("failed to update permission. %w", err)
+			}
 		}
 
 		return perm.ID, nil

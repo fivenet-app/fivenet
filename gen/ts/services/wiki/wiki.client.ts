@@ -42,7 +42,7 @@ export interface IWikiServiceClient {
      */
     createPage(input: CreatePageRequest, options?: RpcOptions): UnaryCall<CreatePageRequest, CreatePageResponse>;
     /**
-     * @perm
+     * @perm: Name=ListPages
      *
      * @generated from protobuf rpc: UpdatePage(services.wiki.UpdatePageRequest) returns (services.wiki.UpdatePageResponse);
      */
@@ -97,7 +97,7 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<CreatePageRequest, CreatePageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=ListPages
      *
      * @generated from protobuf rpc: UpdatePage(services.wiki.UpdatePageRequest) returns (services.wiki.UpdatePageResponse);
      */

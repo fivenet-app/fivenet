@@ -100,7 +100,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UFormGroup
                 name="content"
                 class="flex flex-1 overflow-y-hidden"
-                :ui="{ container: 'flex flex-1 mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
+                :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
                 label="&nbsp;"
             >
                 <ClientOnly>

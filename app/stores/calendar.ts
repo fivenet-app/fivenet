@@ -1,12 +1,14 @@
 import { format } from 'date-fns';
 import { defineStore } from 'pinia';
+import { checkCalendarAccess } from '~/components/calendar/helpers';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
+    CreateCalendarResponse,
     CreateOrUpdateCalendarEntryResponse,
-    CreateOrUpdateCalendarResponse,
     GetCalendarEntryRequest,
     GetCalendarEntryResponse,
     GetCalendarRequest,
@@ -21,6 +23,7 @@ import type {
     ListCalendarsResponse,
     RSVPCalendarEntryRequest,
     RSVPCalendarEntryResponse,
+    UpdateCalendarResponse,
 } from '~~/gen/ts/services/calendar/calendar';
 import { useNotificatorStore } from './notificator';
 import { useSettingsStore } from './settings';
@@ -173,10 +176,19 @@ export const useCalendarStore = defineStore(
             }
         };
 
-        const createOrUpdateCalendar = async (calendarParam: Calendar): Promise<CreateOrUpdateCalendarResponse> => {
-            const call = $grpc.calendar.calendar.createOrUpdateCalendar({
-                calendar: calendarParam,
-            });
+        const createOrUpdateCalendar = async (
+            calendarParam: Calendar,
+        ): Promise<CreateCalendarResponse | UpdateCalendarResponse> => {
+            let call;
+            if (calendarParam.id === 0) {
+                call = $grpc.calendar.calendar.createCalendar({
+                    calendar: calendarParam,
+                });
+            } else {
+                call = $grpc.calendar.calendar.updateCalendar({
+                    calendar: calendarParam,
+                });
+            }
             const { response } = await call;
 
             if (response.calendar) {
@@ -357,6 +369,17 @@ export const useCalendarStore = defineStore(
             return !!calendars.value.find((c) => c.job === undefined && c.creatorId === activeChar.value?.userId);
         });
 
+        const hasEditAccessToCalendar = computed(() => {
+            const { activeChar } = useAuth();
+            return !!calendars.value.find((c) => {
+                if (c.job === undefined && c.creatorId === activeChar.value?.userId) {
+                    return true;
+                }
+
+                return checkCalendarAccess(c.access, c.creator, AccessLevel.EDIT);
+            });
+        });
+
         return {
             activeCalendarIds,
             view,
@@ -381,6 +404,7 @@ export const useCalendarStore = defineStore(
 
             // Getters
             hasPrivateCalendar,
+            hasEditAccessToCalendar,
         };
     },
     {

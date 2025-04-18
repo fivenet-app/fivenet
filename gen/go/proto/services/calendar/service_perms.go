@@ -11,16 +11,20 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: CalendarService
-	"CalendarService/GetCalendar":           "Any",
-	"CalendarService/GetCalendarEntry":      "Any",
-	"CalendarService/GetUpcomingEntries":    "Any",
-	"CalendarService/ListCalendarEntries":   "Any",
-	"CalendarService/ListCalendarEntryRSVP": "Any",
-	"CalendarService/ListCalendars":         "Any",
-	"CalendarService/ListSubscriptions":     "Any",
-	"CalendarService/RSVPCalendarEntry":     "Any",
-	"CalendarService/ShareCalendarEntry":    "CalendarService/CreateOrUpdateCalendarEntry",
-	"CalendarService/SubscribeToCalendar":   "Any",
+	"CalendarService/CreateOrUpdateCalendarEntry": "Any",
+	"CalendarService/DeleteCalendar":              "Any",
+	"CalendarService/DeleteCalendarEntry":         "Any",
+	"CalendarService/GetCalendar":                 "Any",
+	"CalendarService/GetCalendarEntry":            "Any",
+	"CalendarService/GetUpcomingEntries":          "Any",
+	"CalendarService/ListCalendarEntries":         "Any",
+	"CalendarService/ListCalendarEntryRSVP":       "Any",
+	"CalendarService/ListCalendars":               "Any",
+	"CalendarService/ListSubscriptions":           "Any",
+	"CalendarService/RSVPCalendarEntry":           "Any",
+	"CalendarService/ShareCalendarEntry":          "Any",
+	"CalendarService/SubscribeToCalendar":         "Any",
+	"CalendarService/UpdateCalendar":              "Any",
 }
 
 func init() {
@@ -29,29 +33,15 @@ func init() {
 		// Service: CalendarService
 		{
 			Category: permkeys.CalendarServicePerm,
-			Name:     permkeys.CalendarServiceCreateOrUpdateCalendarPerm,
+			Name:     permkeys.CalendarServiceCreateCalendarPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.CalendarServiceCreateOrUpdateCalendarFieldsPermField,
+					Key:         permkeys.CalendarServiceCreateCalendarFieldsPermField,
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"Job", "Public"},
 				},
 			},
-		},
-		{
-			Category: permkeys.CalendarServicePerm,
-			Name:     permkeys.CalendarServiceCreateOrUpdateCalendarEntryPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.CalendarServicePerm,
-			Name:     permkeys.CalendarServiceDeleteCalendarPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.CalendarServicePerm,
-			Name:     permkeys.CalendarServiceDeleteCalendarEntryPerm,
-			Attrs:    []perms.Attr{},
+			Order: 0,
 		},
 	})
 }

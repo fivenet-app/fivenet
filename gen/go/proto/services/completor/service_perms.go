@@ -28,11 +28,13 @@ func init() {
 					Type: permissions.JobListAttributeType,
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.CompletorServicePerm,
 			Name:     permkeys.CompletorServiceCompleteCitizensPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.CompletorServicePerm,
@@ -43,6 +45,7 @@ func init() {
 					Type: permissions.JobListAttributeType,
 				},
 			},
+			Order: 0,
 		},
 	})
 }

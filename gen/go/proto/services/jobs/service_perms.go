@@ -30,11 +30,13 @@ func init() {
 			Category: permkeys.JobsConductServicePerm,
 			Name:     permkeys.JobsConductServiceCreateConductEntryPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.JobsConductServicePerm,
 			Name:     permkeys.JobsConductServiceDeleteConductEntryPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.JobsConductServicePerm,
@@ -46,11 +48,13 @@ func init() {
 					ValidValues: []string{"Own", "All"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.JobsConductServicePerm,
 			Name:     permkeys.JobsConductServiceUpdateConductEntryPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 
 		// Service: JobsService
@@ -69,6 +73,7 @@ func init() {
 					ValidValues: []string{"Note", "Labels"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.JobsServicePerm,
@@ -80,16 +85,19 @@ func init() {
 					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceListColleaguesPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceManageColleagueLabelsPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.JobsServicePerm,
@@ -106,11 +114,13 @@ func init() {
 					ValidValues: []string{"AbsenceDate", "Note", "Labels", "Name"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceSetMOTDPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 
 		// Service: JobsTimeclockService
@@ -118,6 +128,7 @@ func init() {
 			Category: permkeys.JobsTimeclockServicePerm,
 			Name:     permkeys.JobsTimeclockServiceListInactiveEmployeesPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.JobsTimeclockServicePerm,
@@ -129,6 +140,7 @@ func init() {
 					ValidValues: []string{"All"},
 				},
 			},
+			Order: 0,
 		},
 	})
 }

@@ -427,7 +427,7 @@ service DocStoreService {
 
   // @perm: Name=ListDocuments
   rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
-  // @perm
+  // @perm: Name=ListDocuments
   rpc PostComment(PostCommentRequest) returns (PostCommentResponse);
   // @perm: Name=PostComment
   rpc EditComment(EditCommentRequest) returns (EditCommentResponse);

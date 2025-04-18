@@ -11,7 +11,8 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: WikiService
-	"WikiService/GetPage": "WikiService/ListPages",
+	"WikiService/GetPage":    "WikiService/ListPages",
+	"WikiService/UpdatePage": "WikiService/ListPages",
 }
 
 func init() {
@@ -28,26 +29,25 @@ func init() {
 					ValidValues: []string{"Public"},
 				},
 			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceDeletePagePerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceListPageActivityPerm,
 			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceListPagesPerm,
 			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceUpdatePagePerm,
-			Attrs:    []perms.Attr{},
+			Order:    0,
 		},
 	})
 }

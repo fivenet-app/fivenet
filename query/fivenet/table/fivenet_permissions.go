@@ -22,6 +22,7 @@ type fivenetPermissionsTable struct {
 	Category  mysql.ColumnString
 	Name      mysql.ColumnString
 	GuardName mysql.ColumnString
+	Order     mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -68,9 +69,10 @@ func newFivenetPermissionsTableImpl(schemaName, tableName, alias string) fivenet
 		CategoryColumn  = mysql.StringColumn("category")
 		NameColumn      = mysql.StringColumn("name")
 		GuardNameColumn = mysql.StringColumn("guard_name")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn}
-		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
+		OrderColumn     = mysql.IntegerColumn("order")
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn, OrderColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, CategoryColumn, NameColumn, GuardNameColumn, OrderColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn, OrderColumn}
 	)
 
 	return fivenetPermissionsTable{
@@ -82,6 +84,7 @@ func newFivenetPermissionsTableImpl(schemaName, tableName, alias string) fivenet
 		Category:  CategoryColumn,
 		Name:      NameColumn,
 		GuardName: GuardNameColumn,
+		Order:     OrderColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

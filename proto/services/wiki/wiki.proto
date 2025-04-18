@@ -70,7 +70,7 @@ service WikiService {
   rpc GetPage(GetPageRequest) returns (GetPageResponse);
   // @perm: Attrs=Fields/StringList:[]string{"Public"}
   rpc CreatePage(CreatePageRequest) returns (CreatePageResponse);
-  // @perm
+  // @perm: Name=ListPages
   rpc UpdatePage(UpdatePageRequest) returns (UpdatePageResponse);
   // @perm
   rpc DeletePage(DeletePageRequest) returns (DeletePageResponse);

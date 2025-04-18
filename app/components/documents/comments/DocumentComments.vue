@@ -32,8 +32,6 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const { can } = useAuth();
-
 const notifications = useNotificatorStore();
 
 const page = useRouteQuery('page', '1', { transform: Number });
@@ -150,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <div>
         <div ref="commentsEl">
-            <template v-if="can('DocStoreService.PostComment').value">
+            <template v-if="canComment">
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
                         <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">

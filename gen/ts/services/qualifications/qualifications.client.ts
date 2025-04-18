@@ -84,7 +84,7 @@ export interface IQualificationsServiceClient {
      */
     createOrUpdateQualificationRequest(input: CreateOrUpdateQualificationRequestRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>;
     /**
-     * @perm
+     * @perm: Name=ListQualifications
      *
      * @generated from protobuf rpc: DeleteQualificationReq(services.qualifications.DeleteQualificationReqRequest) returns (services.qualifications.DeleteQualificationReqResponse);
      */
@@ -96,13 +96,13 @@ export interface IQualificationsServiceClient {
      */
     listQualificationsResults(input: ListQualificationsResultsRequest, options?: RpcOptions): UnaryCall<ListQualificationsResultsRequest, ListQualificationsResultsResponse>;
     /**
-     * @perm
+     * @perm: Name=ListQualifications
      *
      * @generated from protobuf rpc: CreateOrUpdateQualificationResult(services.qualifications.CreateOrUpdateQualificationResultRequest) returns (services.qualifications.CreateOrUpdateQualificationResultResponse);
      */
     createOrUpdateQualificationResult(input: CreateOrUpdateQualificationResultRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse>;
     /**
-     * @perm
+     * @perm: Name=ListQualifications
      *
      * @generated from protobuf rpc: DeleteQualificationResult(services.qualifications.DeleteQualificationResultRequest) returns (services.qualifications.DeleteQualificationResultResponse);
      */
@@ -126,7 +126,7 @@ export interface IQualificationsServiceClient {
      */
     submitExam(input: SubmitExamRequest, options?: RpcOptions): UnaryCall<SubmitExamRequest, SubmitExamResponse>;
     /**
-     * @perm: Name=CreateOrUpdateQualificationResult
+     * @perm: Name=ListQualifications
      *
      * @generated from protobuf rpc: GetUserExam(services.qualifications.GetUserExamRequest) returns (services.qualifications.GetUserExamResponse);
      */
@@ -205,7 +205,7 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<CreateOrUpdateQualificationRequestRequest, CreateOrUpdateQualificationRequestResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=ListQualifications
      *
      * @generated from protobuf rpc: DeleteQualificationReq(services.qualifications.DeleteQualificationReqRequest) returns (services.qualifications.DeleteQualificationReqResponse);
      */
@@ -223,7 +223,7 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<ListQualificationsResultsRequest, ListQualificationsResultsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=ListQualifications
      *
      * @generated from protobuf rpc: CreateOrUpdateQualificationResult(services.qualifications.CreateOrUpdateQualificationResultRequest) returns (services.qualifications.CreateOrUpdateQualificationResultResponse);
      */
@@ -232,7 +232,7 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<CreateOrUpdateQualificationResultRequest, CreateOrUpdateQualificationResultResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=ListQualifications
      *
      * @generated from protobuf rpc: DeleteQualificationResult(services.qualifications.DeleteQualificationResultRequest) returns (services.qualifications.DeleteQualificationResultResponse);
      */
@@ -268,7 +268,7 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<SubmitExamRequest, SubmitExamResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateOrUpdateQualificationResult
+     * @perm: Name=ListQualifications
      *
      * @generated from protobuf rpc: GetUserExam(services.qualifications.GetUserExamRequest) returns (services.qualifications.GetUserExamResponse);
      */

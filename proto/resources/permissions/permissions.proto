@@ -14,6 +14,7 @@ message Permission {
   string name = 4 [(validate.rules).string.max_len = 255];
   string guard_name = 5 [(validate.rules).string.max_len = 255];
   bool val = 6;
+  optional int32 order = 7 [(validate.rules).int32.gte = 0];
 }
 
 message Role {
@@ -62,6 +63,7 @@ message AttributeValues {
     StringList string_list = 1;
     StringList job_list = 2;
     JobGradeList job_grade_list = 3;
+    JobGradeMap job_grade_map = 4;
   }
 }
 
@@ -72,4 +74,12 @@ message StringList {
 
 message JobGradeList {
   map<string, int32> jobs = 1;
+}
+
+message JobGradeMap {
+  map<string, JobGrades> jobs = 1;
+}
+
+message JobGrades {
+  repeated int32 grades = 1;
 }

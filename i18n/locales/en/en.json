@@ -593,7 +593,42 @@
                 "previous": "Previous",
                 "next": "Next",
                 "replace": "Replace",
-                "replace_all": "Replace All"
+                "replace_all": "Replace All",
+                "bold": "Bold",
+                "italic": "Italic",
+                "underline": "Underline",
+                "strike": "Strikethrough",
+                "superscript": "Superscript",
+                "subscript": "Subscript",
+                "code": "Code",
+                "align_left": "Align Left",
+                "align_center": "Align Center",
+                "align_right": "Align Right",
+                "align_justify": "Align Justify",
+                "font_family": "Font Family",
+                "font_color": "Font Color",
+                "paragraph": "Paragraph",
+                "header_1": "Header 1",
+                "header_2": "Header 2",
+                "header_3": "Header 3",
+                "header_4": "Header 4",
+                "header_5": "Header 5",
+                "header_6": "Header 6",
+                "highlight": "Highlight",
+                "highlight_color": "Highlight Color",
+                "bullet_list": "Bullet List",
+                "ordered_list": "Ordered List",
+                "task_list": "Task List",
+                "image": "Image",
+                "table": "Table",
+                "link": "Link",
+                "code_block": "Code Block",
+                "block_quote": "Block Quote",
+                "horizontal_rule": "Horizontal Rule",
+                "search_and_replace": "Search and Replace",
+                "undo": "Undo",
+                "redo": "Redo",
+                "source_code": "Source Code"
             }
         },
         "clipboard": {
@@ -1969,10 +2004,6 @@
                     "Access": "Access to factions-own documents"
                 }
             },
-            "PostComment": {
-                "key": "PostComment",
-                "description": "Post document comments."
-            },
             "CreateCategory": {
                 "key": "CreateCategory",
                 "description": "Create/ Update document categories."
@@ -2303,27 +2334,15 @@
                 "key": "List Qualification Results",
                 "description": "List qualification results"
             },
-            "CreateOrUpdateQualificationResult": {
-                "key": "Create or Update Qualification Results",
-                "description": "Create and update qualification results"
-            },
-            "DeleteQualificationResult": {
-                "key": "Delete Qualification Results",
-                "description": "Delete qualification results"
-            },
             "ListQualificationRequests": {
                 "key": "List Qualification Requests",
                 "description": "List qualification requests"
-            },
-            "DeleteQualificationReq": {
-                "key": "Delete Qualification Requests",
-                "description": "Delete qualification requests"
             }
         },
         "CalendarService": {
             "category": "Calendar",
-            "CreateOrUpdateCalendar": {
-                "key": "Create and update calendars",
+            "CreateCalendar": {
+                "key": "Create calendars",
                 "description": "Manage calendars.",
                 "attrs": {
                     "Job": "Calendar for user's job",
@@ -2361,10 +2380,6 @@
                 "attrs_types": {
                     "Fields": "Access to creating pages with specific access"
                 }
-            },
-            "UpdatePage": {
-                "key": "Update Pages",
-                "description": "Update pages in wiki."
             },
             "DeletePage": {
                 "key": "Delete Pages",

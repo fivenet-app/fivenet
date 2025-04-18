@@ -17,4 +17,5 @@ type FivenetPermissions struct {
 	Category  string     `json:"category"`
 	Name      string     `json:"name"`
 	GuardName string     `json:"guard_name"`
+	Order     *int32     `json:"order"`
 }

@@ -10,14 +10,11 @@ import (
 const (
 	QualificationsServicePerm perms.Category = "QualificationsService"
 
-	QualificationsServiceCreateOrUpdateQualificationResultPerm perms.Name = "CreateOrUpdateQualificationResult"
-	QualificationsServiceCreateQualificationPerm               perms.Name = "CreateQualification"
-	QualificationsServiceCreateQualificationFieldsPermField    perms.Key  = "Fields"
-	QualificationsServiceDeleteQualificationPerm               perms.Name = "DeleteQualification"
-	QualificationsServiceDeleteQualificationAccessPermField    perms.Key  = "Access"
-	QualificationsServiceDeleteQualificationReqPerm            perms.Name = "DeleteQualificationReq"
-	QualificationsServiceDeleteQualificationResultPerm         perms.Name = "DeleteQualificationResult"
-	QualificationsServiceListQualificationsPerm                perms.Name = "ListQualifications"
-	QualificationsServiceUpdateQualificationPerm               perms.Name = "UpdateQualification"
-	QualificationsServiceUpdateQualificationAccessPermField    perms.Key  = "Access"
+	QualificationsServiceCreateQualificationPerm            perms.Name = "CreateQualification"
+	QualificationsServiceCreateQualificationFieldsPermField perms.Key  = "Fields"
+	QualificationsServiceDeleteQualificationPerm            perms.Name = "DeleteQualification"
+	QualificationsServiceDeleteQualificationAccessPermField perms.Key  = "Access"
+	QualificationsServiceListQualificationsPerm             perms.Name = "ListQualifications"
+	QualificationsServiceUpdateQualificationPerm            perms.Name = "UpdateQualification"
+	QualificationsServiceUpdateQualificationAccessPermField perms.Key  = "Access"
 )
