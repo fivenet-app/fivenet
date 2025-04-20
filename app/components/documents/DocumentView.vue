@@ -26,6 +26,7 @@ import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
+import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import DocumentReminderModal from './DocumentReminderModal.vue';
 
 const props = defineProps<{
@@ -77,13 +78,24 @@ async function deleteDocument(id: number, reason?: string): Promise<void> {
             reason: reason,
         });
 
-        notifications.add({
-            title: { key: 'notifications.document_deleted.title', parameters: {} },
-            description: { key: 'notifications.document_deleted.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
+        // Navigate to document list when deletedAt timestamp is undefined
+        if (doc.value?.deletedAt === undefined) {
+            notifications.add({
+                title: { key: 'notifications.document_deleted.title', parameters: {} },
+                description: { key: 'notifications.document_deleted.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
 
-        await navigateTo({ name: 'documents' });
+            await navigateTo({ name: 'documents' });
+        } else {
+            notifications.add({
+                title: { key: 'notifications.document_restored.title', parameters: {} },
+                description: { key: 'notifications.document_restored.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
+
+            await refresh();
+        }
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -414,8 +426,8 @@ defineShortcuts({
                         :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
                         :label="!doc.deletedAt ? $t('common.delete') : $t('common.restore')"
                         @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteDocument(documentId),
+                            modal.open(doc.deletedAt !== undefined ? ConfirmModal : ConfirmModalWithReason, {
+                                confirm: async (reason?: string) => deleteDocument(documentId, reason),
                             })
                         "
                     />

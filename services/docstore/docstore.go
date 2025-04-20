@@ -541,6 +541,11 @@ func (s *Server) DeleteDocument(ctx context.Context, req *pbdocstore.DeleteDocum
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
+	// Require a reason if the document is not already deleted
+	if doc.DeletedAt == nil && req.Reason == nil {
+		return nil, errorsdocstore.ErrDocDeleteDenied
+	}
+
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteDocumentPerm, permsdocstore.DocStoreServiceDeleteDocumentAccessPermField)
 	if err != nil {

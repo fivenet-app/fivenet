@@ -1818,6 +1818,10 @@
                 "title": "New E-Mail received!",
                 "content": "\"{title}\" from \"{from}\""
             }
+        },
+        "document_restored": {
+            "title": "Document restored!",
+            "content": "Document has been restored."
         }
     },
     "perms": {
