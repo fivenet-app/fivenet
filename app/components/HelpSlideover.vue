@@ -128,7 +128,7 @@ const filteredCategories = computed(() => {
 </script>
 
 <template>
-    <USlideover v-model="isHelpSlideoverOpen">
+    <USlideover v-model:open="isHelpSlideoverOpen">
         <template #title>
             <UButton
                 v-if="shortcuts"
@@ -142,29 +142,37 @@ const filteredCategories = computed(() => {
             {{ shortcuts ? $t('common.shortcuts') : $t('common.help') }}
         </template>
 
-        <div v-if="shortcuts" class="space-y-6">
-            <UInput v-model="query" icon="i-mdi-search" :placeholder="$t('common.search_field')" autofocus color="neutral" />
+        <template #content>
+            <div v-if="shortcuts" class="space-y-6">
+                <UInput
+                    v-model="query"
+                    icon="i-mdi-search"
+                    :placeholder="$t('common.search_field')"
+                    autofocus
+                    color="neutral"
+                />
 
-            <div v-for="(category, index) in filteredCategories" :key="index">
-                <p class="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">
-                    {{ category.title }}
-                </p>
+                <div v-for="(category, index) in filteredCategories" :key="index">
+                    <p class="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">
+                        {{ category.title }}
+                    </p>
 
-                <div class="space-y-2">
-                    <div v-for="(item, i) in category.items" :key="i" class="flex items-center justify-between">
-                        <span class="text-sm text-neutral-500 dark:text-neutral-400">{{ item.name }}</span>
+                    <div class="space-y-2">
+                        <div v-for="(item, i) in category.items" :key="i" class="flex items-center justify-between">
+                            <span class="text-sm text-neutral-500 dark:text-neutral-400">{{ item.name }}</span>
 
-                        <div class="flex shrink-0 items-center justify-end gap-0.5">
-                            <UKbd v-for="(shortcut, j) in item.shortcuts" :key="j">
-                                {{ shortcut }}
-                            </UKbd>
+                            <div class="flex shrink-0 items-center justify-end gap-0.5">
+                                <UKbd v-for="(shortcut, j) in item.shortcuts" :key="j">
+                                    {{ shortcut }}
+                                </UKbd>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div v-else class="flex flex-col gap-y-3">
-            <UButton v-for="(link, index) in links" :key="index" v-bind="link" />
-        </div>
+            <div v-else class="flex flex-col gap-y-3">
+                <UButton v-for="(link, index) in links" :key="index" v-bind="link" />
+            </div>
+        </template>
     </USlideover>
 </template>

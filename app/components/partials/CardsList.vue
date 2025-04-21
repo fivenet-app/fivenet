@@ -26,35 +26,35 @@ const { can } = useAuth();
 <template>
     <UPageGrid>
         <UPageCard
-            v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission).value)"
+            v-for="(card, index) in items.filter((i) => i.permission === undefined || can(i.permission).value)"
             v-bind="$attrs"
             :key="index"
-            :to="module.to"
-            :title="module.title"
-            :description="module.description"
-            :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
+            :to="card.to"
+            :title="card.title"
+            :description="card.description"
+            :icon="showIcon && card.icon?.startsWith('i-') ? card.icon : undefined"
             @click="$emit('selected', index)"
         >
-            <template v-if="showIcon && module.icon" #icon>
-                <template v-if="!module.icon.startsWith('i-')">
+            <template v-if="showIcon && card.icon" #leading>
+                <template v-if="!card.icon.startsWith('i-')">
                     <component
-                        :is="availableIcons.find((item) => item.name === module.icon) ?? fallbackIcon"
-                        v-if="module.icon"
+                        :is="availableIcons.find((item) => item.name === card.icon) ?? fallbackIcon"
+                        v-if="card.icon"
                         class="text-primary h-10 w-10 shrink-0"
-                        :class="module.color && `text-${module.color}-500 dark:text-${module.color}-400`"
+                        :class="card.color && `text-${card.color}-500 dark:text-${card.color}-400`"
                     />
                 </template>
                 <template v-else>
                     <UIcon
-                        :name="module.icon"
+                        :name="card.icon"
                         class="text-primary h-10 w-10 shrink-0"
-                        :class="`text-${module.color}-500 dark:text-${module.color}-400`"
+                        :class="`text-${card.color}-500 dark:text-${card.color}-400`"
                     />
                 </template>
             </template>
 
             <template #description>
-                <span class="line-clamp-2">{{ module.description }}</span>
+                <span class="line-clamp-2">{{ card.description }}</span>
             </template>
         </UPageCard>
     </UPageGrid>

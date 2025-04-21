@@ -3,6 +3,10 @@ import SuperUserJobSelection from '~/components/partials/SuperUserJobSelection.v
 import { useAuthStore } from '~/stores/auth';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 
+defineProps<{
+    collapsed?: boolean;
+}>();
+
 const { can, activeChar, username, isSuperuser } = useAuth();
 
 const { t } = useI18n();
@@ -78,18 +82,13 @@ const { game } = useAppConfig();
 const name = computed(() =>
     activeChar.value ? `${activeChar.value?.firstname} ${activeChar.value?.lastname}` : (username.value ?? t('common.na')),
 );
-
-const open = ref(false);
 </script>
 
 <template>
     <UDropdownMenu
-        v-model:open="open"
         :items="items"
-        :ui="{ width: 'w-full' }"
-        :popper="{ strategy: 'absolute', placement: 'top' }"
-        class="w-full"
-        mode="hover"
+        :content="{ align: 'center', collisionPadding: 12 }"
+        :ui="{ content: collapsed ? 'w-48' : 'w-(--reka-dropdown-menu-trigger-width)' }"
     >
         <UChip
             class="w-full"
@@ -100,20 +99,20 @@ const open = ref(false);
             :ui="{ base: 'top-0 left-1/2' }"
         >
             <UButton
+                v-bind="{
+                    label: collapsed ? undefined : name,
+                }"
                 color="neutral"
                 variant="ghost"
-                class="w-full"
-                :label="name"
-                :class="[open && 'bg-neutral-50 dark:bg-neutral-800']"
-                @click="open = !open"
-                @touchstart.passive="open = !open"
+                block
+                :square="collapsed"
+                class="data-[state=open]:bg-(--ui-bg-elevated)"
+                :ui="{
+                    trailingIcon: 'text-(--ui-text-dimmed)',
+                }"
             >
                 <template #leading>
                     <UAvatar :src="activeChar?.avatar?.url" :alt="$t('common.avatar')" :text="getInitials(name)" size="2xs" />
-                </template>
-
-                <template #trailing>
-                    <UIcon name="i-mdi-ellipsis-vertical" class="ml-auto size-5" />
                 </template>
             </UButton>
         </UChip>

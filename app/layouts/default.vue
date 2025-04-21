@@ -8,7 +8,7 @@ import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupM
 import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCalculatorModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
-import UserDropdown from '~/components/UserDropdown.vue';
+import UserMenu from '~/components/UserMenu.vue';
 import { useMailerStore } from '~/stores/mailer';
 import type { Perms } from '~~/gen/ts/perms';
 
@@ -210,7 +210,7 @@ const footerLinks = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const groups = computed(() => [
+const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
     {
         id: 'links',
         label: t('common.goto'),
@@ -415,44 +415,38 @@ const quickAccessButtons = computed(() =>
 </script>
 
 <template>
-    <UDashboardGroup>
-        <UDashboardPanel id="mainleftsidebar" resizable :width="225" :min-size="175" :max-size="275">
-            <UDashboardNavbar class="border-transparent!" :ui="{ left: 'flex-1' }">
-                <template #left>
-                    <TopLogoDropdown />
-                </template>
-            </UDashboardNavbar>
+    <UDashboardGroup unit="rem">
+        <UDashboardSidebar id="mainleftsidebar" resizable :width="225" :min-size="175" :max-size="275">
+            <template #header>
+                <TopLogoDropdown />
+            </template>
 
-            <UDashboardSidebar>
-                <template #header>
-                    <UDashboardSearchButton :label="$t('common.search_field')" />
-                </template>
+            <template #default="{ collapsed }">
+                <UDashboardSearchButton :collapsed="collapsed" :label="$t('common.search_field')" />
 
-                <UNavigationMenu :items="links" />
+                <UNavigationMenu orientation="vertical" :items="links" />
 
-                <template v-if="clipboardLink.length > 0">
-                    <USeparator />
+                <UNavigationMenu
+                    v-if="clipboardLink.length > 0"
+                    :collapsed="collapsed"
+                    orientation="vertical"
+                    :items="clipboardLink"
+                />
 
-                    <UNavigationMenu :items="clipboardLink" />
-                </template>
+                <UNavigationMenu
+                    v-if="quickAccessButtons"
+                    :collapsed="collapsed"
+                    orientation="vertical"
+                    :items="quickAccessButtons"
+                />
 
-                <template v-if="quickAccessButtons">
-                    <USeparator />
+                <UNavigationMenu :collapsed="collapsed" orientation="vertical" :items="footerLinks" />
+            </template>
 
-                    <UNavigationMenu :items="quickAccessButtons" />
-                </template>
-
-                <div class="flex-1" />
-
-                <UNavigationMenu :items="footerLinks" />
-
-                <USeparator class="sticky bottom-0" />
-
-                <template #footer>
-                    <UserDropdown />
-                </template>
-            </UDashboardSidebar>
-        </UDashboardPanel>
+            <template #footer="{ collapsed }">
+                <UserMenu :collapsed="collapsed" />
+            </template>
+        </UDashboardSidebar>
 
         <slot />
 
@@ -475,7 +469,7 @@ const quickAccessButtons = computed(() =>
                     queryLabel: $t('commandpalette.empty.title'),
                 }"
                 :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
-                :groups="groups as CommandPaletteGroup<CommandPaletteItem>[]"
+                :groups="groups"
             />
         </ClientOnly>
     </UDashboardGroup>

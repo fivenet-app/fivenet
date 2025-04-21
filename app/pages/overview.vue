@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import FiveNetHints from '~/components/FiveNetHints.vue';
 import CardsList from '~/components/partials/CardsList.vue';
 import type { CardElements } from '~/utils/types';
 
@@ -95,15 +94,19 @@ const items = [
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.overview')" />
+    <UDashboardPanel>
+        <template #header>
+            <UDashboardNavbar :title="$t('common.overview')" :ui="{ right: 'gap-3' }">
+                <template #leading>
+                    <UDashboardSidebarCollapse />
+                </template>
+            </UDashboardNavbar>
+        </template>
 
-            <UDashboardPanelContent>
-                <CardsList :items="items" />
+        <template #body>
+            <CardsList :items="items" />
 
-                <FiveNetHints class="mt-4" />
-            </UDashboardPanelContent>
-        </UDashboardPanel>
-    </UDashboardPage>
+            <FiveNetHints class="mt-4" />
+        </template>
+    </UDashboardPanel>
 </template>
