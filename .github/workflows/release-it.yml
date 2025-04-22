@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update_release_draft:
+  run_release_it:
     permissions:
       # write permission is required to create a github release
       contents: write
