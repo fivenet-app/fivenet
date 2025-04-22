@@ -8,8 +8,8 @@
   "github": {
     "release": true,
     "releaseName": "v${version}",
-    "web": true,
-    "draft": true,
+    "web": false,
+    "draft": false,
     "releaseNotes": "./internal/scripts/changelog.sh stdout"
   },
   "hooks": {

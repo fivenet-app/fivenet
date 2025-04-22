@@ -73,7 +73,7 @@ commit_parsers = [
   { field = "github.pr_labels", pattern = "type/refactor", group = "<!-- 4 -->🏭 Refactor" },
   { message = "^style", group = "<!-- 5 -->🎨 Styling" },
   { message = "^test", group = "<!-- 6 -->🧪 Testing" },
-  { message = "^chore\\(release\\):", skip = true },
+  { message = "^chore\\(release\\):|^version:", skip = true },
   { message = "^chore\\(deps.*\\)", skip = true },
   { message = "^chore\\(pr\\)", skip = true },
   { message = "^chore\\(pull\\)", skip = true },
@@ -84,10 +84,12 @@ commit_parsers = [
   { message = ".*", group = "<!-- 10 -->💼 Other" },
 ]
 # filter out the commits that are not matched by commit parsers
-filter_commits = false
+filter_commits = true
 # sort the tags topologically
 topo_order = false
 # sort the commits inside sections by oldest/newest order
 sort_commits = "oldest"
 limit_commits = 25
-skip_tags = "v0.+"
+ignore_tags = "^v0\\..+"
+
+tag_pattern = "^v[0-9]+\\..*"
