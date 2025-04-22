@@ -3,18 +3,18 @@
     "requireCleanWorkingDir": false,
     "commitMessage": "chore(release): v${version}",
     "tagName": "v${version}",
-    "changelog": "pnpx git-cliff --unreleased"
+    "changelog": "./internal/scripts/changelog.sh stdout"
   },
   "github": {
     "release": true,
     "releaseName": "v${version}",
     "web": true,
     "draft": true,
-    "releaseNotes": "pnpx git-cliff --output CHANGELOG.md --tag ${version}"
+    "releaseNotes": "./internal/scripts/changelog.sh stdout"
   },
   "hooks": {
     "before:init": [],
-    "after:bump": "pnpx git-cliff --output CHANGELOG.md --tag ${version}"
+    "after:bump": "./internal/scripts/changelog.sh"
   },
   "npm": {
     "publish": true,

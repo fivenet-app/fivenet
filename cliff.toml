@@ -60,11 +60,17 @@ commit_preprocessors = [
 ]
 # regex for parsing and grouping commits
 commit_parsers = [
-  { message = "^feat", group = "<!-- 0 -->🚀 Features" },
-  { message = "^fix", group = "<!-- 1 -->🐛 Bug Fixes" },
-  { message = "^doc", group = "<!-- 3 -->📚 Documentation" },
+  { message = ".*breaking change.*", group = "<!-- 0 -->🏗️ Breaking changes" },
+  { field = "github.pr_labels", pattern = "breaking-change", group = "<!-- 0 -->🏗️ Breaking changes" },
+  { message = "^feat", group = "<!-- 1 -->🚀 Features" },
+  { field = "github.pr_labels", pattern = "type/enhancement", group = "<!-- 1 -->🚀 Features" },
+  { message = "^fix", group = "<!-- 1 -->🐛 Fixes" },
+  { field = "github.pr_labels", pattern = "type/bug", group = "<!-- 2 -->🐛 Fixes" },
+  { message = "^doc", group = "<!-- 5 -->📚 Documentation" },
+  { field = "github.pr_labels", pattern = "area/documentation", group = "<!-- 5 -->📚 Documentation" },
   { message = "^perf", group = "<!-- 4 -->⚡ Performance" },
-  { message = "^refactor", group = "<!-- 2 -->🚜 Refactor" },
+  { message = "^refactor", group = "<!-- 4 -->🏭 Refactor" },
+  { field = "github.pr_labels", pattern = "type/refactor", group = "<!-- 4 -->🏭 Refactor" },
   { message = "^style", group = "<!-- 5 -->🎨 Styling" },
   { message = "^test", group = "<!-- 6 -->🧪 Testing" },
   { message = "^chore\\(release\\):", skip = true },
@@ -72,6 +78,7 @@ commit_parsers = [
   { message = "^chore\\(pr\\)", skip = true },
   { message = "^chore\\(pull\\)", skip = true },
   { message = "^chore|^ci", group = "<!-- 7 -->⚙️ Miscellaneous Tasks" },
+  { field = "github.pr_labels", pattern = ".*", group = "<!-- 7 -->⚙️ Miscellaneous Tasks" },
   { body = ".*security", group = "<!-- 8 -->🛡️ Security" },
   { message = "^revert", group = "<!-- 9 -->◀️ Revert" },
   { message = ".*", group = "<!-- 10 -->💼 Other" },
@@ -82,3 +89,5 @@ filter_commits = false
 topo_order = false
 # sort the commits inside sections by oldest/newest order
 sort_commits = "oldest"
+limit_commits = 25
+skip_tags = "v0.+"
