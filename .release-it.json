@@ -17,9 +17,11 @@
     "publishPath": "gen/ts"
   },
   "plugins": {
-    "@csmith/release-it-calver-plugin": {
+    "release-it-pnpm": {},
+    "./internal/release/calver-plugin.js": {
       "format": "yyyy.mm.minor",
-      "increment": "calendar"
+      "increment": "calendar",
+      "fallbackIncrement": "minor"
     },
     "@release-it/conventional-changelog": {
       "preset": {
