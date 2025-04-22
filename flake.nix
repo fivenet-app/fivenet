@@ -32,6 +32,8 @@
           hardeningDisable = [ "fortify" ];
 
           packages = with pkgs; [
+            git-cliff
+
             # go
             go
             # goimports, godoc, etc.

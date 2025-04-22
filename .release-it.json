@@ -1,35 +1,30 @@
 {
   "git": {
+    "requireCleanWorkingDir": false,
     "commitMessage": "chore(release): v${version}",
-    "tagName": "v${version}"
+    "tagName": "v${version}",
+    "changelog": "pnpx git-cliff --unreleased"
   },
   "github": {
     "release": true,
     "releaseName": "v${version}",
     "web": true,
-    "draft": true
+    "draft": true,
+    "releaseNotes": "pnpx git-cliff --output CHANGELOG.md --tag ${version}"
   },
   "hooks": {
-    "before:init": []
+    "before:init": [],
+    "after:bump": "pnpx git-cliff --output CHANGELOG.md --tag ${version}"
   },
   "npm": {
     "publish": true,
     "publishPath": "gen/ts"
   },
   "plugins": {
-    "release-it-pnpm": {},
-    "./internal/release/calver-plugin.js": {
+    "@csmith/release-it-calver-plugin": {
       "format": "yyyy.mm.minor",
       "increment": "calendar",
       "fallbackIncrement": "minor"
-    },
-    "@release-it/conventional-changelog": {
-      "preset": {
-        "name": "conventionalcommits"
-      },
-      "infile": "CHANGELOG.md",
-      "header": "# Changelog",
-      "ignoreRecommendedBump": true
     },
     "@release-it/bumper": {
       "out": [
