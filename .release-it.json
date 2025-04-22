@@ -1,0 +1,41 @@
+{
+  "git": {
+    "commitMessage": "chore(release): v${version}",
+    "tagName": "v${version}"
+  },
+  "github": {
+    "release": true,
+    "releaseName": "v${version}",
+    "web": true,
+    "draft": true
+  },
+  "hooks": {
+    "before:init": []
+  },
+  "plugins": {
+    "@csmith/release-it-calver-plugin": {
+      "format": "yyyy.mm.minor",
+      "increment": "calendar"
+    },
+    "@release-it/conventional-changelog": {
+      "preset": {
+        "name": "conventionalcommits"
+      },
+      "infile": "CHANGELOG.md",
+      "header": "# Changelog",
+      "ignoreRecommendedBump": true
+    },
+    "@release-it/bumper": {
+      "out": [
+        {
+          "file": "VERSION",
+          "type": "text/plain"
+        },
+        {
+          "file": "gen/ts/package.json",
+          "path": "version"
+        }
+      ]
+    }
+  }
+}
