@@ -1,11 +1,7 @@
-name: Release Draft
+name: Release It!
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, reopened, synchronize, edited]
+  workflow_dispatch:
 
 jobs:
   update_release_draft:
@@ -29,5 +25,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Set auth for NPM
+        run: pnpm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Run release-it
         run: pnpm run release-it --ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}

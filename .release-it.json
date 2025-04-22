@@ -12,6 +12,10 @@
   "hooks": {
     "before:init": []
   },
+  "npm": {
+    "publish": true,
+    "publishPath": "gen/ts"
+  },
   "plugins": {
     "@csmith/release-it-calver-plugin": {
       "format": "yyyy.mm.minor",

@@ -69,3 +69,4 @@ localhost.*
 !/dbsync.example.yaml
 
 /dbsync.state.yaml
+.npmr
