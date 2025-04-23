@@ -5,6 +5,7 @@ go 1.24.2
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/DATA-DOG/go-sqlmock v1.5.2
+	github.com/HugoSmits86/nativewebp v1.1.4
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.38.0
 	github.com/adhocore/gronx v1.19.5

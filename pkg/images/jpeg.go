@@ -21,6 +21,7 @@ func (g JPEG) Decode(input io.Reader) (image.Image, error) {
 }
 
 func (g JPEG) Encode(w io.Writer, m image.Image) error {
+	// Encode the image (from image.Image to JPEG)
 	if err := jpeg.Encode(w, m, &jpeg.Options{Quality: 90}); err != nil {
 		return err
 	}

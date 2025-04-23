@@ -31,7 +31,7 @@ export default defineAppConfig({
             images: 2 * 1024 * 1024,
         },
         types: {
-            images: ['image/jpeg', 'image/jpg', 'image/png'],
+            images: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
         },
     },
     // Request timeouts

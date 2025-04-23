@@ -400,7 +400,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <UInput
                                                 name="jobLogo"
                                                 type="file"
-                                                accept="image/jpeg,image/jpg,image/png"
+                                                :accept="appConfig.fileUpload.types.images.join(',')"
                                                 block
                                                 :placeholder="$t('common.image')"
                                                 @change="state.logoUrl = $event"

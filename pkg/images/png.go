@@ -21,6 +21,7 @@ func (g PNG) Decode(input io.Reader) (image.Image, error) {
 }
 
 func (g PNG) Encode(w io.Writer, m image.Image) error {
+	// Encode the image (from image.Image to PNG)
 	if err := png.Encode(w, m); err != nil {
 		return err
 	}

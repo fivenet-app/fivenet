@@ -121,7 +121,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UInput
                                 type="file"
                                 name="mugShot"
-                                accept="image/jpeg,image/jpg,image/png"
+                                :accept="appConfig.fileUpload.types.images.join(',')"
                                 :placeholder="$t('common.image')"
                                 @change="state.mugShot = $event"
                             />

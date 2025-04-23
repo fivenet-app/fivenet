@@ -9,6 +9,7 @@ import (
 	"io"
 	"testing"
 
+	webp "github.com/HugoSmits86/nativewebp"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -110,6 +111,11 @@ func TestResizeImage(t *testing.T) {
 					assert.Equal(t, int(tt.width), img.Bounds().Dx())
 				} else if tt.ext == "jpeg" {
 					img, err := jpeg.Decode(bytes.NewBuffer(output))
+					assert.NoError(t, err)
+					assert.Equal(t, int(tt.height), img.Bounds().Dy())
+					assert.Equal(t, int(tt.width), img.Bounds().Dx())
+				} else if tt.ext == "webp" {
+					img, err := webp.Decode(bytes.NewBuffer(output))
 					assert.NoError(t, err)
 					assert.Equal(t, int(tt.height), img.Bounds().Dy())
 					assert.Equal(t, int(tt.width), img.Bounds().Dx())

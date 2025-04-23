@@ -21,18 +21,17 @@ type ImageType interface {
 	Encode(w io.Writer, m image.Image) error
 }
 
-type ResizeTypeFn = func(input io.Reader, height uint, width uint) ([]byte, error)
-
 func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, error) {
 	var imgType ImageType
 
-	switch strings.ToLower(ext) {
+	ext = strings.ToLower(strings.TrimPrefix(ext, "."))
+	switch ext {
 	case "png":
 		imgType = PNG{}
-	case "jpg":
-		fallthrough
-	case "jpeg":
+	case "jpg", "jpeg":
 		imgType = JPEG{}
+	case "webp":
+		imgType = WebP{}
 	default:
 		return nil, ErrUnsupportedImageType
 	}
@@ -60,7 +59,7 @@ func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, 
 	return output.Bytes(), nil
 }
 
-// Resize logic is heavily inspired by https://github.com/KononK/resize code
+// Resize condition is heavily inspired by <https://github.com/KononK/resize> code
 func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RGBA, error) {
 	// Source image has no or "negative" pixels
 	if src.Bounds().Dx() <= 0 || src.Bounds().Dy() <= 0 {

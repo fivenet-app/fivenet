@@ -16,6 +16,8 @@ const emit = defineEmits<{
 
 const question = useVModel(props, 'modelValue', emit);
 
+const appConfig = useAppConfig();
+
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
@@ -236,7 +238,7 @@ function changeQuestionType(qt: string): void {
                         <template v-else>
                             <UInput
                                 type="file"
-                                accept="image/jpeg,image/jpg,image/png"
+                                :accept="appConfig.fileUpload.types.images.join(',')"
                                 :placeholder="$t('common.image')"
                                 @change="handleImage($event)"
                             />

@@ -100,7 +100,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 type="file"
                                 name="avatar"
                                 :placeholder="$t('common.image')"
-                                accept="image/jpeg,image/jpg,image/png"
+                                :accept="appConfig.fileUpload.types.images.join(',')"
                                 @change="state.avatar = $event"
                             />
                         </UFormGroup>
