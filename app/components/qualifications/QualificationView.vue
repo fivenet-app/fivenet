@@ -381,7 +381,13 @@ const accordionItems = computed(() =>
                 </template>
 
                 <div>
-                    <UTabs v-model="selectedTab" :items="items" class="w-full">
+                    <UAlert
+                        v-if="!canDo.grade"
+                        icon="i-mdi-info"
+                        :description="$t('components.qualifications.content_unavailable')"
+                    />
+
+                    <UTabs v-else v-model="selectedTab" :items="items" class="w-full">
                         <template #info>
                             <h2 class="sr-only">
                                 {{ $t('common.content') }}
@@ -393,9 +399,11 @@ const accordionItems = computed(() =>
                                     class="px-4 py-2"
                                     :value="qualification.content.content"
                                 />
-                                <p v-else>
-                                    {{ $t('components.qualifications.content_unavailable') }}
-                                </p>
+                                <UAlert
+                                    v-else
+                                    icon="i-mdi-info"
+                                    :description="$t('components.qualifications.content_unavailable')"
+                                />
                             </div>
                         </template>
 

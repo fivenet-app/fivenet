@@ -236,6 +236,11 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	role, err := p.GetRole(ctx, id)
 	if err != nil {
+		// Role not found? It shouldn't exist anymore
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil
+		}
+
 		return fmt.Errorf("failed to retrieve role for deletion with ID %d. %w", id, err)
 	}
 
