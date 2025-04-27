@@ -42,6 +42,8 @@ function copyError(): void {
 }
 
 const isDev = import.meta.dev;
+
+const version = APP_VERSION;
 </script>
 
 <template>
@@ -69,7 +71,14 @@ const isDev = import.meta.dev;
                             }}
                         </h2>
 
-                        <div class="mb-4 py-2">
+                        <div class="py-2">
+                            <p class="font-semibold">
+                                {{ $t !== undefined ? $t('components.debug_info.version') : 'Version' }}:
+                            </p>
+                            <span> {{ version }} </span>
+                        </div>
+
+                        <div class="mb-4 py-1">
                             <p class="py-2 font-semibold">
                                 {{ $t !== undefined ? $t('pages.error.error_message') : 'Error message:' }}
                             </p>
