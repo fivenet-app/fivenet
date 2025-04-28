@@ -264,9 +264,10 @@ type CopyRole = {
 async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
     const parsed = JSON.parse(event.data.input) as CopyRole;
 
-    role.value = parsed.role;
-    attrList.value.length = 0;
-    attrList.value.push(...parsed.attrList);
+    if (parsed.attrList) {
+        attrList.value.length = 0;
+        attrList.value.push(...parsed.attrList);
+    }
 
     state.input = '';
     changed.value = true;
