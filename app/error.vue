@@ -38,7 +38,11 @@ function copyError(): void {
         return;
     }
 
-    copyToClipboardWrapper(JSON.stringify(props.error));
+    copyToClipboardWrapper(`**App Error occured - ${new Date().toLocaleString()}**
+\`\`\`
+${props.error ? JSON.stringify(props.error) : 'Unknown error'}
+\`\`\`
+`);
 }
 
 const isDev = import.meta.dev;
