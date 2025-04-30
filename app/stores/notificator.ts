@@ -171,7 +171,7 @@ export const useNotificatorStore = defineStore(
                 }
             } catch (e) {
                 const error = e as RpcError;
-                if (error.code !== 'cancelled' && error.code !== 'aborted') {
+                if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                     logger.debug('Stream failed', error.code, error.message, error.cause);
                     if (error.message.includes('ErrCharLock')) {
                         await handleGRPCError(error);

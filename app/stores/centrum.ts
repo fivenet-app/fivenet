@@ -569,10 +569,10 @@ export const useCentrumStore = defineStore(
                 }
             } catch (e) {
                 const rpcError = e as RpcError;
-                if (rpcError.code !== 'cancelled' && rpcError.code !== 'aborted') {
+                if (rpcError.code !== 'CANCELLED' && rpcError.code !== 'ABORTED') {
                     logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
 
-                    if (rpcError.code === 'invalid_argument' && rpcError.message.includes('.ErrDisabled')) {
+                    if (rpcError.code === 'INVALID_ARGUMENT' && rpcError.message.includes('CentrumService.ErrDisabled')) {
                         // Create empty settings object with enabled set to false
                         settings.value = {
                             enabled: false,
@@ -588,6 +588,7 @@ export const useCentrumStore = defineStore(
                             type: NotificationType.INFO,
                             actions: getNotificationActions(),
                         });
+                        console.info('Centrum is disabled for job, stopping stream.');
                     } else if (abort.value && !abort.value.signal.aborted) {
                         // only restart if not aborted
                         restartStream();

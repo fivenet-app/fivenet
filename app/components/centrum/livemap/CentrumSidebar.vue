@@ -353,7 +353,7 @@ defineShortcuts({
     <UDashboardPanel grow>
         <UDashboardNavbar :title="$t('common.livemap')">
             <template #right>
-                <DisponentsInfo :hide-join="true" />
+                <DisponentsInfo v-if="canStream" :hide-join="true" />
             </template>
         </UDashboardNavbar>
 

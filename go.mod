@@ -8,7 +8,7 @@ require (
 	github.com/HugoSmits86/nativewebp v1.2.0
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.38.0
-	github.com/adhocore/gronx v1.19.5
+	github.com/adhocore/gronx v1.19.6
 	github.com/alecthomas/kong v1.10.0
 	github.com/aymanbagabas/go-udiff v0.2.0
 	github.com/blevesearch/bleve/v2 v2.5.0
