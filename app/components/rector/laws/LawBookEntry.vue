@@ -27,6 +27,8 @@ const { can } = useAuth();
 
 const lawBook = useVModel(props, 'modelValue', emit);
 
+const laws = useVModel(props, 'laws', emit);
+
 const modal = useModal();
 
 const schema = z.object({
@@ -83,6 +85,8 @@ async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
     }
 }
 
+const tableRef = useTemplateRef<typeof Table>('tableRef');
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!lawBook.value) {
@@ -94,30 +98,38 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 function deletedLaw(id: number): void {
-    emit(
-        'update:laws',
-        props.laws.filter((b) => b.id !== id),
-    );
+    laws.value = laws.value.filter((b) => b.id !== id);
 }
 
 const lastNewId = ref(-1);
+
+const lawEntriesRefs = ref(new Map<number, Element>());
 
 function addLaw(): void {
     if (!lawBook.value) {
         return;
     }
 
-    emit('update:laws', [
-        ...props.laws,
-        {
-            lawbookId: lawBook.value.id,
-            id: lastNewId.value,
-            name: '',
-            fine: 0,
-            detentionTime: 0,
-            stvoPoints: 0,
-        },
-    ]);
+    const law = {
+        lawbookId: lawBook.value.id,
+        id: lastNewId.value,
+        name: '',
+        fine: 0,
+        detentionTime: 0,
+        stvoPoints: 0,
+    };
+    laws.value.push(law);
+
+    useTimeoutFn(() => {
+        const ref = lawEntriesRefs.value.get(law.id);
+        if (ref) {
+            ref.scrollIntoView({ block: 'nearest' });
+        }
+
+        tableRef.value?.toggleOpened(law);
+        console.log('tableRef', tableRef.value);
+    }, 100);
+
     lastNewId.value--;
 }
 
@@ -176,8 +188,6 @@ const columns = [
     },
 ];
 
-const table = useTemplateRef<typeof Table>('table');
-
 const expand = ref({
     openedRows: [],
     row: {},
@@ -189,7 +199,7 @@ const editing = ref(props.startInEdit);
 <template>
     <UCard v-if="lawBook" class="overflow-y-auto">
         <template #header>
-            <div v-if="!editing" class="flex items-center gap-x-2">
+            <div v-if="!editing" class="inline-flex w-full items-center gap-x-2">
                 <UButtonGroup class="inline-flex">
                     <UTooltip :text="$t('common.edit')">
                         <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
@@ -215,7 +225,7 @@ const editing = ref(props.startInEdit);
                     <p v-if="lawBook.description">{{ $t('common.description') }}: {{ lawBook.description }}</p>
                 </div>
 
-                <UTooltip :text="$t('pages.rector.laws.add_new_law')">
+                <UTooltip :text="$t('pages.rector.laws.add_new_law')" class="shrink-0">
                     <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLaw">
                         {{ $t('pages.rector.laws.add_new_law') }}
                     </UButton>
@@ -259,7 +269,7 @@ const editing = ref(props.startInEdit);
         </template>
 
         <UTable
-            ref="table"
+            ref="tableRef"
             v-model:expand="expand"
             :columns="columns"
             :rows="laws"
@@ -270,16 +280,15 @@ const editing = ref(props.startInEdit);
                 label: $t('common.not_found', [$t('common.law', 2)]),
             }"
         >
-            <template #expand="{ row: law, index }">
+            <template #expand="{ row: law }">
                 <LawEntry
                     :law="law"
-                    :start-in-edit="law.id < 0"
                     @update:law="
                         $emit('update:law', $event);
-                        table?.toggleOpened(index);
+                        tableRef?.toggleOpened(law);
                     "
                     @close="
-                        table?.toggleOpened(index);
+                        tableRef?.toggleOpened(law);
                         if (law.id < 0) {
                             deleteLaw(law.id);
                         }
@@ -303,7 +312,7 @@ const editing = ref(props.startInEdit);
             </template>
 
             <template #crime-data="{ row: law }">
-                <span class="truncate text-gray-900 dark:text-white">
+                <span :ref="(ref) => lawEntriesRefs.set(law.id, ref as Element)" class="truncate text-gray-900 dark:text-white">
                     {{ law.name }}
                 </span>
             </template>

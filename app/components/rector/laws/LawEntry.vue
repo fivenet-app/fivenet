@@ -5,7 +5,6 @@ import type { Law } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
     law: Law;
-    startInEdit?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -52,8 +51,6 @@ async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<v
         const { response } = await call;
 
         emit('update:law', { id: id, law: response.law! });
-
-        editing.value = false;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -67,8 +64,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
-
-const editing = ref(props.startInEdit);
 </script>
 
 <template>
@@ -81,14 +76,7 @@ const editing = ref(props.startInEdit);
                     </UTooltip>
 
                     <UTooltip :text="$t('common.cancel')">
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-cancel"
-                            @click="
-                                editing = false;
-                                $emit('close');
-                            "
-                        />
+                        <UButton variant="link" icon="i-mdi-cancel" @click="$emit('close')" />
                     </UTooltip>
                 </UButtonGroup>
             </UFormGroup>

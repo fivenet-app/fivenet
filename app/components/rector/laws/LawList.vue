@@ -72,6 +72,7 @@ function updateLaw(event: { id: number; law: Law }): void {
             <ul role="list" class="space-y-3">
                 <li v-for="(book, idx) in lawBooks" :key="book.id">
                     <LawBookEntry
+                        :id="`book-${lawBooks[idx]?.id}`"
                         v-model="lawBooks[idx]"
                         v-model:laws="book.laws"
                         :start-in-edit="book.id < 0"
