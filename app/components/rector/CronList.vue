@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { CronjobState } from '~~/gen/ts/resources/common/cron/cron';
+import { Any } from '~~/gen/ts/google/protobuf/any';
+import { CronjobState, GenericCronData } from '~~/gen/ts/resources/common/cron/cron';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListCronjobsResponse } from '~~/gen/ts/services/rector/cron';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
@@ -21,6 +23,19 @@ async function listCronjobs(): Promise<ListCronjobsResponse> {
 }
 
 const { t } = useI18n();
+
+const notifications = useNotificatorStore();
+
+function copyLinkToClipboard(text: string): void {
+    copyToClipboardWrapper(text);
+
+    notifications.add({
+        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
+        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
+        timeout: 3250,
+        type: NotificationType.INFO,
+    });
+}
 
 const columns = [
     {
@@ -80,16 +95,45 @@ const expand = ref({
         <template #expand="{ row }">
             <div class="p-2">
                 <pre v-if="!row.lastCompletedEvent">{{ $t('common.na') }}</pre>
-                <div v-else class="flex items-center gap-2">
-                    <UBadge v-if="row.lastCompletedEvent.success" icon="i-mdi-check-bold" color="success" />
-                    <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
+                <UCard v-else>
+                    <template #header>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex gap-2">
+                                <UBadge v-if="row.lastCompletedEvent.success" icon="i-mdi-check-bold" color="success" />
+                                <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
 
-                    <div class="font-semibold">
-                        {{ $t('common.end_date') }}: <GenericTime :value="row.lastCompletedEvent.endDate" /> ({{
-                            $t('common.duration')
-                        }}: {{ fromDuration(row.lastCompletedEvent.elapsed) }}s)
-                    </div>
-                </div>
+                                <div class="font-semibold">
+                                    {{ $t('common.end_date') }}: <GenericTime :value="row.lastCompletedEvent.endDate" /> ({{
+                                        $t('common.duration')
+                                    }}: {{ fromDuration(row.lastCompletedEvent.elapsed) }}s)
+                                </div>
+                            </div>
+
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-share"
+                                @click="
+                                    copyLinkToClipboard(
+                                        row.lastCompletedEvent.data?.data?.typeUrl.includes(
+                                            '/resources.common.cron.GenericCronData',
+                                        )
+                                            ? Any.unpack(row.lastCompletedEvent.data.data, GenericCronData)
+                                            : row.lastCompletedEvent.data,
+                                    )
+                                "
+                            />
+                        </div>
+                    </template>
+
+                    <pre
+                        class="line-clamp-[9] hover:line-clamp-none"
+                        v-text="
+                            row.lastCompletedEvent.data?.data?.typeUrl.includes('/resources.common.cron.GenericCronData')
+                                ? Any.unpack(row.lastCompletedEvent.data.data, GenericCronData)
+                                : row.lastCompletedEvent.data
+                        "
+                    />
+                </UCard>
             </div>
         </template>
 
@@ -125,5 +169,5 @@ const expand = ref({
         </template>
     </UTable>
 
-    <Pagination :loading="loading" :refresh="refresh" />
+    <Pagination :loading="loading" :refresh="refresh" hide-text hide-buttons />
 </template>

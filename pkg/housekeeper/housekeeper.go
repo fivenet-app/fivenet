@@ -84,7 +84,7 @@ func New(p Params) *Housekeeper {
 		}
 
 		if err := data.Data.UnmarshalTo(dest); err != nil {
-			h.logger.Error("failed to unmarshal housekeeper cron data", zap.Error(err))
+			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
 		if err := h.runHousekeeper(ctx, dest); err != nil {

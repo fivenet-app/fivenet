@@ -98,7 +98,7 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 		}
 
 		if err := anypb.UnmarshalTo(data.Data, dest, proto.UnmarshalOptions{}); err != nil {
-			w.logger.Error("failed to unmarshal document workflow cron data", zap.Error(err))
+			w.logger.Warn("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
 
 		if err := w.handleDocuments(ctx, dest); err != nil {
