@@ -11,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -42,8 +41,6 @@ type Scheduler struct {
 	gron  *gronx.Gronx
 
 	jsCons jetstream.ConsumeContext
-
-	cronjobs *xsync.Map[string, *jobWrapper]
 }
 
 func NewScheduler(p SchedulerParams) (*Scheduler, error) {
@@ -55,8 +52,6 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		js:     p.JS,
 		state:  p.State,
 		gron:   gronx.New(),
-
-		cronjobs: xsync.NewMap[string, *jobWrapper](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -85,7 +80,7 @@ func (s *Scheduler) start(ctx context.Context) {
 			return
 
 		case t := <-ticker.C:
-			if s.cronjobs.Size() == 0 {
+			if s.state.cronjobs.Size() == 0 {
 				continue
 			}
 
@@ -95,7 +90,7 @@ func (s *Scheduler) start(ctx context.Context) {
 
 				wg := sync.WaitGroup{}
 
-				s.cronjobs.Range(func(key string, value *jobWrapper) bool {
+				s.state.cronjobs.Range(func(key string, value *jobWrapper) bool {
 					job, err := s.state.store.GetOrLoad(ctx, key)
 					if err != nil {
 						s.logger.Error("failed to load cron job", zap.String("job_name", key))
@@ -129,6 +124,9 @@ func (s *Scheduler) start(ctx context.Context) {
 
 							existing.StartedTime = timestamp.Now()
 							existing.State = cron.CronjobState_CRONJOB_STATE_RUNNING
+
+							job.StartedTime = existing.StartedTime
+							job.State = existing.State
 
 							return existing, true, nil
 						}); err != nil {
