@@ -422,7 +422,7 @@ defineShortcuts({
                         "
                         block
                         class="flex-1 flex-col"
-                        :color="!doc.deletedAt ? 'red' : 'green'"
+                        :color="!doc.deletedAt ? 'error' : 'success'"
                         :icon="!doc.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                         :label="!doc.deletedAt ? $t('common.delete') : $t('common.restore')"
                         @click="

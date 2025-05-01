@@ -104,6 +104,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		croner.HandlerModule,
 		croner.Module,
 		croner.SchedulerModule,
+		croner.StateModule,
 		events.Module,
 		grpc.ServerModule,
 		htmlsanitizer.Module,

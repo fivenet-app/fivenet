@@ -29,14 +29,14 @@ watch(result, () => {
     switch (result.value.score) {
         case 0:
         case 1:
-            color.value = 'red';
+            color.value = 'error';
             break;
         case 2:
             color.value = 'amber';
             break;
         case 3:
         case 4:
-            color.value = 'green';
+            color.value = 'success';
             break;
         default:
             color.value = 'base';

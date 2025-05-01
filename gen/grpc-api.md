@@ -844,6 +844,12 @@
   
     - [RectorLawsService](#services-rector-RectorLawsService)
   
+- [services/rector/cron.proto](#services_rector_cron-proto)
+    - [ListCronjobsRequest](#services-rector-ListCronjobsRequest)
+    - [ListCronjobsResponse](#services-rector-ListCronjobsResponse)
+  
+    - [RectorCronService](#services-rector-RectorCronService)
+  
 - [services/calendar/calendar.proto](#services_calendar_calendar-proto)
     - [CreateCalendarRequest](#services-calendar-CreateCalendarRequest)
     - [CreateCalendarResponse](#services-calendar-CreateCalendarResponse)
@@ -12777,6 +12783,57 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `DeleteLawBook` | [DeleteLawBookRequest](#services-rector-DeleteLawBookRequest) | [DeleteLawBookResponse](#services-rector-DeleteLawBookResponse) | @perm |
 | `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#services-rector-CreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#services-rector-CreateOrUpdateLawResponse) | @perm: Name=CreateOrUpdateLawBook |
 | `DeleteLaw` | [DeleteLawRequest](#services-rector-DeleteLawRequest) | [DeleteLawResponse](#services-rector-DeleteLawResponse) | @perm: Name=DeleteLawBook |
+
+ <!-- end services -->
+
+
+
+<a name="services_rector_cron-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/rector/cron.proto
+
+
+
+<a name="services-rector-ListCronjobsRequest"></a>
+
+### ListCronjobsRequest
+
+
+
+
+
+
+
+<a name="services-rector-ListCronjobsResponse"></a>
+
+### ListCronjobsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [resources.common.cron.Cronjob](#resources-common-cron-Cronjob) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-rector-RectorCronService"></a>
+
+### RectorCronService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListCronjobs` | [ListCronjobsRequest](#services-rector-ListCronjobsRequest) | [ListCronjobsResponse](#services-rector-ListCronjobsResponse) | @perm: Name=SuperUser |
 
  <!-- end services -->
 

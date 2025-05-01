@@ -18,11 +18,11 @@ export function notificationTypeToIcon(t?: NotificationType): string {
 export function notificationTypeToColor(t?: NotificationType): NotificationColor {
     switch (t) {
         case NotificationType.SUCCESS:
-            return 'green';
+            return 'success';
         case NotificationType.WARNING:
             return 'amber';
         case NotificationType.ERROR:
-            return 'red';
+            return 'error';
         case NotificationType.INFO:
         default:
             return 'blue';

@@ -90,6 +90,7 @@
 // source: services/notificator/notificator.proto
 // source: services/qualifications/qualifications.proto
 // source: services/rector/config.proto
+// source: services/rector/cron.proto
 // source: services/rector/filestore.proto
 // source: services/rector/laws.proto
 // source: services/rector/rector.proto
@@ -116,6 +117,7 @@ export const grpcServices = [
     'NotificatorService',
     'QualificationsService',
     'RectorConfigService',
+    'RectorCronService',
     'RectorFilestoreService',
     'RectorLawsService',
     'RectorService',
@@ -289,6 +291,7 @@ export const grpcMethods = [
 	'QualificationsService/GetUserExam',
 	'RectorConfigService/GetAppConfig',
 	'RectorConfigService/UpdateAppConfig',
+	'RectorCronService/ListCronjobs',
 	'RectorFilestoreService/ListFiles',
 	'RectorFilestoreService/UploadFile',
 	'RectorFilestoreService/DeleteFile',

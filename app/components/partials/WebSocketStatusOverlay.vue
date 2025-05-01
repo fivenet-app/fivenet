@@ -33,7 +33,7 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
 
         toast.add({
             id: uuidv4(),
-            color: 'green',
+            color: 'success',
             icon: 'i-mdi-check-network',
             title: t('notifications.grpc_errors.available.title'),
             description: t('notifications.grpc_errors.available.content'),
@@ -49,7 +49,7 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
         notificationId.value = uuidv4();
         toast.add({
             id: notificationId.value,
-            color: 'red',
+            color: 'error',
             icon: 'i-mdi-close-network',
             title: t('notifications.grpc_errors.unavailable.title'),
             description: t('notifications.grpc_errors.unavailable.content'),

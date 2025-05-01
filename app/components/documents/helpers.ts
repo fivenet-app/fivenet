@@ -94,9 +94,9 @@ export function refToColor(ref: DocReference): ButtonColor {
         case DocReference.LINKED:
             return 'blue';
         case DocReference.SOLVES:
-            return 'green';
+            return 'success';
         case DocReference.CLOSES:
-            return 'red';
+            return 'error';
         case DocReference.DEPRECATES:
             return 'amber';
         default:
@@ -109,9 +109,9 @@ export function refToBadge(ref: DocReference): BadgeColor {
         case DocReference.LINKED:
             return 'blue';
         case DocReference.SOLVES:
-            return 'green';
+            return 'success';
         case DocReference.CLOSES:
-            return 'red';
+            return 'error';
         case DocReference.DEPRECATES:
             return 'amber';
         default:
@@ -141,7 +141,7 @@ export function relationToColor(ref: DocRelation): ButtonColor {
         case DocRelation.TARGETS:
             return 'amber';
         case DocRelation.CAUSED:
-            return 'red';
+            return 'error';
         default:
             return 'black';
     }
@@ -154,7 +154,7 @@ export function relationToBadge(ref: DocRelation): BadgeColor {
         case DocRelation.TARGETS:
             return 'amber';
         case DocRelation.CAUSED:
-            return 'red';
+            return 'error';
         default:
             return 'black';
     }

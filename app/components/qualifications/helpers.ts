@@ -74,9 +74,9 @@ export function requestStatusToBadgeColor(status: RequestStatus): BadgeColor {
     switch (status) {
         case RequestStatus.ACCEPTED:
         case RequestStatus.COMPLETED:
-            return 'green';
+            return 'success';
         case RequestStatus.DENIED:
-            return 'red';
+            return 'error';
         default:
             return 'primary';
     }
@@ -109,9 +109,9 @@ export function requestStatusToBgColor(status: RequestStatus): string {
 export function resultStatusToBadgeColor(status: ResultStatus): BadgeColor {
     switch (status) {
         case ResultStatus.FAILED:
-            return 'red';
+            return 'error';
         case ResultStatus.SUCCESSFUL:
-            return 'green';
+            return 'success';
         default:
             return 'primary';
     }

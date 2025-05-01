@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import LawList from '~/components/rector/laws/LawList.vue';
+import CronList from '~/components/rector/CronList.vue';
 
 useHead({
-    title: 'pages.rector.laws.title',
+    title: 'pages.rector.cron.title',
 });
 
 definePageMeta({
-    title: 'pages.rector.laws.title',
+    title: 'pages.rector.cron.title',
     requiresAuth: true,
-    permission: 'RectorLawsService.CreateOrUpdateLawBook',
+    permission: 'SuperUser',
 });
 </script>
 
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <LawList />
+            <CronList />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

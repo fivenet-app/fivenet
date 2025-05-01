@@ -658,7 +658,7 @@ defineShortcuts({
                                 >
                                     <UTooltip :text="$t('components.centrum.take_dispatch.title')" :shortcuts="['M', 'D']">
                                         <UButton
-                                            :color="pendingDispatches.length > 0 ? 'red' : 'primary'"
+                                            :color="pendingDispatches.length > 0 ? 'error' : 'primary'"
                                             size="xl"
                                             icon="i-mdi-car-emergency"
                                             class="flex size-12 items-center justify-center"

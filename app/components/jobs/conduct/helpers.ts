@@ -6,9 +6,9 @@ export function conductTypesToBadgeColor(status: ConductType | undefined): Badge
         case ConductType.NEUTRAL:
             return 'gray';
         case ConductType.POSITIVE:
-            return 'green';
+            return 'success';
         case ConductType.NEGATIVE:
-            return 'red';
+            return 'error';
         case ConductType.WARNING:
             return 'amber';
         case ConductType.SUSPENSION:

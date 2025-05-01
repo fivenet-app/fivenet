@@ -16,7 +16,7 @@ withDefaults(
         description: undefined,
         cancel: undefined,
         icon: 'i-mdi-warning-circle',
-        color: 'red',
+        color: 'error',
         iconClass: 'text-red-500 dark:text-red-400',
     },
 );

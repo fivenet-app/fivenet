@@ -41,6 +41,7 @@ type Params struct {
 	Logger    *zap.Logger
 	Cfg       *config.Config
 	JS        *events.JSWrapper
+	State     *State
 	Scheduler *Scheduler
 }
 
@@ -52,6 +53,7 @@ type Cron struct {
 	js        *events.JSWrapper
 	ownerKv   jetstream.KeyValue
 	ownerLock *locks.Locks
+	state     *State
 	scheduler *Scheduler
 }
 
@@ -73,6 +75,7 @@ func New(p Params) (ICron, error) {
 		ctx:       ctx,
 		logger:    p.Logger.Named("cron"),
 		js:        p.JS,
+		state:     p.State,
 		scheduler: p.Scheduler,
 	}
 
@@ -118,7 +121,7 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 	}
 
 	c.logger.Debug("registering cronjob", zap.String("name", job.Name))
-	cj, err := c.scheduler.store.GetOrLoad(ctx, job.Name)
+	cj, err := c.state.store.GetOrLoad(ctx, job.Name)
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		return fmt.Errorf("failed to load existing cron job %s. %w", job.Name, err)
 	}
@@ -141,7 +144,7 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 		cj.NextScheduleTime = timestamp.New(nextTime)
 	}
 
-	if err := c.scheduler.store.ComputeUpdate(ctx, strings.ToLower(job.Name), true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+	if err := c.state.store.ComputeUpdate(ctx, strings.ToLower(job.Name), true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 		if existing == nil {
 			return cj, true, nil
 		}
@@ -158,7 +161,7 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 
 func (c *Cron) UnregisterCronjob(ctx context.Context, name string) error {
 	c.logger.Debug("unregistering cronjob", zap.String("name", name))
-	if err := c.scheduler.store.Delete(ctx, name); err != nil {
+	if err := c.state.store.Delete(ctx, name); err != nil {
 		return fmt.Errorf("failed to unregister cron job %s from store. %w", name, err)
 	}
 

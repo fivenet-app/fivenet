@@ -8,10 +8,10 @@ export function eventTypeToBadgeColor(et: EventType): BadgeColor {
         case EventType.VIEWED:
             return 'blue';
         case EventType.CREATED:
-            return 'green';
+            return 'success';
         case EventType.UPDATED:
             return 'amber';
         default:
-            return 'red';
+            return 'error';
     }
 }

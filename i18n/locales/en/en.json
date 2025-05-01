@@ -54,7 +54,8 @@
                 "laws": "Set the law books and laws for the state.",
                 "units": "List, create and update units for the dispatch center.",
                 "filestore": "List and manage all files.",
-                "settings": "Manage FiveNet settings."
+                "settings": "Manage FiveNet settings.",
+                "cron": "View status of background tasks."
             },
             "roles": {
                 "title": "Roles",
@@ -75,6 +76,9 @@
             },
             "settings": {
                 "title": "FiveNet Settings"
+            },
+            "cron": {
+                "title": "Background Tasks"
             }
         },
         "notfound": {
@@ -568,7 +572,11 @@
         "zoom_in": "Zoom In",
         "zoom_out": "Zoom Out",
         "system": "System",
-        "my_location": "My Location"
+        "my_location": "My Location",
+        "schedule": "Schedule",
+        "next_schedule_time": "Next Schedule Time",
+        "last_attempt_time": "Last Attempt Time",
+        "started_time": "Started Time"
     },
     "components": {
         "partials": {
@@ -2843,6 +2851,12 @@
                     "UPDATED": "Updated",
                     "DELETED": "Deleted"
                 }
+            },
+            "CronjobState": {
+                "UNSPECIFIED": "Unspecified",
+                "WAITING": "Waiting",
+                "PENDING": "Pending",
+                "RUNNING": "Running"
             }
         },
         "calendar": {

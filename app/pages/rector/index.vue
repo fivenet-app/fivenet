@@ -64,6 +64,13 @@ const items = [
         permission: 'SuperUser',
         icon: 'i-mdi-office-building-cog',
     },
+    {
+        title: t('pages.rector.cron.title'),
+        description: t('pages.rector.features.cron'),
+        to: { name: 'rector-cron' },
+        permission: 'SuperUser',
+        icon: 'i-mdi-calendar-task',
+    },
 ] as CardElements;
 </script>
 

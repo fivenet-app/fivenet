@@ -238,7 +238,7 @@ const accordionItems = computed(() =>
 
                     <UButton
                         v-if="can('QualificationsService.DeleteQualification').value && canDo.delete"
-                        :color="!qualification.deletedAt ? 'red' : 'green'"
+                        :color="!qualification.deletedAt ? 'error' : 'success'"
                         :icon="!qualification.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                         :label="!qualification.deletedAt ? $t('common.delete') : $t('common.restore')"
                         @click="
@@ -366,8 +366,8 @@ const accordionItems = computed(() =>
                                 <UBadge
                                     :color="
                                         requirement.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
-                                            ? 'green'
-                                            : 'red'
+                                            ? 'success'
+                                            : 'error'
                                     "
                                 >
                                     <span>

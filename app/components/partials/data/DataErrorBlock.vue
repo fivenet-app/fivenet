@@ -47,8 +47,8 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
             retry !== undefined
                 ? [
                       {
-                          variant: 'soft',
-                          color: 'red',
+                          variant: 'solid',
+                          color: 'white',
                           label: retryMessage ?? $t('common.retry'),
                           disabled: disabled,
                           click: async () => {

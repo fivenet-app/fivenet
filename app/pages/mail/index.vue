@@ -451,7 +451,7 @@ onBeforeMount(async () => {
                             :text="!selectedThread.deletedAt ? $t('common.delete') : $t('common.restore')"
                         >
                             <UButton
-                                :color="!selectedThread.deletedAt ? 'red' : 'green'"
+                                :color="!selectedThread.deletedAt ? 'error' : 'success'"
                                 :icon="!selectedThread.deletedAt ? 'i-mdi-delete-outline' : 'i-mdi-restore'"
                                 variant="ghost"
                                 @click="

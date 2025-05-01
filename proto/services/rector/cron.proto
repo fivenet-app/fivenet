@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package services.rector;
+
+import "resources/common/cron/cron.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/rector;rector";
+
+message ListCronjobsRequest {}
+
+message ListCronjobsResponse {
+  repeated resources.common.cron.Cronjob jobs = 1;
+}
+
+service RectorCronService {
+  // @perm: Name=SuperUser
+  rpc ListCronjobs(ListCronjobsRequest) returns (ListCronjobsResponse);
+}

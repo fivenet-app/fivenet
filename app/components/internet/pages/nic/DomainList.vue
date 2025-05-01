@@ -66,7 +66,7 @@ const columns = [
 
             <template #active-data="{ row }">
                 <UBadge
-                    :color="row.active ? 'green' : 'orange'"
+                    :color="row.active ? 'success' : 'orange'"
                     :label="row.active ? $t('common.approve', 2) : $t('common.decline', 2)"
                 />
             </template>

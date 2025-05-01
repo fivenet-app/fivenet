@@ -10,7 +10,6 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/pkg/events"
-	"github.com/fivenet-app/fivenet/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"
@@ -33,24 +32,17 @@ type SchedulerParams struct {
 	JS     *events.JSWrapper
 }
 
-type jobWrapper struct {
-	ctx    context.Context
-	cancel context.CancelFunc
-
-	schedule string
-}
-
 type Scheduler struct {
 	logger *zap.Logger
 
 	ctx   context.Context
 	js    *events.JSWrapper
-	store *store.Store[cron.Cronjob, *cron.Cronjob]
+	state *State
 	gron  *gronx.Gronx
 
 	jsCons jetstream.ConsumeContext
 
-	jobs *xsync.Map[string, *jobWrapper]
+	cronjobs *xsync.Map[string, *jobWrapper]
 }
 
 func NewScheduler(p SchedulerParams) (*Scheduler, error) {
@@ -62,56 +54,11 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		js:     p.JS,
 		gron:   gronx.New(),
 
-		jobs: xsync.NewMap[string, *jobWrapper](),
+		cronjobs: xsync.NewMap[string, *jobWrapper](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		if err := registerCronStreams(ctxStartup, s.js); err != nil {
-			return err
-		}
-
-		st, err := store.New(ctxStartup, p.Logger, p.JS, "cron",
-			store.WithOnUpdateFn(func(_ *store.Store[cron.Cronjob, *cron.Cronjob], cj *cron.Cronjob) (*cron.Cronjob, error) {
-				if cj == nil {
-					return cj, nil
-				}
-
-				jw, ok := s.jobs.Load(cj.Name)
-				if !ok {
-					ctx, cancel := context.WithCancel(ctxCancel)
-					s.jobs.Store(cj.Name, &jobWrapper{
-						ctx:    ctx,
-						cancel: cancel,
-
-						schedule: cj.Schedule,
-					})
-				} else {
-					if cj.Schedule != jw.schedule {
-						jw.schedule = cj.Schedule
-					}
-				}
-
-				return cj, nil
-			}),
-
-			store.WithOnDeleteFn(func(_ *store.Store[cron.Cronjob, *cron.Cronjob], entry jetstream.KeyValueEntry, cj *cron.Cronjob) error {
-				jw, ok := s.jobs.LoadAndDelete(entry.Key())
-				if !ok {
-					return nil
-				}
-
-				jw.cancel()
-				jw = nil
-
-				return nil
-			}),
-		)
-		if err != nil {
-			return err
-		}
-		s.store = st
-
-		if err := st.Start(ctxCancel, true); err != nil {
 			return err
 		}
 
@@ -136,7 +83,7 @@ func (s *Scheduler) start(ctx context.Context) {
 			return
 
 		case t := <-ticker.C:
-			if s.jobs.Size() == 0 {
+			if s.cronjobs.Size() == 0 {
 				continue
 			}
 
@@ -146,8 +93,8 @@ func (s *Scheduler) start(ctx context.Context) {
 
 				wg := sync.WaitGroup{}
 
-				s.jobs.Range(func(key string, value *jobWrapper) bool {
-					job, err := s.store.GetOrLoad(ctx, key)
+				s.cronjobs.Range(func(key string, value *jobWrapper) bool {
+					job, err := s.state.store.GetOrLoad(ctx, key)
 					if err != nil {
 						s.logger.Error("failed to load cron job", zap.String("job_name", key))
 						return true
@@ -173,7 +120,7 @@ func (s *Scheduler) start(ctx context.Context) {
 					go func() {
 						defer wg.Done()
 
-						if err := s.store.ComputeUpdate(ctx, key, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+						if err := s.state.store.ComputeUpdate(ctx, key, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 							if existing == nil {
 								return existing, false, nil
 							}
@@ -253,7 +200,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		s.logger.Error("failed to send in progress for cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
 	}
 
-	if err := s.store.ComputeUpdate(s.ctx, job.Name, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+	if err := s.state.store.ComputeUpdate(s.ctx, job.Name, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 		// No need to update the job, probably doesn't exist anymore
 		if existing == nil {
 			return existing, false, nil

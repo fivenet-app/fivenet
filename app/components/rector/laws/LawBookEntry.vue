@@ -23,6 +23,8 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const lawBook = useVModel(props, 'modelValue', emit);
 
 const modal = useModal();
@@ -193,7 +195,7 @@ const editing = ref(props.startInEdit);
                         <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
                     </UTooltip>
 
-                    <UTooltip :text="$t('common.delete')">
+                    <UTooltip v-if="can('RectorLawsService.DeleteLawBook').value" :text="$t('common.delete')">
                         <UButton
                             variant="link"
                             icon="i-mdi-delete"
@@ -285,7 +287,7 @@ const editing = ref(props.startInEdit);
             </template>
 
             <template #actions-data="{ row: law }">
-                <UTooltip :text="$t('common.delete')">
+                <UTooltip v-if="can('RectorLawsService.DeleteLawBook').value" :text="$t('common.delete')">
                     <UButton
                         variant="link"
                         icon="i-mdi-delete"

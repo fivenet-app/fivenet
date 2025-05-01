@@ -19,6 +19,7 @@ import { MailerServiceClient } from '~~/gen/ts/services/mailer/mailer.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { QualificationsServiceClient } from '~~/gen/ts/services/qualifications/qualifications.client';
 import { RectorConfigServiceClient } from '~~/gen/ts/services/rector/config.client';
+import { RectorCronServiceClient } from '~~/gen/ts/services/rector/cron.client';
 import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestore.client';
 import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
@@ -73,6 +74,7 @@ export class GRPCClients {
     };
     public rector: {
         rectorConfig: RectorConfigServiceClient;
+        rectorCron: RectorCronServiceClient;
         rectorFilestore: RectorFilestoreServiceClient;
         rectorLaws: RectorLawsServiceClient;
         rector: RectorServiceClient;
@@ -133,6 +135,7 @@ export class GRPCClients {
         };
         this.rector = {
             rectorConfig: new RectorConfigServiceClient(transport),
+            rectorCron: new RectorCronServiceClient(transport),
             rectorFilestore: new RectorFilestoreServiceClient(transport),
             rectorLaws: new RectorLawsServiceClient(transport),
             rector: new RectorServiceClient(transport),

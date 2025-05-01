@@ -219,7 +219,7 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
 
         <div class="grid grid-cols-1 gap-2">
             <div class="grid grid-cols-4 gap-2">
-                <UButton block :color="powerOn ? 'green' : 'red'" icon="i-mdi-power-standby" @click="powerOn = !powerOn" />
+                <UButton block :color="powerOn ? 'success' : 'error'" icon="i-mdi-power-standby" @click="powerOn = !powerOn" />
                 <UButton block color="white" @click="allClear()">
                     <span class="font-semibold">AC</span>
                 </UButton>

@@ -172,7 +172,7 @@ const accordionItems = computed(() =>
                             :text="!page.meta.deletedAt ? $t('common.delete') : $t('common.restore')"
                         >
                             <UButton
-                                :color="!page.meta.deletedAt ? 'red' : 'green'"
+                                :color="!page.meta.deletedAt ? 'error' : 'success'"
                                 :icon="!page.meta.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                                 @click="
                                     modal.open(ConfirmModal, {

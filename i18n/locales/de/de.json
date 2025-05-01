@@ -54,7 +54,8 @@
                 "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates.",
                 "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle.",
                 "filestore": "Auflisten und verwalten aller Dateien.",
-                "settings": "Verwalten von FiveNet-Einstellungen."
+                "settings": "Verwalten von FiveNet-Einstellungen.",
+                "cron": "Status der Hintergrundaufgaben anzeigen."
             },
             "roles": {
                 "title": "Rollen",
@@ -75,6 +76,9 @@
             },
             "settings": {
                 "title": "FiveNet-Einstellungen"
+            },
+            "cron": {
+                "title": "Hintergrund-Aufgaben"
             }
         },
         "notfound": {
@@ -568,7 +572,11 @@
         "zoom_in": "Vergrößern",
         "zoom_out": "Verkleinern",
         "system": "System",
-        "my_location": "Mein Standort"
+        "my_location": "Mein Standort",
+        "schedule": "Cron-Zeitplan",
+        "next_schedule_time": "Nächster Lauf",
+        "last_attempt_time": "Letzter Versuch Zeit",
+        "started_time": "Startzeit"
     },
     "components": {
         "partials": {
@@ -2843,6 +2851,12 @@
                     "UPDATED": "Aktualisiert",
                     "DELETED": "Gelöscht"
                 }
+            },
+            "CronjobState": {
+                "UNSPECIFIED": "Unbestimmt",
+                "WAITING": "Warten",
+                "PENDING": "Ausstehend",
+                "RUNNING": "Laufend"
             }
         },
         "calendar": {

@@ -258,7 +258,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         class="ml-2"
                     >
                         <UButton
-                            :color="!message.deletedAt ? 'red' : 'green'"
+                            :color="!message.deletedAt ? 'error' : 'success'"
                             :icon="!message.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                             variant="ghost"
                             size="xs"

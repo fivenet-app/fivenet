@@ -44,11 +44,12 @@ export default defineNuxtConfig({
         safelistColors: [
             // Primary - Default
             'primary',
-            'green',
+            'success',
             'teal',
             'cyan',
             'sky',
             'blue',
+            'red',
             'indigo',
             'violet',
             // Custom
