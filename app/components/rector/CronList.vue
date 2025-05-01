@@ -32,6 +32,10 @@ const columns = [
         label: t('common.schedule'),
     },
     {
+        key: 'status',
+        label: t('common.status'),
+    },
+    {
         key: 'state',
         label: t('common.state'),
     },
@@ -74,19 +78,34 @@ const expand = ref({
         class="flex-1"
     >
         <template #expand="{ row }">
-            <div class="p-4">
-                <pre>{{ row.lastCompletedEvent ?? $t('common.na') }}</pre>
+            <div class="p-2">
+                <pre v-if="!row.lastCompletedEvent">{{ $t('common.na') }}</pre>
+                <div v-else class="flex items-center gap-2">
+                    <UBadge v-if="row.lastCompletedEvent.success" icon="i-mdi-check-bold" color="success" />
+                    <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
+
+                    <div class="font-semibold">
+                        {{ $t('common.end_date') }}: <GenericTime :value="row.lastCompletedEvent.endDate" /> ({{
+                            $t('common.duration')
+                        }}: {{ fromDuration(row.lastCompletedEvent.elapsed) }}s)
+                    </div>
+                </div>
             </div>
         </template>
 
         <template #name-data="{ row }">
             <span class="text-gray-900 dark:text-white">
-                {{ row.name }}
+                <pre>{{ row.name }}</pre>
             </span>
         </template>
 
         <template #schedule-data="{ row }">
             <UKbd size="md">{{ row.schedule }}</UKbd>
+        </template>
+
+        <template #status-data="{ row }">
+            <UBadge v-if="row.lastCompletedEvent?.success" icon="i-mdi-check-bold" color="success" />
+            <UBadge v-else icon="i-mdi-exclamation-thick" color="error" />
         </template>
 
         <template #state-data="{ row }">
