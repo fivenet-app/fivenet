@@ -230,8 +230,8 @@ defineExpose({
                                 <UButton
                                     class="flex-initial"
                                     variant="link"
-                                    icon="i-mdi-trash-can"
-                                    color="red"
+                                    icon="i-mdi-delete"
+                                    color="error"
                                     @click="
                                         modal.open(ConfirmModal, {
                                             confirm: async () => deleteQualificationResult(result.id),

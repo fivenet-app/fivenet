@@ -196,8 +196,8 @@ const editing = ref(props.startInEdit);
                     <UTooltip :text="$t('common.delete')">
                         <UButton
                             variant="link"
-                            icon="i-mdi-trash-can"
-                            color="red"
+                            icon="i-mdi-delete"
+                            color="error"
                             @click="
                                 modal.open(ConfirmModal, {
                                     confirm: async () => deleteLawBook(lawBook!.id),
@@ -288,8 +288,8 @@ const editing = ref(props.startInEdit);
                 <UTooltip :text="$t('common.delete')">
                     <UButton
                         variant="link"
-                        icon="i-mdi-trash-can"
-                        color="red"
+                        icon="i-mdi-delete"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteLaw(law.id),

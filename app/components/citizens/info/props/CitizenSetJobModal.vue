@@ -181,7 +181,7 @@ onBeforeMount(async () => listJobs());
                             type="submit"
                             block
                             class="flex-1"
-                            color="red"
+                            color="error"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
                             @click="state.reset = true"

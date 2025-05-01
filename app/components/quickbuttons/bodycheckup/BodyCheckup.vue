@@ -192,7 +192,7 @@ function reset(): void {
 
                         <UInput v-model="pin.description" type="text" block class="flex-1" @focusin="selectPin(pin)" />
 
-                        <UButton variant="link" icon="i-mdi-trash-can" color="red" @click="removePin(idx)" />
+                        <UButton variant="link" icon="i-mdi-delete" color="error" @click="removePin(idx)" />
                     </li>
                 </ol>
             </div>
@@ -202,7 +202,7 @@ function reset(): void {
                     <UButton icon="i-mdi-content-copy" class="flex-1" @click="copySummary()">
                         {{ $t('common.copy') }}
                     </UButton>
-                    <UButton trailing-icon="i-mdi-clear-outline" color="red" @click="reset()">
+                    <UButton trailing-icon="i-mdi-clear-outline" color="error" @click="reset()">
                         {{ $t('common.reset') }}
                     </UButton>
                 </UButtonGroup>

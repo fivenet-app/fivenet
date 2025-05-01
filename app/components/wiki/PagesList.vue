@@ -15,7 +15,7 @@ function mapNavItemToNavItem(page: PageShort): NavItem {
         title: page.title !== '' ? page.title : `${page?.jobLabel ? page?.jobLabel + ': ' : ''}${t('common.wiki')}`,
         _path: fullPath,
         children: page.children.map((p) => mapNavItemToNavItem(p)),
-        icon: page.deletedAt !== undefined ? 'i-mdi-trash-can' : undefined,
+        icon: page.deletedAt !== undefined ? 'i-mdi-delete' : undefined,
     };
 }
 

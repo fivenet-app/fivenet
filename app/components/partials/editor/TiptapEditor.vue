@@ -821,7 +821,7 @@ onBeforeUnmount(() => {
 
                                     <UButton
                                         :disabled="!editor.isActive('link')"
-                                        color="red"
+                                        color="error"
                                         variant="outline"
                                         icon="i-mdi-link-off"
                                         :label="$t('common.unlink')"
@@ -905,7 +905,7 @@ onBeforeUnmount(() => {
                                     <UFormGroup class="flex flex-col lg:flex-row">
                                         <UButtonGroup>
                                             <UButton
-                                                color="red"
+                                                color="error"
                                                 variant="outline"
                                                 :label="$t('components.partials.TipTapEditor.clear')"
                                                 @click="clear"

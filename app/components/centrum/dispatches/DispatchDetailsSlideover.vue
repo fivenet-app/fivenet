@@ -107,8 +107,8 @@ watch(dispatch, () => {
                         <UTooltip v-if="can('CentrumService.DeleteDispatch').value" :text="$t('common.delete')">
                             <UButton
                                 variant="link"
-                                icon="i-mdi-trash-can"
-                                color="red"
+                                icon="i-mdi-delete"
+                                color="error"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => dispatch && deleteDispatch(dispatch.id),

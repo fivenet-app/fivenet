@@ -123,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             type="submit"
                             block
                             class="flex-1"
-                            color="red"
+                            color="error"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
                             @click="state.reset = true"

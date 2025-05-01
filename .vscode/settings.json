@@ -30,5 +30,6 @@
     "tailwindCSS.classAttributes": [
         "active-class",
         "inactive-class"
-    ]
+    ],
+    "tailwind-fold.foldStyle": "QUOTES"
 }

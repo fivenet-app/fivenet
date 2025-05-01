@@ -152,7 +152,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     class="flex-1"
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
-                    color="red"
+                    color="error"
                     :variant="ownEntry?.response === RsvpResponses.NO ? 'soft' : 'solid'"
                     @click="onSubmitThrottle(RsvpResponses.NO)"
                 >

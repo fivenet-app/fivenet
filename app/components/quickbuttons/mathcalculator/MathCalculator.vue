@@ -193,8 +193,8 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
                     :padded="false"
                     class="absolute left-0 top-0 m-2 p-0.5"
                     size="xs"
-                    icon="i-mdi-trash-can"
-                    color="red"
+                    icon="i-mdi-delete"
+                    color="error"
                     @click="deleteHistory"
                 />
 

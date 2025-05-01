@@ -172,7 +172,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UButton
                             type="submit"
                             block
-                            color="red"
+                            color="error"
                             class="flex-1"
                             :disabled="!canSubmit || (!userProps?.absenceBegin && !userProps?.absenceEnd)"
                             :loading="!canSubmit"

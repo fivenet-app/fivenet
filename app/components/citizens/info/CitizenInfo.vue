@@ -180,7 +180,7 @@ const isOpen = ref(false);
                                     {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
                                 </UBadge>
 
-                                <UBadge v-if="user?.props?.wanted" color="red">
+                                <UBadge v-if="user?.props?.wanted" color="error">
                                     {{ $t('common.wanted').toUpperCase() }}
                                 </UBadge>
                             </div>

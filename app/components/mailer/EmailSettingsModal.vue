@@ -105,7 +105,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UFormGroup :label="$t('common.address_book')">
                         <UButton
                             :label="$t('components.mailer.settings.clear_address_book')"
-                            color="red"
+                            color="error"
                             icon="i-mdi-bookmark-remove"
                             @click="addressBook.length = 0"
                         />

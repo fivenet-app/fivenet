@@ -2407,6 +2407,17 @@
                     "Fields": "Access to create special E-Mail addresses"
                 }
             }
+        },
+        "RectorLawsService": {
+            "category": "Law Books",
+            "CreateOrUpdateLawBook": {
+                "key": "Create and Update Law Book",
+                "description": "Create and update laws and law books."
+            },
+            "DeleteLawBook": {
+                "key": "Delete Laws and Law Books",
+                "description": "Delete laws and law books."
+            }
         }
     },
     "errors": {

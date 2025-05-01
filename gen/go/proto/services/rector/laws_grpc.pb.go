@@ -29,13 +29,13 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RectorLawsServiceClient interface {
-	// @perm: Name=SuperUser
+	// @perm
 	CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error)
-	// @perm: Name=SuperUser
+	// @perm
 	DeleteLawBook(ctx context.Context, in *DeleteLawBookRequest, opts ...grpc.CallOption) (*DeleteLawBookResponse, error)
-	// @perm: Name=SuperUser
+	// @perm: Name=CreateOrUpdateLawBook
 	CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error)
-	// @perm: Name=SuperUser
+	// @perm: Name=DeleteLawBook
 	DeleteLaw(ctx context.Context, in *DeleteLawRequest, opts ...grpc.CallOption) (*DeleteLawResponse, error)
 }
 
@@ -91,13 +91,13 @@ func (c *rectorLawsServiceClient) DeleteLaw(ctx context.Context, in *DeleteLawRe
 // All implementations must embed UnimplementedRectorLawsServiceServer
 // for forward compatibility.
 type RectorLawsServiceServer interface {
-	// @perm: Name=SuperUser
+	// @perm
 	CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error)
-	// @perm: Name=SuperUser
+	// @perm
 	DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error)
-	// @perm: Name=SuperUser
+	// @perm: Name=CreateOrUpdateLawBook
 	CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error)
-	// @perm: Name=SuperUser
+	// @perm: Name=DeleteLawBook
 	DeleteLaw(context.Context, *DeleteLawRequest) (*DeleteLawResponse, error)
 	mustEmbedUnimplementedRectorLawsServiceServer()
 }

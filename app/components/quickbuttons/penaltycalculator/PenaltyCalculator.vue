@@ -323,7 +323,7 @@ const columns = [
                 <UButton icon="i-mdi-content-copy" class="flex-1" @click="copySummary()">
                     {{ $t('common.copy') }}
                 </UButton>
-                <UButton trailing-icon="i-mdi-clear-outline" color="red" @click="reset()">
+                <UButton trailing-icon="i-mdi-clear-outline" color="error" @click="reset()">
                     {{ $t('common.reset') }}
                 </UButton>
             </UButtonGroup>

@@ -111,7 +111,11 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                         </div>
 
                         <div>
-                            <UButton v-if="calendar.subscription" color="red" @click="subscribeToCalendar(calendar.id, false)">
+                            <UButton
+                                v-if="calendar.subscription"
+                                color="error"
+                                @click="subscribeToCalendar(calendar.id, false)"
+                            >
                                 {{ $t('common.unsubscribe') }}
                             </UButton>
                             <UButton v-else color="amber" @click="subscribeToCalendar(calendar.id, true)">

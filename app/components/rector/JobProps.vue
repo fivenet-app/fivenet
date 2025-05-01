@@ -15,11 +15,14 @@ import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { JobProps } from '~~/gen/ts/resources/users/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/job_settings';
+import ConfirmModal from '../partials/ConfirmModal.vue';
 import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
+
+const modal = useModal();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled, streamerMode } = storeToRefs(settingsStore);
@@ -73,6 +76,7 @@ const schema = z.object({
         qualificationsRoleFormat: z.string().max(64),
     }),
     logoUrl: zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images, true).optional(),
+    logoDelete: z.boolean(),
     settings: z.object({
         absencePastDays: z.number().int().nonnegative().min(0).max(31),
         absenceFutureDays: z.number().int().nonnegative().min(0).max(186),
@@ -117,6 +121,7 @@ const state = reactive<Schema>({
         qualificationsRoleFormat: '',
     },
     logoUrl: undefined,
+    logoDelete: false,
     settings: {
         absencePastDays: 7,
         absenceFutureDays: 93,
@@ -147,8 +152,12 @@ async function setJobProps(values: Schema): Promise<void> {
     jobProps.value.radioFrequency = values.radioFrequency;
     jobProps.value.discordGuildId = values.discordGuildId.trim().length > 0 ? values.discordGuildId : undefined;
     jobProps.value.discordSyncSettings = values.discordSyncSettings;
-    if (values.logoUrl && values.logoUrl[0]) {
-        jobProps.value.logoUrl = { data: new Uint8Array(await values.logoUrl[0].arrayBuffer()) };
+    if (values.logoUrl) {
+        if (values.logoUrl[0]) {
+            jobProps.value.logoUrl = { data: new Uint8Array(await values.logoUrl[0].arrayBuffer()) };
+        } else if (values.logoDelete) {
+            jobProps.value.logoUrl = { data: new Uint8Array(), delete: true };
+        }
     }
     if (!jobProps.value.settings) {
         jobProps.value.settings = {
@@ -394,20 +403,36 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <div class="flex flex-col">
+                                    <div class="flex flex-col gap-2">
                                         <NotSupportedTabletBlock v-if="nuiEnabled" />
-                                        <template v-else>
+                                        <div v-else class="flex gap-1">
                                             <UInput
                                                 name="jobLogo"
                                                 type="file"
                                                 :accept="appConfig.fileUpload.types.images.join(',')"
                                                 block
+                                                class="flex-1"
                                                 :placeholder="$t('common.image')"
                                                 @change="state.logoUrl = $event"
                                             />
-                                        </template>
 
-                                        <div class="mt-2 flex w-full flex-col items-center justify-center gap-2">
+                                            <UTooltip :ui="{ placement: 'top' }" :text="$t('common.delete')">
+                                                <UButton
+                                                    icon="i-mdi-delete"
+                                                    color="error"
+                                                    @click="
+                                                        modal.open(ConfirmModal, {
+                                                            confirm: async () => {
+                                                                state.logoUrl = undefined;
+                                                                state.logoDelete = true;
+                                                            },
+                                                        })
+                                                    "
+                                                />
+                                            </UTooltip>
+                                        </div>
+
+                                        <div class="flex w-full flex-col items-center justify-center gap-2">
                                             <GenericImg
                                                 v-if="jobProps.logoUrl?.url"
                                                 size="3xl"

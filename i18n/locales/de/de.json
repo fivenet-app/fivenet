@@ -2407,6 +2407,17 @@
                     "Fields": "Zugriff auf spezielle E-Mail Adressen"
                 }
             }
+        },
+        "RectorLawsService": {
+            "category": "Gesetzesbücher",
+            "CreateOrUpdateLawBook": {
+                "key": "Gesetzbuch erstellen und aktualisieren",
+                "description": "Erstellen und aktualisieren von Gesetzen und Gesetzbüchern."
+            },
+            "DeleteLawBook": {
+                "key": "Gesetze und Gesetzbücher löschen",
+                "description": "Löschen von Gesetzen und Gesetzbüchern."
+            }
         }
     },
     "errors": {

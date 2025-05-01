@@ -22,14 +22,6 @@ func (m *AttributeValues) Sanitize() error {
 			}
 		}
 
-		// Field: JobGradeMap
-	case *AttributeValues_JobGradeMap:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 		// Field: JobList
 	case *AttributeValues_JobList:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -56,22 +48,8 @@ func (m *JobGradeList) Sanitize() error {
 		return nil
 	}
 
-	// Field: Jobs
-	for idx, item := range m.Jobs {
-		_, _ = idx, item
-
-	}
-
-	return nil
-}
-
-func (m *JobGradeMap) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Jobs
-	for idx, item := range m.Jobs {
+	// Field: Grades
+	for idx, item := range m.Grades {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -79,6 +57,12 @@ func (m *JobGradeMap) Sanitize() error {
 				return err
 			}
 		}
+
+	}
+
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
 
 	}
 

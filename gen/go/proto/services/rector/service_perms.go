@@ -22,10 +22,8 @@ var PermsRemap = map[string]string{
 	"RectorFilestoreService/UploadFile": "SuperUser",
 
 	// Service: RectorLawsService
-	"RectorLawsService/CreateOrUpdateLaw":     "SuperUser",
-	"RectorLawsService/CreateOrUpdateLawBook": "SuperUser",
-	"RectorLawsService/DeleteLaw":             "SuperUser",
-	"RectorLawsService/DeleteLawBook":         "SuperUser",
+	"RectorLawsService/CreateOrUpdateLaw": "RectorLawsService/CreateOrUpdateLawBook",
+	"RectorLawsService/DeleteLaw":         "RectorLawsService/DeleteLawBook",
 
 	// Service: RectorService
 	"RectorService/DeleteFaction":    "SuperUser",
@@ -36,6 +34,20 @@ var PermsRemap = map[string]string{
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
+
+		// Service: RectorLawsService
+		{
+			Category: permkeys.RectorLawsServicePerm,
+			Name:     permkeys.RectorLawsServiceCreateOrUpdateLawBookPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
+		{
+			Category: permkeys.RectorLawsServicePerm,
+			Name:     permkeys.RectorLawsServiceDeleteLawBookPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
 
 		// Service: RectorService
 		{

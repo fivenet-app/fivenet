@@ -36,7 +36,7 @@ watch(notificationsCount, () => {
     <UTooltip :text="$t('components.partials.sidebar_notifications')" :shortcuts="['B']">
         <UChip
             :show="notificationsCount > 0"
-            color="red"
+            color="error"
             inset
             :text="notificationsCount <= 9 ? notificationsCount : '9+'"
             size="xl"

@@ -94,7 +94,7 @@ const open = ref(false);
     >
         <UChip
             class="w-full"
-            color="red"
+            color="error"
             :text="$t('common.superuser')"
             position="top-left"
             :show="isSuperuser"

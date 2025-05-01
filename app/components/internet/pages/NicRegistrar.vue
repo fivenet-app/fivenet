@@ -175,7 +175,7 @@ const items = [
                         <UAlert
                             v-if="!domainAvailability.transferable && !domainAvailability.available"
                             icon="i-mdi-information-outline"
-                            color="red"
+                            color="error"
                             :title="$t('components.internet.pages.nic_registrar.search.not_available.title')"
                             :description="$t('components.internet.pages.nic_registrar.search.not_available.description')"
                         />

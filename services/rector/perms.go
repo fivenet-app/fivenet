@@ -361,7 +361,7 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *pbrector.UpdateRolePe
 
 func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.FivenetRoles, permsUpdate *pbrector.PermsUpdate) error {
 	updatePermIds := make([]uint64, len(permsUpdate.ToUpdate))
-	for i := 0; i < len(permsUpdate.ToUpdate); i++ {
+	for i := range permsUpdate.ToUpdate {
 		updatePermIds[i] = permsUpdate.ToUpdate[i].Id
 	}
 	toUpdate, err := s.filterPermissionIDs(ctx, role.Job, false, updatePermIds)
@@ -535,10 +535,11 @@ func (s *Server) DeleteFaction(ctx context.Context, req *pbrector.DeleteFactionR
 
 	if err := s.ps.ClearJobAttributes(ctx, role.Job); err != nil {
 		errs = multierr.Append(errs, err)
+		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
 	}
 
 	// Remove job props as last action to remove a faction from the data
-	if err := s.deleteJobProps(ctx, role.Job); err != nil {
+	if err := s.deleteJobProps(ctx, s.db, role.Job); err != nil {
 		errs = multierr.Append(errs, err)
 	}
 
@@ -551,7 +552,7 @@ func (s *Server) DeleteFaction(ctx context.Context, req *pbrector.DeleteFactionR
 	return &pbrector.DeleteFactionResponse{}, nil
 }
 
-func (s *Server) deleteJobProps(ctx context.Context, job string) error {
+func (s *Server) deleteJobProps(ctx context.Context, tx qrm.DB, job string) error {
 	stmt := tJobProps.
 		DELETE().
 		WHERE(
@@ -559,7 +560,7 @@ func (s *Server) deleteJobProps(ctx context.Context, job string) error {
 		).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

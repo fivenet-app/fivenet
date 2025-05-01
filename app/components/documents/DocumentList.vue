@@ -288,7 +288,7 @@ defineShortcuts({
                                                     color="green"
                                                     class="size-4"
                                                 />
-                                                <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
+                                                <UIcon v-else name="i-mdi-lock" color="error" class="size-4" />
                                             </template>
 
                                             {{
@@ -309,7 +309,7 @@ defineShortcuts({
                                                     color="green"
                                                     class="size-4"
                                                 />
-                                                <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
+                                                <UIcon v-else name="i-mdi-lock" color="error" class="size-4" />
                                             </template>
 
                                             {{ option.label }}

@@ -35,12 +35,12 @@ message DeleteLawRequest {
 message DeleteLawResponse {}
 
 service RectorLawsService {
-  // @perm: Name=SuperUser
+  // @perm
   rpc CreateOrUpdateLawBook(CreateOrUpdateLawBookRequest) returns (CreateOrUpdateLawBookResponse);
-  // @perm: Name=SuperUser
+  // @perm
   rpc DeleteLawBook(DeleteLawBookRequest) returns (DeleteLawBookResponse);
-  // @perm: Name=SuperUser
+  // @perm: Name=CreateOrUpdateLawBook
   rpc CreateOrUpdateLaw(CreateOrUpdateLawRequest) returns (CreateOrUpdateLawResponse);
-  // @perm: Name=SuperUser
+  // @perm: Name=DeleteLawBook
   rpc DeleteLaw(DeleteLawRequest) returns (DeleteLawResponse);
 }

@@ -63,7 +63,6 @@ message AttributeValues {
     StringList string_list = 1;
     StringList job_list = 2;
     JobGradeList job_grade_list = 3;
-    JobGradeMap job_grade_map = 4;
   }
 }
 
@@ -73,11 +72,9 @@ message StringList {
 }
 
 message JobGradeList {
+  bool fine_grained = 2;
   map<string, int32> jobs = 1;
-}
-
-message JobGradeMap {
-  map<string, JobGrades> jobs = 1;
+  map<string, JobGrades> grades = 3;
 }
 
 message JobGrades {

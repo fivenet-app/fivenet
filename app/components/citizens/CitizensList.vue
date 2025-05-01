@@ -320,7 +320,7 @@ defineShortcuts({
                 <span>{{ citizen.firstname }} {{ citizen.lastname }}</span>
                 <span class="lg:hidden"> ({{ citizen.dateofbirth.value }}) </span>
 
-                <UBadge v-if="citizen.props?.wanted" color="red">
+                <UBadge v-if="citizen.props?.wanted" color="error">
                     {{ $t('common.wanted').toUpperCase() }}
                 </UBadge>
             </div>

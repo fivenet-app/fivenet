@@ -203,12 +203,6 @@ export interface AttributeValues {
          */
         jobGradeList: JobGradeList;
     } | {
-        oneofKind: "jobGradeMap";
-        /**
-         * @generated from protobuf field: resources.permissions.JobGradeMap job_grade_map = 4;
-         */
-        jobGradeMap: JobGradeMap;
-    } | {
         oneofKind: undefined;
     };
 }
@@ -228,20 +222,19 @@ export interface StringList {
  */
 export interface JobGradeList {
     /**
+     * @generated from protobuf field: bool fine_grained = 2;
+     */
+    fineGrained: boolean;
+    /**
      * @generated from protobuf field: map<string, int32> jobs = 1;
      */
     jobs: {
         [key: string]: number;
     };
-}
-/**
- * @generated from protobuf message resources.permissions.JobGradeMap
- */
-export interface JobGradeMap {
     /**
-     * @generated from protobuf field: map<string, resources.permissions.JobGrades> jobs = 1;
+     * @generated from protobuf field: map<string, resources.permissions.JobGrades> grades = 3;
      */
-    jobs: {
+    grades: {
         [key: string]: JobGrades;
     };
 }
@@ -692,8 +685,7 @@ class AttributeValues$Type extends MessageType<AttributeValues> {
         super("resources.permissions.AttributeValues", [
             { no: 1, name: "string_list", kind: "message", oneof: "validValues", T: () => StringList },
             { no: 2, name: "job_list", kind: "message", oneof: "validValues", T: () => StringList },
-            { no: 3, name: "job_grade_list", kind: "message", oneof: "validValues", T: () => JobGradeList },
-            { no: 4, name: "job_grade_map", kind: "message", oneof: "validValues", T: () => JobGradeMap }
+            { no: 3, name: "job_grade_list", kind: "message", oneof: "validValues", T: () => JobGradeList }
         ]);
     }
     create(value?: PartialMessage<AttributeValues>): AttributeValues {
@@ -726,12 +718,6 @@ class AttributeValues$Type extends MessageType<AttributeValues> {
                         jobGradeList: JobGradeList.internalBinaryRead(reader, reader.uint32(), options, (message.validValues as any).jobGradeList)
                     };
                     break;
-                case /* resources.permissions.JobGradeMap job_grade_map */ 4:
-                    message.validValues = {
-                        oneofKind: "jobGradeMap",
-                        jobGradeMap: JobGradeMap.internalBinaryRead(reader, reader.uint32(), options, (message.validValues as any).jobGradeMap)
-                    };
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -753,9 +739,6 @@ class AttributeValues$Type extends MessageType<AttributeValues> {
         /* resources.permissions.JobGradeList job_grade_list = 3; */
         if (message.validValues.oneofKind === "jobGradeList")
             JobGradeList.internalBinaryWrite(message.validValues.jobGradeList, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.permissions.JobGradeMap job_grade_map = 4; */
-        if (message.validValues.oneofKind === "jobGradeMap")
-            JobGradeMap.internalBinaryWrite(message.validValues.jobGradeMap, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -817,12 +800,16 @@ export const StringList = new StringList$Type();
 class JobGradeList$Type extends MessageType<JobGradeList> {
     constructor() {
         super("resources.permissions.JobGradeList", [
-            { no: 1, name: "jobs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 5 /*ScalarType.INT32*/ } }
+            { no: 2, name: "fine_grained", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 1, name: "jobs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 5 /*ScalarType.INT32*/ } },
+            { no: 3, name: "grades", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => JobGrades } }
         ]);
     }
     create(value?: PartialMessage<JobGradeList>): JobGradeList {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.fineGrained = false;
         message.jobs = {};
+        message.grades = {};
         if (value !== undefined)
             reflectionMergePartial<JobGradeList>(this, message, value);
         return message;
@@ -832,8 +819,14 @@ class JobGradeList$Type extends MessageType<JobGradeList> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* bool fine_grained */ 2:
+                    message.fineGrained = reader.bool();
+                    break;
                 case /* map<string, int32> jobs */ 1:
                     this.binaryReadMap1(message.jobs, reader, options);
+                    break;
+                case /* map<string, resources.permissions.JobGrades> grades */ 3:
+                    this.binaryReadMap3(message.grades, reader, options);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -862,10 +855,36 @@ class JobGradeList$Type extends MessageType<JobGradeList> {
         }
         map[key ?? ""] = val ?? 0;
     }
+    private binaryReadMap3(map: JobGradeList["grades"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof JobGradeList["grades"] | undefined, val: JobGradeList["grades"][any] | undefined;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case 1:
+                    key = reader.string();
+                    break;
+                case 2:
+                    val = JobGrades.internalBinaryRead(reader, reader.uint32(), options);
+                    break;
+                default: throw new globalThis.Error("unknown map entry field for field resources.permissions.JobGradeList.grades");
+            }
+        }
+        map[key ?? ""] = val ?? JobGrades.create();
+    }
     internalBinaryWrite(message: JobGradeList, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool fine_grained = 2; */
+        if (message.fineGrained !== false)
+            writer.tag(2, WireType.Varint).bool(message.fineGrained);
         /* map<string, int32> jobs = 1; */
         for (let k of globalThis.Object.keys(message.jobs))
             writer.tag(1, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.Varint).int32(message.jobs[k]).join();
+        /* map<string, resources.permissions.JobGrades> grades = 3; */
+        for (let k of globalThis.Object.keys(message.grades)) {
+            writer.tag(3, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
+            writer.tag(2, WireType.LengthDelimited).fork();
+            JobGrades.internalBinaryWrite(message.grades[k], writer, options);
+            writer.join().join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -876,73 +895,6 @@ class JobGradeList$Type extends MessageType<JobGradeList> {
  * @generated MessageType for protobuf message resources.permissions.JobGradeList
  */
 export const JobGradeList = new JobGradeList$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class JobGradeMap$Type extends MessageType<JobGradeMap> {
-    constructor() {
-        super("resources.permissions.JobGradeMap", [
-            { no: 1, name: "jobs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => JobGrades } }
-        ]);
-    }
-    create(value?: PartialMessage<JobGradeMap>): JobGradeMap {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.jobs = {};
-        if (value !== undefined)
-            reflectionMergePartial<JobGradeMap>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobGradeMap): JobGradeMap {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* map<string, resources.permissions.JobGrades> jobs */ 1:
-                    this.binaryReadMap1(message.jobs, reader, options);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    private binaryReadMap1(map: JobGradeMap["jobs"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof JobGradeMap["jobs"] | undefined, val: JobGradeMap["jobs"][any] | undefined;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case 1:
-                    key = reader.string();
-                    break;
-                case 2:
-                    val = JobGrades.internalBinaryRead(reader, reader.uint32(), options);
-                    break;
-                default: throw new globalThis.Error("unknown map entry field for field resources.permissions.JobGradeMap.jobs");
-            }
-        }
-        map[key ?? ""] = val ?? JobGrades.create();
-    }
-    internalBinaryWrite(message: JobGradeMap, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* map<string, resources.permissions.JobGrades> jobs = 1; */
-        for (let k of globalThis.Object.keys(message.jobs)) {
-            writer.tag(1, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k);
-            writer.tag(2, WireType.LengthDelimited).fork();
-            JobGrades.internalBinaryWrite(message.jobs[k], writer, options);
-            writer.join().join();
-        }
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.permissions.JobGradeMap
- */
-export const JobGradeMap = new JobGradeMap$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class JobGrades$Type extends MessageType<JobGrades> {
     constructor() {

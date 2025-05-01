@@ -77,7 +77,7 @@ const open = ref(cookiesState.value === null);
 
                     <UButton
                         block
-                        color="red"
+                        color="error"
                         class="flex-1"
                         :variant="cookiesState === false ? 'soft' : 'solid'"
                         @click="

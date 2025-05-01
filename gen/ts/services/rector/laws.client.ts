@@ -20,25 +20,25 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface IRectorLawsServiceClient {
     /**
-     * @perm: Name=SuperUser
+     * @perm
      *
      * @generated from protobuf rpc: CreateOrUpdateLawBook(services.rector.CreateOrUpdateLawBookRequest) returns (services.rector.CreateOrUpdateLawBookResponse);
      */
     createOrUpdateLawBook(input: CreateOrUpdateLawBookRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse>;
     /**
-     * @perm: Name=SuperUser
+     * @perm
      *
      * @generated from protobuf rpc: DeleteLawBook(services.rector.DeleteLawBookRequest) returns (services.rector.DeleteLawBookResponse);
      */
     deleteLawBook(input: DeleteLawBookRequest, options?: RpcOptions): UnaryCall<DeleteLawBookRequest, DeleteLawBookResponse>;
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=CreateOrUpdateLawBook
      *
      * @generated from protobuf rpc: CreateOrUpdateLaw(services.rector.CreateOrUpdateLawRequest) returns (services.rector.CreateOrUpdateLawResponse);
      */
     createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>;
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=DeleteLawBook
      *
      * @generated from protobuf rpc: DeleteLaw(services.rector.DeleteLawRequest) returns (services.rector.DeleteLawResponse);
      */
@@ -54,7 +54,7 @@ export class RectorLawsServiceClient implements IRectorLawsServiceClient, Servic
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=SuperUser
+     * @perm
      *
      * @generated from protobuf rpc: CreateOrUpdateLawBook(services.rector.CreateOrUpdateLawBookRequest) returns (services.rector.CreateOrUpdateLawBookResponse);
      */
@@ -63,7 +63,7 @@ export class RectorLawsServiceClient implements IRectorLawsServiceClient, Servic
         return stackIntercept<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SuperUser
+     * @perm
      *
      * @generated from protobuf rpc: DeleteLawBook(services.rector.DeleteLawBookRequest) returns (services.rector.DeleteLawBookResponse);
      */
@@ -72,7 +72,7 @@ export class RectorLawsServiceClient implements IRectorLawsServiceClient, Servic
         return stackIntercept<DeleteLawBookRequest, DeleteLawBookResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=CreateOrUpdateLawBook
      *
      * @generated from protobuf rpc: CreateOrUpdateLaw(services.rector.CreateOrUpdateLawRequest) returns (services.rector.CreateOrUpdateLawResponse);
      */
@@ -81,7 +81,7 @@ export class RectorLawsServiceClient implements IRectorLawsServiceClient, Servic
         return stackIntercept<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=DeleteLawBook
      *
      * @generated from protobuf rpc: DeleteLaw(services.rector.DeleteLawRequest) returns (services.rector.DeleteLawResponse);
      */

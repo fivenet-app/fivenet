@@ -72,7 +72,7 @@ const target = route.query.target as string;
                             @click="nuiEnabled ? openURLInWindow(target) : undefined"
                         />
 
-                        <UButton color="red" icon="i-mdi-arrow-back" :label="$t('common.back')" @click="router.back()" />
+                        <UButton color="error" icon="i-mdi-arrow-back" :label="$t('common.back')" @click="router.back()" />
                     </div>
                 </template>
             </UCard>

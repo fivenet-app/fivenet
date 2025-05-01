@@ -178,7 +178,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 
                     <UButton
                         class="flex-1"
-                        color="red"
+                        color="error"
                         :disabled="!canTakeDispatch || !canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"

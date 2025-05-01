@@ -36,7 +36,7 @@ const clipboardStore = useClipboardStore();
                         {{ $t('common.close', 1) }}
                     </UButton>
 
-                    <UButton block class="flex-1" color="red" @click="clipboardStore.clear()">
+                    <UButton block class="flex-1" color="error" @click="clipboardStore.clear()">
                         {{ $t('components.clipboard.clipboard_modal.clear') }}
                     </UButton>
                 </UButtonGroup>

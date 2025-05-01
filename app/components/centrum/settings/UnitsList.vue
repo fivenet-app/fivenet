@@ -156,8 +156,8 @@ const columns = [
                 <UTooltip v-if="can('CentrumService.DeleteUnit').value" :text="$t('common.delete')">
                     <UButton
                         variant="link"
-                        icon="i-mdi-trash-can"
-                        color="red"
+                        icon="i-mdi-delete"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteUnit(unit.id),

@@ -73,7 +73,7 @@ const selectedTemplate = ref<Template | undefined>(undefined);
                 "
             />
 
-            <UButton :label="$t('common.cancel')" color="red" icon="i-mdi-cancel" @click="selectedTemplate = undefined" />
+            <UButton :label="$t('common.cancel')" color="error" icon="i-mdi-cancel" @click="selectedTemplate = undefined" />
         </UButtonGroup>
     </ClientOnly>
 </template>

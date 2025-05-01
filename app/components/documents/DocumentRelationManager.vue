@@ -211,7 +211,7 @@ const columnsNew = [
                                             <UButton
                                                 variant="link"
                                                 icon="i-mdi-account-minus"
-                                                color="red"
+                                                color="error"
                                                 @click="removeRelation(row.id!)"
                                             />
                                         </UTooltip>
@@ -256,7 +256,7 @@ const columnsNew = [
 
                                         <UTooltip :text="$t('components.documents.document_managers.caused')">
                                             <UButton
-                                                color="red"
+                                                color="error"
                                                 icon="i-mdi-source-commit-start"
                                                 @click="addRelation(getUser(row), DocRelation.CAUSED)"
                                             />
@@ -321,7 +321,7 @@ const columnsNew = [
 
                                         <UTooltip :text="$t('components.documents.document_managers.caused')">
                                             <UButton
-                                                color="red"
+                                                color="error"
                                                 icon="i-mdi-source-commit-start"
                                                 @click="addRelation(row, DocRelation.CAUSED)"
                                             />

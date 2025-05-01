@@ -247,7 +247,7 @@ onBeforeMount(async () => {
 
                                 <UBadge
                                     v-if="selectedEmail?.deactivated"
-                                    color="red"
+                                    color="error"
                                     size="xs"
                                     :label="$t('common.disabled')"
                                 />
@@ -268,7 +268,7 @@ onBeforeMount(async () => {
                                 }}
                             </span>
 
-                            <UBadge v-if="option?.deactivated" color="red" size="xs" :label="$t('common.disabled')" />
+                            <UBadge v-if="option?.deactivated" color="error" size="xs" :label="$t('common.disabled')" />
                         </template>
 
                         <template #option-empty="{ query: search }">
@@ -452,7 +452,7 @@ onBeforeMount(async () => {
                         >
                             <UButton
                                 :color="!selectedThread.deletedAt ? 'red' : 'green'"
-                                :icon="!selectedThread.deletedAt ? 'i-mdi-trash-can-outline' : 'i-mdi-restore'"
+                                :icon="!selectedThread.deletedAt ? 'i-mdi-delete-outline' : 'i-mdi-restore'"
                                 variant="ghost"
                                 @click="
                                     modal.open(ConfirmModal, {

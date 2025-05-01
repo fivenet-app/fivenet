@@ -128,7 +128,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                     <UButton
                         class="flex-1"
                         block
-                        color="red"
+                        color="error"
                         icon="i-mdi-close-thick"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
@@ -142,7 +142,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         [
                             {
                                 label: $t('common.delete'),
-                                icon: 'i-mdi-trash-can',
+                                icon: 'i-mdi-delete',
                                 click: async () => deleteDocumentReq(request.id),
                             },
                         ],

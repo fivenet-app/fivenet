@@ -1137,48 +1137,6 @@ func (m *AttributeValues) validate(all bool) error {
 			}
 		}
 
-	case *AttributeValues_JobGradeMap:
-		if v == nil {
-			err := AttributeValuesValidationError{
-				field:  "ValidValues",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofValidValuesPresent = true
-
-		if all {
-			switch v := interface{}(m.GetJobGradeMap()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, AttributeValuesValidationError{
-						field:  "JobGradeMap",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, AttributeValuesValidationError{
-						field:  "JobGradeMap",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetJobGradeMap()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return AttributeValuesValidationError{
-					field:  "JobGradeMap",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	default:
 		_ = v // ensures v is used
 	}
@@ -1392,7 +1350,55 @@ func (m *JobGradeList) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for FineGrained
+
 	// no validation rules for Jobs
+
+	{
+		sorted_keys := make([]string, len(m.GetGrades()))
+		i := 0
+		for key := range m.GetGrades() {
+			sorted_keys[i] = key
+			i++
+		}
+		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
+		for _, key := range sorted_keys {
+			val := m.GetGrades()[key]
+			_ = val
+
+			// no validation rules for Grades[key]
+
+			if all {
+				switch v := interface{}(val).(type) {
+				case interface{ ValidateAll() error }:
+					if err := v.ValidateAll(); err != nil {
+						errors = append(errors, JobGradeListValidationError{
+							field:  fmt.Sprintf("Grades[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				case interface{ Validate() error }:
+					if err := v.Validate(); err != nil {
+						errors = append(errors, JobGradeListValidationError{
+							field:  fmt.Sprintf("Grades[%v]", key),
+							reason: "embedded message failed validation",
+							cause:  err,
+						})
+					}
+				}
+			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
+				if err := v.Validate(); err != nil {
+					return JobGradeListValidationError{
+						field:  fmt.Sprintf("Grades[%v]", key),
+						reason: "embedded message failed validation",
+						cause:  err,
+					}
+				}
+			}
+
+		}
+	}
 
 	if len(errors) > 0 {
 		return JobGradeListMultiError(errors)
@@ -1470,151 +1476,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = JobGradeListValidationError{}
-
-// Validate checks the field values on JobGradeMap with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *JobGradeMap) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on JobGradeMap with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in JobGradeMapMultiError, or
-// nil if none found.
-func (m *JobGradeMap) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *JobGradeMap) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	{
-		sorted_keys := make([]string, len(m.GetJobs()))
-		i := 0
-		for key := range m.GetJobs() {
-			sorted_keys[i] = key
-			i++
-		}
-		sort.Slice(sorted_keys, func(i, j int) bool { return sorted_keys[i] < sorted_keys[j] })
-		for _, key := range sorted_keys {
-			val := m.GetJobs()[key]
-			_ = val
-
-			// no validation rules for Jobs[key]
-
-			if all {
-				switch v := interface{}(val).(type) {
-				case interface{ ValidateAll() error }:
-					if err := v.ValidateAll(); err != nil {
-						errors = append(errors, JobGradeMapValidationError{
-							field:  fmt.Sprintf("Jobs[%v]", key),
-							reason: "embedded message failed validation",
-							cause:  err,
-						})
-					}
-				case interface{ Validate() error }:
-					if err := v.Validate(); err != nil {
-						errors = append(errors, JobGradeMapValidationError{
-							field:  fmt.Sprintf("Jobs[%v]", key),
-							reason: "embedded message failed validation",
-							cause:  err,
-						})
-					}
-				}
-			} else if v, ok := interface{}(val).(interface{ Validate() error }); ok {
-				if err := v.Validate(); err != nil {
-					return JobGradeMapValidationError{
-						field:  fmt.Sprintf("Jobs[%v]", key),
-						reason: "embedded message failed validation",
-						cause:  err,
-					}
-				}
-			}
-
-		}
-	}
-
-	if len(errors) > 0 {
-		return JobGradeMapMultiError(errors)
-	}
-
-	return nil
-}
-
-// JobGradeMapMultiError is an error wrapping multiple validation errors
-// returned by JobGradeMap.ValidateAll() if the designated constraints aren't met.
-type JobGradeMapMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m JobGradeMapMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m JobGradeMapMultiError) AllErrors() []error { return m }
-
-// JobGradeMapValidationError is the validation error returned by
-// JobGradeMap.Validate if the designated constraints aren't met.
-type JobGradeMapValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e JobGradeMapValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e JobGradeMapValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e JobGradeMapValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e JobGradeMapValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e JobGradeMapValidationError) ErrorName() string { return "JobGradeMapValidationError" }
-
-// Error satisfies the builtin error interface
-func (e JobGradeMapValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sJobGradeMap.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = JobGradeMapValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = JobGradeMapValidationError{}
 
 // Validate checks the field values on JobGrades with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

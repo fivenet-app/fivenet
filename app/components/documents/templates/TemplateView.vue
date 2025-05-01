@@ -114,8 +114,8 @@ const contentAccessTypes: AccessType[] = [
                     v-if="can('DocStoreService.DeleteTemplate').value"
                     block
                     class="flex-1"
-                    trailing-icon="i-mdi-trash-can"
-                    color="red"
+                    trailing-icon="i-mdi-delete"
+                    color="error"
                     @click="
                         modal.open(ConfirmModal, {
                             confirm: async () => deleteTemplate(templateId),

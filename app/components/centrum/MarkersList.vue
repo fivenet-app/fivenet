@@ -100,8 +100,8 @@ const columns = [
                             <UButton
                                 v-if="can('LivemapperService.DeleteMarker').value"
                                 variant="link"
-                                icon="i-mdi-trash-can"
-                                color="red"
+                                icon="i-mdi-delete"
+                                color="error"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => deleteMarker(marker.id),

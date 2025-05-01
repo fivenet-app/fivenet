@@ -71,8 +71,8 @@ const calendar = computed(() => data.value?.calendar);
                                 v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)"
                                 variant="link"
                                 :padded="false"
-                                icon="i-mdi-trash-can"
-                                color="red"
+                                icon="i-mdi-delete"
+                                color="error"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => calendarStore.deleteCalendar(calendar?.id!),

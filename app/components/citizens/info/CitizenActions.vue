@@ -125,7 +125,7 @@ if (props.registerShortcuts) {
             :shortcuts="['C', 'W']"
         >
             <UButton
-                color="red"
+                color="error"
                 block
                 truncate
                 :icon="user?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"

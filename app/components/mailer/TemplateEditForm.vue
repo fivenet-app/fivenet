@@ -90,7 +90,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UButtonGroup class="mb-2 flex">
                 <UButton type="submit" class="flex-1" icon="i-mdi-pencil" :label="$t('common.save')" />
 
-                <UButton icon="i-mdi-cancel" color="red" :label="$t('common.cancel')" @click="$emit('close')" />
+                <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close')" />
             </UButtonGroup>
 
             <UFormGroup name="title" :label="$t('common.name')">

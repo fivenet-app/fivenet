@@ -223,7 +223,7 @@ const columnsNew = [
                                         <UButton
                                             icon="i-mdi-file-document-minus"
                                             variant="link"
-                                            color="red"
+                                            color="error"
                                             @click="removeReference(row.id!)"
                                         />
                                     </UTooltip>
@@ -274,7 +274,7 @@ const columnsNew = [
 
                                         <UTooltip :text="$t('components.documents.document_managers.closes')">
                                             <UButton
-                                                color="red"
+                                                color="error"
                                                 icon="i-mdi-close-box"
                                                 @click="addReferenceClipboard(row, DocReference.CLOSES)"
                                             />
@@ -353,7 +353,7 @@ const columnsNew = [
 
                                         <UTooltip :text="$t('components.documents.document_managers.closes')">
                                             <UButton
-                                                color="red"
+                                                color="error"
                                                 icon="i-mdi-close-box"
                                                 @click="addReference(row, DocReference.CLOSES)"
                                             />

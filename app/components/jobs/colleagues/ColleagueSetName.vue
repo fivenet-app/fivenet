@@ -102,7 +102,7 @@ const editing = ref(false);
             <UButton
                 v-else
                 icon="i-mdi-cancel"
-                color="red"
+                color="error"
                 @click="
                     state.prefix = namePrefix;
                     state.suffix = nameSuffix;

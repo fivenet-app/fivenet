@@ -165,6 +165,8 @@ export type Perms =
 	| 'QualificationsService.DeleteQualification'
 	| 'QualificationsService.ListQualifications'
 	| 'QualificationsService.UpdateQualification'
+	| 'RectorLawsService.CreateOrUpdateLawBook'
+	| 'RectorLawsService.DeleteLawBook'
 	| 'RectorService.CreateRole'
 	| 'RectorService.DeleteRole'
 	| 'RectorService.GetJobProps'

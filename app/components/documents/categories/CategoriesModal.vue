@@ -201,8 +201,8 @@ watch(props, () => setFromProps());
                             v-if="category !== undefined && can('DocStoreService.DeleteCategory').value"
                             block
                             class="flex-1"
-                            icon="i-mdi-trash-can"
-                            color="red"
+                            icon="i-mdi-delete"
+                            color="error"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
                             @click="deleteCategory()"

@@ -138,7 +138,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
 
                     <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5">
-                        <UIcon name="i-mdi-trash-can" class="size-5 shrink-0" />
+                        <UIcon name="i-mdi-delete" class="size-5 shrink-0" />
                         <span>{{ $t('common.deleted') }}</span>
                     </div>
 
@@ -148,8 +148,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UButton
                             v-if="can('DocStoreService.DeleteComment').value"
                             variant="link"
-                            icon="i-mdi-trash-can"
-                            color="red"
+                            icon="i-mdi-delete"
+                            color="error"
                             @click="
                                 modal.open(ConfirmModal, {
                                     confirm: async () => deleteComment(comment!.id),

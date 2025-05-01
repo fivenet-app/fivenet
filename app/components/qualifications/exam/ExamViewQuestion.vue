@@ -77,7 +77,7 @@ const response = useVModel(props, 'modelValue', emit);
                             ? 'solid'
                             : 'outline'
                     "
-                    color="red"
+                    color="error"
                     :label="$t('common.no')"
                     block
                     class="w-20"

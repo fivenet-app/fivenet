@@ -104,7 +104,7 @@ const editing = ref(false);
                                             @click="editing = !editing"
                                         />
 
-                                        <UButton icon="i-mdi-trash-can" color="red" :label="$t('common.delete')" />
+                                        <UButton icon="i-mdi-delete" color="error" :label="$t('common.delete')" />
                                     </UButtonGroup>
 
                                     <ClientOnly>

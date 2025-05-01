@@ -196,8 +196,8 @@ const creating = ref(false);
                                     selectedEmail.job !== undefined &&
                                     canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE)
                                 "
-                                color="red"
-                                trailing-icon="i-mdi-trash-can"
+                                color="error"
+                                trailing-icon="i-mdi-delete"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () =>

@@ -423,7 +423,7 @@ defineShortcuts({
                         block
                         class="flex-1 flex-col"
                         :color="!doc.deletedAt ? 'red' : 'green'"
-                        :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
+                        :icon="!doc.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                         :label="!doc.deletedAt ? $t('common.delete') : $t('common.restore')"
                         @click="
                             modal.open(doc.deletedAt !== undefined ? ConfirmModal : ConfirmModalWithReason, {

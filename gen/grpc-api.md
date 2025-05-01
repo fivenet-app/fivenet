@@ -237,9 +237,8 @@
 - [resources/permissions/permissions.proto](#resources_permissions_permissions-proto)
     - [AttributeValues](#resources-permissions-AttributeValues)
     - [JobGradeList](#resources-permissions-JobGradeList)
+    - [JobGradeList.GradesEntry](#resources-permissions-JobGradeList-GradesEntry)
     - [JobGradeList.JobsEntry](#resources-permissions-JobGradeList-JobsEntry)
-    - [JobGradeMap](#resources-permissions-JobGradeMap)
-    - [JobGradeMap.JobsEntry](#resources-permissions-JobGradeMap-JobsEntry)
     - [JobGrades](#resources-permissions-JobGrades)
     - [Permission](#resources-permissions-Permission)
     - [RawRoleAttribute](#resources-permissions-RawRoleAttribute)
@@ -4207,7 +4206,6 @@ Dummy - DO NOT USE!
 | `string_list` | [StringList](#resources-permissions-StringList) |  |  |
 | `job_list` | [StringList](#resources-permissions-StringList) |  |  |
 | `job_grade_list` | [JobGradeList](#resources-permissions-JobGradeList) |  |  |
-| `job_grade_map` | [JobGradeMap](#resources-permissions-JobGradeMap) |  |  |
 
 
 
@@ -4222,7 +4220,25 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `fine_grained` | [bool](#bool) |  |  |
 | `jobs` | [JobGradeList.JobsEntry](#resources-permissions-JobGradeList-JobsEntry) | repeated |  |
+| `grades` | [JobGradeList.GradesEntry](#resources-permissions-JobGradeList-GradesEntry) | repeated |  |
+
+
+
+
+
+
+<a name="resources-permissions-JobGradeList-GradesEntry"></a>
+
+### JobGradeList.GradesEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [JobGrades](#resources-permissions-JobGrades) |  |  |
 
 
 
@@ -4239,37 +4255,6 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `key` | [string](#string) |  |  |
 | `value` | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="resources-permissions-JobGradeMap"></a>
-
-### JobGradeMap
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [JobGradeMap.JobsEntry](#resources-permissions-JobGradeMap-JobsEntry) | repeated |  |
-
-
-
-
-
-
-<a name="resources-permissions-JobGradeMap-JobsEntry"></a>
-
-### JobGradeMap.JobsEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  |  |
-| `value` | [JobGrades](#resources-permissions-JobGrades) |  |  |
 
 
 
@@ -12788,10 +12773,10 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#services-rector-CreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#services-rector-CreateOrUpdateLawBookResponse) | @perm: Name=SuperUser |
-| `DeleteLawBook` | [DeleteLawBookRequest](#services-rector-DeleteLawBookRequest) | [DeleteLawBookResponse](#services-rector-DeleteLawBookResponse) | @perm: Name=SuperUser |
-| `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#services-rector-CreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#services-rector-CreateOrUpdateLawResponse) | @perm: Name=SuperUser |
-| `DeleteLaw` | [DeleteLawRequest](#services-rector-DeleteLawRequest) | [DeleteLawResponse](#services-rector-DeleteLawResponse) | @perm: Name=SuperUser |
+| `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#services-rector-CreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#services-rector-CreateOrUpdateLawBookResponse) | @perm |
+| `DeleteLawBook` | [DeleteLawBookRequest](#services-rector-DeleteLawBookRequest) | [DeleteLawBookResponse](#services-rector-DeleteLawBookResponse) | @perm |
+| `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#services-rector-CreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#services-rector-CreateOrUpdateLawResponse) | @perm: Name=CreateOrUpdateLawBook |
+| `DeleteLaw` | [DeleteLawRequest](#services-rector-DeleteLawRequest) | [DeleteLawResponse](#services-rector-DeleteLawResponse) | @perm: Name=DeleteLawBook |
 
  <!-- end services -->
 

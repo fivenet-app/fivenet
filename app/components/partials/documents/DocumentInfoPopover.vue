@@ -172,7 +172,7 @@ watchOnce(opened, async () => {
                         </div>
 
                         <div v-if="document.deletedAt" class="flex flex-row items-center gap-1 font-bold">
-                            <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
+                            <UIcon name="i-mdi-delete" class="mr-1.5 size-5 shrink-0" />
                             <span>{{ $t('common.deleted') }}</span>
                         </div>
                     </div>

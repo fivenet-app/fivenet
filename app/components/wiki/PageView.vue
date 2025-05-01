@@ -173,7 +173,7 @@ const accordionItems = computed(() =>
                         >
                             <UButton
                                 :color="!page.meta.deletedAt ? 'red' : 'green'"
-                                :icon="!page.meta.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
+                                :icon="!page.meta.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => page && deletePage(page.id),

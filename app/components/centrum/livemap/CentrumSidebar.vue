@@ -653,7 +653,7 @@ defineShortcuts({
                                     }"
                                     position="top-left"
                                     size="xl"
-                                    color="red"
+                                    color="error"
                                     :show="pendingDispatches.length > 0"
                                 >
                                     <UTooltip :text="$t('components.centrum.take_dispatch.title')" :shortcuts="['M', 'D']">

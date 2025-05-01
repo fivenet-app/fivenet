@@ -204,7 +204,7 @@ export function getDocAtivityIcon(activityType: DocActivityType): string {
         case DocActivityType.COMMENT_UPDATED:
             return 'i-mdi-comment-edit';
         case DocActivityType.COMMENT_DELETED:
-            return 'i-mdi-trash-can';
+            return 'i-mdi-delete';
 
         default:
             return 'i-mdi-help';

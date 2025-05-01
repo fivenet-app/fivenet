@@ -81,7 +81,7 @@ const modal = useModal();
                 <div v-if="account" class="flex items-center justify-between">
                     <UButton
                         icon="i-mdi-close-circle"
-                        color="red"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => disconnectOAuth2Connection(provider),

@@ -277,8 +277,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     <UButton
                         v-if="can('RectorService.DeleteRole').value"
                         variant="link"
-                        icon="i-mdi-trash-can"
-                        color="red"
+                        icon="i-mdi-delete"
+                        color="error"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteRole(role!.id),
@@ -339,7 +339,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             />
 
                                             <UButton
-                                                color="red"
+                                                color="error"
                                                 :variant="
                                                     permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
                                                         ? 'solid'

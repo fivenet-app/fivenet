@@ -159,7 +159,7 @@ const version = APP_VERSION;
                     <UButton block @click="resetLocalStorage()">
                         <span>{{ $t('components.debug_info.reset_local_storage') }}</span>
                     </UButton>
-                    <UButton block color="red" :external="true" to="/api/clear-site-data">
+                    <UButton block color="error" :external="true" to="/api/clear-site-data">
                         <span>{{ $t('components.debug_info.factory_reset') }}</span>
                     </UButton>
                     <UButton block color="gray" @click="sendTestNotifications">

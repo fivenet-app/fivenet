@@ -157,7 +157,7 @@ const filteredUnits = computed(() => ({
                     <UButton
                         v-if="ownUnitId !== undefined"
                         block
-                        color="red"
+                        color="error"
                         class="flex-1"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"

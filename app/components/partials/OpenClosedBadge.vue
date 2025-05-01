@@ -5,8 +5,8 @@ defineProps<{
 </script>
 
 <template>
-    <UBadge v-if="closed" v-bind="$attrs" color="red" class="inline-flex gap-1">
-        <UIcon name="i-mdi-lock" color="red" class="size-5" />
+    <UBadge v-if="closed" v-bind="$attrs" color="error" class="inline-flex gap-1">
+        <UIcon name="i-mdi-lock" color="error" class="size-5" />
         <span>
             {{ $t('common.close', 2) }}
         </span>
