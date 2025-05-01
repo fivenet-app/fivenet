@@ -19,8 +19,16 @@ func (x *Cronjob) Merge(in *Cronjob) *Cronjob {
 		x.LastAttemptTime = in.LastAttemptTime
 	}
 
-	if in.Data != nil {
-		x.Data = in.Data
+	if in.StartedTime != nil {
+		x.StartedTime = in.StartedTime
+	}
+
+	x.Timeout = in.Timeout
+
+	x.Data = in.Data
+
+	if in.LastCompletedEvent != nil {
+		x.LastCompletedEvent = in.LastCompletedEvent
 	}
 
 	return x

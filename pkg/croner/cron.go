@@ -136,11 +136,12 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 		cj.State = cron.CronjobState_CRONJOB_STATE_PENDING
 	}
 
-	if cj.NextScheduleTime == nil {
-		nextTime, err := gronx.NextTick(cj.Schedule, false)
-		if err != nil {
-			return err
-		}
+	nextTime, err := gronx.NextTick(cj.Schedule, false)
+	if err != nil {
+		return err
+	}
+
+	if cj.NextScheduleTime == nil || cj.NextScheduleTime.AsTime() != nextTime {
 		cj.NextScheduleTime = timestamp.New(nextTime)
 	}
 
