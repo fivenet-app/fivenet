@@ -54,7 +54,7 @@ func (s *State) FilterDispatches(ctx context.Context, job string, statuses []cen
 	}
 
 	dsps := []*centrum.Dispatch{}
-	for i := 0; i < len(dispatches); i++ {
+	for i := range dispatches {
 		// Hide user info when dispatch is anonymous
 		if dispatches[i].Anon {
 			dispatches[i].Creator = nil

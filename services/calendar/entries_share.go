@@ -94,7 +94,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCa
 
 func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint64, inUserIds []int32) ([]int32, error) {
 	userIds := make([]jet.Expression, len(inUserIds))
-	for i := 0; i < len(inUserIds); i++ {
+	for i := range inUserIds {
 		userIds[i] = jet.Int32(inUserIds[i])
 	}
 
@@ -133,8 +133,7 @@ func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint
 			tCalendarRSVP.UserID,
 			tCalendarRSVP.Response,
 		)
-
-	for i := 0; i < len(userIds); i++ {
+	for i := range userIds {
 		insertStmt = insertStmt.VALUES(
 			entryId,
 			userIds[i],

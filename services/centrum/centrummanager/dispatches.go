@@ -156,7 +156,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 	if len(toRemove) > 0 {
 		removeIds := make([]jet.Expression, len(toRemove))
-		for i := 0; i < len(toRemove); i++ {
+		for i := range toRemove {
 			removeIds[i] = jet.Uint64(toRemove[i])
 		}
 
@@ -186,8 +186,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		if err != nil {
 			return err
 		}
-
-		for i := 0; i < len(toAdd); i++ {
+		for i := range toAdd {
 
 			// Skip already added units
 			if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
@@ -254,7 +253,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		if len(toRemove) > 0 {
 			toAnnounce := []uint64{}
 			dsp.Units = slices.DeleteFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
-				for k := 0; k < len(toRemove); k++ {
+				for k := range toRemove {
 					if in.UnitId != toRemove[k] {
 						continue
 					}
@@ -285,7 +284,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 		if len(toAdd) > 0 {
 			units := []uint64{}
-			for i := 0; i < len(toAdd); i++ {
+			for i := range toAdd {
 				// Skip already added units
 				if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 					return in.UnitId == toAdd[i]

@@ -138,8 +138,7 @@ func (p *PermifyModule) parseComment(method string, comment string) (*Perm, erro
 	}
 
 	split := strings.Split(comment, ";")
-
-	for i := 0; i < len(split); i++ {
+	for i := range split {
 		k, v, _ := strings.Cut(split[i], "=")
 		if v == "" {
 			continue

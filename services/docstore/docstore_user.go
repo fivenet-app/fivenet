@@ -126,7 +126,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 	}
 
 	rIds := make([]jet.Expression, len(dbRelIds))
-	for i := 0; i < len(dbRelIds); i++ {
+	for i := range dbRelIds {
 		rIds[i] = jet.Uint64(dbRelIds[i])
 	}
 

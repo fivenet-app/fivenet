@@ -448,7 +448,7 @@ func (s *Server) getQualificationResult(ctx context.Context, qualificationId uin
 
 	if len(status) > 0 {
 		statusConds := make([]jet.Expression, len(status))
-		for i := 0; i < len(status); i++ {
+		for i := range status {
 			statusConds[i] = jet.Int16(int16(status[i]))
 		}
 

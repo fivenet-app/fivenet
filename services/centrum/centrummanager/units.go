@@ -158,7 +158,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 	if len(toRemove) > 0 {
 		removeIds := make([]jet.Expression, len(toRemove))
-		for i := 0; i < len(toRemove); i++ {
+		for i := range toRemove {
 			removeIds[i] = jet.Int32(toRemove[i])
 		}
 
@@ -176,7 +176,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 	if len(toAdd) > 0 {
 		addIds := []jet.IntegerExpression{}
-		for i := 0; i < len(toAdd); i++ {
+		for i := range toAdd {
 			if um, ok := s.tracker.GetUserById(toAdd[i]); !ok || um.Hidden {
 				continue
 			}
@@ -235,7 +235,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 			toAnnounce := []int32{}
 
 			unit.Users = slices.DeleteFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
-				for k := 0; k < len(toRemove); k++ {
+				for k := range toRemove {
 					if in.UserId != toRemove[k] {
 						continue
 					}
@@ -270,7 +270,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 		if len(toAdd) > 0 {
 			notFound := []int32{}
-			for i := 0; i < len(toAdd); i++ {
+			for i := range toAdd {
 				if um, ok := s.tracker.GetUserById(toAdd[i]); !ok || um.Hidden {
 					continue
 				}

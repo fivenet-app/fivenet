@@ -39,7 +39,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *pbauth.GetAccountInfoR
 	}
 
 	oauth2Providers := make([]*accounts.OAuth2Provider, len(s.oauth2Providers))
-	for i := 0; i < len(oauth2Providers); i++ {
+	for i := range oauth2Providers {
 		p := s.oauth2Providers[i]
 		oauth2Providers[i] = &accounts.OAuth2Provider{
 			Name:     p.Name,
@@ -73,9 +73,10 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *pbauth.GetAccountInfoR
 			return nil, errswrap.NewError(err, ErrGenericAccount)
 		}
 	}
+	for
 
 	// Set provider in the connections
-	for i := 0; i < len(oauth2Conns); i++ {
+	i := range oauth2Conns {
 		idx := slices.IndexFunc(oauth2Providers, func(p *accounts.OAuth2Provider) bool {
 			return p.Name == oauth2Conns[i].GetProviderName()
 		})

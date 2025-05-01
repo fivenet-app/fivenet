@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/grpcws"
 )
 
-var ClientErr = errors.New("grpc client error")
+var ErrClient = errors.New("grpc client error")
 
 type GrpcStream struct {
 	id                uint32
@@ -81,7 +81,7 @@ func (stream *GrpcStream) Read(p []byte) (int, error) {
 			return stream.Read(p)
 
 		case *grpcws.GrpcFrame_Failure:
-			return 0, ClientErr
+			return 0, ErrClient
 		}
 	}
 	return 0, io.EOF

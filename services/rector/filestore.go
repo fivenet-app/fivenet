@@ -58,7 +58,7 @@ func (s *Server) ListFiles(ctx context.Context, req *pbrector.ListFilesRequest) 
 	}
 
 	fs := make([]*filestore.FileInfo, len(files))
-	for i := 0; i < len(files); i++ {
+	for i := range files {
 		fs[i] = &filestore.FileInfo{
 			Name:         files[i].Name,
 			Size:         files[i].Size,

@@ -78,7 +78,7 @@ func (s *Manager) resolveColleagueById(ctx context.Context, u ...int32) ([]*jobs
 	}
 
 	userIds := make([]jet.Expression, len(u))
-	for i := 0; i < len(u); i++ {
+	for i := range u {
 		userIds[i] = jet.Int32(u[i])
 	}
 
@@ -119,8 +119,7 @@ func (s *Manager) resolveColleagueById(ctx context.Context, u ...int32) ([]*jobs
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to resolve colleagues by ids %+v: %w", u, err)
 	}
-
-	for i := 0; i < len(dest); i++ {
+	for i := range dest {
 		if dest[i] != nil {
 			s.enricher.EnrichJobInfo(dest[i])
 		}

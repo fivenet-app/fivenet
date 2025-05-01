@@ -5,21 +5,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Frontend",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}",
-            "cwd": "${workspaceFolder}",
-            "args": ["frontend"],
-            "buildFlags": "-race -a -installsuffix cgo",
-            "env": {
-                "CGO_ENABLED": "1",
-                "FIVENET_CONFIG_FILE": "./config.yaml"
-            },
-            "dlvFlags": ["--check-go-version=false"]
-        },
-        {
             "name": "Launch Server",
             "type": "go",
             "request": "launch",
@@ -94,10 +79,9 @@
         {
             "name": "ALL",
             "configurations": [
-                "Launch UI",
-                "Launch Frontend",
                 "Launch Server",
-                "Launch Worker"
+                "Launch Worker",
+                "Launch UI"
             ],
             "stopAll": false
         }

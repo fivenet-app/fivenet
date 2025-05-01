@@ -36,14 +36,14 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 
 	// Allow superusers access to any docs
 	if userInfo.SuperUser {
-		for i := 0; i < len(entryIds); i++ {
+		for i := range entryIds {
 			dest = append(dest, entryIds[i])
 		}
 		return dest, nil
 	}
 
 	ids := make([]jet.Expression, len(entryIds))
-	for i := 0; i < len(entryIds); i++ {
+	for i := range entryIds {
 		ids[i] = jet.Uint64(entryIds[i])
 	}
 

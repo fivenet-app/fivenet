@@ -230,13 +230,12 @@ func (s *Server) getPageAccess(ctx context.Context, userInfo *userinfo.UserInfo,
 	if err != nil {
 		return nil, errorswiki.ErrFailedQuery
 	}
-
-	for i := 0; i < len(jobsAccess); i++ {
+	for i := range jobsAccess {
 		s.enricher.EnrichJobInfo(jobsAccess[i])
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(usersAccess); i++ {
+	for i := range usersAccess {
 		if usersAccess[i].User != nil {
 			jobInfoFn(usersAccess[i].User)
 		}

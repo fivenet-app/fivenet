@@ -40,7 +40,7 @@ func (s *State) FilterUnits(ctx context.Context, job string, statuses []centrum.
 	}
 
 	us := []*centrum.Unit{}
-	for i := 0; i < len(units); i++ {
+	for i := range units {
 		include := true
 
 		// Include statuses that should be listed

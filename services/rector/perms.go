@@ -59,7 +59,7 @@ func (s *Server) filterPermissions(ctx context.Context, job string, fullFilter b
 
 outer:
 	for _, p := range ps {
-		for i := 0; i < len(ignoredGuardPermissions); i++ {
+		for i := range ignoredGuardPermissions {
 			if p.GuardName == ignoredGuardPermissions[i] {
 				continue outer
 			}
@@ -102,7 +102,7 @@ func (s *Server) filterPermissionIDs(ctx context.Context, job string, full bool,
 	}
 
 	permIds := make([]uint64, len(filtered))
-	for i := 0; i < len(filtered); i++ {
+	for i := range filtered {
 		permIds[i] = filtered[i].Id
 	}
 	return permIds, nil

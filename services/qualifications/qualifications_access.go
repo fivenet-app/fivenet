@@ -30,8 +30,7 @@ func (s *Server) GetQualificationAccess(ctx context.Context, req *pbqualificatio
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-
-	for i := 0; i < len(access); i++ {
+	for i := range access {
 		s.enricher.EnrichJobInfo(access[i])
 	}
 

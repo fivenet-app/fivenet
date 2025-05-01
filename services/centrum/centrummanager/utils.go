@@ -16,8 +16,7 @@ func (s *Manager) CheckIfUserIsDisponent(ctx context.Context, job string, userId
 	if len(disponents) == 0 {
 		return false
 	}
-
-	for i := 0; i < len(disponents); i++ {
+	for i := range disponents {
 		if userId == disponents[i].UserId {
 			return true
 		}

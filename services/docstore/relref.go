@@ -95,7 +95,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *pbdocstore.GetD
 	}
 
 	dIds := make([]jet.Expression, len(ids))
-	for i := 0; i < len(ids); i++ {
+	for i := range ids {
 		dIds[i] = jet.Uint64(ids[i])
 	}
 
@@ -176,7 +176,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *pbdocstore.GetD
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(dest); i++ {
+	for i := range dest {
 		if dest[i].Creator != nil {
 			jobInfoFn(dest[i].Creator)
 		}
@@ -645,7 +645,7 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(dest); i++ {
+	for i := range dest {
 		if dest[i].SourceUser != nil {
 			jobInfoFn(dest[i].SourceUser)
 		}
