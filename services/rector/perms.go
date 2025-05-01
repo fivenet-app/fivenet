@@ -18,11 +18,9 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	errorsrector "github.com/fivenet-app/fivenet/services/rector/errors"
-	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"go.uber.org/multierr"
 )
 
 var ignoredGuardPermissions = []string{}
@@ -497,72 +495,4 @@ func (s *Server) UpdateRoleLimits(ctx context.Context, req *pbrector.UpdateRoleL
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &pbrector.UpdateRoleLimitsResponse{}, nil
-}
-
-func (s *Server) DeleteFaction(ctx context.Context, req *pbrector.DeleteFactionRequest) (*pbrector.DeleteFactionResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
-
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &model.FivenetAuditLog{
-		Service: pbrector.RectorService_ServiceDesc.ServiceName,
-		Method:  "DeleteFaction",
-		UserID:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
-	}
-	defer s.aud.Log(auditEntry, req)
-
-	role, err := s.ps.GetRole(ctx, req.RoleId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
-	}
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", role.Job))
-
-	roles, err := s.ps.GetJobRoles(ctx, role.Job)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
-	}
-
-	errs := multierr.Combine()
-	for _, role := range roles {
-		if err := s.ps.DeleteRole(ctx, role.ID); err != nil {
-			errs = multierr.Append(errs, err)
-			continue
-		}
-	}
-
-	if err := s.ps.ClearJobAttributes(ctx, role.Job); err != nil {
-		errs = multierr.Append(errs, err)
-		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
-	}
-
-	// Remove job props as last action to remove a faction from the data
-	if err := s.deleteJobProps(ctx, s.db, role.Job); err != nil {
-		errs = multierr.Append(errs, err)
-	}
-
-	if errs != nil {
-		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
-	}
-
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
-
-	return &pbrector.DeleteFactionResponse{}, nil
-}
-
-func (s *Server) deleteJobProps(ctx context.Context, tx qrm.DB, job string) error {
-	stmt := tJobProps.
-		DELETE().
-		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
-		).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
 }

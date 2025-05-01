@@ -28,7 +28,7 @@ type JobProps struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
 	Job                 string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel            *string                `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	Theme               string                 `protobuf:"bytes,3,opt,name=theme,proto3" json:"theme,omitempty"`
+	DeletedAt           *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	LivemapMarkerColor  string                 `protobuf:"bytes,4,opt,name=livemap_marker_color,json=livemapMarkerColor,proto3" json:"livemap_marker_color,omitempty"`
 	QuickButtons        *QuickButtons          `protobuf:"bytes,5,opt,name=quick_buttons,json=quickButtons,proto3" json:"quick_buttons,omitempty"`
 	RadioFrequency      *string                `protobuf:"bytes,6,opt,name=radio_frequency,json=radioFrequency,proto3,oneof" json:"radio_frequency,omitempty"`
@@ -87,11 +87,11 @@ func (x *JobProps) GetJobLabel() string {
 	return ""
 }
 
-func (x *JobProps) GetTheme() string {
+func (x *JobProps) GetDeletedAt() *timestamp.Timestamp {
 	if x != nil {
-		return x.Theme
+		return x.DeletedAt
 	}
-	return ""
+	return nil
 }
 
 func (x *JobProps) GetLivemapMarkerColor() string {
@@ -229,24 +229,26 @@ var File_resources_users_job_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_job_props_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/users/job_props.proto\x12\x0fresources.users\x1a\"resources/users/job_settings.proto\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x83\a\n" +
+	"\x1fresources/users/job_props.proto\x12\x0fresources.users\x1a\"resources/users/job_settings.proto\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xb7\a\n" +
 	"\bJobProps\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12)\n" +
-	"\tjob_label\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12\x1d\n" +
-	"\x05theme\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x05theme\x12M\n" +
+	"\tjob_label\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12M\n" +
 	"\x14livemap_marker_color\x18\x04 \x01(\tB\x1b\xfaB\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x12livemapMarkerColor\x12B\n" +
 	"\rquick_buttons\x18\x05 \x01(\v2\x1d.resources.users.QuickButtonsR\fquickButtons\x125\n" +
-	"\x0fradio_frequency\x18\x06 \x01(\tB\a\xfaB\x04r\x02\x18\x18H\x01R\x0eradioFrequency\x88\x01\x01\x12-\n" +
-	"\x10discord_guild_id\x18\a \x01(\tH\x02R\x0ediscordGuildId\x88\x01\x01\x12O\n" +
-	"\x11discord_last_sync\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x0fdiscordLastSync\x88\x01\x01\x12X\n" +
+	"\x0fradio_frequency\x18\x06 \x01(\tB\a\xfaB\x04r\x02\x18\x18H\x02R\x0eradioFrequency\x88\x01\x01\x12-\n" +
+	"\x10discord_guild_id\x18\a \x01(\tH\x03R\x0ediscordGuildId\x88\x01\x01\x12O\n" +
+	"\x11discord_last_sync\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x04R\x0fdiscordLastSync\x88\x01\x01\x12X\n" +
 	"\x15discord_sync_settings\x18\t \x01(\v2$.resources.users.DiscordSyncSettingsR\x13discordSyncSettings\x12Z\n" +
 	"\x14discord_sync_changes\x18\n" +
-	" \x01(\v2#.resources.users.DiscordSyncChangesH\x04R\x12discordSyncChanges\x88\x01\x01\x12!\n" +
-	"\x04motd\x18\v \x01(\tB\b\xfaB\x05r\x03\x18\x80\bH\x05R\x04motd\x88\x01\x01\x129\n" +
-	"\blogo_url\x18\f \x01(\v2\x19.resources.filestore.FileH\x06R\alogoUrl\x88\x01\x01\x128\n" +
+	" \x01(\v2#.resources.users.DiscordSyncChangesH\x05R\x12discordSyncChanges\x88\x01\x01\x12!\n" +
+	"\x04motd\x18\v \x01(\tB\b\xfaB\x05r\x03\x18\x80\bH\x06R\x04motd\x88\x01\x01\x129\n" +
+	"\blogo_url\x18\f \x01(\v2\x19.resources.filestore.FileH\aR\alogoUrl\x88\x01\x01\x128\n" +
 	"\bsettings\x18\r \x01(\v2\x1c.resources.users.JobSettingsR\bsettingsB\f\n" +
 	"\n" +
-	"_job_labelB\x12\n" +
+	"_job_labelB\r\n" +
+	"\v_deleted_atB\x12\n" +
 	"\x10_radio_frequencyB\x13\n" +
 	"\x11_discord_guild_idB\x14\n" +
 	"\x12_discord_last_syncB\x17\n" +
@@ -281,17 +283,18 @@ var file_resources_users_job_props_proto_goTypes = []any{
 	(*JobSettings)(nil),         // 6: resources.users.JobSettings
 }
 var file_resources_users_job_props_proto_depIdxs = []int32{
-	1, // 0: resources.users.JobProps.quick_buttons:type_name -> resources.users.QuickButtons
-	2, // 1: resources.users.JobProps.discord_last_sync:type_name -> resources.timestamp.Timestamp
-	3, // 2: resources.users.JobProps.discord_sync_settings:type_name -> resources.users.DiscordSyncSettings
-	4, // 3: resources.users.JobProps.discord_sync_changes:type_name -> resources.users.DiscordSyncChanges
-	5, // 4: resources.users.JobProps.logo_url:type_name -> resources.filestore.File
-	6, // 5: resources.users.JobProps.settings:type_name -> resources.users.JobSettings
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	2, // 0: resources.users.JobProps.deleted_at:type_name -> resources.timestamp.Timestamp
+	1, // 1: resources.users.JobProps.quick_buttons:type_name -> resources.users.QuickButtons
+	2, // 2: resources.users.JobProps.discord_last_sync:type_name -> resources.timestamp.Timestamp
+	3, // 3: resources.users.JobProps.discord_sync_settings:type_name -> resources.users.DiscordSyncSettings
+	4, // 4: resources.users.JobProps.discord_sync_changes:type_name -> resources.users.DiscordSyncChanges
+	5, // 5: resources.users.JobProps.logo_url:type_name -> resources.filestore.File
+	6, // 6: resources.users.JobProps.settings:type_name -> resources.users.JobSettings
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_job_props_proto_init() }

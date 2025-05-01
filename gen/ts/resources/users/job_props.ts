@@ -28,9 +28,9 @@ export interface JobProps {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: string theme = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
      */
-    theme: string;
+    deletedAt?: Timestamp;
     /**
      * @generated from protobuf field: string livemap_marker_color = 4;
      */
@@ -97,7 +97,7 @@ class JobProps$Type extends MessageType<JobProps> {
         super("resources.users.JobProps", [
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 3, name: "theme", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
             { no: 5, name: "quick_buttons", kind: "message", T: () => QuickButtons },
             { no: 6, name: "radio_frequency", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
@@ -113,7 +113,6 @@ class JobProps$Type extends MessageType<JobProps> {
     create(value?: PartialMessage<JobProps>): JobProps {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.job = "";
-        message.theme = "";
         message.livemapMarkerColor = "";
         if (value !== undefined)
             reflectionMergePartial<JobProps>(this, message, value);
@@ -130,8 +129,8 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* optional string job_label */ 2:
                     message.jobLabel = reader.string();
                     break;
-                case /* string theme */ 3:
-                    message.theme = reader.string();
+                case /* optional resources.timestamp.Timestamp deleted_at */ 3:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
                 case /* string livemap_marker_color */ 4:
                     message.livemapMarkerColor = reader.string();
@@ -181,9 +180,9 @@ class JobProps$Type extends MessageType<JobProps> {
         /* optional string job_label = 2; */
         if (message.jobLabel !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
-        /* string theme = 3; */
-        if (message.theme !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.theme);
+        /* optional resources.timestamp.Timestamp deleted_at = 3; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* string livemap_marker_color = 4; */
         if (message.livemapMarkerColor !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.livemapMarkerColor);

@@ -595,9 +595,10 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			tUsers.Group.AS("group"),
 			tJobs.Label.AS("user.job_label"),
 			tJobGrades.Label.AS("user.job_grade_label"),
-			tJobProps.Theme,
-			tJobProps.RadioFrequency,
+			tJobProps.DeletedAt,
+			tJobProps.LivemapMarkerColor,
 			tJobProps.QuickButtons,
+			tJobProps.RadioFrequency,
 			tJobProps.LogoURL,
 		).
 		FROM(

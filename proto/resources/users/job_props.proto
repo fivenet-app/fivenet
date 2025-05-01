@@ -12,7 +12,7 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users
 message JobProps {
   string job = 1 [(validate.rules).string.max_len = 20];
   optional string job_label = 2 [(validate.rules).string.max_len = 50];
-  string theme = 3 [(validate.rules).string.max_len = 20];
+  optional resources.timestamp.Timestamp deleted_at = 3;
   string livemap_marker_color = 4 [(validate.rules).string = {
     len: 7,
     pattern: "^#[A-Fa-f0-9]{6}$",

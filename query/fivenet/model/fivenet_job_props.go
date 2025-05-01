@@ -14,6 +14,7 @@ import (
 type FivenetJobProps struct {
 	Job                 string     `json:"job"`
 	UpdatedAt           *time.Time `json:"updated_at"`
+	DeletedAt           *time.Time `json:"deleted_at"`
 	Theme               *string    `json:"theme"`
 	LivemapMarkerColor  *string    `json:"livemap_marker_color"`
 	QuickButtons        *string    `json:"quick_buttons"`

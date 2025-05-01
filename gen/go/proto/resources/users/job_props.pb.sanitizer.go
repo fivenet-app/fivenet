@@ -8,6 +8,15 @@ func (m *JobProps) Sanitize() error {
 		return nil
 	}
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: DiscordLastSync
 	if m.DiscordLastSync != nil {
 		if v, ok := any(m.GetDiscordLastSync()).(interface{ Sanitize() error }); ok {

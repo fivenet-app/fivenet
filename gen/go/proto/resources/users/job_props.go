@@ -27,6 +27,7 @@ func GetJobProps(ctx context.Context, tx qrm.DB, job string) (*JobProps, error) 
 		SELECT(
 			tJobProps.Job,
 			tJobProps.UpdatedAt,
+			tJobProps.DeletedAt,
 			tJobProps.Theme,
 			tJobProps.LivemapMarkerColor,
 			tJobProps.RadioFrequency,
@@ -62,10 +63,6 @@ func (x *JobProps) SetJobLabel(label string) {
 func (x *JobProps) Default(job string) {
 	if x.Job == "" {
 		x.Job = job
-	}
-
-	if x.Theme == "" {
-		x.Theme = DefaultTheme
 	}
 
 	if x.QuickButtons == nil {

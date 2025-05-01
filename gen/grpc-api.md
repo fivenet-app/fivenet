@@ -5861,7 +5861,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
-| `theme` | [string](#string) |  |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `livemap_marker_color` | [string](#string) |  |  |
 | `quick_buttons` | [QuickButtons](#resources-users-QuickButtons) |  |  |
 | `radio_frequency` | [string](#string) | optional |  |

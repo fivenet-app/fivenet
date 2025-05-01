@@ -19,6 +19,7 @@ type fivenetJobPropsTable struct {
 	// Columns
 	Job                 mysql.ColumnString
 	UpdatedAt           mysql.ColumnTimestamp
+	DeletedAt           mysql.ColumnTimestamp
 	Theme               mysql.ColumnString
 	LivemapMarkerColor  mysql.ColumnString
 	QuickButtons        mysql.ColumnString
@@ -73,6 +74,7 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 	var (
 		JobColumn                 = mysql.StringColumn("job")
 		UpdatedAtColumn           = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn           = mysql.TimestampColumn("deleted_at")
 		ThemeColumn               = mysql.StringColumn("theme")
 		LivemapMarkerColorColumn  = mysql.StringColumn("livemap_marker_color")
 		QuickButtonsColumn        = mysql.StringColumn("quick_buttons")
@@ -84,8 +86,8 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		MotdColumn                = mysql.StringColumn("motd")
 		LogoURLColumn             = mysql.StringColumn("logo_url")
 		SettingsColumn            = mysql.StringColumn("settings")
-		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncChangesColumn, MotdColumn, LogoURLColumn, SettingsColumn}
-		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncChangesColumn, MotdColumn, LogoURLColumn, SettingsColumn}
+		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, DeletedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncChangesColumn, MotdColumn, LogoURLColumn, SettingsColumn}
+		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, DeletedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncChangesColumn, MotdColumn, LogoURLColumn, SettingsColumn}
 		defaultColumns            = mysql.ColumnList{ThemeColumn, LivemapMarkerColorColumn}
 	)
 
@@ -95,6 +97,7 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		//Columns
 		Job:                 JobColumn,
 		UpdatedAt:           UpdatedAtColumn,
+		DeletedAt:           DeletedAtColumn,
 		Theme:               ThemeColumn,
 		LivemapMarkerColor:  LivemapMarkerColorColumn,
 		QuickButtons:        QuickButtonsColumn,
