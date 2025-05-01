@@ -71,7 +71,7 @@ func NewDocumentCategories(p Params) *DocumentCategories {
 
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "mstlystcdata.doccategories",
-			Schedule: "@always", // Every minute
+			Schedule: "* * * * *", // Every minute
 		}); err != nil {
 			return err
 		}

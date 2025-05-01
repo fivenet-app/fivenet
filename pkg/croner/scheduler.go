@@ -188,8 +188,8 @@ func (s *Scheduler) registerSubscriptions(ctxStartup context.Context, ctxCancel 
 }
 
 func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
-	job := &cron.CronjobCompletedEvent{}
-	if err := protojson.Unmarshal(msg.Data(), job); err != nil {
+	event := &cron.CronjobCompletedEvent{}
+	if err := protojson.Unmarshal(msg.Data(), event); err != nil {
 		s.logger.Error("failed to unmarshal cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
 
 		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {
@@ -202,7 +202,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		s.logger.Error("failed to send in progress for cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
 	}
 
-	if err := s.state.store.ComputeUpdate(s.ctx, job.Name, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+	if err := s.state.store.ComputeUpdate(s.ctx, event.Name, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 		// No need to update the job, probably doesn't exist anymore
 		if existing == nil {
 			return existing, false, nil
@@ -217,11 +217,9 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		existing.NextScheduleTime = timestamp.New(nextTime)
 		existing.LastAttemptTime = timestamp.New(time.Now())
 
-		if existing.Data == nil {
-			existing.Data = job.Data
-		} else {
-			existing.Data = existing.Data.Merge(job.Data)
-		}
+		existing.Data = event.Data
+
+		existing.LastCompletedEvent = event
 
 		return existing, true, nil
 	}); err != nil {

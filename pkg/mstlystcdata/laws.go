@@ -60,7 +60,7 @@ func NewLaws(p Params) *Laws {
 
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "mstlystcdata.laws",
-			Schedule: "@always", // Every minute
+			Schedule: "* * * * *", // Every minute
 		}); err != nil {
 			return err
 		}

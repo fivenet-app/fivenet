@@ -2021,6 +2021,7 @@ To generate Cronjob schedule expressions, you can also use web tools like https:
 | `started_time` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional | Time current cronjob was started |
 | `timeout` | [google.protobuf.Duration](#google-protobuf-Duration) | optional | Optional timeout for cronjob execution |
 | `data` | [CronjobData](#resources-common-cron-CronjobData) |  | Cronjob data |
+| `last_completed_event` | [CronjobCompletedEvent](#resources-common-cron-CronjobCompletedEvent) | optional | Last event info to ease debugging and tracking |
 
 
 

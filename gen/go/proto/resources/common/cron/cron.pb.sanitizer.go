@@ -30,6 +30,15 @@ func (m *Cronjob) Sanitize() error {
 		}
 	}
 
+	// Field: LastCompletedEvent
+	if m.LastCompletedEvent != nil {
+		if v, ok := any(m.GetLastCompletedEvent()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: NextScheduleTime
 	if m.NextScheduleTime != nil {
 		if v, ok := any(m.GetNextScheduleTime()).(interface{ Sanitize() error }); ok {

@@ -101,7 +101,7 @@ func NewJobs(p Params) (*Jobs, error) {
 
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "mstlystcdata.jobs",
-			Schedule: "@always", // Every minute
+			Schedule: "* * * * *", // Every minute
 		}); err != nil {
 			return err
 		}

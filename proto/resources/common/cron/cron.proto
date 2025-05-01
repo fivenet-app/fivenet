@@ -32,6 +32,9 @@ message Cronjob {
 
   // Cronjob data
   CronjobData data = 8;
+
+  // Last event info to ease debugging and tracking
+  optional CronjobCompletedEvent last_completed_event = 9;
 }
 
 // States of Cronjbo

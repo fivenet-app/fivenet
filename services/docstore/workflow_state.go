@@ -71,14 +71,14 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "docstore.workflow_run",
-			Schedule: "@always", // Every minute
+			Schedule: "* * * * *", // Every minute
 		}); err != nil {
 			return err
 		}
 
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "docstore.workflow_users_run",
-			Schedule: "@always", // Every minute
+			Schedule: "* * * * *", // Every minute
 		}); err != nil {
 			return err
 		}

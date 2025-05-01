@@ -97,9 +97,11 @@ type Cronjob struct {
 	// Optional timeout for cronjob execution
 	Timeout *durationpb.Duration `protobuf:"bytes,7,opt,name=timeout,proto3,oneof" json:"timeout,omitempty"`
 	// Cronjob data
-	Data          *CronjobData `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Data *CronjobData `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
+	// Last event info to ease debugging and tracking
+	LastCompletedEvent *CronjobCompletedEvent `protobuf:"bytes,9,opt,name=last_completed_event,json=lastCompletedEvent,proto3,oneof" json:"last_completed_event,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Cronjob) Reset() {
@@ -184,6 +186,13 @@ func (x *Cronjob) GetTimeout() *durationpb.Duration {
 func (x *Cronjob) GetData() *CronjobData {
 	if x != nil {
 		return x.Data
+	}
+	return nil
+}
+
+func (x *Cronjob) GetLastCompletedEvent() *CronjobCompletedEvent {
+	if x != nil {
+		return x.LastCompletedEvent
 	}
 	return nil
 }
@@ -468,7 +477,7 @@ var File_resources_common_cron_cron_proto protoreflect.FileDescriptor
 
 const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\n" +
-	" resources/common/cron/cron.proto\x12\x15resources.common.cron\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\x80\x04\n" +
+	" resources/common/cron/cron.proto\x12\x15resources.common.cron\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a#resources/timestamp/timestamp.proto\"\xfe\x04\n" +
 	"\aCronjob\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1a\n" +
 	"\bschedule\x18\x02 \x01(\tR\bschedule\x129\n" +
@@ -477,11 +486,13 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\x11last_attempt_time\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\x0flastAttemptTime\x88\x01\x01\x12F\n" +
 	"\fstarted_time\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\vstartedTime\x88\x01\x01\x128\n" +
 	"\atimeout\x18\a \x01(\v2\x19.google.protobuf.DurationH\x02R\atimeout\x88\x01\x01\x126\n" +
-	"\x04data\x18\b \x01(\v2\".resources.common.cron.CronjobDataR\x04dataB\x14\n" +
+	"\x04data\x18\b \x01(\v2\".resources.common.cron.CronjobDataR\x04data\x12c\n" +
+	"\x14last_completed_event\x18\t \x01(\v2,.resources.common.cron.CronjobCompletedEventH\x03R\x12lastCompletedEvent\x88\x01\x01B\x14\n" +
 	"\x12_last_attempt_timeB\x0f\n" +
 	"\r_started_timeB\n" +
 	"\n" +
-	"\b_timeout\"\x84\x01\n" +
+	"\b_timeoutB\x17\n" +
+	"\x15_last_completed_event\"\x84\x01\n" +
 	"\vCronjobData\x12=\n" +
 	"\n" +
 	"updated_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\x12-\n" +
@@ -547,19 +558,20 @@ var file_resources_common_cron_cron_proto_depIdxs = []int32{
 	8,  // 3: resources.common.cron.Cronjob.started_time:type_name -> resources.timestamp.Timestamp
 	9,  // 4: resources.common.cron.Cronjob.timeout:type_name -> google.protobuf.Duration
 	2,  // 5: resources.common.cron.Cronjob.data:type_name -> resources.common.cron.CronjobData
-	8,  // 6: resources.common.cron.CronjobData.updated_at:type_name -> resources.timestamp.Timestamp
-	10, // 7: resources.common.cron.CronjobData.data:type_name -> google.protobuf.Any
-	8,  // 8: resources.common.cron.CronjobLockOwnerState.updated_at:type_name -> resources.timestamp.Timestamp
-	1,  // 9: resources.common.cron.CronjobSchedulerEvent.cronjob:type_name -> resources.common.cron.Cronjob
-	8,  // 10: resources.common.cron.CronjobCompletedEvent.endDate:type_name -> resources.timestamp.Timestamp
-	9,  // 11: resources.common.cron.CronjobCompletedEvent.elapsed:type_name -> google.protobuf.Duration
-	2,  // 12: resources.common.cron.CronjobCompletedEvent.data:type_name -> resources.common.cron.CronjobData
-	7,  // 13: resources.common.cron.GenericCronData.attributes:type_name -> resources.common.cron.GenericCronData.AttributesEntry
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	5,  // 6: resources.common.cron.Cronjob.last_completed_event:type_name -> resources.common.cron.CronjobCompletedEvent
+	8,  // 7: resources.common.cron.CronjobData.updated_at:type_name -> resources.timestamp.Timestamp
+	10, // 8: resources.common.cron.CronjobData.data:type_name -> google.protobuf.Any
+	8,  // 9: resources.common.cron.CronjobLockOwnerState.updated_at:type_name -> resources.timestamp.Timestamp
+	1,  // 10: resources.common.cron.CronjobSchedulerEvent.cronjob:type_name -> resources.common.cron.Cronjob
+	8,  // 11: resources.common.cron.CronjobCompletedEvent.endDate:type_name -> resources.timestamp.Timestamp
+	9,  // 12: resources.common.cron.CronjobCompletedEvent.elapsed:type_name -> google.protobuf.Duration
+	2,  // 13: resources.common.cron.CronjobCompletedEvent.data:type_name -> resources.common.cron.CronjobData
+	7,  // 14: resources.common.cron.GenericCronData.attributes:type_name -> resources.common.cron.GenericCronData.AttributesEntry
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_resources_common_cron_cron_proto_init() }

@@ -69,6 +69,12 @@ export interface Cronjob {
      * @generated from protobuf field: resources.common.cron.CronjobData data = 8;
      */
     data?: CronjobData;
+    /**
+     * Last event info to ease debugging and tracking
+     *
+     * @generated from protobuf field: optional resources.common.cron.CronjobCompletedEvent last_completed_event = 9;
+     */
+    lastCompletedEvent?: CronjobCompletedEvent;
 }
 /**
  * @generated from protobuf message resources.common.cron.CronjobData
@@ -191,7 +197,8 @@ class Cronjob$Type extends MessageType<Cronjob> {
             { no: 5, name: "last_attempt_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "started_time", kind: "message", T: () => Timestamp },
             { no: 7, name: "timeout", kind: "message", T: () => Duration },
-            { no: 8, name: "data", kind: "message", T: () => CronjobData }
+            { no: 8, name: "data", kind: "message", T: () => CronjobData },
+            { no: 9, name: "last_completed_event", kind: "message", T: () => CronjobCompletedEvent }
         ]);
     }
     create(value?: PartialMessage<Cronjob>): Cronjob {
@@ -232,6 +239,9 @@ class Cronjob$Type extends MessageType<Cronjob> {
                 case /* resources.common.cron.CronjobData data */ 8:
                     message.data = CronjobData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
+                case /* optional resources.common.cron.CronjobCompletedEvent last_completed_event */ 9:
+                    message.lastCompletedEvent = CronjobCompletedEvent.internalBinaryRead(reader, reader.uint32(), options, message.lastCompletedEvent);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -268,6 +278,9 @@ class Cronjob$Type extends MessageType<Cronjob> {
         /* resources.common.cron.CronjobData data = 8; */
         if (message.data)
             CronjobData.internalBinaryWrite(message.data, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.cron.CronjobCompletedEvent last_completed_event = 9; */
+        if (message.lastCompletedEvent)
+            CronjobCompletedEvent.internalBinaryWrite(message.lastCompletedEvent, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
