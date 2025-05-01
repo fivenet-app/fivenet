@@ -257,6 +257,7 @@ const editing = ref(props.startInEdit);
                 </UFormGroup>
             </UForm>
         </template>
+
         <UTable
             ref="table"
             v-model:expand="expand"

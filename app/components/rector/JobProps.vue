@@ -462,6 +462,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <UInput
                                             v-model="state.settings.absencePastDays"
                                             type="number"
+                                            :min="0"
                                             :placeholder="$t('common.day', 2)"
                                             :label="$t('common.day', 2)"
                                             class="flex-1"
@@ -860,6 +861,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                 "
                                                                 :name="`discordSyncSettings.userInfoSyncSettings.${idx}.fromGrade`"
                                                                 type="number"
+                                                                :min="0"
                                                                 class="w-full"
                                                                 :disabled="!state.discordSyncSettings.userInfoSync"
                                                                 :placeholder="
@@ -886,6 +888,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                 "
                                                                 :name="`userInfoSyncSettings.${idx}.toGrade`"
                                                                 type="number"
+                                                                :min="0"
                                                                 class="w-full"
                                                                 :disabled="!state.discordSyncSettings.userInfoSync"
                                                                 :placeholder="

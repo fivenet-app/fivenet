@@ -389,7 +389,13 @@ function changeQuestionType(qt: string): void {
                     </UFormGroup>
 
                     <UFormGroup name="points" :label="$t('common.points', 2)" class="max-w-24">
-                        <UInput v-model="question.points" type="number" name="points" :placeholder="$t('common.points', 2)" />
+                        <UInput
+                            v-model="question.points"
+                            type="number"
+                            name="points"
+                            :min="0"
+                            :placeholder="$t('common.points', 2)"
+                        />
                     </UFormGroup>
                 </div>
             </div>

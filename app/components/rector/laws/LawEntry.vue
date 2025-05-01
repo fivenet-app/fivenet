@@ -93,46 +93,49 @@ const editing = ref(props.startInEdit);
                 </UButtonGroup>
             </UFormGroup>
 
-            <UFormGroup :label="$t('common.law')" class="flex-1 text-sm font-medium">
+            <UFormGroup :label="$t('common.law')" name="name" class="flex-1 text-sm font-medium">
                 <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law')" />
             </UFormGroup>
         </div>
 
         <div class="flex flex-1 gap-2">
-            <UFormGroup :label="$t('common.fine')" class="whitespace-nowrap text-left">
+            <UFormGroup :label="$t('common.fine')" name="fine" class="whitespace-nowrap text-left">
                 <UInput
                     v-model="state.fine"
                     name="fine"
                     type="number"
+                    :min="0"
                     :placeholder="$t('common.fine')"
                     leading-icon="i-mdi-dollar"
                 />
             </UFormGroup>
 
-            <UFormGroup :label="$t('common.detention_time')" class="whitespace-nowrap text-left">
+            <UFormGroup :label="$t('common.detention_time')" name="detentionTime" class="whitespace-nowrap text-left">
                 <UInput
                     v-model="state.detentionTime"
                     name="detentionTime"
                     type="number"
+                    :min="0"
                     :placeholder="$t('common.detention_time')"
                 />
             </UFormGroup>
 
-            <UFormGroup :label="$t('common.traffic_infraction_points')" class="whitespace-nowrap text-left">
+            <UFormGroup :label="$t('common.traffic_infraction_points')" name="stvoPoints" class="whitespace-nowrap text-left">
                 <UInput
                     v-model="state.stvoPoints"
                     name="stvoPoints"
                     type="number"
+                    :min="0"
                     :placeholder="$t('common.traffic_infraction_points')"
                 />
             </UFormGroup>
         </div>
 
-        <UFormGroup :label="$t('common.description')" class="text-left">
+        <UFormGroup :label="$t('common.description')" name="description" class="text-left">
             <UInput v-model="state.description" name="description" type="text" :placeholder="$t('common.description')" />
         </UFormGroup>
 
-        <UFormGroup :label="$t('common.hint')" class="text-left">
+        <UFormGroup :label="$t('common.hint')" name="hint" class="text-left">
             <UInput v-model="state.hint" name="hint" type="text" :placeholder="$t('common.hint')" />
         </UFormGroup>
     </UForm>

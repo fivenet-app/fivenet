@@ -263,7 +263,7 @@ defineShortcuts({
                                 v-model="query.trafficInfractionPoints"
                                 type="number"
                                 name="trafficInfractionPoints"
-                                :smin="0"
+                                :min="0"
                                 :placeholder="$t('common.traffic_infraction_points')"
                                 block
                             />

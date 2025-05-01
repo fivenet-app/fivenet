@@ -31,8 +31,8 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 <UInput
                     v-model="templateSchema.users.min"
                     type="number"
-                    :disabled="!templateSchema.users.req"
                     :min="0"
+                    :disabled="!templateSchema.users.req"
                     oninput="validity.valid||(value='');"
                     name="users"
                 />
@@ -58,8 +58,8 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 <UInput
                     v-model="templateSchema.documents.min"
                     type="number"
-                    :disabled="!templateSchema.documents.req"
                     :min="0"
+                    :disabled="!templateSchema.documents.req"
                     oninput="validity.valid||(value='');"
                     name="documents"
                 />
@@ -85,8 +85,8 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 <UInput
                     v-model="templateSchema.vehicles.min"
                     type="number"
-                    :disabled="!templateSchema.vehicles.req"
                     :min="0"
+                    :disabled="!templateSchema.vehicles.req"
                     oninput="validity.valid||(value='');"
                 />
             </UFormGroup>

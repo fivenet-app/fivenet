@@ -386,6 +386,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UInput
                                     v-model="state.timings.dispatchMaxWait"
                                     type="number"
+                                    :min="30"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
                                 />
@@ -409,6 +410,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UInput
                                     v-model="state.timings.requireUnitReminderSeconds"
                                     type="number"
+                                    :min="60"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
                                 />
