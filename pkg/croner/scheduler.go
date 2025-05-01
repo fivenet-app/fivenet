@@ -30,6 +30,7 @@ type SchedulerParams struct {
 
 	Logger *zap.Logger
 	JS     *events.JSWrapper
+	State  *State
 }
 
 type Scheduler struct {
@@ -52,6 +53,7 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		logger: p.Logger.Named("cron_scheduler"),
 		ctx:    ctxCancel,
 		js:     p.JS,
+		state:  p.State,
 		gron:   gronx.New(),
 
 		cronjobs: xsync.NewMap[string, *jobWrapper](),
