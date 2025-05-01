@@ -128,9 +128,9 @@ export interface CronjobCompletedEvent {
     /**
      * Cronjob execution success status
      *
-     * @generated from protobuf field: bool sucess = 2;
+     * @generated from protobuf field: bool success = 2;
      */
-    sucess: boolean;
+    success: boolean;
     /**
      * Cronjob end time
      *
@@ -449,7 +449,7 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
     constructor() {
         super("resources.common.cron.CronjobCompletedEvent", [
             { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "sucess", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "endDate", kind: "message", T: () => Timestamp },
             { no: 4, name: "elapsed", kind: "message", T: () => Duration },
             { no: 5, name: "data", kind: "message", T: () => CronjobData }
@@ -458,7 +458,7 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
     create(value?: PartialMessage<CronjobCompletedEvent>): CronjobCompletedEvent {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.name = "";
-        message.sucess = false;
+        message.success = false;
         if (value !== undefined)
             reflectionMergePartial<CronjobCompletedEvent>(this, message, value);
         return message;
@@ -471,8 +471,8 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
                 case /* string name */ 1:
                     message.name = reader.string();
                     break;
-                case /* bool sucess */ 2:
-                    message.sucess = reader.bool();
+                case /* bool success */ 2:
+                    message.success = reader.bool();
                     break;
                 case /* resources.timestamp.Timestamp endDate */ 3:
                     message.endDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.endDate);
@@ -498,9 +498,9 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
         /* string name = 1; */
         if (message.name !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.name);
-        /* bool sucess = 2; */
-        if (message.sucess !== false)
-            writer.tag(2, WireType.Varint).bool(message.sucess);
+        /* bool success = 2; */
+        if (message.success !== false)
+            writer.tag(2, WireType.Varint).bool(message.success);
         /* resources.timestamp.Timestamp endDate = 3; */
         if (message.endDate)
             Timestamp.internalBinaryWrite(message.endDate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();

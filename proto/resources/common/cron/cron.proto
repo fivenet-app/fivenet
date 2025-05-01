@@ -65,7 +65,7 @@ message CronjobCompletedEvent {
   // Cronjob name
   string name = 1;
   // Cronjob execution success status
-  bool sucess = 2;
+  bool success = 2;
   // Cronjob end time
   resources.timestamp.Timestamp endDate = 3;
   // Cronjob execution time/elapsed time

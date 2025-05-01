@@ -157,7 +157,7 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 
 	if _, err := ag.js.PublishProto(ag.ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic), &cron.CronjobCompletedEvent{
 		Name:    job.Cronjob.Name,
-		Sucess:  err == nil,
+		Success: err == nil,
 		Elapsed: durationpb.New(elapsed),
 		EndDate: now,
 

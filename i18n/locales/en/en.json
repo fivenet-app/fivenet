@@ -576,7 +576,8 @@
         "schedule": "Schedule",
         "next_schedule_time": "Next Schedule Time",
         "last_attempt_time": "Last Attempt Time",
-        "started_time": "Started Time"
+        "started_time": "Started Time",
+        "end_date": "End Date"
     },
     "components": {
         "partials": {

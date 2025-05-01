@@ -778,7 +778,7 @@ func (m *CronjobCompletedEvent) validate(all bool) error {
 
 	// no validation rules for Name
 
-	// no validation rules for Sucess
+	// no validation rules for Success
 
 	if all {
 		switch v := interface{}(m.GetEndDate()).(type) {

@@ -576,7 +576,8 @@
         "schedule": "Cron-Zeitplan",
         "next_schedule_time": "Nächster Lauf",
         "last_attempt_time": "Letzter Versuch Zeit",
-        "started_time": "Startzeit"
+        "started_time": "Startzeit",
+        "end_date": "Enddatum"
     },
     "components": {
         "partials": {

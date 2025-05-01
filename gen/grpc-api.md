@@ -2037,7 +2037,7 @@ To generate Cronjob schedule expressions, you can also use web tools like https:
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `name` | [string](#string) |  | Cronjob name |
-| `sucess` | [bool](#bool) |  | Cronjob execution success status |
+| `success` | [bool](#bool) |  | Cronjob execution success status |
 | `endDate` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | Cronjob end time |
 | `elapsed` | [google.protobuf.Duration](#google-protobuf-Duration) |  | Cronjob execution time/elapsed time |
 | `data` | [CronjobData](#resources-common-cron-CronjobData) | optional | Cronjob data (can be empty if not touched by the Cronjob handler) |

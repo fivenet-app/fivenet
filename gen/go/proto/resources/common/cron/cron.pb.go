@@ -352,7 +352,7 @@ type CronjobCompletedEvent struct {
 	// Cronjob name
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Cronjob execution success status
-	Sucess bool `protobuf:"varint,2,opt,name=sucess,proto3" json:"sucess,omitempty"`
+	Success bool `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
 	// Cronjob end time
 	EndDate *timestamp.Timestamp `protobuf:"bytes,3,opt,name=endDate,proto3" json:"endDate,omitempty"`
 	// Cronjob execution time/elapsed time
@@ -400,9 +400,9 @@ func (x *CronjobCompletedEvent) GetName() string {
 	return ""
 }
 
-func (x *CronjobCompletedEvent) GetSucess() bool {
+func (x *CronjobCompletedEvent) GetSuccess() bool {
 	if x != nil {
-		return x.Sucess
+		return x.Success
 	}
 	return false
 }
@@ -503,10 +503,10 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"Q\n" +
 	"\x15CronjobSchedulerEvent\x128\n" +
-	"\acronjob\x18\x01 \x01(\v2\x1e.resources.common.cron.CronjobR\acronjob\"\xf8\x01\n" +
+	"\acronjob\x18\x01 \x01(\v2\x1e.resources.common.cron.CronjobR\acronjob\"\xfa\x01\n" +
 	"\x15CronjobCompletedEvent\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
-	"\x06sucess\x18\x02 \x01(\bR\x06sucess\x128\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\x128\n" +
 	"\aendDate\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aendDate\x123\n" +
 	"\aelapsed\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\aelapsed\x12;\n" +
 	"\x04data\x18\x05 \x01(\v2\".resources.common.cron.CronjobDataH\x00R\x04data\x88\x01\x01B\a\n" +
