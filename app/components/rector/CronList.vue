@@ -3,6 +3,7 @@ import { CronjobState } from '~~/gen/ts/resources/common/cron/cron';
 import type { ListCronjobsResponse } from '~~/gen/ts/services/rector/cron';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
+import Pagination from '../partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -92,4 +93,6 @@ const columns = [
             <GenericTime v-if="row.startedTime" :value="row.startedTime" />
         </template>
     </UTable>
+
+    <Pagination :loading="loading" :refresh="refresh" />
 </template>

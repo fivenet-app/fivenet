@@ -11,7 +11,7 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: DocStoreService
-	"DocStoreService/EditComment":             "DocStoreService/PostComment",
+	"DocStoreService/EditComment":             "DocStoreService/ListDocuments",
 	"DocStoreService/GetComments":             "DocStoreService/ListDocuments",
 	"DocStoreService/GetDocument":             "DocStoreService/ListDocuments",
 	"DocStoreService/GetDocumentAccess":       "DocStoreService/ListDocuments",
@@ -161,12 +161,6 @@ func init() {
 		{
 			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceListUserDocumentsPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
-		},
-		{
-			Category: permkeys.DocStoreServicePerm,
-			Name:     permkeys.DocStoreServicePostCommentPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},

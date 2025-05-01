@@ -429,7 +429,7 @@ service DocStoreService {
   rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
   // @perm: Name=ListDocuments
   rpc PostComment(PostCommentRequest) returns (PostCommentResponse);
-  // @perm: Name=PostComment
+  // @perm: Name=ListDocuments
   rpc EditComment(EditCommentRequest) returns (EditCommentResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse);

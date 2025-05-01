@@ -34,10 +34,6 @@ func (x *AppConfig) Default() {
 					Name:     "ListDocuments",
 				},
 				{
-					Category: "DocStoreService",
-					Name:     "PostComment",
-				},
-				{
 					Category: "QualificationsService",
 					Name:     "ListQualifications",
 				},

@@ -102,7 +102,7 @@ type DocStoreServiceClient interface {
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
 	// @perm: Name=ListDocuments
 	PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error)
-	// @perm: Name=PostComment
+	// @perm: Name=ListDocuments
 	EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
@@ -560,7 +560,7 @@ type DocStoreServiceServer interface {
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
 	// @perm: Name=ListDocuments
 	PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error)
-	// @perm: Name=PostComment
+	// @perm: Name=ListDocuments
 	EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)

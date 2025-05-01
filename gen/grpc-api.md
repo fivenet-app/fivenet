@@ -10506,7 +10506,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `RemoveDocumentRelation` | [RemoveDocumentRelationRequest](#services-docstore-RemoveDocumentRelationRequest) | [RemoveDocumentRelationResponse](#services-docstore-RemoveDocumentRelationResponse) | @perm: Name=AddDocumentRelation |
 | `GetComments` | [GetCommentsRequest](#services-docstore-GetCommentsRequest) | [GetCommentsResponse](#services-docstore-GetCommentsResponse) | @perm: Name=ListDocuments |
 | `PostComment` | [PostCommentRequest](#services-docstore-PostCommentRequest) | [PostCommentResponse](#services-docstore-PostCommentResponse) | @perm: Name=ListDocuments |
-| `EditComment` | [EditCommentRequest](#services-docstore-EditCommentRequest) | [EditCommentResponse](#services-docstore-EditCommentResponse) | @perm: Name=PostComment |
+| `EditComment` | [EditCommentRequest](#services-docstore-EditCommentRequest) | [EditCommentResponse](#services-docstore-EditCommentResponse) | @perm: Name=ListDocuments |
 | `DeleteComment` | [DeleteCommentRequest](#services-docstore-DeleteCommentRequest) | [DeleteCommentResponse](#services-docstore-DeleteCommentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
 | `GetDocumentAccess` | [GetDocumentAccessRequest](#services-docstore-GetDocumentAccessRequest) | [GetDocumentAccessResponse](#services-docstore-GetDocumentAccessResponse) | @perm: Name=ListDocuments |
 | `SetDocumentAccess` | [SetDocumentAccessRequest](#services-docstore-SetDocumentAccessRequest) | [SetDocumentAccessResponse](#services-docstore-SetDocumentAccessResponse) | @perm: Name=CreateDocument |

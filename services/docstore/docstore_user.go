@@ -3,7 +3,6 @@ package docstore
 import (
 	context "context"
 	"errors"
-	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
@@ -76,8 +75,6 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 				),
 		).
 		WHERE(condition)
-
-	fmt.Println(countStmt.DebugSql())
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
