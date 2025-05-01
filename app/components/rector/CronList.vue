@@ -48,6 +48,11 @@ const columns = [
         label: t('common.started_time'),
     },
 ];
+
+const expand = ref({
+    openedRows: [],
+    row: {},
+});
 </script>
 
 <template>
@@ -61,12 +66,19 @@ const columns = [
 
     <UTable
         v-else
+        v-model:expand="expand"
         :loading="loading"
         :columns="columns"
         :rows="cronjobs?.jobs"
         :empty-state="{ icon: 'i-mdi-calendar-task', label: $t('common.not_found', [$t('common.file', 2)]) }"
         class="flex-1"
     >
+        <template #expand="{ row }">
+            <div class="p-4">
+                <pre>{{ row.lastCompletedEvent ?? $t('common.na') }}</pre>
+            </div>
+        </template>
+
         <template #name-data="{ row }">
             <span class="text-gray-900 dark:text-white">
                 {{ row.name }}

@@ -63,7 +63,7 @@ func New(p Params) *Housekeeper {
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "housekeeper.run",
-			Schedule: "@5minutes", // Every 5 minutes
+			Schedule: "*/5 * * * *", // Every 5 minutes
 			Timeout:  durationpb.New(1 * time.Minute),
 		}); err != nil {
 			return err
