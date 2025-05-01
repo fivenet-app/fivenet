@@ -127,7 +127,6 @@ function addLaw(): void {
         }
 
         tableRef.value?.toggleOpened(law);
-        console.log('tableRef', tableRef.value);
     }, 100);
 
     lastNewId.value--;
