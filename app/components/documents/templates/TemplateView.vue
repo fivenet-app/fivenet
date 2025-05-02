@@ -144,8 +144,9 @@ const contentAccessTypes: AccessType[] = [
                     <div>
                         <h2 class="inline-flex items-center gap-2 text-2xl">
                             <UIcon
-                                :name="template.icon ?? 'i-mdi-file-outline'"
+                                :name="template.icon ? convertComponentIconNameToDynamic(template.icon) : 'i-mdi-file-outline'"
                                 :class="`text-${template.color}-500 dark:text-${template.color}-400`"
+                                class="shrink-0"
                             />
 
                             <span>
