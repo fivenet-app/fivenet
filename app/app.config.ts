@@ -62,6 +62,11 @@ export default defineAppConfig({
         primary: 'blue',
         gray: 'neutral',
 
+        avatar: {
+            default: {
+                icon: 'i-mdi-file-image-box',
+            },
+        },
         button: {
             default: {
                 loadingIcon: 'i-mdi-loading',
@@ -70,6 +75,12 @@ export default defineAppConfig({
         input: {
             default: {
                 loadingIcon: 'i-mdi-loading',
+            },
+        },
+        inputMenu: {
+            default: {
+                selectedIcon: 'i-mdi-check',
+                trailingIcon: 'i-mdi-chevron-down',
             },
         },
         select: {
@@ -83,6 +94,13 @@ export default defineAppConfig({
                 selectedIcon: 'i-mdi-check',
             },
         },
+        notification: {
+            default: {
+                closeButton: {
+                    icon: 'i-mdi-window-close',
+                },
+            },
+        },
         commandPalette: {
             default: {
                 icon: 'i-mdi-search',
@@ -90,6 +108,9 @@ export default defineAppConfig({
                 selectedIcon: 'i-mdi-check',
                 emptyState: {
                     icon: 'i-mdi-search',
+                },
+                closeButton: {
+                    icon: 'i-mdi-window-close',
                 },
             },
         },
@@ -143,6 +164,16 @@ export default defineAppConfig({
                 divider: 'i-mdi-chevron-right',
             },
         },
+        carousel: {
+            default: {
+                prevButton: {
+                    icon: 'i-mdi-chevron-left',
+                },
+                nextButton: {
+                    icon: 'i-mdi-chevron-right',
+                },
+            },
+        },
         card: {
             header: {
                 padding: 'px-2 py-3 sm:px-4',
@@ -158,6 +189,32 @@ export default defineAppConfig({
             body: { padding: 'px-2 py-2 sm:p-2' },
             header: { padding: 'px-2 py-2 sm:p-2' },
             footer: { padding: 'px-2 py-2 sm:p-2' },
+        },
+        content: {
+            search: {
+                fileIcon: {
+                    name: 'i-mdi-file-document',
+                },
+            },
+            surround: {
+                icon: {
+                    prev: 'i-ph-arrow-left',
+                    next: 'i-ph-arrow-right',
+                },
+            },
+            prose: {
+                code: {
+                    button: {
+                        icon: {
+                            copy: 'i-mdi-content-copy',
+                            copied: 'i-mdi-checkbox-marked',
+                        },
+                    },
+                    icon: {
+                        terminal: 'i-mdi-console',
+                    },
+                },
+            },
         },
 
         // Nuxt UI Pro
