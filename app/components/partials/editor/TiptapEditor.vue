@@ -750,9 +750,12 @@ onBeforeUnmount(() => {
 
                 <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
-                <UTooltip :text="$t('components.partials.TipTapEditor.image')" :popper="{ placement: 'top' }">
+                <UTooltip
+                    v-if="!commentMode"
+                    :text="$t('components.partials.TipTapEditor.image')"
+                    :popper="{ placement: 'top' }"
+                >
                     <UButton
-                        v-if="!commentMode"
                         icon="i-mdi-image-plus"
                         color="white"
                         variant="ghost"
