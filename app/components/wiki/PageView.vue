@@ -78,7 +78,8 @@ const tocLinks = computedAsync(async () => props.page?.content?.content && jsonN
 const accordionItems = computed(() =>
     [
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock' },
-        can('WikiService.ListPageActivity').value
+        can('WikiService.ListPageActivity').value &&
+        checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW)
             ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),

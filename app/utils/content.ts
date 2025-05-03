@@ -36,11 +36,12 @@ function walkContentForText(ns: JSONNode[]): string {
     let text = '';
     for (let i = 0; i < ns.length; i++) {
         const element = ns[i]!;
-        if (element.text === '') {
-            text += walkContentForText(element.content);
-        } else {
+        if (element.text !== undefined && element.text !== '') {
             text += element.text;
-            break;
+        }
+
+        if (element.content.length > 0) {
+            text += walkContentForText(element.content);
         }
     }
 
