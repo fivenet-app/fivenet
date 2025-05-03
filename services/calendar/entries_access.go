@@ -36,9 +36,7 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 
 	// Allow superusers access to any docs
 	if userInfo.SuperUser {
-		for i := range entryIds {
-			dest = append(dest, entryIds[i])
-		}
+		dest = append(dest, entryIds...)
 		return dest, nil
 	}
 

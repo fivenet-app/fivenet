@@ -33,7 +33,7 @@ const slideover = useSlideover();
 const calendarStore = useCalendarStore();
 const { activeCalendarIds, currentDate, view, calendars, entries, hasEditAccessToCalendar } = storeToRefs(calendarStore);
 
-const calRef = ref<InstanceType<typeof MonthCalendarClient> | null>(null);
+const calRef = useTemplateRef('calRef');
 
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() =>
@@ -264,8 +264,8 @@ watchDebounced(
 );
 
 const viewOptions = [
-    { label: t('common.time_ago.week'), icon: 'i-mdi-view-week', value: 'week' },
-    { label: t('common.time_ago.month'), icon: 'i-mdi-view-headline', value: 'month' },
+    { label: t('common.week_view'), icon: 'i-mdi-view-week', value: 'week' },
+    { label: t('common.monthly_view'), icon: 'i-mdi-view-headline', value: 'month' },
     { label: t('common.summary'), icon: 'i-mdi-view-agenda-outline', value: 'summary' },
 ];
 

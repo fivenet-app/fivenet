@@ -138,7 +138,9 @@ export const useCalendarStore = defineStore(
 
                 // Only "register" calendars in list when they are accessible by the user
                 if (!req.onlyPublic) {
-                    if (response.calendars.length > 0) {
+                    if (response.calendars.length === 0) {
+                        calendars.value.length = 0;
+                    } else {
                         const foundCalendars: number[] = [];
                         response.calendars.forEach((calendar) => {
                             const idx = calendars.value.findIndex((c) => c.id === calendar!.id);
@@ -164,8 +166,6 @@ export const useCalendarStore = defineStore(
 
                             return false;
                         });
-                    } else {
-                        calendars.value.length = 0;
                     }
                 }
 
@@ -372,9 +372,7 @@ export const useCalendarStore = defineStore(
         const hasEditAccessToCalendar = computed(() => {
             const { activeChar } = useAuth();
             return !!calendars.value.find((c) => {
-                if (c.job === undefined && c.creatorId === activeChar.value?.userId) {
-                    return true;
-                }
+                if (c.job === undefined && c.creatorId === activeChar.value?.userId) return true;
 
                 return checkCalendarAccess(c.access, c.creator, AccessLevel.EDIT);
             });

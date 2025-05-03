@@ -129,6 +129,15 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 			tCalendarSubs.CreatedAt,
 			tCalendarSubs.Confirmed,
 			tCalendarSubs.Muted,
+			tCAccess.ID.AS("user_access.id"),
+			tCAccess.TargetID.AS("user_access.target_id"),
+			tCAccess.UserID.AS("user_access.user_id"),
+			tCAccess.Access.AS("user_access.access"),
+			tCAccess.ID.AS("job_access.id"),
+			tCAccess.TargetID.AS("job_access.target_id"),
+			tCAccess.Job.AS("job_access.job"),
+			tCAccess.MinimumGrade.AS("job_access.minimum_grade"),
+			tCAccess.Access.AS("job_access.access"),
 		).
 		FROM(tCalendar.
 			LEFT_JOIN(tCAccess,
@@ -162,7 +171,7 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Calendars); i++ {
+	for i := range resp.Calendars {
 		if resp.Calendars[i].Creator != nil {
 			jobInfoFn(resp.Calendars[i].Creator)
 		}
@@ -385,16 +394,8 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 		req.Calendar.Color = "blue"
 	}
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	// Check if user has access to existing calendar
-	if req.Calendar.Id < 0 {
+	if req.Calendar.Id == 0 {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Calendar.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
@@ -419,6 +420,14 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 	if !slices.Contains(fields, "Public") && calendar.Public && req.Calendar.Public {
 		req.Calendar.Public = false
 	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	tCalendar := table.FivenetCalendar
 	stmt := tCalendar.

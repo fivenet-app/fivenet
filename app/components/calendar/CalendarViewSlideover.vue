@@ -121,7 +121,7 @@ const calendar = computed(() => data.value?.calendar);
                     </div>
 
                     <p>
-                        {{ $t('common.description') }}:
+                        <span class="font-semibold">{{ $t('common.description') }}:</span>
                         {{ calendar.description ?? $t('common.na') }}
                     </p>
                 </template>
@@ -133,7 +133,7 @@ const calendar = computed(() => data.value?.calendar);
                     :unmount="true"
                 >
                     <template #access>
-                        <UContainer>
+                        <UContainer :ui="{ padding: 'px-2 sm:px-4 lg:px-4' }">
                             <AccessBadges
                                 :access-level="AccessLevel"
                                 :jobs="calendar?.access.jobs"
