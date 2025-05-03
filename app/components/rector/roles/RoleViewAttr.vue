@@ -55,6 +55,8 @@ if (maxValues === undefined) {
                     oneofKind: 'jobGradeList',
                     jobGradeList: {
                         jobs: {},
+                        grades: {},
+                        fineGrained: false,
                     },
                 },
             };
@@ -94,6 +96,8 @@ if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
                     oneofKind: 'jobGradeList',
                     jobGradeList: {
                         jobs: {},
+                        grades: {},
+                        fineGrained: false,
                     },
                 },
             });

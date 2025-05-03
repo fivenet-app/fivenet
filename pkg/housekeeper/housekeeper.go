@@ -123,7 +123,7 @@ func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCron
 	} else {
 		idx := slices.Index(keys, lastTblKey)
 		if idx == -1 || len(keys) <= idx+1 {
-			h.logger.Warn("last table key not found in keys, falling back to first table")
+			h.logger.Debug("last table key not found in keys, starting from the beginning again")
 			lastTblKey = keys[0]
 		} else {
 			lastTblKey = keys[idx+1]
