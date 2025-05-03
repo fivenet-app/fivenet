@@ -12,15 +12,16 @@ import (
 )
 
 type FivenetUserProps struct {
-	UserID                  int32      `json:"user_id"`
-	UpdatedAt               *time.Time `json:"updated_at"`
-	Wanted                  *bool      `json:"wanted"`
-	Job                     *string    `json:"job"`
-	JobGrade                *int32     `json:"job_grade"`
-	TrafficInfractionPoints *uint32    `json:"traffic_infraction_points"`
-	OpenFines               *int64     `json:"open_fines"`
-	BloodType               *string    `json:"blood_type"`
-	Avatar                  *string    `json:"avatar"`
-	MugShot                 *string    `json:"mug_shot"`
-	Email                   *string    `json:"email"`
+	UserID                           int32      `json:"user_id"`
+	UpdatedAt                        *time.Time `json:"updated_at"`
+	Wanted                           *bool      `json:"wanted"`
+	Job                              *string    `json:"job"`
+	JobGrade                         *int32     `json:"job_grade"`
+	TrafficInfractionPoints          *uint32    `json:"traffic_infraction_points"`
+	TrafficInfractionPointsUpdatedAt *time.Time `json:"traffic_infraction_points_updated_at"`
+	OpenFines                        *int64     `json:"open_fines"`
+	BloodType                        *string    `json:"blood_type"`
+	Avatar                           *string    `json:"avatar"`
+	MugShot                          *string    `json:"mug_shot"`
+	Email                            *string    `json:"email"`
 }

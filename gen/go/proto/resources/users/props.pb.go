@@ -25,19 +25,20 @@ const (
 )
 
 type UserProps struct {
-	state                   protoimpl.MessageState `protogen:"open.v1"`
-	UserId                  int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	UpdatedAt               *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Wanted                  *bool                  `protobuf:"varint,3,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
-	JobName                 *string                `protobuf:"bytes,4,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty" alias:"job"` // @gotags: alias:"job"
-	Job                     *Job                   `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	JobGradeNumber          *int32                 `protobuf:"varint,6,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof" json:"job_grade_number,omitempty" alias:"job_grade"` // @gotags: alias:"job_grade"
-	JobGrade                *JobGrade              `protobuf:"bytes,7,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
-	TrafficInfractionPoints *uint32                `protobuf:"varint,8,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty"`
-	OpenFines               *int64                 `protobuf:"varint,9,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
-	BloodType               *string                `protobuf:"bytes,10,opt,name=blood_type,json=bloodType,proto3,oneof" json:"blood_type,omitempty"`
-	MugShot                 *filestore.File        `protobuf:"bytes,11,opt,name=mug_shot,json=mugShot,proto3,oneof" json:"mug_shot,omitempty"`
-	Labels                  *CitizenLabels         `protobuf:"bytes,12,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
+	state                            protoimpl.MessageState `protogen:"open.v1"`
+	UserId                           int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UpdatedAt                        *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Wanted                           *bool                  `protobuf:"varint,3,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
+	JobName                          *string                `protobuf:"bytes,4,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty" alias:"job"` // @gotags: alias:"job"
+	Job                              *Job                   `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	JobGradeNumber                   *int32                 `protobuf:"varint,6,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof" json:"job_grade_number,omitempty" alias:"job_grade"` // @gotags: alias:"job_grade"
+	JobGrade                         *JobGrade              `protobuf:"bytes,7,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
+	TrafficInfractionPoints          *uint32                `protobuf:"varint,8,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty"`
+	TrafficInfractionPointsUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,13,opt,name=traffic_infraction_points_updated_at,json=trafficInfractionPointsUpdatedAt,proto3,oneof" json:"traffic_infraction_points_updated_at,omitempty"`
+	OpenFines                        *int64                 `protobuf:"varint,9,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
+	BloodType                        *string                `protobuf:"bytes,10,opt,name=blood_type,json=bloodType,proto3,oneof" json:"blood_type,omitempty"`
+	MugShot                          *filestore.File        `protobuf:"bytes,11,opt,name=mug_shot,json=mugShot,proto3,oneof" json:"mug_shot,omitempty"`
+	Labels                           *CitizenLabels         `protobuf:"bytes,12,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
 	// @sanitize: method=StripTags
 	Email         *string `protobuf:"bytes,19,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -130,6 +131,13 @@ func (x *UserProps) GetTrafficInfractionPoints() uint32 {
 	return 0
 }
 
+func (x *UserProps) GetTrafficInfractionPointsUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.TrafficInfractionPointsUpdatedAt
+	}
+	return nil
+}
+
 func (x *UserProps) GetOpenFines() int64 {
 	if x != nil && x.OpenFines != nil {
 		return *x.OpenFines
@@ -169,7 +177,7 @@ var File_resources_users_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x17validate/validate.proto\"\x9e\x06\n" +
+	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x17validate/validate.proto\"\xbc\a\n" +
 	"\tUserProps\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12B\n" +
 	"\n" +
@@ -179,16 +187,17 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"\x03job\x18\x05 \x01(\v2\x14.resources.users.JobH\x03R\x03job\x88\x01\x01\x12-\n" +
 	"\x10job_grade_number\x18\x06 \x01(\x05H\x04R\x0ejobGradeNumber\x88\x01\x01\x12;\n" +
 	"\tjob_grade\x18\a \x01(\v2\x19.resources.users.JobGradeH\x05R\bjobGrade\x88\x01\x01\x12?\n" +
-	"\x19traffic_infraction_points\x18\b \x01(\rH\x06R\x17trafficInfractionPoints\x88\x01\x01\x12\"\n" +
+	"\x19traffic_infraction_points\x18\b \x01(\rH\x06R\x17trafficInfractionPoints\x88\x01\x01\x12s\n" +
+	"$traffic_infraction_points_updated_at\x18\r \x01(\v2\x1e.resources.timestamp.TimestampH\aR trafficInfractionPointsUpdatedAt\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"open_fines\x18\t \x01(\x03H\aR\topenFines\x88\x01\x01\x12\"\n" +
+	"open_fines\x18\t \x01(\x03H\bR\topenFines\x88\x01\x01\x12\"\n" +
 	"\n" +
 	"blood_type\x18\n" +
-	" \x01(\tH\bR\tbloodType\x88\x01\x01\x129\n" +
-	"\bmug_shot\x18\v \x01(\v2\x19.resources.filestore.FileH\tR\amugShot\x88\x01\x01\x12;\n" +
-	"\x06labels\x18\f \x01(\v2\x1e.resources.users.CitizenLabelsH\n" +
-	"R\x06labels\x88\x01\x01\x12$\n" +
-	"\x05email\x18\x13 \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PH\vR\x05email\x88\x01\x01B\r\n" +
+	" \x01(\tH\tR\tbloodType\x88\x01\x01\x129\n" +
+	"\bmug_shot\x18\v \x01(\v2\x19.resources.filestore.FileH\n" +
+	"R\amugShot\x88\x01\x01\x12;\n" +
+	"\x06labels\x18\f \x01(\v2\x1e.resources.users.CitizenLabelsH\vR\x06labels\x88\x01\x01\x12$\n" +
+	"\x05email\x18\x13 \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PH\fR\x05email\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\v\n" +
 	"\t_job_nameB\x06\n" +
@@ -196,7 +205,8 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"\x11_job_grade_numberB\f\n" +
 	"\n" +
 	"_job_gradeB\x1c\n" +
-	"\x1a_traffic_infraction_pointsB\r\n" +
+	"\x1a_traffic_infraction_pointsB'\n" +
+	"%_traffic_infraction_points_updated_atB\r\n" +
 	"\v_open_finesB\r\n" +
 	"\v_blood_typeB\v\n" +
 	"\t_mug_shotB\t\n" +
@@ -228,13 +238,14 @@ var file_resources_users_props_proto_depIdxs = []int32{
 	1, // 0: resources.users.UserProps.updated_at:type_name -> resources.timestamp.Timestamp
 	2, // 1: resources.users.UserProps.job:type_name -> resources.users.Job
 	3, // 2: resources.users.UserProps.job_grade:type_name -> resources.users.JobGrade
-	4, // 3: resources.users.UserProps.mug_shot:type_name -> resources.filestore.File
-	5, // 4: resources.users.UserProps.labels:type_name -> resources.users.CitizenLabels
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	1, // 3: resources.users.UserProps.traffic_infraction_points_updated_at:type_name -> resources.timestamp.Timestamp
+	4, // 4: resources.users.UserProps.mug_shot:type_name -> resources.filestore.File
+	5, // 5: resources.users.UserProps.labels:type_name -> resources.users.CitizenLabels
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_props_proto_init() }

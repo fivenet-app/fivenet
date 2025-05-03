@@ -183,6 +183,39 @@ func (m *UserProps) validate(all bool) error {
 		// no validation rules for TrafficInfractionPoints
 	}
 
+	if m.TrafficInfractionPointsUpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetTrafficInfractionPointsUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserPropsValidationError{
+						field:  "TrafficInfractionPointsUpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserPropsValidationError{
+						field:  "TrafficInfractionPointsUpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTrafficInfractionPointsUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserPropsValidationError{
+					field:  "TrafficInfractionPointsUpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.OpenFines != nil {
 		// no validation rules for OpenFines
 	}

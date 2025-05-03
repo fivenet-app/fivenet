@@ -52,6 +52,10 @@ export interface UserProps {
      */
     trafficInfractionPoints?: number;
     /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp traffic_infraction_points_updated_at = 13;
+     */
+    trafficInfractionPointsUpdatedAt?: Timestamp;
+    /**
      * @generated from protobuf field: optional int64 open_fines = 9;
      */
     openFines?: number;
@@ -86,6 +90,7 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 6, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 7, name: "job_grade", kind: "message", T: () => JobGrade },
             { no: 8, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 13, name: "traffic_infraction_points_updated_at", kind: "message", T: () => Timestamp },
             { no: 9, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 10, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "mug_shot", kind: "message", T: () => File },
@@ -128,6 +133,9 @@ class UserProps$Type extends MessageType<UserProps> {
                     break;
                 case /* optional uint32 traffic_infraction_points */ 8:
                     message.trafficInfractionPoints = reader.uint32();
+                    break;
+                case /* optional resources.timestamp.Timestamp traffic_infraction_points_updated_at */ 13:
+                    message.trafficInfractionPointsUpdatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.trafficInfractionPointsUpdatedAt);
                     break;
                 case /* optional int64 open_fines */ 9:
                     message.openFines = reader.int64().toNumber();
@@ -192,6 +200,9 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional resources.users.CitizenLabels labels = 12; */
         if (message.labels)
             CitizenLabels.internalBinaryWrite(message.labels, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp traffic_infraction_points_updated_at = 13; */
+        if (message.trafficInfractionPointsUpdatedAt)
+            Timestamp.internalBinaryWrite(message.trafficInfractionPointsUpdatedAt, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         /* optional string email = 19; */
         if (message.email !== undefined)
             writer.tag(19, WireType.LengthDelimited).string(message.email);

@@ -638,6 +638,7 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 			tUserProps.Job,
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
+			tUserProps.TrafficInfractionPointsUpdatedAt,
 			tUserProps.MugShot,
 		).
 		FROM(tUserProps).

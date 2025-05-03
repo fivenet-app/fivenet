@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
@@ -25,6 +26,7 @@ func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []strin
 			tUserProps.Job,
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
+			tUserProps.TrafficInfractionPointsUpdatedAt,
 			tUserProps.OpenFines,
 			tUserProps.MugShot,
 		).
@@ -159,8 +161,17 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 
 	if in.TrafficInfractionPoints != nil {
 		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint32(*in.TrafficInfractionPoints)))
+
+		// Update the timestamp if points are added
+		if *in.TrafficInfractionPoints > 0 {
+			in.TrafficInfractionPointsUpdatedAt = timestamp.Now()
+		} else {
+			// Reset the timestamp if points are "reset" (0)
+			in.TrafficInfractionPointsUpdatedAt = nil
+		}
 	} else {
 		in.TrafficInfractionPoints = x.TrafficInfractionPoints
+		in.TrafficInfractionPointsUpdatedAt = x.TrafficInfractionPointsUpdatedAt
 	}
 
 	if in.OpenFines != nil {
@@ -202,6 +213,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				tUserProps.Job,
 				tUserProps.JobGrade,
 				tUserProps.TrafficInfractionPoints,
+				tUserProps.TrafficInfractionPointsUpdatedAt,
 				tUserProps.OpenFines,
 				tUserProps.MugShot,
 			).
@@ -211,6 +223,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				in.JobName,
 				in.JobGradeNumber,
 				in.TrafficInfractionPoints,
+				in.TrafficInfractionPointsUpdatedAt,
 				in.OpenFines,
 				in.MugShot,
 			).

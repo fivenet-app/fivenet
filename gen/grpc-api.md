@@ -5498,6 +5498,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `job_grade_number` | [int32](#int32) | optional | @gotags: alias:"job_grade" |
 | `job_grade` | [JobGrade](#resources-users-JobGrade) | optional |  |
 | `traffic_infraction_points` | [uint32](#uint32) | optional |  |
+| `traffic_infraction_points_updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `open_fines` | [int64](#int64) | optional |  |
 | `blood_type` | [string](#string) | optional |  |
 | `mug_shot` | [resources.filestore.File](#resources-filestore-File) | optional |  |

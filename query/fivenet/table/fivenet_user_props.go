@@ -17,17 +17,18 @@ type fivenetUserPropsTable struct {
 	mysql.Table
 
 	// Columns
-	UserID                  mysql.ColumnInteger
-	UpdatedAt               mysql.ColumnTimestamp
-	Wanted                  mysql.ColumnBool
-	Job                     mysql.ColumnString
-	JobGrade                mysql.ColumnInteger
-	TrafficInfractionPoints mysql.ColumnInteger
-	OpenFines               mysql.ColumnInteger
-	BloodType               mysql.ColumnString
-	Avatar                  mysql.ColumnString
-	MugShot                 mysql.ColumnString
-	Email                   mysql.ColumnString
+	UserID                           mysql.ColumnInteger
+	UpdatedAt                        mysql.ColumnTimestamp
+	Wanted                           mysql.ColumnBool
+	Job                              mysql.ColumnString
+	JobGrade                         mysql.ColumnInteger
+	TrafficInfractionPoints          mysql.ColumnInteger
+	TrafficInfractionPointsUpdatedAt mysql.ColumnTimestamp
+	OpenFines                        mysql.ColumnInteger
+	BloodType                        mysql.ColumnString
+	Avatar                           mysql.ColumnString
+	MugShot                          mysql.ColumnString
+	Email                            mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -69,37 +70,39 @@ func newFivenetUserPropsTable(schemaName, tableName, alias string) *FivenetUserP
 
 func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUserPropsTable {
 	var (
-		UserIDColumn                  = mysql.IntegerColumn("user_id")
-		UpdatedAtColumn               = mysql.TimestampColumn("updated_at")
-		WantedColumn                  = mysql.BoolColumn("wanted")
-		JobColumn                     = mysql.StringColumn("job")
-		JobGradeColumn                = mysql.IntegerColumn("job_grade")
-		TrafficInfractionPointsColumn = mysql.IntegerColumn("traffic_infraction_points")
-		OpenFinesColumn               = mysql.IntegerColumn("open_fines")
-		BloodTypeColumn               = mysql.StringColumn("blood_type")
-		AvatarColumn                  = mysql.StringColumn("avatar")
-		MugShotColumn                 = mysql.StringColumn("mug_shot")
-		EmailColumn                   = mysql.StringColumn("email")
-		allColumns                    = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
-		mutableColumns                = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
-		defaultColumns                = mysql.ColumnList{WantedColumn, TrafficInfractionPointsColumn, OpenFinesColumn}
+		UserIDColumn                           = mysql.IntegerColumn("user_id")
+		UpdatedAtColumn                        = mysql.TimestampColumn("updated_at")
+		WantedColumn                           = mysql.BoolColumn("wanted")
+		JobColumn                              = mysql.StringColumn("job")
+		JobGradeColumn                         = mysql.IntegerColumn("job_grade")
+		TrafficInfractionPointsColumn          = mysql.IntegerColumn("traffic_infraction_points")
+		TrafficInfractionPointsUpdatedAtColumn = mysql.TimestampColumn("traffic_infraction_points_updated_at")
+		OpenFinesColumn                        = mysql.IntegerColumn("open_fines")
+		BloodTypeColumn                        = mysql.StringColumn("blood_type")
+		AvatarColumn                           = mysql.StringColumn("avatar")
+		MugShotColumn                          = mysql.StringColumn("mug_shot")
+		EmailColumn                            = mysql.StringColumn("email")
+		allColumns                             = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
+		mutableColumns                         = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
+		defaultColumns                         = mysql.ColumnList{WantedColumn, TrafficInfractionPointsColumn, OpenFinesColumn}
 	)
 
 	return fivenetUserPropsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID:                  UserIDColumn,
-		UpdatedAt:               UpdatedAtColumn,
-		Wanted:                  WantedColumn,
-		Job:                     JobColumn,
-		JobGrade:                JobGradeColumn,
-		TrafficInfractionPoints: TrafficInfractionPointsColumn,
-		OpenFines:               OpenFinesColumn,
-		BloodType:               BloodTypeColumn,
-		Avatar:                  AvatarColumn,
-		MugShot:                 MugShotColumn,
-		Email:                   EmailColumn,
+		UserID:                           UserIDColumn,
+		UpdatedAt:                        UpdatedAtColumn,
+		Wanted:                           WantedColumn,
+		Job:                              JobColumn,
+		JobGrade:                         JobGradeColumn,
+		TrafficInfractionPoints:          TrafficInfractionPointsColumn,
+		TrafficInfractionPointsUpdatedAt: TrafficInfractionPointsUpdatedAtColumn,
+		OpenFines:                        OpenFinesColumn,
+		BloodType:                        BloodTypeColumn,
+		Avatar:                           AvatarColumn,
+		MugShot:                          MugShotColumn,
+		Email:                            EmailColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
