@@ -1,6 +1,8 @@
 package cron
 
-import "time"
+import (
+	"time"
+)
 
 const DefaultCronTimeout = 10 * time.Second
 
@@ -25,7 +27,9 @@ func (x *Cronjob) Merge(in *Cronjob) *Cronjob {
 
 	x.Timeout = in.Timeout
 
-	x.Data = in.Data
+	if in.Data != nil {
+		x.Data.Merge(in.Data)
+	}
 
 	if in.LastCompletedEvent != nil {
 		x.LastCompletedEvent = in.LastCompletedEvent
