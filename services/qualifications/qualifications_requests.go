@@ -86,7 +86,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 
 	if len(req.Status) > 0 {
 		statuses := []jet.Expression{}
-		for i := 0; i < len(req.Status); i++ {
+		for i := range req.Status {
 			statuses = append(statuses, jet.Int16(int16(req.Status[i])))
 		}
 
@@ -220,7 +220,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Requests); i++ {
+	for i := range resp.Requests {
 		if resp.Requests[i].User != nil {
 			jobInfoFn(resp.Requests[i].User)
 		}

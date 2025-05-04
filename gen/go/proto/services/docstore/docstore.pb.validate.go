@@ -8282,22 +8282,22 @@ var _ interface {
 	ErrorName() string
 } = ListCategoriesResponseValidationError{}
 
-// Validate checks the field values on CreateCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateOrUpdateCategoryRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateCategoryRequest) Validate() error {
+func (m *CreateOrUpdateCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CreateCategoryRequestMultiError, or nil if none found.
-func (m *CreateCategoryRequest) ValidateAll() error {
+// ValidateAll checks the field values on CreateOrUpdateCategoryRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateCategoryRequestMultiError, or nil if none found.
+func (m *CreateOrUpdateCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateCategoryRequest) validate(all bool) error {
+func (m *CreateOrUpdateCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -8305,7 +8305,7 @@ func (m *CreateCategoryRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetCategory() == nil {
-		err := CreateCategoryRequestValidationError{
+		err := CreateOrUpdateCategoryRequestValidationError{
 			field:  "Category",
 			reason: "value is required",
 		}
@@ -8319,7 +8319,7 @@ func (m *CreateCategoryRequest) validate(all bool) error {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateCategoryRequestValidationError{
+				errors = append(errors, CreateOrUpdateCategoryRequestValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -8327,7 +8327,7 @@ func (m *CreateCategoryRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateCategoryRequestValidationError{
+				errors = append(errors, CreateOrUpdateCategoryRequestValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -8336,7 +8336,7 @@ func (m *CreateCategoryRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreateCategoryRequestValidationError{
+			return CreateOrUpdateCategoryRequestValidationError{
 				field:  "Category",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -8345,19 +8345,19 @@ func (m *CreateCategoryRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreateCategoryRequestMultiError(errors)
+		return CreateOrUpdateCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateCategoryRequestMultiError is an error wrapping multiple validation
-// errors returned by CreateCategoryRequest.ValidateAll() if the designated
-// constraints aren't met.
-type CreateCategoryRequestMultiError []error
+// CreateOrUpdateCategoryRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateOrUpdateCategoryRequest.ValidateAll()
+// if the designated constraints aren't met.
+type CreateOrUpdateCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateCategoryRequestMultiError) Error() string {
+func (m CreateOrUpdateCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -8366,11 +8366,12 @@ func (m CreateCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateCategoryRequestMultiError) AllErrors() []error { return m }
+func (m CreateOrUpdateCategoryRequestMultiError) AllErrors() []error { return m }
 
-// CreateCategoryRequestValidationError is the validation error returned by
-// CreateCategoryRequest.Validate if the designated constraints aren't met.
-type CreateCategoryRequestValidationError struct {
+// CreateOrUpdateCategoryRequestValidationError is the validation error
+// returned by CreateOrUpdateCategoryRequest.Validate if the designated
+// constraints aren't met.
+type CreateOrUpdateCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -8378,24 +8379,24 @@ type CreateCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateCategoryRequestValidationError) Field() string { return e.field }
+func (e CreateOrUpdateCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateCategoryRequestValidationError) Reason() string { return e.reason }
+func (e CreateOrUpdateCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateCategoryRequestValidationError) Cause() error { return e.cause }
+func (e CreateOrUpdateCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateCategoryRequestValidationError) Key() bool { return e.key }
+func (e CreateOrUpdateCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateCategoryRequestValidationError) ErrorName() string {
-	return "CreateCategoryRequestValidationError"
+func (e CreateOrUpdateCategoryRequestValidationError) ErrorName() string {
+	return "CreateOrUpdateCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateCategoryRequestValidationError) Error() string {
+func (e CreateOrUpdateCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -8407,14 +8408,14 @@ func (e CreateCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateCategoryRequest.%s: %s%s",
+		"invalid %sCreateOrUpdateCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateCategoryRequestValidationError{}
+var _ error = CreateOrUpdateCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -8422,128 +8423,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateCategoryRequestValidationError{}
+} = CreateOrUpdateCategoryRequestValidationError{}
 
-// Validate checks the field values on CreateCategoryResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateOrUpdateCategoryResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateCategoryResponse) Validate() error {
+func (m *CreateOrUpdateCategoryResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateCategoryResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CreateCategoryResponseMultiError, or nil if none found.
-func (m *CreateCategoryResponse) ValidateAll() error {
+// ValidateAll checks the field values on CreateOrUpdateCategoryResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateCategoryResponseMultiError, or nil if none found.
+func (m *CreateOrUpdateCategoryResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateCategoryResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	if len(errors) > 0 {
-		return CreateCategoryResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// CreateCategoryResponseMultiError is an error wrapping multiple validation
-// errors returned by CreateCategoryResponse.ValidateAll() if the designated
-// constraints aren't met.
-type CreateCategoryResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CreateCategoryResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CreateCategoryResponseMultiError) AllErrors() []error { return m }
-
-// CreateCategoryResponseValidationError is the validation error returned by
-// CreateCategoryResponse.Validate if the designated constraints aren't met.
-type CreateCategoryResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CreateCategoryResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CreateCategoryResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CreateCategoryResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CreateCategoryResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CreateCategoryResponseValidationError) ErrorName() string {
-	return "CreateCategoryResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e CreateCategoryResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCreateCategoryResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CreateCategoryResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CreateCategoryResponseValidationError{}
-
-// Validate checks the field values on UpdateCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateCategoryRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateCategoryRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateCategoryRequestMultiError, or nil if none found.
-func (m *UpdateCategoryRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateCategoryRequest) validate(all bool) error {
+func (m *CreateOrUpdateCategoryResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -8551,7 +8448,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetCategory() == nil {
-		err := UpdateCategoryRequestValidationError{
+		err := CreateOrUpdateCategoryResponseValidationError{
 			field:  "Category",
 			reason: "value is required",
 		}
@@ -8565,7 +8462,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateCategoryRequestValidationError{
+				errors = append(errors, CreateOrUpdateCategoryResponseValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -8573,7 +8470,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateCategoryRequestValidationError{
+				errors = append(errors, CreateOrUpdateCategoryResponseValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -8582,7 +8479,7 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return UpdateCategoryRequestValidationError{
+			return CreateOrUpdateCategoryResponseValidationError{
 				field:  "Category",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -8591,19 +8488,19 @@ func (m *UpdateCategoryRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UpdateCategoryRequestMultiError(errors)
+		return CreateOrUpdateCategoryResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateCategoryRequestMultiError is an error wrapping multiple validation
-// errors returned by UpdateCategoryRequest.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateCategoryRequestMultiError []error
+// CreateOrUpdateCategoryResponseMultiError is an error wrapping multiple
+// validation errors returned by CreateOrUpdateCategoryResponse.ValidateAll()
+// if the designated constraints aren't met.
+type CreateOrUpdateCategoryResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateCategoryRequestMultiError) Error() string {
+func (m CreateOrUpdateCategoryResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -8612,11 +8509,12 @@ func (m UpdateCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateCategoryRequestMultiError) AllErrors() []error { return m }
+func (m CreateOrUpdateCategoryResponseMultiError) AllErrors() []error { return m }
 
-// UpdateCategoryRequestValidationError is the validation error returned by
-// UpdateCategoryRequest.Validate if the designated constraints aren't met.
-type UpdateCategoryRequestValidationError struct {
+// CreateOrUpdateCategoryResponseValidationError is the validation error
+// returned by CreateOrUpdateCategoryResponse.Validate if the designated
+// constraints aren't met.
+type CreateOrUpdateCategoryResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -8624,24 +8522,24 @@ type UpdateCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateCategoryRequestValidationError) Field() string { return e.field }
+func (e CreateOrUpdateCategoryResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateCategoryRequestValidationError) Reason() string { return e.reason }
+func (e CreateOrUpdateCategoryResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateCategoryRequestValidationError) Cause() error { return e.cause }
+func (e CreateOrUpdateCategoryResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateCategoryRequestValidationError) Key() bool { return e.key }
+func (e CreateOrUpdateCategoryResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateCategoryRequestValidationError) ErrorName() string {
-	return "UpdateCategoryRequestValidationError"
+func (e CreateOrUpdateCategoryResponseValidationError) ErrorName() string {
+	return "CreateOrUpdateCategoryResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateCategoryRequestValidationError) Error() string {
+func (e CreateOrUpdateCategoryResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -8653,14 +8551,14 @@ func (e UpdateCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateCategoryRequest.%s: %s%s",
+		"invalid %sCreateOrUpdateCategoryResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateCategoryRequestValidationError{}
+var _ error = CreateOrUpdateCategoryResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -8668,109 +8566,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateCategoryRequestValidationError{}
-
-// Validate checks the field values on UpdateCategoryResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateCategoryResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateCategoryResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateCategoryResponseMultiError, or nil if none found.
-func (m *UpdateCategoryResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateCategoryResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return UpdateCategoryResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// UpdateCategoryResponseMultiError is an error wrapping multiple validation
-// errors returned by UpdateCategoryResponse.ValidateAll() if the designated
-// constraints aren't met.
-type UpdateCategoryResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdateCategoryResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdateCategoryResponseMultiError) AllErrors() []error { return m }
-
-// UpdateCategoryResponseValidationError is the validation error returned by
-// UpdateCategoryResponse.Validate if the designated constraints aren't met.
-type UpdateCategoryResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateCategoryResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateCategoryResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateCategoryResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateCategoryResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateCategoryResponseValidationError) ErrorName() string {
-	return "UpdateCategoryResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateCategoryResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateCategoryResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateCategoryResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateCategoryResponseValidationError{}
+} = CreateOrUpdateCategoryResponseValidationError{}
 
 // Validate checks the field values on DeleteCategoryRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -8793,6 +8589,8 @@ func (m *DeleteCategoryRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return DeleteCategoryRequestMultiError(errors)

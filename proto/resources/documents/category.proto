@@ -2,25 +2,28 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documents";
 
 message Category {
   uint64 id = 1;
+  resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp deleted_at = 3;
   // @sanitize
-  string name = 2 [(validate.rules).string = {
+  string name = 4 [(validate.rules).string = {
     min_len: 3,
     max_len: 128
   }];
   // @sanitize
-  optional string description = 3 [(validate.rules).string.max_len = 255];
-  optional string job = 4 [(validate.rules).string.max_len = 20];
+  optional string description = 5 [(validate.rules).string.max_len = 255];
+  optional string job = 6 [(validate.rules).string.max_len = 20];
   // @sanitize: method=StripTags
-  optional string color = 5 [(validate.rules).string = {
+  optional string color = 7 [(validate.rules).string = {
     min_len: 3,
     max_len: 7,
   }];
   // @sanitize: method=StripTags
-  optional string icon = 6 [(validate.rules).string.max_len = 128];
+  optional string icon = 8 [(validate.rules).string.max_len = 128];
 }

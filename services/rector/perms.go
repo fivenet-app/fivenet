@@ -375,7 +375,7 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 	if len(toUpdate) > 0 {
 		toUpdatePerms := make([]perms.AddPerm, len(permsUpdate.ToUpdate))
 		for _, v := range toUpdate {
-			for i := 0; i < len(permsUpdate.ToUpdate); i++ {
+			for i := range permsUpdate.ToUpdate {
 				if v == permsUpdate.ToUpdate[i].Id {
 					toUpdatePerms[i] = perms.AddPerm{
 						Id:  permsUpdate.ToUpdate[i].Id,

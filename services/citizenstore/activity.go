@@ -145,7 +145,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizenstore.ListU
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Activity); i++ {
+	for i := range resp.Activity {
 		if resp.Activity[i].SourceUser != nil {
 			jobInfoFn(resp.Activity[i].SourceUser)
 		}

@@ -78,7 +78,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *pbcalendar.ListCa
 
 	if len(req.CalendarIds) > 0 {
 		ids := []jet.Expression{}
-		for i := 0; i < len(req.CalendarIds); i++ {
+		for i := range req.CalendarIds {
 			if req.CalendarIds[i] == 0 {
 				continue
 			}
@@ -101,7 +101,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *pbcalendar.ListCa
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Entries); i++ {
+	for i := range resp.Entries {
 		if resp.Entries[i].Creator != nil {
 			jobInfoFn(resp.Entries[i].Creator)
 		}

@@ -45,7 +45,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *pbdocstore.ListD
 	condition := tDocActivity.DocumentID.EQ(jet.Uint64(req.DocumentId))
 	if len(req.ActivityTypes) > 0 {
 		ids := make([]jet.Expression, len(req.ActivityTypes))
-		for i := 0; i < len(req.ActivityTypes); i++ {
+		for i := range req.ActivityTypes {
 			ids[i] = jet.Int16(int16(*req.ActivityTypes[i].Enum()))
 		}
 		condition = condition.AND(tDocActivity.ActivityType.IN(ids...))
@@ -118,7 +118,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *pbdocstore.ListD
 	resp.Pagination.Update(len(resp.Activity))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Activity); i++ {
+	for i := range resp.Activity {
 		if resp.Activity[i].Creator != nil {
 			jobInfoFn(resp.Activity[i].Creator)
 		}

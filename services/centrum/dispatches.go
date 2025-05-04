@@ -53,7 +53,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 
 	if len(req.Status) > 0 {
 		statuses := make([]jet.Expression, len(req.Status))
-		for i := 0; i < len(req.Status); i++ {
+		for i := range req.Status {
 			statuses[i] = jet.Int16(int16(*req.Status[i].Enum()))
 		}
 
@@ -61,7 +61,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 	}
 	if len(req.NotStatus) > 0 {
 		statuses := make([]jet.Expression, len(req.NotStatus))
-		for i := 0; i < len(req.NotStatus); i++ {
+		for i := range req.NotStatus {
 			statuses[i] = jet.Int16(int16(*req.NotStatus[i].Enum()))
 		}
 
@@ -70,7 +70,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 
 	if len(req.Ids) > 0 {
 		ids := make([]jet.Expression, len(req.Ids))
-		for i := 0; i < len(req.Ids); i++ {
+		for i := range req.Ids {
 			ids[i] = jet.Uint64(req.Ids[i])
 		}
 
@@ -168,7 +168,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 	resp.Pagination.Update(len(resp.Dispatches))
 
 	publicJobs := s.appCfg.Get().JobInfo.PublicJobs
-	for i := 0; i < len(resp.Dispatches); i++ {
+	for i := range resp.Dispatches {
 		var err error
 		resp.Dispatches[i].Units, err = s.state.LoadDispatchAssignments(ctx, resp.Dispatches[i].Job, resp.Dispatches[i].Id)
 		if err != nil {
@@ -584,7 +584,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Activity); i++ {
+	for i := range resp.Activity {
 		if resp.Activity[i].UnitId != nil && *resp.Activity[i].UnitId > 0 {
 			var err error
 			resp.Activity[i].Unit, err = s.state.GetUnit(ctx, userInfo.Job, *resp.Activity[i].UnitId)

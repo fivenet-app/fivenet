@@ -332,22 +332,16 @@ message ListCategoriesResponse {
   repeated resources.documents.Category categories = 1;
 }
 
-message CreateCategoryRequest {
+message CreateOrUpdateCategoryRequest {
   resources.documents.Category category = 1 [(validate.rules).message.required = true];
 }
 
-message CreateCategoryResponse {
-  uint64 id = 1;
-}
-
-message UpdateCategoryRequest {
+message CreateOrUpdateCategoryResponse {
   resources.documents.Category category = 1 [(validate.rules).message.required = true];
 }
-
-message UpdateCategoryResponse {}
 
 message DeleteCategoryRequest {
-  repeated uint64 ids = 1;
+  uint64 id = 1;
 }
 
 message DeleteCategoryResponse {}
@@ -457,9 +451,7 @@ service DocStoreService {
   // @perm
   rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
   // @perm
-  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse);
-  // @perm: Name=CreateCategory
-  rpc UpdateCategory(UpdateCategoryRequest) returns (UpdateCategoryResponse);
+  rpc CreateOrUpdateCategory(CreateOrUpdateCategoryRequest) returns (CreateOrUpdateCategoryResponse);
   // @perm
   rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
 

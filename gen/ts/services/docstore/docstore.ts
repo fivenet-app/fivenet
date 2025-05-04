@@ -797,45 +797,31 @@ export interface ListCategoriesResponse {
     categories: Category[];
 }
 /**
- * @generated from protobuf message services.docstore.CreateCategoryRequest
+ * @generated from protobuf message services.docstore.CreateOrUpdateCategoryRequest
  */
-export interface CreateCategoryRequest {
+export interface CreateOrUpdateCategoryRequest {
     /**
      * @generated from protobuf field: resources.documents.Category category = 1;
      */
     category?: Category;
 }
 /**
- * @generated from protobuf message services.docstore.CreateCategoryResponse
+ * @generated from protobuf message services.docstore.CreateOrUpdateCategoryResponse
  */
-export interface CreateCategoryResponse {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: number;
-}
-/**
- * @generated from protobuf message services.docstore.UpdateCategoryRequest
- */
-export interface UpdateCategoryRequest {
+export interface CreateOrUpdateCategoryResponse {
     /**
      * @generated from protobuf field: resources.documents.Category category = 1;
      */
     category?: Category;
-}
-/**
- * @generated from protobuf message services.docstore.UpdateCategoryResponse
- */
-export interface UpdateCategoryResponse {
 }
 /**
  * @generated from protobuf message services.docstore.DeleteCategoryRequest
  */
 export interface DeleteCategoryRequest {
     /**
-     * @generated from protobuf field: repeated uint64 ids = 1;
+     * @generated from protobuf field: uint64 id = 1;
      */
-    ids: number[];
+    id: number;
 }
 /**
  * @generated from protobuf message services.docstore.DeleteCategoryResponse
@@ -4152,19 +4138,19 @@ class ListCategoriesResponse$Type extends MessageType<ListCategoriesResponse> {
  */
 export const ListCategoriesResponse = new ListCategoriesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateCategoryRequest$Type extends MessageType<CreateCategoryRequest> {
+class CreateOrUpdateCategoryRequest$Type extends MessageType<CreateOrUpdateCategoryRequest> {
     constructor() {
-        super("services.docstore.CreateCategoryRequest", [
+        super("services.docstore.CreateOrUpdateCategoryRequest", [
             { no: 1, name: "category", kind: "message", T: () => Category, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
-    create(value?: PartialMessage<CreateCategoryRequest>): CreateCategoryRequest {
+    create(value?: PartialMessage<CreateOrUpdateCategoryRequest>): CreateOrUpdateCategoryRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<CreateCategoryRequest>(this, message, value);
+            reflectionMergePartial<CreateOrUpdateCategoryRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateCategoryRequest): CreateCategoryRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateCategoryRequest): CreateOrUpdateCategoryRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -4183,7 +4169,7 @@ class CreateCategoryRequest$Type extends MessageType<CreateCategoryRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: CreateCategoryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CreateOrUpdateCategoryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.documents.Category category = 1; */
         if (message.category)
             Category.internalBinaryWrite(message.category, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -4194,24 +4180,70 @@ class CreateCategoryRequest$Type extends MessageType<CreateCategoryRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.CreateCategoryRequest
+ * @generated MessageType for protobuf message services.docstore.CreateOrUpdateCategoryRequest
  */
-export const CreateCategoryRequest = new CreateCategoryRequest$Type();
+export const CreateOrUpdateCategoryRequest = new CreateOrUpdateCategoryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateCategoryResponse$Type extends MessageType<CreateCategoryResponse> {
+class CreateOrUpdateCategoryResponse$Type extends MessageType<CreateOrUpdateCategoryResponse> {
     constructor() {
-        super("services.docstore.CreateCategoryResponse", [
+        super("services.docstore.CreateOrUpdateCategoryResponse", [
+            { no: 1, name: "category", kind: "message", T: () => Category, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrUpdateCategoryResponse>): CreateOrUpdateCategoryResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrUpdateCategoryResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateCategoryResponse): CreateOrUpdateCategoryResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.Category category */ 1:
+                    message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrUpdateCategoryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.Category category = 1; */
+        if (message.category)
+            Category.internalBinaryWrite(message.category, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.CreateOrUpdateCategoryResponse
+ */
+export const CreateOrUpdateCategoryResponse = new CreateOrUpdateCategoryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteCategoryRequest$Type extends MessageType<DeleteCategoryRequest> {
+    constructor() {
+        super("services.docstore.DeleteCategoryRequest", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
-    create(value?: PartialMessage<CreateCategoryResponse>): CreateCategoryResponse {
+    create(value?: PartialMessage<DeleteCategoryRequest>): DeleteCategoryRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         if (value !== undefined)
-            reflectionMergePartial<CreateCategoryResponse>(this, message, value);
+            reflectionMergePartial<DeleteCategoryRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateCategoryResponse): CreateCategoryResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteCategoryRequest): DeleteCategoryRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -4230,149 +4262,10 @@ class CreateCategoryResponse$Type extends MessageType<CreateCategoryResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: CreateCategoryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: DeleteCategoryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.docstore.CreateCategoryResponse
- */
-export const CreateCategoryResponse = new CreateCategoryResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpdateCategoryRequest$Type extends MessageType<UpdateCategoryRequest> {
-    constructor() {
-        super("services.docstore.UpdateCategoryRequest", [
-            { no: 1, name: "category", kind: "message", T: () => Category, options: { "validate.rules": { message: { required: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<UpdateCategoryRequest>): UpdateCategoryRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<UpdateCategoryRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateCategoryRequest): UpdateCategoryRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.documents.Category category */ 1:
-                    message.category = Category.internalBinaryRead(reader, reader.uint32(), options, message.category);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UpdateCategoryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.documents.Category category = 1; */
-        if (message.category)
-            Category.internalBinaryWrite(message.category, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.docstore.UpdateCategoryRequest
- */
-export const UpdateCategoryRequest = new UpdateCategoryRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpdateCategoryResponse$Type extends MessageType<UpdateCategoryResponse> {
-    constructor() {
-        super("services.docstore.UpdateCategoryResponse", []);
-    }
-    create(value?: PartialMessage<UpdateCategoryResponse>): UpdateCategoryResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<UpdateCategoryResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateCategoryResponse): UpdateCategoryResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UpdateCategoryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.docstore.UpdateCategoryResponse
- */
-export const UpdateCategoryResponse = new UpdateCategoryResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DeleteCategoryRequest$Type extends MessageType<DeleteCategoryRequest> {
-    constructor() {
-        super("services.docstore.DeleteCategoryRequest", [
-            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
-        ]);
-    }
-    create(value?: PartialMessage<DeleteCategoryRequest>): DeleteCategoryRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.ids = [];
-        if (value !== undefined)
-            reflectionMergePartial<DeleteCategoryRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteCategoryRequest): DeleteCategoryRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated uint64 ids */ 1:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.ids.push(reader.uint64().toNumber());
-                    else
-                        message.ids.push(reader.uint64().toNumber());
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DeleteCategoryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated uint64 ids = 1; */
-        if (message.ids.length) {
-            writer.tag(1, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.ids.length; i++)
-                writer.uint64(message.ids[i]);
-            writer.join();
-        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4757,8 +4650,7 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "DeleteDocumentReq", options: {}, I: DeleteDocumentReqRequest, O: DeleteDocumentReqResponse },
     { name: "ListUserDocuments", options: {}, I: ListUserDocumentsRequest, O: ListUserDocumentsResponse },
     { name: "ListCategories", options: {}, I: ListCategoriesRequest, O: ListCategoriesResponse },
-    { name: "CreateCategory", options: {}, I: CreateCategoryRequest, O: CreateCategoryResponse },
-    { name: "UpdateCategory", options: {}, I: UpdateCategoryRequest, O: UpdateCategoryResponse },
+    { name: "CreateOrUpdateCategory", options: {}, I: CreateOrUpdateCategoryRequest, O: CreateOrUpdateCategoryResponse },
     { name: "DeleteCategory", options: {}, I: DeleteCategoryRequest, O: DeleteCategoryResponse },
     { name: "ListDocumentPins", options: {}, I: ListDocumentPinsRequest, O: ListDocumentPinsResponse },
     { name: "ToggleDocumentPin", options: {}, I: ToggleDocumentPinRequest, O: ToggleDocumentPinResponse },

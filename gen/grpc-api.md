@@ -604,12 +604,12 @@
     - [AddDocumentRelationResponse](#services-docstore-AddDocumentRelationResponse)
     - [ChangeDocumentOwnerRequest](#services-docstore-ChangeDocumentOwnerRequest)
     - [ChangeDocumentOwnerResponse](#services-docstore-ChangeDocumentOwnerResponse)
-    - [CreateCategoryRequest](#services-docstore-CreateCategoryRequest)
-    - [CreateCategoryResponse](#services-docstore-CreateCategoryResponse)
     - [CreateDocumentReqRequest](#services-docstore-CreateDocumentReqRequest)
     - [CreateDocumentReqResponse](#services-docstore-CreateDocumentReqResponse)
     - [CreateDocumentRequest](#services-docstore-CreateDocumentRequest)
     - [CreateDocumentResponse](#services-docstore-CreateDocumentResponse)
+    - [CreateOrUpdateCategoryRequest](#services-docstore-CreateOrUpdateCategoryRequest)
+    - [CreateOrUpdateCategoryResponse](#services-docstore-CreateOrUpdateCategoryResponse)
     - [CreateTemplateRequest](#services-docstore-CreateTemplateRequest)
     - [CreateTemplateResponse](#services-docstore-CreateTemplateResponse)
     - [DeleteCategoryRequest](#services-docstore-DeleteCategoryRequest)
@@ -664,8 +664,6 @@
     - [ToggleDocumentPinResponse](#services-docstore-ToggleDocumentPinResponse)
     - [ToggleDocumentRequest](#services-docstore-ToggleDocumentRequest)
     - [ToggleDocumentResponse](#services-docstore-ToggleDocumentResponse)
-    - [UpdateCategoryRequest](#services-docstore-UpdateCategoryRequest)
-    - [UpdateCategoryResponse](#services-docstore-UpdateCategoryResponse)
     - [UpdateDocumentReqRequest](#services-docstore-UpdateDocumentReqRequest)
     - [UpdateDocumentReqResponse](#services-docstore-UpdateDocumentReqResponse)
     - [UpdateDocumentRequest](#services-docstore-UpdateDocumentRequest)
@@ -2404,6 +2402,8 @@ Wrapped translated message for the client @dbscanner: json
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `name` | [string](#string) |  | @sanitize |
 | `description` | [string](#string) | optional | @sanitize |
 | `job` | [string](#string) | optional |  |
@@ -9455,36 +9455,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services-docstore-CreateCategoryRequest"></a>
-
-### CreateCategoryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category` | [resources.documents.Category](#resources-documents-Category) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-CreateCategoryResponse"></a>
-
-### CreateCategoryResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
 <a name="services-docstore-CreateDocumentReqRequest"></a>
 
 ### CreateDocumentReqRequest
@@ -9561,6 +9531,36 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-docstore-CreateOrUpdateCategoryRequest"></a>
+
+### CreateOrUpdateCategoryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [resources.documents.Category](#resources-documents-Category) |  |  |
+
+
+
+
+
+
+<a name="services-docstore-CreateOrUpdateCategoryResponse"></a>
+
+### CreateOrUpdateCategoryResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [resources.documents.Category](#resources-documents-Category) |  |  |
+
+
+
+
+
+
 <a name="services-docstore-CreateTemplateRequest"></a>
 
 ### CreateTemplateRequest
@@ -9599,7 +9599,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `ids` | [uint64](#uint64) | repeated |  |
+| `id` | [uint64](#uint64) |  |  |
 
 
 
@@ -10343,31 +10343,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services-docstore-UpdateCategoryRequest"></a>
-
-### UpdateCategoryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category` | [resources.documents.Category](#resources-documents-Category) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-UpdateCategoryResponse"></a>
-
-### UpdateCategoryResponse
-
-
-
-
-
-
-
 <a name="services-docstore-UpdateDocumentReqRequest"></a>
 
 ### UpdateDocumentReqRequest
@@ -10519,8 +10494,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `DeleteDocumentReq` | [DeleteDocumentReqRequest](#services-docstore-DeleteDocumentReqRequest) | [DeleteDocumentReqResponse](#services-docstore-DeleteDocumentReqResponse) | @perm |
 | `ListUserDocuments` | [ListUserDocumentsRequest](#services-docstore-ListUserDocumentsRequest) | [ListUserDocumentsResponse](#services-docstore-ListUserDocumentsResponse) | @perm |
 | `ListCategories` | [ListCategoriesRequest](#services-docstore-ListCategoriesRequest) | [ListCategoriesResponse](#services-docstore-ListCategoriesResponse) | @perm |
-| `CreateCategory` | [CreateCategoryRequest](#services-docstore-CreateCategoryRequest) | [CreateCategoryResponse](#services-docstore-CreateCategoryResponse) | @perm |
-| `UpdateCategory` | [UpdateCategoryRequest](#services-docstore-UpdateCategoryRequest) | [UpdateCategoryResponse](#services-docstore-UpdateCategoryResponse) | @perm: Name=CreateCategory |
+| `CreateOrUpdateCategory` | [CreateOrUpdateCategoryRequest](#services-docstore-CreateOrUpdateCategoryRequest) | [CreateOrUpdateCategoryResponse](#services-docstore-CreateOrUpdateCategoryResponse) | @perm |
 | `DeleteCategory` | [DeleteCategoryRequest](#services-docstore-DeleteCategoryRequest) | [DeleteCategoryResponse](#services-docstore-DeleteCategoryResponse) | @perm |
 | `ListDocumentPins` | [ListDocumentPinsRequest](#services-docstore-ListDocumentPinsRequest) | [ListDocumentPinsResponse](#services-docstore-ListDocumentPinsResponse) | @perm: Name=ListDocuments |
 | `ToggleDocumentPin` | [ToggleDocumentPinRequest](#services-docstore-ToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#services-docstore-ToggleDocumentPinResponse) | @perm |

@@ -100,7 +100,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Qualifications); i++ {
+	for i := range resp.Qualifications {
 		if resp.Qualifications[i].Creator != nil {
 			jobInfoFn(resp.Qualifications[i].Creator)
 		}

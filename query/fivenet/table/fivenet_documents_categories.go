@@ -18,6 +18,8 @@ type fivenetDocumentsCategoriesTable struct {
 
 	// Columns
 	ID          mysql.ColumnInteger
+	CreatedAt   mysql.ColumnTimestamp
+	DeletedAt   mysql.ColumnTimestamp
 	Name        mysql.ColumnString
 	SortKey     mysql.ColumnString
 	Description mysql.ColumnString
@@ -66,15 +68,17 @@ func newFivenetDocumentsCategoriesTable(schemaName, tableName, alias string) *Fi
 func newFivenetDocumentsCategoriesTableImpl(schemaName, tableName, alias string) fivenetDocumentsCategoriesTable {
 	var (
 		IDColumn          = mysql.IntegerColumn("id")
+		CreatedAtColumn   = mysql.TimestampColumn("created_at")
+		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
 		NameColumn        = mysql.StringColumn("name")
 		SortKeyColumn     = mysql.StringColumn("sort_key")
 		DescriptionColumn = mysql.StringColumn("description")
 		JobColumn         = mysql.StringColumn("job")
 		ColorColumn       = mysql.StringColumn("color")
 		IconColumn        = mysql.StringColumn("icon")
-		allColumns        = mysql.ColumnList{IDColumn, NameColumn, SortKeyColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
-		mutableColumns    = mysql.ColumnList{NameColumn, SortKeyColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
-		defaultColumns    = mysql.ColumnList{ColorColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, NameColumn, SortKeyColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, NameColumn, SortKeyColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, ColorColumn}
 	)
 
 	return fivenetDocumentsCategoriesTable{
@@ -82,6 +86,8 @@ func newFivenetDocumentsCategoriesTableImpl(schemaName, tableName, alias string)
 
 		//Columns
 		ID:          IDColumn,
+		CreatedAt:   CreatedAtColumn,
+		DeletedAt:   DeletedAtColumn,
 		Name:        NameColumn,
 		SortKey:     SortKeyColumn,
 		Description: DescriptionColumn,

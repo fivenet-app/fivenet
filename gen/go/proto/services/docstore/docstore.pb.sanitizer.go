@@ -73,31 +73,6 @@ func (m *ChangeDocumentOwnerResponse) Sanitize() error {
 	return nil
 }
 
-func (m *CreateCategoryRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Category
-	if m.Category != nil {
-		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *CreateCategoryResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
 func (m *CreateDocumentReqRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -173,6 +148,40 @@ func (m *CreateDocumentRequest) Sanitize() error {
 func (m *CreateDocumentResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	return nil
+}
+
+func (m *CreateOrUpdateCategoryRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Category
+	if m.Category != nil {
+		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateOrUpdateCategoryResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Category
+	if m.Category != nil {
+		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
@@ -990,31 +999,6 @@ func (m *ToggleDocumentRequest) Sanitize() error {
 }
 
 func (m *ToggleDocumentResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UpdateCategoryRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Category
-	if m.Category != nil {
-		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *UpdateCategoryResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

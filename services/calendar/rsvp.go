@@ -105,7 +105,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Entries); i++ {
+	for i := range resp.Entries {
 		if resp.Entries[i].User != nil {
 			jobInfoFn(resp.Entries[i].User)
 		}

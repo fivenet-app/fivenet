@@ -112,7 +112,8 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 					AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 			).
 			LEFT_JOIN(tDCategory,
-				tDocumentShort.CategoryID.EQ(tDCategory.ID),
+				tDocumentShort.CategoryID.EQ(tDCategory.ID).
+					AND(tDCategory.DeletedAt.IS_NULL()),
 			).
 			LEFT_JOIN(tCreator,
 				tDocumentShort.CreatorID.EQ(tCreator.ID),
@@ -123,7 +124,8 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 	} else {
 		tables = tDocumentShort.
 			LEFT_JOIN(tDCategory,
-				tDocumentShort.CategoryID.EQ(tDCategory.ID),
+				tDocumentShort.CategoryID.EQ(tDCategory.ID).
+					AND(tDCategory.DeletedAt.IS_NULL()),
 			).
 			LEFT_JOIN(tCreator,
 				tDocumentShort.CreatorID.EQ(tCreator.ID),
@@ -245,7 +247,8 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 					AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 			).
 			LEFT_JOIN(tDCategory,
-				tDocument.CategoryID.EQ(tDCategory.ID),
+				tDocument.CategoryID.EQ(tDCategory.ID).
+					AND(tDCategory.DeletedAt.IS_NULL()),
 			).
 			LEFT_JOIN(tCreator,
 				tDocument.CreatorID.EQ(tCreator.ID),
@@ -263,7 +266,8 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 	} else {
 		tables = tDocument.
 			LEFT_JOIN(tDCategory,
-				tDocument.CategoryID.EQ(tDCategory.ID),
+				tDocument.CategoryID.EQ(tDCategory.ID).
+					AND(tDCategory.DeletedAt.IS_NULL()),
 			).
 			LEFT_JOIN(tCreator,
 				tDocument.CreatorID.EQ(tCreator.ID),

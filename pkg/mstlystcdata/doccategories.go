@@ -101,6 +101,9 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 			tDCategory.Icon,
 		).
 		FROM(tDCategory).
+		WHERE(
+			tDCategory.DeletedAt.IS_NULL(),
+		).
 		ORDER_BY(
 			tDCategory.Job.ASC(),
 			tDCategory.SortKey.ASC(),

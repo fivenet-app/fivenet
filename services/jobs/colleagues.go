@@ -327,7 +327,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 
 	resp.Pagination.Update(len(resp.Colleagues))
 
-	for i := 0; i < len(resp.Colleagues); i++ {
+	for i := range resp.Colleagues {
 		s.enricher.EnrichJobInfo(resp.Colleagues[i])
 	}
 
@@ -737,7 +737,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 		if len(req.UserIds) >= 2 {
 			// More than 2 user ids
 			userIds := make([]jet.Expression, len(req.UserIds))
-			for i := 0; i < len(req.UserIds); i++ {
+			for i := range req.UserIds {
 				userIds[i] = jet.Int32(req.UserIds[i])
 			}
 
@@ -917,7 +917,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 	pag.Update(len(resp.Activity))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Activity); i++ {
+	for i := range resp.Activity {
 		if resp.Activity[i].SourceUser != nil {
 			jobInfoFn(resp.Activity[i].SourceUser)
 		}

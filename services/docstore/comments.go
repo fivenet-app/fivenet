@@ -137,7 +137,7 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocstore.GetCommentsReq
 	resp.Pagination.Update(len(resp.Comments))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Comments); i++ {
+	for i := range resp.Comments {
 		if resp.Comments[i].Creator != nil {
 			jobInfoFn(resp.Comments[i].Creator)
 		}

@@ -3,6 +3,7 @@ import CategoriesModal from '~/components/documents/categories/CategoriesModal.v
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import type { CardElements } from '~/utils/types';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 
@@ -24,21 +25,15 @@ async function listCategories(): Promise<Category[]> {
     }
 }
 
-const items = ref<CardElements>([]);
-
-watch(categories, () => {
-    if (items.value) {
-        items.value.length = 0;
-    }
-
-    items.value =
+const items = computed<CardElements>(
+    () =>
         categories.value?.map((v) => ({
             title: v?.name,
             description: v?.description,
-            icon: v.icon ?? 'i-mdi-shape',
+            icon: v.deletedAt ? 'i-mdi-delete' : (v.icon ?? 'i-mdi-shape'),
             color: v.color,
-        })) ?? [];
-});
+        })) ?? [],
+);
 
 function categorySelected(idx: number): void {
     if (!categories.value) {
@@ -61,7 +56,7 @@ const modal = useModal();
 
             <UButtonGroup class="inline-flex">
                 <UButton
-                    v-if="can('DocStoreService.CreateCategory').value"
+                    v-if="can('DocStoreService.CreateOrUpdateCategory').value"
                     color="gray"
                     trailing-icon="i-mdi-plus"
                     @click="
@@ -102,4 +97,6 @@ const modal = useModal();
             <CardsList :items="items" @selected="categorySelected($event)" />
         </div>
     </UDashboardPanelContent>
+
+    <Pagination :loading="loading" :refresh="refresh" hide-buttons hide-text />
 </template>

@@ -34,12 +34,12 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *pbdocstore.GetDocum
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	for i := 0; i < len(access.Jobs); i++ {
+	for i := range access.Jobs {
 		s.enricher.EnrichJobInfo(access.Jobs[i])
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(access.Users); i++ {
+	for i := range access.Users {
 		if access.Users[i].User != nil {
 			jobInfoFn(access.Users[i].User)
 		}

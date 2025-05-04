@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
 useHead({
@@ -21,6 +22,8 @@ async function selected(t: TemplateShort | undefined): Promise<void> {
 
     await navigateTo({ name: 'documents-templates-id', params: { id: t.id } });
 }
+
+const templatesListRef = useTemplateRef('templatesListRef');
 </script>
 
 <template>
@@ -44,8 +47,10 @@ async function selected(t: TemplateShort | undefined): Promise<void> {
             </UDashboardNavbar>
 
             <UDashboardPanelContent>
-                <TemplatesList @selected="selected($event)" />
+                <TemplatesList ref="templatesListRef" @selected="selected($event)" />
             </UDashboardPanelContent>
+
+            <Pagination :loading="templatesListRef?.loading" :refresh="templatesListRef?.refresh" hide-buttons hide-text />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

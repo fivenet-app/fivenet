@@ -68,7 +68,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 	} else {
 		if len(req.UserIds) > 0 {
 			ids := make([]jet.Expression, len(req.UserIds))
-			for i := 0; i < len(req.UserIds); i++ {
+			for i := range req.UserIds {
 				ids[i] = jet.Int32(req.UserIds[i])
 			}
 
@@ -287,7 +287,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 
 		data.Date = req.Date.End
-		for i := 0; i < len(data.Entries); i++ {
+		for i := range data.Entries {
 			if data.Entries[i].User != nil {
 				if data.Entries[i].User.Job != userInfo.Job {
 					jobInfoFn(data.Entries[i].User)
@@ -352,7 +352,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			}
 		}
 
-		for i := 0; i < len(data.Entries); i++ {
+		for i := range data.Entries {
 			if data.Entries[i].User != nil {
 				if data.Entries[i].User.Job != userInfo.Job {
 					jobInfoFn(data.Entries[i].User)
@@ -418,7 +418,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 
 		data.Date = req.Date.End
-		for i := 0; i < len(data.Entries); i++ {
+		for i := range data.Entries {
 			if data.Entries[i].User != nil {
 				jobInfoFn(data.Entries[i].User)
 			}
@@ -478,7 +478,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 
 		data.Date = req.Date.End
-		for i := 0; i < len(data.Entries); i++ {
+		for i := range data.Entries {
 			if data.Entries[i].User != nil {
 				jobInfoFn(data.Entries[i].User)
 			}
@@ -667,7 +667,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Colleagues); i++ {
+	for i := range resp.Colleagues {
 		jobInfoFn(resp.Colleagues[i])
 	}
 

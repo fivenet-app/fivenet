@@ -106,7 +106,7 @@ func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActiv
 	resp.Pagination.Update(len(resp.Activity))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Activity); i++ {
+	for i := range resp.Activity {
 		if resp.Activity[i].Creator != nil {
 			jobInfoFn(resp.Activity[i].Creator)
 		}

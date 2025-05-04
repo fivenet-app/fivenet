@@ -148,7 +148,7 @@ func (s *Server) ListThreads(ctx context.Context, req *pbmailer.ListThreadsReque
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Threads); i++ {
+	for i := range resp.Threads {
 		if resp.Threads[i].Creator != nil {
 			jobInfoFn(resp.Threads[i].Creator)
 		}

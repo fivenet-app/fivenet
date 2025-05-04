@@ -49,7 +49,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 
 	if len(req.Ids) > 0 {
 		ids := make([]jet.Expression, len(req.Ids))
-		for i := 0; i < len(req.Ids); i++ {
+		for i := range req.Ids {
 			ids[i] = jet.Uint64(req.Ids[i])
 		}
 
@@ -57,7 +57,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 	}
 	if len(req.Types) > 0 {
 		ts := make([]jet.Expression, len(req.Types))
-		for i := 0; i < len(req.Types); i++ {
+		for i := range req.Types {
 			ts[i] = jet.Int16(int16(req.Types[i].Number()))
 		}
 
@@ -73,7 +73,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 	}
 	if len(req.UserIds) > 0 {
 		ids := make([]jet.Expression, len(req.UserIds))
-		for i := 0; i < len(req.UserIds); i++ {
+		for i := range req.UserIds {
 			ids[i] = jet.Int32(req.UserIds[i])
 		}
 
@@ -196,7 +196,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Entries); i++ {
+	for i := range resp.Entries {
 		if resp.Entries[i].TargetUser != nil {
 			jobInfoFn(resp.Entries[i].TargetUser)
 		}

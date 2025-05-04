@@ -96,7 +96,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThrea
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Messages); i++ {
+	for i := range resp.Messages {
 		if resp.Messages[i].Sender != nil {
 			jobInfoFn(resp.Messages[i].Sender)
 		}
@@ -468,7 +468,7 @@ func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsR
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Messages); i++ {
+	for i := range resp.Messages {
 		if resp.Messages[i].Sender != nil {
 			jobInfoFn(resp.Messages[i].Sender)
 		}

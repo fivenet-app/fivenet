@@ -619,7 +619,8 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
 				LEFT_JOIN(tDCategory,
-					tDocument.CategoryID.EQ(tDCategory.ID),
+					tDocument.CategoryID.EQ(tDCategory.ID).
+						AND(tDCategory.DeletedAt.IS_NULL()),
 				).
 				LEFT_JOIN(tSourceUser,
 					tSourceUser.ID.EQ(tDocRel.SourceUserID),

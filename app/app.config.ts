@@ -43,6 +43,8 @@ export default defineAppConfig({
     },
     maxAccessEntries: 12,
 
+    fallbackColor: 'blue',
+
     popover: {
         waitTime: 850,
     },

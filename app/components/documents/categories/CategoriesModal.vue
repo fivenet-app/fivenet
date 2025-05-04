@@ -20,9 +20,13 @@ const { $grpc } = useNuxtApp();
 
 const { can } = useAuth();
 
+const { fallbackColor } = useAppConfig();
+
 const notifications = useNotificatorStore();
 
 const { isOpen } = useModal();
+
+const canEdit = can('DocStoreService.CreateOrUpdateCategory');
 
 const schema = z.object({
     name: z.string().min(3).max(128),
@@ -39,11 +43,11 @@ const state = reactive<Schema>({
     color: 'primary',
 });
 
-async function createCategory(values: Schema): Promise<void> {
+async function createOrUpdateCategory(values: Schema): Promise<void> {
     try {
-        await $grpc.docstore.docStore.createCategory({
+        await $grpc.docstore.docStore.createOrUpdateCategory({
             category: {
-                id: 0,
+                id: props.category?.id ?? 0,
                 name: values.name,
                 description: values.description,
                 color: values.color,
@@ -51,36 +55,19 @@ async function createCategory(values: Schema): Promise<void> {
             },
         });
 
-        notifications.add({
-            title: { key: 'notifications.category_created.title', parameters: {} },
-            description: { key: 'notifications.category_created.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
-
-        emit('update');
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
-
-async function updateCategory(values: Schema): Promise<void> {
-    try {
-        await $grpc.docstore.docStore.updateCategory({
-            category: {
-                id: props.category!.id,
-                name: values.name,
-                description: values.description,
-                color: values.color,
-                icon: values.icon,
-            },
-        });
-
-        notifications.add({
-            title: { key: 'notifications.category_updated.title', parameters: {} },
-            description: { key: 'notifications.category_updated.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
+        if (!props.category?.id) {
+            notifications.add({
+                title: { key: 'notifications.category_created.title', parameters: {} },
+                description: { key: 'notifications.category_created.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
+        } else {
+            notifications.add({
+                title: { key: 'notifications.category_updated.title', parameters: {} },
+                description: { key: 'notifications.category_updated.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
+        }
 
         emit('update');
     } catch (e) {
@@ -96,7 +83,7 @@ async function deleteCategory(): Promise<void> {
 
     try {
         await $grpc.docstore.docStore.deleteCategory({
-            ids: [props.category.id!],
+            id: props.category.id!,
         });
 
         notifications.add({
@@ -115,9 +102,7 @@ async function deleteCategory(): Promise<void> {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await (props.category === undefined ? createCategory(event.data) : updateCategory(event.data)).finally(() =>
-        useTimeoutFn(() => (canSubmit.value = true), 400),
-    );
+    await createOrUpdateCategory(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 function setFromProps(): void {
@@ -127,7 +112,7 @@ function setFromProps(): void {
 
     state.name = props.category.name;
     state.description = props.category.description;
-    state.color = props.category.color ?? 'primary';
+    state.color = props.category.color ?? fallbackColor;
     state.icon = props.category.icon;
 }
 
@@ -142,7 +127,11 @@ watch(props, () => setFromProps());
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
-                            <template v-if="category">
+                            <template v-if="!canEdit">
+                                {{ $t('common.category') }}:
+                                {{ category?.name }}
+                            </template>
+                            <template v-else-if="category">
                                 {{ $t('components.documents.categories.modal.update_category') }}:
                                 {{ category?.name }}
                             </template>
@@ -162,26 +151,38 @@ watch(props, () => setFromProps());
                                 v-model="state.name"
                                 type="text"
                                 name="name"
+                                :disabled="!canEdit"
                                 :placeholder="$t('common.name', 1)"
                                 :label="$t('common.name', 1)"
                             />
                         </UFormGroup>
 
                         <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
-                            <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
+                            <UTextarea
+                                v-model="state.description"
+                                name="description"
+                                :disabled="!canEdit"
+                                :placeholder="$t('common.description')"
+                            />
                         </UFormGroup>
 
                         <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row">
                             <div class="flex flex-1 gap-1">
-                                <ColorPickerTW v-model="state.color" class="flex-1" />
+                                <ColorPickerTW v-model="state.color" class="flex-1" :disabled="!canEdit" />
                             </div>
                         </UFormGroup>
 
                         <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
                             <div class="flex flex-1 gap-1">
-                                <IconSelectMenu v-model="state.icon" class="flex-1" :fallback-icon="ShapeIcon" />
+                                <IconSelectMenu
+                                    v-model="state.icon"
+                                    class="flex-1"
+                                    :color="state.color"
+                                    :disabled="!canEdit"
+                                    :fallback-icon="ShapeIcon"
+                                />
 
-                                <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
+                                <UButton v-if="canEdit" icon="i-mdi-backspace" @click="state.icon = undefined" />
                             </div>
                         </UFormGroup>
                     </div>
@@ -193,12 +194,8 @@ watch(props, () => setFromProps());
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ category === undefined ? $t('common.create') : $t('common.update') }}
-                        </UButton>
-
                         <UButton
-                            v-if="category !== undefined && can('DocStoreService.DeleteCategory').value"
+                            v-if="category !== undefined && canEdit && can('DocStoreService.DeleteCategory').value"
                             block
                             class="flex-1"
                             icon="i-mdi-delete"
@@ -208,6 +205,10 @@ watch(props, () => setFromProps());
                             @click="deleteCategory()"
                         >
                             {{ $t('common.delete') }}
+                        </UButton>
+
+                        <UButton v-if="canEdit" type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ category === undefined ? $t('common.create') : $t('common.update') }}
                         </UButton>
                     </UButtonGroup>
                 </template>

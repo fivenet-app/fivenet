@@ -116,7 +116,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *pbdocstore.ListDocum
 	resp.Pagination.Update(len(resp.Requests))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Requests); i++ {
+	for i := range resp.Requests {
 		if resp.Requests[i].Creator != nil {
 			jobInfoFn(resp.Requests[i].Creator)
 		}

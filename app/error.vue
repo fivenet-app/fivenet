@@ -2,7 +2,6 @@
 <script setup lang="ts">
 import '~/assets/css/herofull-pattern.css';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import PageHeader from './components/landing/PageHeader.vue';
 import PageFooter from './components/partials/PageFooter.vue';
 
 useHead({
@@ -33,6 +32,8 @@ async function handleError(url?: string): Promise<void> {
     });
 }
 
+const version = APP_VERSION;
+
 function copyError(): void {
     if (!props.error) {
         return;
@@ -42,78 +43,90 @@ function copyError(): void {
 \`\`\`
 ${props.error ? JSON.stringify(props.error) : 'Unknown error'}
 \`\`\`
+**Version:** ${version}
 `);
 }
 
-const isDev = import.meta.dev;
+const kbdBlockClasses =
+    'inline-flex items-center rounded bg-gray-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-white dark:ring-gray-700';
 
-const version = APP_VERSION;
+const isDev = import.meta.dev;
 </script>
 
+<!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
     <div class="h-dscreen">
-        <PageHeader />
-
+        <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
-        <div class="h-full">
-            <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+        <div class="flex h-full flex-col items-center justify-center">
+            <UButton icon="i-mdi-home" :label="$t('common.home')" to="/" color="black" class="absolute top-4 z-10" />
 
-            <div class="h-full">
-                <main class="mx-auto flex size-full max-w-3xl text-center">
-                    <div class="my-auto py-2 max-sm:w-full sm:mx-auto lg:mx-auto">
-                        <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
+            <UCard class="w-full max-w-md bg-white/75 backdrop-blur dark:bg-white/5">
+                <template #header>
+                    <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
-                        <h1 class="text-5xl font-bold">
-                            {{ $t !== undefined ? $t('pages.error.title') : 'Error occured' }}
-                        </h1>
-                        <h2 class="text-xl">
-                            {{
-                                $t !== undefined
-                                    ? $t('pages.error.subtitle')
-                                    : 'A fatal error occured, please try again in a few seconds.'
-                            }}
-                        </h2>
+                    <h1 class="text-center text-4xl font-bold">
+                        {{ $t !== undefined ? $t('pages.error.title') : 'Error occured' }}
+                    </h1>
+                </template>
 
-                        <div class="py-2">
-                            <p class="font-semibold">
-                                {{ $t !== undefined ? $t('components.debug_info.version') : 'Version' }}:
-                            </p>
-                            <span> {{ version }} </span>
-                        </div>
+                <div class="flex flex-col gap-1">
+                    <p class="text-base">
+                        {{
+                            $t !== undefined
+                                ? $t('pages.error.subtitle')
+                                : 'A fatal error occured, please try again in a few seconds.'
+                        }}
+                    </p>
+                </div>
 
-                        <div class="mb-4 py-1">
-                            <p class="py-2 font-semibold">
-                                {{ $t !== undefined ? $t('pages.error.error_message') : 'Error message:' }}
-                            </p>
-                            <span v-if="error">
-                                <!-- @vue-ignore -->
-                                <pre
-                                    v-if="error.statusMessage"
-                                    v-text="
-                                        // @ts-expect-error
-                                        error.statusMessage
-                                    "
-                                />
-                                <!-- @vue-ignore -->
-                                <pre
-                                    v-else-if="
-                                        // @ts-expect-error
-                                        error.message
-                                    "
-                                    v-text="
-                                        // @ts-expect-error
-                                        error.message
-                                    "
-                                />
-                                <pre v-else>Unable to get error message</pre>
-                            </span>
-                            <span v-else>
-                                <pre>Unknown error</pre>
-                            </span>
-                        </div>
+                <div class="flex flex-col gap-1">
+                    <div class="flex flex-row gap-1">
+                        <p>
+                            <span class="font-semibold"
+                                >{{ $t !== undefined ? $t('components.debug_info.version') : 'Version' }}:</span
+                            >
+                        </p>
 
-                        <div class="inline-flex w-full gap-2">
+                        <pre :class="kbdBlockClasses">{{ version }}</pre>
+                    </div>
+
+                    <p class="font-semibold">
+                        {{ $t !== undefined ? $t('pages.error.error_message') : 'Error message:' }}
+                    </p>
+                    <span v-if="error">
+                        <!-- @vue-ignore -->
+                        <pre
+                            v-if="error.statusMessage"
+                            :class="kbdBlockClasses"
+                            v-text="
+                                // @ts-expect-error
+                                error.statusMessage
+                            "
+                        />
+                        <!-- @vue-ignore -->
+                        <pre
+                            v-else-if="
+                                // @ts-expect-error
+                                error.message
+                            "
+                            :class="kbdBlockClasses"
+                            v-text="
+                                // @ts-expect-error
+                                error.message
+                            "
+                        />
+                        <pre v-else>Unable to get error message</pre>
+                    </span>
+                    <span v-else>
+                        <pre>Unknown error</pre>
+                    </span>
+                </div>
+
+                <template #footer>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex w-full gap-2">
                             <UButton
                                 color="primary"
                                 block
@@ -151,7 +164,6 @@ const version = APP_VERSION;
 
                         <UButton
                             v-if="isDev"
-                            class="mt-4"
                             @click="
                                 updateAppConfig({ version: 'UNKNOWN' });
                                 clearError();
@@ -160,8 +172,8 @@ const version = APP_VERSION;
                             Set Dev App Config
                         </UButton>
                     </div>
-                </main>
-            </div>
+                </template>
+            </UCard>
         </div>
 
         <PageFooter />

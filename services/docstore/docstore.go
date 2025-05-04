@@ -69,7 +69,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocstore.ListDocument
 	if len(req.CreatorIds) > 0 {
 		logRequest = true
 		ids := make([]jet.Expression, len(req.CreatorIds))
-		for i := 0; i < len(req.CreatorIds); i++ {
+		for i := range req.CreatorIds {
 			ids[i] = jet.Int32(req.CreatorIds[i])
 		}
 
@@ -94,7 +94,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocstore.ListDocument
 	}
 	if len(req.DocumentIds) > 0 {
 		ids := make([]jet.Expression, len(req.DocumentIds))
-		for i := 0; i < len(req.DocumentIds); i++ {
+		for i := range req.DocumentIds {
 			ids[i] = jet.Uint64(req.DocumentIds[i])
 		}
 
@@ -159,7 +159,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocstore.ListDocument
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Documents); i++ {
+	for i := range resp.Documents {
 		if resp.Documents[i].Creator != nil {
 			jobInfoFn(resp.Documents[i].Creator)
 		}

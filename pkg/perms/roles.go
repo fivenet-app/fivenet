@@ -393,7 +393,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 
 func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, perms ...uint64) error {
 	ids := make([]jet.Expression, len(perms))
-	for i := 0; i < len(perms); i++ {
+	for i := range perms {
 		ids[i] = jet.Uint64(perms[i])
 	}
 

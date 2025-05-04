@@ -96,7 +96,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 
 	if len(req.Status) > 0 {
 		statuses := []jet.Expression{}
-		for i := 0; i < len(req.Status); i++ {
+		for i := range req.Status {
 			statuses = append(statuses, jet.Int16(int16(req.Status[i])))
 		}
 

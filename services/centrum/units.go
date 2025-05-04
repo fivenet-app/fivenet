@@ -406,7 +406,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Activity); i++ {
+	for i := range resp.Activity {
 		if resp.Activity[i].UnitId > 0 && resp.Activity[i].User != nil {
 			unit, err := s.state.GetUnit(ctx, userInfo.Job, resp.Activity[i].UnitId)
 			if err != nil {

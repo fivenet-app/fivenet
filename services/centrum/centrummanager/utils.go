@@ -32,7 +32,7 @@ func (s *Manager) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *use
 	}
 
 	// Iterate over units of dispatch and check if the user is in one of the units
-	for i := 0; i < len(dsp.Units); i++ {
+	for i := range dsp.Units {
 		unit, err := s.GetUnit(ctx, dsp.Units[i].Unit.Job, dsp.Units[i].UnitId)
 		if unit == nil || err != nil {
 			continue
@@ -52,7 +52,7 @@ func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId 
 		return true
 	}
 
-	for i := 0; i < len(unit.Users); i++ {
+	for i := range unit.Users {
 		if (unit.Users[i].User != nil && unit.Users[i].User.UserId == userId) || unit.Users[i].UserId == userId {
 			return true
 		}

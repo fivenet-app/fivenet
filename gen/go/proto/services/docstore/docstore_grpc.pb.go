@@ -50,8 +50,7 @@ const (
 	DocStoreService_DeleteDocumentReq_FullMethodName       = "/services.docstore.DocStoreService/DeleteDocumentReq"
 	DocStoreService_ListUserDocuments_FullMethodName       = "/services.docstore.DocStoreService/ListUserDocuments"
 	DocStoreService_ListCategories_FullMethodName          = "/services.docstore.DocStoreService/ListCategories"
-	DocStoreService_CreateCategory_FullMethodName          = "/services.docstore.DocStoreService/CreateCategory"
-	DocStoreService_UpdateCategory_FullMethodName          = "/services.docstore.DocStoreService/UpdateCategory"
+	DocStoreService_CreateOrUpdateCategory_FullMethodName  = "/services.docstore.DocStoreService/CreateOrUpdateCategory"
 	DocStoreService_DeleteCategory_FullMethodName          = "/services.docstore.DocStoreService/DeleteCategory"
 	DocStoreService_ListDocumentPins_FullMethodName        = "/services.docstore.DocStoreService/ListDocumentPins"
 	DocStoreService_ToggleDocumentPin_FullMethodName       = "/services.docstore.DocStoreService/ToggleDocumentPin"
@@ -125,9 +124,7 @@ type DocStoreServiceClient interface {
 	// @perm
 	ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error)
 	// @perm
-	CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error)
-	// @perm: Name=CreateCategory
-	UpdateCategory(ctx context.Context, in *UpdateCategoryRequest, opts ...grpc.CallOption) (*UpdateCategoryResponse, error)
+	CreateOrUpdateCategory(ctx context.Context, in *CreateOrUpdateCategoryRequest, opts ...grpc.CallOption) (*CreateOrUpdateCategoryResponse, error)
 	// @perm
 	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error)
 	// @perm: Name=ListDocuments
@@ -456,20 +453,10 @@ func (c *docStoreServiceClient) ListCategories(ctx context.Context, in *ListCate
 	return out, nil
 }
 
-func (c *docStoreServiceClient) CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error) {
+func (c *docStoreServiceClient) CreateOrUpdateCategory(ctx context.Context, in *CreateOrUpdateCategoryRequest, opts ...grpc.CallOption) (*CreateOrUpdateCategoryResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CreateCategoryResponse)
-	err := c.cc.Invoke(ctx, DocStoreService_CreateCategory_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *docStoreServiceClient) UpdateCategory(ctx context.Context, in *UpdateCategoryRequest, opts ...grpc.CallOption) (*UpdateCategoryResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateCategoryResponse)
-	err := c.cc.Invoke(ctx, DocStoreService_UpdateCategory_FullMethodName, in, out, cOpts...)
+	out := new(CreateOrUpdateCategoryResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_CreateOrUpdateCategory_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -583,9 +570,7 @@ type DocStoreServiceServer interface {
 	// @perm
 	ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error)
 	// @perm
-	CreateCategory(context.Context, *CreateCategoryRequest) (*CreateCategoryResponse, error)
-	// @perm: Name=CreateCategory
-	UpdateCategory(context.Context, *UpdateCategoryRequest) (*UpdateCategoryResponse, error)
+	CreateOrUpdateCategory(context.Context, *CreateOrUpdateCategoryRequest) (*CreateOrUpdateCategoryResponse, error)
 	// @perm
 	DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error)
 	// @perm: Name=ListDocuments
@@ -697,11 +682,8 @@ func (UnimplementedDocStoreServiceServer) ListUserDocuments(context.Context, *Li
 func (UnimplementedDocStoreServiceServer) ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
 }
-func (UnimplementedDocStoreServiceServer) CreateCategory(context.Context, *CreateCategoryRequest) (*CreateCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateCategory not implemented")
-}
-func (UnimplementedDocStoreServiceServer) UpdateCategory(context.Context, *UpdateCategoryRequest) (*UpdateCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateCategory not implemented")
+func (UnimplementedDocStoreServiceServer) CreateOrUpdateCategory(context.Context, *CreateOrUpdateCategoryRequest) (*CreateOrUpdateCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateCategory not implemented")
 }
 func (UnimplementedDocStoreServiceServer) DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCategory not implemented")
@@ -1294,38 +1276,20 @@ func _DocStoreService_ListCategories_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_CreateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateCategoryRequest)
+func _DocStoreService_CreateOrUpdateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateCategoryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).CreateCategory(ctx, in)
+		return srv.(DocStoreServiceServer).CreateOrUpdateCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DocStoreService_CreateCategory_FullMethodName,
+		FullMethod: DocStoreService_CreateOrUpdateCategory_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).CreateCategory(ctx, req.(*CreateCategoryRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _DocStoreService_UpdateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateCategoryRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DocStoreServiceServer).UpdateCategory(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DocStoreService_UpdateCategory_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).UpdateCategory(ctx, req.(*UpdateCategoryRequest))
+		return srv.(DocStoreServiceServer).CreateOrUpdateCategory(ctx, req.(*CreateOrUpdateCategoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1534,12 +1498,8 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_ListCategories_Handler,
 		},
 		{
-			MethodName: "CreateCategory",
-			Handler:    _DocStoreService_CreateCategory_Handler,
-		},
-		{
-			MethodName: "UpdateCategory",
-			Handler:    _DocStoreService_UpdateCategory_Handler,
+			MethodName: "CreateOrUpdateCategory",
+			Handler:    _DocStoreService_CreateOrUpdateCategory_Handler,
 		},
 		{
 			MethodName: "DeleteCategory",

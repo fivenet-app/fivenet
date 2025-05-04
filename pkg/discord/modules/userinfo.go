@@ -393,7 +393,7 @@ func (g *UserInfo) constructUserNickname(firstname string, lastname string, pref
 	// Truncate the firstname progressively
 	firstParts := strings.Split(firstname, " ")
 	truncatedFirst := ""
-	for i := 0; i < len(firstParts); i++ {
+	for i := range firstParts {
 		if i == len(firstParts)-1 {
 			truncatedFirst += string(firstParts[i][0]) + "."
 		} else {

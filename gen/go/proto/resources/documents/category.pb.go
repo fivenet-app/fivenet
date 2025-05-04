@@ -8,6 +8,7 @@ package documents
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -23,17 +24,19 @@ const (
 )
 
 type Category struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	// @sanitize
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	// @sanitize
-	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Job         *string `protobuf:"bytes,4,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	Description *string `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Job         *string `protobuf:"bytes,6,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	// @sanitize: method=StripTags
-	Color *string `protobuf:"bytes,5,opt,name=color,proto3,oneof" json:"color,omitempty"`
+	Color *string `protobuf:"bytes,7,opt,name=color,proto3,oneof" json:"color,omitempty"`
 	// @sanitize: method=StripTags
-	Icon          *string `protobuf:"bytes,6,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
+	Icon          *string `protobuf:"bytes,8,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -75,6 +78,20 @@ func (x *Category) GetId() uint64 {
 	return 0
 }
 
+func (x *Category) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Category) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
+}
+
 func (x *Category) GetName() string {
 	if x != nil {
 		return x.Name
@@ -114,15 +131,20 @@ var File_resources_documents_category_proto protoreflect.FileDescriptor
 
 const file_resources_documents_category_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/documents/category.proto\x12\x13resources.documents\x1a\x17validate/validate.proto\"\xff\x01\n" +
+	"\"resources/documents/category.proto\x12\x13resources.documents\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x91\x03\n" +
 	"\bCategory\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1e\n" +
-	"\x04name\x18\x02 \x01(\tB\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12\x1e\n" +
+	"\x04name\x18\x04 \x01(\tB\n" +
 	"\xfaB\ar\x05\x10\x03\x18\x80\x01R\x04name\x12/\n" +
-	"\vdescription\x18\x03 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x00R\vdescription\x88\x01\x01\x12\x1e\n" +
-	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x01R\x03job\x88\x01\x01\x12$\n" +
-	"\x05color\x18\x05 \x01(\tB\t\xfaB\x06r\x04\x10\x03\x18\aH\x02R\x05color\x88\x01\x01\x12!\n" +
-	"\x04icon\x18\x06 \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01H\x03R\x04icon\x88\x01\x01B\x0e\n" +
+	"\vdescription\x18\x05 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x01R\vdescription\x88\x01\x01\x12\x1e\n" +
+	"\x03job\x18\x06 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x02R\x03job\x88\x01\x01\x12$\n" +
+	"\x05color\x18\a \x01(\tB\t\xfaB\x06r\x04\x10\x03\x18\aH\x03R\x05color\x88\x01\x01\x12!\n" +
+	"\x04icon\x18\b \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01H\x04R\x04icon\x88\x01\x01B\r\n" +
+	"\v_deleted_atB\x0e\n" +
 	"\f_descriptionB\x06\n" +
 	"\x04_jobB\b\n" +
 	"\x06_colorB\a\n" +
@@ -142,14 +164,17 @@ func file_resources_documents_category_proto_rawDescGZIP() []byte {
 
 var file_resources_documents_category_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_documents_category_proto_goTypes = []any{
-	(*Category)(nil), // 0: resources.documents.Category
+	(*Category)(nil),            // 0: resources.documents.Category
+	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
 }
 var file_resources_documents_category_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // 0: resources.documents.Category.created_at:type_name -> resources.timestamp.Timestamp
+	1, // 1: resources.documents.Category.deleted_at:type_name -> resources.timestamp.Timestamp
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_category_proto_init() }

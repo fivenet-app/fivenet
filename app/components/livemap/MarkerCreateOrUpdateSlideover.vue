@@ -289,7 +289,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="icon">
-                                    <IconSelectMenu v-model="state.icon" />
+                                    <IconSelectMenu v-model="state.icon" :color="state.color" />
                                 </UFormGroup>
                             </dd>
                         </div>

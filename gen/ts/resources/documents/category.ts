@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.documents.Category
  */
@@ -19,31 +20,39 @@ export interface Category {
      */
     id: number;
     /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
+     */
+    deletedAt?: Timestamp;
+    /**
      * @sanitize
      *
-     * @generated from protobuf field: string name = 2;
+     * @generated from protobuf field: string name = 4;
      */
     name: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string description = 3;
+     * @generated from protobuf field: optional string description = 5;
      */
     description?: string;
     /**
-     * @generated from protobuf field: optional string job = 4;
+     * @generated from protobuf field: optional string job = 6;
      */
     job?: string;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string color = 5;
+     * @generated from protobuf field: optional string color = 7;
      */
     color?: string;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string icon = 6;
+     * @generated from protobuf field: optional string icon = 8;
      */
     icon?: string;
 }
@@ -52,11 +61,13 @@ class Category$Type extends MessageType<Category> {
     constructor() {
         super("resources.documents.Category", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
-            { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "7" } } } },
-            { no: 6, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
+            { no: 5, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 7, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "7" } } } },
+            { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<Category>): Category {
@@ -75,19 +86,25 @@ class Category$Type extends MessageType<Category> {
                 case /* uint64 id */ 1:
                     message.id = reader.uint64().toNumber();
                     break;
-                case /* string name */ 2:
+                case /* resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp deleted_at */ 3:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* string name */ 4:
                     message.name = reader.string();
                     break;
-                case /* optional string description */ 3:
+                case /* optional string description */ 5:
                     message.description = reader.string();
                     break;
-                case /* optional string job */ 4:
+                case /* optional string job */ 6:
                     message.job = reader.string();
                     break;
-                case /* optional string color */ 5:
+                case /* optional string color */ 7:
                     message.color = reader.string();
                     break;
-                case /* optional string icon */ 6:
+                case /* optional string icon */ 8:
                     message.icon = reader.string();
                     break;
                 default:
@@ -105,21 +122,27 @@ class Category$Type extends MessageType<Category> {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
-        /* string name = 2; */
+        /* resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp deleted_at = 3; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* string name = 4; */
         if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* optional string description = 3; */
+            writer.tag(4, WireType.LengthDelimited).string(message.name);
+        /* optional string description = 5; */
         if (message.description !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.description);
-        /* optional string job = 4; */
+            writer.tag(5, WireType.LengthDelimited).string(message.description);
+        /* optional string job = 6; */
         if (message.job !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* optional string color = 5; */
+            writer.tag(6, WireType.LengthDelimited).string(message.job);
+        /* optional string color = 7; */
         if (message.color !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.color);
-        /* optional string icon = 6; */
+            writer.tag(7, WireType.LengthDelimited).string(message.color);
+        /* optional string icon = 8; */
         if (message.icon !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.icon);
+            writer.tag(8, WireType.LengthDelimited).string(message.icon);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

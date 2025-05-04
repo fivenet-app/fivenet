@@ -432,7 +432,12 @@ const categoriesLoading = ref(false);
 
                             <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
                                 <div class="flex flex-1 gap-1">
-                                    <IconSelectMenu v-model="state.icon" class="flex-1" :fallback-icon="FileOutlineIcon" />
+                                    <IconSelectMenu
+                                        v-model="state.icon"
+                                        class="flex-1"
+                                        :color="state.color"
+                                        :fallback-icon="FileOutlineIcon"
+                                    />
 
                                     <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
                                 </div>

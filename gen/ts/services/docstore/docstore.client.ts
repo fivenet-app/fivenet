@@ -12,10 +12,8 @@ import type { ListDocumentPinsResponse } from "./docstore";
 import type { ListDocumentPinsRequest } from "./docstore";
 import type { DeleteCategoryResponse } from "./docstore";
 import type { DeleteCategoryRequest } from "./docstore";
-import type { UpdateCategoryResponse } from "./docstore";
-import type { UpdateCategoryRequest } from "./docstore";
-import type { CreateCategoryResponse } from "./docstore";
-import type { CreateCategoryRequest } from "./docstore";
+import type { CreateOrUpdateCategoryResponse } from "./docstore";
+import type { CreateOrUpdateCategoryRequest } from "./docstore";
 import type { ListCategoriesResponse } from "./docstore";
 import type { ListCategoriesRequest } from "./docstore";
 import type { ListUserDocumentsResponse } from "./docstore";
@@ -274,15 +272,9 @@ export interface IDocStoreServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: CreateCategory(services.docstore.CreateCategoryRequest) returns (services.docstore.CreateCategoryResponse);
+     * @generated from protobuf rpc: CreateOrUpdateCategory(services.docstore.CreateOrUpdateCategoryRequest) returns (services.docstore.CreateOrUpdateCategoryResponse);
      */
-    createCategory(input: CreateCategoryRequest, options?: RpcOptions): UnaryCall<CreateCategoryRequest, CreateCategoryResponse>;
-    /**
-     * @perm: Name=CreateCategory
-     *
-     * @generated from protobuf rpc: UpdateCategory(services.docstore.UpdateCategoryRequest) returns (services.docstore.UpdateCategoryResponse);
-     */
-    updateCategory(input: UpdateCategoryRequest, options?: RpcOptions): UnaryCall<UpdateCategoryRequest, UpdateCategoryResponse>;
+    createOrUpdateCategory(input: CreateOrUpdateCategoryRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse>;
     /**
      * @perm
      *
@@ -599,20 +591,11 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
     /**
      * @perm
      *
-     * @generated from protobuf rpc: CreateCategory(services.docstore.CreateCategoryRequest) returns (services.docstore.CreateCategoryResponse);
+     * @generated from protobuf rpc: CreateOrUpdateCategory(services.docstore.CreateOrUpdateCategoryRequest) returns (services.docstore.CreateOrUpdateCategoryResponse);
      */
-    createCategory(input: CreateCategoryRequest, options?: RpcOptions): UnaryCall<CreateCategoryRequest, CreateCategoryResponse> {
+    createOrUpdateCategory(input: CreateOrUpdateCategoryRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse> {
         const method = this.methods[31], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateCategoryRequest, CreateCategoryResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=CreateCategory
-     *
-     * @generated from protobuf rpc: UpdateCategory(services.docstore.UpdateCategoryRequest) returns (services.docstore.UpdateCategoryResponse);
-     */
-    updateCategory(input: UpdateCategoryRequest, options?: RpcOptions): UnaryCall<UpdateCategoryRequest, UpdateCategoryResponse> {
-        const method = this.methods[32], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateCategoryRequest, UpdateCategoryResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateOrUpdateCategoryRequest, CreateOrUpdateCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm
@@ -620,7 +603,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
      * @generated from protobuf rpc: DeleteCategory(services.docstore.DeleteCategoryRequest) returns (services.docstore.DeleteCategoryResponse);
      */
     deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse> {
-        const method = this.methods[33], opt = this._transport.mergeOptions(options);
+        const method = this.methods[32], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteCategoryRequest, DeleteCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -629,7 +612,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
      * @generated from protobuf rpc: ListDocumentPins(services.docstore.ListDocumentPinsRequest) returns (services.docstore.ListDocumentPinsResponse);
      */
     listDocumentPins(input: ListDocumentPinsRequest, options?: RpcOptions): UnaryCall<ListDocumentPinsRequest, ListDocumentPinsResponse> {
-        const method = this.methods[34], opt = this._transport.mergeOptions(options);
+        const method = this.methods[33], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDocumentPinsRequest, ListDocumentPinsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -638,7 +621,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
      * @generated from protobuf rpc: ToggleDocumentPin(services.docstore.ToggleDocumentPinRequest) returns (services.docstore.ToggleDocumentPinResponse);
      */
     toggleDocumentPin(input: ToggleDocumentPinRequest, options?: RpcOptions): UnaryCall<ToggleDocumentPinRequest, ToggleDocumentPinResponse> {
-        const method = this.methods[35], opt = this._transport.mergeOptions(options);
+        const method = this.methods[34], opt = this._transport.mergeOptions(options);
         return stackIntercept<ToggleDocumentPinRequest, ToggleDocumentPinResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -647,7 +630,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
      * @generated from protobuf rpc: SetDocumentReminder(services.docstore.SetDocumentReminderRequest) returns (services.docstore.SetDocumentReminderResponse);
      */
     setDocumentReminder(input: SetDocumentReminderRequest, options?: RpcOptions): UnaryCall<SetDocumentReminderRequest, SetDocumentReminderResponse> {
-        const method = this.methods[36], opt = this._transport.mergeOptions(options);
+        const method = this.methods[35], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetDocumentReminderRequest, SetDocumentReminderResponse>("unary", this._transport, method, opt, input);
     }
 }

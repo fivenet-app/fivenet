@@ -54,7 +54,7 @@ const state = reactive<Schema>({
     private: !hasPrivateCalendar,
     public: false,
     closed: false,
-    color: 'primary',
+    color: 'blue',
     access: {
         jobs: [],
         users: [],

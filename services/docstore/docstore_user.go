@@ -175,7 +175,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 					tDocRel.DocumentID.EQ(tDocument.ID),
 				).
 				LEFT_JOIN(tDCategory,
-					tDocument.CategoryID.EQ(tDCategory.ID),
+					tDocument.CategoryID.EQ(tDCategory.ID).
+						AND(tDCategory.DeletedAt.IS_NULL()),
 				).
 				LEFT_JOIN(tCreator,
 					tDocument.CreatorID.EQ(tCreator.ID),
@@ -201,7 +202,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Relations); i++ {
+	for i := range resp.Relations {
 		if resp.Relations[i].SourceUser != nil {
 			jobInfoFn(resp.Relations[i].SourceUser)
 		}

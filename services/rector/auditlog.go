@@ -42,7 +42,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *pbrector.ViewAuditLogReq
 
 	if len(req.UserIds) > 0 {
 		ids := make([]jet.Expression, len(req.UserIds))
-		for i := 0; i < len(req.UserIds); i++ {
+		for i := range req.UserIds {
 			ids[i] = jet.Int32(req.UserIds[i])
 		}
 		condition = condition.AND(tAuditLog.UserID.IN(ids...))
@@ -59,14 +59,14 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *pbrector.ViewAuditLogReq
 	}
 	if len(req.Services) > 0 {
 		svcs := make([]jet.Expression, len(req.Services))
-		for i := 0; i < len(req.Services); i++ {
+		for i := range req.Services {
 			svcs[i] = jet.String(req.Services[i])
 		}
 		condition = condition.AND(tAuditLog.Service.IN(svcs...))
 	}
 	if len(req.Methods) > 0 {
 		methods := make([]jet.Expression, len(req.Methods))
-		for i := 0; i < len(req.Methods); i++ {
+		for i := range req.Methods {
 			methods[i] = jet.String(req.Methods[i])
 		}
 		condition = condition.AND(tAuditLog.Method.IN(methods...))

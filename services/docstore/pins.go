@@ -66,7 +66,7 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *pbdocstore.ListDocum
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Documents); i++ {
+	for i := range resp.Documents {
 		if resp.Documents[i].Creator != nil {
 			jobInfoFn(resp.Documents[i].Creator)
 		}

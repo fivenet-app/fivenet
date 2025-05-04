@@ -66,7 +66,7 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, userId int32, jobs []string) 
 	}
 
 	jobsExp := make([]jet.Expression, len(jobs))
-	for i := 0; i < len(jobs); i++ {
+	for i := range jobs {
 		jobsExp[i] = jet.String(jobs[i])
 	}
 

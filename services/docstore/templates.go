@@ -79,7 +79,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *pbdocstore.ListTemplate
 		}
 	}
 
-	for i := 0; i < len(resp.Templates); i++ {
+	for i := range resp.Templates {
 		s.enricher.EnrichJobName(resp.Templates[i])
 	}
 
@@ -103,6 +103,10 @@ func (s *Server) GetTemplate(ctx context.Context, req *pbdocstore.GetTemplateReq
 	resp.Template, err = s.getTemplate(ctx, req.TemplateId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
+	if resp.Template == nil {
+		return nil, errorsdocstore.ErrTemplateNoPerms
 	}
 
 	if req.Render == nil || !*req.Render {
@@ -160,9 +164,10 @@ func (s *Server) getTemplate(ctx context.Context, templateId uint64) (*documents
 					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
-		WHERE(
+		WHERE(jet.AND(
+			tDTemplates.DeletedAt.IS_NULL(),
 			tDTemplates.ID.EQ(jet.Uint64(templateId)),
-		).
+		)).
 		LIMIT(1)
 
 	var dest documents.Template
@@ -475,11 +480,17 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *pbdocstore.DeleteTempl
 
 	tDTemplates := table.FivenetDocumentsTemplates
 	stmt := tDTemplates.
-		DELETE().
-		WHERE(
-			tDTemplates.CreatorJob.EQ(jet.String(userInfo.Job)).AND(
-				tDTemplates.ID.EQ(jet.Uint64(req.Id))),
-		)
+		UPDATE(
+			tDTemplates.DeletedAt,
+		).
+		SET(
+			tDTemplates.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+		).
+		WHERE(jet.AND(
+			tDTemplates.CreatorJob.EQ(jet.String(userInfo.Job)),
+			tDTemplates.ID.EQ(jet.Uint64(req.Id)),
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)

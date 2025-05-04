@@ -38,21 +38,24 @@ async function listTemplates(): Promise<TemplateShort[]> {
     }
 }
 
-const items = ref<CardElements>([]);
-watch(templates, () =>
-    templates.value?.forEach((v) =>
-        items.value.push({
+const items = computed<CardElements>(
+    () =>
+        templates.value?.map((v) => ({
             title: v?.title,
             description: v?.description,
             icon: v.icon ?? (!props.hideIcon ? 'i-mdi-file-outline' : undefined),
             color: v.color ?? 'primary',
-        }),
-    ),
+        })) ?? [],
 );
 
 function selected(idx: number): TemplateShort | undefined {
     return templates.value?.at(idx);
 }
+
+defineExpose({
+    loading,
+    refresh,
+});
 </script>
 
 <template>

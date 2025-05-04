@@ -36,7 +36,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *pbnotificator.GetNot
 
 	if len(req.Categories) > 0 {
 		categoryIds := make([]jet.Expression, len(req.Categories))
-		for i := 0; i < len(req.Categories); i++ {
+		for i := range req.Categories {
 			categoryIds[i] = jet.Int16(int16(req.Categories[i]))
 		}
 
@@ -107,7 +107,7 @@ func (s *Server) MarkNotifications(ctx context.Context, req *pbnotificator.MarkN
 	// If not all
 	if len(req.Ids) > 0 {
 		ids := make([]jet.Expression, len(req.Ids))
-		for i := 0; i < len(req.Ids); i++ {
+		for i := range req.Ids {
 			ids[i] = jet.Uint64(req.Ids[i])
 		}
 		condition = condition.AND(tNotifications.ID.IN(ids...))

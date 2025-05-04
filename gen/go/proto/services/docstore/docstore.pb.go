@@ -3109,27 +3109,27 @@ func (x *ListCategoriesResponse) GetCategories() []*documents.Category {
 	return nil
 }
 
-type CreateCategoryRequest struct {
+type CreateOrUpdateCategoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Category      *documents.Category    `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateCategoryRequest) Reset() {
-	*x = CreateCategoryRequest{}
+func (x *CreateOrUpdateCategoryRequest) Reset() {
+	*x = CreateOrUpdateCategoryRequest{}
 	mi := &file_services_docstore_docstore_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CreateCategoryRequest) String() string {
+func (x *CreateOrUpdateCategoryRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CreateCategoryRequest) ProtoMessage() {}
+func (*CreateOrUpdateCategoryRequest) ProtoMessage() {}
 
-func (x *CreateCategoryRequest) ProtoReflect() protoreflect.Message {
+func (x *CreateOrUpdateCategoryRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_docstore_docstore_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3141,152 +3141,72 @@ func (x *CreateCategoryRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CreateCategoryRequest.ProtoReflect.Descriptor instead.
-func (*CreateCategoryRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use CreateOrUpdateCategoryRequest.ProtoReflect.Descriptor instead.
+func (*CreateOrUpdateCategoryRequest) Descriptor() ([]byte, []int) {
 	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{62}
 }
 
-func (x *CreateCategoryRequest) GetCategory() *documents.Category {
+func (x *CreateOrUpdateCategoryRequest) GetCategory() *documents.Category {
 	if x != nil {
 		return x.Category
 	}
 	return nil
 }
 
-type CreateCategoryResponse struct {
+type CreateOrUpdateCategoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Category      *documents.Category    `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateOrUpdateCategoryResponse) Reset() {
+	*x = CreateOrUpdateCategoryResponse{}
+	mi := &file_services_docstore_docstore_proto_msgTypes[63]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateOrUpdateCategoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateOrUpdateCategoryResponse) ProtoMessage() {}
+
+func (x *CreateOrUpdateCategoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_docstore_docstore_proto_msgTypes[63]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateOrUpdateCategoryResponse.ProtoReflect.Descriptor instead.
+func (*CreateOrUpdateCategoryResponse) Descriptor() ([]byte, []int) {
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{63}
+}
+
+func (x *CreateOrUpdateCategoryResponse) GetCategory() *documents.Category {
+	if x != nil {
+		return x.Category
+	}
+	return nil
+}
+
+type DeleteCategoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CreateCategoryResponse) Reset() {
-	*x = CreateCategoryResponse{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[63]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *CreateCategoryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*CreateCategoryResponse) ProtoMessage() {}
-
-func (x *CreateCategoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[63]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use CreateCategoryResponse.ProtoReflect.Descriptor instead.
-func (*CreateCategoryResponse) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{63}
-}
-
-func (x *CreateCategoryResponse) GetId() uint64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-type UpdateCategoryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Category      *documents.Category    `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateCategoryRequest) Reset() {
-	*x = UpdateCategoryRequest{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[64]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateCategoryRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateCategoryRequest) ProtoMessage() {}
-
-func (x *UpdateCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[64]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateCategoryRequest.ProtoReflect.Descriptor instead.
-func (*UpdateCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{64}
-}
-
-func (x *UpdateCategoryRequest) GetCategory() *documents.Category {
-	if x != nil {
-		return x.Category
-	}
-	return nil
-}
-
-type UpdateCategoryResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UpdateCategoryResponse) Reset() {
-	*x = UpdateCategoryResponse{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[65]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UpdateCategoryResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UpdateCategoryResponse) ProtoMessage() {}
-
-func (x *UpdateCategoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[65]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UpdateCategoryResponse.ProtoReflect.Descriptor instead.
-func (*UpdateCategoryResponse) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{65}
-}
-
-type DeleteCategoryRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ids           []uint64               `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
 func (x *DeleteCategoryRequest) Reset() {
 	*x = DeleteCategoryRequest{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[66]
+	mi := &file_services_docstore_docstore_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3298,7 +3218,7 @@ func (x *DeleteCategoryRequest) String() string {
 func (*DeleteCategoryRequest) ProtoMessage() {}
 
 func (x *DeleteCategoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[66]
+	mi := &file_services_docstore_docstore_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3311,14 +3231,14 @@ func (x *DeleteCategoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCategoryRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCategoryRequest) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{66}
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{64}
 }
 
-func (x *DeleteCategoryRequest) GetIds() []uint64 {
+func (x *DeleteCategoryRequest) GetId() uint64 {
 	if x != nil {
-		return x.Ids
+		return x.Id
 	}
-	return nil
+	return 0
 }
 
 type DeleteCategoryResponse struct {
@@ -3329,7 +3249,7 @@ type DeleteCategoryResponse struct {
 
 func (x *DeleteCategoryResponse) Reset() {
 	*x = DeleteCategoryResponse{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[67]
+	mi := &file_services_docstore_docstore_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3341,7 +3261,7 @@ func (x *DeleteCategoryResponse) String() string {
 func (*DeleteCategoryResponse) ProtoMessage() {}
 
 func (x *DeleteCategoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[67]
+	mi := &file_services_docstore_docstore_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3354,7 +3274,7 @@ func (x *DeleteCategoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCategoryResponse.ProtoReflect.Descriptor instead.
 func (*DeleteCategoryResponse) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{67}
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{65}
 }
 
 type ListDocumentPinsRequest struct {
@@ -3366,7 +3286,7 @@ type ListDocumentPinsRequest struct {
 
 func (x *ListDocumentPinsRequest) Reset() {
 	*x = ListDocumentPinsRequest{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[68]
+	mi := &file_services_docstore_docstore_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3378,7 +3298,7 @@ func (x *ListDocumentPinsRequest) String() string {
 func (*ListDocumentPinsRequest) ProtoMessage() {}
 
 func (x *ListDocumentPinsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[68]
+	mi := &file_services_docstore_docstore_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3391,7 +3311,7 @@ func (x *ListDocumentPinsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDocumentPinsRequest.ProtoReflect.Descriptor instead.
 func (*ListDocumentPinsRequest) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{68}
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *ListDocumentPinsRequest) GetPagination() *database.PaginationRequest {
@@ -3411,7 +3331,7 @@ type ListDocumentPinsResponse struct {
 
 func (x *ListDocumentPinsResponse) Reset() {
 	*x = ListDocumentPinsResponse{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[69]
+	mi := &file_services_docstore_docstore_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3423,7 +3343,7 @@ func (x *ListDocumentPinsResponse) String() string {
 func (*ListDocumentPinsResponse) ProtoMessage() {}
 
 func (x *ListDocumentPinsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[69]
+	mi := &file_services_docstore_docstore_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3436,7 +3356,7 @@ func (x *ListDocumentPinsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDocumentPinsResponse.ProtoReflect.Descriptor instead.
 func (*ListDocumentPinsResponse) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{69}
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ListDocumentPinsResponse) GetPagination() *database.PaginationResponse {
@@ -3463,7 +3383,7 @@ type ToggleDocumentPinRequest struct {
 
 func (x *ToggleDocumentPinRequest) Reset() {
 	*x = ToggleDocumentPinRequest{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[70]
+	mi := &file_services_docstore_docstore_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3475,7 +3395,7 @@ func (x *ToggleDocumentPinRequest) String() string {
 func (*ToggleDocumentPinRequest) ProtoMessage() {}
 
 func (x *ToggleDocumentPinRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[70]
+	mi := &file_services_docstore_docstore_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3488,7 +3408,7 @@ func (x *ToggleDocumentPinRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToggleDocumentPinRequest.ProtoReflect.Descriptor instead.
 func (*ToggleDocumentPinRequest) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{70}
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *ToggleDocumentPinRequest) GetDocumentId() uint64 {
@@ -3514,7 +3434,7 @@ type ToggleDocumentPinResponse struct {
 
 func (x *ToggleDocumentPinResponse) Reset() {
 	*x = ToggleDocumentPinResponse{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[71]
+	mi := &file_services_docstore_docstore_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3526,7 +3446,7 @@ func (x *ToggleDocumentPinResponse) String() string {
 func (*ToggleDocumentPinResponse) ProtoMessage() {}
 
 func (x *ToggleDocumentPinResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[71]
+	mi := &file_services_docstore_docstore_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3539,7 +3459,7 @@ func (x *ToggleDocumentPinResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ToggleDocumentPinResponse.ProtoReflect.Descriptor instead.
 func (*ToggleDocumentPinResponse) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{71}
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *ToggleDocumentPinResponse) GetState() bool {
@@ -3561,7 +3481,7 @@ type SetDocumentReminderRequest struct {
 
 func (x *SetDocumentReminderRequest) Reset() {
 	*x = SetDocumentReminderRequest{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[72]
+	mi := &file_services_docstore_docstore_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3573,7 +3493,7 @@ func (x *SetDocumentReminderRequest) String() string {
 func (*SetDocumentReminderRequest) ProtoMessage() {}
 
 func (x *SetDocumentReminderRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[72]
+	mi := &file_services_docstore_docstore_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3586,7 +3506,7 @@ func (x *SetDocumentReminderRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDocumentReminderRequest.ProtoReflect.Descriptor instead.
 func (*SetDocumentReminderRequest) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{72}
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *SetDocumentReminderRequest) GetDocumentId() uint64 {
@@ -3618,7 +3538,7 @@ type SetDocumentReminderResponse struct {
 
 func (x *SetDocumentReminderResponse) Reset() {
 	*x = SetDocumentReminderResponse{}
-	mi := &file_services_docstore_docstore_proto_msgTypes[73]
+	mi := &file_services_docstore_docstore_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3630,7 +3550,7 @@ func (x *SetDocumentReminderResponse) String() string {
 func (*SetDocumentReminderResponse) ProtoMessage() {}
 
 func (x *SetDocumentReminderResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_docstore_docstore_proto_msgTypes[73]
+	mi := &file_services_docstore_docstore_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3643,7 +3563,7 @@ func (x *SetDocumentReminderResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SetDocumentReminderResponse.ProtoReflect.Descriptor instead.
 func (*SetDocumentReminderResponse) Descriptor() ([]byte, []int) {
-	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{73}
+	return file_services_docstore_docstore_proto_rawDescGZIP(), []int{71}
 }
 
 var File_services_docstore_docstore_proto protoreflect.FileDescriptor
@@ -3893,16 +3813,13 @@ const file_services_docstore_docstore_proto_rawDesc = "" +
 	"\x16ListCategoriesResponse\x12=\n" +
 	"\n" +
 	"categories\x18\x01 \x03(\v2\x1d.resources.documents.CategoryR\n" +
-	"categories\"\\\n" +
-	"\x15CreateCategoryRequest\x12C\n" +
-	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryB\b\xfaB\x05\x8a\x01\x02\x10\x01R\bcategory\"(\n" +
-	"\x16CreateCategoryResponse\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\"\\\n" +
-	"\x15UpdateCategoryRequest\x12C\n" +
-	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryB\b\xfaB\x05\x8a\x01\x02\x10\x01R\bcategory\"\x18\n" +
-	"\x16UpdateCategoryResponse\")\n" +
-	"\x15DeleteCategoryRequest\x12\x10\n" +
-	"\x03ids\x18\x01 \x03(\x04R\x03ids\"\x18\n" +
+	"categories\"d\n" +
+	"\x1dCreateOrUpdateCategoryRequest\x12C\n" +
+	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryB\b\xfaB\x05\x8a\x01\x02\x10\x01R\bcategory\"e\n" +
+	"\x1eCreateOrUpdateCategoryResponse\x12C\n" +
+	"\bcategory\x18\x01 \x01(\v2\x1d.resources.documents.CategoryB\b\xfaB\x05\x8a\x01\x02\x10\x01R\bcategory\"'\n" +
+	"\x15DeleteCategoryRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"\x18\n" +
 	"\x16DeleteCategoryResponse\"q\n" +
 	"\x17ListDocumentPinsRequest\x12V\n" +
 	"\n" +
@@ -3927,7 +3844,7 @@ const file_services_docstore_docstore_proto_rawDesc = "" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +
-	"\x1bSetDocumentReminderResponse2\xb5\x1f\n" +
+	"\x1bSetDocumentReminderResponse2\xe6\x1e\n" +
 	"\x0fDocStoreService\x12b\n" +
 	"\rListTemplates\x12'.services.docstore.ListTemplatesRequest\x1a(.services.docstore.ListTemplatesResponse\x12\\\n" +
 	"\vGetTemplate\x12%.services.docstore.GetTemplateRequest\x1a&.services.docstore.GetTemplateResponse\x12e\n" +
@@ -3959,9 +3876,8 @@ const file_services_docstore_docstore_proto_rawDesc = "" +
 	"\x11UpdateDocumentReq\x12+.services.docstore.UpdateDocumentReqRequest\x1a,.services.docstore.UpdateDocumentReqResponse\x12n\n" +
 	"\x11DeleteDocumentReq\x12+.services.docstore.DeleteDocumentReqRequest\x1a,.services.docstore.DeleteDocumentReqResponse\x12n\n" +
 	"\x11ListUserDocuments\x12+.services.docstore.ListUserDocumentsRequest\x1a,.services.docstore.ListUserDocumentsResponse\x12e\n" +
-	"\x0eListCategories\x12(.services.docstore.ListCategoriesRequest\x1a).services.docstore.ListCategoriesResponse\x12e\n" +
-	"\x0eCreateCategory\x12(.services.docstore.CreateCategoryRequest\x1a).services.docstore.CreateCategoryResponse\x12e\n" +
-	"\x0eUpdateCategory\x12(.services.docstore.UpdateCategoryRequest\x1a).services.docstore.UpdateCategoryResponse\x12e\n" +
+	"\x0eListCategories\x12(.services.docstore.ListCategoriesRequest\x1a).services.docstore.ListCategoriesResponse\x12}\n" +
+	"\x16CreateOrUpdateCategory\x120.services.docstore.CreateOrUpdateCategoryRequest\x1a1.services.docstore.CreateOrUpdateCategoryResponse\x12e\n" +
 	"\x0eDeleteCategory\x12(.services.docstore.DeleteCategoryRequest\x1a).services.docstore.DeleteCategoryResponse\x12k\n" +
 	"\x10ListDocumentPins\x12*.services.docstore.ListDocumentPinsRequest\x1a+.services.docstore.ListDocumentPinsResponse\x12n\n" +
 	"\x11ToggleDocumentPin\x12+.services.docstore.ToggleDocumentPinRequest\x1a,.services.docstore.ToggleDocumentPinResponse\x12t\n" +
@@ -3979,7 +3895,7 @@ func file_services_docstore_docstore_proto_rawDescGZIP() []byte {
 	return file_services_docstore_docstore_proto_rawDescData
 }
 
-var file_services_docstore_docstore_proto_msgTypes = make([]protoimpl.MessageInfo, 74)
+var file_services_docstore_docstore_proto_msgTypes = make([]protoimpl.MessageInfo, 72)
 var file_services_docstore_docstore_proto_goTypes = []any{
 	(*ListTemplatesRequest)(nil),            // 0: services.docstore.ListTemplatesRequest
 	(*ListTemplatesResponse)(nil),           // 1: services.docstore.ListTemplatesResponse
@@ -4043,97 +3959,95 @@ var file_services_docstore_docstore_proto_goTypes = []any{
 	(*ListUserDocumentsResponse)(nil),       // 59: services.docstore.ListUserDocumentsResponse
 	(*ListCategoriesRequest)(nil),           // 60: services.docstore.ListCategoriesRequest
 	(*ListCategoriesResponse)(nil),          // 61: services.docstore.ListCategoriesResponse
-	(*CreateCategoryRequest)(nil),           // 62: services.docstore.CreateCategoryRequest
-	(*CreateCategoryResponse)(nil),          // 63: services.docstore.CreateCategoryResponse
-	(*UpdateCategoryRequest)(nil),           // 64: services.docstore.UpdateCategoryRequest
-	(*UpdateCategoryResponse)(nil),          // 65: services.docstore.UpdateCategoryResponse
-	(*DeleteCategoryRequest)(nil),           // 66: services.docstore.DeleteCategoryRequest
-	(*DeleteCategoryResponse)(nil),          // 67: services.docstore.DeleteCategoryResponse
-	(*ListDocumentPinsRequest)(nil),         // 68: services.docstore.ListDocumentPinsRequest
-	(*ListDocumentPinsResponse)(nil),        // 69: services.docstore.ListDocumentPinsResponse
-	(*ToggleDocumentPinRequest)(nil),        // 70: services.docstore.ToggleDocumentPinRequest
-	(*ToggleDocumentPinResponse)(nil),       // 71: services.docstore.ToggleDocumentPinResponse
-	(*SetDocumentReminderRequest)(nil),      // 72: services.docstore.SetDocumentReminderRequest
-	(*SetDocumentReminderResponse)(nil),     // 73: services.docstore.SetDocumentReminderResponse
-	(*documents.TemplateShort)(nil),         // 74: resources.documents.TemplateShort
-	(*documents.TemplateData)(nil),          // 75: resources.documents.TemplateData
-	(*documents.Template)(nil),              // 76: resources.documents.Template
-	(*database.PaginationRequest)(nil),      // 77: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                   // 78: resources.common.database.Sort
-	(*timestamp.Timestamp)(nil),             // 79: resources.timestamp.Timestamp
-	(*database.PaginationResponse)(nil),     // 80: resources.common.database.PaginationResponse
-	(*documents.DocumentShort)(nil),         // 81: resources.documents.DocumentShort
-	(*documents.Document)(nil),              // 82: resources.documents.Document
-	(*documents.DocumentAccess)(nil),        // 83: resources.documents.DocumentAccess
-	(*documents.DocumentReference)(nil),     // 84: resources.documents.DocumentReference
-	(*documents.DocumentRelation)(nil),      // 85: resources.documents.DocumentRelation
-	(*documents.Comment)(nil),               // 86: resources.documents.Comment
-	(*content.Content)(nil),                 // 87: resources.common.content.Content
-	(content.ContentType)(0),                // 88: resources.common.content.ContentType
-	(documents.DocActivityType)(0),          // 89: resources.documents.DocActivityType
-	(*documents.DocActivity)(nil),           // 90: resources.documents.DocActivity
-	(*documents.DocRequest)(nil),            // 91: resources.documents.DocRequest
-	(*documents.DocActivityData)(nil),       // 92: resources.documents.DocActivityData
-	(documents.DocRelation)(0),              // 93: resources.documents.DocRelation
-	(*documents.Category)(nil),              // 94: resources.documents.Category
+	(*CreateOrUpdateCategoryRequest)(nil),   // 62: services.docstore.CreateOrUpdateCategoryRequest
+	(*CreateOrUpdateCategoryResponse)(nil),  // 63: services.docstore.CreateOrUpdateCategoryResponse
+	(*DeleteCategoryRequest)(nil),           // 64: services.docstore.DeleteCategoryRequest
+	(*DeleteCategoryResponse)(nil),          // 65: services.docstore.DeleteCategoryResponse
+	(*ListDocumentPinsRequest)(nil),         // 66: services.docstore.ListDocumentPinsRequest
+	(*ListDocumentPinsResponse)(nil),        // 67: services.docstore.ListDocumentPinsResponse
+	(*ToggleDocumentPinRequest)(nil),        // 68: services.docstore.ToggleDocumentPinRequest
+	(*ToggleDocumentPinResponse)(nil),       // 69: services.docstore.ToggleDocumentPinResponse
+	(*SetDocumentReminderRequest)(nil),      // 70: services.docstore.SetDocumentReminderRequest
+	(*SetDocumentReminderResponse)(nil),     // 71: services.docstore.SetDocumentReminderResponse
+	(*documents.TemplateShort)(nil),         // 72: resources.documents.TemplateShort
+	(*documents.TemplateData)(nil),          // 73: resources.documents.TemplateData
+	(*documents.Template)(nil),              // 74: resources.documents.Template
+	(*database.PaginationRequest)(nil),      // 75: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                   // 76: resources.common.database.Sort
+	(*timestamp.Timestamp)(nil),             // 77: resources.timestamp.Timestamp
+	(*database.PaginationResponse)(nil),     // 78: resources.common.database.PaginationResponse
+	(*documents.DocumentShort)(nil),         // 79: resources.documents.DocumentShort
+	(*documents.Document)(nil),              // 80: resources.documents.Document
+	(*documents.DocumentAccess)(nil),        // 81: resources.documents.DocumentAccess
+	(*documents.DocumentReference)(nil),     // 82: resources.documents.DocumentReference
+	(*documents.DocumentRelation)(nil),      // 83: resources.documents.DocumentRelation
+	(*documents.Comment)(nil),               // 84: resources.documents.Comment
+	(*content.Content)(nil),                 // 85: resources.common.content.Content
+	(content.ContentType)(0),                // 86: resources.common.content.ContentType
+	(documents.DocActivityType)(0),          // 87: resources.documents.DocActivityType
+	(*documents.DocActivity)(nil),           // 88: resources.documents.DocActivity
+	(*documents.DocRequest)(nil),            // 89: resources.documents.DocRequest
+	(*documents.DocActivityData)(nil),       // 90: resources.documents.DocActivityData
+	(documents.DocRelation)(0),              // 91: resources.documents.DocRelation
+	(*documents.Category)(nil),              // 92: resources.documents.Category
 }
 var file_services_docstore_docstore_proto_depIdxs = []int32{
-	74, // 0: services.docstore.ListTemplatesResponse.templates:type_name -> resources.documents.TemplateShort
-	75, // 1: services.docstore.GetTemplateRequest.data:type_name -> resources.documents.TemplateData
-	76, // 2: services.docstore.GetTemplateResponse.template:type_name -> resources.documents.Template
-	76, // 3: services.docstore.CreateTemplateRequest.template:type_name -> resources.documents.Template
-	76, // 4: services.docstore.UpdateTemplateRequest.template:type_name -> resources.documents.Template
-	76, // 5: services.docstore.UpdateTemplateResponse.template:type_name -> resources.documents.Template
-	77, // 6: services.docstore.ListDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	78, // 7: services.docstore.ListDocumentsRequest.sort:type_name -> resources.common.database.Sort
-	79, // 8: services.docstore.ListDocumentsRequest.from:type_name -> resources.timestamp.Timestamp
-	79, // 9: services.docstore.ListDocumentsRequest.to:type_name -> resources.timestamp.Timestamp
-	80, // 10: services.docstore.ListDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	81, // 11: services.docstore.ListDocumentsResponse.documents:type_name -> resources.documents.DocumentShort
-	82, // 12: services.docstore.GetDocumentResponse.document:type_name -> resources.documents.Document
-	83, // 13: services.docstore.GetDocumentResponse.access:type_name -> resources.documents.DocumentAccess
-	84, // 14: services.docstore.GetDocumentReferencesResponse.references:type_name -> resources.documents.DocumentReference
-	85, // 15: services.docstore.GetDocumentRelationsResponse.relations:type_name -> resources.documents.DocumentRelation
-	84, // 16: services.docstore.AddDocumentReferenceRequest.reference:type_name -> resources.documents.DocumentReference
-	85, // 17: services.docstore.AddDocumentRelationRequest.relation:type_name -> resources.documents.DocumentRelation
-	77, // 18: services.docstore.GetCommentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	80, // 19: services.docstore.GetCommentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	86, // 20: services.docstore.GetCommentsResponse.comments:type_name -> resources.documents.Comment
-	86, // 21: services.docstore.PostCommentRequest.comment:type_name -> resources.documents.Comment
-	86, // 22: services.docstore.PostCommentResponse.comment:type_name -> resources.documents.Comment
-	86, // 23: services.docstore.EditCommentRequest.comment:type_name -> resources.documents.Comment
-	86, // 24: services.docstore.EditCommentResponse.comment:type_name -> resources.documents.Comment
-	87, // 25: services.docstore.CreateDocumentRequest.content:type_name -> resources.common.content.Content
-	88, // 26: services.docstore.CreateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
-	83, // 27: services.docstore.CreateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
-	87, // 28: services.docstore.UpdateDocumentRequest.content:type_name -> resources.common.content.Content
-	88, // 29: services.docstore.UpdateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
-	83, // 30: services.docstore.UpdateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
-	77, // 31: services.docstore.ListDocumentActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	89, // 32: services.docstore.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.DocActivityType
-	80, // 33: services.docstore.ListDocumentActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	90, // 34: services.docstore.ListDocumentActivityResponse.activity:type_name -> resources.documents.DocActivity
-	77, // 35: services.docstore.ListDocumentReqsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	80, // 36: services.docstore.ListDocumentReqsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	91, // 37: services.docstore.ListDocumentReqsResponse.requests:type_name -> resources.documents.DocRequest
-	89, // 38: services.docstore.CreateDocumentReqRequest.request_type:type_name -> resources.documents.DocActivityType
-	92, // 39: services.docstore.CreateDocumentReqRequest.data:type_name -> resources.documents.DocActivityData
-	91, // 40: services.docstore.CreateDocumentReqResponse.request:type_name -> resources.documents.DocRequest
-	92, // 41: services.docstore.UpdateDocumentReqRequest.data:type_name -> resources.documents.DocActivityData
-	91, // 42: services.docstore.UpdateDocumentReqResponse.request:type_name -> resources.documents.DocRequest
-	83, // 43: services.docstore.GetDocumentAccessResponse.access:type_name -> resources.documents.DocumentAccess
-	83, // 44: services.docstore.SetDocumentAccessRequest.access:type_name -> resources.documents.DocumentAccess
-	77, // 45: services.docstore.ListUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	93, // 46: services.docstore.ListUserDocumentsRequest.relations:type_name -> resources.documents.DocRelation
-	80, // 47: services.docstore.ListUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	85, // 48: services.docstore.ListUserDocumentsResponse.relations:type_name -> resources.documents.DocumentRelation
-	94, // 49: services.docstore.ListCategoriesResponse.categories:type_name -> resources.documents.Category
-	94, // 50: services.docstore.CreateCategoryRequest.category:type_name -> resources.documents.Category
-	94, // 51: services.docstore.UpdateCategoryRequest.category:type_name -> resources.documents.Category
-	77, // 52: services.docstore.ListDocumentPinsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	80, // 53: services.docstore.ListDocumentPinsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	81, // 54: services.docstore.ListDocumentPinsResponse.documents:type_name -> resources.documents.DocumentShort
-	79, // 55: services.docstore.SetDocumentReminderRequest.reminder_time:type_name -> resources.timestamp.Timestamp
+	72, // 0: services.docstore.ListTemplatesResponse.templates:type_name -> resources.documents.TemplateShort
+	73, // 1: services.docstore.GetTemplateRequest.data:type_name -> resources.documents.TemplateData
+	74, // 2: services.docstore.GetTemplateResponse.template:type_name -> resources.documents.Template
+	74, // 3: services.docstore.CreateTemplateRequest.template:type_name -> resources.documents.Template
+	74, // 4: services.docstore.UpdateTemplateRequest.template:type_name -> resources.documents.Template
+	74, // 5: services.docstore.UpdateTemplateResponse.template:type_name -> resources.documents.Template
+	75, // 6: services.docstore.ListDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	76, // 7: services.docstore.ListDocumentsRequest.sort:type_name -> resources.common.database.Sort
+	77, // 8: services.docstore.ListDocumentsRequest.from:type_name -> resources.timestamp.Timestamp
+	77, // 9: services.docstore.ListDocumentsRequest.to:type_name -> resources.timestamp.Timestamp
+	78, // 10: services.docstore.ListDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	79, // 11: services.docstore.ListDocumentsResponse.documents:type_name -> resources.documents.DocumentShort
+	80, // 12: services.docstore.GetDocumentResponse.document:type_name -> resources.documents.Document
+	81, // 13: services.docstore.GetDocumentResponse.access:type_name -> resources.documents.DocumentAccess
+	82, // 14: services.docstore.GetDocumentReferencesResponse.references:type_name -> resources.documents.DocumentReference
+	83, // 15: services.docstore.GetDocumentRelationsResponse.relations:type_name -> resources.documents.DocumentRelation
+	82, // 16: services.docstore.AddDocumentReferenceRequest.reference:type_name -> resources.documents.DocumentReference
+	83, // 17: services.docstore.AddDocumentRelationRequest.relation:type_name -> resources.documents.DocumentRelation
+	75, // 18: services.docstore.GetCommentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	78, // 19: services.docstore.GetCommentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	84, // 20: services.docstore.GetCommentsResponse.comments:type_name -> resources.documents.Comment
+	84, // 21: services.docstore.PostCommentRequest.comment:type_name -> resources.documents.Comment
+	84, // 22: services.docstore.PostCommentResponse.comment:type_name -> resources.documents.Comment
+	84, // 23: services.docstore.EditCommentRequest.comment:type_name -> resources.documents.Comment
+	84, // 24: services.docstore.EditCommentResponse.comment:type_name -> resources.documents.Comment
+	85, // 25: services.docstore.CreateDocumentRequest.content:type_name -> resources.common.content.Content
+	86, // 26: services.docstore.CreateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
+	81, // 27: services.docstore.CreateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
+	85, // 28: services.docstore.UpdateDocumentRequest.content:type_name -> resources.common.content.Content
+	86, // 29: services.docstore.UpdateDocumentRequest.content_type:type_name -> resources.common.content.ContentType
+	81, // 30: services.docstore.UpdateDocumentRequest.access:type_name -> resources.documents.DocumentAccess
+	75, // 31: services.docstore.ListDocumentActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	87, // 32: services.docstore.ListDocumentActivityRequest.activity_types:type_name -> resources.documents.DocActivityType
+	78, // 33: services.docstore.ListDocumentActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	88, // 34: services.docstore.ListDocumentActivityResponse.activity:type_name -> resources.documents.DocActivity
+	75, // 35: services.docstore.ListDocumentReqsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	78, // 36: services.docstore.ListDocumentReqsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	89, // 37: services.docstore.ListDocumentReqsResponse.requests:type_name -> resources.documents.DocRequest
+	87, // 38: services.docstore.CreateDocumentReqRequest.request_type:type_name -> resources.documents.DocActivityType
+	90, // 39: services.docstore.CreateDocumentReqRequest.data:type_name -> resources.documents.DocActivityData
+	89, // 40: services.docstore.CreateDocumentReqResponse.request:type_name -> resources.documents.DocRequest
+	90, // 41: services.docstore.UpdateDocumentReqRequest.data:type_name -> resources.documents.DocActivityData
+	89, // 42: services.docstore.UpdateDocumentReqResponse.request:type_name -> resources.documents.DocRequest
+	81, // 43: services.docstore.GetDocumentAccessResponse.access:type_name -> resources.documents.DocumentAccess
+	81, // 44: services.docstore.SetDocumentAccessRequest.access:type_name -> resources.documents.DocumentAccess
+	75, // 45: services.docstore.ListUserDocumentsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	91, // 46: services.docstore.ListUserDocumentsRequest.relations:type_name -> resources.documents.DocRelation
+	78, // 47: services.docstore.ListUserDocumentsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	83, // 48: services.docstore.ListUserDocumentsResponse.relations:type_name -> resources.documents.DocumentRelation
+	92, // 49: services.docstore.ListCategoriesResponse.categories:type_name -> resources.documents.Category
+	92, // 50: services.docstore.CreateOrUpdateCategoryRequest.category:type_name -> resources.documents.Category
+	92, // 51: services.docstore.CreateOrUpdateCategoryResponse.category:type_name -> resources.documents.Category
+	75, // 52: services.docstore.ListDocumentPinsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	78, // 53: services.docstore.ListDocumentPinsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	79, // 54: services.docstore.ListDocumentPinsResponse.documents:type_name -> resources.documents.DocumentShort
+	77, // 55: services.docstore.SetDocumentReminderRequest.reminder_time:type_name -> resources.timestamp.Timestamp
 	0,  // 56: services.docstore.DocStoreService.ListTemplates:input_type -> services.docstore.ListTemplatesRequest
 	2,  // 57: services.docstore.DocStoreService.GetTemplate:input_type -> services.docstore.GetTemplateRequest
 	4,  // 58: services.docstore.DocStoreService.CreateTemplate:input_type -> services.docstore.CreateTemplateRequest
@@ -4165,51 +4079,49 @@ var file_services_docstore_docstore_proto_depIdxs = []int32{
 	52, // 84: services.docstore.DocStoreService.DeleteDocumentReq:input_type -> services.docstore.DeleteDocumentReqRequest
 	58, // 85: services.docstore.DocStoreService.ListUserDocuments:input_type -> services.docstore.ListUserDocumentsRequest
 	60, // 86: services.docstore.DocStoreService.ListCategories:input_type -> services.docstore.ListCategoriesRequest
-	62, // 87: services.docstore.DocStoreService.CreateCategory:input_type -> services.docstore.CreateCategoryRequest
-	64, // 88: services.docstore.DocStoreService.UpdateCategory:input_type -> services.docstore.UpdateCategoryRequest
-	66, // 89: services.docstore.DocStoreService.DeleteCategory:input_type -> services.docstore.DeleteCategoryRequest
-	68, // 90: services.docstore.DocStoreService.ListDocumentPins:input_type -> services.docstore.ListDocumentPinsRequest
-	70, // 91: services.docstore.DocStoreService.ToggleDocumentPin:input_type -> services.docstore.ToggleDocumentPinRequest
-	72, // 92: services.docstore.DocStoreService.SetDocumentReminder:input_type -> services.docstore.SetDocumentReminderRequest
-	1,  // 93: services.docstore.DocStoreService.ListTemplates:output_type -> services.docstore.ListTemplatesResponse
-	3,  // 94: services.docstore.DocStoreService.GetTemplate:output_type -> services.docstore.GetTemplateResponse
-	5,  // 95: services.docstore.DocStoreService.CreateTemplate:output_type -> services.docstore.CreateTemplateResponse
-	7,  // 96: services.docstore.DocStoreService.UpdateTemplate:output_type -> services.docstore.UpdateTemplateResponse
-	9,  // 97: services.docstore.DocStoreService.DeleteTemplate:output_type -> services.docstore.DeleteTemplateResponse
-	11, // 98: services.docstore.DocStoreService.ListDocuments:output_type -> services.docstore.ListDocumentsResponse
-	13, // 99: services.docstore.DocStoreService.GetDocument:output_type -> services.docstore.GetDocumentResponse
-	42, // 100: services.docstore.DocStoreService.CreateDocument:output_type -> services.docstore.CreateDocumentResponse
-	34, // 101: services.docstore.DocStoreService.UpdateDocument:output_type -> services.docstore.UpdateDocumentResponse
-	36, // 102: services.docstore.DocStoreService.DeleteDocument:output_type -> services.docstore.DeleteDocumentResponse
-	38, // 103: services.docstore.DocStoreService.ToggleDocument:output_type -> services.docstore.ToggleDocumentResponse
-	40, // 104: services.docstore.DocStoreService.ChangeDocumentOwner:output_type -> services.docstore.ChangeDocumentOwnerResponse
-	15, // 105: services.docstore.DocStoreService.GetDocumentReferences:output_type -> services.docstore.GetDocumentReferencesResponse
-	17, // 106: services.docstore.DocStoreService.GetDocumentRelations:output_type -> services.docstore.GetDocumentRelationsResponse
-	19, // 107: services.docstore.DocStoreService.AddDocumentReference:output_type -> services.docstore.AddDocumentReferenceResponse
-	21, // 108: services.docstore.DocStoreService.RemoveDocumentReference:output_type -> services.docstore.RemoveDocumentReferenceResponse
-	23, // 109: services.docstore.DocStoreService.AddDocumentRelation:output_type -> services.docstore.AddDocumentRelationResponse
-	25, // 110: services.docstore.DocStoreService.RemoveDocumentRelation:output_type -> services.docstore.RemoveDocumentRelationResponse
-	27, // 111: services.docstore.DocStoreService.GetComments:output_type -> services.docstore.GetCommentsResponse
-	29, // 112: services.docstore.DocStoreService.PostComment:output_type -> services.docstore.PostCommentResponse
-	31, // 113: services.docstore.DocStoreService.EditComment:output_type -> services.docstore.EditCommentResponse
-	33, // 114: services.docstore.DocStoreService.DeleteComment:output_type -> services.docstore.DeleteCommentResponse
-	55, // 115: services.docstore.DocStoreService.GetDocumentAccess:output_type -> services.docstore.GetDocumentAccessResponse
-	57, // 116: services.docstore.DocStoreService.SetDocumentAccess:output_type -> services.docstore.SetDocumentAccessResponse
-	45, // 117: services.docstore.DocStoreService.ListDocumentActivity:output_type -> services.docstore.ListDocumentActivityResponse
-	47, // 118: services.docstore.DocStoreService.ListDocumentReqs:output_type -> services.docstore.ListDocumentReqsResponse
-	49, // 119: services.docstore.DocStoreService.CreateDocumentReq:output_type -> services.docstore.CreateDocumentReqResponse
-	51, // 120: services.docstore.DocStoreService.UpdateDocumentReq:output_type -> services.docstore.UpdateDocumentReqResponse
-	53, // 121: services.docstore.DocStoreService.DeleteDocumentReq:output_type -> services.docstore.DeleteDocumentReqResponse
-	59, // 122: services.docstore.DocStoreService.ListUserDocuments:output_type -> services.docstore.ListUserDocumentsResponse
-	61, // 123: services.docstore.DocStoreService.ListCategories:output_type -> services.docstore.ListCategoriesResponse
-	63, // 124: services.docstore.DocStoreService.CreateCategory:output_type -> services.docstore.CreateCategoryResponse
-	65, // 125: services.docstore.DocStoreService.UpdateCategory:output_type -> services.docstore.UpdateCategoryResponse
-	67, // 126: services.docstore.DocStoreService.DeleteCategory:output_type -> services.docstore.DeleteCategoryResponse
-	69, // 127: services.docstore.DocStoreService.ListDocumentPins:output_type -> services.docstore.ListDocumentPinsResponse
-	71, // 128: services.docstore.DocStoreService.ToggleDocumentPin:output_type -> services.docstore.ToggleDocumentPinResponse
-	73, // 129: services.docstore.DocStoreService.SetDocumentReminder:output_type -> services.docstore.SetDocumentReminderResponse
-	93, // [93:130] is the sub-list for method output_type
-	56, // [56:93] is the sub-list for method input_type
+	62, // 87: services.docstore.DocStoreService.CreateOrUpdateCategory:input_type -> services.docstore.CreateOrUpdateCategoryRequest
+	64, // 88: services.docstore.DocStoreService.DeleteCategory:input_type -> services.docstore.DeleteCategoryRequest
+	66, // 89: services.docstore.DocStoreService.ListDocumentPins:input_type -> services.docstore.ListDocumentPinsRequest
+	68, // 90: services.docstore.DocStoreService.ToggleDocumentPin:input_type -> services.docstore.ToggleDocumentPinRequest
+	70, // 91: services.docstore.DocStoreService.SetDocumentReminder:input_type -> services.docstore.SetDocumentReminderRequest
+	1,  // 92: services.docstore.DocStoreService.ListTemplates:output_type -> services.docstore.ListTemplatesResponse
+	3,  // 93: services.docstore.DocStoreService.GetTemplate:output_type -> services.docstore.GetTemplateResponse
+	5,  // 94: services.docstore.DocStoreService.CreateTemplate:output_type -> services.docstore.CreateTemplateResponse
+	7,  // 95: services.docstore.DocStoreService.UpdateTemplate:output_type -> services.docstore.UpdateTemplateResponse
+	9,  // 96: services.docstore.DocStoreService.DeleteTemplate:output_type -> services.docstore.DeleteTemplateResponse
+	11, // 97: services.docstore.DocStoreService.ListDocuments:output_type -> services.docstore.ListDocumentsResponse
+	13, // 98: services.docstore.DocStoreService.GetDocument:output_type -> services.docstore.GetDocumentResponse
+	42, // 99: services.docstore.DocStoreService.CreateDocument:output_type -> services.docstore.CreateDocumentResponse
+	34, // 100: services.docstore.DocStoreService.UpdateDocument:output_type -> services.docstore.UpdateDocumentResponse
+	36, // 101: services.docstore.DocStoreService.DeleteDocument:output_type -> services.docstore.DeleteDocumentResponse
+	38, // 102: services.docstore.DocStoreService.ToggleDocument:output_type -> services.docstore.ToggleDocumentResponse
+	40, // 103: services.docstore.DocStoreService.ChangeDocumentOwner:output_type -> services.docstore.ChangeDocumentOwnerResponse
+	15, // 104: services.docstore.DocStoreService.GetDocumentReferences:output_type -> services.docstore.GetDocumentReferencesResponse
+	17, // 105: services.docstore.DocStoreService.GetDocumentRelations:output_type -> services.docstore.GetDocumentRelationsResponse
+	19, // 106: services.docstore.DocStoreService.AddDocumentReference:output_type -> services.docstore.AddDocumentReferenceResponse
+	21, // 107: services.docstore.DocStoreService.RemoveDocumentReference:output_type -> services.docstore.RemoveDocumentReferenceResponse
+	23, // 108: services.docstore.DocStoreService.AddDocumentRelation:output_type -> services.docstore.AddDocumentRelationResponse
+	25, // 109: services.docstore.DocStoreService.RemoveDocumentRelation:output_type -> services.docstore.RemoveDocumentRelationResponse
+	27, // 110: services.docstore.DocStoreService.GetComments:output_type -> services.docstore.GetCommentsResponse
+	29, // 111: services.docstore.DocStoreService.PostComment:output_type -> services.docstore.PostCommentResponse
+	31, // 112: services.docstore.DocStoreService.EditComment:output_type -> services.docstore.EditCommentResponse
+	33, // 113: services.docstore.DocStoreService.DeleteComment:output_type -> services.docstore.DeleteCommentResponse
+	55, // 114: services.docstore.DocStoreService.GetDocumentAccess:output_type -> services.docstore.GetDocumentAccessResponse
+	57, // 115: services.docstore.DocStoreService.SetDocumentAccess:output_type -> services.docstore.SetDocumentAccessResponse
+	45, // 116: services.docstore.DocStoreService.ListDocumentActivity:output_type -> services.docstore.ListDocumentActivityResponse
+	47, // 117: services.docstore.DocStoreService.ListDocumentReqs:output_type -> services.docstore.ListDocumentReqsResponse
+	49, // 118: services.docstore.DocStoreService.CreateDocumentReq:output_type -> services.docstore.CreateDocumentReqResponse
+	51, // 119: services.docstore.DocStoreService.UpdateDocumentReq:output_type -> services.docstore.UpdateDocumentReqResponse
+	53, // 120: services.docstore.DocStoreService.DeleteDocumentReq:output_type -> services.docstore.DeleteDocumentReqResponse
+	59, // 121: services.docstore.DocStoreService.ListUserDocuments:output_type -> services.docstore.ListUserDocumentsResponse
+	61, // 122: services.docstore.DocStoreService.ListCategories:output_type -> services.docstore.ListCategoriesResponse
+	63, // 123: services.docstore.DocStoreService.CreateOrUpdateCategory:output_type -> services.docstore.CreateOrUpdateCategoryResponse
+	65, // 124: services.docstore.DocStoreService.DeleteCategory:output_type -> services.docstore.DeleteCategoryResponse
+	67, // 125: services.docstore.DocStoreService.ListDocumentPins:output_type -> services.docstore.ListDocumentPinsResponse
+	69, // 126: services.docstore.DocStoreService.ToggleDocumentPin:output_type -> services.docstore.ToggleDocumentPinResponse
+	71, // 127: services.docstore.DocStoreService.SetDocumentReminder:output_type -> services.docstore.SetDocumentReminderResponse
+	92, // [92:128] is the sub-list for method output_type
+	56, // [56:92] is the sub-list for method input_type
 	56, // [56:56] is the sub-list for extension type_name
 	56, // [56:56] is the sub-list for extension extendee
 	0,  // [0:56] is the sub-list for field type_name
@@ -4230,14 +4142,14 @@ func file_services_docstore_docstore_proto_init() {
 	file_services_docstore_docstore_proto_msgTypes[48].OneofWrappers = []any{}
 	file_services_docstore_docstore_proto_msgTypes[50].OneofWrappers = []any{}
 	file_services_docstore_docstore_proto_msgTypes[58].OneofWrappers = []any{}
-	file_services_docstore_docstore_proto_msgTypes[72].OneofWrappers = []any{}
+	file_services_docstore_docstore_proto_msgTypes[70].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_docstore_docstore_proto_rawDesc), len(file_services_docstore_docstore_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   74,
+			NumMessages:   72,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
