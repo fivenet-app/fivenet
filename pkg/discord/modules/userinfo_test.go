@@ -57,7 +57,7 @@ func TestConstructUserNickname(t *testing.T) {
 			lastname:  "Doe",
 			prefix:    "A very longp",
 			suffix:    "",
-			expected:  "John Doe A very longs",
+			expected:  "A very longp John Doe",
 		},
 		{
 			name:      "Name with only suffix exceeding max length",
