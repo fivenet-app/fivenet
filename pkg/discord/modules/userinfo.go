@@ -358,7 +358,7 @@ func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, las
 		return nil // Can't change owner's nickname
 	}
 
-	targetNickname := g.constructUserNickname(firstname, lastname, prefix+" ", " "+suffix)
+	targetNickname := g.constructUserNickname(firstname, lastname, prefix, suffix)
 
 	// No need to set nickname when they are already equal
 	if member.Nick == targetNickname {
@@ -369,6 +369,7 @@ func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, las
 }
 
 // constructUserNickname constructs a user's nickname based on the provided input and ensures that it isn't longer than what Discord allows (32 chars)
+// prefix and suffix are optional and will be trimmed of spaces, max length is 12/24
 func (g *UserInfo) constructUserNickname(firstname string, lastname string, prefix string, suffix string) string {
 	maxLength := DiscordNicknameMaxLength
 
@@ -382,8 +383,12 @@ func (g *UserInfo) constructUserNickname(firstname string, lastname string, pref
 		suffix = " " + strings.TrimSpace(suffix)
 	}
 
-	baseName := fmt.Sprintf("%s%s %s%s", prefix, firstname, lastname, suffix)
-	fullName := baseName
+	last := strings.TrimSpace(lastname + suffix)
+	fullName := strings.TrimSpace(prefix + firstname)
+	if last != "" {
+		fullName += " " + last
+	}
+	fullName = strings.TrimSpace(fullName)
 
 	// If within limit, return as is
 	if len(fullName) <= maxLength {
@@ -402,8 +407,8 @@ func (g *UserInfo) constructUserNickname(firstname string, lastname string, pref
 	}
 	truncatedFirst = strings.TrimSpace(truncatedFirst)
 
-	baseName = fmt.Sprintf("%s%s %s%s", prefix, truncatedFirst, lastname, suffix)
-	fullName = baseName
+	fullName = fmt.Sprintf("%s%s %s%s", prefix, truncatedFirst, lastname, suffix)
+	fullName = strings.TrimSpace(fullName)
 
 	if len(fullName) <= maxLength {
 		return fullName
@@ -417,7 +422,8 @@ func (g *UserInfo) constructUserNickname(firstname string, lastname string, pref
 	}
 
 	// If even the prefix and suffix alone exceed the limit, just truncate everything
-	return (prefix + suffix)[:maxLength]
+	result := (prefix + suffix)[:maxLength]
+	return strings.TrimSpace(result)
 }
 
 func (g *UserInfo) getUserRoles(job string, grade int32) (types.Roles, error) {

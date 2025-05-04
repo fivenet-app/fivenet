@@ -863,9 +863,6 @@
                         "subtitle": "Global angezeigte Bannermeldung (sollte nicht zulange vom Text her sein)."
                     }
                 }
-            },
-            "citizen_labels": {
-                "title": "Bürger-Labels"
             }
         },
         "debug_info": {
@@ -1286,6 +1283,9 @@
                     "title": "Sie können Ihren eigenen Aktivitätsfeed nicht sehen",
                     "message": "Ihnen fehlen die Berechtigungen diesen sehen zu können."
                 }
+            },
+            "citizen_labels": {
+                "title": "Bürger-Labels"
             }
         },
         "CookieControl": {

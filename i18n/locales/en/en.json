@@ -863,9 +863,6 @@
                         "subtitle": "Globally displayed banner message (the message should be kept short)."
                     }
                 }
-            },
-            "citizen_labels": {
-                "title": "Citizen Labels"
             }
         },
         "debug_info": {
@@ -1286,6 +1283,9 @@
                     "title": "You won't be able to see your own activity feed",
                     "message": "Because you don't have permissions to see your own acvitiy feed."
                 }
+            },
+            "citizen_labels": {
+                "title": "Citizen Labels"
             }
         },
         "CookieControl": {

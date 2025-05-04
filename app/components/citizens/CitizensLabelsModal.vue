@@ -65,7 +65,7 @@ watch(labels, () => (state.labels = labels.value ?? []));
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.citizen_labels.title') }}
+                            {{ $t('components.citizens.citizen_labels.title') }}
                         </h3>
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
