@@ -31,7 +31,7 @@ const items = computed<CardElements>(
             title: v?.name,
             description: v?.description,
             icon: v.deletedAt ? 'i-mdi-delete' : (v.icon ?? 'i-mdi-shape'),
-            color: v.color,
+            color: v.deletedAt ? 'error' : v.color,
         })) ?? [],
 );
 
