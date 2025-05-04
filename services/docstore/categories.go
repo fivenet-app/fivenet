@@ -23,6 +23,14 @@ var tDCategory = table.FivenetDocumentsCategories.AS("category")
 func (s *Server) ListCategories(ctx context.Context, req *pbdocstore.ListCategoriesRequest) (*pbdocstore.ListCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	condition := tDCategory.Job.EQ(jet.String(userInfo.Job))
+	if !userInfo.SuperUser {
+		condition = jet.AND(
+			tDCategory.DeletedAt.IS_NULL(),
+			tDCategory.Job.EQ(jet.String(userInfo.Job)),
+		)
+	}
+
 	stmt := tDCategory.
 		SELECT(
 			tDCategory.ID,
@@ -36,10 +44,7 @@ func (s *Server) ListCategories(ctx context.Context, req *pbdocstore.ListCategor
 		FROM(
 			tDCategory,
 		).
-		WHERE(jet.AND(
-			tDCategory.DeletedAt.IS_NULL(),
-			tDCategory.Job.EQ(jet.String(userInfo.Job)),
-		)).
+		WHERE(condition).
 		ORDER_BY(
 			tDCategory.SortKey.ASC(),
 		)

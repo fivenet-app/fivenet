@@ -21,24 +21,35 @@ import (
 const housekeeperMinDays = 60
 
 func init() {
+	// Categories
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocumentsCategories,
+		TimestampColumn: table.FivenetDocumentsCategories.DeletedAt,
+		MinDays:         housekeeperMinDays,
+	})
+
+	// Documents
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetDocuments,
 		TimestampColumn: table.FivenetDocuments.DeletedAt,
 		MinDays:         housekeeperMinDays,
 	})
 
+	// Templates
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetDocumentsTemplates,
 		TimestampColumn: table.FivenetDocumentsTemplates.DeletedAt,
 		MinDays:         housekeeperMinDays,
 	})
 
+	// Comments
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetDocumentsComments,
 		TimestampColumn: table.FivenetDocumentsComments.DeletedAt,
 		MinDays:         housekeeperMinDays,
 	})
 
+	// Document References and Relations
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetDocumentsReferences,
 		TimestampColumn: table.FivenetDocumentsReferences.DeletedAt,
