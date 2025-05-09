@@ -3,7 +3,6 @@ package qualifications
 import (
 	"context"
 	"errors"
-	"slices"
 	"strings"
 	"time"
 
@@ -15,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/services/qualifications/errors"
@@ -231,15 +229,11 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 	defer s.aud.Log(auditEntry, req)
 
 	// Field Permission Check
-	fieldsAttr, err := s.perms.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceCreateQualificationPerm, permsqualifications.QualificationsServiceCreateQualificationFieldsPermField)
+	fields, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceCreateQualificationPerm, permsqualifications.QualificationsServiceCreateQualificationFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
-	if !slices.Contains(fields, "Public") {
+	if !fields.Contains("Public") {
 		req.Qualification.Public = false
 	}
 
@@ -354,27 +348,19 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 	}
 
 	// Field Permission Check
-	accessAttr, err := s.perms.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceUpdateQualificationPerm, permsqualifications.QualificationsServiceUpdateQualificationAccessPermField)
+	ownAccess, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceUpdateQualificationPerm, permsqualifications.QualificationsServiceUpdateQualificationAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-	var ownAccess perms.StringList
-	if accessAttr != nil {
-		ownAccess = accessAttr.([]string)
 	}
 	if !access.CheckIfHasAccess(ownAccess, userInfo, quali.CreatorJob, quali.Creator) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	fieldsAttr, err := s.perms.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceCreateQualificationPerm, permsqualifications.QualificationsServiceCreateQualificationFieldsPermField)
+	fields, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceCreateQualificationPerm, permsqualifications.QualificationsServiceCreateQualificationFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
-	if !slices.Contains(fields, "Public") {
+	if !fields.Contains("Public") {
 		req.Qualification.Public = quali.Public
 	}
 
@@ -496,13 +482,9 @@ func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.perms.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceDeleteQualificationPerm, permsqualifications.QualificationsServiceDeleteQualificationAccessPermField)
+	fields, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceDeleteQualificationPerm, permsqualifications.QualificationsServiceDeleteQualificationAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 	if !access.CheckIfHasAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
 		return nil, errorsqualifications.ErrFailedQuery

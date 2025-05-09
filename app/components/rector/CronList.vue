@@ -89,7 +89,7 @@ const expand = ref({
         :loading="loading"
         :columns="columns"
         :rows="cronjobs?.jobs"
-        :empty-state="{ icon: 'i-mdi-calendar-task', label: $t('common.not_found', [$t('common.file', 2)]) }"
+        :empty-state="{ icon: 'i-mdi-calendar-task', label: $t('common.not_found', [$t('pages.rector.cron.title', 2)]) }"
         class="flex-1"
     >
         <template #expand="{ row }">

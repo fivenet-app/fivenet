@@ -385,6 +385,7 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 				}
 			}
 		}
+
 		if err := s.ps.UpdateRolePermissions(ctx, role.ID, toUpdatePerms...); err != nil {
 			return err
 		}

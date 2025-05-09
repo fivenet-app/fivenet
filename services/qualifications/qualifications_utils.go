@@ -10,7 +10,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -102,13 +101,9 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 		}
 
 		// Field Permission Check
-		fieldsAttr, _ := s.perms.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
-		var fields perms.StringList
-		if fieldsAttr != nil {
-			fields = fieldsAttr.([]string)
-		}
+		fields, _ := s.perms.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 
-		if slices.Contains(fields, "PhoneNumber") {
+		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 
@@ -244,13 +239,9 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 		}
 
 		// Field Permission Check
-		fieldsAttr, _ := s.perms.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
-		var fields perms.StringList
-		if fieldsAttr != nil {
-			fields = fieldsAttr.([]string)
-		}
+		fields, _ := s.perms.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 
-		if slices.Contains(fields, "PhoneNumber") {
+		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 

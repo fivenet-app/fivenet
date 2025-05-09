@@ -3,6 +3,7 @@ package access
 import (
 	"testing"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/stretchr/testify/assert"
@@ -194,7 +195,9 @@ func TestCheckIfHasAccess(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := CheckIfHasAccess(tt.levels, tt.userInfo, tt.creatorJob, tt.creator)
+			result := CheckIfHasAccess(&permissions.StringList{
+				Strings: tt.levels,
+			}, tt.userInfo, tt.creatorJob, tt.creator)
 			assert.Equal(t, tt.expected, result, "Test case: %s", tt.name)
 		})
 	}

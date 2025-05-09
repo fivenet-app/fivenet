@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	pblivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper"
 	permslivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper/perms"
@@ -21,56 +22,48 @@ const (
 )
 
 func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.LivemapperService_StreamServer) error {
-	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
+	origUI := auth.MustGetUserInfoFromContext(srv.Context()).Clone()
+	userInfo := &origUI
 
 	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.UserId))
-	markerJobsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
+	markerJobs, err := s.ps.AttrJobList(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
 		return errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
 	}
-	userJobsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamPlayersPermField)
+	usersJobs, err := s.ps.AttrJobGradeList(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamPlayersPermField)
 	if err != nil {
 		return errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
 	}
 
-	var markersJobs []string
-	if markerJobsAttr != nil {
-		markersJobs = markerJobsAttr.([]string)
-	}
 	if userInfo.SuperUser {
 		s.markersCache.Range(func(job string, _ []*livemap.MarkerMarker) bool {
-			markersJobs = append(markersJobs, job)
+			markerJobs.Strings = append(markerJobs.Strings, job)
 			return true
 		})
-		markersJobs = utils.RemoveSliceDuplicates(markersJobs)
-	}
+		markerJobs.Strings = utils.RemoveSliceDuplicates(markerJobs.Strings)
 
-	var usersJobs map[string]int32
-	if userJobsAttr != nil {
-		usersJobs, _ = userJobsAttr.(map[string]int32)
-	}
-	if userInfo.SuperUser {
-		usersJobs = map[string]int32{}
+		// Disable fine-grained permissions for superuser as the it is now just a list of jobs
+		usersJobs.FineGrained = false
 		for _, j := range s.tracker.ListTrackedJobs() {
-			usersJobs[j] = -1
+			usersJobs.Jobs[j] = -1
 		}
 	}
 
 	// Prepare jobs for client response
 	jobs := &pblivemapper.StreamResponse_Jobs{
 		Jobs: &pblivemapper.JobsList{
-			Markers: make([]*users.Job, len(markersJobs)),
+			Markers: make([]*users.Job, markerJobs.Len()),
 			Users:   []*users.Job{},
 		},
 	}
 
-	for i := range markersJobs {
+	for i := range markerJobs.Strings {
 		jobs.Jobs.Markers[i] = &users.Job{
-			Name: markersJobs[i],
+			Name: markerJobs.Strings[i],
 		}
 		s.enricher.EnrichJobName(jobs.Jobs.Markers[i])
 	}
-	for job := range usersJobs {
+	for job := range usersJobs.Iter() {
 		j := &users.Job{
 			Name: job,
 		}
@@ -84,11 +77,11 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 		return err
 	}
 
-	if end, err := s.sendMarkerMarkers(srv, markersJobs, time.Time{}); end || err != nil {
+	if end, err := s.sendMarkerMarkers(srv, markerJobs, time.Time{}); end || err != nil {
 		return err
 	}
 
-	end, lastUpdatedAt, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, time.Time{})
+	end, lastUpdatedAt, onDutyState, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, time.Time{}, false)
 	if end || err != nil {
 		return err
 	}
@@ -113,19 +106,19 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 			}
 
 			if event.Users != nil {
-				if len(usersJobs) == 0 {
+				if usersJobs.Len() == 0 {
 					continue
 				}
 
 				// Send delete user markers event to client
 				deleted := []int32{}
-				for job, grade := range usersJobs {
+				for job := range usersJobs.Iter() {
 					if _, ok := (*event.Users)[job]; !ok {
 						continue
 					}
 
 					for _, um := range (*event.Users)[job] {
-						if um.Hidden || (grade == -1 || um.User.JobGrade > grade) {
+						if um.Hidden || (userInfo.SuperUser || !usersJobs.HasJobGrade(job, um.User.JobGrade)) {
 							continue
 						}
 
@@ -157,6 +150,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 						},
 					},
 				}
+
 				if err := srv.Send(resp); err != nil {
 					return err
 				}
@@ -169,32 +163,54 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 						},
 					},
 				}
+
 				if err := srv.Send(resp); err != nil {
 					return err
 				}
 			}
 
 		case <-updateTicker.C:
-			end, lastUpdatedAt, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, updatedAt)
+			end, updatedAt, onDutyState, err = s.sendChunkedUserMarkers(srv, usersJobs, userInfo, updatedAt, onDutyState)
 			if end || err != nil {
 				return err
 			}
-
-			updatedAt = lastUpdatedAt
 		}
 	}
 }
 
 // Sends out chunked current user markers
-func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo, updatedAt time.Time) (bool, time.Time, error) {
+func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_StreamServer, usersJobs *permissions.JobGradeList, userInfo *userinfo.UserInfo, updatedAt time.Time, lastOnDutyState bool) (bool, time.Time, bool, error) {
+	// If the user was off duty and is now on duty, we need to send all user locations and not just updated ones
+	// use the updatedAt time to force sending all users
+	if onDutyState := s.tracker.IsUserOnDuty(userInfo.UserId); onDutyState != lastOnDutyState {
+		if !lastOnDutyState {
+			updatedAt = time.Time{}
+		} else {
+			clear := true
+			resp := &pblivemapper.StreamResponse{
+				Data: &pblivemapper.StreamResponse_Users{
+					Users: &pblivemapper.UserMarkersUpdates{
+						Clear: &clear,
+					},
+				},
+				UserOnDuty: &onDutyState,
+			}
+			if err := srv.Send(resp); err != nil {
+				return true, updatedAt, onDutyState, err
+			}
+
+			return false, updatedAt, onDutyState, nil
+		}
+	}
+
 	updatedUsers, deletedUsers, onDutyState, lastUpdatedAt, err := s.getUserLocations(usersJobs, userInfo, updatedAt)
 	if err != nil {
-		return true, lastUpdatedAt, errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
+		return true, lastUpdatedAt, onDutyState, errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
 	}
 
 	// UpdatedAt is zero and no user updates or deletions? Early return
 	if !updatedAt.IsZero() && len(updatedUsers) == 0 && len(deletedUsers) == 0 {
-		return false, lastUpdatedAt, nil
+		return false, lastUpdatedAt, onDutyState, nil
 	}
 
 	// Less than chunk size or no markers, no need to chunk the response early return
@@ -212,10 +228,10 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 		}
 
 		if err := srv.Send(resp); err != nil {
-			return true, lastUpdatedAt, err
+			return true, lastUpdatedAt, onDutyState, err
 		}
 
-		return false, lastUpdatedAt, nil
+		return false, lastUpdatedAt, onDutyState, nil
 	}
 
 	totalParts := int32(len(updatedUsers) / userMarkerChunkSize)
@@ -240,14 +256,14 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 		currentPart--
 
 		if err := srv.Send(resp); err != nil {
-			return true, lastUpdatedAt, err
+			return true, lastUpdatedAt, onDutyState, err
 		}
 
 		updatedUsers = updatedUsers[userMarkerChunkSize:]
 
 		select {
 		case <-srv.Context().Done():
-			return true, lastUpdatedAt, nil
+			return true, lastUpdatedAt, onDutyState, nil
 
 		case <-time.After(25 * time.Millisecond):
 		}
@@ -265,15 +281,15 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 			UserOnDuty: &onDutyState,
 		}
 		if err := srv.Send(resp); err != nil {
-			return true, lastUpdatedAt, err
+			return true, lastUpdatedAt, onDutyState, err
 		}
 	}
 
-	return false, lastUpdatedAt, nil
+	return false, lastUpdatedAt, onDutyState, nil
 }
 
 // Send out chunked current marker markers
-func (s *Server) sendMarkerMarkers(srv pblivemapper.LivemapperService_StreamServer, jobs []string, updatedAt time.Time) (bool, error) {
+func (s *Server) sendMarkerMarkers(srv pblivemapper.LivemapperService_StreamServer, jobs *permissions.StringList, updatedAt time.Time) (bool, error) {
 	updatedMarkers, deletedMarkers, err := s.getMarkerMarkers(jobs, updatedAt)
 	if err != nil {
 		return true, errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
@@ -356,7 +372,7 @@ func (s *Server) sendMarkerMarkers(srv pblivemapper.LivemapperService_StreamServ
 	return false, nil
 }
 
-func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo, updatedAt time.Time) ([]*livemap.UserMarker, []int32, bool, time.Time, error) {
+func (s *Server) getUserLocations(jobs *permissions.JobGradeList, userInfo *userinfo.UserInfo, updatedAt time.Time) ([]*livemap.UserMarker, []int32, bool, time.Time, error) {
 	updated := []*livemap.UserMarker{}
 	deleted := []int32{}
 
@@ -366,26 +382,33 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 	}
 
 	lastUpdatedAt := updatedAt
-	for job, grade := range jobs {
+
+	for job, grades := range jobs.Iter() {
+		if len(grades) == 0 {
+			continue
+		}
+
 		markers, ok := s.tracker.GetUsersByJob(job)
 		if !ok {
 			continue
 		}
 
 		markers.Range(func(key int32, marker *livemap.UserMarker) bool {
-			// SuperUser returns grade as `-1`, job has access to that grade or it is the user itself
-			if grade == -1 || (marker.User.JobGrade <= grade || key == userInfo.UserId) {
-				// Either no input updatedAt time set or the marker has been updated in the mean time
-				if updatedAt.IsZero() || (marker.UpdatedAt != nil && updatedAt.Sub(marker.UpdatedAt.AsTime()) < 0) {
-					if lastUpdatedAt.IsZero() || lastUpdatedAt.Sub(marker.UpdatedAt.AsTime()) < 0 {
-						lastUpdatedAt = marker.UpdatedAt.AsTime()
-					}
+			// If it isn't the user's own marker, user doesn't have access to grade, and is not a superuser, continue
+			if key != userInfo.UserId && !jobs.HasJobGrade(job, marker.User.JobGrade) && !userInfo.SuperUser {
+				return true
+			}
 
-					if marker.Hidden {
-						deleted = append(deleted, marker.UserId)
-					} else {
-						updated = append(updated, marker)
-					}
+			// Either no input updatedAt time set or the marker has been updated in the mean time
+			if updatedAt.IsZero() || (marker.UpdatedAt != nil && updatedAt.Sub(marker.UpdatedAt.AsTime()) < 0) {
+				if lastUpdatedAt.IsZero() || lastUpdatedAt.Sub(marker.UpdatedAt.AsTime()) < 0 {
+					lastUpdatedAt = marker.UpdatedAt.AsTime()
+				}
+
+				if marker.Hidden {
+					deleted = append(deleted, marker.UserId)
+				} else {
+					updated = append(updated, marker)
 				}
 			}
 

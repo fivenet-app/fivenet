@@ -17,29 +17,70 @@ import (
 )
 
 func init() {
-	housekeeper.AddTable(&housekeeper.Table{
-		Table:           table.FivenetMailerEmails,
-		TimestampColumn: table.FivenetMailerEmails.DeletedAt,
-		MinDays:         60,
-	})
+	housekeeper.AddTable(
+		&housekeeper.Table{
+			Table:           table.FivenetMailerEmails,
+			TimestampColumn: table.FivenetMailerEmails.DeletedAt,
+			MinDays:         60,
+		},
+		&housekeeper.Table{
+			Table:           table.FivenetMailerThreads,
+			TimestampColumn: table.FivenetMailerThreads.DeletedAt,
+			MinDays:         60,
+		},
+		&housekeeper.Table{
+			Table:           table.FivenetMailerMessages,
+			TimestampColumn: table.FivenetMailerMessages.DeletedAt,
+			MinDays:         60,
+		},
+		&housekeeper.Table{
+			Table:           table.FivenetMailerTemplates,
+			TimestampColumn: table.FivenetMailerTemplates.DeletedAt,
+			MinDays:         60,
+		},
+	)
 
-	housekeeper.AddTable(&housekeeper.Table{
-		Table:           table.FivenetMailerThreads,
-		TimestampColumn: table.FivenetMailerThreads.DeletedAt,
-		MinDays:         60,
-	})
-
-	housekeeper.AddTable(&housekeeper.Table{
-		Table:           table.FivenetMailerMessages,
-		TimestampColumn: table.FivenetMailerMessages.DeletedAt,
-		MinDays:         60,
-	})
-
-	housekeeper.AddTable(&housekeeper.Table{
-		Table:           table.FivenetMailerTemplates,
-		TimestampColumn: table.FivenetMailerTemplates.DeletedAt,
-		MinDays:         60,
-	})
+	housekeeper.AddJobTable(
+		&housekeeper.JobTable{
+			TargetTable:           table.FivenetMailerEmails,
+			TargetSourceIDColumn:  table.FivenetMailerEmails.ID,
+			TargetDeletedAtColumn: table.FivenetMailerEmails.DeletedAt,
+			TargetJobColumn:       table.FivenetMailerEmails.Job,
+		},
+		&housekeeper.JobTable{
+			Source: &housekeeper.JobTableSource{
+				SourceTable:           table.FivenetMailerEmails,
+				SourceJobColumn:       table.FivenetMailerEmails.Job,
+				SourceDeletedAtColumn: table.FivenetMailerEmails.DeletedAt,
+				SourceIDColumn:        table.FivenetMailerEmails.ID,
+			},
+			TargetTable:           table.FivenetMailerThreads,
+			TargetSourceIDColumn:  table.FivenetMailerThreads.CreatorEmailID,
+			TargetDeletedAtColumn: table.FivenetMailerThreads.DeletedAt,
+		},
+		&housekeeper.JobTable{
+			Source: &housekeeper.JobTableSource{
+				SourceTable:           table.FivenetMailerEmails,
+				SourceJobColumn:       table.FivenetMailerEmails.Job,
+				SourceDeletedAtColumn: table.FivenetMailerEmails.DeletedAt,
+				SourceIDColumn:        table.FivenetMailerEmails.ID,
+			},
+			TargetTable:           table.FivenetMailerMessages,
+			TargetSourceIDColumn:  table.FivenetMailerMessages.SenderID,
+			TargetDeletedAtColumn: table.FivenetMailerMessages.DeletedAt,
+		},
+		&housekeeper.JobTable{
+			Source: &housekeeper.JobTableSource{
+				SourceTable:           table.FivenetMailerEmails,
+				SourceJobColumn:       table.FivenetMailerEmails.Job,
+				SourceDeletedAtColumn: table.FivenetMailerEmails.DeletedAt,
+				SourceIDColumn:        table.FivenetMailerEmails.ID,
+			},
+			TargetTable:           table.FivenetMailerTemplates,
+			TargetSourceIDColumn:  table.FivenetMailerTemplates.EmailID,
+			TargetDeletedAtColumn: table.FivenetMailerTemplates.DeletedAt,
+		},
+	)
 }
 
 type Server struct {

@@ -1,6 +1,7 @@
 package permissions
 
 import (
+	"iter"
 	"slices"
 
 	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
@@ -73,8 +74,91 @@ func (x *AttributeValues) Default(aType AttributeTypes) {
 		if x.GetJobGradeList() == nil || x.GetJobGradeList().Jobs == nil {
 			x.ValidValues = &AttributeValues_JobGradeList{
 				JobGradeList: &JobGradeList{
-					Jobs: nil,
+					Jobs:        nil,
+					FineGrained: false,
+					Grades:      nil,
 				},
+			}
+		}
+	}
+}
+
+func (x *StringList) Contains(items ...string) bool {
+	if x == nil || x.Strings == nil {
+		return false
+	}
+
+	// Check if all items are in the list
+	for _, item := range items {
+		if !slices.Contains(x.Strings, item) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func (x *StringList) Len() int {
+	if x == nil || x.Strings == nil {
+		return 0
+	}
+
+	return len(x.Strings)
+}
+
+func (x *JobGradeList) HasJobGrade(job string, grade int32) bool {
+	if x == nil || x.Jobs == nil {
+		return false
+	}
+
+	if x.FineGrained {
+		// Check if the job exists in the list and the grade is allowed in the fine grained list
+		grades, ok := x.Grades[job]
+		if !ok {
+			return false
+		}
+		if grades == nil || len(grades.Grades) == 0 {
+			return false
+		}
+
+		return slices.Contains(grades.Grades, grade)
+	} else {
+		// Check if the job exists in the list and the grade is "in range"
+		if g, ok := x.Jobs[job]; ok {
+			if g >= grade {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
+func (x *JobGradeList) Len() int {
+	if x == nil {
+		return 0
+	}
+
+	if x.FineGrained {
+		return len(x.Grades)
+	}
+
+	return len(x.Jobs)
+}
+
+func (x *JobGradeList) Iter() iter.Seq2[string, []int32] {
+	return func(yield func(string, []int32) bool) {
+		if x.FineGrained {
+			for job, v := range x.Grades {
+				if !yield(job, v.Grades) {
+					return
+				}
+			}
+		} else {
+			for job, v := range x.Jobs {
+				if !yield(job, []int32{v}) {
+					return
+				}
 			}
 		}
 	}
@@ -181,20 +265,9 @@ func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool
 
 func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals map[string]int32) (bool, bool) {
 	changed := false
-	for job, grade := range in.Jobs {
-		if vg, ok := maxVals[job]; ok {
-			if grade > vg {
-				in.Jobs[job] = vg
-				changed = true
-			}
-		} else {
-			delete(in.Jobs, job)
-			changed = true
-		}
-
-		// If valid vals are empty/ nil, don't check them
-		if len(validVals) > 0 {
-			if vg, ok := validVals[job]; ok {
+	if !in.FineGrained {
+		for job, grade := range in.Jobs {
+			if vg, ok := maxVals[job]; ok {
 				if grade > vg {
 					in.Jobs[job] = vg
 					changed = true
@@ -202,6 +275,62 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 			} else {
 				delete(in.Jobs, job)
 				changed = true
+			}
+
+			// If valid vals are empty/ nil, don't check them
+			if len(validVals) > 0 {
+				if vg, ok := validVals[job]; ok {
+					if grade > vg {
+						in.Jobs[job] = vg
+						changed = true
+					}
+				} else {
+					delete(in.Jobs, job)
+					changed = true
+				}
+			}
+		}
+	} else {
+		for job, grades := range in.Grades {
+			if grades == nil || len(grades.Grades) == 0 {
+				delete(in.Grades, job)
+				changed = true
+				continue
+			}
+
+			for _, grade := range grades.Grades {
+				if vg, ok := maxVals[job]; ok {
+					currentLen := len(in.Grades[job].Grades)
+					// Remove all grades that are greater than the max grade
+					in.Grades[job].Grades = slices.DeleteFunc(in.Grades[job].Grades, func(ig int32) bool {
+						return grade > vg
+					})
+					newLen := len(in.Grades[job].Grades)
+					if currentLen != newLen {
+						changed = true
+					}
+				} else {
+					delete(in.Grades, job)
+					changed = true
+				}
+
+				// If valid vals are empty/ nil, don't check them
+				if len(validVals) > 0 {
+					if vg, ok := validVals[job]; ok {
+						currentLen := len(in.Grades[job].Grades)
+						// Remove all grades that are greater than the max grade
+						in.Grades[job].Grades = slices.DeleteFunc(in.Grades[job].Grades, func(ig int32) bool {
+							return grade > vg
+						})
+						newLen := len(in.Grades[job].Grades)
+						if currentLen != newLen {
+							changed = true
+						}
+					} else {
+						delete(in.Grades, job)
+						changed = true
+					}
+				}
 			}
 		}
 	}

@@ -11313,6 +11313,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `deleted` | [int32](#int32) | repeated |  |
 | `part` | [int32](#int32) |  |  |
 | `partial` | [bool](#bool) |  |  |
+| `clear` | [bool](#bool) | optional |  |
 
 
 

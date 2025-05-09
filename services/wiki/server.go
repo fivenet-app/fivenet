@@ -25,6 +25,25 @@ func init() {
 		TimestampColumn: table.FivenetWikiPages.DeletedAt,
 		MinDays:         60,
 	})
+
+	housekeeper.AddJobTable(
+		&housekeeper.JobTable{
+			TargetTable:           table.FivenetWikiPages,
+			TargetSourceIDColumn:  table.FivenetWikiPages.ID,
+			TargetDeletedAtColumn: table.FivenetWikiPages.DeletedAt,
+			TargetJobColumn:       table.FivenetWikiPages.Job,
+		},
+		&housekeeper.JobTable{
+			Source: &housekeeper.JobTableSource{
+				SourceTable:           table.FivenetWikiPages,
+				SourceJobColumn:       table.FivenetWikiPages.Job,
+				SourceDeletedAtColumn: table.FivenetWikiPages.DeletedAt,
+				SourceIDColumn:        table.FivenetWikiPages.ID,
+			},
+			TargetTable:          table.FivenetWikiPageActivity,
+			TargetSourceIDColumn: table.FivenetWikiPageActivity.PageID,
+		},
+	)
 }
 
 var (

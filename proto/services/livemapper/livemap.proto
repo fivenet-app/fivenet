@@ -39,6 +39,7 @@ message UserMarkersUpdates {
   repeated int32 deleted = 2;
   int32 part = 3;
   bool partial = 4;
+  optional bool clear = 5;
 }
 
 message CreateOrUpdateMarkerRequest {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"math"
-	"slices"
 	"time"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -16,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/services/jobs/errors"
@@ -36,6 +34,11 @@ func init() {
 		DateColumn: table.FivenetJobsTimeclock.Date,
 		MinDays:    365, // One year
 	})
+
+	housekeeper.AddJobTable(&housekeeper.JobTable{
+		TargetTable:     table.FivenetJobsTimeclock,
+		TargetJobColumn: table.FivenetJobsTimeclock.Job,
+	})
 }
 
 func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockRequest) (*pbjobs.ListTimeclockResponse, error) {
@@ -49,16 +52,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 	statsCondition := tTimeClock.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
 
-	if !slices.Contains(fields, "All") {
+	if !fields.Contains("All") {
 		req.UserMode = jobs.TimeclockUserMode_TIMECLOCK_USER_MODE_SELF
 	}
 
@@ -498,15 +497,11 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *pbjobs.GetTimeclock
 	userId := userInfo.UserId
 	if req.UserId != nil && *req.UserId > 0 && *req.UserId != userInfo.UserId {
 		// Field Permission Check
-		fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
+		fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
-		var fields perms.StringList
-		if fieldsAttr != nil {
-			fields = fieldsAttr.([]string)
-		}
-		if slices.Contains(fields, "All") {
+		if fields.Contains("All") {
 			userId = *req.UserId
 		}
 	}

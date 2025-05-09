@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -161,22 +160,18 @@ func (s *Server) validateCitizenLabels(ctx context.Context, userInfo *userinfo.U
 		return true, nil
 	}
 
-	jobsAttr, err := s.ps.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
+	jobs, err := s.ps.AttrStringList(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
-	var jobs perms.StringList
-	if jobsAttr != nil {
-		jobs = jobsAttr.([]string)
+
+	if jobs.Len() == 0 {
+		jobs.Strings = append(jobs.Strings, userInfo.Job)
 	}
 
-	if len(jobs) == 0 {
-		jobs = append(jobs, userInfo.Job)
-	}
-
-	jobsExp := make([]jet.Expression, len(jobs))
-	for i := range jobs {
-		jobsExp[i] = jet.String(jobs[i])
+	jobsExp := make([]jet.Expression, len(jobs.Strings))
+	for i := range jobs.Strings {
+		jobsExp[i] = jet.String(jobs.Strings[i])
 	}
 
 	idsExp := make([]jet.Expression, len(attributes))
@@ -206,22 +201,18 @@ func (s *Server) validateCitizenLabels(ctx context.Context, userInfo *userinfo.U
 }
 
 func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.CitizenLabels, error) {
-	jobsAttr, err := s.ps.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
+	jobs, err := s.ps.AttrStringList(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
-	var jobs perms.StringList
-	if jobsAttr != nil {
-		jobs = jobsAttr.([]string)
+
+	if jobs.Len() == 0 {
+		jobs.Strings = append(jobs.Strings, userInfo.Job)
 	}
 
-	if len(jobs) == 0 {
-		jobs = append(jobs, userInfo.Job)
-	}
-
-	jobsExp := make([]jet.Expression, len(jobs))
-	for i := range jobs {
-		jobsExp[i] = jet.String(jobs[i])
+	jobsExp := make([]jet.Expression, jobs.Len())
+	for i := range jobs.Strings {
+		jobsExp[i] = jet.String(jobs.Strings[i])
 	}
 
 	stmt := tUserCitizenLabels.

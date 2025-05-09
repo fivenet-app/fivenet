@@ -1,17 +1,16 @@
 <script lang="ts" setup>
 import { useCompletorStore } from '~/stores/completor';
 import type { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import type { Job } from '~~/gen/ts/resources/users/jobs';
 
 const props = defineProps<{
-    attribute: RoleAttribute;
-    states: Map<number, AttributeValues | undefined>;
+    modelValue: RoleAttribute;
     disabled?: boolean;
     permission: Permission;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:states', payload: Map<number, AttributeValues | undefined>): void;
+    (e: 'update:modelValue', value: AttributeValues): void;
     (e: 'changed'): void;
 }>();
 
@@ -19,94 +18,165 @@ const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const jobGrades = ref(new Map<string, JobGrade>());
+const attribute = useVModel(props, 'modelValue', emit);
 
-const states = ref<typeof props.states>(props.states);
-const id = ref<number>(props.attribute.attrId);
-
-if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
-    switch (lowercaseFirstLetter(props.attribute.type)) {
+if (attribute.value?.validValues === undefined) {
+    switch (lowercaseFirstLetter(attribute.value.type)) {
         case 'stringList': {
-            states.value.set(id.value, {
+            attribute.value.validValues = {
                 validValues: {
                     oneofKind: 'stringList',
                     stringList: {
                         strings: [],
                     },
                 },
-            });
+            };
             break;
         }
 
         case 'jobList': {
-            states.value.set(id.value, {
+            attribute.value.validValues = {
                 validValues: {
                     oneofKind: 'jobList',
                     jobList: {
                         strings: [],
                     },
                 },
-            });
+            };
             break;
         }
 
         case 'jobGradeList': {
-            states.value.set(id.value, {
+            attribute.value.validValues = {
                 validValues: {
                     oneofKind: 'jobGradeList',
                     jobGradeList: {
                         jobs: {},
-                        grades: {},
                         fineGrained: false,
+                        grades: {},
                     },
                 },
-            });
+            };
+            break;
+        }
+    }
+}
+if (attribute.value?.value === undefined) {
+    switch (lowercaseFirstLetter(attribute.value.type)) {
+        case 'stringList': {
+            attribute.value.value = {
+                validValues: {
+                    oneofKind: 'stringList',
+                    stringList: {
+                        strings: [],
+                    },
+                },
+            };
+            break;
+        }
+
+        case 'jobList': {
+            attribute.value.value = {
+                validValues: {
+                    oneofKind: 'jobList',
+                    jobList: {
+                        strings: [],
+                    },
+                },
+            };
+            break;
+        }
+
+        case 'jobGradeList': {
+            attribute.value.value = {
+                validValues: {
+                    oneofKind: 'jobGradeList',
+                    jobGradeList: {
+                        jobs: {},
+                        fineGrained: false,
+                        grades: {},
+                    },
+                },
+            };
             break;
         }
     }
 }
 
-const currentValue: AttributeValues = states.value.get(id.value)!;
-const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
+const attrValue = ref<AttributeValues>(attribute.value.value!);
+
+let maxValues = attribute.value.maxValues;
+if (maxValues === undefined) {
+    switch (lowercaseFirstLetter(attribute.value.type)) {
+        case 'stringList':
+            maxValues = {
+                validValues: {
+                    oneofKind: 'stringList',
+                    stringList: {
+                        strings: [],
+                    },
+                },
+            };
+            break;
+
+        case 'jobList':
+            maxValues = {
+                validValues: {
+                    oneofKind: 'jobList',
+                    jobList: {
+                        strings: [],
+                    },
+                },
+            };
+            break;
+
+        case 'jobGradeList':
+            maxValues = {
+                validValues: {
+                    oneofKind: 'jobGradeList',
+                    jobGradeList: {
+                        jobs: {},
+                        fineGrained: false,
+                        grades: {},
+                    },
+                },
+            };
+            break;
+    }
+}
+
+const validValues = computed<AttributeValues | undefined>(() => attribute.value.validValues);
+
+watchOnce(attrValue, () => emit('changed'), { deep: true });
 
 async function toggleStringListValue(value: string): Promise<void> {
-    if (currentValue.validValues.oneofKind !== 'stringList') {
+    if (attrValue.value.validValues.oneofKind !== 'stringList') {
         return;
     }
 
-    const array = currentValue.validValues.stringList.strings;
-    if (!array.includes(value)) {
-        array.push(value);
+    const idx = attrValue.value.validValues.stringList.strings.findIndex((v) => v === value);
+    if (idx === -1) {
+        attrValue.value.validValues.stringList.strings.push(value);
     } else {
-        array.splice(array.indexOf(value), 1);
+        attrValue.value.validValues.stringList.strings.splice(idx, 1);
     }
-
-    currentValue.validValues.stringList.strings = array;
-    states.value.set(id.value, currentValue);
-    emit('update:states', states.value);
-    emit('changed');
 }
 
 async function toggleJobListValue(value: string): Promise<void> {
-    if (currentValue.validValues.oneofKind !== 'jobList') {
+    if (attrValue.value.validValues.oneofKind !== 'jobList') {
         return;
     }
 
-    const array = currentValue.validValues.jobList.strings;
-    if (!array.includes(value)) {
-        array.push(value);
+    const idx = attrValue.value.validValues.jobList.strings.findIndex((v) => v === value);
+    if (idx === -1) {
+        attrValue.value.validValues.jobList.strings.push(value);
     } else {
-        array.splice(array.indexOf(value), 1);
+        attrValue.value.validValues.jobList.strings.splice(idx, 1);
     }
-
-    currentValue.validValues.jobList.strings = array;
-    states.value.set(id.value, currentValue);
-    emit('update:states', states.value);
-    emit('changed');
 }
 
 async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
-    if (currentValue.validValues.oneofKind !== 'jobGradeList') {
+    if (attrValue.value.validValues.oneofKind !== 'jobGradeList') {
         return;
     }
 
@@ -114,60 +184,17 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
         return;
     }
 
-    const map = currentValue.validValues.jobGradeList.jobs;
-    if (checked && !map[job.name]) {
-        map[job.name] = 1;
-        jobGrades.value.set(job.name, job.grades[0]);
-    } else if (!checked && map[job.name]) {
+    if (checked && !attrValue.value.validValues.jobGradeList.jobs[job.name]) {
+        attrValue.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
+    } else if (!checked && attrValue.value.validValues.jobGradeList.jobs[job.name]) {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete map[job.name];
-        jobGrades.value.set(job.name, job.grades[0]);
-    } else {
-        return;
+        delete attrValue.value.validValues.jobGradeList.jobs[job.name];
     }
-
-    currentValue.validValues.jobGradeList.jobs = map;
-    states.value.set(id.value, currentValue);
-    emit('update:states', states.value);
-    emit('changed');
-}
-
-async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
-    if (currentValue.validValues.oneofKind !== 'jobGradeList') {
-        return;
-    }
-
-    const map = currentValue.validValues.jobGradeList.jobs;
-
-    map[job.name] = grade.grade;
-    const idx = job.grades.findIndex((g) => g.grade === grade.grade);
-    if (idx === -1) {
-        return;
-    }
-    jobGrades.value.set(job.name, job.grades[idx]!);
-
-    currentValue.validValues.jobGradeList.jobs = map;
-    states.value.set(id.value, currentValue);
-    emit('update:states', states.value);
-    emit('changed');
 }
 
 onBeforeMount(async () => {
-    if (currentValue.validValues.oneofKind === 'jobList' || currentValue.validValues.oneofKind === 'jobGradeList') {
+    if (attrValue.value.validValues.oneofKind === 'jobList' || attrValue.value.validValues.oneofKind === 'jobGradeList')
         await listJobs();
-
-        jobs.value.forEach((job) => {
-            if (currentValue.validValues.oneofKind !== 'jobGradeList') {
-                return;
-            }
-
-            const grade = job.grades[(currentValue.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1];
-            if (!grade) {
-                return;
-            }
-            jobGrades.value.set(job.name, grade);
-        });
-    }
 });
 
 const { game } = useAppConfig();
@@ -179,12 +206,13 @@ const { game } = useAppConfig();
             variant="outline"
             :items="[{ label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }]"
             :unmount="true"
+            :ui="{ default: { class: 'mb-0.5' } }"
         >
             <template #item>
                 <div class="flex flex-col gap-2">
                     <div
                         v-if="
-                            currentValue.validValues.oneofKind === 'stringList' &&
+                            attrValue.validValues.oneofKind === 'stringList' &&
                             validValues?.validValues &&
                             validValues?.validValues.oneofKind === 'stringList'
                         "
@@ -197,7 +225,7 @@ const { game } = useAppConfig();
                         >
                             <UToggle
                                 :name="value"
-                                :model-value="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
+                                :model-value="!!attrValue.validValues.stringList.strings.find((v) => v === value)"
                                 @update:model-value="toggleStringListValue(value)"
                             />
                             <span>{{
@@ -207,7 +235,7 @@ const { game } = useAppConfig();
                     </div>
                     <div
                         v-else-if="
-                            currentValue.validValues.oneofKind === 'jobList' &&
+                            attrValue.validValues.oneofKind === 'jobList' &&
                             validValues?.validValues &&
                             validValues?.validValues.oneofKind === 'jobList' &&
                             jobs !== undefined
@@ -217,7 +245,7 @@ const { game } = useAppConfig();
                         <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-1">
                             <UToggle
                                 :name="job.name"
-                                :model-value="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
+                                :model-value="!!attrValue.validValues.jobList?.strings.find((v) => v === job.name)"
                                 @update:model-value="toggleJobListValue(job.name)"
                             />
                             <span>{{ job.label }}</span>
@@ -225,7 +253,7 @@ const { game } = useAppConfig();
                     </div>
                     <div
                         v-else-if="
-                            currentValue.validValues.oneofKind === 'jobGradeList' &&
+                            attrValue.validValues.oneofKind === 'jobGradeList' &&
                             validValues?.validValues &&
                             validValues.validValues.oneofKind === 'jobGradeList'
                         "
@@ -238,7 +266,7 @@ const { game } = useAppConfig();
                         >
                             <UToggle
                                 :name="job.name"
-                                :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
+                                :model-value="!!attrValue.validValues?.jobGradeList.jobs[job.name]"
                                 @update:model-value="toggleJobGradeValue(job, $event)"
                             />
 
@@ -246,33 +274,34 @@ const { game } = useAppConfig();
 
                             <ClientOnly>
                                 <USelectMenu
+                                    v-model="attrValue.validValues.jobGradeList.jobs[job.name]"
                                     class="flex-1"
                                     nullable
-                                    :disabled="!currentValue.validValues?.jobGradeList.jobs[job.name]"
+                                    :disabled="!attrValue.validValues?.jobGradeList.jobs[job.name]"
                                     :options="job.grades"
                                     :search-attributes="['label']"
-                                    by="grade"
-                                    :placeholder="$t('common.rank')"
                                     :searchable-placeholder="$t('common.search_field')"
-                                    @update:model-value="updateJobGradeValue(job, $event)"
+                                    :placeholder="$t('common.rank')"
+                                    value-attribute="grade"
                                 >
                                     <template #label>
-                                        <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
-                                            <span class="truncate">{{
-                                                job.grades.find(
-                                                    (g) =>
-                                                        currentValue.validValues.oneofKind === 'jobGradeList' &&
-                                                        g.grade ===
-                                                            (currentValue.validValues.jobGradeList.jobs[job.name] ??
-                                                                game.startJobGrade),
-                                                )?.label ?? $t('common.na')
-                                            }}</span>
+                                        <template v-if="job.grades && attrValue.validValues.jobGradeList.jobs[job.name]">
+                                            <span class="truncate"
+                                                >{{
+                                                    job.grades.find(
+                                                        (g) =>
+                                                            attrValue.validValues.oneofKind === 'jobGradeList' &&
+                                                            g.grade ===
+                                                                (attrValue.validValues.jobGradeList.jobs[job.name] ??
+                                                                    game.startJobGrade),
+                                                    )?.label ?? $t('common.na')
+                                                }}
+                                                ({{ attrValue.validValues.jobGradeList.jobs[job.name] }})</span
+                                            >
                                         </template>
                                     </template>
 
-                                    <template #option="{ option: grade }">
-                                        {{ grade?.label }}
-                                    </template>
+                                    <template #option="{ option: grade }"> {{ grade?.label }} ({{ grade?.grade }}) </template>
 
                                     <template #option-empty="{ query: search }">
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -283,7 +312,7 @@ const { game } = useAppConfig();
                             </ClientOnly>
                         </div>
                     </div>
-                    <div v-else>{{ currentValue.validValues.oneofKind }} {{ validValues }}</div>
+                    <div v-else>{{ attrValue.validValues.oneofKind }} {{ validValues }}</div>
                 </div>
             </template>
         </UAccordion>

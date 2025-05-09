@@ -66,18 +66,18 @@ func New(p Params) IAuditer {
 		input:  make(chan *model.FivenetAuditLog),
 	}
 
+	// Register audit log table in housekeeper
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           tAudit,
+		TimestampColumn: tAudit.CreatedAt,
+		MinDays:         p.Config.Audit.RetentionDays,
+	})
+
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		for range 4 {
 			a.wg.Add(1)
 			go a.worker(ctxCancel)
 		}
-
-		// Register audit log table in housekeeper
-		housekeeper.AddTable(&housekeeper.Table{
-			Table:           tAudit,
-			TimestampColumn: tAudit.CreatedAt,
-			MinDays:         p.Config.Audit.RetentionDays,
-		})
 
 		// Remove legacy audit log retention cron job
 		if err := p.Cron.UnregisterCronjob(ctxStartup, "auditlog-retention"); err != nil {

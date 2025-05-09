@@ -4,7 +4,6 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import RoleView from '~/components/rector/roles/RoleView.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -79,7 +78,7 @@ async function createRole(): Promise<void> {
 
         roles.value?.push(response.role!);
 
-        selectedRole.value = response.role;
+        await navigateTo({ name: 'rector-roles-id', params: { id: response.role.id } });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -87,8 +86,6 @@ async function createRole(): Promise<void> {
 }
 
 const sortedRoles = computed(() => [...(roles.value ?? [])].sort((a, b) => a.grade - b.grade));
-
-const selectedRole = ref<Role | undefined>();
 
 const columns = [
     {
@@ -101,6 +98,8 @@ const columns = [
         sortable: false,
     },
 ];
+
+const route = useRoute('rector-roles-id');
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
@@ -191,7 +190,11 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     <template #actions-data="{ row: role }">
                         <div class="text-right">
                             <UTooltip :text="$t('common.show')">
-                                <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                                <UButton
+                                    :to="{ name: 'rector-roles-id', params: { id: role.id } }"
+                                    variant="link"
+                                    icon="i-mdi-eye"
+                                />
                             </UTooltip>
                         </div>
                     </template>
@@ -205,18 +208,11 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
         <div class="w-full basis-2/3">
             <DataNoDataBlock
-                v-if="!selectedRole"
+                v-if="!route.params.id"
                 icon="i-mdi-select"
                 :message="$t('common.none_selected', [$t('common.role')])"
             />
-            <RoleView
-                v-else
-                :role-id="selectedRole.id"
-                @deleted="
-                    selectedRole = undefined;
-                    refresh();
-                "
-            />
+            <NuxtPage v-else />
         </div>
     </UDashboardPanelContent>
 </template>

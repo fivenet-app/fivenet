@@ -553,7 +553,7 @@
         "insert": "Insert",
         "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
         "default_lang": "Default Language",
-        "selected": "None selected | {n} selected",
+        "selected": "None selected | {n} selected | {n} selected",
         "image_caching": "Please note that due to browser caching it can take up to 4 hours for the image to have updated for everyone.",
         "day_view": "Daily View",
         "week_view": "Weekly View",

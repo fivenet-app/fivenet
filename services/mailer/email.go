@@ -3,7 +3,6 @@ package mailer
 import (
 	"context"
 	"errors"
-	"slices"
 	"strings"
 	"time"
 
@@ -17,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/services/mailer/errors"
@@ -343,16 +341,12 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *pbmailer.CreateOr
 		req.Email.Job = &userInfo.Job
 
 		// Field Permission Check
-		fieldsAttr, err := s.ps.Attr(userInfo, permsmailer.MailerServicePerm, permsmailer.MailerServiceCreateOrUpdateEmailPerm, permsmailer.MailerServiceCreateOrUpdateEmailFieldsPermField)
+		fields, err := s.ps.AttrStringList(userInfo, permsmailer.MailerServicePerm, permsmailer.MailerServiceCreateOrUpdateEmailPerm, permsmailer.MailerServiceCreateOrUpdateEmailFieldsPermField)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
-		var fields perms.StringList
-		if fieldsAttr != nil {
-			fields = fieldsAttr.([]string)
-		}
 
-		if !slices.Contains(fields, "Job") {
+		if !fields.Contains("Job") {
 			return nil, errswrap.NewError(err, errorsmailer.ErrEmailAccessDenied)
 		}
 	}

@@ -9,6 +9,7 @@ import (
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	pbjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs"
@@ -18,7 +19,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
@@ -43,13 +43,9 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	types, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
 	}
 
 	tUser := tables.Users().AS("colleague")
@@ -82,7 +78,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 			))
 	}
 
-	if len(req.LabelIds) > 0 && (slices.Contains(types, "Labels") || userInfo.SuperUser) {
+	if len(req.LabelIds) > 0 && (types.Contains("Labels") || userInfo.SuperUser) {
 		labelIds := []jet.Expression{}
 		for _, labelId := range req.LabelIds {
 			labelIds = append(labelIds, jet.Uint64(labelId))
@@ -128,7 +124,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
 
-	if len(req.LabelIds) > 0 && (slices.Contains(types, "Labels") || userInfo.SuperUser) {
+	if len(req.LabelIds) > 0 && (types.Contains("Labels") || userInfo.SuperUser) {
 		countStmt = countStmt.
 			FROM(
 				tUser.
@@ -221,7 +217,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
 
-	if len(req.LabelIds) > 0 && (slices.Contains(types, "Labels") || userInfo.SuperUser) {
+	if len(req.LabelIds) > 0 && (types.Contains("Labels") || userInfo.SuperUser) {
 		stmt = stmt.
 			FROM(
 				tUser.
@@ -267,7 +263,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		}
 	}
 
-	if len(resp.Colleagues) > 0 && (slices.Contains(types, "Labels") || userInfo.SuperUser) {
+	if len(resp.Colleagues) > 0 && (types.Contains("Labels") || userInfo.SuperUser) {
 		userIds := []jet.Expression{}
 		for _, colleague := range resp.Colleagues {
 			userIds = append(userIds, jet.Int32(colleague.UserId))
@@ -419,13 +415,9 @@ func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueReque
 	defer s.aud.Log(auditEntry, req)
 
 	// Access Permission Check
-	accessAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
+	colleagueAccess, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-	var colleagueAccess perms.StringList
-	if accessAttr != nil {
-		colleagueAccess = accessAttr.([]string)
 	}
 
 	targetUser, err := s.getColleague(ctx, userInfo, userInfo.Job, req.UserId, nil)
@@ -450,22 +442,19 @@ func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueReque
 	}
 
 	// Field Permission Check
-	var types perms.StringList
+	var fields *permissions.StringList
 	if !infoOnly {
-		typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+		fields, err = s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
-		if typesAttr != nil {
-			types = typesAttr.([]string)
-		}
 	}
 	if userInfo.SuperUser {
-		types = []string{"Note"}
+		fields.Strings = []string{"Note"}
 	}
 
 	withColumns := []jet.Projection{}
-	for _, fType := range types {
+	for _, fType := range fields.Strings {
 		switch fType {
 		case "Note":
 			withColumns = append(withColumns, tJobsUserProps.Note)
@@ -488,20 +477,16 @@ func (s *Server) GetSelf(ctx context.Context, req *pbjobs.GetSelfRequest) (*pbjo
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Field Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	types, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
-	}
 	if userInfo.SuperUser {
-		types = append(types, "AbsenceDate", "Note")
+		types.Strings = append(types.Strings, "AbsenceDate", "Note")
 	}
 
 	withColumns := []jet.Projection{}
-	for _, fType := range types {
+	for _, fType := range types.Strings {
 		switch fType {
 		case "Note":
 			withColumns = append(withColumns, tJobsUserProps.Note)
@@ -537,13 +522,9 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *pbjobs.SetJobsUserPr
 	}
 
 	// Access Permission Check
-	accessAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsAccessPermField)
+	colleagueAccess, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-	var colleagueAccess perms.StringList
-	if accessAttr != nil {
-		colleagueAccess = accessAttr.([]string)
 	}
 
 	targetUser, err := s.getColleague(ctx, userInfo, userInfo.Job, req.Props.UserId, nil)
@@ -563,26 +544,22 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *pbjobs.SetJobsUserPr
 	}
 
 	// Types Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsTypesPermField)
+	types, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsTypesPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
-	}
 	if userInfo.SuperUser {
-		types = []string{"AbsenceDate", "Note", "Labels", "Name"}
+		types.Strings = []string{"AbsenceDate", "Note", "Labels", "Name"}
 	}
 
-	props, err := jobs.GetJobsUserProps(ctx, s.db, targetUser.Job, targetUser.UserId, types)
+	props, err := jobs.GetJobsUserProps(ctx, s.db, targetUser.Job, targetUser.UserId, types.Strings)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil {
 		// Allow users to set their own absence date regardless of types perms check
-		if userInfo.UserId != targetUser.UserId && !slices.Contains(types, "AbsenceDate") && !userInfo.SuperUser {
+		if userInfo.UserId != targetUser.UserId && !types.Contains("AbsenceDate") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
@@ -607,14 +584,14 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *pbjobs.SetJobsUserPr
 
 	// Generate the update sets
 	if req.Props.Note != nil {
-		if !slices.Contains(types, "Note") && !userInfo.SuperUser {
+		if !types.Contains("Note") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsNoteDenied
 		}
 	}
 
 	if req.Props.Labels != nil {
 		// Check if user is allowed to update labels
-		if !slices.Contains(types, "Labels") && !userInfo.SuperUser {
+		if !types.Contains("Labels") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
@@ -633,7 +610,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *pbjobs.SetJobsUserPr
 	}
 
 	if req.Props.NamePrefix != nil || req.Props.NameSuffix != nil {
-		if !slices.Contains(types, "Name") && !userInfo.SuperUser {
+		if !types.Contains("Name") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsNameDenied
 		}
 	}
@@ -662,7 +639,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *pbjobs.SetJobsUserPr
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	props, err = jobs.GetJobsUserProps(ctx, s.db, targetUser.Job, targetUser.UserId, types)
+	props, err = jobs.GetJobsUserProps(ctx, s.db, targetUser.Job, targetUser.UserId, types.Strings)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -705,13 +682,9 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Access Field Permission Check
-	accessAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
+	colleagueAccess, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-	var colleagueAccess perms.StringList
-	if accessAttr != nil {
-		colleagueAccess = accessAttr.([]string)
 	}
 
 	tJobsUserActivity := tJobsUserActivity.AS("jobsuseractivity")
@@ -732,7 +705,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 
 	// If no user IDs given or more than 2, show all the user has access to
 	if len(req.UserIds) == 0 || len(req.UserIds) >= 2 {
-		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tTargetUser, colleagueAccess, userInfo))
+		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tTargetUser, colleagueAccess.Strings, userInfo))
 
 		if len(req.UserIds) >= 2 {
 			// More than 2 user ids
@@ -766,25 +739,21 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 	}
 
 	// Types Field Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceListColleagueActivityPerm, permsjobs.JobsServiceListColleagueActivityTypesPermField)
+	types, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceListColleagueActivityPerm, permsjobs.JobsServiceListColleagueActivityTypesPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
-	}
-	if len(types) == 0 {
+	if types.Len() == 0 {
 		if !userInfo.SuperUser {
 			return resp, nil
 		} else {
-			types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME")
+			types.Strings = append(types.Strings, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME")
 		}
 	}
 
 	if len(req.ActivityTypes) > 0 {
 		req.ActivityTypes = slices.DeleteFunc(req.ActivityTypes, func(t jobs.JobsUserActivityType) bool {
-			return !slices.ContainsFunc(types, func(s string) bool {
+			return !slices.ContainsFunc(types.Strings, func(s string) bool {
 				return strings.Contains(t.String(), "JOBS_USER_ACTIVITY_TYPE_"+s)
 			})
 		})

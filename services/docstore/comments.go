@@ -19,7 +19,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsdocstore "github.com/fivenet-app/fivenet/services/docstore/errors"
@@ -369,13 +368,9 @@ func (s *Server) DeleteComment(ctx context.Context, req *pbdocstore.DeleteCommen
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteCommentPerm, permsdocstore.DocStoreServiceDeleteCommentAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteCommentPerm, permsdocstore.DocStoreServiceDeleteCommentAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 	if !access.CheckIfHasAccess(fields, userInfo, comment.CreatorJob, comment.Creator) {
 		return nil, errorsdocstore.ErrCommentDeleteDenied

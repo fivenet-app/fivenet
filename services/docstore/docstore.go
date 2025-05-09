@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsdocstore "github.com/fivenet-app/fivenet/services/docstore/errors"
@@ -404,13 +403,9 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocstore.UpdateDocum
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceUpdateDocumentPerm, permsdocstore.DocStoreServiceUpdateDocumentAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceUpdateDocumentPerm, permsdocstore.DocStoreServiceUpdateDocumentAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocUpdateDenied
@@ -547,13 +542,9 @@ func (s *Server) DeleteDocument(ctx context.Context, req *pbdocstore.DeleteDocum
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteDocumentPerm, permsdocstore.DocStoreServiceDeleteDocumentAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteDocumentPerm, permsdocstore.DocStoreServiceDeleteDocumentAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocDeleteDenied
@@ -632,13 +623,9 @@ func (s *Server) ToggleDocument(ctx context.Context, req *pbdocstore.ToggleDocum
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceToggleDocumentPerm, permsdocstore.DocStoreServiceToggleDocumentAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceToggleDocumentPerm, permsdocstore.DocStoreServiceToggleDocumentAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocToggleDenied
@@ -733,13 +720,9 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *pbdocstore.Change
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceChangeDocumentOwnerPerm, permsdocstore.DocStoreServiceChangeDocumentOwnerAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceChangeDocumentOwnerPerm, permsdocstore.DocStoreServiceChangeDocumentOwnerAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocOwnerFailed

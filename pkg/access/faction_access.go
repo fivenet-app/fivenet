@@ -1,13 +1,12 @@
 package access
 
 import (
-	"slices"
-
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 )
 
-func CheckIfHasAccess(levels []string, userInfo *userinfo.UserInfo, creatorJob string, creator *users.UserShort) bool {
+func CheckIfHasAccess(levels *permissions.StringList, userInfo *userinfo.UserInfo, creatorJob string, creator *users.UserShort) bool {
 	if userInfo.SuperUser {
 		return true
 	}
@@ -24,24 +23,24 @@ func CheckIfHasAccess(levels []string, userInfo *userinfo.UserInfo, creatorJob s
 	}
 
 	// If no levels set, assume "Own" as a safe default
-	if len(levels) == 0 {
+	if levels.Len() == 0 {
 		return creator.UserId == userInfo.UserId
 	}
 
-	if slices.Contains(levels, "Any") {
+	if levels.Contains("Any") {
 		return true
 	}
-	if slices.Contains(levels, "Lower_Rank") {
+	if levels.Contains("Lower_Rank") {
 		if creator.JobGrade < userInfo.JobGrade {
 			return true
 		}
 	}
-	if slices.Contains(levels, "Same_Rank") {
+	if levels.Contains("Same_Rank") {
 		if creator.JobGrade <= userInfo.JobGrade {
 			return true
 		}
 	}
-	if slices.Contains(levels, "Own") {
+	if levels.Contains("Own") {
 		if creator.UserId == userInfo.UserId {
 			return true
 		}

@@ -748,6 +748,10 @@ func (m *UserMarkersUpdates) validate(all bool) error {
 
 	// no validation rules for Partial
 
+	if m.Clear != nil {
+		// no validation rules for Clear
+	}
+
 	if len(errors) > 0 {
 		return UserMarkersUpdatesMultiError(errors)
 	}

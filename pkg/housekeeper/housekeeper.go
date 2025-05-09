@@ -102,8 +102,8 @@ func New(p Params) *Housekeeper {
 }
 
 func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCronData) error {
-	tablesMu.Lock()
-	defer tablesMu.Unlock()
+	tableListsMu.Lock()
+	defer tableListsMu.Unlock()
 
 	tablesList := h.getTablesListFn()
 

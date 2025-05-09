@@ -61,6 +61,7 @@ storage:
   type: "filesystem"
   filesystem:
     path: ".data/"
+    prefix: ""
   s3:
     endpoint: ""
     region: "us-east-1"

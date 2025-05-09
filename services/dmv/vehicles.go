@@ -3,7 +3,6 @@ package dmv
 import (
 	"context"
 	"errors"
-	"slices"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -14,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	errorsdmv "github.com/fivenet-app/fivenet/services/dmv/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -139,16 +137,12 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbdmv.ListVehiclesReques
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdmv.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
 
-	if slices.Contains(fields, "PhoneNumber") {
+	if fields.Contains("PhoneNumber") {
 		columns = append(columns, tUsers.PhoneNumber)
 	}
 

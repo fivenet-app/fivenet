@@ -3,7 +3,6 @@ package wiki
 import (
 	"context"
 	"errors"
-	"slices"
 	"strings"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -16,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -383,15 +381,11 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.perms.Attr(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
+	fields, err := s.perms.AttrStringList(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
-	if !slices.Contains(fields, "Public") {
+	if !fields.Contains("Public") {
 		req.Page.Meta.Public = false
 	}
 
@@ -558,15 +552,11 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.perms.Attr(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
+	fields, err := s.perms.AttrStringList(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
-	if !slices.Contains(fields, "Public") {
+	if !fields.Contains("Public") {
 		req.Page.Meta.Public = page.Meta.Public
 	}
 

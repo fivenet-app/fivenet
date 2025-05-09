@@ -3,7 +3,6 @@ package jobs
 import (
 	context "context"
 	"errors"
-	"slices"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -15,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -37,20 +35,16 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 		Labels: []*jobs.Label{},
 	}
 
-	// Types Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	// Fields Permission Check
+	fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
-	}
 	if userInfo.SuperUser {
-		types = []string{"Labels"}
+		fields.Strings = []string{"Labels"}
 	}
 
-	if !slices.Contains(types, "Labels") {
+	if !fields.Contains("Labels") {
 		// Fallback to checking if user has manage colleague labels permission
 		if !s.ps.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceManageColleagueLabelsPerm) {
 			return nil, errorsjobs.ErrLabelsNoPerms
@@ -299,19 +293,15 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *pbjobs.GetCol
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Types Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
-	}
 	if userInfo.SuperUser {
-		types = []string{"Labels"}
+		fields.Strings = []string{"Labels"}
 	}
 
-	if !slices.Contains(types, "Labels") {
+	if !fields.Contains("Labels") {
 		return &pbjobs.GetColleagueLabelsStatsResponse{}, nil
 	}
 

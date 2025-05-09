@@ -3,7 +3,6 @@ package jobs
 import (
 	"context"
 	"errors"
-	"slices"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
@@ -12,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/services/jobs/errors"
@@ -30,18 +28,14 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 	condition := tConduct.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsConductServicePerm, permsjobs.JobsConductServiceListConductEntriesPerm, permsjobs.JobsConductServiceListConductEntriesAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsConductServicePerm, permsjobs.JobsConductServiceListConductEntriesPerm, permsjobs.JobsConductServiceListConductEntriesAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
 
 	// "All" is a pass, but if no fields or "Own" is given, return user's created conduct entries
-	if slices.Contains(fields, "All") {
-	} else if len(fields) == 0 || slices.Contains(fields, "Own") {
+	if fields.Contains("All") {
+	} else if fields.Len() == 0 || fields.Contains("Own") {
 		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
 	} else {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

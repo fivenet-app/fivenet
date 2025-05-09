@@ -31,17 +31,44 @@ var (
 )
 
 func init() {
-	housekeeper.AddTable(&housekeeper.Table{
-		Table:           table.FivenetCalendar,
-		TimestampColumn: table.FivenetCalendar.DeletedAt,
-		MinDays:         60,
-	})
+	housekeeper.AddTable(
+		&housekeeper.Table{
+			Table:           table.FivenetCalendar,
+			TimestampColumn: table.FivenetCalendar.DeletedAt,
+			MinDays:         61, // Delete calendars later than entries to lessen the load on the database
+		},
+		&housekeeper.Table{
+			Table:           table.FivenetCalendarEntries,
+			TimestampColumn: table.FivenetCalendarEntries.DeletedAt,
+			MinDays:         60,
+		},
+	)
 
-	housekeeper.AddTable(&housekeeper.Table{
-		Table:           table.FivenetCalendarEntries,
-		TimestampColumn: table.FivenetCalendarEntries.DeletedAt,
-		MinDays:         60,
-	})
+	housekeeper.AddJobTable(
+		&housekeeper.JobTable{
+			Source: &housekeeper.JobTableSource{
+				SourceTable:           table.FivenetCalendar,
+				SourceJobColumn:       table.FivenetCalendar.Job,
+				SourceDeletedAtColumn: table.FivenetCalendar.DeletedAt,
+				SourceIDColumn:        table.FivenetCalendar.ID,
+			},
+
+			TargetTable:           table.FivenetCalendarEntries,
+			TargetDeletedAtColumn: table.FivenetCalendarEntries.DeletedAt,
+			TargetSourceIDColumn:  table.FivenetCalendarEntries.CalendarID,
+		},
+		&housekeeper.JobTable{
+			Source: &housekeeper.JobTableSource{
+				SourceTable:           table.FivenetCalendar,
+				SourceJobColumn:       table.FivenetCalendar.Job,
+				SourceDeletedAtColumn: table.FivenetCalendar.DeletedAt,
+				SourceIDColumn:        table.FivenetCalendar.ID,
+			},
+
+			TargetTable:          table.FivenetCalendarSubs,
+			TargetSourceIDColumn: table.FivenetCalendarSubs.CalendarID,
+		},
+	)
 }
 
 type Server struct {

@@ -8,7 +8,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import type { Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import type { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
 const props = defineProps<{
@@ -43,7 +43,6 @@ const permCategories = ref<Set<string>>(new Set());
 const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
-const attrStates = ref(new Map<number, AttributeValues | undefined>());
 
 async function getRole(id: number): Promise<Role> {
     try {
@@ -131,33 +130,29 @@ async function updatePermissions(): Promise<void> {
         toRemove: [],
         toUpdate: [],
     };
-    attrStates.value.forEach((state, attr) => {
-        // Make sure the permission exists and is enabled, otherwise attr needs to be removed
-        const a = attrList.value.find((a) => a.attrId === attr);
-        if (a === undefined) {
-            return;
-        }
-        const perm = permStates.value.get(a.permissionId);
+    attrList.value.forEach((attr) => {
+        // Make sure the permission is enabled, otherwise attr needs to be removed
+        const perm = permStates.value.get(attr.permissionId);
 
-        if (perm === undefined || state === undefined) {
+        if (perm === undefined || attr.value === undefined) {
             attrs.toRemove.push({
                 roleId: role.value!.id,
-                attrId: attr,
+                attrId: attr.attrId,
                 category: '',
                 key: '',
                 name: '',
-                permissionId: 0,
+                permissionId: attr.permissionId,
                 type: '',
             });
-        } else if (state !== undefined) {
+        } else if (attr.value !== undefined) {
             attrs.toUpdate.push({
                 roleId: role.value!.id,
-                attrId: attr,
-                maxValues: state,
+                attrId: attr.attrId,
+                maxValues: attr.value,
                 category: '',
                 key: '',
                 name: '',
-                permissionId: 0,
+                permissionId: attr.permissionId,
                 type: '',
             });
         }
@@ -200,7 +195,6 @@ function clearState(): void {
     permCategories.value.clear();
     permStates.value.clear();
     attrList.value.length = 0;
-    attrStates.value.clear();
 }
 
 async function initializeRoleView(): Promise<void> {
@@ -208,15 +202,6 @@ async function initializeRoleView(): Promise<void> {
 
     await getPermissions(props.roleId);
     await propogatePermissionStates();
-
-    attrStates.value.clear();
-    attrList.value.forEach((attr) => {
-        attrStates.value.set(attr.attrId, attr.maxValues);
-    });
-
-    role.value?.attributes.forEach((attr) => {
-        attrStates.value.set(attr.attrId, attr.maxValues);
-    });
 }
 
 watch(role, async () => {
@@ -234,7 +219,6 @@ async function copyRole(): Promise<void> {
         JSON.stringify({
             role: role.value,
             attrList: attrList.value,
-            attrStates: attrStates.value,
         }),
     );
 
@@ -384,7 +368,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"
-                                    class="flex flex-col gap-2"
+                                    class="flex flex-col gap-1"
                                 >
                                     <div class="flex flex-row items-center gap-2">
                                         <div class="flex-1">
@@ -416,13 +400,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         </UButtonGroup>
                                     </div>
 
-                                    <template
-                                        v-for="attr in attrList.filter((a) => a.permissionId === perm.id)"
-                                        :key="attr.attrId"
-                                    >
+                                    <template v-for="(attr, idx) in attrList" :key="attr.attrId">
                                         <AttrViewAttr
-                                            v-model:states="attrStates"
-                                            :attribute="attr"
+                                            v-if="attr.permissionId === perm.id"
+                                            v-model="attrList[idx]!"
                                             :permission="perm"
                                             @changed="changed = true"
                                         />

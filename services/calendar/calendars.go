@@ -3,7 +3,6 @@ package calendar
 import (
 	"context"
 	"errors"
-	"slices"
 
 	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -14,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/services/calendar/errors"
@@ -254,16 +252,12 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	fieldsAttr, err := s.p.Attr(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
+	fields, err := s.p.AttrStringList(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
 
-	if req.Calendar.Job != nil && !slices.Contains(fields, "Job") {
+	if req.Calendar.Job != nil && !fields.Contains("Job") {
 		return nil, errorscalendar.ErrFailedQuery
 	}
 	if req.Calendar.Color == "" {
@@ -378,16 +372,12 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	fieldsAttr, err := s.p.Attr(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
+	fields, err := s.p.AttrStringList(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
 
-	if req.Calendar.Job != nil && !slices.Contains(fields, "Job") {
+	if req.Calendar.Job != nil && !fields.Contains("Job") {
 		return nil, errorscalendar.ErrFailedQuery
 	}
 	if req.Calendar.Color == "" {
@@ -417,7 +407,7 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 		req.Calendar.Description = &empty
 	}
 
-	if !slices.Contains(fields, "Public") && calendar.Public && req.Calendar.Public {
+	if !fields.Contains("Public") && calendar.Public && req.Calendar.Public {
 		req.Calendar.Public = false
 	}
 

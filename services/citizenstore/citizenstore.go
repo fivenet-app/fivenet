@@ -17,7 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/storage"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
@@ -53,16 +52,12 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizenstore.ListCitiz
 	orderBys := []jet.OrderByClause{}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
-	}
 
-	for _, field := range fields {
+	for _, field := range fields.Strings {
 		switch field {
 		case "PhoneNumber":
 			selectors = append(selectors, tUser.PhoneNumber)
@@ -159,11 +154,11 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizenstore.ListCitiz
 		var column jet.Column
 		switch req.Sort.Column {
 		case "trafficInfractionPoints":
-			if slices.Contains(fields, "UserProps.TrafficInfractionPoints") {
+			if fields.Contains("UserProps.TrafficInfractionPoints") {
 				column = tUserProps.TrafficInfractionPoints
 			}
 		case "openFines":
-			if slices.Contains(fields, "UserProps.OpenFines") {
+			if fields.Contains("UserProps.OpenFines") {
 				column = tUserProps.OpenFines
 			}
 		case "name":
@@ -266,17 +261,15 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizenstore.GetUserRequest
 	infoOnly := req.InfoOnly != nil && *req.InfoOnly
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
+	if fields.Strings != nil {
 		selectors = append(selectors, tUserProps.UpdatedAt)
 	}
 
-	for _, field := range fields {
+	for _, field := range fields.Strings {
 		switch field {
 		case "PhoneNumber":
 			selectors = append(selectors, tUser.PhoneNumber)
@@ -327,26 +320,18 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizenstore.GetUserRequest
 	if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.User.Job) ||
 		slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
-		jobGradesAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
+		jobGrades, err := s.ps.AttrJobGradeList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
-		var jobGrades perms.JobGradeList
-		if jobGradesAttr != nil {
-			jobGrades = jobGradesAttr.(map[string]int32)
-		}
 
-		if len(jobGrades) == 0 && !userInfo.SuperUser {
+		if jobGrades.Len() == 0 && !userInfo.SuperUser {
 			return nil, errorscitizenstore.ErrJobGradeNoPermission
 		}
 
-		// Make sure user has permission to see that grade, otherwise "hide" the user's job
-		grade, ok := jobGrades[resp.User.Job]
-		if !ok || resp.User.JobGrade > grade {
-			// Skip for superuser
-			if !userInfo.SuperUser {
-				return nil, errorscitizenstore.ErrJobGradeNoPermission
-			}
+		// Make sure user has permission to see that job's grade, otherwise deny access to the user
+		if ok := jobGrades.HasJobGrade(resp.User.Job, resp.User.JobGrade); !ok && !userInfo.SuperUser {
+			return nil, errorscitizenstore.ErrJobGradeNoPermission
 		}
 	}
 
@@ -372,7 +357,7 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizenstore.GetUserRequest
 	}
 
 	// Check if user can see licenses and fetch them
-	if !infoOnly && slices.Contains(fields, "Licenses") {
+	if !infoOnly && fields.Contains("Licenses") {
 		tLicenses := tables.Licenses()
 		tUserLicenses := tables.UserLicenses()
 
@@ -399,7 +384,7 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizenstore.GetUserRequest
 		}
 	}
 
-	if slices.Contains(fields, "UserProps.Labels") {
+	if fields.Contains("UserProps.Labels") {
 		attributes, err := s.getUserLabels(ctx, userInfo, req.UserId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
@@ -478,24 +463,20 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizenstore.SetUserPr
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceSetUserPropsPerm, permscitizenstore.CitizenStoreServiceSetUserPropsFieldsPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceSetUserPropsPerm, permscitizenstore.CitizenStoreServiceSetUserPropsFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 
 	// Generate the update sets
 	if req.Props.Wanted != nil {
-		if !slices.Contains(fields, "Wanted") {
+		if !fields.Contains("Wanted") {
 			return nil, errorscitizenstore.ErrPropsWantedDenied
 		}
 	}
 
 	if req.Props.JobName != nil {
-		if !slices.Contains(fields, "Job") {
+		if !fields.Contains("Job") {
 			return nil, errorscitizenstore.ErrPropsJobDenied
 		}
 
@@ -515,7 +496,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizenstore.SetUserPr
 	}
 
 	if req.Props.TrafficInfractionPoints != nil {
-		if !slices.Contains(fields, "TrafficInfractionPoints") {
+		if !fields.Contains("TrafficInfractionPoints") {
 			return nil, errorscitizenstore.ErrPropsTrafficPointsDenied
 		}
 	}
@@ -525,7 +506,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizenstore.SetUserPr
 	req.Props.BloodType = nil
 
 	if req.Props.MugShot != nil {
-		if !slices.Contains(fields, "MugShot") {
+		if !fields.Contains("MugShot") {
 			return nil, errorscitizenstore.ErrPropsMugShotDenied
 		}
 
@@ -556,7 +537,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizenstore.SetUserPr
 	}
 
 	if req.Props.Labels != nil {
-		if !slices.Contains(fields, "Labels") {
+		if !fields.Contains("Labels") {
 			return nil, errorscitizenstore.ErrPropsLabelsDenied
 		}
 

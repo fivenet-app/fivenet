@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"reflect"
 	"slices"
 	"sync"
 
@@ -195,24 +194,26 @@ func (p *Perms) registerOrUpdateAttribute(ctx context.Context, permId uint64, ke
 	var validValsOut string
 	// If the valid values is a nil or a string, don't do anything extra just set to an empty string
 	if validValues != nil {
-		vType := reflect.TypeOf(validValues).String()
-		if vType == "string" {
-			if validValues != "" {
-				validValsOut = validValues.(string)
+		switch v := validValues.(type) {
+		case string:
+			if v != "" {
+				validValsOut = v
 			}
-		} else {
-			if aType == "StringList" {
-				validValsOut, err = json.MarshalToString(validValues)
+
+		default:
+			if aType == permissions.StringListAttributeType {
+				marshaled, err := json.Marshal(v)
 				if err != nil {
 					return 0, fmt.Errorf("failed to marshal valid values to string. %w", err)
 				}
-				validValsOut = "{\"stringList\":{\"strings\":" + validValsOut + "}}"
+				validValsOut = "{\"stringList\":{\"strings\":" + string(marshaled) + "}}"
 			}
 		}
 	}
 	if validValsOut == "" {
 		validValsOut = "{}"
 	}
+
 	validVals := &permissions.AttributeValues{}
 	if err := p.convertRawValue(validVals, validValsOut, aType); err != nil {
 		return 0, fmt.Errorf("failed to convert raw value for valid values. %w", err)

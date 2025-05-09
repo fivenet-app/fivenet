@@ -263,7 +263,7 @@ func (p *Perms) GetJobAttrMaxVals(job string, attrId uint64) (*permissions.Attri
 	return jas.Load(attrId)
 }
 
-func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error) {
+func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.AttributeValues, error) {
 	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
 	if !ok {
 		return nil, nil
@@ -292,18 +292,44 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 		return nil, nil
 	}
 
-	switch cached.Type {
-	case permissions.StringListAttributeType:
-		return cached.Value.GetStringList().Strings, nil
+	return cached.Value, nil
+}
 
-	case permissions.JobListAttributeType:
-		return cached.Value.GetJobList().Strings, nil
-
-	case permissions.JobGradeListAttributeType:
-		return cached.Value.GetJobGradeList().Jobs, nil
+func (p *Perms) AttrStringList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error) {
+	attrValue, err := p.Attr(userInfo, category, name, key)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil, fmt.Errorf("unknown role attribute type")
+	switch v := attrValue.ValidValues.(type) {
+	case *permissions.AttributeValues_StringList:
+		return v.StringList, nil
+
+	case *permissions.AttributeValues_JobList:
+		return v.JobList, nil
+
+	default:
+		return nil, fmt.Errorf("unknown role attribute type")
+	}
+}
+
+func (p *Perms) AttrJobList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error) {
+	return p.AttrStringList(userInfo, category, name, key)
+}
+
+func (p *Perms) AttrJobGradeList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.JobGradeList, error) {
+	attrValue, err := p.Attr(userInfo, category, name, key)
+	if err != nil {
+		return nil, err
+	}
+
+	switch v := attrValue.ValidValues.(type) {
+	case *permissions.AttributeValues_JobGradeList:
+		return v.JobGradeList, nil
+
+	default:
+		return nil, fmt.Errorf("unknown role attribute type for string list")
+	}
 }
 
 func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, job string) []*permissions.RoleAttribute {

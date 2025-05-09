@@ -119,6 +119,14 @@ export const useLivemapStore = defineStore(
                             }
                         }
                     } else if (resp.data.oneofKind === 'users') {
+                        if (resp.data.users.clear === true) {
+                            console.info('Clearing all user markers');
+                            selectedMarker.value = undefined;
+                            foundUsers.length = 0;
+                            markersUsers.value.clear();
+                            continue;
+                        }
+
                         resp.data.users.updated.forEach((v) => {
                             // Only record found users for non-partial responses
                             if (resp.data.oneofKind === 'users' && !resp.data.users.partial) {

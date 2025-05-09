@@ -3,7 +3,6 @@ package citizenstore
 import (
 	context "context"
 	"errors"
-	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
@@ -12,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorscitizenstore "github.com/fivenet-app/fivenet/services/citizenstore/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -31,18 +29,14 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizenstore.ListU
 	}
 
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
-	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListUserActivityPerm, permscitizenstore.CitizenStoreServiceListUserActivityFieldsPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListUserActivityPerm, permscitizenstore.CitizenStoreServiceListUserActivityFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 
 	if userInfo.UserId == req.UserId {
 		// If isn't superuser or doesn't have 'Own' activity feed access
-		if !userInfo.SuperUser && !slices.Contains(fields, "Own") {
+		if !userInfo.SuperUser && !fields.Contains("Own") {
 			return resp, nil
 		}
 	}

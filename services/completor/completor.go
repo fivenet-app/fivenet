@@ -12,7 +12,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorscompletor "github.com/fivenet-app/fivenet/services/completor/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -135,26 +134,21 @@ func (s *Server) CompleteJobs(ctx context.Context, req *pbcompletor.CompleteJobs
 func (s *Server) CompleteDocumentCategories(ctx context.Context, req *pbcompletor.CompleteDocumentCategoriesRequest) (*pbcompletor.CompleteDocumentCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteDocumentCategoriesPerm, permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField)
+	jobs, err := s.p.AttrJobList(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteDocumentCategoriesPerm, permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
-	var jobs perms.StringList
-	if jobsAttr != nil {
-		jobs = jobsAttr.([]string)
-	}
-
-	if len(jobs) == 0 {
-		jobs = append(jobs, userInfo.Job)
+	if jobs.Len() == 0 {
+		jobs.Strings = append(jobs.Strings, userInfo.Job)
 	}
 
 	req.Search = strings.TrimSpace(req.Search)
 	req.Search = strings.ReplaceAll(req.Search, "%", "")
 	req.Search = strings.ReplaceAll(req.Search, " ", "%")
 
-	jobsExp := make([]jet.Expression, len(jobs))
-	for i := range jobs {
-		jobsExp[i] = jet.String(jobs[i])
+	jobsExp := make([]jet.Expression, jobs.Len())
+	for i := range jobs.Strings {
+		jobsExp[i] = jet.String(jobs.Strings[i])
 	}
 
 	condition := tDCategory.Job.IN(jobsExp...)
@@ -200,26 +194,21 @@ func (s *Server) ListLawBooks(ctx context.Context, req *pbcompletor.ListLawBooks
 func (s *Server) CompleteCitizenLabels(ctx context.Context, req *pbcompletor.CompleteCitizenLabelsRequest) (*pbcompletor.CompleteCitizenLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
+	jobs, err := s.p.AttrJobList(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
-	var jobs perms.StringList
-	if jobsAttr != nil {
-		jobs = jobsAttr.([]string)
-	}
-
-	if len(jobs) == 0 {
-		jobs = append(jobs, userInfo.Job)
+	if jobs.Len() == 0 {
+		jobs.Strings = append(jobs.Strings, userInfo.Job)
 	}
 
 	req.Search = strings.TrimSpace(req.Search)
 	req.Search = strings.ReplaceAll(req.Search, "%", "")
 	req.Search = strings.ReplaceAll(req.Search, " ", "%")
 
-	jobsExp := make([]jet.Expression, len(jobs))
-	for i := range jobs {
-		jobsExp[i] = jet.String(jobs[i])
+	jobsExp := make([]jet.Expression, jobs.Len())
+	for i := range jobs.Strings {
+		jobsExp[i] = jet.String(jobs.Strings[i])
 	}
 
 	condition := tJobCitizenLabels.Job.IN(jobsExp...)

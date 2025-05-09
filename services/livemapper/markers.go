@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	pblivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper"
 	permslivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper/perms"
@@ -13,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorslivemapper "github.com/fivenet-app/fivenet/services/livemapper/errors"
@@ -86,13 +86,9 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerPerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerAccessPermField)
+		fields, err := s.ps.AttrStringList(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerPerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerAccessPermField)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
-		}
-		var fields perms.StringList
-		if fieldsAttr != nil {
-			fields = fieldsAttr.([]string)
 		}
 
 		marker, err := s.getMarker(ctx, req.Marker.Id)
@@ -167,13 +163,9 @@ func (s *Server) DeleteMarker(ctx context.Context, req *pblivemapper.DeleteMarke
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceDeleteMarkerPerm, permslivemapper.LivemapperServiceDeleteMarkerAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceDeleteMarkerPerm, permslivemapper.LivemapperServiceDeleteMarkerAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
-	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
 	}
 
 	marker, err := s.getMarker(ctx, req.Id)
@@ -261,11 +253,11 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarke
 	return &dest, nil
 }
 
-func (s *Server) getMarkerMarkers(jobs []string, updatedAt time.Time) ([]*livemap.MarkerMarker, []uint64, error) {
+func (s *Server) getMarkerMarkers(jobs *permissions.StringList, updatedAt time.Time) ([]*livemap.MarkerMarker, []uint64, error) {
 	updated := []*livemap.MarkerMarker{}
 	deleted := []uint64{}
 
-	for _, job := range jobs {
+	for _, job := range jobs.Strings {
 		markers, _ := s.markersCache.Load(job)
 
 		for _, marker := range markers {

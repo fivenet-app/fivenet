@@ -7,8 +7,12 @@ import (
 )
 
 var (
-	tablesMu   = sync.Mutex{}
-	tablesList = map[string]*Table{}
+	// Mutexes to protect access to the table list maps
+	tableListsMu   = sync.Mutex{}
+	fkTableListsMu = sync.Mutex{}
+
+	tablesList   = map[string]*Table{}
+	fkTablesList = map[string]*JobTable{}
 )
 
 type Table struct {
@@ -19,13 +23,49 @@ type Table struct {
 	MinDays         int
 }
 
-func AddTable(tbl *Table) {
-	tablesMu.Lock()
-	defer tablesMu.Unlock()
+func AddTable(tbls ...*Table) {
+	tableListsMu.Lock()
+	defer tableListsMu.Unlock()
 
-	if tbl.MinDays < 30 {
-		tbl.MinDays = 30
+	for _, tbl := range tbls {
+		if tbl.MinDays < 30 {
+			tbl.MinDays = 30
+		}
+
+		tablesList[tbl.Table.TableName()] = tbl
 	}
+}
 
-	tablesList[tbl.Table.TableName()] = tbl
+type JobTable struct {
+	Source *JobTableSource
+
+	// Table which relies on the source ID column
+	TargetTable jet.Table
+
+	TargetSourceIDColumn jet.ColumnInteger
+	// To be able to (soft) delete the target rows (if nil will "hard" delete)
+	TargetDeletedAtColumn jet.ColumnTimestamp
+	// Target job column (required when TargetSourceIDColumn not set)
+	TargetJobColumn jet.ColumnString
+
+	TargetSourceIDValue jet.Expression
+}
+
+type JobTableSource struct {
+	SourceTable jet.Table
+	// To find rows that are part of the job to delete
+	SourceJobColumn jet.ColumnString
+	// So the resource can be set as "(soft) deleted"
+	SourceDeletedAtColumn jet.ColumnTimestamp
+	// Neded to have ID(s) for results
+	SourceIDColumn jet.ColumnInteger
+}
+
+func AddJobTable(tbls ...*JobTable) {
+	fkTableListsMu.Lock()
+	defer fkTableListsMu.Unlock()
+
+	for _, tbl := range tbls {
+		fkTablesList[tbl.TargetTable.TableName()] = tbl
+	}
 }

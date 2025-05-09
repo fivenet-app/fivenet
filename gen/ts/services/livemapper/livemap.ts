@@ -106,6 +106,10 @@ export interface UserMarkersUpdates {
      * @generated from protobuf field: bool partial = 4;
      */
     partial: boolean;
+    /**
+     * @generated from protobuf field: optional bool clear = 5;
+     */
+    clear?: boolean;
 }
 /**
  * @generated from protobuf message services.livemapper.CreateOrUpdateMarkerRequest
@@ -395,7 +399,8 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
             { no: 1, name: "updated", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserMarker },
             { no: 2, name: "deleted", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "part", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "clear", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<UserMarkersUpdates>): UserMarkersUpdates {
@@ -429,6 +434,9 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
                 case /* bool partial */ 4:
                     message.partial = reader.bool();
                     break;
+                case /* optional bool clear */ 5:
+                    message.clear = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -457,6 +465,9 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
         /* bool partial = 4; */
         if (message.partial !== false)
             writer.tag(4, WireType.Varint).bool(message.partial);
+        /* optional bool clear = 5; */
+        if (message.clear !== undefined)
+            writer.tag(5, WireType.Varint).bool(message.clear);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

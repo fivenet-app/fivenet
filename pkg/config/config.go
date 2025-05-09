@@ -124,7 +124,8 @@ type Storage struct {
 }
 
 type FilesystemStorage struct {
-	Path string `yaml:"path"`
+	Path   string `yaml:"path"`
+	Prefix string `yaml:"prefix"`
 }
 
 type S3Storage struct {

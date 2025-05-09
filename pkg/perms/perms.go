@@ -70,7 +70,10 @@ type Permissions interface {
 	UpdateJobAttributeMaxValues(ctx context.Context, job string, attrId uint64, maxValues *permissions.AttributeValues) error
 	ClearJobAttributes(ctx context.Context, job string) error
 
-	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
+	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.AttributeValues, error)
+	AttrStringList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error)
+	AttrJobList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error)
+	AttrJobGradeList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.JobGradeList, error)
 
 	SetDefaultRolePerms(ctx context.Context, defaultPerms []string) error
 }

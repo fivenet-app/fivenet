@@ -2,7 +2,6 @@ package docstore
 
 import (
 	context "context"
-	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
@@ -10,7 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/perms"
 	errorsdocstore "github.com/fivenet-app/fivenet/services/docstore/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -91,13 +89,8 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 		}
 
 		// Field Permission Check
-		fieldsAttr, _ := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
-		var fields perms.StringList
-		if fieldsAttr != nil {
-			fields = fieldsAttr.([]string)
-		}
-
-		if slices.Contains(fields, "PhoneNumber") {
+		fields, _ := s.ps.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 
@@ -226,13 +219,8 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 		}
 
 		// Field Permission Check
-		fieldsAttr, _ := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
-		var fields perms.StringList
-		if fieldsAttr != nil {
-			fields = fieldsAttr.([]string)
-		}
-
-		if slices.Contains(fields, "PhoneNumber") {
+		fields, _ := s.ps.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
 		}
 
