@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '^1.24.2'
+          go-version: '^1.24.3'
 
       - name: Run Go Tests
         env:
@@ -104,7 +104,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: '^1.24.2'
+          go-version: '^1.24.3'
 
       - name: Run Go Build
         run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o fivenet .

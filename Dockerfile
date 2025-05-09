@@ -19,7 +19,7 @@ RUN find ./public/images/livemap/ \
     NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
 
 # Backend Build
-FROM docker.io/library/golang:1.24.2 AS gobuilder
+FROM docker.io/library/golang:1.24.3 AS gobuilder
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/
 
