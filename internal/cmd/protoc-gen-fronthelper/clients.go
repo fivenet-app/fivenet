@@ -6,7 +6,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/fivenet-app/fivenet/v2025/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	pgs "github.com/lyft/protoc-gen-star/v2"
 	pgsgo "github.com/lyft/protoc-gen-star/v2/lang/go"
 )
