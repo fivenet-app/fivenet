@@ -807,7 +807,11 @@
                 }
             },
             "role_view": {
-                "add_permission": "Add Permission"
+                "add_permission": "Add Permission",
+                "fine_grained_toggle": {
+                    "title": "Enable fine grained job grades selection",
+                    "description": "Allows you to select specific job grades instead of a first to selected grade range. Enabling this option, requires the accessible ranks to be set again for the edited role."
+                }
             },
             "app_config": {
                 "auth": {

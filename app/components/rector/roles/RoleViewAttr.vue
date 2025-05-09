@@ -184,6 +184,7 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
         return;
     }
 
+    console.log('toggleJobGradeValue 1', attrValue.value.validValues.jobGradeList.grades);
     if (!attrValue.value.validValues.jobGradeList.fineGrained) {
         if (checked && !attrValue.value.validValues.jobGradeList.jobs[job.name]) {
             attrValue.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
@@ -192,6 +193,7 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
             delete attrValue.value.validValues.jobGradeList.jobs[job.name];
         }
     } else {
+        console.log('toggleJobGradeValue', attrValue.value.validValues.jobGradeList.grades);
         if (checked && !attrValue.value.validValues.jobGradeList.grades[job.name]) {
             attrValue.value.validValues.jobGradeList.grades[job.name] = {
                 grades: [job.grades[0].grade],
@@ -201,6 +203,18 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
             delete attrValue.value.validValues.jobGradeList.grades[job.name];
         }
     }
+}
+
+async function toggleJobGradeListFineGrained(checked: boolean): Promise<void> {
+    if (attrValue.value.validValues.oneofKind !== 'jobGradeList') {
+        return;
+    }
+
+    if (!attrValue.value.validValues.jobGradeList.grades) {
+        attrValue.value.validValues.jobGradeList.grades = {};
+    }
+
+    attrValue.value.validValues.jobGradeList.fineGrained = checked;
 }
 
 onBeforeMount(async () => {
@@ -354,7 +368,7 @@ const { game } = useAppConfig();
                                         <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>
                                     </USelectMenu>
                                     <USelectMenu
-                                        v-else
+                                        v-else-if="attrValue.validValues.jobGradeList.grades[job.name]?.grades"
                                         v-model="attrValue.validValues.jobGradeList.grades[job.name]!.grades"
                                         class="flex-1"
                                         multiple
@@ -364,20 +378,23 @@ const { game } = useAppConfig();
                                                 (g) =>
                                                     maxValues &&
                                                     maxValues.validValues.oneofKind === 'jobGradeList' &&
+                                                    maxValues.validValues.jobGradeList.jobs &&
                                                     (maxValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) >
                                                         g.grade,
                                             )
                                         "
                                         :search-attributes="['label']"
-                                        :placeholder="$t('common.rank')"
                                         :searchable-placeholder="$t('common.search_field')"
+                                        :placeholder="$t('common.rank')"
                                         value-attribute="grade"
                                     >
                                         <template #label>
                                             {{
                                                 $t(
                                                     'common.selected',
-                                                    attrValue.validValues.jobGradeList.grades[job.name]!.grades.length,
+                                                    attrValue.validValues.jobGradeList.grades[job.name] === undefined
+                                                        ? 0
+                                                        : attrValue.validValues.jobGradeList.grades[job.name]!.grades.length,
                                                 )
                                             }}
                                         </template>
@@ -392,21 +409,21 @@ const { game } = useAppConfig();
 
                                         <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>
                                     </USelectMenu>
-
-                                    <UTooltip>
-                                        <UCheckbox
-                                            :model-value="attrValue.validValues.jobGradeList.fineGrained"
-                                            @update:model-value="
-                                                if (!attrValue.validValues.jobGradeList.grades[job.name]) {
-                                                    attrValue.validValues.jobGradeList.grades[job.name] = {
-                                                        grades: [],
-                                                    };
-                                                }
-                                                attrValue.validValues.jobGradeList.fineGrained = $event;
-                                            "
-                                        />
-                                    </UTooltip>
                                 </ClientOnly>
+                            </div>
+
+                            <UDivider />
+
+                            <div class="flex flex-row items-center gap-2">
+                                <UToggle
+                                    :model-value="attrValue.validValues.jobGradeList.fineGrained"
+                                    @update:model-value="toggleJobGradeListFineGrained($event)"
+                                />
+
+                                <UFormGroup
+                                    :label="$t('components.rector.role_view.fine_grained_toggle.title')"
+                                    :description="$t('components.rector.role_view.fine_grained_toggle.description')"
+                                />
                             </div>
                         </template>
                     </div>

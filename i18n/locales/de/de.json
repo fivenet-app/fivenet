@@ -807,7 +807,11 @@
                 }
             },
             "role_view": {
-                "add_permission": "Berechtigung hinzufügen"
+                "add_permission": "Berechtigung hinzufügen",
+                "fine_grained_toggle": {
+                    "title": "Fein abgestufte Auswahl von Job-Rängen aktivieren",
+                    "description": "Ermöglicht die Auswahl spezifischer Job-Ränge anstelle eines Bereichs von dem ersten bis zu dem ausgewählten Rang. Wenn diese Option aktiviert wird, müssen die zugänglichen Ränge für die bearbeitete Rolle erneut festgelegt werden."
+                }
             },
             "app_config": {
                 "auth": {
