@@ -3881,7 +3881,7 @@ const file_services_docstore_docstore_proto_rawDesc = "" +
 	"\x0eDeleteCategory\x12(.services.docstore.DeleteCategoryRequest\x1a).services.docstore.DeleteCategoryResponse\x12k\n" +
 	"\x10ListDocumentPins\x12*.services.docstore.ListDocumentPinsRequest\x1a+.services.docstore.ListDocumentPinsResponse\x12n\n" +
 	"\x11ToggleDocumentPin\x12+.services.docstore.ToggleDocumentPinRequest\x1a,.services.docstore.ToggleDocumentPinResponse\x12t\n" +
-	"\x13SetDocumentReminder\x12-.services.docstore.SetDocumentReminderRequest\x1a..services.docstore.SetDocumentReminderResponseBHZFgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/docstore;docstoreb\x06proto3"
+	"\x13SetDocumentReminder\x12-.services.docstore.SetDocumentReminderRequest\x1a..services.docstore.SetDocumentReminderResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/docstore;docstoreb\x06proto3"
 
 var (
 	file_services_docstore_docstore_proto_rawDescOnce sync.Once

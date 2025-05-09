@@ -382,7 +382,7 @@ const file_resources_mailer_thread_proto_rawDesc = "" +
 	"_importantB\v\n" +
 	"\t_favoriteB\b\n" +
 	"\x06_mutedB\v\n" +
-	"\t_archivedBEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"\t_archivedBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_thread_proto_rawDescOnce sync.Once

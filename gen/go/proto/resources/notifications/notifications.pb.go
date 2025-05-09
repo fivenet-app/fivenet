@@ -474,7 +474,7 @@ const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"!NOTIFICATION_CATEGORY_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dNOTIFICATION_CATEGORY_GENERAL\x10\x01\x12\"\n" +
 	"\x1eNOTIFICATION_CATEGORY_DOCUMENT\x10\x02\x12\"\n" +
-	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03BSZQgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
+	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03BYZWgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
 var (
 	file_resources_notifications_notifications_proto_rawDescOnce sync.Once

@@ -188,7 +188,7 @@ const file_services_dmv_vehicles_proto_rawDesc = "" +
 	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles2c\n" +
 	"\n" +
 	"DMVService\x12U\n" +
-	"\fListVehicles\x12!.services.dmv.ListVehiclesRequest\x1a\".services.dmv.ListVehiclesResponseB>Z<github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/dmv;dmvb\x06proto3"
+	"\fListVehicles\x12!.services.dmv.ListVehiclesRequest\x1a\".services.dmv.ListVehiclesResponseBDZBgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/dmv;dmvb\x06proto3"
 
 var (
 	file_services_dmv_vehicles_proto_rawDescOnce sync.Once

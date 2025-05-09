@@ -381,7 +381,7 @@ const file_resources_documents_access_proto_rawDesc = "" +
 	"\x14ACCESS_LEVEL_COMMENT\x10\x03\x12\x17\n" +
 	"\x13ACCESS_LEVEL_STATUS\x10\x04\x12\x17\n" +
 	"\x13ACCESS_LEVEL_ACCESS\x10\x05\x12\x15\n" +
-	"\x11ACCESS_LEVEL_EDIT\x10\x06BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x11ACCESS_LEVEL_EDIT\x10\x06BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_access_proto_rawDescOnce sync.Once

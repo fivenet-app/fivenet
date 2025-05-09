@@ -821,7 +821,7 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_label\"\x14\n" +
-	"\x12TemplateUserAccessBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x12TemplateUserAccessBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_templates_proto_rawDescOnce sync.Once

@@ -232,7 +232,7 @@ const file_resources_centrum_attributes_proto_rawDesc = "" +
 	"\x1eDISPATCH_ATTRIBUTE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bDISPATCH_ATTRIBUTE_MULTIPLE\x10\x01\x12 \n" +
 	"\x1cDISPATCH_ATTRIBUTE_DUPLICATE\x10\x02\x12\x1e\n" +
-	"\x1aDISPATCH_ATTRIBUTE_TOO_OLD\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"\x1aDISPATCH_ATTRIBUTE_TOO_OLD\x10\x03BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_attributes_proto_rawDescOnce sync.Once

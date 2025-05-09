@@ -1178,7 +1178,7 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\x12]\n" +
 	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12u\n" +
 	"\x16DeleteOAuth2Connection\x12,.services.auth.DeleteOAuth2ConnectionRequest\x1a-.services.auth.DeleteOAuth2ConnectionResponse\x12c\n" +
-	"\x10SetSuperUserMode\x12&.services.auth.SetSuperUserModeRequest\x1a'.services.auth.SetSuperUserModeResponseB@Z>github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"
+	"\x10SetSuperUserMode\x12&.services.auth.SetSuperUserModeRequest\x1a'.services.auth.SetSuperUserModeResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"
 
 var (
 	file_services_auth_auth_proto_rawDescOnce sync.Once

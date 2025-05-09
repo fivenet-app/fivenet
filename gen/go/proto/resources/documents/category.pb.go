@@ -148,7 +148,7 @@ const file_resources_documents_category_proto_rawDesc = "" +
 	"\f_descriptionB\x06\n" +
 	"\x04_jobB\b\n" +
 	"\x06_colorB\a\n" +
-	"\x05_iconBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x05_iconBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_category_proto_rawDescOnce sync.Once

@@ -2322,7 +2322,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\x12]\n" +
 	"\fTakeDispatch\x12%.services.centrum.TakeDispatchRequest\x1a&.services.centrum.TakeDispatchResponse\x12i\n" +
 	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\x12u\n" +
-	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrumb\x06proto3"
+	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponseBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrumb\x06proto3"
 
 var (
 	file_services_centrum_centrum_proto_rawDescOnce sync.Once

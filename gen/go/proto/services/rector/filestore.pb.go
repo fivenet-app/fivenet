@@ -342,7 +342,7 @@ const file_services_rector_filestore_proto_rawDesc = "" +
 	"\n" +
 	"UploadFile\x12\".services.rector.UploadFileRequest\x1a#.services.rector.UploadFileResponse\x12U\n" +
 	"\n" +
-	"DeleteFile\x12\".services.rector.DeleteFileRequest\x1a#.services.rector.DeleteFileResponseBDZBgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
+	"DeleteFile\x12\".services.rector.DeleteFileRequest\x1a#.services.rector.DeleteFileResponseBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
 
 var (
 	file_services_rector_filestore_proto_rawDescOnce sync.Once

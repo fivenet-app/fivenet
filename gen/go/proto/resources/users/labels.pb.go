@@ -149,7 +149,7 @@ const file_resources_users_labels_proto_rawDesc = "" +
 	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01\x12\x1b\n" +
 	"\x04name\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x180R\x04name\x121\n" +
 	"\x05color\x18\x04 \x01(\tB\x1b\xfaB\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05colorB\x06\n" +
-	"\x04_jobBCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
+	"\x04_jobBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (
 	file_resources_users_labels_proto_rawDescOnce sync.Once

@@ -117,7 +117,7 @@ const file_resources_internet_search_proto_rawDesc = "" +
 	"\tdomain_id\x18\x04 \x01(\x04R\bdomainId\x127\n" +
 	"\x06domain\x18\x05 \x01(\v2\x1a.resources.internet.DomainH\x00R\x06domain\x88\x01\x01\x12\x12\n" +
 	"\x04path\x18\x06 \x01(\tR\x04pathB\t\n" +
-	"\a_domainBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet;internetb\x06proto3"
+	"\a_domainBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet;internetb\x06proto3"
 
 var (
 	file_resources_internet_search_proto_rawDescOnce sync.Once

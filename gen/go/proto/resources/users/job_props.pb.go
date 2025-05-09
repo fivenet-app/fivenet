@@ -258,7 +258,7 @@ const file_resources_users_job_props_proto_rawDesc = "" +
 	"\fQuickButtons\x12-\n" +
 	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator\x12!\n" +
 	"\fbody_checkup\x18\x02 \x01(\bR\vbodyCheckup\x12'\n" +
-	"\x0fmath_calculator\x18\x03 \x01(\bR\x0emathCalculatorBCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
+	"\x0fmath_calculator\x18\x03 \x01(\bR\x0emathCalculatorBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (
 	file_resources_users_job_props_proto_rawDescOnce sync.Once

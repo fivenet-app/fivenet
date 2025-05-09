@@ -522,7 +522,7 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\x19CRONJOB_STATE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15CRONJOB_STATE_WAITING\x10\x01\x12\x19\n" +
 	"\x15CRONJOB_STATE_PENDING\x10\x02\x12\x19\n" +
-	"\x15CRONJOB_STATE_RUNNING\x10\x03BHZFgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron;cronb\x06proto3"
+	"\x15CRONJOB_STATE_RUNNING\x10\x03BNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron;cronb\x06proto3"
 
 var (
 	file_resources_common_cron_cron_proto_rawDescOnce sync.Once

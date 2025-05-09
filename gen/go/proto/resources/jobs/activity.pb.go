@@ -585,7 +585,7 @@ const file_resources_jobs_activity_proto_rawDesc = "" +
 	"$JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE\x10\x05\x12 \n" +
 	"\x1cJOBS_USER_ACTIVITY_TYPE_NOTE\x10\x06\x12\"\n" +
 	"\x1eJOBS_USER_ACTIVITY_TYPE_LABELS\x10\a\x12 \n" +
-	"\x1cJOBS_USER_ACTIVITY_TYPE_NAME\x10\bBAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x1cJOBS_USER_ACTIVITY_TYPE_NAME\x10\bBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_activity_proto_rawDescOnce sync.Once

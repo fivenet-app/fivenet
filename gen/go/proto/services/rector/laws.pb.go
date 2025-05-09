@@ -382,7 +382,7 @@ const file_services_rector_laws_proto_rawDesc = "" +
 	"\x15CreateOrUpdateLawBook\x12-.services.rector.CreateOrUpdateLawBookRequest\x1a..services.rector.CreateOrUpdateLawBookResponse\x12^\n" +
 	"\rDeleteLawBook\x12%.services.rector.DeleteLawBookRequest\x1a&.services.rector.DeleteLawBookResponse\x12j\n" +
 	"\x11CreateOrUpdateLaw\x12).services.rector.CreateOrUpdateLawRequest\x1a*.services.rector.CreateOrUpdateLawResponse\x12R\n" +
-	"\tDeleteLaw\x12!.services.rector.DeleteLawRequest\x1a\".services.rector.DeleteLawResponseBDZBgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
+	"\tDeleteLaw\x12!.services.rector.DeleteLawRequest\x1a\".services.rector.DeleteLawResponseBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
 
 var (
 	file_services_rector_laws_proto_rawDescOnce sync.Once

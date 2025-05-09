@@ -1414,7 +1414,7 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\x1d\x00\x00zD-\x00\x00\x00\x00R\x06points\x12\x1d\n" +
 	"\achecked\x18\x03 \x01(\bH\x00R\achecked\x88\x01\x01B\n" +
 	"\n" +
-	"\b_checkedBUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualificationsb\x06proto3"
+	"\b_checkedB[ZYgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualificationsb\x06proto3"
 
 var (
 	file_resources_qualifications_exam_proto_rawDescOnce sync.Once

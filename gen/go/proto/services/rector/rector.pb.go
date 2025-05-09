@@ -1344,7 +1344,7 @@ const file_services_rector_rector_proto_rawDesc = "" +
 	"\x0eGetPermissions\x12&.services.rector.GetPermissionsRequest\x1a'.services.rector.GetPermissionsResponse\x12[\n" +
 	"\fViewAuditLog\x12$.services.rector.ViewAuditLogRequest\x1a%.services.rector.ViewAuditLogResponse\x12g\n" +
 	"\x10UpdateRoleLimits\x12(.services.rector.UpdateRoleLimitsRequest\x1a).services.rector.UpdateRoleLimitsResponse\x12^\n" +
-	"\rDeleteFaction\x12%.services.rector.DeleteFactionRequest\x1a&.services.rector.DeleteFactionResponseBDZBgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
+	"\rDeleteFaction\x12%.services.rector.DeleteFactionRequest\x1a&.services.rector.DeleteFactionResponseBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
 
 var (
 	file_services_rector_rector_proto_rawDescOnce sync.Once

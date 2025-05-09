@@ -131,7 +131,7 @@ const file_services_internet_ads_proto_rawDesc = "" +
 	"\x03ads\x18\x01 \x03(\v2\x16.resources.internet.AdR\x03ads2[\n" +
 	"\n" +
 	"AdsService\x12M\n" +
-	"\x06GetAds\x12 .services.internet.GetAdsRequest\x1a!.services.internet.GetAdsResponseBHZFgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet;internetb\x06proto3"
+	"\x06GetAds\x12 .services.internet.GetAdsRequest\x1a!.services.internet.GetAdsResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet;internetb\x06proto3"
 
 var (
 	file_services_internet_ads_proto_rawDescOnce sync.Once

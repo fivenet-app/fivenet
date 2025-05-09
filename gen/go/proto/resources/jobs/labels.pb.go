@@ -213,7 +213,7 @@ const file_resources_jobs_labels_proto_rawDesc = "" +
 	"\n" +
 	"LabelCount\x12+\n" +
 	"\x05label\x18\x01 \x01(\v2\x15.resources.jobs.LabelR\x05label\x12\x14\n" +
-	"\x05count\x18\x02 \x01(\x03R\x05countBAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x05count\x18\x02 \x01(\x03R\x05countBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_labels_proto_rawDescOnce sync.Once

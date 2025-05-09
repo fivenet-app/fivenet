@@ -1014,7 +1014,7 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\bSendData\x12\x1e.services.sync.SendDataRequest\x1a\x1f.services.sync.SendDataResponse\x12Q\n" +
 	"\n" +
 	"DeleteData\x12 .services.sync.DeleteDataRequest\x1a!.services.sync.DeleteDataResponse\x12G\n" +
-	"\x06Stream\x12\x1c.services.sync.StreamRequest\x1a\x1d.services.sync.StreamResponse0\x01B@Z>github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync;syncb\x06proto3"
+	"\x06Stream\x12\x1c.services.sync.StreamRequest\x1a\x1d.services.sync.StreamResponse0\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync;syncb\x06proto3"
 
 var (
 	file_services_sync_sync_proto_rawDescOnce sync1.Once

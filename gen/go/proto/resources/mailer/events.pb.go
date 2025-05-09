@@ -214,7 +214,7 @@ const file_resources_mailer_events_proto_rawDesc = "" +
 	"\x13thread_state_update\x18\x06 \x01(\v2\x1d.resources.mailer.ThreadStateH\x00R\x11threadStateUpdate\x12B\n" +
 	"\x0emessage_update\x18\a \x01(\v2\x19.resources.mailer.MessageH\x00R\rmessageUpdate\x12'\n" +
 	"\x0emessage_delete\x18\b \x01(\x04H\x00R\rmessageDeleteB\v\n" +
-	"\x04data\x12\x03\xf8B\x01BEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"\x04data\x12\x03\xf8B\x01BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_events_proto_rawDescOnce sync.Once

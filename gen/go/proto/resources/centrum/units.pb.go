@@ -584,7 +584,7 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\x17STATUS_UNIT_UNAVAILABLE\x10\x04\x12\x19\n" +
 	"\x15STATUS_UNIT_AVAILABLE\x10\x05\x12\x18\n" +
 	"\x14STATUS_UNIT_ON_BREAK\x10\x06\x12\x14\n" +
-	"\x10STATUS_UNIT_BUSY\x10\aBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"\x10STATUS_UNIT_BUSY\x10\aBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_units_proto_rawDescOnce sync.Once

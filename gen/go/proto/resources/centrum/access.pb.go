@@ -383,7 +383,7 @@ const file_resources_centrum_access_proto_rawDesc = "" +
 	"\x0fUnitAccessLevel\x12!\n" +
 	"\x1dUNIT_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19UNIT_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1a\n" +
-	"\x16UNIT_ACCESS_LEVEL_JOIN\x10\x02BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"\x16UNIT_ACCESS_LEVEL_JOIN\x10\x02BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_access_proto_rawDescOnce sync.Once

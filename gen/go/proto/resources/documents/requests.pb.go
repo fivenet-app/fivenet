@@ -186,7 +186,7 @@ const file_resources_documents_requests_proto_rawDesc = "" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\t\n" +
 	"\a_reasonB\v\n" +
-	"\t_acceptedBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\t_acceptedBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_requests_proto_rawDescOnce sync.Once

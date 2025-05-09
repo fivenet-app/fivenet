@@ -205,7 +205,7 @@ const file_services_rector_config_proto_rawDesc = "" +
 	"\x06config\x18\x01 \x01(\v2\x1b.resources.rector.AppConfigR\x06config2\xd8\x01\n" +
 	"\x13RectorConfigService\x12[\n" +
 	"\fGetAppConfig\x12$.services.rector.GetAppConfigRequest\x1a%.services.rector.GetAppConfigResponse\x12d\n" +
-	"\x0fUpdateAppConfig\x12'.services.rector.UpdateAppConfigRequest\x1a(.services.rector.UpdateAppConfigResponseBDZBgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
+	"\x0fUpdateAppConfig\x12'.services.rector.UpdateAppConfigRequest\x1a(.services.rector.UpdateAppConfigResponseBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
 
 var (
 	file_services_rector_config_proto_rawDescOnce sync.Once

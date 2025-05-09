@@ -312,7 +312,7 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\x05_noteB\t\n" +
 	"\a_labelsB\x0e\n" +
 	"\f_name_prefixB\x0e\n" +
-	"\f_name_suffixBAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\f_name_suffixBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_colleagues_proto_rawDescOnce sync.Once

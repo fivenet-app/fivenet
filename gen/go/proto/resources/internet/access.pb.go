@@ -353,7 +353,7 @@ const file_resources_internet_access_proto_rawDesc = "" +
 	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
 	"\x11ACCESS_LEVEL_VIEW\x10\x02\x12\x15\n" +
 	"\x11ACCESS_LEVEL_EDIT\x10\x03\x12\x16\n" +
-	"\x12ACCESS_LEVEL_OWNER\x10\x04BIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet;internetb\x06proto3"
+	"\x12ACCESS_LEVEL_OWNER\x10\x04BOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet;internetb\x06proto3"
 
 var (
 	file_resources_internet_access_proto_rawDescOnce sync.Once

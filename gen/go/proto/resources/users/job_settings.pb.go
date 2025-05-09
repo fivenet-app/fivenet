@@ -673,7 +673,7 @@ const file_resources_users_job_settings_proto_rawDesc = "" +
 	"\x1aUserInfoSyncUnemployedMode\x12.\n" +
 	"*USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED\x10\x00\x12,\n" +
 	"(USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE\x10\x01\x12'\n" +
-	"#USER_INFO_SYNC_UNEMPLOYED_MODE_KICK\x10\x02BCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
+	"#USER_INFO_SYNC_UNEMPLOYED_MODE_KICK\x10\x02BIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (
 	file_resources_users_job_settings_proto_rawDescOnce sync.Once

@@ -85,7 +85,7 @@ const file_resources_centrum_disponents_proto_rawDesc = "" +
 	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x129\n" +
 	"\n" +
 	"disponents\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueR\n" +
-	"disponentsBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"disponentsBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_disponents_proto_rawDescOnce sync.Once

@@ -211,7 +211,7 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"\v_blood_typeB\v\n" +
 	"\t_mug_shotB\t\n" +
 	"\a_labelsB\b\n" +
-	"\x06_emailBCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
+	"\x06_emailBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (
 	file_resources_users_props_proto_rawDescOnce sync.Once

@@ -236,7 +236,7 @@ const file_services_internet_internet_proto_rawDesc = "" +
 	"\x05_page2\xb2\x01\n" +
 	"\x0fInternetService\x12M\n" +
 	"\x06Search\x12 .services.internet.SearchRequest\x1a!.services.internet.SearchResponse\x12P\n" +
-	"\aGetPage\x12!.services.internet.GetPageRequest\x1a\".services.internet.GetPageResponseBHZFgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet;internetb\x06proto3"
+	"\aGetPage\x12!.services.internet.GetPageRequest\x1a\".services.internet.GetPageResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet;internetb\x06proto3"
 
 var (
 	file_services_internet_internet_proto_rawDescOnce sync.Once

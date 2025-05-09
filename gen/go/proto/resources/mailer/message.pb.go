@@ -360,7 +360,7 @@ const file_resources_mailer_message_proto_rawDesc = "" +
 	"\x19MessageAttachmentDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12#\n" +
 	"\x05title\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x18\x80\x06H\x00R\x05title\x88\x01\x01B\b\n" +
-	"\x06_titleBEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"\x06_titleBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_message_proto_rawDescOnce sync.Once

@@ -94,7 +94,7 @@ const file_resources_mailer_settings_proto_rawDesc = "" +
 	"\tsignature\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x18\x80\bH\x00R\tsignature\x88\x01\x01\x12/\n" +
 	"\x0eblocked_emails\x18\x03 \x03(\tB\b\xfaB\x05\x92\x01\x02\x10\x19R\rblockedEmailsB\f\n" +
 	"\n" +
-	"_signatureBEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"_signatureBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_settings_proto_rawDescOnce sync.Once

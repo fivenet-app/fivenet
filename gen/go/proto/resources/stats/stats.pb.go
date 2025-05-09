@@ -72,7 +72,7 @@ const file_resources_stats_stats_proto_rawDesc = "" +
 	"\x1bresources/stats/stats.proto\x12\x0fresources.stats\"+\n" +
 	"\x04Stat\x12\x19\n" +
 	"\x05value\x18\x01 \x01(\x05H\x00R\x05value\x88\x01\x01B\b\n" +
-	"\x06_valueBCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/stats;statsb\x06proto3"
+	"\x06_valueBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/stats;statsb\x06proto3"
 
 var (
 	file_resources_stats_stats_proto_rawDescOnce sync.Once

@@ -457,7 +457,7 @@ const file_resources_mailer_access_proto_rawDesc = "" +
 	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
 	"\x11ACCESS_LEVEL_READ\x10\x02\x12\x16\n" +
 	"\x12ACCESS_LEVEL_WRITE\x10\x03\x12\x17\n" +
-	"\x13ACCESS_LEVEL_MANAGE\x10\x04BEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"\x13ACCESS_LEVEL_MANAGE\x10\x04BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_access_proto_rawDescOnce sync.Once

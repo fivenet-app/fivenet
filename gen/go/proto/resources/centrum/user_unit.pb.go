@@ -101,7 +101,7 @@ const file_resources_centrum_user_unit_proto_rawDesc = "" +
 	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
 	"\auser_id\x18\x03 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x12=\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAtBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAtBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_user_unit_proto_rawDescOnce sync.Once

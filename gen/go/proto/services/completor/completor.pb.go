@@ -544,7 +544,7 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\x12\x8b\x01\n" +
 	"\x1aCompleteDocumentCategories\x125.services.completor.CompleteDocumentCategoriesRequest\x1a6.services.completor.CompleteDocumentCategoriesResponse\x12a\n" +
 	"\fListLawBooks\x12'.services.completor.ListLawBooksRequest\x1a(.services.completor.ListLawBooksResponse\x12|\n" +
-	"\x15CompleteCitizenLabels\x120.services.completor.CompleteCitizenLabelsRequest\x1a1.services.completor.CompleteCitizenLabelsResponseBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor;completorb\x06proto3"
+	"\x15CompleteCitizenLabels\x120.services.completor.CompleteCitizenLabelsRequest\x1a1.services.completor.CompleteCitizenLabelsResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor;completorb\x06proto3"
 
 var (
 	file_services_completor_completor_proto_rawDescOnce sync.Once

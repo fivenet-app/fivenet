@@ -493,7 +493,7 @@ const file_resources_sync_data_proto_rawDesc = "" +
 	"\vDeleteUsers\x12#\n" +
 	"\buser_ids\x18\x01 \x03(\x05B\b\xfaB\x05\x92\x01\x02\x10dR\auserIds\"2\n" +
 	"\x0eDeleteVehicles\x12 \n" +
-	"\x06plates\x18\x01 \x03(\tB\b\xfaB\x05\x92\x01\x02\x10dR\x06platesBAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;syncb\x06proto3"
+	"\x06plates\x18\x01 \x03(\tB\b\xfaB\x05\x92\x01\x02\x10dR\x06platesBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;syncb\x06proto3"
 
 var (
 	file_resources_sync_data_proto_rawDescOnce sync.Once

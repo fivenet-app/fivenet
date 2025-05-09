@@ -737,7 +737,7 @@ const file_services_citizenstore_citizenstore_proto_rawDesc = "" +
 	"\x10ListUserActivity\x12..services.citizenstore.ListUserActivityRequest\x1a/.services.citizenstore.ListUserActivityResponse\x12g\n" +
 	"\fSetUserProps\x12*.services.citizenstore.SetUserPropsRequest\x1a+.services.citizenstore.SetUserPropsResponse\x12v\n" +
 	"\x11SetProfilePicture\x12/.services.citizenstore.SetProfilePictureRequest\x1a0.services.citizenstore.SetProfilePictureResponse\x12|\n" +
-	"\x13ManageCitizenLabels\x121.services.citizenstore.ManageCitizenLabelsRequest\x1a2.services.citizenstore.ManageCitizenLabelsResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizenstore;citizenstoreb\x06proto3"
+	"\x13ManageCitizenLabels\x121.services.citizenstore.ManageCitizenLabelsRequest\x1a2.services.citizenstore.ManageCitizenLabelsResponseBVZTgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizenstore;citizenstoreb\x06proto3"
 
 var (
 	file_services_citizenstore_citizenstore_proto_rawDescOnce sync.Once

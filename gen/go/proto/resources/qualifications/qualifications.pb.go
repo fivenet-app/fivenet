@@ -1257,7 +1257,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\x19RESULT_STATUS_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15RESULT_STATUS_PENDING\x10\x01\x12\x18\n" +
 	"\x14RESULT_STATUS_FAILED\x10\x02\x12\x1c\n" +
-	"\x18RESULT_STATUS_SUCCESSFUL\x10\x03BUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualificationsb\x06proto3"
+	"\x18RESULT_STATUS_SUCCESSFUL\x10\x03B[ZYgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualificationsb\x06proto3"
 
 var (
 	file_resources_qualifications_qualifications_proto_rawDescOnce sync.Once

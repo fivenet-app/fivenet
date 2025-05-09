@@ -269,7 +269,7 @@ const file_resources_laws_laws_proto_rawDesc = "" +
 	"\x05_hintB\a\n" +
 	"\x05_fineB\x11\n" +
 	"\x0f_detention_timeB\x0e\n" +
-	"\f_stvo_pointsBAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws;lawsb\x06proto3"
+	"\f_stvo_pointsBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws;lawsb\x06proto3"
 
 var (
 	file_resources_laws_laws_proto_rawDescOnce sync.Once

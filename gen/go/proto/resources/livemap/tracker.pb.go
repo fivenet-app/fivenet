@@ -80,7 +80,7 @@ const file_resources_livemap_tracker_proto_rawDesc = "" +
 	"\x1fresources/livemap/tracker.proto\x12\x11resources.livemap\x1a\x1fresources/livemap/livemap.proto\"\x80\x01\n" +
 	"\x10UsersUpdateEvent\x123\n" +
 	"\x05added\x18\x01 \x03(\v2\x1d.resources.livemap.UserMarkerR\x05added\x127\n" +
-	"\aremoved\x18\x02 \x03(\v2\x1d.resources.livemap.UserMarkerR\aremovedBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
+	"\aremoved\x18\x02 \x03(\v2\x1d.resources.livemap.UserMarkerR\aremovedBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
 
 var (
 	file_resources_livemap_tracker_proto_rawDescOnce sync.Once

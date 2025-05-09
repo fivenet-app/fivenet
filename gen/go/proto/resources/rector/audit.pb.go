@@ -246,7 +246,7 @@ const file_resources_rector_audit_proto_rawDesc = "" +
 	"\x11EVENT_TYPE_VIEWED\x10\x02\x12\x16\n" +
 	"\x12EVENT_TYPE_CREATED\x10\x03\x12\x16\n" +
 	"\x12EVENT_TYPE_UPDATED\x10\x04\x12\x16\n" +
-	"\x12EVENT_TYPE_DELETED\x10\x05BEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector;rectorb\x06proto3"
+	"\x12EVENT_TYPE_DELETED\x10\x05BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector;rectorb\x06proto3"
 
 var (
 	file_resources_rector_audit_proto_rawDescOnce sync.Once

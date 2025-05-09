@@ -81,7 +81,7 @@ const file_resources_common_tests_objects_proto_rawDesc = "" +
 	"$resources/common/tests/objects.proto\x12\x16resources.common.tests\">\n" +
 	"\fSimpleObject\x12\x16\n" +
 	"\x06field1\x18\x01 \x01(\tR\x06field1\x12\x16\n" +
-	"\x06field2\x18\x02 \x01(\bR\x06field2BJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/tests;testsb\x06proto3"
+	"\x06field2\x18\x02 \x01(\bR\x06field2BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/tests;testsb\x06proto3"
 
 var (
 	file_resources_common_tests_objects_proto_rawDescOnce sync.Once

@@ -569,7 +569,7 @@ const file_services_livemapper_livemap_proto_rawDesc = "" +
 	"\x11LivemapperService\x12S\n" +
 	"\x06Stream\x12\".services.livemapper.StreamRequest\x1a#.services.livemapper.StreamResponse0\x01\x12{\n" +
 	"\x14CreateOrUpdateMarker\x120.services.livemapper.CreateOrUpdateMarkerRequest\x1a1.services.livemapper.CreateOrUpdateMarkerResponse\x12c\n" +
-	"\fDeleteMarker\x12(.services.livemapper.DeleteMarkerRequest\x1a).services.livemapper.DeleteMarkerResponseBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemapper;livemapperb\x06proto3"
+	"\fDeleteMarker\x12(.services.livemapper.DeleteMarkerRequest\x1a).services.livemapper.DeleteMarkerResponseBRZPgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemapper;livemapperb\x06proto3"
 
 var (
 	file_services_livemapper_livemap_proto_rawDescOnce sync.Once

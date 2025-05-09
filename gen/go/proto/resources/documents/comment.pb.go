@@ -159,7 +159,7 @@ const file_resources_documents_comment_proto_rawDesc = "" +
 	"\v_deleted_atB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
-	"\b_creatorBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\b_creatorBQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_comment_proto_rawDescOnce sync.Once

@@ -465,7 +465,7 @@ const file_services_notificator_notificator_proto_rawDesc = "" +
 	"\x12NotificatorService\x12q\n" +
 	"\x10GetNotifications\x12-.services.notificator.GetNotificationsRequest\x1a..services.notificator.GetNotificationsResponse\x12t\n" +
 	"\x11MarkNotifications\x12..services.notificator.MarkNotificationsRequest\x1a/.services.notificator.MarkNotificationsResponse\x12U\n" +
-	"\x06Stream\x12#.services.notificator.StreamRequest\x1a$.services.notificator.StreamResponse0\x01BNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notificator;notificatorb\x06proto3"
+	"\x06Stream\x12#.services.notificator.StreamRequest\x1a$.services.notificator.StreamResponse0\x01BTZRgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notificator;notificatorb\x06proto3"
 
 var (
 	file_services_notificator_notificator_proto_rawDescOnce sync.Once

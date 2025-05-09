@@ -206,7 +206,7 @@ const file_resources_mailer_email_proto_rawDesc = "" +
 	"\x05_userB\x10\n" +
 	"\x0e_email_changedB\b\n" +
 	"\x06_labelB\v\n" +
-	"\t_settingsBEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"\t_settingsBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_email_proto_rawDescOnce sync.Once

@@ -204,7 +204,7 @@ const file_resources_accounts_oauth2_proto_rawDesc = "" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x12\x1a\n" +
 	"\bhomepage\x18\x03 \x01(\tR\bhomepage\x12\x17\n" +
 	"\x04icon\x18\x04 \x01(\tH\x00R\x04icon\x88\x01\x01B\a\n" +
-	"\x05_iconBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts;accountsb\x06proto3"
+	"\x05_iconBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts;accountsb\x06proto3"
 
 var (
 	file_resources_accounts_oauth2_proto_rawDescOnce sync.Once

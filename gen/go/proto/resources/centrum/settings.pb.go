@@ -305,7 +305,7 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\x13CENTRUM_MODE_MANUAL\x10\x01\x12 \n" +
 	"\x1cCENTRUM_MODE_CENTRAL_COMMAND\x10\x02\x12!\n" +
 	"\x1dCENTRUM_MODE_AUTO_ROUND_ROBIN\x10\x03\x12\x1b\n" +
-	"\x17CENTRUM_MODE_SIMPLIFIED\x10\x04BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"\x17CENTRUM_MODE_SIMPLIFIED\x10\x04BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_settings_proto_rawDescOnce sync.Once

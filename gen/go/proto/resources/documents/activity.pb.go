@@ -762,7 +762,7 @@ const file_resources_documents_activity_proto_rawDesc = "" +
 	"#DOC_ACTIVITY_TYPE_REQUESTED_OPENING\x10\x0f\x12&\n" +
 	"\"DOC_ACTIVITY_TYPE_REQUESTED_UPDATE\x10\x10\x12,\n" +
 	"(DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE\x10\x11\x12(\n" +
-	"$DOC_ACTIVITY_TYPE_REQUESTED_DELETION\x10\x12BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"$DOC_ACTIVITY_TYPE_REQUESTED_DELETION\x10\x12BQZOgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_activity_proto_rawDescOnce sync.Once

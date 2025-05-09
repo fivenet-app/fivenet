@@ -143,7 +143,7 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\x06_ownerB\x06\n" +
 	"\x04_jobB\f\n" +
 	"\n" +
-	"_job_labelBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
+	"_job_labelBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
 
 var (
 	file_resources_vehicles_vehicles_proto_rawDescOnce sync.Once
