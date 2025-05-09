@@ -317,6 +317,8 @@ func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
 }
 
 func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.WorkflowState) error {
+	tWorkflow := table.FivenetDocumentsWorkflowState
+
 	stmt := tWorkflow.
 		UPDATE(
 			tWorkflow.NextReminderTime,
@@ -340,6 +342,8 @@ func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.Wor
 }
 
 func (w *Workflow) deleteWorkflowState(ctx context.Context, state *documents.WorkflowState) error {
+	tWorkflow := table.FivenetDocumentsWorkflowState
+
 	stmt := tWorkflow.
 		DELETE().
 		WHERE(jet.AND(

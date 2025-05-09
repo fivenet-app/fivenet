@@ -16,8 +16,6 @@ import (
 var tUserWorkflow = table.FivenetDocumentsWorkflowUsers.AS("workflow_user_state")
 
 func (w *Workflow) handleDocumentsUsers(ctx context.Context, data *documents.WorkflowCronData) error {
-	nowTs := jet.TimestampT(time.Now())
-
 	stmt := tUserWorkflow.
 		SELECT(
 			tUserWorkflow.DocumentID,
@@ -42,7 +40,7 @@ func (w *Workflow) handleDocumentsUsers(ctx context.Context, data *documents.Wor
 		).
 		WHERE(jet.AND(
 			tUserWorkflow.DocumentID.GT(jet.Uint64(data.LastDocId)),
-			tUserWorkflow.ManualReminderTime.LT_EQ(nowTs),
+			tUserWorkflow.ManualReminderTime.LT_EQ(jet.TimestampT(time.Now())),
 		)).
 		LIMIT(100)
 
@@ -113,6 +111,7 @@ func updateWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.Wo
 	}
 
 	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
+
 	stmt := tUserWorkflow.
 		INSERT(
 			tUserWorkflow.DocumentID,
@@ -139,6 +138,8 @@ func updateWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.Wo
 }
 
 func deleteWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.WorkflowUserState) error {
+	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
+
 	stmt := tUserWorkflow.
 		DELETE().
 		WHERE(jet.AND(
