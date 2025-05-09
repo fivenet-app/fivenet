@@ -301,6 +301,10 @@ func (p *Perms) AttrStringList(userInfo *userinfo.UserInfo, category Category, n
 		return nil, err
 	}
 
+	if attrValue == nil {
+		return &permissions.StringList{}, nil
+	}
+
 	switch v := attrValue.ValidValues.(type) {
 	case *permissions.AttributeValues_StringList:
 		return v.StringList, nil
@@ -321,6 +325,10 @@ func (p *Perms) AttrJobGradeList(userInfo *userinfo.UserInfo, category Category,
 	attrValue, err := p.Attr(userInfo, category, name, key)
 	if err != nil {
 		return nil, err
+	}
+
+	if attrValue == nil {
+		return &permissions.JobGradeList{}, nil
 	}
 
 	switch v := attrValue.ValidValues.(type) {
