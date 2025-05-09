@@ -184,7 +184,6 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
         return;
     }
 
-    console.log('toggleJobGradeValue 1', attrValue.value.validValues.jobGradeList.grades);
     if (!attrValue.value.validValues.jobGradeList.fineGrained) {
         if (checked && !attrValue.value.validValues.jobGradeList.jobs[job.name]) {
             attrValue.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
@@ -193,7 +192,6 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
             delete attrValue.value.validValues.jobGradeList.jobs[job.name];
         }
     } else {
-        console.log('toggleJobGradeValue', attrValue.value.validValues.jobGradeList.grades);
         if (checked && !attrValue.value.validValues.jobGradeList.grades[job.name]) {
             attrValue.value.validValues.jobGradeList.grades[job.name] = {
                 grades: [job.grades[0].grade],
@@ -254,6 +252,7 @@ const { game } = useAppConfig();
                                 <UToggle
                                     :name="value"
                                     :model-value="!!attrValue.validValues.stringList.strings.find((v) => v === value)"
+                                    :disabled="disabled"
                                     @update:model-value="toggleStringListValue(value)"
                                 />
                                 <span>{{
@@ -285,6 +284,7 @@ const { game } = useAppConfig();
                                 <UToggle
                                     :name="job.name"
                                     :model-value="!!attrValue.validValues.jobList?.strings.find((v) => v === job.name)"
+                                    :disabled="disabled"
                                     @update:model-value="toggleJobListValue(job.name)"
                                 />
                                 <span>{{ job.label }}</span>
@@ -315,6 +315,7 @@ const { game } = useAppConfig();
                                 <UToggle
                                     :name="job.name"
                                     :model-value="!!attrValue.validValues?.jobGradeList.jobs[job.name]"
+                                    :disabled="disabled"
                                     @update:model-value="toggleJobGradeValue(job, $event)"
                                 />
 
@@ -325,7 +326,7 @@ const { game } = useAppConfig();
                                         v-if="!attrValue.validValues.jobGradeList.fineGrained"
                                         v-model="attrValue.validValues.jobGradeList.jobs[job.name]"
                                         class="flex-1"
-                                        :disabled="!attrValue.validValues?.jobGradeList.jobs[job.name]"
+                                        :disabled="disabled || !attrValue.validValues?.jobGradeList.jobs[job.name]"
                                         :options="
                                             job.grades.filter(
                                                 (g) =>
@@ -372,7 +373,7 @@ const { game } = useAppConfig();
                                         v-model="attrValue.validValues.jobGradeList.grades[job.name]!.grades"
                                         class="flex-1"
                                         multiple
-                                        :disabled="!attrValue.validValues?.jobGradeList.grades[job.name]"
+                                        :disabled="disabled || !attrValue.validValues?.jobGradeList.grades[job.name]"
                                         :options="
                                             job.grades.filter(
                                                 (g) =>
@@ -417,6 +418,7 @@ const { game } = useAppConfig();
                             <div class="flex flex-row items-center gap-2">
                                 <UToggle
                                     :model-value="attrValue.validValues.jobGradeList.fineGrained"
+                                    :disabled="disabled"
                                     @update:model-value="toggleJobGradeListFineGrained($event)"
                                 />
 

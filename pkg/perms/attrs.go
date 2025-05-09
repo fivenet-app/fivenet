@@ -483,11 +483,11 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 }
 
 func (p *Perms) getRoleAttributesFromCache(job string, grade int32) ([]*cacheRoleAttr, error) {
-	as := []*cacheRoleAttr{}
+	roleAttrs := map[uint64]*cacheRoleAttr{}
 
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
-		return as, nil
+		return nil, nil
 	}
 
 	for i := range slices.Backward(roleIds) {
@@ -497,10 +497,20 @@ func (p *Perms) getRoleAttributesFromCache(job string, grade int32) ([]*cacheRol
 		}
 
 		attrMap.Range(func(_ uint64, value *cacheRoleAttr) bool {
-			as = append(as, value)
+			// Skip already added attributes
+			if _, ok := roleAttrs[value.AttrID]; ok {
+				return true
+			}
+
+			roleAttrs[value.AttrID] = value
 
 			return true
 		})
+	}
+
+	as := make([]*cacheRoleAttr, 0, len(roleAttrs))
+	for _, v := range roleAttrs {
+		as = append(as, v)
 	}
 
 	return as, nil

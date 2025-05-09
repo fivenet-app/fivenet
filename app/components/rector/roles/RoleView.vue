@@ -235,6 +235,8 @@ const accordionCategories = computed(() =>
     }),
 );
 
+const canUpdate = can('RectorService.UpdateRolePerms');
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
@@ -277,7 +279,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                 <div class="flex flex-col gap-2">
                     <UButton
-                        v-if="can('RectorService.UpdateRolePerms').value"
+                        v-if="canUpdate"
                         block
                         :disabled="!changed || !canSubmit"
                         :loading="!canSubmit"
@@ -310,6 +312,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 color="green"
                                                 :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
                                                 icon="i-mdi-check"
+                                                :disabled="!canUpdate"
                                                 @click="updatePermissionState(perm.id, true)"
                                             />
 
@@ -321,6 +324,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                         : 'soft'
                                                 "
                                                 icon="i-mdi-minus"
+                                                :disabled="!canUpdate"
                                                 @click="updatePermissionState(perm.id, undefined)"
                                             />
 
@@ -332,6 +336,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                         : 'soft'
                                                 "
                                                 icon="i-mdi-close"
+                                                :disabled="!canUpdate"
                                                 @click="updatePermissionState(perm.id, false)"
                                             />
                                         </UButtonGroup>
@@ -342,7 +347,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             v-if="attr.permissionId === perm.id && !isEmptyAttributes(attr.maxValues)"
                                             v-model="attrList[idx]!"
                                             :permission="perm"
-                                            :disabled="permStates.get(perm.id) !== true"
+                                            :disabled="!canUpdate || permStates.get(perm.id) !== true"
                                             @changed="changed = true"
                                         />
                                     </template>

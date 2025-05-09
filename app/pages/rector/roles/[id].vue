@@ -5,7 +5,7 @@ import RoleView from '~/components/rector/roles/RoleView.vue';
 
 definePageMeta({
     requiresAuth: true,
-    permission: 'RectorService.CreateRole',
+    permission: 'RectorService.GetRoles',
     validate: async (route) => {
         route = route as TypedRouteFromName<'rector-roles-id'>;
         // Check if the id is made up of digits

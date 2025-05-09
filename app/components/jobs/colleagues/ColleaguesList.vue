@@ -176,6 +176,11 @@ const columns = [
         : undefined,
 ].filter((c) => c !== undefined) as TableColumn[];
 
+const canDo = computed(() => ({
+    getColleague: can('JobsService.GetColleague').value,
+    setJobsUerProps: can('JobsService.SetJobsUserProps').value,
+}));
+
 const { game } = useAppConfig();
 
 const input = useTemplateRef('input');
@@ -436,7 +441,7 @@ defineShortcuts({
                 <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
                     <UTooltip
                         v-if="
-                            can('JobsService.SetJobsUserProps').value &&
+                            canDo.setJobsUerProps &&
                             (colleague.userId === activeChar!.userId ||
                                 attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
                             checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
@@ -456,10 +461,7 @@ defineShortcuts({
                     </UTooltip>
 
                     <UTooltip
-                        v-if="
-                            can('JobsService.GetColleague').value &&
-                            checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
-                        "
+                        v-if="canDo.getColleague && checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')"
                         :text="$t('common.show')"
                     >
                         <UButton
@@ -567,11 +569,11 @@ defineShortcuts({
                         </div>
                     </template>
 
-                    <template #footer>
+                    <template v-if="!canDo.getColleague && canDo.setJobsUerProps" #footer>
                         <UButtonGroup class="inline-flex w-full">
                             <UTooltip
                                 v-if="
-                                    can('JobsService.SetJobsUserProps').value &&
+                                    canDo.setJobsUerProps &&
                                     (colleague.userId === activeChar!.userId ||
                                         attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
                                     checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
@@ -594,10 +596,7 @@ defineShortcuts({
                             </UTooltip>
 
                             <UTooltip
-                                v-if="
-                                    can('JobsService.GetColleague').value &&
-                                    checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
-                                "
+                                v-if="canDo.getColleague && checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')"
                                 :text="$t('common.show')"
                                 class="flex-1"
                             >
