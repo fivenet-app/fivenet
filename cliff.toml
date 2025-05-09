@@ -64,7 +64,8 @@ commit_parsers = [
   { field = "github.pr_labels", pattern = "breaking-change", group = "<!-- 0 -->🏗️ Breaking changes" },
   { message = "^feat", group = "<!-- 1 -->🚀 Features" },
   { field = "github.pr_labels", pattern = "type/enhancement", group = "<!-- 1 -->🚀 Features" },
-  { message = "^fix", group = "<!-- 1 -->🐛 Fixes" },
+  { message = "^fix\\(deps\\)", skip = true },
+  { message = "^fix:", group = "<!-- 1 -->🐛 Fixes" },
   { field = "github.pr_labels", pattern = "type/bug", group = "<!-- 2 -->🐛 Fixes" },
   { message = "^doc", group = "<!-- 5 -->📚 Documentation" },
   { field = "github.pr_labels", pattern = "area/documentation", group = "<!-- 5 -->📚 Documentation" },
@@ -77,11 +78,13 @@ commit_parsers = [
   { message = "^chore\\(deps.*\\)", skip = true },
   { message = "^chore\\(pr\\)", skip = true },
   { message = "^chore\\(pull\\)", skip = true },
-  { message = "^chore|^ci", group = "<!-- 7 -->⚙️ Miscellaneous Tasks" },
+  { message = "^chore", skip = true },
+  { message = "^ci", group = "<!-- 7 -->⚙️ Miscellaneous Tasks" },
   { field = "github.pr_labels", pattern = ".*", group = "<!-- 7 -->⚙️ Miscellaneous Tasks" },
   { body = ".*security", group = "<!-- 8 -->🛡️ Security" },
   { message = "^revert", group = "<!-- 9 -->◀️ Revert" },
-  { message = ".*", group = "<!-- 10 -->💼 Other" },
+  { message = "^Update module", skip = true },
+  { message = ".*", skip = true },
 ]
 # filter out the commits that are not matched by commit parsers
 filter_commits = true
@@ -89,7 +92,6 @@ filter_commits = true
 topo_order = false
 # sort the commits inside sections by oldest/newest order
 sort_commits = "oldest"
-limit_commits = 25
 ignore_tags = "^v0\\..+"
 
 tag_pattern = "^v[0-9]+\\..*"
