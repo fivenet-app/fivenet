@@ -5,9 +5,9 @@ import (
 	"slices"
 
 	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/perms/collections"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 )
 
 func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {

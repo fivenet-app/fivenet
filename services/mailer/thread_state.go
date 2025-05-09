@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
-	pbmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
-	errorsmailer "github.com/fivenet-app/fivenet/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
+	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

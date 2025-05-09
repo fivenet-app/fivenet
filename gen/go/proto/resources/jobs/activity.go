@@ -3,7 +3,7 @@ package jobs
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
 )
 

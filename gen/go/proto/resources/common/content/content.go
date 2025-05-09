@@ -7,9 +7,9 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
-	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/yosssi/gohtml"
 	"golang.org/x/net/html"
 	"google.golang.org/protobuf/encoding/protojson"

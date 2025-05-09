@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

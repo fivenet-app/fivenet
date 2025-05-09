@@ -8,9 +8,9 @@ package jobs
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -692,7 +692,7 @@ const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"\x14JobsTimeclockService\x12Z\n" +
 	"\rListTimeclock\x12#.services.jobs.ListTimeclockRequest\x1a$.services.jobs.ListTimeclockResponse\x12f\n" +
 	"\x11GetTimeclockStats\x12'.services.jobs.GetTimeclockStatsRequest\x1a(.services.jobs.GetTimeclockStatsResponse\x12r\n" +
-	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponseB@Z>github.com/fivenet-app/fivenet/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponseB@Z>github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_timeclock_proto_rawDescOnce sync.Once

@@ -8,8 +8,8 @@ package internet
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	internet "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	internet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -559,7 +559,7 @@ const file_services_internet_domain_proto_rawDesc = "" +
 	"\x17CheckDomainAvailability\x121.services.internet.CheckDomainAvailabilityRequest\x1a2.services.internet.CheckDomainAvailabilityResponse\x12e\n" +
 	"\x0eRegisterDomain\x12(.services.internet.RegisterDomainRequest\x1a).services.internet.RegisterDomainResponse\x12\\\n" +
 	"\vListDomains\x12%.services.internet.ListDomainsRequest\x1a&.services.internet.ListDomainsResponse\x12_\n" +
-	"\fUpdateDomain\x12&.services.internet.UpdateDomainRequest\x1a'.services.internet.UpdateDomainResponseBHZFgithub.com/fivenet-app/fivenet/gen/go/proto/services/internet;internetb\x06proto3"
+	"\fUpdateDomain\x12&.services.internet.UpdateDomainRequest\x1a'.services.internet.UpdateDomainResponseBHZFgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet;internetb\x06proto3"
 
 var (
 	file_services_internet_domain_proto_rawDescOnce sync.Once

@@ -312,7 +312,7 @@ const file_resources_common_content_content_proto_rawDesc = "" +
 	"\rNODE_TYPE_DOC\x10\x01\x12\x15\n" +
 	"\x11NODE_TYPE_ELEMENT\x10\x02\x12\x12\n" +
 	"\x0eNODE_TYPE_TEXT\x10\x03\x12\x15\n" +
-	"\x11NODE_TYPE_COMMENT\x10\x04BNZLgithub.com/fivenet-app/fivenet/gen/go/proto/resources/common/content;contentb\x06proto3"
+	"\x11NODE_TYPE_COMMENT\x10\x04BNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content;contentb\x06proto3"
 
 var (
 	file_resources_common_content_content_proto_rawDescOnce sync.Once

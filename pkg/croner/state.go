@@ -3,9 +3,9 @@ package croner
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
-	"github.com/fivenet-app/fivenet/pkg/events"
-	"github.com/fivenet-app/fivenet/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"

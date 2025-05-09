@@ -136,7 +136,7 @@ const file_resources_users_licenses_proto_rawDesc = "" +
 	"\x05label\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18<R\x05label\"f\n" +
 	"\fUserLicenses\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x124\n" +
-	"\blicenses\x18\x02 \x03(\v2\x18.resources.users.LicenseR\blicensesBCZAgithub.com/fivenet-app/fivenet/gen/go/proto/resources/users;usersb\x06proto3"
+	"\blicenses\x18\x02 \x03(\v2\x18.resources.users.LicenseR\blicensesBCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (
 	file_resources_users_licenses_proto_rawDescOnce sync.Once

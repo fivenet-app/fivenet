@@ -8,8 +8,8 @@ package wiki
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	wiki "github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	wiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -658,7 +658,7 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"UpdatePage\x12 .services.wiki.UpdatePageRequest\x1a!.services.wiki.UpdatePageResponse\x12Q\n" +
 	"\n" +
 	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\x12c\n" +
-	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponseB@Z>github.com/fivenet-app/fivenet/gen/go/proto/services/wiki;wikib\x06proto3"
+	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponseB@Z>github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var (
 	file_services_wiki_wiki_proto_rawDescOnce sync.Once

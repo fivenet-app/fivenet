@@ -4,7 +4,7 @@ package resources.centrum;
 
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum;centrum";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
 enum UnitAttribute {
   UNIT_ATTRIBUTE_UNSPECIFIED = 0;

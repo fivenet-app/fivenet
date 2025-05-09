@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/coords"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/coords"
 	jsoniter "github.com/json-iterator/go"
 )
 

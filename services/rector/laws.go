@@ -3,14 +3,14 @@ package rector
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
-	rector "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
-	pbrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
-	errorsrector "github.com/fivenet-app/fivenet/services/rector/errors"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
+	rector "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	pbrector "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	errorsrector "github.com/fivenet-app/fivenet/v2025/services/rector/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

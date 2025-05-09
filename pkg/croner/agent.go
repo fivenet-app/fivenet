@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"

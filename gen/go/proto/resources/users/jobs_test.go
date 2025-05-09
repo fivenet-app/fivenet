@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/stretchr/testify/assert"
 )
 

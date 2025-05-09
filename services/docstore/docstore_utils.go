@@ -3,13 +3,13 @@ package docstore
 import (
 	context "context"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	permscitizenstore "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore/perms"
-	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	errorsdocstore "github.com/fivenet-app/fivenet/services/docstore/errors"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	permscitizenstore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizenstore/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	errorsdocstore "github.com/fivenet-app/fivenet/v2025/services/docstore/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

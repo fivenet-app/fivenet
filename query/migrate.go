@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/pkg/dbutils/dsn"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
 	"github.com/golang-migrate/migrate/v4"
 	mysqlmigrate "github.com/golang-migrate/migrate/v4/database/mysql"
 	"github.com/golang-migrate/migrate/v4/source/iofs"

@@ -1,7 +1,7 @@
 package centrummanager
 
 import (
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 )
 
 var (

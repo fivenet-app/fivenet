@@ -6,7 +6,7 @@ import (
 	"slices"
 	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

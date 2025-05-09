@@ -7,7 +7,7 @@ import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailer";
 
 message Thread {
   uint64 id = 1;

@@ -8,8 +8,8 @@ package wiki
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -353,7 +353,7 @@ const file_resources_wiki_access_proto_rawDesc = "" +
 	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
 	"\x11ACCESS_LEVEL_VIEW\x10\x02\x12\x17\n" +
 	"\x13ACCESS_LEVEL_ACCESS\x10\x03\x12\x15\n" +
-	"\x11ACCESS_LEVEL_EDIT\x10\x04BAZ?github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;wikib\x06proto3"
+	"\x11ACCESS_LEVEL_EDIT\x10\x04BAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"
 
 var (
 	file_resources_wiki_access_proto_rawDescOnce sync.Once

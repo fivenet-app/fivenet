@@ -6,8 +6,8 @@ import (
 	"path"
 	"strings"
 
-	internet "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	internet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

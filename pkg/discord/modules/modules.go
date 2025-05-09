@@ -9,13 +9,13 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/pkg/discord/types"
-	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"go.uber.org/zap"
 )
 

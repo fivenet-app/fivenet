@@ -1,7 +1,7 @@
 package common
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

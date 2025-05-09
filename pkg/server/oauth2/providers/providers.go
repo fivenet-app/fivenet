@@ -3,7 +3,7 @@ package providers
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	jsoniter "github.com/json-iterator/go"
 	"golang.org/x/oauth2"
 )

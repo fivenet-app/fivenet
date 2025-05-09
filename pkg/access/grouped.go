@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

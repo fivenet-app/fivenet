@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/croner"
-	"github.com/fivenet-app/fivenet/pkg/discord"
-	"github.com/fivenet-app/fivenet/pkg/discord/commands"
+	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/pkg/discord"
+	"github.com/fivenet-app/fivenet/v2025/pkg/discord/commands"
 	"go.uber.org/fx"
 )
 

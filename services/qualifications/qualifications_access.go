@@ -3,13 +3,13 @@ package qualifications
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
-	pbqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
-	errorsqualifications "github.com/fivenet-app/fivenet/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )

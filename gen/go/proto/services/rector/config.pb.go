@@ -8,7 +8,7 @@ package rector
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	rector "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
+	rector "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -205,7 +205,7 @@ const file_services_rector_config_proto_rawDesc = "" +
 	"\x06config\x18\x01 \x01(\v2\x1b.resources.rector.AppConfigR\x06config2\xd8\x01\n" +
 	"\x13RectorConfigService\x12[\n" +
 	"\fGetAppConfig\x12$.services.rector.GetAppConfigRequest\x1a%.services.rector.GetAppConfigResponse\x12d\n" +
-	"\x0fUpdateAppConfig\x12'.services.rector.UpdateAppConfigRequest\x1a(.services.rector.UpdateAppConfigResponseBDZBgithub.com/fivenet-app/fivenet/gen/go/proto/services/rector;rectorb\x06proto3"
+	"\x0fUpdateAppConfig\x12'.services.rector.UpdateAppConfigRequest\x1a(.services.rector.UpdateAppConfigResponseBDZBgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
 
 var (
 	file_services_rector_config_proto_rawDescOnce sync.Once

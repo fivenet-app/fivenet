@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/dbsync"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbsync"
 	"go.uber.org/fx"
 )
 

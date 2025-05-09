@@ -5,9 +5,9 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

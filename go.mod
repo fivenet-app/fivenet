@@ -1,4 +1,4 @@
-module github.com/fivenet-app/fivenet
+module github.com/fivenet-app/fivenet/v2025
 
 go 1.24.3
 

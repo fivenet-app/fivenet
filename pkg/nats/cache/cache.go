@@ -5,8 +5,8 @@ import (
 	"errors"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/events"
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"

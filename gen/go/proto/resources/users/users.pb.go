@@ -8,7 +8,7 @@ package users
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
+	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -386,7 +386,7 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\x06_visumB\v\n" +
 	"\t_playtimeB\t\n" +
 	"\a_avatarB\b\n" +
-	"\x06_groupBCZAgithub.com/fivenet-app/fivenet/gen/go/proto/resources/users;usersb\x06proto3"
+	"\x06_groupBCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (
 	file_resources_users_users_proto_rawDescOnce sync.Once

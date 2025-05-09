@@ -18,9 +18,9 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
-	content "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 
-	documents "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
+	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 )
 
 // ensure the imports are used

@@ -8,7 +8,7 @@ package users
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1075,7 +1075,7 @@ const file_resources_users_activity_proto_rawDesc = "" +
 	"\x12\x1f\n" +
 	"\x1bUSER_ACTIVITY_TYPE_DOCUMENT\x10\v\x12\x1b\n" +
 	"\x17USER_ACTIVITY_TYPE_JAIL\x10\f\x12\x1b\n" +
-	"\x17USER_ACTIVITY_TYPE_FINE\x10\r\"\x04\b\x01\x10\x03BCZAgithub.com/fivenet-app/fivenet/gen/go/proto/resources/users;usersb\x06proto3"
+	"\x17USER_ACTIVITY_TYPE_FINE\x10\r\"\x04\b\x01\x10\x03BCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (
 	file_resources_users_activity_proto_rawDescOnce sync.Once

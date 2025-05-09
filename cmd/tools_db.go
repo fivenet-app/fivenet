@@ -7,10 +7,10 @@ import (
 	"os"
 
 	"github.com/alecthomas/kong"
-	"github.com/fivenet-app/fivenet/cmd/envs"
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/dbutils/dsn"
-	"github.com/fivenet-app/fivenet/query"
+	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/dsn"
+	"github.com/fivenet-app/fivenet/v2025/query"
 	"go.uber.org/fx"
 )
 

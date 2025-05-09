@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	"google.golang.org/grpc/codes"
 )
 

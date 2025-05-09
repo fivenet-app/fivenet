@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )

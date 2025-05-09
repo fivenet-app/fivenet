@@ -8,10 +8,10 @@ package sync
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
-	sync "github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	sync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1014,7 +1014,7 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\bSendData\x12\x1e.services.sync.SendDataRequest\x1a\x1f.services.sync.SendDataResponse\x12Q\n" +
 	"\n" +
 	"DeleteData\x12 .services.sync.DeleteDataRequest\x1a!.services.sync.DeleteDataResponse\x12G\n" +
-	"\x06Stream\x12\x1c.services.sync.StreamRequest\x1a\x1d.services.sync.StreamResponse0\x01B@Z>github.com/fivenet-app/fivenet/gen/go/proto/services/sync;syncb\x06proto3"
+	"\x06Stream\x12\x1c.services.sync.StreamRequest\x1a\x1d.services.sync.StreamResponse0\x01B@Z>github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync;syncb\x06proto3"
 
 var (
 	file_services_sync_sync_proto_rawDescOnce sync1.Once

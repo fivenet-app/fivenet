@@ -1,9 +1,9 @@
 package access
 
 import (
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 )
 
 func CheckIfHasAccess(levels *permissions.StringList, userInfo *userinfo.UserInfo, creatorJob string, creator *users.UserShort) bool {

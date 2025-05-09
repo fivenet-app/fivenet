@@ -8,9 +8,9 @@ package documents
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	content "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1065,7 +1065,7 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x18DOC_RELATION_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16DOC_RELATION_MENTIONED\x10\x01\x12\x18\n" +
 	"\x14DOC_RELATION_TARGETS\x10\x02\x12\x17\n" +
-	"\x13DOC_RELATION_CAUSED\x10\x03BKZIgithub.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x13DOC_RELATION_CAUSED\x10\x03BKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_documents_proto_rawDescOnce sync.Once

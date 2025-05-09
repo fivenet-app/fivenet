@@ -8,7 +8,7 @@ package filestore
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -189,7 +189,7 @@ const file_resources_filestore_file_proto_rawDesc = "" +
 	"\rlast_modified\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\flastModified\x88\x01\x01\x12\x12\n" +
 	"\x04size\x18\x03 \x01(\x03R\x04size\x12!\n" +
 	"\fcontent_type\x18\x04 \x01(\tR\vcontentTypeB\x10\n" +
-	"\x0e_last_modifiedBKZIgithub.com/fivenet-app/fivenet/gen/go/proto/resources/filestore;filestoreb\x06proto3"
+	"\x0e_last_modifiedBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore;filestoreb\x06proto3"
 
 var (
 	file_resources_filestore_file_proto_rawDescOnce sync.Once

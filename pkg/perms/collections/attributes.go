@@ -1,7 +1,7 @@
 package collections
 
 import (
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 )
 
 // Attributes provides methods for you to manage array data more easily.

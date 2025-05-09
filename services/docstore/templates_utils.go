@@ -3,7 +3,7 @@ package docstore
 import (
 	"slices"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 )
 
 func (s *Server) checkAccessAgainstTemplate(tmpl *documents.Template, docAccess *documents.DocumentAccess) bool {

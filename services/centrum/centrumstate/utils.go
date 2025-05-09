@@ -3,8 +3,8 @@ package centrumstate
 import (
 	"strconv"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/pkg/coords"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/pkg/coords"
 )
 
 func JobIdKey(job string, id uint64) string {

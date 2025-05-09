@@ -8,8 +8,8 @@ package rector
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -246,7 +246,7 @@ const file_resources_rector_audit_proto_rawDesc = "" +
 	"\x11EVENT_TYPE_VIEWED\x10\x02\x12\x16\n" +
 	"\x12EVENT_TYPE_CREATED\x10\x03\x12\x16\n" +
 	"\x12EVENT_TYPE_UPDATED\x10\x04\x12\x16\n" +
-	"\x12EVENT_TYPE_DELETED\x10\x05BEZCgithub.com/fivenet-app/fivenet/gen/go/proto/resources/rector;rectorb\x06proto3"
+	"\x12EVENT_TYPE_DELETED\x10\x05BEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector;rectorb\x06proto3"
 
 var (
 	file_resources_rector_audit_proto_rawDescOnce sync.Once

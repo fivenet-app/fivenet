@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
+	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"

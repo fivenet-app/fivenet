@@ -8,10 +8,10 @@ package livemap
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -705,7 +705,7 @@ const file_resources_livemap_livemap_proto_rawDesc = "" +
 	"\x17MARKER_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fMARKER_TYPE_DOT\x10\x01\x12\x16\n" +
 	"\x12MARKER_TYPE_CIRCLE\x10\x02\x12\x14\n" +
-	"\x10MARKER_TYPE_ICON\x10\x03BGZEgithub.com/fivenet-app/fivenet/gen/go/proto/resources/livemap;livemapb\x06proto3"
+	"\x10MARKER_TYPE_ICON\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
 
 var (
 	file_resources_livemap_livemap_proto_rawDescOnce sync.Once

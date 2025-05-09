@@ -3,8 +3,8 @@ package centrummanager
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	eventscentrum "github.com/fivenet-app/fivenet/services/centrum/events"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/protobuf/proto"
 )

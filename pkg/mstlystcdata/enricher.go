@@ -4,13 +4,13 @@ import (
 	"slices"
 	"strconv"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	permscitizenstore "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore/perms"
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	permscitizenstore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizenstore/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
 const (

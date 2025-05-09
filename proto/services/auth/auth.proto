@@ -9,7 +9,7 @@ import "resources/users/job_props.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/auth;auth";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;auth";
 
 message CreateAccountRequest {
   string reg_token = 1 [(validate.rules).string = {

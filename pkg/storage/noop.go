@@ -6,7 +6,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 )
 
 func init() {

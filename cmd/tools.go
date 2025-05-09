@@ -11,9 +11,9 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	"github.com/fivenet-app/fivenet/cmd/envs"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"

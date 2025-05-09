@@ -8,7 +8,7 @@
 package permsrector
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
 const (

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/gin-contrib/pprof"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"

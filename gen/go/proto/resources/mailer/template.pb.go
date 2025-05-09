@@ -8,7 +8,7 @@ package mailer
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -159,7 +159,7 @@ const file_resources_mailer_template_proto_rawDesc = "" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_creator_jobB\r\n" +
-	"\v_creator_idBEZCgithub.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"\v_creator_idBEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_template_proto_rawDescOnce sync.Once

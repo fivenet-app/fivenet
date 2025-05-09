@@ -4,9 +4,9 @@
 package livemapper
 
 import (
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
-	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper/perms"
-	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemapper/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
 func init() {

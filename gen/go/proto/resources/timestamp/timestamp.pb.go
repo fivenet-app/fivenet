@@ -80,7 +80,7 @@ const file_resources_timestamp_timestamp_proto_rawDesc = "" +
 	"\n" +
 	"#resources/timestamp/timestamp.proto\x12\x13resources.timestamp\x1a\x1fgoogle/protobuf/timestamp.proto\"E\n" +
 	"\tTimestamp\x128\n" +
-	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestampBKZIgithub.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp;timestampb\x06proto3"
+	"\ttimestamp\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\ttimestampBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp;timestampb\x06proto3"
 
 var (
 	file_resources_timestamp_timestamp_proto_rawDescOnce sync.Once

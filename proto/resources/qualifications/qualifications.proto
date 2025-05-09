@@ -10,7 +10,7 @@ import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications;qualifications";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualifications";
 
 message Qualification {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"

@@ -4,8 +4,8 @@
 package centrum
 
 import (
-	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/perms"
-	"github.com/fivenet-app/fivenet/pkg/perms"
+	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
 var PermsRemap = map[string]string{

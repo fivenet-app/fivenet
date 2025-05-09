@@ -3,10 +3,10 @@ package auth
 import (
 	"context"
 
-	pbauth "github.com/fivenet-app/fivenet/gen/go/proto/services/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"

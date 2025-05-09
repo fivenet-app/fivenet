@@ -8,7 +8,7 @@ package documents
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -148,7 +148,7 @@ const file_resources_documents_category_proto_rawDesc = "" +
 	"\f_descriptionB\x06\n" +
 	"\x04_jobB\b\n" +
 	"\x06_colorB\a\n" +
-	"\x05_iconBKZIgithub.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x05_iconBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_category_proto_rawDescOnce sync.Once

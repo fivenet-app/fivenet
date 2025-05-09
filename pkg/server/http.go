@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	grpcws "github.com/fivenet-app/fivenet/pkg/grpc/grpcws"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	grpcws "github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"

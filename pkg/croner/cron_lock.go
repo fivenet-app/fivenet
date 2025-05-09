@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"

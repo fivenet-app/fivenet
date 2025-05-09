@@ -5,12 +5,12 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/pkg/storage"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
-	errorsqualifications "github.com/fivenet-app/fivenet/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

@@ -4,8 +4,8 @@
 package dmv
 
 import (
-	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/dmv/perms"
-	"github.com/fivenet-app/fivenet/pkg/perms"
+	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/dmv/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
 func init() {

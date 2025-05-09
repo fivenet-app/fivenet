@@ -6,9 +6,9 @@
 package jobs
 
 import (
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
-	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
 
 var PermsRemap = map[string]string{

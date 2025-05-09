@@ -1,7 +1,7 @@
 package audit
 
 import (
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 )
 
 type Noop struct{}

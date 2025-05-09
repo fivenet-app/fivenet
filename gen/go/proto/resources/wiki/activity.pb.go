@@ -8,8 +8,8 @@ package wiki
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -568,7 +568,7 @@ const file_resources_wiki_activity_proto_rawDesc = "" +
 	"\x1aPAGE_ACTIVITY_TYPE_UPDATED\x10\x02\x12%\n" +
 	"!PAGE_ACTIVITY_TYPE_ACCESS_UPDATED\x10\x03\x12$\n" +
 	" PAGE_ACTIVITY_TYPE_OWNER_CHANGED\x10\x04\x12\x1e\n" +
-	"\x1aPAGE_ACTIVITY_TYPE_DELETED\x10\x05BAZ?github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;wikib\x06proto3"
+	"\x1aPAGE_ACTIVITY_TYPE_DELETED\x10\x05BAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"
 
 var (
 	file_resources_wiki_activity_proto_rawDescOnce sync.Once

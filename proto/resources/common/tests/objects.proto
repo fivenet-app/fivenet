@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resources.common.tests;
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/tests;tests";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/tests;tests";
 
 // **INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages are required.
 message SimpleObject {

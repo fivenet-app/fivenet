@@ -1,7 +1,7 @@
 package wiki
 
 import (
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 )
 
 func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {

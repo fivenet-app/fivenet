@@ -3,8 +3,8 @@ package centrumstate
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 )
 
 func (s *State) GetDisponents(ctx context.Context, job string) ([]*jobs.Colleague, error) {

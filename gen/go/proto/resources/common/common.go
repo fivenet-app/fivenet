@@ -1,6 +1,6 @@
 package common
 
-import "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
+import "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 
 type IJobInfo interface {
 	GetJob() string

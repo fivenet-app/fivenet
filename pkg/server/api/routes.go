@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"sync/atomic"
 
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/pkg/version"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2025/pkg/version"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"

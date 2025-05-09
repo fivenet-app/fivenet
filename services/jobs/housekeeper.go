@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
-	"github.com/fivenet-app/fivenet/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	jet "github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"

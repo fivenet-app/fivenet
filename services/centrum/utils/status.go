@@ -1,6 +1,6 @@
 package centrumutils
 
-import "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+import "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 
 func IsStatusDispatchComplete(in centrum.StatusDispatch) bool {
 	return in == centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED ||

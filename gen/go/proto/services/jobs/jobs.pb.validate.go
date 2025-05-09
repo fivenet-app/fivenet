@@ -18,7 +18,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 )
 
 // ensure the imports are used

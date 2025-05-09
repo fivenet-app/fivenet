@@ -3,9 +3,9 @@ package internet
 import (
 	"context"
 
-	pbinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	errorsinternet "github.com/fivenet-app/fivenet/services/internet/errors"
+	pbinternet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	errorsinternet "github.com/fivenet-app/fivenet/v2025/services/internet/errors"
 )
 
 func (s *Server) GetPage(ctx context.Context, req *pbinternet.GetPageRequest) (*pbinternet.GetPageResponse, error) {

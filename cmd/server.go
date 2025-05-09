@@ -1,10 +1,10 @@
 package cmd
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/croner"
-	"github.com/fivenet-app/fivenet/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/pkg/server"
-	pbjobs "github.com/fivenet-app/fivenet/services/jobs"
+	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server"
+	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	"go.uber.org/fx"
 )
 

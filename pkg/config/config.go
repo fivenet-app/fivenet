@@ -3,7 +3,7 @@ package config
 import (
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 )
 
 type Config struct {

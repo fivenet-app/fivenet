@@ -3,12 +3,12 @@ package internet
 import (
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/internet"
-	pbinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet"
-	"github.com/fivenet-app/fivenet/pkg/access"
-	"github.com/fivenet-app/fivenet/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/pkg/server/audit"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet"
+	pbinternet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet"
+	"github.com/fivenet-app/fivenet/v2025/pkg/access"
+	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )

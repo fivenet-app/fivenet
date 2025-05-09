@@ -8,7 +8,7 @@ package vehicles
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -143,7 +143,7 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\x06_ownerB\x06\n" +
 	"\x04_jobB\f\n" +
 	"\n" +
-	"_job_labelBIZGgithub.com/fivenet-app/fivenet/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
+	"_job_labelBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
 
 var (
 	file_resources_vehicles_vehicles_proto_rawDescOnce sync.Once

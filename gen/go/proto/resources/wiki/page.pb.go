@@ -8,10 +8,10 @@ package wiki
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	content "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
-	filestore "github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -482,7 +482,7 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"_root_info\"K\n" +
 	"\fPageRootInfo\x122\n" +
 	"\x04logo\x18\x01 \x01(\v2\x19.resources.filestore.FileH\x00R\x04logo\x88\x01\x01B\a\n" +
-	"\x05_logoBAZ?github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;wikib\x06proto3"
+	"\x05_logoBAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"
 
 var (
 	file_resources_wiki_page_proto_rawDescOnce sync.Once

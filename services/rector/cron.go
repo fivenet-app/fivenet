@@ -5,8 +5,8 @@ import (
 	"context"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
-	pbrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	pbrector "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector"
 )
 
 func (s *Server) ListCronjobs(ctx context.Context, req *pbrector.ListCronjobsRequest) (*pbrector.ListCronjobsResponse, error) {

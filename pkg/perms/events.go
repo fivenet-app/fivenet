@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )

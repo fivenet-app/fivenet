@@ -4,8 +4,8 @@ import (
 	"iter"
 	"slices"
 
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 )
 
 func (x *Role) GetJobGrade() int32 {

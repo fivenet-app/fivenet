@@ -8,8 +8,8 @@ package jobs
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -453,7 +453,7 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x12ListConductEntries\x12(.services.jobs.ListConductEntriesRequest\x1a).services.jobs.ListConductEntriesResponse\x12i\n" +
 	"\x12CreateConductEntry\x12(.services.jobs.CreateConductEntryRequest\x1a).services.jobs.CreateConductEntryResponse\x12i\n" +
 	"\x12UpdateConductEntry\x12(.services.jobs.UpdateConductEntryRequest\x1a).services.jobs.UpdateConductEntryResponse\x12i\n" +
-	"\x12DeleteConductEntry\x12(.services.jobs.DeleteConductEntryRequest\x1a).services.jobs.DeleteConductEntryResponseB@Z>github.com/fivenet-app/fivenet/gen/go/proto/services/jobs;jobsb\x06proto3"
+	"\x12DeleteConductEntry\x12(.services.jobs.DeleteConductEntryRequest\x1a).services.jobs.DeleteConductEntryResponseB@Z>github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
 
 var (
 	file_services_jobs_conduct_proto_rawDescOnce sync.Once

@@ -5,7 +5,7 @@ package resources.common.database;
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database;database";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database;database";
 
 // Pagination for requests to the server
 message PaginationRequest {

@@ -4,7 +4,7 @@ package resources.internet;
 
 import "resources/internet/domain.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet;internet";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet;internet";
 
 message SearchResult {
   uint64 id = 1;

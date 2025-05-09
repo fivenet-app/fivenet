@@ -5,7 +5,7 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )

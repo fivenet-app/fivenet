@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	"github.com/fivenet-app/fivenet/cmd"
-	"github.com/fivenet-app/fivenet/cmd/envs"
-	"github.com/fivenet-app/fivenet/pkg/version"
+	"github.com/fivenet-app/fivenet/v2025/cmd"
+	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2025/pkg/version"
 )
 
 func main() {

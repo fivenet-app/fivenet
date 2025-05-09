@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/creasty/defaults"
-	"github.com/fivenet-app/fivenet/cmd/envs"
+	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
 	"github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"

@@ -7,7 +7,7 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 )
 
 func (s *State) Calculate(ctx context.Context, dc *state.State, dryRun bool) (*Plan, []discord.Embed, error) {

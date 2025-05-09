@@ -9,7 +9,7 @@ import "resources/sync/data.proto";
 import "resources/users/activity.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/sync;sync";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync;sync";
 
 message GetStatusRequest {}
 

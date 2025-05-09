@@ -6,8 +6,8 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
-	"github.com/fivenet-app/fivenet/pkg/lang"
+	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/v2025/pkg/lang"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 

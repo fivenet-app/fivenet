@@ -3,16 +3,16 @@ package livemapper
 import (
 	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	pblivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper"
-	permslivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper/perms"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/utils"
-	errorslivemapper "github.com/fivenet-app/fivenet/services/livemapper/errors"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	pblivemapper "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemapper"
+	permslivemapper "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemapper/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	errorslivemapper "github.com/fivenet-app/fivenet/v2025/services/livemapper/errors"
 	"go.uber.org/zap"
 )
 

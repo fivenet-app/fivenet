@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/croner"
-	"github.com/fivenet-app/fivenet/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/pkg/tracker"
-	"github.com/fivenet-app/fivenet/services/centrum/centrumbot"
-	"github.com/fivenet-app/fivenet/services/centrum/centrummanager"
-	pbdocstore "github.com/fivenet-app/fivenet/services/docstore"
-	pbjobs "github.com/fivenet-app/fivenet/services/jobs"
+	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
+	pbdocstore "github.com/fivenet-app/fivenet/v2025/services/docstore"
+	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	"go.uber.org/fx"
 )
 

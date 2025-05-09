@@ -18,7 +18,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
-	notifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
+	notifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 )
 
 // ensure the imports are used

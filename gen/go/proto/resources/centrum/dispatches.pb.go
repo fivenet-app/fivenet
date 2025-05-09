@@ -8,9 +8,9 @@ package centrum
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -872,7 +872,7 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"#DISPATCH_REFERENCE_TYPE_UNSPECIFIED\x10\x00\x12&\n" +
 	"\"DISPATCH_REFERENCE_TYPE_REFERENCED\x10\x01\x12)\n" +
 	"%DISPATCH_REFERENCE_TYPE_DUPLICATED_BY\x10\x02\x12(\n" +
-	"$DISPATCH_REFERENCE_TYPE_DUPLICATE_OF\x10\x03BGZEgithub.com/fivenet-app/fivenet/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"$DISPATCH_REFERENCE_TYPE_DUPLICATE_OF\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_dispatches_proto_rawDescOnce sync.Once

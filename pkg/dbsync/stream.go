@@ -5,7 +5,7 @@ import (
 	"io"
 	"time"
 
-	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
+	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"

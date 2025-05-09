@@ -89,7 +89,7 @@ const file_resources_common_i18n_proto_rawDesc = "" +
 	"parameters\x1a=\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01BEZCgithub.com/fivenet-app/fivenet/gen/go/proto/resources/common;commonb\x06proto3"
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01BEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
 
 var (
 	file_resources_common_i18n_proto_rawDescOnce sync.Once

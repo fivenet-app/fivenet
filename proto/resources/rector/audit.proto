@@ -6,7 +6,7 @@ import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector;rector";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector;rector";
 
 enum EventType {
   EVENT_TYPE_UNSPECIFIED = 0;

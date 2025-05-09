@@ -6,7 +6,7 @@ package calendar
 import (
 	"database/sql/driver"
 
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 

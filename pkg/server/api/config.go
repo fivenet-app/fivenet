@@ -1,6 +1,6 @@
 package api
 
-import "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+import "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 
 type Version struct {
 	Version string `json:"version"`

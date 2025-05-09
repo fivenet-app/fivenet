@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/fx"
 )

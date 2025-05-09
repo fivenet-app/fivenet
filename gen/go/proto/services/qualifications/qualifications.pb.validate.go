@@ -18,7 +18,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
-	qualifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
+	qualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 )
 
 // ensure the imports are used

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"

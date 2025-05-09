@@ -3,11 +3,11 @@ package completor
 import (
 	"database/sql"
 
-	pbcompletor "github.com/fivenet-app/fivenet/gen/go/proto/services/completor"
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/tracker"
+	pbcompletor "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )

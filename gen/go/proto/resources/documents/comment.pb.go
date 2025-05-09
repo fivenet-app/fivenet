@@ -8,9 +8,9 @@ package documents
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	content "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -159,7 +159,7 @@ const file_resources_documents_comment_proto_rawDesc = "" +
 	"\v_deleted_atB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
-	"\b_creatorBKZIgithub.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\b_creatorBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_comment_proto_rawDescOnce sync.Once

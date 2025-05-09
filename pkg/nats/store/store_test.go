@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/tests"
-	"github.com/fivenet-app/fivenet/internal/tests/nats"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/tests"
+	"github.com/fivenet-app/fivenet/v2025/internal/tests/nats"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap/zaptest"
 )

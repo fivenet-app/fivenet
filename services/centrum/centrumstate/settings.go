@@ -3,7 +3,7 @@ package centrumstate
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"google.golang.org/protobuf/proto"
 )
 

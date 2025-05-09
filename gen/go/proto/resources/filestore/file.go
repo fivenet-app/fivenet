@@ -12,8 +12,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/pkg/images"
-	"github.com/fivenet-app/fivenet/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2025/pkg/images"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/h2non/filetype"
 	"github.com/h2non/filetype/matchers"
 )

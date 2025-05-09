@@ -8,7 +8,7 @@ package centrum
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -85,7 +85,7 @@ const file_resources_centrum_disponents_proto_rawDesc = "" +
 	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x129\n" +
 	"\n" +
 	"disponents\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueR\n" +
-	"disponentsBGZEgithub.com/fivenet-app/fivenet/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"disponentsBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_disponents_proto_rawDescOnce sync.Once

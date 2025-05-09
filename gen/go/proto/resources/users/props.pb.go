@@ -8,8 +8,8 @@ package users
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -211,7 +211,7 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"\v_blood_typeB\v\n" +
 	"\t_mug_shotB\t\n" +
 	"\a_labelsB\b\n" +
-	"\x06_emailBCZAgithub.com/fivenet-app/fivenet/gen/go/proto/resources/users;usersb\x06proto3"
+	"\x06_emailBCZAgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
 var (
 	file_resources_users_props_proto_rawDescOnce sync.Once

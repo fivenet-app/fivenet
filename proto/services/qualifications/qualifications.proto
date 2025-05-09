@@ -9,7 +9,7 @@ import "resources/qualifications/exam.proto";
 import "resources/qualifications/qualifications.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications;qualifications";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualifications";
 
 message ListQualificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];

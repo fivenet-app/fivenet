@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	pbcentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/pkg/utils/broker"
+	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"go.uber.org/fx"
 )
 

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/nats-io/nats-server/v2/server"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"

@@ -8,10 +8,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const securityTxtTpl = `Contact: https://github.com/fivenet-app/fivenet/blob/main/SECURITY.md
+const securityTxtTpl = `Contact: https://github.com/fivenet-app/fivenet/v2025/blob/main/SECURITY.md
 Expires: %s
 Preferred-Languages: en, de
-Policy: https://github.com/fivenet-app/fivenet/blob/main/SECURITY.md
+Policy: https://github.com/fivenet-app/fivenet/v2025/blob/main/SECURITY.md
 `
 
 type WK struct {

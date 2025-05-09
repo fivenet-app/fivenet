@@ -1,4 +1,4 @@
-module github.com/fivenet-app/fivenet/internal/cmd/protoc-gen-customizer
+module github.com/fivenet-app/fivenet/v2025/internal/cmd/protoc-gen-customizer
 
 go 1.24.3
 

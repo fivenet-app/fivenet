@@ -8,9 +8,9 @@ package notifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	common "github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	common "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -474,7 +474,7 @@ const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"!NOTIFICATION_CATEGORY_UNSPECIFIED\x10\x00\x12!\n" +
 	"\x1dNOTIFICATION_CATEGORY_GENERAL\x10\x01\x12\"\n" +
 	"\x1eNOTIFICATION_CATEGORY_DOCUMENT\x10\x02\x12\"\n" +
-	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03BSZQgithub.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notificationsb\x06proto3"
+	"\x1eNOTIFICATION_CATEGORY_CALENDAR\x10\x03BSZQgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
 var (
 	file_resources_notifications_notifications_proto_rawDescOnce sync.Once

@@ -8,8 +8,8 @@ package internet
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -283,7 +283,7 @@ const file_resources_internet_ads_proto_rawDesc = "" +
 	"\x11AD_TYPE_SPONSORED\x10\x01\x12\x19\n" +
 	"\x15AD_TYPE_SEARCH_RESULT\x10\x02\x12\x18\n" +
 	"\x14AD_TYPE_CONTENT_MAIN\x10\x03\x12\x19\n" +
-	"\x15AD_TYPE_CONTENT_ASIDE\x10\x04BIZGgithub.com/fivenet-app/fivenet/gen/go/proto/resources/internet;internetb\x06proto3"
+	"\x15AD_TYPE_CONTENT_ASIDE\x10\x04BIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet;internetb\x06proto3"
 
 var (
 	file_resources_internet_ads_proto_rawDescOnce sync.Once

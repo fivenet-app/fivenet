@@ -6,7 +6,7 @@ import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs;jobs";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
 
 enum TimeclockMode {
   TIMECLOCK_MODE_UNSPECIFIED = 0;

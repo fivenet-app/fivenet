@@ -8,7 +8,7 @@ package rector
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -128,7 +128,7 @@ const file_resources_rector_banner_proto_rawDesc = "" +
 	"expires_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01B\a\n" +
 	"\x05_iconB\b\n" +
 	"\x06_colorB\r\n" +
-	"\v_expires_atBEZCgithub.com/fivenet-app/fivenet/gen/go/proto/resources/rector;rectorb\x06proto3"
+	"\v_expires_atBEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector;rectorb\x06proto3"
 
 var (
 	file_resources_rector_banner_proto_rawDescOnce sync.Once

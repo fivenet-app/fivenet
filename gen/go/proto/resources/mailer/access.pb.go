@@ -8,9 +8,9 @@ package mailer
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	qualifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	qualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -457,7 +457,7 @@ const file_resources_mailer_access_proto_rawDesc = "" +
 	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
 	"\x11ACCESS_LEVEL_READ\x10\x02\x12\x16\n" +
 	"\x12ACCESS_LEVEL_WRITE\x10\x03\x12\x17\n" +
-	"\x13ACCESS_LEVEL_MANAGE\x10\x04BEZCgithub.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"\x13ACCESS_LEVEL_MANAGE\x10\x04BEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_access_proto_rawDescOnce sync.Once

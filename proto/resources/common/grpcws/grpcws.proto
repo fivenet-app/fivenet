@@ -4,7 +4,7 @@ package resources.common.grpcws;
 
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/grpcws;grpcws";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/grpcws;grpcws";
 
 message GrpcFrame {
   uint32 streamId = 1;

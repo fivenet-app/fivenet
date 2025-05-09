@@ -8,8 +8,8 @@ package notifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	rector "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	rector "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -403,7 +403,7 @@ const file_resources_notifications_events_proto_rawDesc = "" +
 	"\x04data\x12\x03\xf8B\x01\"v\n" +
 	"\x14BannerMessageWrapper\x12K\n" +
 	"\x0ebanner_message\x18\x01 \x01(\v2\x1f.resources.rector.BannerMessageH\x00R\rbannerMessage\x88\x01\x01B\x11\n" +
-	"\x0f_banner_messageBSZQgithub.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notificationsb\x06proto3"
+	"\x0f_banner_messageBSZQgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
 var (
 	file_resources_notifications_events_proto_rawDescOnce sync.Once

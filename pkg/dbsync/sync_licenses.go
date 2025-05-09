@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )

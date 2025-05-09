@@ -6,7 +6,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "resources/timestamp/timestamp.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron;cron";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron;cron";
 
 message Cronjob {
   // Cronjob name

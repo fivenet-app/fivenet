@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"

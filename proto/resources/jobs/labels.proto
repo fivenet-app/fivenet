@@ -4,7 +4,7 @@ package resources.jobs;
 
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs;jobs";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
 
 message Labels {
   repeated Label list = 1 [(validate.rules).repeated.max_items = 10];

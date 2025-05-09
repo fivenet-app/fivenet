@@ -5,7 +5,7 @@ package resources.rector;
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector;rector";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector;rector";
 
 message BannerMessage {
   // @sanitize: method=StripTags

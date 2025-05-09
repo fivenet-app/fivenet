@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	grpc_metadata "github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

@@ -4,7 +4,7 @@
 package permissions
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
 func (m *AttributeValues) Sanitize() error {

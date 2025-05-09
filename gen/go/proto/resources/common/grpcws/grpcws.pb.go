@@ -545,7 +545,7 @@ const file_resources_common_grpcws_grpcws_proto_rawDesc = "" +
 	"\fHeadersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12:\n" +
 	"\x05value\x18\x02 \x01(\v2$.resources.common.grpcws.HeaderValueR\x05value:\x028\x01\"\b\n" +
-	"\x06CancelBLZJgithub.com/fivenet-app/fivenet/gen/go/proto/resources/common/grpcws;grpcwsb\x06proto3"
+	"\x06CancelBLZJgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/grpcws;grpcwsb\x06proto3"
 
 var (
 	file_resources_common_grpcws_grpcws_proto_rawDescOnce sync.Once

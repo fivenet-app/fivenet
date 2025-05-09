@@ -6,7 +6,7 @@ package rector
 import (
 	"database/sql/driver"
 
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 )
 
 // Scan implements driver.Valuer for protobuf AppConfig.

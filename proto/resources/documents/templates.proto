@@ -11,7 +11,7 @@ import "resources/users/users.proto";
 import "resources/vehicles/vehicles.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documents";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
 message Template {
   uint64 id = 1; // @gotags: alias:"id"

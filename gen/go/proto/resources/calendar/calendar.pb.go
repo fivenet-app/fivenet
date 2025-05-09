@@ -8,9 +8,9 @@ package calendar
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	content "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -873,7 +873,7 @@ const file_resources_calendar_calendar_proto_rawDesc = "" +
 	"\x16RSVP_RESPONSES_INVITED\x10\x02\x12\x15\n" +
 	"\x11RSVP_RESPONSES_NO\x10\x03\x12\x18\n" +
 	"\x14RSVP_RESPONSES_MAYBE\x10\x04\x12\x16\n" +
-	"\x12RSVP_RESPONSES_YES\x10\x05BIZGgithub.com/fivenet-app/fivenet/gen/go/proto/resources/calendar;calendarb\x06proto3"
+	"\x12RSVP_RESPONSES_YES\x10\x05BIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar;calendarb\x06proto3"
 
 var (
 	file_resources_calendar_calendar_proto_rawDescOnce sync.Once

@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/pkg/server/oauth2/providers"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/oauth2/providers"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

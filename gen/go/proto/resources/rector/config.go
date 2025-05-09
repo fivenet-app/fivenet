@@ -3,7 +3,7 @@ package rector
 import (
 	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 

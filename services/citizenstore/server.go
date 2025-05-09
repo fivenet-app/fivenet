@@ -3,13 +3,13 @@ package citizenstore
 import (
 	"database/sql"
 
-	pbcitizenstore "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore"
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/server/audit"
-	"github.com/fivenet-app/fivenet/pkg/storage"
+	pbcitizenstore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizenstore"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )

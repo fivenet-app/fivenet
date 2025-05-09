@@ -3,8 +3,8 @@ package jobs
 import (
 	"context"
 
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

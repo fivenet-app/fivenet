@@ -7,7 +7,7 @@ import "resources/filestore/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;users";
 
 message JobProps {
   string job = 1 [(validate.rules).string.max_len = 20];

@@ -8,9 +8,9 @@ package documents
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	vehicles "github.com/fivenet-app/fivenet/gen/go/proto/resources/vehicles"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	vehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -821,7 +821,7 @@ const file_resources_documents_templates_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_label\"\x14\n" +
-	"\x12TemplateUserAccessBKZIgithub.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documentsb\x06proto3"
+	"\x12TemplateUserAccessBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documentsb\x06proto3"
 
 var (
 	file_resources_documents_templates_proto_rawDescOnce sync.Once

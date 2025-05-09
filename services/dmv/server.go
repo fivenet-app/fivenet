@@ -3,11 +3,11 @@ package dmv
 import (
 	"database/sql"
 
-	pbdmv "github.com/fivenet-app/fivenet/gen/go/proto/services/dmv"
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/server/audit"
+	pbdmv "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/dmv"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )

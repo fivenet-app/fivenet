@@ -871,7 +871,7 @@ const file_resources_rector_config_proto_rawDesc = "" +
 	"\x1eDISCORD_BOT_PRESENCE_TYPE_GAME\x10\x01\x12'\n" +
 	"#DISCORD_BOT_PRESENCE_TYPE_LISTENING\x10\x02\x12'\n" +
 	"#DISCORD_BOT_PRESENCE_TYPE_STREAMING\x10\x03\x12#\n" +
-	"\x1fDISCORD_BOT_PRESENCE_TYPE_WATCH\x10\x04BEZCgithub.com/fivenet-app/fivenet/gen/go/proto/resources/rector;rectorb\x06proto3"
+	"\x1fDISCORD_BOT_PRESENCE_TYPE_WATCH\x10\x04BEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector;rectorb\x06proto3"
 
 var (
 	file_resources_rector_config_proto_rawDescOnce sync.Once

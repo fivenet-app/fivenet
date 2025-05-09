@@ -5,8 +5,8 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 
-	internet "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet"
-	pbinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet"
-	errorsinternet "github.com/fivenet-app/fivenet/services/internet/errors"
+	internet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet"
+	pbinternet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet"
+	errorsinternet "github.com/fivenet-app/fivenet/v2025/services/internet/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

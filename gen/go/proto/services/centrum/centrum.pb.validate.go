@@ -18,7 +18,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
-	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 )
 
 // ensure the imports are used

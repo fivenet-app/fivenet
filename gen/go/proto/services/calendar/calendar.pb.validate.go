@@ -18,7 +18,7 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
-	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
+	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
 )
 
 // ensure the imports are used

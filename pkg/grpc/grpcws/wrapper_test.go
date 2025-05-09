@@ -22,7 +22,7 @@ import (
 	"testing"
 	"time"
 
-	grpcws "github.com/fivenet-app/fivenet/pkg/grpc/grpcws"
+	grpcws "github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	google_protobuf "github.com/golang/protobuf/ptypes/empty"
 	testproto "github.com/improbable-eng/grpc-web/integration_test/go/_proto/improbable/grpcweb/test"
 	"github.com/mwitkow/go-conntrack/connhelpers"

@@ -3,12 +3,12 @@ package centrummanager
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	errorscentrum "github.com/fivenet-app/fivenet/services/centrum/errors"
-	eventscentrum "github.com/fivenet-app/fivenet/services/centrum/events"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
+	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/protobuf/proto"
 )

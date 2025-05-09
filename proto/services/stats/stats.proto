@@ -4,7 +4,7 @@ package services.stats;
 
 import "resources/stats/stats.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/stats;stats";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/stats;stats";
 
 message GetStatsRequest {}
 

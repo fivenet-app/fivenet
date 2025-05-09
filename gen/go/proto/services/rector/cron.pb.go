@@ -7,7 +7,7 @@
 package rector
 
 import (
-	cron "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
+	cron "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -111,7 +111,7 @@ const file_services_rector_cron_proto_rawDesc = "" +
 	"\x14ListCronjobsResponse\x122\n" +
 	"\x04jobs\x18\x01 \x03(\v2\x1e.resources.common.cron.CronjobR\x04jobs2p\n" +
 	"\x11RectorCronService\x12[\n" +
-	"\fListCronjobs\x12$.services.rector.ListCronjobsRequest\x1a%.services.rector.ListCronjobsResponseBDZBgithub.com/fivenet-app/fivenet/gen/go/proto/services/rector;rectorb\x06proto3"
+	"\fListCronjobs\x12$.services.rector.ListCronjobsRequest\x1a%.services.rector.ListCronjobsResponseBDZBgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
 
 var (
 	file_services_rector_cron_proto_rawDescOnce sync.Once

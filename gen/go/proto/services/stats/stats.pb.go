@@ -7,7 +7,7 @@
 package stats
 
 import (
-	stats "github.com/fivenet-app/fivenet/gen/go/proto/resources/stats"
+	stats "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/stats"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -115,7 +115,7 @@ const file_services_stats_stats_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12+\n" +
 	"\x05value\x18\x02 \x01(\v2\x15.resources.stats.StatR\x05value:\x028\x012]\n" +
 	"\fStatsService\x12M\n" +
-	"\bGetStats\x12\x1f.services.stats.GetStatsRequest\x1a .services.stats.GetStatsResponseBBZ@github.com/fivenet-app/fivenet/gen/go/proto/services/stats;statsb\x06proto3"
+	"\bGetStats\x12\x1f.services.stats.GetStatsRequest\x1a .services.stats.GetStatsResponseBBZ@github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/stats;statsb\x06proto3"
 
 var (
 	file_services_stats_stats_proto_rawDescOnce sync.Once

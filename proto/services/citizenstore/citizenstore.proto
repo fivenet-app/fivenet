@@ -10,7 +10,7 @@ import "resources/users/users.proto";
 import "resources/users/props.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore;citizenstore";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizenstore;citizenstore";
 
 message ListCitizensRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];

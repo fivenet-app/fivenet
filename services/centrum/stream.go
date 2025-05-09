@@ -4,14 +4,14 @@ import (
 	"context"
 	"time"
 
-	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	pbcentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
-	errorscentrum "github.com/fivenet-app/fivenet/services/centrum/errors"
+	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	"go.uber.org/zap"
 )
 

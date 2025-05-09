@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/grpcws"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/grpcws"
 )
 
 var ErrClient = errors.New("grpc client error")

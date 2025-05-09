@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 
-	internet "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet"
-	pbinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
-	errorsinternet "github.com/fivenet-app/fivenet/services/internet/errors"
+	internet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet"
+	pbinternet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	errorsinternet "github.com/fivenet-app/fivenet/v2025/services/internet/errors"
 	"github.com/go-jet/jet/v2/qrm"
 )
 

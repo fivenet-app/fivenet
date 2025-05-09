@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/accounts"
-	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
+	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

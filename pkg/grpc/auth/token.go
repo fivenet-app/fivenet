@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/golang-jwt/jwt/v5"
 )
 

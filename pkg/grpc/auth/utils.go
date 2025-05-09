@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 )

@@ -8,9 +8,9 @@ package calendar
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
-	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -1564,7 +1564,7 @@ const file_services_calendar_calendar_proto_rawDesc = "" +
 	"\x15ListCalendarEntryRSVP\x12/.services.calendar.ListCalendarEntryRSVPRequest\x1a0.services.calendar.ListCalendarEntryRSVPResponse\x12n\n" +
 	"\x11RSVPCalendarEntry\x12+.services.calendar.RSVPCalendarEntryRequest\x1a,.services.calendar.RSVPCalendarEntryResponse\x12n\n" +
 	"\x11ListSubscriptions\x12+.services.calendar.ListSubscriptionsRequest\x1a,.services.calendar.ListSubscriptionsResponse\x12t\n" +
-	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponseBHZFgithub.com/fivenet-app/fivenet/gen/go/proto/services/calendar;calendarb\x06proto3"
+	"\x13SubscribeToCalendar\x12-.services.calendar.SubscribeToCalendarRequest\x1a..services.calendar.SubscribeToCalendarResponseBHZFgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar;calendarb\x06proto3"
 
 var (
 	file_services_calendar_calendar_proto_rawDescOnce sync.Once

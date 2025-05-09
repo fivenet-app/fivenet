@@ -5,10 +5,10 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	errorsmailer "github.com/fivenet-app/fivenet/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

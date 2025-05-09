@@ -8,7 +8,7 @@ package permissions
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -788,7 +788,7 @@ const file_resources_permissions_permissions_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x126\n" +
 	"\x05value\x18\x02 \x01(\v2 .resources.permissions.JobGradesR\x05value:\x028\x01\"#\n" +
 	"\tJobGrades\x12\x16\n" +
-	"\x06grades\x18\x01 \x03(\x05R\x06gradesBOZMgithub.com/fivenet-app/fivenet/gen/go/proto/resources/permissions;permissionsb\x06proto3"
+	"\x06grades\x18\x01 \x03(\x05R\x06gradesBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissionsb\x06proto3"
 
 var (
 	file_resources_permissions_permissions_proto_rawDescOnce sync.Once

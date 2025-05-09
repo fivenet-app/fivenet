@@ -1,6 +1,6 @@
 package centrum
 
-import jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+import jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 
 func (x *Disponents) Merge(in *Disponents) *Disponents {
 	if len(in.Disponents) == 0 {

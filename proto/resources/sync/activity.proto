@@ -6,7 +6,7 @@ import "resources/jobs/colleagues.proto";
 import "resources/users/props.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/sync;sync";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;sync";
 
 // Connect an identifier/license to the provider with the specified external id
 // (e.g., auto discord social connect on server join)

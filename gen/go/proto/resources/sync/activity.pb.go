@@ -8,8 +8,8 @@ package sync
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -382,7 +382,7 @@ const file_resources_sync_activity_proto_rawDesc = "" +
 	"\x0fTimeclockUpdate\x12\x10\n" +
 	"\x03job\x18\x01 \x01(\tR\x03job\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12\x14\n" +
-	"\x05start\x18\x03 \x01(\bR\x05startBAZ?github.com/fivenet-app/fivenet/gen/go/proto/resources/sync;syncb\x06proto3"
+	"\x05start\x18\x03 \x01(\bR\x05startBAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;syncb\x06proto3"
 
 var (
 	file_resources_sync_activity_proto_rawDescOnce sync.Once

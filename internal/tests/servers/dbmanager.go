@@ -8,8 +8,8 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/fivenet-app/fivenet/internal/tests"
-	"github.com/fivenet-app/fivenet/query"
+	"github.com/fivenet-app/fivenet/v2025/internal/tests"
+	"github.com/fivenet-app/fivenet/v2025/query"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"

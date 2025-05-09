@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fivenet-app/fivenet/internal/tests/servers"
+	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"

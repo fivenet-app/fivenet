@@ -8,7 +8,7 @@ package jobs
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -401,7 +401,7 @@ const file_resources_jobs_timeclock_proto_rawDesc = "" +
 	"\x11TimeclockUserMode\x12#\n" +
 	"\x1fTIMECLOCK_USER_MODE_UNSPECIFIED\x10\x00\x12\x1c\n" +
 	"\x18TIMECLOCK_USER_MODE_SELF\x10\x01\x12\x1b\n" +
-	"\x17TIMECLOCK_USER_MODE_ALL\x10\x02BAZ?github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x17TIMECLOCK_USER_MODE_ALL\x10\x02BAZ?github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_timeclock_proto_rawDescOnce sync.Once

@@ -6,7 +6,7 @@ import "resources/common/database/database.proto";
 import "resources/vehicles/vehicles.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/dmv;dmv";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/dmv;dmv";
 
 message ListVehiclesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];

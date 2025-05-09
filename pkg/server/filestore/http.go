@@ -10,8 +10,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/gin-gonic/gin"
 	"github.com/h2non/filetype"
 	cachecontrol "go.eigsys.de/gin-cachecontrol/v2"

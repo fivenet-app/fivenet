@@ -12,7 +12,7 @@ import (
 
 	"github.com/coder/websocket"
 	"github.com/desertbit/timer"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/grpcws"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/grpcws"
 	"google.golang.org/protobuf/proto"
 )
 

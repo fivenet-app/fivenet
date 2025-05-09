@@ -8,10 +8,10 @@ package centrum
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -2322,7 +2322,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"DeleteUnit\x12#.services.centrum.DeleteUnitRequest\x1a$.services.centrum.DeleteUnitResponse\x12]\n" +
 	"\fTakeDispatch\x12%.services.centrum.TakeDispatchRequest\x1a&.services.centrum.TakeDispatchResponse\x12i\n" +
 	"\x10UpdateUnitStatus\x12).services.centrum.UpdateUnitStatusRequest\x1a*.services.centrum.UpdateUnitStatusResponse\x12u\n" +
-	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponseBFZDgithub.com/fivenet-app/fivenet/gen/go/proto/services/centrum;centrumb\x06proto3"
+	"\x14UpdateDispatchStatus\x12-.services.centrum.UpdateDispatchStatusRequest\x1a..services.centrum.UpdateDispatchStatusResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrumb\x06proto3"
 
 var (
 	file_services_centrum_centrum_proto_rawDescOnce sync.Once

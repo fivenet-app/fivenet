@@ -8,7 +8,7 @@ package qualifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -294,7 +294,7 @@ const file_resources_qualifications_access_proto_rawDesc = "" +
 	"\x14ACCESS_LEVEL_REQUEST\x10\x03\x12\x15\n" +
 	"\x11ACCESS_LEVEL_TAKE\x10\x04\x12\x16\n" +
 	"\x12ACCESS_LEVEL_GRADE\x10\x05\x12\x15\n" +
-	"\x11ACCESS_LEVEL_EDIT\x10\x06BUZSgithub.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications;qualificationsb\x06proto3"
+	"\x11ACCESS_LEVEL_EDIT\x10\x06BUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualificationsb\x06proto3"
 
 var (
 	file_resources_qualifications_access_proto_rawDescOnce sync.Once

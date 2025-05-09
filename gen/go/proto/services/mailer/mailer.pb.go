@@ -8,9 +8,9 @@ package mailer
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	mailer "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	mailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -2211,7 +2211,7 @@ const file_services_mailer_mailer_proto_rawDesc = "" +
 	"\vPostMessage\x12#.services.mailer.PostMessageRequest\x1a$.services.mailer.PostMessageResponse\x12^\n" +
 	"\rDeleteMessage\x12%.services.mailer.DeleteMessageRequest\x1a&.services.mailer.DeleteMessageResponse\x12g\n" +
 	"\x10GetEmailSettings\x12(.services.mailer.GetEmailSettingsRequest\x1a).services.mailer.GetEmailSettingsResponse\x12g\n" +
-	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponseBDZBgithub.com/fivenet-app/fivenet/gen/go/proto/services/mailer;mailerb\x06proto3"
+	"\x10SetEmailSettings\x12(.services.mailer.SetEmailSettingsRequest\x1a).services.mailer.SetEmailSettingsResponseBDZBgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer;mailerb\x06proto3"
 
 var (
 	file_services_mailer_mailer_proto_rawDescOnce sync.Once

@@ -8,8 +8,8 @@ package qualifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	qualifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
+	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	qualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -1850,7 +1850,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\bTakeExam\x12(.services.qualifications.TakeExamRequest\x1a).services.qualifications.TakeExamResponse\x12e\n" +
 	"\n" +
 	"SubmitExam\x12*.services.qualifications.SubmitExamRequest\x1a+.services.qualifications.SubmitExamResponse\x12h\n" +
-	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponseBTZRgithub.com/fivenet-app/fivenet/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
+	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponseBTZRgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
 
 var (
 	file_services_qualifications_qualifications_proto_rawDescOnce sync.Once

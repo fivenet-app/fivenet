@@ -8,8 +8,8 @@ package mailer
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -382,7 +382,7 @@ const file_resources_mailer_thread_proto_rawDesc = "" +
 	"_importantB\v\n" +
 	"\t_favoriteB\b\n" +
 	"\x06_mutedB\v\n" +
-	"\t_archivedBEZCgithub.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailerb\x06proto3"
+	"\t_archivedBEZCgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailerb\x06proto3"
 
 var (
 	file_resources_mailer_thread_proto_rawDescOnce sync.Once
