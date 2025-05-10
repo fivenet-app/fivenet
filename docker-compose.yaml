@@ -27,7 +27,7 @@ services:
   # Message Queue
   nats:
     container_name: nats
-    image: docker.io/library/nats:2.11.2-alpine3.21
+    image: docker.io/library/nats:2.11.3-alpine3.21
     command:
       - --jetstream
       # If you change the user/password, you must update the FiveNet's `config.yaml` (`.nats.url`) as well
