@@ -3,11 +3,14 @@ package types
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
+	"github.com/diamondburned/arikawa/v3/utils/httputil"
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
+	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 	"go.uber.org/multierr"
 )
 
@@ -98,8 +101,18 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 			if err := dc.ModifyMember(p.GuildID, user.ID, api.ModifyMemberData{
 				Nick: user.Nickname,
 			}); err != nil {
-				errs = multierr.Append(errs, fmt.Errorf("failed to set user %s nickname (%q). %w", user.ID, *user.Nickname, err))
-				continue
+				if restErr, ok := err.(*httputil.HTTPError); ok && restErr.Status == http.StatusForbidden {
+					logs = append(logs, discord.Embed{
+						Title:       "Error while setting user nickname",
+						Description: fmt.Sprintf("Failed to set user %s nickanem (%q). %q", user.ID, *user.Nickname, err),
+						Author:      embeds.EmbedAuthor,
+						Color:       embeds.ColorWarn,
+						Footer:      embeds.EmbedFooterVersion,
+					})
+				} else {
+					errs = multierr.Append(errs, fmt.Errorf("failed to set user %s nickname (%q). %w", user.ID, *user.Nickname, err))
+					continue
+				}
 			}
 		}
 
