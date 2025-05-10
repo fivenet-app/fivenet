@@ -332,7 +332,7 @@ const { game } = useAppConfig();
                                                 (g) =>
                                                     maxValues &&
                                                     maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) >
+                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) >=
                                                         g.grade,
                                             )
                                         "
@@ -380,7 +380,7 @@ const { game } = useAppConfig();
                                                     maxValues &&
                                                     maxValues.validValues.oneofKind === 'jobGradeList' &&
                                                     maxValues.validValues.jobGradeList.jobs &&
-                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) >
+                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) >=
                                                         g.grade,
                                             )
                                         "
