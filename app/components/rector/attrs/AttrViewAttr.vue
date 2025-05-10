@@ -61,10 +61,10 @@ if (attribute.value?.validValues === undefined) {
         }
     }
 }
-if (attribute.value?.value === undefined) {
+if (attribute.value?.maxValues === undefined) {
     switch (lowercaseFirstLetter(attribute.value.type)) {
         case 'stringList': {
-            attribute.value.value = {
+            attribute.value.maxValues = {
                 validValues: {
                     oneofKind: 'stringList',
                     stringList: {
@@ -76,7 +76,7 @@ if (attribute.value?.value === undefined) {
         }
 
         case 'jobList': {
-            attribute.value.value = {
+            attribute.value.maxValues = {
                 validValues: {
                     oneofKind: 'jobList',
                     jobList: {
@@ -88,7 +88,7 @@ if (attribute.value?.value === undefined) {
         }
 
         case 'jobGradeList': {
-            attribute.value.value = {
+            attribute.value.maxValues = {
                 validValues: {
                     oneofKind: 'jobGradeList',
                     jobGradeList: {
@@ -103,47 +103,7 @@ if (attribute.value?.value === undefined) {
     }
 }
 
-const attrValue = ref<AttributeValues>(attribute.value.value!);
-
-let maxValues = attribute.value.maxValues;
-if (maxValues === undefined) {
-    switch (lowercaseFirstLetter(attribute.value.type)) {
-        case 'stringList':
-            maxValues = {
-                validValues: {
-                    oneofKind: 'stringList',
-                    stringList: {
-                        strings: [],
-                    },
-                },
-            };
-            break;
-
-        case 'jobList':
-            maxValues = {
-                validValues: {
-                    oneofKind: 'jobList',
-                    jobList: {
-                        strings: [],
-                    },
-                },
-            };
-            break;
-
-        case 'jobGradeList':
-            maxValues = {
-                validValues: {
-                    oneofKind: 'jobGradeList',
-                    jobGradeList: {
-                        jobs: {},
-                        fineGrained: false,
-                        grades: {},
-                    },
-                },
-            };
-            break;
-    }
-}
+const attrValue = ref<AttributeValues>(attribute.value.maxValues!);
 
 const validValues = computed<AttributeValues | undefined>(() => attribute.value.validValues);
 
