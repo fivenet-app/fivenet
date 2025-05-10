@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
@@ -94,9 +95,39 @@ func (c *JobCleanup) run(ctx context.Context, data *cron.GenericCronData) error 
 	defer fkTableListsMu.Unlock()
 
 	tablesList := c.getTablesListFn()
-	_ = tablesList
 
-	// TODO
+	keys := []string{}
+	for key := range tablesList {
+		keys = append(keys, key)
+	}
+
+	if len(keys) == 0 {
+		return nil
+	}
+
+	lastTblKey, ok := data.Attributes[lastTableMapIndex]
+	if !ok {
+		// Take first table
+		lastTblKey = keys[0]
+	} else {
+		idx := slices.Index(keys, lastTblKey)
+		if idx == -1 || len(keys) <= idx+1 {
+			c.logger.Debug("last table key not found in keys, starting from the beginning again")
+			lastTblKey = keys[0]
+		} else {
+			lastTblKey = keys[idx+1]
+		}
+	}
+
+	tbl, ok := tablesList[lastTblKey]
+	if !ok {
+		return nil
+	}
+
+	_ = tbl
+	// TODO create either UPDATE or DELETE query and execute it
+
+	data.Attributes[lastTableMapIndex] = lastTblKey
 
 	return nil
 }

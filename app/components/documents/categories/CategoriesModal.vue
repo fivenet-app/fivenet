@@ -70,6 +70,7 @@ async function createOrUpdateCategory(values: Schema): Promise<void> {
         }
 
         emit('update');
+        isOpen.value = false;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -86,13 +87,22 @@ async function deleteCategory(): Promise<void> {
             id: props.category.id!,
         });
 
-        notifications.add({
-            title: { key: 'notifications.category_deleted.title', parameters: {} },
-            description: { key: 'notifications.category_deleted.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
+        if (!props.category.deletedAt) {
+            notifications.add({
+                title: { key: 'notifications.category_deleted.title', parameters: {} },
+                description: { key: 'notifications.category_deleted.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
+        } else {
+            notifications.add({
+                title: { key: 'notifications.category_restored.title', parameters: {} },
+                description: { key: 'notifications.category_restored.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
+        }
 
         emit('update');
+        isOpen.value = false;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -198,14 +208,13 @@ watch(props, () => setFromProps());
                             v-if="category !== undefined && canEdit && can('DocStoreService.DeleteCategory').value"
                             block
                             class="flex-1"
-                            icon="i-mdi-delete"
-                            color="error"
+                            :color="!category.deletedAt ? 'error' : 'success'"
+                            :icon="!category.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
+                            :label="!category.deletedAt ? $t('common.delete') : $t('common.restore')"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
                             @click="deleteCategory()"
-                        >
-                            {{ $t('common.delete') }}
-                        </UButton>
+                        />
 
                         <UButton v-if="canEdit" type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
                             {{ category === undefined ? $t('common.create') : $t('common.update') }}

@@ -1836,6 +1836,10 @@
         "document_restored": {
             "title": "Dokument wiederhergestellt!",
             "content": "Dokument wurde wiederhergestellt."
+        },
+        "category_restored": {
+            "title": "Kategorie wiederhergestellt!",
+            "content": "Kategorie wurde wiederhergestellt."
         }
     },
     "perms": {

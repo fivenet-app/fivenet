@@ -1836,6 +1836,10 @@
         "document_restored": {
             "title": "Document restored!",
             "content": "Document has been restored."
+        },
+        "category_restored": {
+            "title": "Category restored!",
+            "content": "Category has been restored."
         }
     },
     "perms": {
