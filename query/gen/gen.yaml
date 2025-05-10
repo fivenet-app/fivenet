@@ -70,11 +70,14 @@ includeTables:
     - id
     - company
     - phone_number
+    - timestamp
   "phone_services_messages":
     - channel_id
     - message
     - x_pos
     - y_pos
+    - timestamp
   "phone_phones":
     - owner_id
     - phone_number
+    - last_seen

@@ -20,6 +20,7 @@ type phoneServicesChannelsTable struct {
 	ID          mysql.ColumnInteger
 	PhoneNumber mysql.ColumnString
 	Company     mysql.ColumnString
+	Timestamp   mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,9 +65,10 @@ func newPhoneServicesChannelsTableImpl(schemaName, tableName, alias string) phon
 		IDColumn          = mysql.IntegerColumn("id")
 		PhoneNumberColumn = mysql.StringColumn("phone_number")
 		CompanyColumn     = mysql.StringColumn("company")
-		allColumns        = mysql.ColumnList{IDColumn, PhoneNumberColumn, CompanyColumn}
-		mutableColumns    = mysql.ColumnList{PhoneNumberColumn, CompanyColumn}
-		defaultColumns    = mysql.ColumnList{}
+		TimestampColumn   = mysql.TimestampColumn("timestamp")
+		allColumns        = mysql.ColumnList{IDColumn, PhoneNumberColumn, CompanyColumn, TimestampColumn}
+		mutableColumns    = mysql.ColumnList{PhoneNumberColumn, CompanyColumn, TimestampColumn}
+		defaultColumns    = mysql.ColumnList{TimestampColumn}
 	)
 
 	return phoneServicesChannelsTable{
@@ -76,6 +78,7 @@ func newPhoneServicesChannelsTableImpl(schemaName, tableName, alias string) phon
 		ID:          IDColumn,
 		PhoneNumber: PhoneNumberColumn,
 		Company:     CompanyColumn,
+		Timestamp:   TimestampColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

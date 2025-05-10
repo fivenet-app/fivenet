@@ -21,6 +21,7 @@ type phoneServicesMessagesTable struct {
 	Message   mysql.ColumnString
 	XPos      mysql.ColumnInteger
 	YPos      mysql.ColumnInteger
+	Timestamp mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,9 +67,10 @@ func newPhoneServicesMessagesTableImpl(schemaName, tableName, alias string) phon
 		MessageColumn   = mysql.StringColumn("message")
 		XPosColumn      = mysql.IntegerColumn("x_pos")
 		YPosColumn      = mysql.IntegerColumn("y_pos")
-		allColumns      = mysql.ColumnList{ChannelIDColumn, MessageColumn, XPosColumn, YPosColumn}
-		mutableColumns  = mysql.ColumnList{ChannelIDColumn, MessageColumn, XPosColumn, YPosColumn}
-		defaultColumns  = mysql.ColumnList{}
+		TimestampColumn = mysql.TimestampColumn("timestamp")
+		allColumns      = mysql.ColumnList{ChannelIDColumn, MessageColumn, XPosColumn, YPosColumn, TimestampColumn}
+		mutableColumns  = mysql.ColumnList{ChannelIDColumn, MessageColumn, XPosColumn, YPosColumn, TimestampColumn}
+		defaultColumns  = mysql.ColumnList{TimestampColumn}
 	)
 
 	return phoneServicesMessagesTable{
@@ -79,6 +81,7 @@ func newPhoneServicesMessagesTableImpl(schemaName, tableName, alias string) phon
 		Message:   MessageColumn,
 		XPos:      XPosColumn,
 		YPos:      YPosColumn,
+		Timestamp: TimestampColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

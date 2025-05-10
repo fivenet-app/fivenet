@@ -19,6 +19,7 @@ type phonePhonesTable struct {
 	// Columns
 	OwnerID     mysql.ColumnString
 	PhoneNumber mysql.ColumnString
+	LastSeen    mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -62,9 +63,10 @@ func newPhonePhonesTableImpl(schemaName, tableName, alias string) phonePhonesTab
 	var (
 		OwnerIDColumn     = mysql.StringColumn("owner_id")
 		PhoneNumberColumn = mysql.StringColumn("phone_number")
-		allColumns        = mysql.ColumnList{OwnerIDColumn, PhoneNumberColumn}
-		mutableColumns    = mysql.ColumnList{OwnerIDColumn, PhoneNumberColumn}
-		defaultColumns    = mysql.ColumnList{}
+		LastSeenColumn    = mysql.TimestampColumn("last_seen")
+		allColumns        = mysql.ColumnList{OwnerIDColumn, PhoneNumberColumn, LastSeenColumn}
+		mutableColumns    = mysql.ColumnList{OwnerIDColumn, PhoneNumberColumn, LastSeenColumn}
+		defaultColumns    = mysql.ColumnList{LastSeenColumn}
 	)
 
 	return phonePhonesTable{
@@ -73,6 +75,7 @@ func newPhonePhonesTableImpl(schemaName, tableName, alias string) phonePhonesTab
 		//Columns
 		OwnerID:     OwnerIDColumn,
 		PhoneNumber: PhoneNumberColumn,
+		LastSeen:    LastSeenColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

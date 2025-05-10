@@ -12,7 +12,8 @@ import (
 )
 
 type PhoneServicesChannels struct {
-	ID          uint32 `sql:"primary_key" json:"id"`
-	PhoneNumber string `json:"phone_number"`
-	Company     string `json:"company"`
+	ID          uint32    `sql:"primary_key" json:"id"`
+	PhoneNumber string    `json:"phone_number"`
+	Company     string    `json:"company"`
+	Timestamp   time.Time `json:"timestamp"`
 }

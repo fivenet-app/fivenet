@@ -12,8 +12,9 @@ import (
 )
 
 type PhoneServicesMessages struct {
-	ChannelID uint32 `json:"channel_id"`
-	Message   string `json:"message"`
-	XPos      *int32 `json:"x_pos"`
-	YPos      *int32 `json:"y_pos"`
+	ChannelID uint32    `json:"channel_id"`
+	Message   string    `json:"message"`
+	XPos      *int32    `json:"x_pos"`
+	YPos      *int32    `json:"y_pos"`
+	Timestamp time.Time `json:"timestamp"`
 }

@@ -12,6 +12,7 @@ import (
 )
 
 type PhonePhones struct {
-	OwnerID     string `json:"owner_id"`
-	PhoneNumber string `json:"phone_number"`
+	OwnerID     string    `json:"owner_id"`
+	PhoneNumber string    `json:"phone_number"`
+	LastSeen    time.Time `json:"last_seen"`
 }
