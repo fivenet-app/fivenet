@@ -45,7 +45,8 @@ type Housekeeper struct {
 	tracer trace.Tracer
 	db     *sql.DB
 
-	convertJobs []string
+	converterType string
+	convertJobs   []string
 
 	*Manager
 }
@@ -69,13 +70,14 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Housekeeper{
-		ctx:         ctxCancel,
-		logger:      p.Logger.Named("centrum.manager.housekeeper"),
-		wg:          sync.WaitGroup{},
-		tracer:      p.TP.Tracer("centrum-manager-housekeeper"),
-		db:          p.DB,
-		convertJobs: p.Config.DispatchCenter.ConvertJobs,
-		Manager:     p.Manager,
+		ctx:           ctxCancel,
+		logger:        p.Logger.Named("centrum.manager.housekeeper"),
+		wg:            sync.WaitGroup{},
+		tracer:        p.TP.Tracer("centrum-manager-housekeeper"),
+		db:            p.DB,
+		converterType: p.Config.DispatchCenter.Type,
+		convertJobs:   p.Config.DispatchCenter.ConvertJobs,
+		Manager:       p.Manager,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

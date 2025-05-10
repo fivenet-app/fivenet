@@ -101,6 +101,9 @@ func UseSchema(schema string) {
 	Jobs = Jobs.FromSchema(schema)
 	Licenses = Licenses.FromSchema(schema)
 	OwnedVehicles = OwnedVehicles.FromSchema(schema)
+	PhonePhones = PhonePhones.FromSchema(schema)
+	PhoneServicesChannels = PhoneServicesChannels.FromSchema(schema)
+	PhoneServicesMessages = PhoneServicesMessages.FromSchema(schema)
 	UserLicenses = UserLicenses.FromSchema(schema)
 	Users = Users.FromSchema(schema)
 }

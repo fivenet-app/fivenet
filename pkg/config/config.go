@@ -204,6 +204,7 @@ type Auth struct {
 }
 
 type DispatchCenter struct {
+	Type        string   `default:"gksphone" yaml:"type"`
 	ConvertJobs []string `yaml:"convertJobs"`
 }
 

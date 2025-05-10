@@ -19,18 +19,6 @@ excludeTables:
   - fivenet_wiki_page_user_access
 includeTables:
   "fivenet_*": ["*"]
-  "gksphone_job_message":
-    - id
-    - jobm
-    - anon
-    - gps
-    - message
-    - number
-    - owner
-    - time
-  "gksphone_settings":
-    - identifier
-    - phone_number
   "job_grades":
     - job_name
     - grade
@@ -65,3 +53,28 @@ includeTables:
     - visum
     - playtime
     - last_seen
+  # Phone Msg Converters
+  "gksphone_job_message":
+    - id
+    - jobm
+    - anon
+    - gps
+    - message
+    - number
+    - owner
+    - time
+  "gksphone_settings":
+    - identifier
+    - phone_number
+  "phone_services_channels":
+    - id
+    - company
+    - phone_number
+  "phone_services_messages":
+    - channel_id
+    - message
+    - x_pos
+    - y_pos
+  "phone_phones":
+    - owner_id
+    - phone_number

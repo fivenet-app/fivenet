@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsrector "github.com/fivenet-app/fivenet/v2025/services/rector/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/zap"
 )
 
 var (
@@ -81,7 +82,9 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *pbrector.Create
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
-	s.laws.Refresh(ctx, lawBook.Id)
+	if err := s.laws.Refresh(ctx, lawBook.Id); err != nil {
+		s.logger.Error("failed to refresh law book", zap.Uint64("law_book_id", lawBook.Id), zap.Error(err))
+	}
 
 	return &pbrector.CreateOrUpdateLawBookResponse{
 		LawBook: lawBook,
