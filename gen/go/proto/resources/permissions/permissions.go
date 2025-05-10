@@ -266,6 +266,7 @@ func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool
 func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals map[string]int32) (bool, bool) {
 	changed := false
 	if !in.FineGrained {
+		in.Grades = nil
 		for job, grade := range in.Jobs {
 			if vg, ok := maxVals[job]; ok {
 				if grade > vg {
@@ -291,6 +292,7 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 			}
 		}
 	} else {
+		in.Jobs = nil
 		for job, grades := range in.Grades {
 			if grades == nil || len(grades.Grades) == 0 {
 				delete(in.Grades, job)
