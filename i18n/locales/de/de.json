@@ -2763,7 +2763,8 @@
             "DispatchAttribute": {
                 "MULTIPLE": "Mehrere Einsätze",
                 "TOO_OLD": "Abgebrochen, Einsatz zu alt",
-                "DUPLICATE": "Duplikat"
+                "DUPLICATE": "Duplikat",
+                "AUTOMATIC": "Automatischer Einsatz"
             },
             "UnitAttribute": {
                 "STATIC": "Statisch",

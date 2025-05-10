@@ -78,6 +78,7 @@ const (
 	DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE    DispatchAttribute = 1
 	DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE   DispatchAttribute = 2
 	DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD     DispatchAttribute = 3
+	DispatchAttribute_DISPATCH_ATTRIBUTE_AUTOMATIC   DispatchAttribute = 4
 )
 
 // Enum value maps for DispatchAttribute.
@@ -87,12 +88,14 @@ var (
 		1: "DISPATCH_ATTRIBUTE_MULTIPLE",
 		2: "DISPATCH_ATTRIBUTE_DUPLICATE",
 		3: "DISPATCH_ATTRIBUTE_TOO_OLD",
+		4: "DISPATCH_ATTRIBUTE_AUTOMATIC",
 	}
 	DispatchAttribute_value = map[string]int32{
 		"DISPATCH_ATTRIBUTE_UNSPECIFIED": 0,
 		"DISPATCH_ATTRIBUTE_MULTIPLE":    1,
 		"DISPATCH_ATTRIBUTE_DUPLICATE":   2,
 		"DISPATCH_ATTRIBUTE_TOO_OLD":     3,
+		"DISPATCH_ATTRIBUTE_AUTOMATIC":   4,
 	}
 )
 
@@ -227,12 +230,13 @@ const file_resources_centrum_attributes_proto_rawDesc = "" +
 	"\rUnitAttribute\x12\x1e\n" +
 	"\x1aUNIT_ATTRIBUTE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15UNIT_ATTRIBUTE_STATIC\x10\x01\x12*\n" +
-	"&UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN\x10\x02*\x9a\x01\n" +
+	"&UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN\x10\x02*\xbc\x01\n" +
 	"\x11DispatchAttribute\x12\"\n" +
 	"\x1eDISPATCH_ATTRIBUTE_UNSPECIFIED\x10\x00\x12\x1f\n" +
 	"\x1bDISPATCH_ATTRIBUTE_MULTIPLE\x10\x01\x12 \n" +
 	"\x1cDISPATCH_ATTRIBUTE_DUPLICATE\x10\x02\x12\x1e\n" +
-	"\x1aDISPATCH_ATTRIBUTE_TOO_OLD\x10\x03BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"\x1aDISPATCH_ATTRIBUTE_TOO_OLD\x10\x03\x12 \n" +
+	"\x1cDISPATCH_ATTRIBUTE_AUTOMATIC\x10\x04BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_attributes_proto_rawDescOnce sync.Once

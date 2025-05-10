@@ -2763,7 +2763,8 @@
             "DispatchAttribute": {
                 "MULTIPLE": "Multiple Dispatches",
                 "TOO_OLD": "Cancelled due to Age",
-                "DUPLICATE": "Duplicate"
+                "DUPLICATE": "Duplicate",
+                "AUTOMATIC": "Automatic Dispatch"
             },
             "UnitAttribute": {
                 "STATIC": "Static",

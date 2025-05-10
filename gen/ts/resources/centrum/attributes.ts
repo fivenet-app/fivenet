@@ -68,7 +68,11 @@ export enum DispatchAttribute {
     /**
      * @generated from protobuf enum value: DISPATCH_ATTRIBUTE_TOO_OLD = 3;
      */
-    TOO_OLD = 3
+    TOO_OLD = 3,
+    /**
+     * @generated from protobuf enum value: DISPATCH_ATTRIBUTE_AUTOMATIC = 4;
+     */
+    AUTOMATIC = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UnitAttributes$Type extends MessageType<UnitAttributes> {
