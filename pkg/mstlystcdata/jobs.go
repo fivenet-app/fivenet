@@ -126,14 +126,15 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 		SELECT(
 			tJobs.Name,
 			tJobs.Label,
-			tJobGrades.JobName.AS("job_grade.job_name"),
+			tJobGrades.JobName,
 			tJobGrades.Grade,
 			tJobGrades.Label,
 		).
-		FROM(tJobs.
-			INNER_JOIN(tJobGrades,
-				tJobGrades.JobName.EQ(tJobs.Name),
-			),
+		FROM(
+			tJobs.
+				INNER_JOIN(tJobGrades,
+					tJobGrades.JobName.EQ(tJobs.Name),
+				),
 		).
 		ORDER_BY(
 			tJobs.Name.ASC(),
@@ -162,9 +163,11 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 	found := []string{}
 	for _, job := range dest {
 		jobName := strings.ToLower(job.Name)
+
 		if err := c.store.Put(ctx, jobName, job); err != nil {
 			errs = multierr.Append(errs, err)
 		}
+
 		found = append(found, jobName)
 	}
 
