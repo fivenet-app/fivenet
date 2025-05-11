@@ -33,13 +33,15 @@ const (
 var SyncCooldownTimeErr = errors.New("guild still in sync cooldown time")
 
 type Guild struct {
-	running atomic.Bool
-	mu      sync.Mutex
-	ctx     context.Context
-	cancel  context.CancelFunc
+	initiated atomic.Bool
+	running   atomic.Bool
+
+	mu     sync.Mutex
+	ctx    context.Context
+	cancel context.CancelFunc
 
 	job      string
-	id       discord.GuildID
+	gid      discord.GuildID
 	lastSync time.Time
 
 	logger *zap.Logger
@@ -60,13 +62,15 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSy
 	go events.Start(ctx)
 
 	g := &Guild{
-		running: atomic.Bool{},
-		mu:      sync.Mutex{},
-		ctx:     ctx,
-		cancel:  cancel,
+		initiated: atomic.Bool{},
+		running:   atomic.Bool{},
+
+		mu:     sync.Mutex{},
+		ctx:    ctx,
+		cancel: cancel,
 
 		job: job,
-		id:  guild.ID,
+		gid: guild.ID,
 
 		logger:  b.logger.Named("guild").With(zap.String("job", job), zap.Uint64("discord_guild_id", uint64(guild.ID))),
 		bot:     b,
@@ -113,11 +117,33 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSy
 	return g, errs
 }
 
+func (g *Guild) warmupStore() error {
+	members, err := g.bot.dc.Session.AllMembers(g.gid)
+	if err != nil {
+		return fmt.Errorf("failed to get guild members. %w", err)
+	}
+	for _, member := range members {
+		if err := g.bot.dc.Cabinet.MemberSet(g.gid, &member, false); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (g *Guild) IsRunning() bool {
 	return g.running.Load()
 }
 
 func (g *Guild) Run(ignoreCooldown bool) error {
+	if !g.initiated.Load() {
+		if err := g.warmupStore(); err != nil {
+			g.logger.Warn("error during store warmup", zap.Error(err))
+		}
+
+		g.initiated.Store(true)
+	}
+
 	// If the sync is already running, return
 	if g.running.Load() {
 		return nil

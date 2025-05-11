@@ -157,7 +157,7 @@ func New(p BotParams) Result {
 
 					case guild := <-b.workCh:
 						func() {
-							logger := b.logger.With(zap.String("job", guild.job), zap.Uint64("discord_guild_id", uint64(guild.id)))
+							logger := b.logger.With(zap.String("job", guild.job), zap.Uint64("discord_guild_id", uint64(guild.gid)))
 
 							// Ignore the cooldown for the periodic sync
 							if err := guild.Run(true); err != nil {
