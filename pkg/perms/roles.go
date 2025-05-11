@@ -479,3 +479,19 @@ func (p *Perms) UpdateJobPermissions(ctx context.Context, job string, id uint64,
 
 	return nil
 }
+
+func (p *Perms) ClearJobPermissions(ctx context.Context, job string) error {
+	stmt := tJobPerms.
+		DELETE().
+		WHERE(
+			tJobPerms.Job.EQ(jet.String(job)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return fmt.Errorf("failed to clear job permissions for job %s. %w", job, err)
+		}
+	}
+
+	return nil
+}

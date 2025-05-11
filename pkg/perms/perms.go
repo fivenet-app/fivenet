@@ -51,6 +51,7 @@ type Permissions interface {
 	GetJobPermissions(ctx context.Context, job string) ([]*permissions.Permission, error)
 	UpdateJobPermissions(ctx context.Context, job string, id uint64, val bool) error
 	ApplyJobPermissions(ctx context.Context, job string) error
+	ClearJobPermissions(ctx context.Context, job string) error
 
 	Can(userInfo *userinfo.UserInfo, category Category, name Name) bool
 

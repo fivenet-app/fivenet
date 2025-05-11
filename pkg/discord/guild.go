@@ -244,11 +244,12 @@ func (g *Guild) sendStartStatusLog(channelId discord.ChannelID) error {
 	}
 
 	if _, err := g.bot.dc.SendEmbeds(channel.ID, discord.Embed{
-		Type:   discord.NormalEmbed,
-		Title:  "Starting sync...",
-		Author: embeds.EmbedAuthor,
-		Color:  embeds.ColorInfo,
-		Footer: embeds.EmbedFooterVersion,
+		Type:        discord.NormalEmbed,
+		Title:       "Starting sync...",
+		Description: fmt.Sprintf("Dry run: %t", g.settings.Load().DryRun || g.bot.cfg.DryRun),
+		Author:      embeds.EmbedAuthor,
+		Color:       embeds.ColorInfo,
+		Footer:      embeds.EmbedFooterVersion,
 	}); err != nil {
 		return fmt.Errorf("failed to send status log start embed. %w", err)
 	}

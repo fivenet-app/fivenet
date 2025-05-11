@@ -199,6 +199,15 @@ func (s *Server) DeleteFaction(ctx context.Context, req *pbrector.DeleteFactionR
 		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
 	}
 
+	if err := s.ps.ClearJobPermissions(ctx, role.Job); err != nil {
+		errs = multierr.Append(errs, err)
+		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
+	}
+
+	if err := s.ps.ApplyJobPermissions(ctx, role.Job); err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+	}
+
 	// Set job props to be deleted as last action to remove a faction and it's data from the database
 	if err := s.deleteJobProps(ctx, s.db, role.Job); err != nil {
 		errs = multierr.Append(errs, err)

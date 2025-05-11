@@ -137,6 +137,7 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 			return users, logs, err
 		}
 	}
+	g.logger.Debug("group sync users", zap.Any("users", dest))
 
 	errs := multierr.Combine()
 	for _, user := range dest {

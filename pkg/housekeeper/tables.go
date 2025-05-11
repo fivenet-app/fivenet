@@ -69,3 +69,20 @@ func AddJobTable(tbls ...*JobTable) {
 		fkTablesList[tbl.TargetTable.TableName()] = tbl
 	}
 }
+
+func (t *JobTable) GetQuery(job string) jet.Statement {
+	if t.Source == nil {
+		if t.TargetDeletedAtColumn == nil {
+			return t.TargetTable.DELETE().
+				WHERE(t.TargetJobColumn.EQ(jet.String(job)))
+		} else {
+			return t.TargetTable.UPDATE().
+				SET(t.TargetDeletedAtColumn.SET(jet.CURRENT_TIMESTAMP())).
+				WHERE(t.TargetJobColumn.EQ(jet.String(job)))
+		}
+	} else {
+		// TODO
+	}
+
+	return nil
+}
