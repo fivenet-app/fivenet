@@ -2026,8 +2026,8 @@
                     "Access": "Access to factions-own documents"
                 }
             },
-            "CreateCategory": {
-                "key": "CreateCategory",
+            "CreateOrUpdateCategory": {
+                "key": "Create or Update Categories",
                 "description": "Create/ Update document categories."
             },
             "DeleteCategory": {

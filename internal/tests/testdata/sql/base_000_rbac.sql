@@ -65,7 +65,7 @@ INSERT INTO `fivenet_permissions` (`id`, `created_at`, `category`, `name`, `guar
 (76,'2023-04-03 12:17:15.132','RectorService','DeleteRole','rectorservice-deleterole'),
 (77,'2023-04-03 12:17:15.144','RectorService','GetPermissions','rectorservice-getpermissions'),
 (82,'2023-04-03 12:17:15.208','RectorService','GetRoles','rectorservice-getroles'),
-(2198,'2023-04-05 17:52:13.377','DocStoreService','CreateCategory','docstoreservice-createcategory'),
+(2198,'2023-04-05 17:52:13.377','DocStoreService','CreateOrUpdateCategory','docstoreservice-createorupdatecategory'),
 (2199,'2023-04-05 17:52:13.438','DocStoreService','DeleteCategory','docstoreservice-deletecategory'),
 (3056,'2023-04-06 20:26:04.619','DocStoreService','ListCategories','docstoreservice-listcategories'),
 (3392,'2023-04-08 16:51:59.783','DocStoreService','CreateTemplate','docstoreservice-createtemplate'),

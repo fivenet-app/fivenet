@@ -54,20 +54,18 @@ const modal = useModal();
         <template #right>
             <PartialsBackButton fallback-to="/documents" />
 
-            <UButtonGroup class="inline-flex">
-                <UButton
-                    v-if="can('DocStoreService.CreateOrUpdateCategory').value"
-                    color="gray"
-                    trailing-icon="i-mdi-plus"
-                    @click="
-                        modal.open(CategoriesModal, {
-                            onUpdate: () => refresh(),
-                        })
-                    "
-                >
-                    {{ $t('components.documents.categories.modal.create_category') }}
-                </UButton>
-            </UButtonGroup>
+            <UButton
+                v-if="can('DocStoreService.CreateOrUpdateCategory').value"
+                color="gray"
+                trailing-icon="i-mdi-plus"
+                @click="
+                    modal.open(CategoriesModal, {
+                        onUpdate: () => refresh(),
+                    })
+                "
+            >
+                {{ $t('components.documents.categories.modal.create_category') }}
+            </UButton>
         </template>
     </UDashboardNavbar>
 

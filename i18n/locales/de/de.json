@@ -2026,7 +2026,7 @@
                     "Access": "Zugriff auf fraktionseigene Dokumente"
                 }
             },
-            "CreateCategory": {
+            "CreateOrUpdateCategory": {
                 "key": "Dokumentenkategorie erstellen",
                 "description": "Dokumentenkategorien erstellen/ aktualisieren."
             },

@@ -19,13 +19,6 @@
   
     - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
   
-- [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
-    - [DispatchAttributes](#resources-centrum-DispatchAttributes)
-    - [UnitAttributes](#resources-centrum-UnitAttributes)
-  
-    - [DispatchAttribute](#resources-centrum-DispatchAttribute)
-    - [UnitAttribute](#resources-centrum-UnitAttribute)
-  
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
     - [DispatchAssignment](#resources-centrum-DispatchAssignment)
@@ -58,6 +51,13 @@
   
 - [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
     - [UserUnitMapping](#resources-centrum-UserUnitMapping)
+  
+- [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
+    - [DispatchAttributes](#resources-centrum-DispatchAttributes)
+    - [UnitAttributes](#resources-centrum-UnitAttributes)
+  
+    - [DispatchAttribute](#resources-centrum-DispatchAttribute)
+    - [UnitAttribute](#resources-centrum-UnitAttribute)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
@@ -1205,80 +1205,6 @@
 
 
 
-<a name="resources_centrum_attributes-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/attributes.proto
-
-
-
-<a name="resources-centrum-DispatchAttributes"></a>
-
-### DispatchAttributes
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [DispatchAttribute](#resources-centrum-DispatchAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAttributes"></a>
-
-### UnitAttributes
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [UnitAttribute](#resources-centrum-UnitAttribute) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-centrum-DispatchAttribute"></a>
-
-### DispatchAttribute
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `DISPATCH_ATTRIBUTE_UNSPECIFIED` | 0 |  |
-| `DISPATCH_ATTRIBUTE_MULTIPLE` | 1 |  |
-| `DISPATCH_ATTRIBUTE_DUPLICATE` | 2 |  |
-| `DISPATCH_ATTRIBUTE_TOO_OLD` | 3 |  |
-| `DISPATCH_ATTRIBUTE_AUTOMATIC` | 4 |  |
-
-
-
-<a name="resources-centrum-UnitAttribute"></a>
-
-### UnitAttribute
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `UNIT_ATTRIBUTE_UNSPECIFIED` | 0 |  |
-| `UNIT_ATTRIBUTE_STATIC` | 1 |  |
-| `UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN` | 2 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_centrum_dispatches-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1735,6 +1661,80 @@
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_attributes-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/attributes.proto
+
+
+
+<a name="resources-centrum-DispatchAttributes"></a>
+
+### DispatchAttributes
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [DispatchAttribute](#resources-centrum-DispatchAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAttributes"></a>
+
+### UnitAttributes
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [UnitAttribute](#resources-centrum-UnitAttribute) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-DispatchAttribute"></a>
+
+### DispatchAttribute
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DISPATCH_ATTRIBUTE_UNSPECIFIED` | 0 |  |
+| `DISPATCH_ATTRIBUTE_MULTIPLE` | 1 |  |
+| `DISPATCH_ATTRIBUTE_DUPLICATE` | 2 |  |
+| `DISPATCH_ATTRIBUTE_TOO_OLD` | 3 |  |
+| `DISPATCH_ATTRIBUTE_AUTOMATIC` | 4 |  |
+
+
+
+<a name="resources-centrum-UnitAttribute"></a>
+
+### UnitAttribute
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `UNIT_ATTRIBUTE_UNSPECIFIED` | 0 |  |
+| `UNIT_ATTRIBUTE_STATIC` | 1 |  |
+| `UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN` | 2 |  |
+
 
  <!-- end enums -->
 
