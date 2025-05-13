@@ -6,6 +6,8 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
+const DefaultDeleteLimit = 500
+
 var (
 	// Mutexes to protect access to the table list maps
 	tableListsMu   = sync.Mutex{}
@@ -71,18 +73,61 @@ func AddJobTable(tbls ...*JobTable) {
 }
 
 func (t *JobTable) GetQuery(job string) jet.Statement {
+	return t.GetQueryWithLimit(job, DefaultDeleteLimit)
+}
+
+func (t *JobTable) GetQueryWithLimit(job string, limit int64) jet.Statement {
 	if t.Source == nil {
 		if t.TargetDeletedAtColumn == nil {
-			return t.TargetTable.DELETE().
-				WHERE(t.TargetJobColumn.EQ(jet.String(job)))
+			return t.TargetTable.
+				DELETE().
+				WHERE(jet.AND(
+					t.TargetJobColumn.EQ(jet.String(job)),
+				)).
+				LIMIT(limit)
 		} else {
-			return t.TargetTable.UPDATE().
+			return t.TargetTable.
+				UPDATE().
 				SET(t.TargetDeletedAtColumn.SET(jet.CURRENT_TIMESTAMP())).
-				WHERE(t.TargetJobColumn.EQ(jet.String(job)))
+				WHERE(jet.AND(
+					t.TargetJobColumn.EQ(jet.String(job)),
+					t.TargetDeletedAtColumn.IS_NULL(),
+				)).
+				LIMIT(limit)
 		}
 	} else {
-		// TODO
-	}
+		// Handle case with Source using USING AND FROM
+		joinCondition := t.Source.SourceIDColumn.EQ(t.TargetSourceIDColumn)
+		whereCondition := t.Source.SourceJobColumn.EQ(jet.String(job))
 
-	return nil
+		if t.Source.SourceDeletedAtColumn != nil {
+			whereCondition = whereCondition.AND(t.Source.SourceDeletedAtColumn.IS_NOT_NULL())
+		}
+		if t.TargetDeletedAtColumn != nil {
+			whereCondition = whereCondition.AND(t.TargetDeletedAtColumn.IS_NULL())
+		}
+
+		if t.TargetDeletedAtColumn == nil {
+			return t.TargetTable.
+				DELETE().
+				USING(t.Source.SourceTable).
+				WHERE(jet.AND(
+					whereCondition,
+					joinCondition,
+				)).
+				LIMIT(limit)
+		} else {
+			return t.TargetTable.
+				INNER_JOIN(t.Source.SourceTable, joinCondition).
+				UPDATE().
+				SET(
+					t.TargetDeletedAtColumn.SET(jet.CURRENT_TIMESTAMP()),
+				).
+				WHERE(jet.AND(
+					whereCondition,
+					joinCondition,
+				)).
+				LIMIT(limit)
+		}
+	}
 }
