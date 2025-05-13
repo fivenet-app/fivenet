@@ -298,7 +298,7 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 func (p *Perms) AttrStringList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error) {
 	attrValue, err := p.Attr(userInfo, category, name, key)
 	if err != nil {
-		return nil, err
+		return &permissions.StringList{}, err
 	}
 
 	if attrValue == nil {
@@ -313,7 +313,7 @@ func (p *Perms) AttrStringList(userInfo *userinfo.UserInfo, category Category, n
 		return v.JobList, nil
 
 	default:
-		return nil, fmt.Errorf("unknown role attribute type")
+		return &permissions.StringList{}, fmt.Errorf("unknown role attribute type")
 	}
 }
 
@@ -324,11 +324,19 @@ func (p *Perms) AttrJobList(userInfo *userinfo.UserInfo, category Category, name
 func (p *Perms) AttrJobGradeList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.JobGradeList, error) {
 	attrValue, err := p.Attr(userInfo, category, name, key)
 	if err != nil {
-		return nil, err
+		return &permissions.JobGradeList{
+			Jobs:        map[string]int32{},
+			FineGrained: false,
+			Grades:      map[string]*permissions.JobGrades{},
+		}, err
 	}
 
 	if attrValue == nil {
-		return &permissions.JobGradeList{}, nil
+		return &permissions.JobGradeList{
+			Jobs:        map[string]int32{},
+			FineGrained: false,
+			Grades:      map[string]*permissions.JobGrades{},
+		}, nil
 	}
 
 	switch v := attrValue.ValidValues.(type) {
@@ -336,7 +344,11 @@ func (p *Perms) AttrJobGradeList(userInfo *userinfo.UserInfo, category Category,
 		return v.JobGradeList, nil
 
 	default:
-		return nil, fmt.Errorf("unknown role attribute type for string list")
+		return &permissions.JobGradeList{
+			Jobs:        map[string]int32{},
+			FineGrained: false,
+			Grades:      map[string]*permissions.JobGrades{},
+		}, fmt.Errorf("unknown role attribute type for string list")
 	}
 }
 

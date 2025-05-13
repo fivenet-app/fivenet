@@ -22,66 +22,36 @@ import (
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetQualifications,
-		TimestampColumn: table.FivenetQualifications.DeletedAt,
-		MinDays:         30,
-	},
-		&housekeeper.Table{
-			Table:           table.FivenetQualificationsExamUsers,
-			TimestampColumn: table.FivenetQualificationsExamUsers.EndsAt,
-			MinDays:         30,
-		},
-		&housekeeper.Table{
-			Table:           table.FivenetQualificationsRequests,
-			TimestampColumn: table.FivenetQualificationsRequests.DeletedAt,
-			MinDays:         30,
-		},
-		&housekeeper.Table{
-			Table:           table.FivenetQualificationsResults,
-			TimestampColumn: table.FivenetQualificationsResults.DeletedAt,
-			MinDays:         30,
-		},
-	)
+		IDColumn:        table.FivenetQualifications.ID,
+		JobColumn:       table.FivenetQualifications.Job,
+		DeletedAtColumn: table.FivenetQualifications.DeletedAt,
 
-	housekeeper.AddJobTable(
-		&housekeeper.JobTable{
-			TargetTable:           table.FivenetQualifications,
-			TargetJobColumn:       table.FivenetQualifications.Job,
-			TargetSourceIDColumn:  table.FivenetQualifications.ID,
-			TargetDeletedAtColumn: table.FivenetQualifications.DeletedAt,
-		},
-		&housekeeper.JobTable{
-			Source: &housekeeper.JobTableSource{
-				SourceTable:           table.FivenetQualifications,
-				SourceJobColumn:       table.FivenetQualifications.Job,
-				SourceDeletedAtColumn: table.FivenetQualifications.DeletedAt,
-				SourceIDColumn:        table.FivenetQualifications.ID,
+		MinDays: 30,
+
+		DependentTables: []*housekeeper.Table{
+			{
+				Table:           table.FivenetQualificationsExamUsers,
+				DeletedAtColumn: table.FivenetQualificationsExamUsers.EndsAt,
+				ForeignKey:      table.FivenetQualificationsExamUsers.QualificationID,
 			},
-			TargetTable:          table.FivenetQualificationsExamUsers,
-			TargetSourceIDColumn: table.FivenetQualificationsExamUsers.QualificationID,
-		},
-		&housekeeper.JobTable{
-			Source: &housekeeper.JobTableSource{
-				SourceTable:           table.FivenetQualifications,
-				SourceJobColumn:       table.FivenetQualifications.Job,
-				SourceDeletedAtColumn: table.FivenetQualifications.DeletedAt,
-				SourceIDColumn:        table.FivenetQualifications.ID,
+			{
+				Table:           table.FivenetQualificationsRequests,
+				DeletedAtColumn: table.FivenetQualificationsRequests.DeletedAt,
+				ForeignKey:      table.FivenetQualificationsRequests.QualificationID,
+
+				MinDays: 30,
 			},
-			TargetTable:           table.FivenetQualificationsRequests,
-			TargetSourceIDColumn:  table.FivenetQualificationsRequests.QualificationID,
-			TargetDeletedAtColumn: table.FivenetQualificationsRequests.DeletedAt,
-		},
-		&housekeeper.JobTable{
-			Source: &housekeeper.JobTableSource{
-				SourceTable:           table.FivenetQualifications,
-				SourceJobColumn:       table.FivenetQualifications.Job,
-				SourceDeletedAtColumn: table.FivenetQualifications.DeletedAt,
-				SourceIDColumn:        table.FivenetQualifications.ID,
+			{
+				Table:           table.FivenetQualificationsResults,
+				IDColumn:        table.FivenetQualificationsResults.ID,
+				DeletedAtColumn: table.FivenetQualificationsResults.DeletedAt,
+
+				ForeignKey: table.FivenetQualificationsResults.QualificationID,
+
+				MinDays: 30,
 			},
-			TargetTable:           table.FivenetQualificationsResults,
-			TargetSourceIDColumn:  table.FivenetQualificationsResults.QualificationID,
-			TargetDeletedAtColumn: table.FivenetQualificationsResults.DeletedAt,
 		},
-	)
+	})
 }
 
 var tQuali = table.FivenetQualifications.AS("qualification")

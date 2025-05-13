@@ -22,27 +22,19 @@ const defaultWikiUpperLimit = 250
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetWikiPages,
-		TimestampColumn: table.FivenetWikiPages.DeletedAt,
+		IDColumn:        table.FivenetWikiPages.ID,
+		DeletedAtColumn: table.FivenetWikiPages.DeletedAt,
+		JobColumn:       table.FivenetWikiPages.Job,
 		MinDays:         60,
-	})
 
-	housekeeper.AddJobTable(
-		&housekeeper.JobTable{
-			TargetTable:           table.FivenetWikiPages,
-			TargetSourceIDColumn:  table.FivenetWikiPages.ID,
-			TargetDeletedAtColumn: table.FivenetWikiPages.DeletedAt,
-			TargetJobColumn:       table.FivenetWikiPages.Job,
-		},
-		&housekeeper.JobTable{
-			Source: &housekeeper.JobTableSource{
-				SourceTable:           table.FivenetWikiPages,
-				SourceJobColumn:       table.FivenetWikiPages.Job,
-				SourceDeletedAtColumn: table.FivenetWikiPages.DeletedAt,
-				SourceIDColumn:        table.FivenetWikiPages.ID,
+		DependentTables: []*housekeeper.Table{
+			{
+				Table:      table.FivenetWikiPageActivity,
+				ForeignKey: table.FivenetWikiPageActivity.PageID,
+				IDColumn:   table.FivenetWikiPageActivity.ID,
 			},
-			TargetTable:          table.FivenetWikiPageActivity,
-			TargetSourceIDColumn: table.FivenetWikiPageActivity.PageID,
 		},
+	},
 	)
 }
 

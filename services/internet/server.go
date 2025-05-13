@@ -17,13 +17,20 @@ func init() {
 	housekeeper.AddTable(
 		&housekeeper.Table{
 			Table:           table.FivenetInternetPages,
-			TimestampColumn: table.FivenetInternetPages.DeletedAt,
-			MinDays:         60,
+			IDColumn:        table.FivenetInternetPages.ID,
+			DeletedAtColumn: table.FivenetInternetPages.DeletedAt,
+
+			MinDays: 60,
 		},
+	)
+
+	housekeeper.AddTable(
 		&housekeeper.Table{
 			Table:           table.FivenetInternetAds,
-			TimestampColumn: table.FivenetInternetAds.DeletedAt,
-			MinDays:         60,
+			IDColumn:        table.FivenetInternetAds.ID,
+			DeletedAtColumn: table.FivenetInternetAds.DeletedAt,
+
+			MinDays: 60,
 		},
 	)
 }

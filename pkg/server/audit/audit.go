@@ -69,7 +69,7 @@ func New(p Params) IAuditer {
 	// Register audit log table in housekeeper
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           tAudit,
-		TimestampColumn: tAudit.CreatedAt,
+		DeletedAtColumn: tAudit.CreatedAt,
 		MinDays:         p.Config.Audit.RetentionDays,
 	})
 

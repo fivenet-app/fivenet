@@ -32,12 +32,9 @@ func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:      table.FivenetJobsTimeclock,
 		DateColumn: table.FivenetJobsTimeclock.Date,
-		MinDays:    365, // One year
-	})
+		JobColumn:  table.FivenetJobsTimeclock.Job,
 
-	housekeeper.AddJobTable(&housekeeper.JobTable{
-		TargetTable:     table.FivenetJobsTimeclock,
-		TargetJobColumn: table.FivenetJobsTimeclock.Job,
+		MinDays: 365, // One year
 	})
 }
 

@@ -252,7 +252,7 @@ func (s *Server) CreateCalendar(ctx context.Context, req *pbcalendar.CreateCalen
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	fields, err := s.p.AttrStringList(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -372,7 +372,7 @@ func (s *Server) UpdateCalendar(ctx context.Context, req *pbcalendar.UpdateCalen
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	fields, err := s.p.AttrStringList(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permscalendar.CalendarServicePerm, permscalendar.CalendarServiceCreateCalendarPerm, permscalendar.CalendarServiceCreateCalendarFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}

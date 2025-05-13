@@ -30,20 +30,24 @@ func init() {
 	housekeeper.AddTable(
 		&housekeeper.Table{
 			Table:           table.FivenetCentrumMarkers,
-			TimestampColumn: table.FivenetCentrumMarkers.ExpiresAt,
-			MinDays:         3,
-		},
-		&housekeeper.Table{
-			Table:           table.FivenetCentrumMarkers,
-			TimestampColumn: table.FivenetCentrumMarkers.DeletedAt,
-			MinDays:         7,
+			IDColumn:        table.FivenetCentrumMarkers.ID,
+			DeletedAtColumn: table.FivenetCentrumMarkers.DeletedAt,
+			DeletedAtColumn: table.FivenetCentrumMarkers.ExpiresAt,
+			JobColumn:       table.FivenetCentrumMarkers.Job,
+
+			MinDays: 7,
 		},
 	)
-	housekeeper.AddJobTable(&housekeeper.JobTable{
-		TargetTable:           table.FivenetCentrumMarkers,
-		TargetJobColumn:       table.FivenetCentrumMarkers.Job,
-		TargetDeletedAtColumn: table.FivenetCentrumMarkers.DeletedAt,
-	})
+
+	housekeeper.AddTable(
+		&housekeeper.Table{
+			Table:           table.FivenetUserLocations,
+			DeletedAtColumn: table.FivenetUserLocations.UpdatedAt,
+			JobColumn:       table.FivenetUserLocations.Job,
+
+			MinDays: 3,
+		},
+	)
 }
 
 type Server struct {

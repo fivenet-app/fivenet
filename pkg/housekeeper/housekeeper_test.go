@@ -5,99 +5,78 @@ import (
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 )
 
-func TestRunHousekeeper(t *testing.T) {
-	// Create a mock database
+func TestSoftDeleteJobData(t *testing.T) {
+	ctx := context.Background()
+
+	// Mock dependencies
+	logger := zap.NewNop()
 	db, mock, err := sqlmock.New()
-	assert.NoError(t, err)
+	if err != nil {
+		t.Fatalf("failed to create mock db: %v", err)
+	}
 	defer db.Close()
 
-	// Mock logger
-	logger := zap.NewNop()
-
-	tablesList := map[string]*Table{
-		"test_table": {
-			Table:      jet.NewTable("", "test_table", ""),
-			DateColumn: jet.DateColumn("date_column"),
-			MinDays:    30,
-		},
-	}
-
-	// Create a Housekeeper instance and add mock table to list
-	h := &Housekeeper{
+	housekeeper := &Housekeeper{
 		logger: logger,
 		db:     db,
+	}
 
-		getTablesListFn: func() map[string]*Table {
-			return tablesList
+	// Define table and job details
+	table := &Table{
+		Table:           jet.NewTable("", "calendars", ""),
+		DeletedAtColumn: jet.TimestampColumn("deleted_at"),
+		JobColumn:       jet.StringColumn("job"),
+		IDColumn:        jet.IntegerColumn("id"),
+		MinDays:         30,
+
+		DependentTables: []*Table{
+			{
+				Table:           jet.NewTable("", "calendar_entries", ""),
+				DeletedAtColumn: jet.TimestampColumn("deleted_at"),
+				ForeignKey:      jet.IntegerColumn("calendar_id"),
+				IDColumn:        jet.IntegerColumn("id"),
+
+				DependentTables: []*Table{
+					{
+						Table:      jet.NewTable("", "calendar_rsvp", ""),
+						ForeignKey: jet.IntegerColumn("entry_id"),
+					},
+				},
+			},
+			{
+				Table:      jet.NewTable("", "calendar_subscriptions", ""),
+				ForeignKey: jet.IntegerColumn("calendar_id"),
+			},
+			{
+				Table:      jet.NewTable("", "calendar_subscriptions", ""),
+				ForeignKey: jet.IntegerColumn("calendar_id"),
+			},
 		},
 	}
+	jobName := "test_job"
 
-	// Define test data
-	data := &cron.GenericCronData{
-		Attributes: map[string]string{},
+	// Mock queries for main table
+	mock.ExpectExec("UPDATE calendars SET deleted_at = CURRENT_TIMESTAMP WHERE \\(.+\\(job = \\?\\) AND deleted_at IS NULL.+\\) LIMIT \\?;").
+		WithArgs().
+		WillReturnResult(sqlmock.NewResult(0, 10))
+
+	// Mock queries for dependent table `calendar_entries`
+	mock.ExpectExec("UPDATE calendar_entries SET deleted_at = CURRENT_TIMESTAMP WHERE .+\\(job = \\?\\) AND deleted_at IS NULL AND \\(calendar_id IN \\(\\( SELECT id AS \"id\" FROM calendars WHERE .+\\(job = \\?\\) AND deleted_at IS NULL .+ LIMIT \\?;").
+		WithArgs().
+		WillReturnResult(sqlmock.NewResult(0, 5))
+
+	// Execute the function
+	err = housekeeper.SoftDeleteJobData(ctx, table, jobName)
+	if err != nil {
+		t.Errorf("SoftDeleteJobData failed: %v", err)
 	}
-
-	// Mock DELETE query
-	mock.ExpectExec(`DELETE FROM test_table .+date_column IS NOT NULL AND .date_column <= .+CURRENT_DATE - INTERVAL 30 DAY. AS DATE.+ LIMIT \?;`).
-		WithArgs(2000).
-		WillReturnResult(sqlmock.NewResult(0, 10)) // Simulate 10 rows affected
-
-	// Run the method
-	err = h.runHousekeeper(context.Background(), data)
-	assert.NoError(t, err)
-
-	// Verify the last table key is set accordingly
-	assert.Equal(t, "test_table", data.Attributes[lastTableMapIndex])
-
-	// Mock DELETE query of test_table
-	mock.ExpectExec(`DELETE FROM test_table .+date_column IS NOT NULL AND .date_column <= .+CURRENT_DATE - INTERVAL 30 DAY. AS DATE.+ LIMIT \?;`).
-		WithArgs(2000).
-		WillReturnResult(sqlmock.NewResult(0, 10)) // Simulate 10 rows affected
-
-	// Run the method again with the same table list
-	err = h.runHousekeeper(context.Background(), data)
-	assert.NoError(t, err)
-
-	// Verify the last table key is set accordingly
-	assert.Equal(t, "test_table", data.Attributes[lastTableMapIndex])
-
-	// Test with a second table in the list
-	tablesList["zsecond_table"] = &Table{
-		Table:           jet.NewTable("", "zsecond_table", ""),
-		TimestampColumn: jet.TimestampColumn("timestamp_column"),
-		MinDays:         7,
-	}
-
-	// Mock DELETE query for second table
-	mock.ExpectExec(`DELETE FROM zsecond_table .+timestamp_column IS NOT NULL AND .timestamp_column <= .+CURRENT_DATE - INTERVAL 7 DAY.+ LIMIT \?;`).
-		WithArgs(2000).
-		WillReturnResult(sqlmock.NewResult(0, 10)) // Simulate 10 rows affected
-
-	// Run the method
-	err = h.runHousekeeper(context.Background(), data)
-	assert.NoError(t, err)
-
-	// Verify the last table key is set to the second table
-	assert.Equal(t, "zsecond_table", data.Attributes[lastTableMapIndex])
-
-	// Mock DELETE query of test_table
-	mock.ExpectExec(`DELETE FROM test_table .+date_column IS NOT NULL AND .date_column <= .+CURRENT_DATE - INTERVAL 30 DAY. AS DATE.+ LIMIT \?;`).
-		WithArgs(2000).
-		WillReturnResult(sqlmock.NewResult(0, 10)) // Simulate 10 rows affected
-
-	// Run the method again it should "rollover" to the first table in the list
-	err = h.runHousekeeper(context.Background(), data)
-	assert.NoError(t, err)
-
-	// Verify the last table key is set to the first test table
-	assert.Equal(t, "test_table", data.Attributes[lastTableMapIndex])
 
 	// Ensure all expectations were met
-	assert.NoError(t, mock.ExpectationsWereMet())
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("unmet expectations: %v", err)
+	}
 }

@@ -31,51 +31,41 @@ var (
 )
 
 func init() {
-	housekeeper.AddTable(
-		&housekeeper.Table{
-			Table:           table.FivenetCalendar,
-			TimestampColumn: table.FivenetCalendar.DeletedAt,
-			MinDays:         61, // Delete calendars later than entries to lessen the load on the database
-		},
-		&housekeeper.Table{
-			Table:           table.FivenetCalendarEntries,
-			TimestampColumn: table.FivenetCalendarEntries.DeletedAt,
-			MinDays:         60,
-		},
-	)
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCalendar,
+		JobColumn:       table.FivenetCalendar.Job,
+		DeletedAtColumn: table.FivenetCalendar.DeletedAt,
+		IDColumn:        table.FivenetCalendar.ID,
 
-	housekeeper.AddJobTable(
-		&housekeeper.JobTable{
-			Source: &housekeeper.JobTableSource{
-				SourceTable:           table.FivenetCalendar,
-				SourceJobColumn:       table.FivenetCalendar.Job,
-				SourceDeletedAtColumn: table.FivenetCalendar.DeletedAt,
-				SourceIDColumn:        table.FivenetCalendar.ID,
+		MinDays: 61, // Delete calendars later than entries to lessen the load on the database
+
+		DependentTables: []*housekeeper.Table{
+			{
+				Table:      table.FivenetCalendarSubs,
+				ForeignKey: table.FivenetCalendarSubs.CalendarID,
 			},
+			{
+				Table:           table.FivenetCalendarEntries,
+				ForeignKey:      table.FivenetCalendarEntries.CalendarID,
+				DeletedAtColumn: table.FivenetCalendarEntries.DeletedAt,
+				MinDays:         60,
 
-			TargetTable:           table.FivenetCalendarEntries,
-			TargetDeletedAtColumn: table.FivenetCalendarEntries.DeletedAt,
-			TargetSourceIDColumn:  table.FivenetCalendarEntries.CalendarID,
-		},
-		&housekeeper.JobTable{
-			Source: &housekeeper.JobTableSource{
-				SourceTable:           table.FivenetCalendar,
-				SourceJobColumn:       table.FivenetCalendar.Job,
-				SourceDeletedAtColumn: table.FivenetCalendar.DeletedAt,
-				SourceIDColumn:        table.FivenetCalendar.ID,
+				DependentTables: []*housekeeper.Table{
+					{
+						Table:      table.FivenetCalendarRsvp,
+						ForeignKey: table.FivenetCalendarRsvp.EntryID,
+					},
+				},
 			},
-
-			TargetTable:          table.FivenetCalendarSubs,
-			TargetSourceIDColumn: table.FivenetCalendarSubs.CalendarID,
 		},
-	)
+	})
 }
 
 type Server struct {
 	pbcalendar.CalendarServiceServer
 
 	db       *sql.DB
-	p        perms.Permissions
+	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	appCfg   appconfig.IConfig
@@ -100,7 +90,7 @@ type Params struct {
 func NewServer(p Params) *Server {
 	return &Server{
 		db:       p.DB,
-		p:        p.P,
+		ps:       p.P,
 		enricher: p.Enricher,
 		aud:      p.Aud,
 		appCfg:   p.AppConfig,

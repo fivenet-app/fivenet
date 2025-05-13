@@ -22,44 +22,60 @@ const housekeeperMinDays = 60
 
 func init() {
 	housekeeper.AddTable(
-		// Categories
-		&housekeeper.Table{
-			Table:           table.FivenetDocumentsCategories,
-			TimestampColumn: table.FivenetDocumentsCategories.DeletedAt,
-			MinDays:         housekeeperMinDays,
-		},
-
-		// Templates
-		&housekeeper.Table{
-			Table:           table.FivenetDocumentsTemplates,
-			TimestampColumn: table.FivenetDocumentsTemplates.DeletedAt,
-			MinDays:         housekeeperMinDays,
-		},
-
 		// Documents
 		&housekeeper.Table{
 			Table:           table.FivenetDocuments,
-			TimestampColumn: table.FivenetDocuments.DeletedAt,
-			MinDays:         housekeeperMinDays,
-		},
+			IDColumn:        table.FivenetDocumentsComments.ID,
+			DeletedAtColumn: table.FivenetDocuments.DeletedAt,
 
-		// Comments
-		&housekeeper.Table{
-			Table:           table.FivenetDocumentsComments,
-			TimestampColumn: table.FivenetDocumentsComments.DeletedAt,
-			MinDays:         housekeeperMinDays,
-		},
+			MinDays: housekeeperMinDays,
 
-		// Document References and Relations
-		&housekeeper.Table{
-			Table:           table.FivenetDocumentsReferences,
-			TimestampColumn: table.FivenetDocumentsReferences.DeletedAt,
-			MinDays:         housekeeperMinDays,
-		},
-		&housekeeper.Table{
-			Table:           table.FivenetDocumentsRelations,
-			TimestampColumn: table.FivenetDocumentsRelations.DeletedAt,
-			MinDays:         housekeeperMinDays,
+			DependentTables: []*housekeeper.Table{
+				// Categories
+				{
+					Table:           table.FivenetDocumentsCategories,
+					IDColumn:        table.FivenetDocumentsCategories.ID,
+					JobColumn:       table.FivenetDocumentsCategories.Job,
+					DeletedAtColumn: table.FivenetDocumentsCategories.DeletedAt,
+
+					MinDays: housekeeperMinDays,
+				},
+				// Templates
+				{
+					Table:           table.FivenetDocumentsTemplates,
+					IDColumn:        table.FivenetDocumentsTemplates.ID,
+					DeletedAtColumn: table.FivenetDocumentsTemplates.DeletedAt,
+
+					MinDays: housekeeperMinDays,
+				},
+				// Comments
+				{
+					Table:           table.FivenetDocumentsComments,
+					IDColumn:        table.FivenetDocumentsComments.ID,
+					ForeignKey:      table.FivenetDocumentsComments.DocumentID,
+					DeletedAtColumn: table.FivenetDocumentsComments.DeletedAt,
+
+					MinDays: housekeeperMinDays,
+				},
+
+				// Document References and Relations
+				{
+					Table:           table.FivenetDocumentsReferences,
+					IDColumn:        table.FivenetDocumentsReferences.ID,
+					ForeignKey:      table.FivenetDocumentsReferences.SourceDocumentID,
+					DeletedAtColumn: table.FivenetDocumentsReferences.DeletedAt,
+
+					MinDays: housekeeperMinDays,
+				},
+				{
+					Table:           table.FivenetDocumentsRelations,
+					IDColumn:        table.FivenetDocumentsRelations.ID,
+					ForeignKey:      table.FivenetDocumentsRelations.DocumentID,
+					DeletedAtColumn: table.FivenetDocumentsRelations.DeletedAt,
+
+					MinDays: housekeeperMinDays,
+				},
+			},
 		},
 	)
 }
