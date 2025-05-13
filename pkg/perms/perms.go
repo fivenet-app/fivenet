@@ -513,6 +513,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 	}
 
 	for _, ra := range dest {
+		ra.Value.Default(ra.Type)
 		p.updateRoleAttributeInMap(ra.RoleID, ra.PermissionID, ra.AttrID, ra.Key, ra.Type, ra.Value)
 	}
 

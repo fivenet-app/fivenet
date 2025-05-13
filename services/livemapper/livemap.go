@@ -182,7 +182,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_StreamServer, usersJobs *permissions.JobGradeList, userInfo *userinfo.UserInfo, updatedAt time.Time, lastOnDutyState bool) (bool, time.Time, bool, error) {
 	// If the user was off duty and is now on duty, we need to send all user locations and not just updated ones
 	// use the updatedAt time to force sending all users
-	if onDutyState := s.tracker.IsUserOnDuty(userInfo.UserId); onDutyState != lastOnDutyState {
+	if onDutyState := s.tracker.IsUserOnDuty(userInfo.UserId); !userInfo.SuperUser && onDutyState != lastOnDutyState {
 		if !lastOnDutyState {
 			updatedAt = time.Time{}
 		} else {

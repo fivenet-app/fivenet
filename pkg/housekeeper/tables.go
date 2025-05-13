@@ -21,9 +21,10 @@ type Table struct {
 	ForeignKey      jet.ColumnInteger   // Optional for first/main table
 	IDColumn        jet.ColumnInteger
 
-	DateColumn jet.ColumnDate
-	Condition  jet.BoolExpression
-	MinDays    int
+	TimestampColumn jet.ColumnTimestamp
+	DateColumn      jet.ColumnDate
+	Condition       jet.BoolExpression
+	MinDays         int
 
 	DependentTables []*Table // Allow tables to have their dependents
 }
@@ -36,8 +37,8 @@ func AddTable(tbl *Table) {
 		tbl.MinDays = 30
 	}
 
-	if tbl.DeletedAtColumn == nil && tbl.DateColumn == nil {
-		panic(fmt.Sprintf("table %s must have a DeletedAt or DateColumn column set for soft delete!", tbl.Table.TableName()))
+	if tbl.DeletedAtColumn == nil && tbl.TimestampColumn == nil && tbl.DateColumn == nil {
+		panic(fmt.Sprintf("table %s must have a DeletedAt, TimestampColumn, or DateColumn column set for soft delete!", tbl.Table.TableName()))
 	}
 
 	tablesList[tbl.Table.TableName()] = tbl

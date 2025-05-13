@@ -71,14 +71,20 @@ func (x *AttributeValues) Default(aType AttributeTypes) {
 		}
 
 	case JobGradeListAttributeType:
-		if x.GetJobGradeList() == nil || x.GetJobGradeList().Jobs == nil {
+		if x.GetJobGradeList() == nil {
 			x.ValidValues = &AttributeValues_JobGradeList{
 				JobGradeList: &JobGradeList{
-					Jobs:        nil,
+					Jobs:        map[string]int32{},
 					FineGrained: false,
-					Grades:      nil,
+					Grades:      map[string]*JobGrades{},
 				},
 			}
+		}
+		if x.GetJobGradeList().Jobs == nil {
+			x.GetJobGradeList().Jobs = map[string]int32{}
+		}
+		if x.GetJobGradeList().Grades == nil {
+			x.GetJobGradeList().Grades = map[string]*JobGrades{}
 		}
 	}
 }
@@ -107,11 +113,15 @@ func (x *StringList) Len() int {
 }
 
 func (x *JobGradeList) HasJobGrade(job string, grade int32) bool {
-	if x == nil || x.Jobs == nil {
+	if x == nil {
 		return false
 	}
 
 	if x.FineGrained {
+		if x.Grades == nil {
+			return false
+		}
+
 		// Check if the job exists in the list and the grade is allowed in the fine grained list
 		grades, ok := x.Grades[job]
 		if !ok {
@@ -123,6 +133,10 @@ func (x *JobGradeList) HasJobGrade(job string, grade int32) bool {
 
 		return slices.Contains(grades.Grades, grade)
 	} else {
+		if x.Jobs == nil {
+			return false
+		}
+
 		// Check if the job exists in the list and the grade is "in range"
 		if g, ok := x.Jobs[job]; ok {
 			if g >= grade {

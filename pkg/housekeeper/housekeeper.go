@@ -143,13 +143,20 @@ func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCron
 				jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
 			),
 		)
-	} else {
+	} else if tbl.DateColumn != nil {
 		condition = jet.AND(
 			tbl.DateColumn.IS_NOT_NULL(),
 			tbl.DateColumn.LT_EQ(
 				jet.CAST(
 					jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
 				).AS_DATE(),
+			),
+		)
+	} else {
+		condition = jet.AND(
+			tbl.TimestampColumn.IS_NOT_NULL(),
+			tbl.TimestampColumn.LT_EQ(
+				jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
 			),
 		)
 	}
@@ -189,7 +196,7 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 
 	if table.DeletedAtColumn != nil {
 		// Mark rows as deleted in the current table for the given job
-		if err := h.markRowsAsDeletedInJob(ctx, table.Table, table.DeletedAtColumn, table.JobColumn, jobName); err != nil {
+		if err := h.markRowsAsDeletedInJob(ctx, table, jobName); err != nil {
 			return fmt.Errorf("failed to soft delete rows from main table %s: %w", table.Table.TableName(), err)
 		}
 	}
@@ -234,16 +241,16 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 	return nil
 }
 
-func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table jet.Table, deletedAtColumn jet.ColumnTimestamp, jobColumn jet.ColumnString, jobName string) error {
+func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, jobName string) error {
 	condition := jet.AND(
-		jobColumn.EQ(jet.String(jobName)),
-		deletedAtColumn.IS_NULL(),
+		table.JobColumn.EQ(jet.String(jobName)),
+		table.DeletedAtColumn.IS_NULL(),
 	)
 
-	stmt := table.
+	stmt := table.Table.
 		UPDATE().
 		SET(
-			deletedAtColumn.SET(jet.CURRENT_TIMESTAMP()),
+			table.DeletedAtColumn.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)
@@ -258,14 +265,22 @@ func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table jet.Tabl
 		return err
 	}
 
-	h.logger.Info("marked rows as deleted", zap.String("table", table.TableName()), zap.Int64("rows", rowsAffected))
+	h.logger.Info("marked rows as deleted", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
 	return nil
 }
 
 func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table, table *Table, jobName string) error {
-	condition := jet.AND(
-		parentTable.JobColumn.EQ(jet.String(jobName)),
+	var condition jet.BoolExpression
+	if table.JobColumn != nil {
+		condition = table.JobColumn.EQ(jet.String(jobName))
+	} else {
+		condition = parentTable.JobColumn.EQ(jet.String(jobName))
+	}
+
+	condition = condition.AND(
 		table.DeletedAtColumn.IS_NULL(),
+	)
+	condition = condition.AND(
 		table.ForeignKey.IN(
 			parentTable.Table.
 				SELECT(parentTable.IDColumn).

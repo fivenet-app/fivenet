@@ -27,17 +27,22 @@ import (
 )
 
 func init() {
-	housekeeper.AddTable(
-		&housekeeper.Table{
-			Table:           table.FivenetCentrumMarkers,
-			IDColumn:        table.FivenetCentrumMarkers.ID,
-			DeletedAtColumn: table.FivenetCentrumMarkers.DeletedAt,
-			DeletedAtColumn: table.FivenetCentrumMarkers.ExpiresAt,
-			JobColumn:       table.FivenetCentrumMarkers.Job,
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCentrumMarkers,
+		IDColumn:        table.FivenetCentrumMarkers.ID,
+		DeletedAtColumn: table.FivenetCentrumMarkers.DeletedAt,
+		JobColumn:       table.FivenetCentrumMarkers.Job,
 
-			MinDays: 7,
-		},
-	)
+		MinDays: 7,
+	})
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCentrumMarkers,
+		IDColumn:        table.FivenetCentrumMarkers.ID,
+		TimestampColumn: table.FivenetCentrumMarkers.ExpiresAt,
+		JobColumn:       table.FivenetCentrumMarkers.Job,
+
+		MinDays: 5,
+	})
 
 	housekeeper.AddTable(
 		&housekeeper.Table{
