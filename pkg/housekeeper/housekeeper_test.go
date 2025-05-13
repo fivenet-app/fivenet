@@ -70,9 +70,10 @@ func TestSoftDeleteJobData(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
 	// Execute the function
-	err = housekeeper.SoftDeleteJobData(ctx, table, jobName)
+	var r int64
+	r, err = housekeeper.SoftDeleteJobData(ctx, table, jobName)
 	if err != nil {
-		t.Errorf("SoftDeleteJobData failed: %v", err)
+		t.Errorf("SoftDeleteJobData failed (%d): %v", r, err)
 	}
 
 	// Ensure all expectations were met

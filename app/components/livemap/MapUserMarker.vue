@@ -9,6 +9,7 @@ import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
+import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -116,7 +117,12 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                     </UButton>
 
                     <UButton
-                        v-if="can('JobsService.GetColleague').value && marker.user?.job === activeChar?.job"
+                        v-if="
+                            can('JobsService.GetColleague').value &&
+                            marker.user &&
+                            marker.user?.job === activeChar?.job &&
+                            checkIfCanAccessColleague(marker.user, 'JobsService.GetColleague')
+                        "
                         variant="link"
                         icon="i-mdi-briefcase"
                         :padded="false"

@@ -569,7 +569,7 @@ defineShortcuts({
                         </div>
                     </template>
 
-                    <template v-if="!canDo.getColleague && canDo.setJobsUerProps" #footer>
+                    <template v-if="canDo.getColleague && canDo.setJobsUerProps" #footer>
                         <UButtonGroup class="inline-flex w-full">
                             <UTooltip
                                 v-if="
