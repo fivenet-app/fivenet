@@ -538,7 +538,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UFormGroup>
 
                                 <UFormGroup
-                                    name="dryRun"
+                                    name="discordSyncSettings.dryRun"
                                     :label="$t('components.rector.job_props.discord_sync_settings.dry_run')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
@@ -547,7 +547,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UFormGroup>
 
                                 <UFormGroup
-                                    name="statusLog"
+                                    name="discordSyncSettings.statusLog"
                                     :label="$t('components.rector.job_props.discord_sync_settings.status_log')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
@@ -556,7 +556,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UFormGroup>
 
                                 <UFormGroup
-                                    name="statusLog"
+                                    name="discordSyncSettings.statusLogSettings.channelId"
                                     :label="`${$t('components.rector.job_props.discord_sync_settings.status_log')} ${$t('components.rector.job_props.discord_sync_settings.status_log_settings.channel_id')}`"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
@@ -595,7 +595,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :description="$t('components.rector.job_props.discord_sync_features.subtitle')"
                             >
                                 <UFormGroup
-                                    name="userInfoSync"
+                                    name="discordSyncSettings.userInfoSync"
                                     :label="$t('components.rector.job_props.discord_sync_settings.user_info_sync')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
@@ -609,7 +609,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                 <template v-if="jobProps.discordSyncSettings.userInfoSyncSettings">
                                     <UFormGroup
-                                        name="userInfoSync"
+                                        name="discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
                                         :label="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format',
@@ -632,7 +632,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UFormGroup>
 
                                     <UFormGroup
-                                        name="userInfoSync"
+                                        name="discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
                                         :label="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.user_info_sync_settings.employee_role_enabled',
@@ -654,7 +654,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UFormGroup>
 
                                     <UFormGroup
-                                        name="userInfoSync"
+                                        name="discordSyncSettings.userInfoSyncSettings.employeeRoleFormat"
                                         :label="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.user_info_sync_settings.employee_role_format',
@@ -680,7 +680,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UFormGroup>
 
                                     <UFormGroup
-                                        name="userInfoSync"
+                                        name="discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
                                         :label="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.user_info_sync_settings.unemployed_enabled',
@@ -702,7 +702,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UFormGroup>
 
                                     <UFormGroup
-                                        name="userInfoSync"
+                                        name="discordSyncSettings.userInfoSyncSettings.unemployedMode"
                                         :label="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.user_info_sync_settings.unemployed_mode',
@@ -756,7 +756,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UFormGroup>
 
                                     <UFormGroup
-                                        name="userInfoSync"
+                                        name="discordSyncSettings.userInfoSyncSettings.unemployedRoleName"
                                         :label="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.user_info_sync_settings.unemployed_role_name',
@@ -782,7 +782,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UFormGroup>
 
                                     <UFormGroup
-                                        name="syncNicknames"
+                                        name="discordSyncSettings.userInfoSyncSettings.syncNicknames"
                                         :label="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.user_info_sync_settings.sync_nicknames',
@@ -958,7 +958,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                     <template v-if="jobProps.discordSyncSettings.jobsAbsenceSettings">
                                         <UFormGroup
-                                            name="userInfoSync"
+                                            name="discordSyncSettings.jobsAbsenceSettings.absenceRole"
                                             :label="
                                                 $t(
                                                     'components.rector.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_name',
