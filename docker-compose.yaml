@@ -23,6 +23,9 @@ services:
     restart: on-failure
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
+  # Traefik reverse proxy
+  # You must ensure that h2c mode is used in the Traefik configuration
+  # See https://doc.traefik.io/traefik/user-guides/grpc/#with-http-h2c
 
   # Message Queue
   nats:

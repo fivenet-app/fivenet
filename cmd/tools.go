@@ -24,6 +24,8 @@ type ToolsCmd struct {
 	DB DBCmd `cmd:""`
 
 	UserActivityMigrate UserActivityMigrateCmd `cmd:""`
+
+	SyncCmd SyncCmd `cmd:"" name:"sync"`
 }
 
 type UserActivityMigrateCmd struct {
