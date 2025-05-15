@@ -218,7 +218,7 @@ async function toggleJobGradeListFineGrained(checked: boolean): Promise<void> {
 
 onBeforeMount(async () => {
     if (attrValue.value.validValues.oneofKind === 'jobList' || attrValue.value.validValues.oneofKind === 'jobGradeList')
-        listJobs();
+        await listJobs();
 });
 
 const { game } = useAppConfig();
