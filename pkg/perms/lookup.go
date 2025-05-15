@@ -23,12 +23,12 @@ func (p *Perms) lookupAttributeByPermID(id uint64, key Key) (*cacheAttr, bool) {
 }
 
 func (p *Perms) lookupRoleAttribute(roleId uint64, attrId uint64) (*cacheRoleAttr, bool) {
-	as, ok := p.attrsRoleMap.Load(roleId)
+	attrMap, ok := p.attrsRoleMap.Load(roleId)
 	if !ok {
 		return nil, false
 	}
 
-	return as.Load(attrId)
+	return attrMap.Load(attrId)
 }
 
 // Roles

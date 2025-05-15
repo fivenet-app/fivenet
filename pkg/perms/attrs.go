@@ -450,21 +450,21 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 		}
 	}
 
-	ars, ok := p.attrsRoleMap.Load(roleId)
+	attrMap, ok := p.attrsRoleMap.Load(roleId)
 	if !ok {
 		return []*permissions.RoleAttribute{}, nil
 	}
 
 	var err error
 	dest := []*permissions.RoleAttribute{}
-	ars.Range(func(key uint64, value *cacheRoleAttr) bool {
+	attrMap.Range(func(key uint64, value *cacheRoleAttr) bool {
 		attr, ok := p.LookupAttributeByID(key)
 		if !ok {
 			err = fmt.Errorf("no attribute found by id for role. %w", fmt.Errorf("attribute ID not found"))
 			return false
 		}
 
-		attrVal, ok := ars.Load(attr.ID)
+		attrVal, ok := attrMap.Load(attr.ID)
 		if !ok {
 			err = fmt.Errorf("no role attribute found by id for role. %w", fmt.Errorf("role attribute ID not found"))
 			return false

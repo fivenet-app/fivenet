@@ -530,23 +530,15 @@ func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId ui
 	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, func() (*xsync.Map[uint64, *cacheRoleAttr], bool) {
 		return xsync.NewMap[uint64, *cacheRoleAttr](), false
 	})
-	cached, ok := attrRoleMap.Load(attrId)
-	if !ok {
-		attrRoleMap.Store(attrId, &cacheRoleAttr{
-			Job:          job,
-			AttrID:       attrId,
-			PermissionID: permId,
-			Key:          key,
-			Type:         aType,
-			Value:        value,
-		})
-	} else {
-		cached.Job = job
-		cached.PermissionID = permId
-		cached.Key = key
-		cached.Type = aType
-		cached.Value = value
-	}
+
+	attrRoleMap.Store(attrId, &cacheRoleAttr{
+		Job:          job,
+		AttrID:       attrId,
+		PermissionID: permId,
+		Key:          key,
+		Type:         aType,
+		Value:        value,
+	})
 }
 
 func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
