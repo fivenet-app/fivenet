@@ -10,6 +10,8 @@ import type { UpdateRoleLimitsResponse } from "./rector";
 import type { UpdateRoleLimitsRequest } from "./rector";
 import type { ViewAuditLogResponse } from "./rector";
 import type { ViewAuditLogRequest } from "./rector";
+import type { GetEffectivePermissionsResponse } from "./rector";
+import type { GetEffectivePermissionsRequest } from "./rector";
 import type { GetPermissionsResponse } from "./rector";
 import type { GetPermissionsRequest } from "./rector";
 import type { UpdateRolePermsResponse } from "./rector";
@@ -81,6 +83,12 @@ export interface IRectorServiceClient {
      * @generated from protobuf rpc: GetPermissions(services.rector.GetPermissionsRequest) returns (services.rector.GetPermissionsResponse);
      */
     getPermissions(input: GetPermissionsRequest, options?: RpcOptions): UnaryCall<GetPermissionsRequest, GetPermissionsResponse>;
+    /**
+     * @perm: Name=GetRoles
+     *
+     * @generated from protobuf rpc: GetEffectivePermissions(services.rector.GetEffectivePermissionsRequest) returns (services.rector.GetEffectivePermissionsResponse);
+     */
+    getEffectivePermissions(input: GetEffectivePermissionsRequest, options?: RpcOptions): UnaryCall<GetEffectivePermissionsRequest, GetEffectivePermissionsResponse>;
     /**
      * @perm
      *
@@ -182,12 +190,21 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
         return stackIntercept<GetPermissionsRequest, GetPermissionsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=GetRoles
+     *
+     * @generated from protobuf rpc: GetEffectivePermissions(services.rector.GetEffectivePermissionsRequest) returns (services.rector.GetEffectivePermissionsResponse);
+     */
+    getEffectivePermissions(input: GetEffectivePermissionsRequest, options?: RpcOptions): UnaryCall<GetEffectivePermissionsRequest, GetEffectivePermissionsResponse> {
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetEffectivePermissionsRequest, GetEffectivePermissionsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @perm
      *
      * @generated from protobuf rpc: ViewAuditLog(services.rector.ViewAuditLogRequest) returns (services.rector.ViewAuditLogResponse);
      */
     viewAuditLog(input: ViewAuditLogRequest, options?: RpcOptions): UnaryCall<ViewAuditLogRequest, ViewAuditLogResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<ViewAuditLogRequest, ViewAuditLogResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -196,7 +213,7 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
      * @generated from protobuf rpc: UpdateRoleLimits(services.rector.UpdateRoleLimitsRequest) returns (services.rector.UpdateRoleLimitsResponse);
      */
     updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -205,7 +222,7 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
      * @generated from protobuf rpc: DeleteFaction(services.rector.DeleteFactionRequest) returns (services.rector.DeleteFactionResponse);
      */
     deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteFactionRequest, DeleteFactionResponse>("unary", this._transport, method, opt, input);
     }
 }

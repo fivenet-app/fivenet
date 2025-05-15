@@ -578,7 +578,8 @@
         "last_attempt_time": "Letzter Versuch Zeit",
         "started_time": "Startzeit",
         "end_date": "Enddatum",
-        "monthly_view": "Monatsansicht"
+        "monthly_view": "Monatsansicht",
+        "effective_permissions": "Effektive Berechtigungen"
     },
     "components": {
         "partials": {
@@ -707,7 +708,7 @@
             "document_request_access": {
                 "title": "Sie haben keinen Zugriff auf das Dokument",
                 "message": "Jedoch können Sie Zugriff auf das Dokument per unterem Knopf beanfragen.",
-                "callback_message": "Hier Zugriff beanfragen"
+                "callback_message": "Hier Zugriff beantragen"
             },
             "TemplateWorkflowEditor": {
                 "reminder": {
@@ -811,6 +812,9 @@
                 "fine_grained_toggle": {
                     "title": "Fein abgestufte Auswahl von Job-Rängen aktivieren",
                     "description": "Ermöglicht die Auswahl spezifischer Job-Ränge anstelle eines Bereichs von dem ersten bis zu dem ausgewählten Rang. Wenn diese Option aktiviert wird, müssen die zugänglichen Ränge für die bearbeitete Rolle erneut festgelegt werden."
+                },
+                "effective_permissions": {
+                    "description": "Liste der effektiven Berechtigungen für die ausgewählte Rolle (beachten Sie, dass Sie die Auswirkungen Ihrer Änderungen erst dann sehen können, wenn Sie Ihre aktuellen Änderungen an der Rolle abspeichern). Die effektiven Berechtigungen sind die tatsächlich den Benutzer mit dieser Rolle vergebenen Berechtigungen. Die effektiven Berechtigungen werden durch Kombination der Rolleneigenschaften und der Job-Rang-Berechtigungen des Benutzers ermittelt."
                 }
             },
             "app_config": {
@@ -2707,14 +2711,14 @@
                 "OWNER_CHANGED": "Dokument Besitzer geändert",
                 "DELETED": "Dokument gelöscht",
                 "REQUESTED_ACCESS": "Zugriff auf Dokument beanfragt | Zugriff auf Dokument",
-                "REQUESTED_CLOSURE": "Schließung des Dokument beanfragt | Schließung des Dokument",
-                "REQUESTED_UPDATE": "Aktualisierung des Dokument beanfragt | Aktualisierung des Dokument",
-                "REQUESTED_DELETION": "Löschung des Dokument beanfragt | Löschung des Dokument",
+                "REQUESTED_CLOSURE": "Schließung des Dokument beantragt | Schließung des Dokument",
+                "REQUESTED_UPDATE": "Aktualisierung des Dokument beantragt | Aktualisierung des Dokument",
+                "REQUESTED_DELETION": "Löschung des Dokument beantragt | Löschung des Dokument",
                 "COMMENT_ADDED": "Kommentar hinzugefügt",
                 "COMMENT_UPDATED": "Kommentar aktualisiert",
                 "COMMENT_DELETED": "Kommentar gelöscht",
                 "UNSPECIFIED": "Unbekannte Aktivität",
-                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt | Dokument-Besitzer Wechsel",
+                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beantragt | Dokument-Besitzer Wechsel",
                 "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert | Öffnung des Dokument"
             }
         },

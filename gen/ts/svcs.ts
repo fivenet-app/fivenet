@@ -306,6 +306,7 @@ export const grpcMethods = [
 	'RectorService/DeleteRole',
 	'RectorService/UpdateRolePerms',
 	'RectorService/GetPermissions',
+	'RectorService/GetEffectivePermissions',
 	'RectorService/ViewAuditLog',
 	'RectorService/UpdateRoleLimits',
 	'RectorService/DeleteFaction',

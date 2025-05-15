@@ -578,7 +578,8 @@
         "last_attempt_time": "Last Attempt Time",
         "started_time": "Started Time",
         "end_date": "End Date",
-        "monthly_view": "Monthly View"
+        "monthly_view": "Monthly View",
+        "effective_permissions": "Effective Permissions"
     },
     "components": {
         "partials": {
@@ -811,6 +812,9 @@
                 "fine_grained_toggle": {
                     "title": "Enable fine grained job grades selection",
                     "description": "Allows you to select specific job grades instead of a first to selected grade range. Enabling this option, requires the accessible ranks to be set again for the edited role."
+                },
+                "effective_permissions": {
+                    "description": "List of effective permissions for the selected role (please note to see the effects of your changes, you must save your current changes to the role first). The effective permissions are the permissions that are actually granted to the user that has the role. The effective permissions are calculated by combining the role's permissions with the user's job grade permissions."
                 }
             },
             "app_config": {

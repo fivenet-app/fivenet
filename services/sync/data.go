@@ -25,28 +25,40 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 		AffectedRows: 0,
 	}
 
-	if s.esxCompat {
-		return nil, ErrSendDataDisabled
-	}
-
 	var err error
 	switch d := req.Data.(type) {
 	case *pbsync.SendDataRequest_Jobs:
+		if s.esxCompat {
+			return nil, ErrSendDataDisabled
+		}
+
 		if resp.AffectedRows, err = s.handleJobsData(ctx, d); err != nil {
 			return nil, err
 		}
 
 	case *pbsync.SendDataRequest_Licenses:
+		if s.esxCompat {
+			return nil, ErrSendDataDisabled
+		}
+
 		if resp.AffectedRows, err = s.handleLicensesData(ctx, d); err != nil {
 			return nil, err
 		}
 
 	case *pbsync.SendDataRequest_Users:
+		if s.esxCompat {
+			return nil, ErrSendDataDisabled
+		}
+
 		if resp.AffectedRows, err = s.handleUsersData(ctx, d); err != nil {
 			return nil, err
 		}
 
 	case *pbsync.SendDataRequest_Vehicles:
+		if s.esxCompat {
+			return nil, ErrSendDataDisabled
+		}
+
 		if resp.AffectedRows, err = s.handleVehiclesData(ctx, d); err != nil {
 			return nil, err
 		}

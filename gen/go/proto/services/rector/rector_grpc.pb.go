@@ -19,17 +19,18 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RectorService_GetJobProps_FullMethodName      = "/services.rector.RectorService/GetJobProps"
-	RectorService_SetJobProps_FullMethodName      = "/services.rector.RectorService/SetJobProps"
-	RectorService_GetRoles_FullMethodName         = "/services.rector.RectorService/GetRoles"
-	RectorService_GetRole_FullMethodName          = "/services.rector.RectorService/GetRole"
-	RectorService_CreateRole_FullMethodName       = "/services.rector.RectorService/CreateRole"
-	RectorService_DeleteRole_FullMethodName       = "/services.rector.RectorService/DeleteRole"
-	RectorService_UpdateRolePerms_FullMethodName  = "/services.rector.RectorService/UpdateRolePerms"
-	RectorService_GetPermissions_FullMethodName   = "/services.rector.RectorService/GetPermissions"
-	RectorService_ViewAuditLog_FullMethodName     = "/services.rector.RectorService/ViewAuditLog"
-	RectorService_UpdateRoleLimits_FullMethodName = "/services.rector.RectorService/UpdateRoleLimits"
-	RectorService_DeleteFaction_FullMethodName    = "/services.rector.RectorService/DeleteFaction"
+	RectorService_GetJobProps_FullMethodName             = "/services.rector.RectorService/GetJobProps"
+	RectorService_SetJobProps_FullMethodName             = "/services.rector.RectorService/SetJobProps"
+	RectorService_GetRoles_FullMethodName                = "/services.rector.RectorService/GetRoles"
+	RectorService_GetRole_FullMethodName                 = "/services.rector.RectorService/GetRole"
+	RectorService_CreateRole_FullMethodName              = "/services.rector.RectorService/CreateRole"
+	RectorService_DeleteRole_FullMethodName              = "/services.rector.RectorService/DeleteRole"
+	RectorService_UpdateRolePerms_FullMethodName         = "/services.rector.RectorService/UpdateRolePerms"
+	RectorService_GetPermissions_FullMethodName          = "/services.rector.RectorService/GetPermissions"
+	RectorService_GetEffectivePermissions_FullMethodName = "/services.rector.RectorService/GetEffectivePermissions"
+	RectorService_ViewAuditLog_FullMethodName            = "/services.rector.RectorService/ViewAuditLog"
+	RectorService_UpdateRoleLimits_FullMethodName        = "/services.rector.RectorService/UpdateRoleLimits"
+	RectorService_DeleteFaction_FullMethodName           = "/services.rector.RectorService/DeleteFaction"
 )
 
 // RectorServiceClient is the client API for RectorService service.
@@ -52,6 +53,8 @@ type RectorServiceClient interface {
 	UpdateRolePerms(ctx context.Context, in *UpdateRolePermsRequest, opts ...grpc.CallOption) (*UpdateRolePermsResponse, error)
 	// @perm: Name=GetRoles
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
+	// @perm: Name=GetRoles
+	GetEffectivePermissions(ctx context.Context, in *GetEffectivePermissionsRequest, opts ...grpc.CallOption) (*GetEffectivePermissionsResponse, error)
 	// @perm
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
@@ -148,6 +151,16 @@ func (c *rectorServiceClient) GetPermissions(ctx context.Context, in *GetPermiss
 	return out, nil
 }
 
+func (c *rectorServiceClient) GetEffectivePermissions(ctx context.Context, in *GetEffectivePermissionsRequest, opts ...grpc.CallOption) (*GetEffectivePermissionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetEffectivePermissionsResponse)
+	err := c.cc.Invoke(ctx, RectorService_GetEffectivePermissions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *rectorServiceClient) ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ViewAuditLogResponse)
@@ -198,6 +211,8 @@ type RectorServiceServer interface {
 	UpdateRolePerms(context.Context, *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error)
 	// @perm: Name=GetRoles
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
+	// @perm: Name=GetRoles
+	GetEffectivePermissions(context.Context, *GetEffectivePermissionsRequest) (*GetEffectivePermissionsResponse, error)
 	// @perm
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
@@ -237,6 +252,9 @@ func (UnimplementedRectorServiceServer) UpdateRolePerms(context.Context, *Update
 }
 func (UnimplementedRectorServiceServer) GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPermissions not implemented")
+}
+func (UnimplementedRectorServiceServer) GetEffectivePermissions(context.Context, *GetEffectivePermissionsRequest) (*GetEffectivePermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEffectivePermissions not implemented")
 }
 func (UnimplementedRectorServiceServer) ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ViewAuditLog not implemented")
@@ -412,6 +430,24 @@ func _RectorService_GetPermissions_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RectorService_GetEffectivePermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEffectivePermissionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).GetEffectivePermissions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RectorService_GetEffectivePermissions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).GetEffectivePermissions(ctx, req.(*GetEffectivePermissionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _RectorService_ViewAuditLog_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ViewAuditLogRequest)
 	if err := dec(in); err != nil {
@@ -504,6 +540,10 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPermissions",
 			Handler:    _RectorService_GetPermissions_Handler,
+		},
+		{
+			MethodName: "GetEffectivePermissions",
+			Handler:    _RectorService_GetEffectivePermissions_Handler,
 		},
 		{
 			MethodName: "ViewAuditLog",

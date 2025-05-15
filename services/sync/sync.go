@@ -46,10 +46,6 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
-	if !p.Config.Sync.Enabled {
-		return nil
-	}
-
 	s := &Server{
 		logger: p.Logger,
 		db:     p.DB,

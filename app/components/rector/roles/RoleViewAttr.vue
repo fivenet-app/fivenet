@@ -7,6 +7,7 @@ const props = defineProps<{
     modelValue: RoleAttribute;
     disabled?: boolean;
     permission: Permission;
+    defaultOpen?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -227,8 +228,14 @@ const { game } = useAppConfig();
     <div v-if="attribute">
         <UAccordion
             variant="outline"
-            :items="[{ label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }]"
+            :items="[
+                {
+                    label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`),
+                    disabled: defaultOpen,
+                },
+            ]"
             :unmount="true"
+            :default-open="defaultOpen"
             :ui="{ default: { class: 'mb-0.5' } }"
         >
             <template #item>
@@ -291,6 +298,7 @@ const { game } = useAppConfig();
                             </div>
                         </template>
                     </div>
+
                     <div
                         v-else-if="
                             attrValue.validValues.oneofKind === 'jobGradeList' &&
@@ -431,6 +439,7 @@ const { game } = useAppConfig();
                             </div>
                         </template>
                     </div>
+
                     <div v-else>{{ attrValue.validValues.oneofKind }} {{ validValues }}</div>
                 </div>
             </template>

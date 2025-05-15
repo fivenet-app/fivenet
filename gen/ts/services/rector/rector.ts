@@ -216,6 +216,32 @@ export interface GetPermissionsResponse {
     attributes: RoleAttribute[];
 }
 /**
+ * @generated from protobuf message services.rector.GetEffectivePermissionsRequest
+ */
+export interface GetEffectivePermissionsRequest {
+    /**
+     * @generated from protobuf field: uint64 role_id = 1;
+     */
+    roleId: number;
+}
+/**
+ * @generated from protobuf message services.rector.GetEffectivePermissionsResponse
+ */
+export interface GetEffectivePermissionsResponse {
+    /**
+     * @generated from protobuf field: resources.permissions.Role role = 1;
+     */
+    role?: Role;
+    /**
+     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 2;
+     */
+    permissions: Permission[];
+    /**
+     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 3;
+     */
+    attributes: RoleAttribute[];
+}
+/**
  * @generated from protobuf message services.rector.ViewAuditLogRequest
  */
 export interface ViewAuditLogRequest {
@@ -1244,6 +1270,115 @@ class GetPermissionsResponse$Type extends MessageType<GetPermissionsResponse> {
  */
 export const GetPermissionsResponse = new GetPermissionsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class GetEffectivePermissionsRequest$Type extends MessageType<GetEffectivePermissionsRequest> {
+    constructor() {
+        super("services.rector.GetEffectivePermissionsRequest", [
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetEffectivePermissionsRequest>): GetEffectivePermissionsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.roleId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<GetEffectivePermissionsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetEffectivePermissionsRequest): GetEffectivePermissionsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 role_id */ 1:
+                    message.roleId = reader.uint64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetEffectivePermissionsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 role_id = 1; */
+        if (message.roleId !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.roleId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.GetEffectivePermissionsRequest
+ */
+export const GetEffectivePermissionsRequest = new GetEffectivePermissionsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetEffectivePermissionsResponse$Type extends MessageType<GetEffectivePermissionsResponse> {
+    constructor() {
+        super("services.rector.GetEffectivePermissionsResponse", [
+            { no: 1, name: "role", kind: "message", T: () => Role },
+            { no: 2, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
+            { no: 3, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
+        ]);
+    }
+    create(value?: PartialMessage<GetEffectivePermissionsResponse>): GetEffectivePermissionsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.permissions = [];
+        message.attributes = [];
+        if (value !== undefined)
+            reflectionMergePartial<GetEffectivePermissionsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetEffectivePermissionsResponse): GetEffectivePermissionsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.permissions.Role role */ 1:
+                    message.role = Role.internalBinaryRead(reader, reader.uint32(), options, message.role);
+                    break;
+                case /* repeated resources.permissions.Permission permissions */ 2:
+                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.permissions.RoleAttribute attributes */ 3:
+                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetEffectivePermissionsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.permissions.Role role = 1; */
+        if (message.role)
+            Role.internalBinaryWrite(message.role, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.Permission permissions = 2; */
+        for (let i = 0; i < message.permissions.length; i++)
+            Permission.internalBinaryWrite(message.permissions[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.RoleAttribute attributes = 3; */
+        for (let i = 0; i < message.attributes.length; i++)
+            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.GetEffectivePermissionsResponse
+ */
+export const GetEffectivePermissionsResponse = new GetEffectivePermissionsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
     constructor() {
         super("services.rector.ViewAuditLogRequest", [
@@ -1599,6 +1734,7 @@ export const RectorService = new ServiceType("services.rector.RectorService", [
     { name: "DeleteRole", options: {}, I: DeleteRoleRequest, O: DeleteRoleResponse },
     { name: "UpdateRolePerms", options: {}, I: UpdateRolePermsRequest, O: UpdateRolePermsResponse },
     { name: "GetPermissions", options: {}, I: GetPermissionsRequest, O: GetPermissionsResponse },
+    { name: "GetEffectivePermissions", options: {}, I: GetEffectivePermissionsRequest, O: GetEffectivePermissionsResponse },
     { name: "ViewAuditLog", options: {}, I: ViewAuditLogRequest, O: ViewAuditLogResponse },
     { name: "UpdateRoleLimits", options: {}, I: UpdateRoleLimitsRequest, O: UpdateRoleLimitsResponse },
     { name: "DeleteFaction", options: {}, I: DeleteFactionRequest, O: DeleteFactionResponse }

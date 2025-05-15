@@ -96,6 +96,55 @@ func (m *DeleteRoleResponse) Sanitize() error {
 	return nil
 }
 
+func (m *GetEffectivePermissionsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetEffectivePermissionsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Permissions
+	for idx, item := range m.Permissions {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Role
+	if m.Role != nil {
+		if v, ok := any(m.GetRole()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *GetJobPropsRequest) Sanitize() error {
 	if m == nil {
 		return nil

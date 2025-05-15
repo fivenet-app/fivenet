@@ -453,6 +453,45 @@ func (s *Server) GetPermissions(ctx context.Context, req *pbrector.GetPermission
 	return resp, nil
 }
 
+func (s *Server) GetEffectivePermissions(ctx context.Context, req *pbrector.GetEffectivePermissionsRequest) (*pbrector.GetEffectivePermissionsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	role, check, err := s.ensureUserCanAccessRole(ctx, req.RoleId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrInvalidRequest)
+	}
+	if !check && !userInfo.SuperUser {
+		return nil, errswrap.NewError(err, errorsrector.ErrNoPermission)
+	}
+
+	perms, err := s.ps.GetRolePermissions(ctx, role.ID)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+	}
+
+	attrs, err := s.ps.GetRoleAttributes(role.Job, role.Grade)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+	}
+
+	r := &permissions.Role{
+		Id:    role.ID,
+		Job:   role.Job,
+		Grade: role.Grade,
+	}
+
+	s.enricher.EnrichJobInfo(r)
+
+	resp := &pbrector.GetEffectivePermissionsResponse{}
+	resp.Role = r
+	resp.Permissions = perms
+	resp.Attributes = attrs
+
+	return resp, nil
+}
+
 func (s *Server) UpdateRoleLimits(ctx context.Context, req *pbrector.UpdateRoleLimitsRequest) (*pbrector.UpdateRoleLimitsResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
 

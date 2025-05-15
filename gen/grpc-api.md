@@ -19,6 +19,13 @@
   
     - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
   
+- [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
+    - [DispatchAttributes](#resources-centrum-DispatchAttributes)
+    - [UnitAttributes](#resources-centrum-UnitAttributes)
+  
+    - [DispatchAttribute](#resources-centrum-DispatchAttribute)
+    - [UnitAttribute](#resources-centrum-UnitAttribute)
+  
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
     - [DispatchAssignment](#resources-centrum-DispatchAssignment)
@@ -51,13 +58,6 @@
   
 - [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
     - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
-- [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
-    - [DispatchAttributes](#resources-centrum-DispatchAttributes)
-    - [UnitAttributes](#resources-centrum-UnitAttributes)
-  
-    - [DispatchAttribute](#resources-centrum-DispatchAttribute)
-    - [UnitAttribute](#resources-centrum-UnitAttribute)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
@@ -827,6 +827,8 @@
     - [DeleteFactionResponse](#services-rector-DeleteFactionResponse)
     - [DeleteRoleRequest](#services-rector-DeleteRoleRequest)
     - [DeleteRoleResponse](#services-rector-DeleteRoleResponse)
+    - [GetEffectivePermissionsRequest](#services-rector-GetEffectivePermissionsRequest)
+    - [GetEffectivePermissionsResponse](#services-rector-GetEffectivePermissionsResponse)
     - [GetJobPropsRequest](#services-rector-GetJobPropsRequest)
     - [GetJobPropsResponse](#services-rector-GetJobPropsResponse)
     - [GetPermissionsRequest](#services-rector-GetPermissionsRequest)
@@ -1195,6 +1197,80 @@
 | `UNIT_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
 | `UNIT_ACCESS_LEVEL_BLOCKED` | 1 |  |
 | `UNIT_ACCESS_LEVEL_JOIN` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_attributes-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/attributes.proto
+
+
+
+<a name="resources-centrum-DispatchAttributes"></a>
+
+### DispatchAttributes
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [DispatchAttribute](#resources-centrum-DispatchAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAttributes"></a>
+
+### UnitAttributes
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [UnitAttribute](#resources-centrum-UnitAttribute) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-DispatchAttribute"></a>
+
+### DispatchAttribute
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DISPATCH_ATTRIBUTE_UNSPECIFIED` | 0 |  |
+| `DISPATCH_ATTRIBUTE_MULTIPLE` | 1 |  |
+| `DISPATCH_ATTRIBUTE_DUPLICATE` | 2 |  |
+| `DISPATCH_ATTRIBUTE_TOO_OLD` | 3 |  |
+| `DISPATCH_ATTRIBUTE_AUTOMATIC` | 4 |  |
+
+
+
+<a name="resources-centrum-UnitAttribute"></a>
+
+### UnitAttribute
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `UNIT_ATTRIBUTE_UNSPECIFIED` | 0 |  |
+| `UNIT_ATTRIBUTE_STATIC` | 1 |  |
+| `UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN` | 2 |  |
 
 
  <!-- end enums -->
@@ -1661,80 +1737,6 @@
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_centrum_attributes-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/attributes.proto
-
-
-
-<a name="resources-centrum-DispatchAttributes"></a>
-
-### DispatchAttributes
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [DispatchAttribute](#resources-centrum-DispatchAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAttributes"></a>
-
-### UnitAttributes
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [UnitAttribute](#resources-centrum-UnitAttribute) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-centrum-DispatchAttribute"></a>
-
-### DispatchAttribute
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `DISPATCH_ATTRIBUTE_UNSPECIFIED` | 0 |  |
-| `DISPATCH_ATTRIBUTE_MULTIPLE` | 1 |  |
-| `DISPATCH_ATTRIBUTE_DUPLICATE` | 2 |  |
-| `DISPATCH_ATTRIBUTE_TOO_OLD` | 3 |  |
-| `DISPATCH_ATTRIBUTE_AUTOMATIC` | 4 |  |
-
-
-
-<a name="resources-centrum-UnitAttribute"></a>
-
-### UnitAttribute
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `UNIT_ATTRIBUTE_UNSPECIFIED` | 0 |  |
-| `UNIT_ATTRIBUTE_STATIC` | 1 |  |
-| `UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN` | 2 |  |
-
 
  <!-- end enums -->
 
@@ -12516,6 +12518,38 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-rector-GetEffectivePermissionsRequest"></a>
+
+### GetEffectivePermissionsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-rector-GetEffectivePermissionsResponse"></a>
+
+### GetEffectivePermissionsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role` | [resources.permissions.Role](#resources-permissions-Role) |  |  |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+
 <a name="services-rector-GetJobPropsRequest"></a>
 
 ### GetJobPropsRequest
@@ -12809,6 +12843,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `DeleteRole` | [DeleteRoleRequest](#services-rector-DeleteRoleRequest) | [DeleteRoleResponse](#services-rector-DeleteRoleResponse) | @perm |
 | `UpdateRolePerms` | [UpdateRolePermsRequest](#services-rector-UpdateRolePermsRequest) | [UpdateRolePermsResponse](#services-rector-UpdateRolePermsResponse) | @perm |
 | `GetPermissions` | [GetPermissionsRequest](#services-rector-GetPermissionsRequest) | [GetPermissionsResponse](#services-rector-GetPermissionsResponse) | @perm: Name=GetRoles |
+| `GetEffectivePermissions` | [GetEffectivePermissionsRequest](#services-rector-GetEffectivePermissionsRequest) | [GetEffectivePermissionsResponse](#services-rector-GetEffectivePermissionsResponse) | @perm: Name=GetRoles |
 | `ViewAuditLog` | [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest) | [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse) | @perm |
 | `UpdateRoleLimits` | [UpdateRoleLimitsRequest](#services-rector-UpdateRoleLimitsRequest) | [UpdateRoleLimitsResponse](#services-rector-UpdateRoleLimitsResponse) | @perm: Name=SuperUser |
 | `DeleteFaction` | [DeleteFactionRequest](#services-rector-DeleteFactionRequest) | [DeleteFactionResponse](#services-rector-DeleteFactionResponse) | @perm: Name=SuperUser |

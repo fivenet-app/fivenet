@@ -2417,6 +2417,311 @@ var _ interface {
 	ErrorName() string
 } = GetPermissionsResponseValidationError{}
 
+// Validate checks the field values on GetEffectivePermissionsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetEffectivePermissionsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetEffectivePermissionsRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetEffectivePermissionsRequestMultiError, or nil if none found.
+func (m *GetEffectivePermissionsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetEffectivePermissionsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RoleId
+
+	if len(errors) > 0 {
+		return GetEffectivePermissionsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetEffectivePermissionsRequestMultiError is an error wrapping multiple
+// validation errors returned by GetEffectivePermissionsRequest.ValidateAll()
+// if the designated constraints aren't met.
+type GetEffectivePermissionsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetEffectivePermissionsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetEffectivePermissionsRequestMultiError) AllErrors() []error { return m }
+
+// GetEffectivePermissionsRequestValidationError is the validation error
+// returned by GetEffectivePermissionsRequest.Validate if the designated
+// constraints aren't met.
+type GetEffectivePermissionsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetEffectivePermissionsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetEffectivePermissionsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetEffectivePermissionsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetEffectivePermissionsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetEffectivePermissionsRequestValidationError) ErrorName() string {
+	return "GetEffectivePermissionsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetEffectivePermissionsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetEffectivePermissionsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetEffectivePermissionsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetEffectivePermissionsRequestValidationError{}
+
+// Validate checks the field values on GetEffectivePermissionsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetEffectivePermissionsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetEffectivePermissionsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetEffectivePermissionsResponseMultiError, or nil if none found.
+func (m *GetEffectivePermissionsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetEffectivePermissionsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetRole()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetEffectivePermissionsResponseValidationError{
+					field:  "Role",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetEffectivePermissionsResponseValidationError{
+					field:  "Role",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetRole()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetEffectivePermissionsResponseValidationError{
+				field:  "Role",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetPermissions() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetEffectivePermissionsResponseValidationError{
+						field:  fmt.Sprintf("Permissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetEffectivePermissionsResponseValidationError{
+						field:  fmt.Sprintf("Permissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetEffectivePermissionsResponseValidationError{
+					field:  fmt.Sprintf("Permissions[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetEffectivePermissionsResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetEffectivePermissionsResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetEffectivePermissionsResponseValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetEffectivePermissionsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetEffectivePermissionsResponseMultiError is an error wrapping multiple
+// validation errors returned by GetEffectivePermissionsResponse.ValidateAll()
+// if the designated constraints aren't met.
+type GetEffectivePermissionsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetEffectivePermissionsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetEffectivePermissionsResponseMultiError) AllErrors() []error { return m }
+
+// GetEffectivePermissionsResponseValidationError is the validation error
+// returned by GetEffectivePermissionsResponse.Validate if the designated
+// constraints aren't met.
+type GetEffectivePermissionsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetEffectivePermissionsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetEffectivePermissionsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetEffectivePermissionsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetEffectivePermissionsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetEffectivePermissionsResponseValidationError) ErrorName() string {
+	return "GetEffectivePermissionsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetEffectivePermissionsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetEffectivePermissionsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetEffectivePermissionsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetEffectivePermissionsResponseValidationError{}
+
 // Validate checks the field values on ViewAuditLogRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

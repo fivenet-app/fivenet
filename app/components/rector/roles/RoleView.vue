@@ -8,6 +8,7 @@ import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import type { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
+import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
 import { isEmptyAttributes } from './helpers';
 
 const props = defineProps<{
@@ -25,6 +26,8 @@ const { t } = useI18n();
 const { can } = useAuth();
 
 const modal = useModal();
+
+const slideover = useSlideover();
 
 const notifications = useNotificatorStore();
 
@@ -261,6 +264,18 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     <h2 class="text-3xl" :title="`ID: ${role.id}`">
                         {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
                     </h2>
+
+                    <UButton
+                        variant="ghost"
+                        trailing-icon="i-mdi-eye"
+                        color="primary"
+                        :label="$t('common.effective_permissions')"
+                        @click="
+                            slideover.open(EffectivePermsSlideover, {
+                                roleId: role!.id,
+                            })
+                        "
+                    />
 
                     <UButton
                         v-if="can('RectorService.DeleteRole').value"

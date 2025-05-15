@@ -90,6 +90,16 @@ message GetPermissionsResponse {
   repeated resources.permissions.RoleAttribute attributes = 2;
 }
 
+message GetEffectivePermissionsRequest {
+  uint64 role_id = 1;
+}
+
+message GetEffectivePermissionsResponse {
+  resources.permissions.Role role = 1;
+  repeated resources.permissions.Permission permissions = 2;
+  repeated resources.permissions.RoleAttribute attributes = 3;
+}
+
 message ViewAuditLogRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   optional resources.common.database.Sort sort = 2;
@@ -149,6 +159,8 @@ service RectorService {
 
   // @perm: Name=GetRoles
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
+  // @perm: Name=GetRoles
+  rpc GetEffectivePermissions(GetEffectivePermissionsRequest) returns (GetEffectivePermissionsResponse);
 
   // @perm
   rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
