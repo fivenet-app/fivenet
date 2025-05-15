@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
@@ -406,6 +407,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 		return err
 	}
 
+	var ready atomic.Bool
 	var wg sync.WaitGroup
 
 	wg.Add(1)
@@ -426,7 +428,9 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 			case entry := <-updateCh:
 				// After all initial keys have been received, a nil entry is returned
 				if entry == nil {
-					wg.Done()
+					if !ready.Swap(true) {
+						wg.Done()
+					}
 					continue
 				}
 
