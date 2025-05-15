@@ -49,14 +49,18 @@ const calendar = computed(() => data.value?.calendar);
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
                         <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
-                            <span>{{ $t('common.calendar') }}: {{ calendar?.name ?? $t('common.calendar') }}</span>
+                            {{ $t('common.calendar') }}: {{ calendar?.name ?? $t('common.calendar') }}
+                        </h3>
 
+                        <UTooltip
+                            v-if="
+                                calendar &&
+                                can('CalendarService.CreateCalendar').value &&
+                                checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)
+                            "
+                            :text="$t('common.edit')"
+                        >
                             <UButton
-                                v-if="
-                                    calendar &&
-                                    can('CalendarService.CreateCalendar').value &&
-                                    checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)
-                                "
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-pencil"
@@ -66,9 +70,13 @@ const calendar = computed(() => data.value?.calendar);
                                     })
                                 "
                             />
+                        </UTooltip>
 
+                        <UTooltip
+                            v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)"
+                            :text="$t('common.delete')"
+                        >
                             <UButton
-                                v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)"
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-delete"
@@ -79,7 +87,7 @@ const calendar = computed(() => data.value?.calendar);
                                     })
                                 "
                             />
-                        </h3>
+                        </UTooltip>
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>

@@ -261,33 +261,42 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
             <template v-else>
                 <div class="flex justify-between">
-                    <h2 class="text-3xl" :title="`ID: ${role.id}`">
+                    <h2 class="shrink-0 text-3xl" :title="`ID: ${role.id}`">
                         {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
                     </h2>
 
-                    <UButton
-                        variant="ghost"
-                        trailing-icon="i-mdi-eye"
-                        color="primary"
-                        :label="$t('common.effective_permissions')"
-                        @click="
-                            slideover.open(EffectivePermsSlideover, {
-                                roleId: role!.id,
-                            })
-                        "
-                    />
+                    <UButtonGroup>
+                        <UTooltip :text="$t('common.effective_permissions')">
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-account-key"
+                                color="primary"
+                                @click="
+                                    slideover.open(EffectivePermsSlideover, {
+                                        roleId: role!.id,
+                                    })
+                                "
+                            />
+                        </UTooltip>
 
-                    <UButton
-                        v-if="can('RectorService.DeleteRole').value"
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteRole(role!.id),
-                            })
-                        "
-                    />
+                        <UTooltip :text="$t('common.refresh')">
+                            <UButton variant="link" icon="i-mdi-refresh" color="primary" @click="refresh()" />
+                        </UTooltip>
+
+                        <UTooltip :text="$t('common.delete')">
+                            <UButton
+                                v-if="can('RectorService.DeleteRole').value"
+                                variant="link"
+                                icon="i-mdi-delete"
+                                color="error"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () => deleteRole(role!.id),
+                                    })
+                                "
+                            />
+                        </UTooltip>
+                    </UButtonGroup>
                 </div>
 
                 <UDivider :label="$t('common.permission', 2)" class="mb-1" />
