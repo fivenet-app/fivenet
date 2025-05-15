@@ -3,6 +3,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
+import type { Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import type { GetEffectivePermissionsResponse } from '~~/gen/ts/services/rector/rector';
 import { isEmptyAttributes } from './helpers';
 
 const props = defineProps<{
@@ -133,7 +135,7 @@ const permCategoriesSorted = computed(() =>
                         :ui="{ body: { padding: 'px-2 py-3 sm:px-4 sm:p-2' } }"
                     >
                         <template #header>
-                            <h3 class="text-xl" :title="`ID: ${role.id}`">
+                            <h3 class="text-xl" :title="`ID: ${role.role?.id}`">
                                 {{ category.label }}
                             </h3>
                         </template>

@@ -25,13 +25,15 @@ type SyncStatusCmd struct {
 	APIToken string `help:"API token for authentication"`
 }
 
-func (c *SyncStatusCmd) Run(ctx *kong.Context) error {
+func (c *SyncStatusCmd) Run(_ *kong.Context) error {
 	cli, err := c.createGRPCClient(c.Host, c.Port, c.Insecure, c.APIToken)
 	if err != nil {
 		return err
 	}
 
-	resp, err := cli.GetStatus(context.Background(), &pbsync.GetStatusRequest{})
+	ctx := context.Background()
+
+	resp, err := cli.GetStatus(ctx, &pbsync.GetStatusRequest{})
 	if err != nil {
 		return err
 	}
