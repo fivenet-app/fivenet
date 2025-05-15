@@ -321,8 +321,16 @@ const { game } = useAppConfig();
                                 class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                             >
                                 <UToggle
+                                    v-if="!attrValue.validValues.jobGradeList.fineGrained"
                                     :name="job.name"
                                     :model-value="!!attrValue.validValues?.jobGradeList.jobs[job.name]"
+                                    :disabled="disabled"
+                                    @update:model-value="toggleJobGradeValue(job, $event)"
+                                />
+                                <UToggle
+                                    v-else
+                                    :name="job.name"
+                                    :model-value="!!attrValue.validValues?.jobGradeList.grades[job.name]"
                                     :disabled="disabled"
                                     @update:model-value="toggleJobGradeValue(job, $event)"
                                 />
