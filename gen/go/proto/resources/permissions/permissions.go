@@ -283,8 +283,14 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 		in.Grades = nil
 		for job, grade := range in.Jobs {
 			if vg, ok := maxVals[job]; ok {
-				if grade > vg {
-					in.Jobs[job] = vg
+				if vg > 0 {
+					if grade > vg {
+						in.Jobs[job] = vg
+						changed = true
+					}
+				} else {
+					// Valid grade for job is less than 0, remove job (invalid input case)
+					delete(in.Jobs, job)
 					changed = true
 				}
 			} else {
@@ -295,8 +301,14 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 			// If valid vals are empty/ nil, don't check them
 			if len(validVals) > 0 {
 				if vg, ok := validVals[job]; ok {
-					if grade > vg {
-						in.Jobs[job] = vg
+					if vg > 0 {
+						if grade > vg {
+							in.Jobs[job] = vg
+							changed = true
+						}
+					} else {
+						// Valid grade for job is less than 0, remove job (invalid input case)
+						delete(in.Jobs, job)
 						changed = true
 					}
 				} else {

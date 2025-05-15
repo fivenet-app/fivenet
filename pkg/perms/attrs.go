@@ -19,6 +19,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
+type Key string
+
 var ErrAttrInvalid = errors.New("invalid attributes")
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
