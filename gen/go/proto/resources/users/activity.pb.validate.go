@@ -130,10 +130,10 @@ func (m *UserActivity) validate(all bool) error {
 		}
 	}
 
-	if l := utf8.RuneCountInString(m.GetKey()); l < 1 || l > 64 {
+	if utf8.RuneCountInString(m.GetKey()) > 64 {
 		err := UserActivityValidationError{
 			field:  "Key",
-			reason: "value length must be between 1 and 64 runes, inclusive",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err

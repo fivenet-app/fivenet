@@ -57,6 +57,10 @@ func (s *Server) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest
 		}
 
 	case *pbsync.AddActivityRequest_UserUpdate:
+		if s.esxCompat {
+			return nil, ErrSendDataDisabled
+		}
+
 		if err := s.handleUserUpdate(ctx, d); err != nil {
 			return nil, err
 		}

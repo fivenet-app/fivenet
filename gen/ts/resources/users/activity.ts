@@ -348,7 +348,7 @@ class UserActivity$Type extends MessageType<UserActivity> {
             { no: 5, name: "source_user", kind: "message", T: () => UserShort },
             { no: 6, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 7, name: "target_user", kind: "message", T: () => UserShort },
-            { no: 8, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "64" } } } },
+            { no: 8, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 9, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 10, name: "data", kind: "message", T: () => UserActivityData },
             { no: 11, name: "old_value", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },

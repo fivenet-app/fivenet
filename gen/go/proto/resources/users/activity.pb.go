@@ -984,7 +984,7 @@ var File_resources_users_activity_proto protoreflect.FileDescriptor
 
 const file_resources_users_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/users/activity.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a\x1cresources/users/labels.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xe3\x04\n" +
+	"\x1eresources/users/activity.proto\x12\x0fresources.users\x1a#resources/timestamp/timestamp.proto\x1a\x1cresources/users/labels.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xe1\x04\n" +
 	"\fUserActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12?\n" +
 	"\x04type\x18\x02 \x01(\x0e2!.resources.users.UserActivityTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\x04type\x12=\n" +
@@ -995,8 +995,8 @@ const file_resources_users_activity_proto_rawDesc = "" +
 	"sourceUser\x88\x01\x01\x12$\n" +
 	"\x0etarget_user_id\x18\x06 \x01(\x05R\ftargetUserId\x12;\n" +
 	"\vtarget_user\x18\a \x01(\v2\x1a.resources.users.UserShortR\n" +
-	"targetUser\x12\x1b\n" +
-	"\x03key\x18\b \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18@R\x03key\x12 \n" +
+	"targetUser\x12\x19\n" +
+	"\x03key\x18\b \x01(\tB\a\xfaB\x04r\x02\x18@R\x03key\x12 \n" +
 	"\x06reason\x18\t \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\x06reason\x12:\n" +
 	"\x04data\x18\n" +
 	" \x01(\v2!.resources.users.UserActivityDataH\x02R\x04data\x88\x01\x01\x12%\n" +
