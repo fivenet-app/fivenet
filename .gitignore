@@ -50,6 +50,9 @@ localhost.*
 .output
 .env
 
+# Nuxt Content - Isn't used like that in the project
+/content/
+
 # i18next-scanner
 /lang/
 

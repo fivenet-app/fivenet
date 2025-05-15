@@ -261,7 +261,10 @@ const { game } = useAppConfig();
                                         </template>
                                     </template>
 
-                                    <template #option="{ option: grade }"> {{ grade?.label }} ({{ grade?.grade }}) </template>
+                                    <template #option="{ option: grade }">
+                                        {{ grade?.label
+                                        }}<span v-if="grade.grade >= game.startJobGrade"> ({{ grade?.grade }})</span>
+                                    </template>
 
                                     <template #option-empty="{ query: search }">
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}

@@ -359,7 +359,8 @@ const { game } = useAppConfig();
                                         </template>
 
                                         <template #option="{ option: grade }">
-                                            {{ grade?.label }} ({{ grade?.grade }})
+                                            {{ grade?.label
+                                            }}<span v-if="grade.grade >= game.startJobGrade"> ({{ grade?.grade }})</span>
                                         </template>
 
                                         <template #option-empty="{ query: search }">
@@ -401,7 +402,8 @@ const { game } = useAppConfig();
                                         </template>
 
                                         <template #option="{ option: grade }">
-                                            {{ grade?.label }} ({{ grade?.grade }})
+                                            {{ grade?.label
+                                            }}<span v-if="grade.grade >= game.startJobGrade"> ({{ grade?.grade }})</span>
                                         </template>
 
                                         <template #option-empty="{ query: search }">
