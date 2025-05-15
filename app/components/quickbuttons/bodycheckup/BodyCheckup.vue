@@ -192,7 +192,9 @@ function reset(): void {
 
                         <UInput v-model="pin.description" type="text" block class="flex-1" @focusin="selectPin(pin)" />
 
-                        <UButton variant="link" icon="i-mdi-delete" color="error" @click="removePin(idx)" />
+                        <UTooltip :text="$t('common.delete')">
+                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="removePin(idx)" />
+                        </UTooltip>
                     </li>
                 </ol>
             </div>

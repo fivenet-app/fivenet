@@ -102,30 +102,36 @@ const input = useTemplateRef('input');
     >
         <UForm :schema="schema" :state="state" class="flex flex-1 items-center gap-1" @submit="onSubmitThrottle">
             <UButtonGroup>
-                <UButton
-                    variant="ghost"
-                    color="white"
-                    icon="i-mdi-chevron-left"
-                    :disabled="tab.history.length === 0 || status === 'pending'"
-                    @click="internetStore.back()"
-                />
+                <UTooltip :text="$t('common.back')">
+                    <UButton
+                        variant="ghost"
+                        color="white"
+                        icon="i-mdi-chevron-left"
+                        :disabled="tab.history.length === 0 || status === 'pending'"
+                        @click="internetStore.back()"
+                    />
+                </UTooltip>
 
-                <UButton
-                    :disabled="tab.domain === urlHomePage || status === 'pending'"
-                    variant="ghost"
-                    color="white"
-                    icon="i-mdi-home"
-                    @click="goToPage(urlHomePage)"
-                />
+                <UTooltip :text="$t('common.home')">
+                    <UButton
+                        :disabled="tab.domain === urlHomePage || status === 'pending'"
+                        variant="ghost"
+                        color="white"
+                        icon="i-mdi-home"
+                        @click="goToPage(urlHomePage)"
+                    />
+                </UTooltip>
 
-                <UButton
-                    variant="ghost"
-                    color="white"
-                    icon="i-mdi-refresh"
-                    :disabled="status === 'pending'"
-                    :loading="status === 'pending'"
-                    @click="refresh"
-                />
+                <UTooltip :text="$t('common.refresh')">
+                    <UButton
+                        variant="ghost"
+                        color="white"
+                        icon="i-mdi-refresh"
+                        :disabled="status === 'pending'"
+                        :loading="status === 'pending'"
+                        @click="refresh"
+                    />
+                </UTooltip>
             </UButtonGroup>
 
             <UInput ref="input" v-model="state.url" type="text" class="flex-1" :ui="{ icon: { trailing: { pointer: '' } } }">

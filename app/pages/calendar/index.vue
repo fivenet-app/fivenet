@@ -525,16 +525,18 @@ const isOpen = ref(false);
                     </ClientOnly>
                 </UFormGroup>
 
-                <UButton
-                    icon="i-mdi-refresh"
-                    variant="outline"
-                    :title="$t('common.refresh')"
-                    :disabled="loading || loadingState"
-                    :loading="loading || loadingState"
-                    @click="refresh()"
-                >
-                    {{ $t('common.refresh') }}
-                </UButton>
+                <UTooltip :text="$t('common.refresh')">
+                    <UButton
+                        icon="i-mdi-refresh"
+                        variant="outline"
+                        :title="$t('common.refresh')"
+                        :disabled="loading || loadingState"
+                        :loading="loading || loadingState"
+                        @click="refresh()"
+                    >
+                        {{ $t('common.refresh') }}
+                    </UButton>
+                </UTooltip>
 
                 <UButton icon="i-mdi-search" class="font-semibold" @click="modal.open(FindCalendarsModal, {})">
                     {{ $t('components.calendar.FindCalendarsModal.title') }}

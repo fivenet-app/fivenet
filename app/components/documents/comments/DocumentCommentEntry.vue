@@ -143,19 +143,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
 
                     <div v-if="comment.creatorId === activeChar?.userId || isSuperuser">
-                        <UButton v-if="canComment" variant="link" icon="i-mdi-pencil" @click="editing = true" />
+                        <UTooltip v-if="canComment" :text="$t('common.edit')">
+                            <UButton v-if="canComment" variant="link" icon="i-mdi-pencil" @click="editing = true" />
+                        </UTooltip>
 
-                        <UButton
-                            v-if="can('DocStoreService.DeleteComment').value"
-                            variant="link"
-                            icon="i-mdi-delete"
-                            color="error"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => deleteComment(comment!.id),
-                                })
-                            "
-                        />
+                        <UTooltip v-if="can('DocStoreService.DeleteComment').value" :text="$t('common.delete')">
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-delete"
+                                color="error"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () => deleteComment(comment!.id),
+                                    })
+                                "
+                            />
+                        </UTooltip>
                     </div>
                 </div>
 

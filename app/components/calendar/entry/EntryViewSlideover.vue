@@ -81,31 +81,36 @@ const canDo = computed(() => ({
                         <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
                             <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
-                            <UButton
+                            <UTooltip
                                 v-if="entry && can('CalendarService.CreateCalendar').value && canDo.edit"
-                                variant="link"
-                                :padded="false"
-                                icon="i-mdi-pencil"
-                                @click="
-                                    modal.open(EntryCreateOrUpdateModal, {
-                                        calendarId: entry?.calendarId,
-                                        entryId: entry?.id,
-                                    })
-                                "
-                            />
+                                :text="$t('common.edit')"
+                            >
+                                <UButton
+                                    variant="link"
+                                    :padded="false"
+                                    icon="i-mdi-pencil"
+                                    @click="
+                                        modal.open(EntryCreateOrUpdateModal, {
+                                            calendarId: entry?.calendarId,
+                                            entryId: entry?.id,
+                                        })
+                                    "
+                                />
+                            </UTooltip>
 
-                            <UButton
-                                v-if="entry && canDo.manage"
-                                variant="link"
-                                :padded="false"
-                                icon="i-mdi-delete"
-                                color="error"
-                                @click="
-                                    modal.open(ConfirmModal, {
-                                        confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
-                                    })
-                                "
-                            />
+                            <UTooltip v-if="entry && canDo.manage" :text="$t('common.delete')">
+                                <UButton
+                                    variant="link"
+                                    :padded="false"
+                                    icon="i-mdi-delete"
+                                    color="error"
+                                    @click="
+                                        modal.open(ConfirmModal, {
+                                            confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
+                                        })
+                                    "
+                                />
+                            </UTooltip>
                         </h3>
 
                         <div class="inline-flex gap-2">

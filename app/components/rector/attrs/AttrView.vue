@@ -310,17 +310,18 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         {{ role?.jobLabel! }}
                     </h2>
 
-                    <UButton
-                        v-if="isSuperuser"
-                        variant="link"
-                        icon="i-mdi-delete"
-                        color="error"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteFaction(role!.id),
-                            })
-                        "
-                    />
+                    <UTooltip v-if="isSuperuser" :text="$t('common.delete')">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-delete"
+                            color="error"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteFaction(role!.id),
+                                })
+                            "
+                        />
+                    </UTooltip>
                 </div>
 
                 <UDivider :label="$t('common.attributes', 2)" class="mb-1" />

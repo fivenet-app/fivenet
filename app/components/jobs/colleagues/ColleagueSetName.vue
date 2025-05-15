@@ -98,17 +98,20 @@ const editing = ref(false);
 <template>
     <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-2" @submit="onSubmitThrottle">
         <div>
-            <UButton v-if="!editing" icon="i-mdi-pencil" @click="editing = true" />
-            <UButton
-                v-else
-                icon="i-mdi-cancel"
-                color="error"
-                @click="
-                    state.prefix = namePrefix;
-                    state.suffix = nameSuffix;
-                    editing = false;
-                "
-            />
+            <UTooltip v-if="!editing" :text="$t('common.edit')">
+                <UButton icon="i-mdi-pencil" @click="editing = true" />
+            </UTooltip>
+            <UTooltip v-else :text="$t('common.cancel')">
+                <UButton
+                    icon="i-mdi-cancel"
+                    color="error"
+                    @click="
+                        state.prefix = namePrefix;
+                        state.suffix = nameSuffix;
+                        editing = false;
+                    "
+                />
+            </UTooltip>
         </div>
 
         <div class="flex flex-col gap-2 sm:flex-row">

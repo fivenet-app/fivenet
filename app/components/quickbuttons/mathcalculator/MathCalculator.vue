@@ -189,14 +189,16 @@ onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eras
     <div class="flex flex-col gap-4">
         <div class="relative flex h-48 max-h-48 flex-col items-end justify-end rounded-md bg-gray-800 text-right text-white">
             <template v-if="powerOn">
-                <UButton
-                    :padded="false"
-                    class="absolute left-0 top-0 m-2 p-0.5"
-                    size="xs"
-                    icon="i-mdi-delete"
-                    color="error"
-                    @click="deleteHistory"
-                />
+                <UTooltip :text="$t('common.delete')">
+                    <UButton
+                        :padded="false"
+                        class="absolute left-0 top-0 m-2 p-0.5"
+                        size="xs"
+                        icon="i-mdi-delete"
+                        color="error"
+                        @click="deleteHistory"
+                    />
+                </UTooltip>
 
                 <div ref="resultElement" class="space-y-3 overflow-y-auto p-1.5">
                     <div v-for="(history, idx) in histroryOperation" :key="idx" class="-space-y-1">

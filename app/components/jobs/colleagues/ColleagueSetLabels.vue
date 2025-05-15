@@ -119,16 +119,19 @@ const editing = ref(false);
 <template>
     <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-2" @submit="onSubmitThrottle">
         <div>
-            <UButton v-if="!editing" icon="i-mdi-pencil" @click="editing = true" />
-            <UButton
-                v-else
-                icon="i-mdi-cancel"
-                color="error"
-                @click="
-                    state.labels = labels?.list.map((l) => ({ ...l, selected: true })) ?? [];
-                    editing = false;
-                "
-            />
+            <UTooltip v-if="!editing" :text="$t('common.edit')">
+                <UButton icon="i-mdi-pencil" @click="editing = true" />
+            </UTooltip>
+            <UTooltip v-else :text="$t('common.cancel')">
+                <UButton
+                    icon="i-mdi-cancel"
+                    color="error"
+                    @click="
+                        state.labels = labels?.list.map((l) => ({ ...l, selected: true })) ?? [];
+                        editing = false;
+                    "
+                />
+            </UTooltip>
         </div>
 
         <div class="flex max-w-72 flex-row flex-wrap gap-1">
@@ -148,22 +151,23 @@ const editing = ref(false);
                         {{ attribute.name }}
                     </span>
 
-                    <UButton
-                        v-if="editing"
-                        variant="link"
-                        icon="i-mdi-close"
-                        :padded="false"
-                        :ui="{ rounded: 'rounded-full' }"
-                        :class="
-                            isColourBright(hexToRgb(attribute.color, RGBBlack)!)
-                                ? '!bg-white/20 !text-black'
-                                : '!bg-black/20 !text-white'
-                        "
-                        @click="
-                            changed = true;
-                            state.labels.splice(idx, 1);
-                        "
-                    />
+                    <UTooltip v-if="editing" :text="$t('common.remove')">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-close"
+                            :padded="false"
+                            :ui="{ rounded: 'rounded-full' }"
+                            :class="
+                                isColourBright(hexToRgb(attribute.color, RGBBlack)!)
+                                    ? '!bg-white/20 !text-black'
+                                    : '!bg-black/20 !text-white'
+                            "
+                            @click="
+                                changed = true;
+                                state.labels.splice(idx, 1);
+                            "
+                        />
+                    </UTooltip>
                 </UBadge>
             </template>
         </div>

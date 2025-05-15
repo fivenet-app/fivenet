@@ -79,10 +79,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </h4>
 
             <template v-if="canDo">
-                <UButton v-if="!editing" variant="link" icon="i-mdi-pencil" :loading="!canSubmit" @click="editing = !editing" />
+                <UTooltip v-if="!editing" :text="$t('common.edit')">
+                    <UButton variant="link" icon="i-mdi-pencil" :loading="!canSubmit" @click="editing = !editing" />
+                </UTooltip>
                 <div v-else class="flex flex-row gap-1">
-                    <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="!canSubmit" />
-                    <UButton variant="link" icon="i-mdi-cancel" :loading="!canSubmit" @click="editing = !editing" />
+                    <UTooltip :text="$t('common.save')">
+                        <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="!canSubmit" />
+                    </UTooltip>
+                    <UTooltip :text="$t('common.cancel')">
+                        <UButton variant="link" icon="i-mdi-cancel" :loading="!canSubmit" @click="editing = !editing" />
+                    </UTooltip>
                 </div>
             </template>
         </div>

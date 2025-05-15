@@ -105,7 +105,9 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
                         {{ $t('common.close', 1) }}
                     </UButton>
 
-                    <UButton icon="i-mdi-refresh" :loading="!canSubmit" :disabled="!canSubmit" @click="refresh" />
+                    <UTooltip :text="$t('common.refresh')">
+                        <UButton icon="i-mdi-refresh" :loading="!canSubmit" :disabled="!canSubmit" @click="refresh" />
+                    </UTooltip>
                 </UButtonGroup>
             </template>
         </UCard>

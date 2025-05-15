@@ -244,7 +244,7 @@ func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActiv
 			VALUES(
 				data.JobsTimeclock.Job,
 				data.JobsTimeclock.UserId,
-				jet.CURRENT_DATE,
+				jet.CURRENT_DATE(),
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {

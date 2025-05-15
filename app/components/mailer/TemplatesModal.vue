@@ -97,14 +97,18 @@ const editing = ref(false);
                             <template v-if="templates?.templates[index]">
                                 <template v-if="!editing">
                                     <UButtonGroup v-if="canManage" class="mx-4 mb-2 flex">
-                                        <UButton
-                                            class="flex-1"
-                                            icon="i-mdi-pencil"
-                                            :label="$t('common.edit')"
-                                            @click="editing = !editing"
-                                        />
+                                        <UTooltip :text="$t('common.edit')">
+                                            <UButton
+                                                class="flex-1"
+                                                icon="i-mdi-pencil"
+                                                :label="$t('common.edit')"
+                                                @click="editing = !editing"
+                                            />
+                                        </UTooltip>
 
-                                        <UButton icon="i-mdi-delete" color="error" :label="$t('common.delete')" />
+                                        <UTooltip :text="$t('common.delete')">
+                                            <UButton icon="i-mdi-delete" color="error" :label="$t('common.delete')" />
+                                        </UTooltip>
                                     </UButtonGroup>
 
                                     <ClientOnly>
