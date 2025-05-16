@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   run-tests:
-    uses: fivenet-app/fivenet/.github/workflows/test.yml
+    uses: fivenet-app/fivenet/.github/workflows/test.yml@develop
 
   run_release_it:
     runs-on: ubuntu-latest

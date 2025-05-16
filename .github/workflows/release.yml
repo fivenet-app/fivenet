@@ -7,7 +7,7 @@ jobs:
   build-images:
     name: Build Images
     needs: [run-tests]
-    uses: fivenet-app/fivenet/.github/workflows/build_image.yml
+    uses: fivenet-app/fivenet/.github/workflows/build_image.yml@develop
 
   build-binaries:
     name: Build Binaries
