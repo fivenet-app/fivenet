@@ -1,7 +1,21 @@
 <script lang="ts" setup>
-// TODO
+import AccountsList from '~/components/rector/accounts/AccountsList.vue';
+
+useHead({
+    title: 'pages.rector.accounts.title',
+});
+
+definePageMeta({
+    title: 'pages.rector.accounts.title',
+    requiresAuth: true,
+    permission: 'SuperUser',
+});
 </script>
 
 <template>
-    <div></div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <AccountsList />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

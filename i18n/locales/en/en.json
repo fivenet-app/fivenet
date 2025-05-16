@@ -55,7 +55,8 @@
                 "units": "List, create and update units for the dispatch center.",
                 "filestore": "List and manage all files.",
                 "settings": "Manage FiveNet settings.",
-                "cron": "View status of background tasks."
+                "cron": "View status of background tasks.",
+                "accounts": "List and manage FiveNet accounts."
             },
             "roles": {
                 "title": "Roles",
@@ -79,6 +80,9 @@
             },
             "cron": {
                 "title": "Background Tasks"
+            },
+            "accounts": {
+                "title": "Accounts"
             }
         },
         "notfound": {
@@ -871,6 +875,9 @@
                         "subtitle": "Globally displayed banner message (the message should be kept short)."
                     }
                 }
+            },
+            "accounts": {
+                "edit_account": "Edit Account"
             }
         },
         "debug_info": {

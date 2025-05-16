@@ -26,7 +26,7 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`files-${page.value}`, () => listFiles(prefix.value));
+} = useLazyAsyncData(`files-${page.value}-${prefix.value}`, () => listFiles(prefix.value));
 
 async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
@@ -43,6 +43,8 @@ async function listFiles(prefix: string): Promise<ListFilesResponse> {
         throw e;
     }
 }
+
+watch(offset, async () => refresh());
 
 async function deleteFile(path: string): Promise<DeleteFileResponse> {
     try {
@@ -61,8 +63,6 @@ async function deleteFile(path: string): Promise<DeleteFileResponse> {
         throw e;
     }
 }
-
-watch(offset, async () => refresh());
 
 function addUploadedFile(file: FileInfo): void {
     const idx = files.value?.files.findIndex((f) => f.name === file.name);

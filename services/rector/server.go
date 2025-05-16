@@ -23,6 +23,7 @@ type Server struct {
 	pbrector.RectorCronServiceServer
 	pbrector.RectorFilestoreServiceServer
 	pbrector.RectorLawsServiceServer
+	pbrector.RectorAccountsServiceServer
 
 	logger    *zap.Logger
 	db        *sql.DB
@@ -75,6 +76,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbrector.RegisterRectorCronServiceServer(srv, s)
 	pbrector.RegisterRectorFilestoreServiceServer(srv, s)
 	pbrector.RegisterRectorLawsServiceServer(srv, s)
+	pbrector.RegisterRectorAccountsServiceServer(srv, s)
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

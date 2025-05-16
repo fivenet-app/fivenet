@@ -89,6 +89,7 @@
 // source: services/mailer/mailer.proto
 // source: services/notificator/notificator.proto
 // source: services/qualifications/qualifications.proto
+// source: services/rector/accounts.proto
 // source: services/rector/config.proto
 // source: services/rector/cron.proto
 // source: services/rector/filestore.proto

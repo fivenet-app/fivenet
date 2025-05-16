@@ -14,6 +14,8 @@ message Account {
   optional resources.timestamp.Timestamp updated_at = 3;
   string username = 4 [(validate.rules).string.max_len = 24];
   string license = 5 [(validate.rules).string.max_len = 64];
+  bool enabled = 6;
+  optional int32 last_char = 7 [(validate.rules).int32.gt = 0];
 }
 
 message Character {

@@ -80,6 +80,8 @@ func (m *Account) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Enabled
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -142,6 +144,21 @@ func (m *Account) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.LastChar != nil {
+
+		if m.GetLastChar() <= 0 {
+			err := AccountValidationError{
+				field:  "LastChar",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

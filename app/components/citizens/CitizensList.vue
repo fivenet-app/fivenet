@@ -183,7 +183,7 @@ defineShortcuts({
     <UDashboardToolbar>
         <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
             <div class="flex w-full flex-row gap-2">
-                <UFormGroup class="flex-1" :label="$t('common.search')">
+                <UFormGroup class="flex-1" :label="$t('common.search')" name="name">
                     <UInput
                         ref="input"
                         v-model="query.name"

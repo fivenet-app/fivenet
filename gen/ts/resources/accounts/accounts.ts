@@ -36,6 +36,14 @@ export interface Account {
      * @generated from protobuf field: string license = 5;
      */
     license: string;
+    /**
+     * @generated from protobuf field: bool enabled = 6;
+     */
+    enabled: boolean;
+    /**
+     * @generated from protobuf field: optional int32 last_char = 7;
+     */
+    lastChar?: number;
 }
 /**
  * @generated from protobuf message resources.accounts.Character
@@ -62,7 +70,9 @@ class Account$Type extends MessageType<Account> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 5, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
+            { no: 5, name: "license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 6, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "last_char", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<Account>): Account {
@@ -70,6 +80,7 @@ class Account$Type extends MessageType<Account> {
         message.id = 0;
         message.username = "";
         message.license = "";
+        message.enabled = false;
         if (value !== undefined)
             reflectionMergePartial<Account>(this, message, value);
         return message;
@@ -93,6 +104,12 @@ class Account$Type extends MessageType<Account> {
                     break;
                 case /* string license */ 5:
                     message.license = reader.string();
+                    break;
+                case /* bool enabled */ 6:
+                    message.enabled = reader.bool();
+                    break;
+                case /* optional int32 last_char */ 7:
+                    message.lastChar = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -121,6 +138,12 @@ class Account$Type extends MessageType<Account> {
         /* string license = 5; */
         if (message.license !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.license);
+        /* bool enabled = 6; */
+        if (message.enabled !== false)
+            writer.tag(6, WireType.Varint).bool(message.enabled);
+        /* optional int32 last_char = 7; */
+        if (message.lastChar !== undefined)
+            writer.tag(7, WireType.Varint).int32(message.lastChar);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

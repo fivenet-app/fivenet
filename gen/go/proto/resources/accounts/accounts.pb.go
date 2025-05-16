@@ -31,6 +31,8 @@ type Account struct {
 	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Username      string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
 	License       string                 `protobuf:"bytes,5,opt,name=license,proto3" json:"license,omitempty"`
+	Enabled       bool                   `protobuf:"varint,6,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	LastChar      *int32                 `protobuf:"varint,7,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -100,6 +102,20 @@ func (x *Account) GetLicense() string {
 	return ""
 }
 
+func (x *Account) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *Account) GetLastChar() int32 {
+	if x != nil && x.LastChar != nil {
+		return *x.LastChar
+	}
+	return 0
+}
+
 type Character struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Available     bool                   `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
@@ -164,7 +180,7 @@ var File_resources_accounts_accounts_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\n" +
-	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x87\x02\n" +
+	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xda\x02\n" +
 	"\aAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
@@ -172,9 +188,13 @@ const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12#\n" +
 	"\busername\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x18R\busername\x12!\n" +
-	"\alicense\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18@R\alicenseB\r\n" +
+	"\alicense\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18@R\alicense\x12\x18\n" +
+	"\aenabled\x18\x06 \x01(\bR\aenabled\x12)\n" +
+	"\tlast_char\x18\a \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x02R\blastChar\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_updated_at\"j\n" +
+	"\v_updated_atB\f\n" +
+	"\n" +
+	"_last_char\"j\n" +
 	"\tCharacter\x12\x1c\n" +
 	"\tavailable\x18\x01 \x01(\bR\tavailable\x12\x14\n" +
 	"\x05group\x18\x02 \x01(\tR\x05group\x12)\n" +

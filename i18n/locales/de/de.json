@@ -55,7 +55,8 @@
                 "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle.",
                 "filestore": "Auflisten und verwalten aller Dateien.",
                 "settings": "Verwalten von FiveNet-Einstellungen.",
-                "cron": "Status der Hintergrundaufgaben anzeigen."
+                "cron": "Status der Hintergrundaufgaben anzeigen.",
+                "accounts": "Auflisten und verwalten von FiveNet Konten."
             },
             "roles": {
                 "title": "Rollen",
@@ -79,6 +80,9 @@
             },
             "cron": {
                 "title": "Hintergrund-Aufgaben"
+            },
+            "accounts": {
+                "title": "Konten"
             }
         },
         "notfound": {
@@ -871,6 +875,9 @@
                         "subtitle": "Global angezeigte Bannermeldung (sollte nicht zulange vom Text her sein)."
                     }
                 }
+            },
+            "accounts": {
+                "edit_account": "Konto bearbeiten"
             }
         },
         "debug_info": {
@@ -2030,10 +2037,6 @@
                     "Access": "Zugriff auf fraktionseigene Dokumente"
                 }
             },
-            "CreateOrUpdateCategory": {
-                "key": "Dokumentenkategorie erstellen",
-                "description": "Dokumentenkategorien erstellen/ aktualisieren."
-            },
             "DeleteCategory": {
                 "key": "Dokumentenkategorie löschen",
                 "description": "Dokumentenkategorien löschen."
@@ -2088,6 +2091,10 @@
             "SetDocumentReminder": {
                 "key": "Setzen von eigenen Dokumenten-Erinnerungen",
                 "description": "Erlaubt es eigene Erinnerungen für Dokumente zu setzen."
+            },
+            "CreateOrUpdateCategory": {
+                "key": "Dokumentenkategorie erstellen",
+                "description": "Dokumentenkategorien erstellen/ aktualisieren."
             }
         },
         "LivemapperService": {

@@ -65,6 +65,13 @@ const items = [
         icon: 'i-mdi-office-building-cog',
     },
     {
+        title: t('pages.rector.accounts.title'),
+        description: t('pages.rector.features.accounts'),
+        to: { name: 'rector-accounts' },
+        permission: 'SuperUser',
+        icon: 'i-mdi-account-multiple',
+    },
+    {
         title: t('pages.rector.cron.title'),
         description: t('pages.rector.features.cron'),
         to: { name: 'rector-cron' },

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package services.rector;
+
+import "resources/common/database/database.proto";
+import "resources/accounts/accounts.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rector";
+
+message ListAccountsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  optional string license = 3 [(validate.rules).string.max_len = 64];
+  optional bool enabled = 4;
+}
+
+message ListAccountsResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.accounts.Account accounts = 2;
+}
+
+message UpdateAccountRequest {
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+  optional bool enabled = 2;
+  optional int32 last_char = 3;
+}
+
+message DeleteAccountRequest {
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message UpdateAccountResponse {
+  resources.accounts.Account account = 1;
+}
+
+message DeleteAccountResponse {}
+
+service RectorAccountsService {
+  // @perm: Name=SuperUser
+  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
+  // @perm: Name=SuperUser
+  rpc UpdateAccount(UpdateAccountRequest) returns (UpdateAccountResponse);
+  // @perm: Name=SuperUser
+  rpc DeleteAccount(DeleteAccountRequest) returns (DeleteAccountResponse);
+}

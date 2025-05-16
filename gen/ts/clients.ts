@@ -18,6 +18,7 @@ import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.c
 import { MailerServiceClient } from '~~/gen/ts/services/mailer/mailer.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { QualificationsServiceClient } from '~~/gen/ts/services/qualifications/qualifications.client';
+import { RectorAccountsServiceClient } from '~~/gen/ts/services/rector/accounts.client';
 import { RectorConfigServiceClient } from '~~/gen/ts/services/rector/config.client';
 import { RectorCronServiceClient } from '~~/gen/ts/services/rector/cron.client';
 import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestore.client';
@@ -73,6 +74,7 @@ export class GRPCClients {
         qualifications: QualificationsServiceClient;
     };
     public rector: {
+        rectorAccounts: RectorAccountsServiceClient;
         rectorConfig: RectorConfigServiceClient;
         rectorCron: RectorCronServiceClient;
         rectorFilestore: RectorFilestoreServiceClient;
@@ -134,6 +136,7 @@ export class GRPCClients {
             qualifications: new QualificationsServiceClient(transport),
         };
         this.rector = {
+            rectorAccounts: new RectorAccountsServiceClient(transport),
             rectorConfig: new RectorConfigServiceClient(transport),
             rectorCron: new RectorCronServiceClient(transport),
             rectorFilestore: new RectorFilestoreServiceClient(transport),
