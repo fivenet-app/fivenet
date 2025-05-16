@@ -116,6 +116,9 @@ jobs:
     needs:
       - container-build
       - binary-build
+    permissions:
+      contents: write
+      packages: write
     uses: ./.github/workflows/build_image.yml
     secrets: inherit
     with:
