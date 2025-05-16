@@ -244,7 +244,7 @@ function changeQuestionType(qt: string): void {
                             />
                         </template>
 
-                        <img v-if="imageUrl" :src="imageUrl" />
+                        <NuxtImg v-if="imageUrl" :src="imageUrl" class="min-h-4 min-w-4" loading="lazy" />
                     </div>
                 </template>
 

@@ -38,9 +38,11 @@ const response = useVModel(props, 'modelValue', emit);
                 <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
             </div>
 
-            <img
+            <NuxtImg
                 :src="modelValue?.question!.data?.data.image?.image?.url"
                 :alt="modelValue?.question!.data?.data.image?.alt ?? $t('common.image')"
+                class="min-h-4 min-w-4"
+                loading="lazy"
             />
         </div>
 

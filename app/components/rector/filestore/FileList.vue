@@ -179,18 +179,22 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                     />
                 </UTooltip>
             </template>
+
             <template #name-data="{ row: file }">
                 <span class="text-gray-900 dark:text-white">
                     {{ file.name }}
                 </span>
             </template>
+
             <template #preview-data="{ row: file }">
-                <span v-if="!previewTypes.some((ext) => file.name.endsWith(ext))"> </span>
-                <img v-else :src="`/api/filestore/${file.name}`" class="max-h-24 max-w-32" />
+                <UIcon v-if="!previewTypes.some((ext) => file.name.endsWith(ext))" name="i-mdi-file-outline" class="size-8" />
+                <NuxtImg v-else :src="`/api/filestore/${file.name}`" class="max-h-24 max-w-32" loading="lazy" />
             </template>
+
             <template #fileSize-data="{ row: file }">
                 {{ formatBytes(file.size) }}
             </template>
+
             <template #updatedAt-data="{ row: file }">
                 <GenericTime :value="toDate(file.lastModified)" />
             </template>

@@ -110,7 +110,14 @@ const open = ref(false);
                 @touchstart.passive="open = !open"
             >
                 <template #leading>
-                    <UAvatar :src="activeChar?.avatar?.url" :alt="$t('common.avatar')" :text="getInitials(name)" size="2xs" />
+                    <UAvatar
+                        :as="NuxtImg"
+                        :src="activeChar?.avatar?.url"
+                        :alt="$t('common.avatar')"
+                        :text="getInitials(name)"
+                        size="2xs"
+                        loading="lazy"
+                    />
                 </template>
 
                 <template #trailing>

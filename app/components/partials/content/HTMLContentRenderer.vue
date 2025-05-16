@@ -4,6 +4,10 @@ import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
 defineProps<{
     value: JSONNode;
 }>();
+
+const tagRemapping = {
+    img: NuxtImg,
+};
 </script>
 
 <template>
@@ -22,7 +26,7 @@ defineProps<{
     />
     <br v-else-if="value.tag === 'br'" v-bind="value.attrs" />
     <component
-        :is="value.tag === 'body' ? 'div' : value.tag"
+        :is="value.tag === 'body' ? 'div' : (tagRemapping[value.tag] ?? value.tag)"
         v-else
         :id="!!value.id ? value.id : undefined"
         :disabled="value.tag === 'input' ? true : undefined"

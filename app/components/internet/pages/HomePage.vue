@@ -92,7 +92,12 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
             }"
         >
             <template #title>
-                <img src="/images/components/internet/homepage/logo.png" :alt="$t('common.logo')" class="mx-auto h-48" />
+                <NuxtImg
+                    src="/images/components/internet/homepage/logo.png"
+                    :alt="$t('common.logo')"
+                    class="mx-auto h-48"
+                    loading="lazy"
+                />
             </template>
         </ULandingHero>
 

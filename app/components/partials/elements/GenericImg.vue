@@ -46,6 +46,7 @@ function toggleBlur(): void {
 <template>
     <template v-if="!src || !enablePopup">
         <UAvatar
+            :as="NuxtImg"
             :size="size"
             :class="[visible ? '' : 'blur', imgClass]"
             :src="src"
@@ -53,12 +54,14 @@ function toggleBlur(): void {
             :text="text"
             :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
             :img-class="imgClass"
+            loading="lazy"
             @click="toggleBlur()"
         />
     </template>
     <UPopover v-else>
         <UButton variant="link" :padded="false">
             <UAvatar
+                :as="NuxtImg"
                 :size="size"
                 :class="[visible ? '' : 'blur', imgClass]"
                 :src="src"
@@ -66,16 +69,18 @@ function toggleBlur(): void {
                 :text="text"
                 :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
                 :img-class="imgClass"
+                loading="lazy"
             />
         </UButton>
 
         <template #panel>
             <div class="p-4">
-                <img
+                <NuxtImg
                     class="h-96 max-w-full"
                     :class="[visible ? '' : 'blur', rounded && 'rounded-md']"
                     :src="src"
                     :alt="alt"
+                    loading="lazy"
                     @click="toggleBlur()"
                 />
             </div>

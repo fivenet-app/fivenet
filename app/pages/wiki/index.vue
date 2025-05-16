@@ -115,7 +115,7 @@ watch(pages, async () => {
                         :ui="{ title: 'text-xl' }"
                     >
                         <template v-if="p.rootInfo?.logo?.url" #icon>
-                            <img :src="p.rootInfo?.logo?.url" class="h-10 w-10" :alt="$t('common.logo')" />
+                            <NuxtImg :src="p.rootInfo?.logo?.url" :alt="$t('common.logo')" class="h-10 w-10" loading="lazy" />
                         </template>
                     </UPageCard>
                 </UPageGrid>

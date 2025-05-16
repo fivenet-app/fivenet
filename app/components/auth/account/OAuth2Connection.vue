@@ -65,7 +65,14 @@ const modal = useModal();
                     target="_blank"
                     class="inline-flex flex-1 gap-2"
                 >
-                    <img v-if="!provider.icon?.startsWith('i-')" :src="provider.icon" :alt="provider.name" class="size-10" />
+                    <NuxtImg
+                        v-if="!provider.icon?.startsWith('i-')"
+                        :src="provider.icon"
+                        :alt="provider.name"
+                        class="size-10"
+                        placeholder-class="size-10"
+                        loading="lazy"
+                    />
                     <UIcon
                         v-else
                         :name="provider.icon"
@@ -99,7 +106,7 @@ const modal = useModal();
         <template #footer>
             <div class="inline-flex items-center gap-4">
                 <template v-if="account">
-                    <UAvatar size="md" :src="account.avatar" :alt="$t('common.image')" />
+                    <UAvatar :as="NuxtImg" size="md" :src="account.avatar" :alt="$t('common.image')" loading="lazy" />
 
                     <UTooltip :text="`ID: ${account.externalId}`">
                         <span class="text-left">

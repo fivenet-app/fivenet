@@ -4,7 +4,7 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 export default defineNuxtConfig({
     telemetry: false,
     ssr: false,
-    extends: [process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'],
+    extends: ['@nuxt/ui-pro'],
 
     modules: [
         '@nuxt/ui',
@@ -13,6 +13,7 @@ export default defineNuxtConfig({
         'nuxt-typed-router',
         '@nuxtjs/robots',
         '@nuxt/fonts',
+        '@nuxt/image',
         'nuxt-zod-i18n',
         '@nuxtjs/i18n',
         '@galexrt/nuxt-update',
@@ -74,6 +75,10 @@ export default defineNuxtConfig({
 
     uiPro: {
         routerOptions: false,
+    },
+
+    image: {
+        provider: 'none',
     },
 
     icon: {

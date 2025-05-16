@@ -107,7 +107,14 @@ function togglePasswordVisibility() {
                         :disabled="!canSubmit"
                         :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
                     >
-                        <img v-if="!provider.icon?.startsWith('i-')" :src="provider.icon" :alt="provider.name" class="size-5" />
+                        <NuxtImg
+                            v-if="!provider.icon?.startsWith('i-')"
+                            :src="provider.icon"
+                            :alt="provider.name"
+                            class="size-5"
+                            placeholder-class="size-5"
+                            loading="lazy"
+                        />
                         {{ $t('components.auth.LoginForm.login_with', [provider.label]) }}
                     </UButton>
                 </div>
