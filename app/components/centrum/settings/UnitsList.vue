@@ -139,7 +139,7 @@ const columns = [
         </template>
 
         <template #actions-data="{ row: unit }">
-            <div class="flex items-center" .key="unit.id">
+            <div :key="unit.id" class="flex items-center">
                 <UTooltip v-if="can('CentrumService.CreateOrUpdateUnit').value" :text="$t('common.update')">
                     <UButton
                         variant="link"
