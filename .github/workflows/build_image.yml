@@ -1,18 +1,18 @@
 name: Build & Publish Container Images
 on:
-  # Run after Test Code workflow
-  workflow_run:
-    workflows: ["Test Code"]
-    types: [completed]
-
   workflow_call:
+    inputs:
+      push:
+        description: 'If built images should be pushed to the registry'
+        default: false
+        required: false
+        type: boolean
 
 jobs:
   build-image:
     name: Build Container Image
     runs-on: ubuntu-latest
     # Ensure tests were successful before building the image
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
       packages: write
@@ -67,10 +67,11 @@ jobs:
       - name: Export digest
         run: |
           mkdir -p ${{ runner.temp }}/digests
-          digest="${{ steps.build.outputs.digest }}"
+          digest="${{ steps.build-image.outputs.digest }}"
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
 
       - name: Upload digest
+        if: ${{ inputs.push }}
         uses: actions/upload-artifact@v4
         with:
           name: digests-${{ env.PLATFORM_PAIR }}
@@ -80,7 +81,7 @@ jobs:
 
   merge:
     name: Merge and Push Image Digests
-    if: ${{ github.event_name != 'pull_request' }}
+    if: ${{ inputs.push }}
     runs-on: ubuntu-latest
     needs: [build-image]
     steps:
@@ -92,7 +93,6 @@ jobs:
           merge-multiple: true
 
       - name: Login to GHCR
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io

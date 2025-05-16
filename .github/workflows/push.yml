@@ -1,15 +1,14 @@
-name: Test Code
+name: 'Push: Test Code & Build Image'
 on:
   push:
     branches:
       - main
       - develop
-    tags:
-      - 'v*'
   pull_request:
     branches:
       - main
       - develop
+
   workflow_call:
 
 jobs:
@@ -111,3 +110,14 @@ jobs:
 
       - name: Run Go Build
         run: GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o fivenet .
+
+  image-build:
+    name: Image Build
+    needs:
+      - container-build
+      - binary-build
+    uses: ./.github/workflows/build_image.yml
+    secrets: inherit
+    with:
+      # Push images when not a pull request
+      push: ${{ github.event_name != 'pull_request' }}
