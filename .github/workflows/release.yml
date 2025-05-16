@@ -1,12 +1,18 @@
-name: Build Release
+name: Build & Publish Release
 on:
   release:
     types: [created]
 
 jobs:
+  build-images:
+    name: Build Images
+    needs: [run-tests]
+    uses: fivenet-app/fivenet/.github/workflows/build_image.yml
+
   build-binaries:
     name: Build Binaries
     runs-on: ubuntu-latest
+    needs: [run-tests]
     permissions:
       contents: write
       packages: write

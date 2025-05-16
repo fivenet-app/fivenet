@@ -4,10 +4,13 @@ on:
     branches:
       - main
       - develop
+    tags:
+      - 'v*'
   pull_request:
     branches:
       - main
       - develop
+  workflow_call:
 
 jobs:
   golang-tests:

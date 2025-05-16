@@ -7,8 +7,12 @@ permissions:
   contents: write
 
 jobs:
+  run-tests:
+    uses: fivenet-app/fivenet/.github/workflows/test.yml
+
   run_release_it:
     runs-on: ubuntu-latest
+    needs: [run-tests]
     steps:
       - uses: actions/checkout@v4
         with:
