@@ -90,9 +90,6 @@ jobs:
     needs:
       - golang-tests
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
     strategy:
       matrix:
         # build in parallel: linux/amd64, linux/arm64, windows/amd64

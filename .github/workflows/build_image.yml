@@ -8,14 +8,14 @@ on:
         required: false
         type: boolean
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build-image:
     name: Build Container Image
     runs-on: ubuntu-latest
-    # Ensure tests were successful before building the image
-    permissions:
-      contents: read
-      packages: write
     strategy:
       matrix:
         # Build and publish in parallel: linux/amd64, linux/arm64
