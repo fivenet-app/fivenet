@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { NuxtImg } from '#components';
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';

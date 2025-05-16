@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { NuxtImg } from '#components';
 import type { AvatarSize } from '#ui/types';
 import { useSettingsStore } from '~/stores/settings';
 

@@ -442,7 +442,7 @@ func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueReque
 	}
 
 	// Field Permission Check
-	var fields *permissions.StringList
+	fields := &permissions.StringList{}
 	if !infoOnly {
 		fields, err = s.ps.AttrStringList(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
 		if err != nil {

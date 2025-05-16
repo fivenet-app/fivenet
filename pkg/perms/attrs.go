@@ -303,23 +303,15 @@ func (p *Perms) AttrStringList(userInfo *userinfo.UserInfo, category Category, n
 		return &permissions.StringList{}, err
 	}
 
-	if attrValue == nil {
+	if attrValue == nil || attrValue.ValidValues == nil {
 		return &permissions.StringList{}, nil
 	}
 
 	switch v := attrValue.ValidValues.(type) {
 	case *permissions.AttributeValues_StringList:
-		if v.StringList == nil {
-			return &permissions.StringList{}, nil
-		}
-
 		return v.StringList, nil
 
 	case *permissions.AttributeValues_JobList:
-		if v.JobList == nil {
-			return &permissions.StringList{}, nil
-		}
-
 		return v.JobList, nil
 
 	default:
@@ -341,7 +333,7 @@ func (p *Perms) AttrJobGradeList(userInfo *userinfo.UserInfo, category Category,
 		}, err
 	}
 
-	if attrValue == nil {
+	if attrValue == nil || attrValue.ValidValues == nil {
 		return &permissions.JobGradeList{
 			Jobs:        map[string]int32{},
 			FineGrained: false,

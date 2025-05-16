@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { listEnumValues } from '@protobuf-ts/runtime';
 import { z } from 'zod';
 import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -24,13 +25,19 @@ const props = withDefaults(
 
 const { $grpc } = useNuxtApp();
 
-const { attrList } = useAuth();
+const { attrList, isSuperuser } = useAuth();
 
 const completorStore = useCompletorStore();
 
 const usersLoading = ref(false);
 
-const typesAttrs = attrList('JobsService.ListColleagueActivity', 'Types').value.map((t) => t.toUpperCase());
+const typesAttrs = (
+    isSuperuser
+        ? listEnumValues(JobsUserActivityType)
+              .filter((t) => t.number !== 0)
+              .map((t) => t.name)
+        : attrList('JobsService.ListColleagueActivity', 'Types').value
+).map((t) => t.toUpperCase());
 const activityTypes = Object.keys(JobsUserActivityType)
     .filter((aType) => typesAttrs.includes(aType))
     .map((aType) => JobsUserActivityType[aType as keyof typeof JobsUserActivityType]);
@@ -44,9 +51,7 @@ type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>({
     colleagues: [],
-    types: Object.keys(JobsUserActivityType)
-        .filter((aType) => typesAttrs.includes(aType))
-        .map((aType) => JobsUserActivityType[aType as keyof typeof JobsUserActivityType]),
+    types: activityTypes,
 });
 
 const page = useRouteQuery('page', '1', { transform: Number });
@@ -107,7 +112,7 @@ watchDebounced(query, async () => refresh(), {
 </script>
 
 <template>
-    <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
+    <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a)) || isSuperuser">
         <UForm class="flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
             <UFormGroup v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
                 <ClientOnly>
@@ -154,7 +159,7 @@ watchDebounced(query, async () => refresh(), {
             <div v-else class="flex-1" />
 
             <UFormGroup
-                v-if="accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
+                v-if="isSuperuser || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
                 name="types"
                 :label="$t('common.type', 2)"
             >

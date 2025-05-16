@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { NuxtImg } from '#components';
 import SuperUserJobSelection from '~/components/partials/SuperUserJobSelection.vue';
 import { useAuthStore } from '~/stores/auth';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
