@@ -100,7 +100,7 @@ const input = useTemplateRef('input');
     <UDashboardToolbar
         :ui="{ wrapper: 'min-h-[41px] bg-gray-100 dark:bg-gray-800 p-0 gap-x-0', container: 'gap-x-0 gap-y-0 mx-1' }"
     >
-        <UForm :schema="schema" :state="state" class="flex flex-1 items-center gap-1" @submit="onSubmitThrottle">
+        <UForm class="flex flex-1 items-center gap-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UButtonGroup>
                 <UTooltip :text="$t('common.back')">
                     <UButton
@@ -134,7 +134,7 @@ const input = useTemplateRef('input');
                 </UTooltip>
             </UButtonGroup>
 
-            <UInput ref="input" v-model="state.url" type="text" class="flex-1" :ui="{ icon: { trailing: { pointer: '' } } }">
+            <UInput ref="input" v-model="state.url" class="flex-1" type="text" :ui="{ icon: { trailing: { pointer: '' } } }">
                 <template #trailing>
                     <UButton
                         v-show="state.url !== ''"

@@ -129,7 +129,7 @@ defineShortcuts({
 
 <template>
     <UDashboardToolbar>
-        <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+        <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
             <UFormGroup name="title" :label="$t('common.search')">
                 <UInput
                     ref="inputRef"
@@ -271,7 +271,7 @@ defineShortcuts({
                     </div>
 
                     <div class="flex flex-row flex-wrap gap-2">
-                        <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
+                        <UFormGroup class="flex-1" name="closed" :label="$t('common.close', 2)">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.closed"
@@ -284,11 +284,11 @@ defineShortcuts({
                                             <template v-if="typeof query.closed === 'boolean'">
                                                 <UIcon
                                                     v-if="!query.closed"
+                                                    class="size-4"
                                                     name="i-mdi-lock-open-variant"
                                                     color="green"
-                                                    class="size-4"
                                                 />
-                                                <UIcon v-else name="i-mdi-lock" color="error" class="size-4" />
+                                                <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
                                             </template>
 
                                             {{
@@ -305,11 +305,11 @@ defineShortcuts({
                                             <template v-if="typeof option.closed === 'boolean'">
                                                 <UIcon
                                                     v-if="!option.closed"
+                                                    class="size-4"
                                                     name="i-mdi-lock-open-variant"
                                                     color="green"
-                                                    class="size-4"
                                                 />
-                                                <UIcon v-else name="i-mdi-lock" color="error" class="size-4" />
+                                                <UIcon v-else class="size-4" name="i-mdi-lock" color="error" />
                                             </template>
 
                                             {{ option.label }}
@@ -334,7 +334,7 @@ defineShortcuts({
                             />
                         </UFormGroup>
 
-                        <UFormGroup :label="$t('common.sort_by')" class="flex-1 grow-0 basis-40">
+                        <UFormGroup class="flex-1 grow-0 basis-40" :label="$t('common.sort_by')">
                             <SortButton
                                 v-model="sort"
                                 :fields="[
@@ -360,9 +360,9 @@ defineShortcuts({
 
         <div v-else-if="data?.documents || loading" class="relative overflow-x-auto">
             <ul
-                role="list"
                 class="my-1 flex flex-initial flex-col divide-y divide-gray-100 dark:divide-gray-800"
                 :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
+                role="list"
             >
                 <template v-if="loading">
                     <li v-for="idx in 8" :key="idx" class="flex-initial">

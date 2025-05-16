@@ -150,13 +150,13 @@ watch(props, () => setFromProps());
                             </template>
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div>
                     <div>
-                        <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
+                        <UFormGroup class="flex-1" name="name" :label="$t('common.name')">
                             <UInput
                                 v-model="state.name"
                                 type="text"
@@ -167,7 +167,7 @@ watch(props, () => setFromProps());
                             />
                         </UFormGroup>
 
-                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                        <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
                             <UTextarea
                                 v-model="state.description"
                                 name="description"
@@ -176,13 +176,13 @@ watch(props, () => setFromProps());
                             />
                         </UFormGroup>
 
-                        <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row">
+                        <UFormGroup class="flex-1 flex-row" name="color" :label="$t('common.color')">
                             <div class="flex flex-1 gap-1">
                                 <ColorPickerTW v-model="state.color" class="flex-1" :disabled="!canEdit" />
                             </div>
                         </UFormGroup>
 
-                        <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
+                        <UFormGroup class="flex-1" name="icon" :label="$t('common.icon')">
                             <div class="flex flex-1 gap-1">
                                 <IconSelectMenu
                                     v-model="state.icon"
@@ -200,14 +200,14 @@ watch(props, () => setFromProps());
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
                         <UButton
                             v-if="category !== undefined && canEdit && can('DocStoreService.DeleteCategory').value"
-                            block
                             class="flex-1"
+                            block
                             :color="!category.deletedAt ? 'error' : 'success'"
                             :icon="!category.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                             :label="!category.deletedAt ? $t('common.delete') : $t('common.restore')"
@@ -216,7 +216,7 @@ watch(props, () => setFromProps());
                             @click="deleteCategory()"
                         />
 
-                        <UButton v-if="canEdit" type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton v-if="canEdit" class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ category === undefined ? $t('common.create') : $t('common.update') }}
                         </UButton>
                     </UButtonGroup>

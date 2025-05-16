@@ -71,7 +71,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
                         {{ $t('common.label', 2) }} - {{ $t('common.total_count') }}: {{ totalCount }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -101,7 +101,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton class="flex-1" color="black" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 

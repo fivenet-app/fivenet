@@ -83,7 +83,6 @@ watchDebounced(postalQuery, () => findPostal(), {
 <template>
     <ClientOnly>
         <UInputMenu
-            v-bind="$attrs"
             v-model="selectedPostal"
             v-model:query="postalQuery"
             class="w-full max-w-40"
@@ -95,6 +94,7 @@ watchDebounced(postalQuery, () => findPostal(), {
             :popper="{ placement: 'top-start' }"
             size="xs"
             leading-icon="i-mdi-postage-stamp"
+            v-bind="$attrs"
         >
             <template #option-empty="{ query: search }">
                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}

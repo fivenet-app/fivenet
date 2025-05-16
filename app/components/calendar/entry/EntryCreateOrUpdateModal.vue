@@ -157,7 +157,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -179,7 +179,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     />
 
                     <template v-else>
-                        <UFormGroup name="calendar" :label="$t('common.calendar')" class="flex-1" required>
+                        <UFormGroup class="flex-1" name="calendar" :label="$t('common.calendar')" required>
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="state.calendar"
@@ -232,11 +232,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </ClientOnly>
                         </UFormGroup>
 
-                        <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
+                        <UFormGroup class="flex-1" name="title" :label="$t('common.title')" required>
                             <UInput v-model="state.title" name="title" type="text" :placeholder="$t('common.title')" />
                         </UFormGroup>
 
-                        <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
+                        <UFormGroup class="flex-1" name="startTime" :label="$t('common.begins_at')" required>
                             <DatePickerPopoverClient
                                 v-model="state.startTime"
                                 date-format="dd.MM.yyyy HH:mm"
@@ -245,7 +245,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             />
                         </UFormGroup>
 
-                        <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
+                        <UFormGroup class="flex-1" name="endTime" :label="$t('common.ends_at')" required>
                             <DatePickerPopoverClient
                                 v-model="state.endTime"
                                 date-format="dd.MM.yyyy HH:mm"
@@ -254,21 +254,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             />
                         </UFormGroup>
 
-                        <UFormGroup name="content" :label="$t('common.content')" class="flex-1" required>
+                        <UFormGroup class="flex-1" name="content" :label="$t('common.content')" required>
                             <ClientOnly>
                                 <TiptapEditor v-model="state.content" wrapper-class="min-h-80" />
                             </ClientOnly>
                         </UFormGroup>
 
-                        <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                        <UFormGroup class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
                             <UToggle v-model="state.closed" />
                         </UFormGroup>
 
-                        <UFormGroup name="rsvpOpen" :label="$t('common.rsvp')" class="flex-1">
+                        <UFormGroup class="flex-1" name="rsvpOpen" :label="$t('common.rsvp')">
                             <UToggle v-model="state.rsvpOpen" />
                         </UFormGroup>
 
-                        <UFormGroup name="users" :label="$t('common.guest', 2)" class="flex-1">
+                        <UFormGroup class="flex-1" name="users" :label="$t('common.guest', 2)">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="state.users"
@@ -312,7 +312,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-if="state.users.length > 0"
                             class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900"
                         >
-                            <ul role="list" class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3">
+                            <ul class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3" role="list">
                                 <li
                                     v-for="user in state.users"
                                     :key="user.userId"
@@ -327,11 +327,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ data ? $t('common.save') : $t('common.create') }}
                         </UButton>
                     </UButtonGroup>

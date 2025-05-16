@@ -15,7 +15,7 @@ const props = defineProps<{
     <template v-if="activity.type === UserActivityType.NAME && activity.data?.data.oneofKind === 'nameChange'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon name="i-mdi-identification-card" class="size-full text-info-600" />
+                <UIcon class="size-full text-info-600" name="i-mdi-identification-card" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -61,10 +61,10 @@ const props = defineProps<{
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon
                     v-if="activity.data.data.documentRelation.added"
-                    name="i-mdi-file-account"
                     class="size-full text-info-600"
+                    name="i-mdi-file-account"
                 />
-                <UIcon v-else name="i-mdi-file-account-outline" class="size-full text-base-600" />
+                <UIcon v-else class="size-full text-base-600" name="i-mdi-file-account-outline" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -116,8 +116,8 @@ const props = defineProps<{
     <template v-else-if="activity.type === UserActivityType.WANTED && activity.data?.data.oneofKind === 'wantedChange'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon v-if="activity.data.data.wantedChange.wanted" name="i-mdi-bell-alert" class="size-full text-error-400" />
-                <UIcon v-else name="i-mdi-bell-sleep" class="size-full text-success-400" />
+                <UIcon v-if="activity.data.data.wantedChange.wanted" class="size-full text-error-400" name="i-mdi-bell-alert" />
+                <UIcon v-else class="size-full text-success-400" name="i-mdi-bell-sleep" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -157,7 +157,7 @@ const props = defineProps<{
     <template v-else-if="activity.type === UserActivityType.JOB && activity.data?.data.oneofKind === 'jobChange'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon name="i-mdi-briefcase" class="size-full text-gray-400" />
+                <UIcon class="size-full text-gray-400" name="i-mdi-briefcase" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -202,7 +202,6 @@ const props = defineProps<{
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon
-                    name="i-mdi-traffic-cone"
                     class="size-full"
                     :class="
                         activity.data.data.trafficInfractionPointsChange.old >
@@ -210,6 +209,7 @@ const props = defineProps<{
                             ? 'text-gray-400'
                             : 'text-orange-400'
                     "
+                    name="i-mdi-traffic-cone"
                 />
             </div>
 
@@ -251,9 +251,9 @@ const props = defineProps<{
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon
-                    name="i-mdi-camera-account"
                     class="size-full text-amber-400"
                     :class="activity.data.data.mugshotChange.new ? 'text-gray-400' : 'text-amber-400'"
+                    name="i-mdi-camera-account"
                 />
             </div>
 
@@ -292,7 +292,7 @@ const props = defineProps<{
     <template v-else-if="activity.type === UserActivityType.LABELS && activity.data?.data.oneofKind === 'labelsChange'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon name="i-mdi-tag" class="size-full text-amber-200" />
+                <UIcon class="size-full text-amber-200" name="i-mdi-tag" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -306,9 +306,9 @@ const props = defineProps<{
                             <UBadge
                                 v-for="attribute in activity.data.data.labelsChange.removed"
                                 :key="attribute.name"
-                                :style="{ backgroundColor: attribute.color }"
                                 class="justify-between gap-2 line-through"
                                 :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                :style="{ backgroundColor: attribute.color }"
                                 size="xs"
                             >
                                 {{ attribute.name }}
@@ -317,9 +317,9 @@ const props = defineProps<{
                             <UBadge
                                 v-for="attribute in activity.data.data.labelsChange.added"
                                 :key="attribute.name"
-                                :style="{ backgroundColor: attribute.color }"
                                 class="justify-between gap-2"
                                 :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                :style="{ backgroundColor: attribute.color }"
                                 size="xs"
                             >
                                 {{ attribute.name }}
@@ -352,9 +352,9 @@ const props = defineProps<{
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon
-                    name="i-mdi-license"
                     class="size-full"
                     :class="activity.data.data.licensesChange.added ? 'text-info-600' : 'text-amber-600'"
+                    name="i-mdi-license"
                 />
             </div>
 
@@ -392,9 +392,9 @@ const props = defineProps<{
     <template v-else-if="activity.type === UserActivityType.JAIL && activity.data?.data.oneofKind === 'jailChange'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon v-if="activity.data.data.jailChange.seconds > 0" name="i-mdi-handcuffs" class="size-full" />
-                <UIcon v-else-if="activity.data.data.jailChange.seconds === 0" name="i-mdi-door-open" class="size-full" />
-                <UIcon v-else name="i-mdi-run-fast" class="size-full" />
+                <UIcon v-if="activity.data.data.jailChange.seconds > 0" class="size-full" name="i-mdi-handcuffs" />
+                <UIcon v-else-if="activity.data.data.jailChange.seconds === 0" class="size-full" name="i-mdi-door-open" />
+                <UIcon v-else class="size-full" name="i-mdi-run-fast" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -440,15 +440,15 @@ const props = defineProps<{
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon
                     v-if="activity.data.data.fineChange.removed"
-                    name="i-mdi-receipt-text-remove"
                     class="size-full text-red-400"
+                    name="i-mdi-receipt-text-remove"
                 />
                 <UIcon
                     v-else-if="activity.data.data.fineChange.amount < 0"
-                    name="i-mdi-receipt-text-check"
                     class="size-full text-success-400"
+                    name="i-mdi-receipt-text-check"
                 />
-                <UIcon v-else name="i-mdi-receipt-text-plus" class="size-full text-info-400" />
+                <UIcon v-else class="size-full text-info-400" name="i-mdi-receipt-text-plus" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -493,7 +493,7 @@ const props = defineProps<{
     <template v-else>
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon name="i-mdi-help-circle" class="size-full" />
+                <UIcon class="size-full" name="i-mdi-help-circle" />
             </div>
 
             <div class="flex-1 space-y-1">

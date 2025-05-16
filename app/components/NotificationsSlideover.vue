@@ -28,10 +28,10 @@ const { isNotificationsSlideoverOpen } = useDashboard();
                         <DNBToggle />
 
                         <UButton
+                            class="-my-1"
                             color="gray"
                             variant="ghost"
                             icon="i-mdi-window-close"
-                            class="-my-1"
                             @click="isNotificationsSlideoverOpen = false"
                         />
                     </div>
@@ -45,8 +45,8 @@ const { isNotificationsSlideoverOpen } = useDashboard();
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
                     <UButton
-                        block
                         class="flex-1"
+                        block
                         @click="
                             navigateTo({ name: 'notifications' });
                             isNotificationsSlideoverOpen = false;
@@ -55,7 +55,7 @@ const { isNotificationsSlideoverOpen } = useDashboard();
                         {{ $t('components.partials.sidebar_notifications') }}
                     </UButton>
 
-                    <UButton color="black" block class="flex-1" @click="isNotificationsSlideoverOpen = false">
+                    <UButton class="flex-1" color="black" block @click="isNotificationsSlideoverOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

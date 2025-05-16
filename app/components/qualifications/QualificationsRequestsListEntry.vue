@@ -38,10 +38,10 @@ const { activeChar } = storeToRefs(authStore);
             <div class="hidden sm:flex sm:flex-col sm:items-end">
                 <UBadge
                     v-if="request.status !== undefined"
-                    :color="requestStatusToBadgeColor(request?.status ?? 0)"
                     class="inline-flex gap-1"
+                    :color="requestStatusToBadgeColor(request?.status ?? 0)"
                 >
-                    <UIcon name="i-mdi-list-status" class="size-5" />
+                    <UIcon class="size-5" name="i-mdi-list-status" />
                     <span>
                         {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`) }}
                     </span>
@@ -56,7 +56,7 @@ const { activeChar } = storeToRefs(authStore);
                 </p>
             </div>
 
-            <UIcon name="i-mdi-chevron-right" class="size-5 flex-none" />
+            <UIcon class="size-5 flex-none" name="i-mdi-chevron-right" />
         </div>
     </li>
 </template>

@@ -78,7 +78,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('components.auth.ChangePasswordModal.change_password') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -122,16 +122,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             />
                         </template>
                     </UInput>
-                    <PasswordStrengthMeter :input="state.newPassword" class="mt-2" />
+                    <PasswordStrengthMeter class="mt-2" :input="state.newPassword" />
                 </UFormGroup>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('components.auth.ChangePasswordModal.change_password') }}
                         </UButton>
                     </UButtonGroup>

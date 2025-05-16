@@ -192,9 +192,9 @@ defineShortcuts({
 
 <template>
     <UDashboardToolbar>
-        <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+        <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
             <div class="flex gap-2">
-                <UFormGroup name="name" :label="$t('common.search')" class="flex-1">
+                <UFormGroup class="flex-1" name="name" :label="$t('common.search')">
                     <UInput
                         ref="input"
                         v-model="query.name"
@@ -212,9 +212,9 @@ defineShortcuts({
                 </UFormGroup>
 
                 <UFormGroup
+                    class="flex flex-initial flex-col"
                     name="absent"
                     :label="$t('common.absent')"
-                    class="flex flex-initial flex-col"
                     :ui="{ container: 'flex-1 flex' }"
                 >
                     <div class="flex flex-1 items-center">
@@ -268,9 +268,9 @@ defineShortcuts({
                     <div class="flex flex-row flex-wrap gap-2">
                         <UFormGroup
                             v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value"
+                            class="flex flex-1 flex-col"
                             name="labels"
                             :label="$t('common.label', 2)"
-                            class="flex flex-1 flex-col"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <ClientOnly>
@@ -316,27 +316,27 @@ defineShortcuts({
                         </UFormGroup>
 
                         <UFormGroup
+                            class="flex flex-col"
                             name="namePrefix"
                             :label="$t('common.prefix')"
-                            class="flex flex-col"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <UInput v-model="query.namePrefix" type="text" />
                         </UFormGroup>
 
                         <UFormGroup
+                            class="flex flex-col"
                             name="nameSuffix"
                             :label="$t('common.suffix')"
-                            class="flex flex-col"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <UInput v-model="query.nameSuffix" type="text" />
                         </UFormGroup>
 
                         <UFormGroup
+                            class="flex flex-initial flex-col"
                             name="cards"
                             :label="$t('common.card_view')"
-                            class="flex flex-initial flex-col"
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <div class="flex flex-1 items-center">
@@ -363,22 +363,22 @@ defineShortcuts({
         <UTable
             v-if="!jobsService.cardView"
             v-model:sort="sort"
+            class="flex-1"
             :loading="loading"
             :columns="columns"
             :rows="data?.colleagues"
             :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
             sort-mode="manual"
-            class="flex-1"
         >
             <template #name-data="{ row: colleague }">
                 <div class="inline-flex items-center text-gray-900 dark:text-white">
                     <ProfilePictureImg
+                        class="mr-2"
                         :src="colleague?.avatar?.url"
                         :name="`${colleague.firstname} ${colleague.lastname}`"
                         size="sm"
                         :enable-popup="true"
                         :alt="$t('common.avatar')"
-                        class="mr-2"
                     />
 
                     <ColleagueName :colleague="colleague" />
@@ -514,13 +514,13 @@ defineShortcuts({
                             <PhoneNumberBlock :number="colleague.phoneNumber" />
 
                             <span class="inline-flex items-center gap-1">
-                                <UIcon name="i-mdi-birthday-cake" class="h-5 w-5" />
+                                <UIcon class="h-5 w-5" name="i-mdi-birthday-cake" />
 
                                 <span>{{ colleague.dateofbirth.value }}</span>
                             </span>
 
                             <span class="inline-flex items-center gap-1">
-                                <UIcon name="i-mdi-email" class="h-5 w-5" />
+                                <UIcon class="h-5 w-5" name="i-mdi-email" />
 
                                 <EmailInfoPopover
                                     :email="colleague.email"
@@ -532,7 +532,7 @@ defineShortcuts({
                             </span>
 
                             <div v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value" class="flex flex-row gap-1">
-                                <UIcon name="i-mdi-tag" class="h-5 w-5 shrink-0" />
+                                <UIcon class="h-5 w-5 shrink-0" name="i-mdi-tag" />
 
                                 <span v-if="!colleague.props?.labels?.list.length">
                                     {{ $t('common.none', [$t('common.label', 2)]) }}
@@ -541,11 +541,11 @@ defineShortcuts({
                                     <UButton
                                         v-for="label in colleague.props?.labels?.list"
                                         :key="label.name"
-                                        :style="{ backgroundColor: label.color }"
                                         class="justify-between gap-2"
                                         :class="
                                             isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'
                                         "
+                                        :style="{ backgroundColor: label.color }"
                                         size="xs"
                                         :ui="{ padding: { xs: 'px-2 py-1' } }"
                                         @click="toggleLabelInSearch(label)"
@@ -561,7 +561,7 @@ defineShortcuts({
                                 v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
                                 class="inline-flex items-center gap-1"
                             >
-                                <UIcon name="i-mdi-island" class="size-5" />
+                                <UIcon class="size-5" name="i-mdi-island" />
                                 <GenericTime :value="colleague.props?.absenceBegin" type="shortDate" />
                                 <span>{{ $t('common.to') }}</span>
                                 <GenericTime :value="colleague.props?.absenceEnd" type="date" />
@@ -578,8 +578,8 @@ defineShortcuts({
                                         attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
                                     checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
                                 "
-                                :text="$t('components.jobs.self_service.set_absence_date')"
                                 class="flex-1"
+                                :text="$t('components.jobs.self_service.set_absence_date')"
                             >
                                 <UButton
                                     :label="$t('components.jobs.self_service.set_absence_date')"
@@ -597,8 +597,8 @@ defineShortcuts({
 
                             <UTooltip
                                 v-if="canDo.getColleague && checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')"
-                                :text="$t('common.show')"
                                 class="flex-1"
+                                :text="$t('common.show')"
                             >
                                 <UButton
                                     :label="$t('common.show')"

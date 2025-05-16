@@ -39,9 +39,9 @@ const response = useVModel(props, 'modelValue', emit);
             </div>
 
             <NuxtImg
+                class="min-h-4 min-w-4"
                 :src="modelValue?.question!.data?.data.image?.image?.url"
                 :alt="modelValue?.question!.data?.data.image?.alt ?? $t('common.image')"
-                class="min-h-4 min-w-4"
                 loading="lazy"
             />
         </div>
@@ -61,6 +61,7 @@ const response = useVModel(props, 'modelValue', emit);
 
             <UButtonGroup>
                 <UButton
+                    class="w-20"
                     :variant="
                         response.response?.response.oneofKind === 'yesno' && response.response?.response.yesno.value
                             ? 'solid'
@@ -69,11 +70,11 @@ const response = useVModel(props, 'modelValue', emit);
                     color="green"
                     :label="$t('common.yes')"
                     block
-                    class="w-20"
                     :disabled="disabled"
                     @click="response.response.response.yesno.value = true"
                 />
                 <UButton
+                    class="w-20"
                     :variant="
                         response.response?.response.oneofKind === 'yesno' && !response.response?.response.yesno.value
                             ? 'solid'
@@ -82,7 +83,6 @@ const response = useVModel(props, 'modelValue', emit);
                     color="error"
                     :label="$t('common.no')"
                     block
-                    class="w-20"
                     :disabled="disabled"
                     @click="response.response.response.yesno.value = false"
                 />
@@ -135,7 +135,7 @@ const response = useVModel(props, 'modelValue', emit);
                 <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
             </div>
 
-            <UFormGroup name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required class="flex-1">
+            <UFormGroup class="flex-1" name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required>
                 <URadioGroup
                     v-model="response.response.response.singleChoice.choice"
                     :name="modelValue?.question.data!.data.singleChoice.choices.join(':')"
@@ -171,7 +171,7 @@ const response = useVModel(props, 'modelValue', emit);
                 </UBadge>
             </div>
 
-            <UFormGroup :label="$t('common.option', 2)" required class="flex-1"> </UFormGroup>
+            <UFormGroup class="flex-1" :label="$t('common.option', 2)" required> </UFormGroup>
             <div class="flex flex-1 flex-col gap-2">
                 <UCheckbox
                     v-for="choice in modelValue?.question.data.data.multipleChoice.choices"

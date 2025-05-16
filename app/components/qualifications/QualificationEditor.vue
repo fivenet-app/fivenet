@@ -335,9 +335,9 @@ const selectedTab = computed({
 
 <template>
     <UForm
+        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         @submit="onSubmitThrottle"
     >
         <UDashboardNavbar :title="qualificationId ? $t('pages.qualifications.edit.title') : $t('pages.qualifications.create')">
@@ -371,8 +371,8 @@ const selectedTab = computed({
         <UDashboardPanelContent class="p-0 sm:pb-0">
             <UTabs
                 v-model="selectedTab"
-                :items="items"
                 class="flex flex-1 flex-col"
+                :items="items"
                 :ui="{
                     wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
@@ -391,9 +391,9 @@ const selectedTab = computed({
                                 <div class="flex w-full flex-col gap-2">
                                     <div class="flex w-full flex-row gap-2">
                                         <UFormGroup
+                                            class="max-w-48 shrink"
                                             name="abbreviation"
                                             :label="$t('common.abbreviation')"
-                                            class="max-w-48 shrink"
                                             required
                                         >
                                             <UInput
@@ -406,7 +406,7 @@ const selectedTab = computed({
                                             />
                                         </UFormGroup>
 
-                                        <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
+                                        <UFormGroup class="flex-1" name="title" :label="$t('common.title')" required>
                                             <UInput
                                                 v-model="state.title"
                                                 name="title"
@@ -419,7 +419,7 @@ const selectedTab = computed({
                                     </div>
 
                                     <div class="flex w-full flex-row gap-2">
-                                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                                        <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
                                             <UTextarea
                                                 v-model="state.description"
                                                 name="description"
@@ -430,11 +430,11 @@ const selectedTab = computed({
                                         </UFormGroup>
 
                                         <div class="flex flex-initial flex-col">
-                                            <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
+                                            <UFormGroup class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
                                                 <UToggle v-model="state.closed" :disabled="!canDo.edit" />
                                             </UFormGroup>
 
-                                            <UFormGroup name="public" :label="$t('common.public')" class="flex-initial">
+                                            <UFormGroup class="flex-initial" name="public" :label="$t('common.public')">
                                                 <UToggle v-model="state.public" :disabled="!canDo.public" />
                                             </UFormGroup>
                                         </div>
@@ -445,16 +445,16 @@ const selectedTab = computed({
 
                         <UFormGroup
                             v-if="canDo.edit"
-                            name="content"
                             class="flex flex-1 overflow-y-hidden"
+                            name="content"
                             :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
                             label="&nbsp;"
                         >
                             <ClientOnly>
                                 <TiptapEditor
                                     v-model="state.content"
-                                    :disabled="!canDo.edit"
                                     class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                    :disabled="!canDo.edit"
                                     rounded="rounded-none"
                                 />
                             </ClientOnly>
@@ -611,9 +611,9 @@ const selectedTab = computed({
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.examMode"
+                                        class="w-40 max-w-40"
                                         :options="examModes"
                                         value-attribute="mode"
-                                        class="w-40 max-w-40"
                                     >
                                         <template #label>
                                             <span class="truncate">

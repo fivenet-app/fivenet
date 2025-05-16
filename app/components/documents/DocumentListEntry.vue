@@ -36,14 +36,14 @@ defineProps<{
                     </div>
 
                     <UBadge v-if="document.state" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-note-check" class="size-4" />
+                        <UIcon class="size-4" name="i-mdi-note-check" />
                         <span>
                             {{ document.state }}
                         </span>
                     </UBadge>
 
                     <div v-if="document.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold">
-                        <UIcon name="i-mdi-delete" class="size-4 shrink-0" />
+                        <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
                         {{ $t('common.deleted') }}
                     </div>
 
@@ -68,7 +68,7 @@ defineProps<{
 
                 <div class="flex gap-2">
                     <div class="flex flex-1 items-center justify-start gap-1.5">
-                        <UIcon name="i-mdi-calendar" class="size-4 shrink-0" />
+                        <UIcon class="size-4 shrink-0" name="i-mdi-calendar" />
                         <p class="inline-flex gap-1 text-nowrap">
                             <span class="hidden truncate md:block">
                                 {{ $t('common.created_at') }}
@@ -78,7 +78,7 @@ defineProps<{
                     </div>
 
                     <div v-if="document.workflowState?.autoCloseTime" class="flex flex-1 items-center justify-start gap-1.5">
-                        <UIcon name="i-mdi-lock-clock" class="size-4 shrink-0" />
+                        <UIcon class="size-4 shrink-0" name="i-mdi-lock-clock" />
                         <p class="inline-flex gap-1 text-nowrap">
                             <span class="hidden truncate lg:block">
                                 {{ $t('common.auto_close', 2) }}
@@ -90,7 +90,7 @@ defineProps<{
                         v-else-if="document.workflowState?.nextReminderTime"
                         class="flex flex-1 items-center justify-start gap-1.5"
                     >
-                        <UIcon name="i-mdi-lock-clock" class="size-4 shrink-0" />
+                        <UIcon class="size-4 shrink-0" name="i-mdi-lock-clock" />
                         <p class="inline-flex gap-1 text-nowrap">
                             <span class="hidden truncate lg:block">
                                 {{ $t('common.reminder') }}
@@ -106,7 +106,7 @@ defineProps<{
                             </span>
                             <GenericTime :value="document.updatedAt" ago />
                         </p>
-                        <UIcon name="i-mdi-update" class="size-4 shrink-0" />
+                        <UIcon class="size-4 shrink-0" name="i-mdi-update" />
                     </div>
                 </div>
 
@@ -115,7 +115,7 @@ defineProps<{
 
                     <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
                         <span>{{ document.creatorJobLabel }}</span>
-                        <UIcon name="i-mdi-briefcase" class="size-4 shrink-0" />
+                        <UIcon class="size-4 shrink-0" name="i-mdi-briefcase" />
                     </div>
                 </div>
             </div>

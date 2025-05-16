@@ -90,7 +90,7 @@ const editing = ref(false);
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-2" @submit="onSubmitThrottle">
+    <UForm class="flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <div>
             <UTooltip v-if="!editing" :text="$t('common.edit')">
                 <UButton icon="i-mdi-pencil" @click="editing = true" />
@@ -108,7 +108,7 @@ const editing = ref(false);
         </div>
 
         <div class="flex flex-1 flex-col gap-2 sm:flex-row">
-            <UFormGroup name="note" class="flex-1" :label="$t('common.note')">
+            <UFormGroup class="flex-1" name="note" :label="$t('common.note')">
                 <UTextarea v-if="editing" v-model="state.note" block :rows="6" :maxrows="10" name="note" />
                 <p v-else class="prose dark:prose-invert whitespace-pre-wrap text-base-800 dark:text-base-300">
                     {{ modelValue ?? $t('common.na') }}

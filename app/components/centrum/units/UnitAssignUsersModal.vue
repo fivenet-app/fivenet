@@ -83,14 +83,14 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{ unit.initials }})
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div>
                     <div class="flex flex-1 flex-col justify-between gap-2">
                         <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
-                            <UFormGroup name="users" :label="$t('common.colleague', 2)" class="flex-1">
+                            <UFormGroup class="flex-1" name="users" :label="$t('common.colleague', 2)">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.users"
@@ -128,8 +128,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                             <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900">
                                 <ul
-                                    role="list"
                                     class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
+                                    role="list"
                                 >
                                     <li
                                         v-for="user in state.users"
@@ -146,11 +146,11 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('common.update') }}
                         </UButton>
                     </UButtonGroup>

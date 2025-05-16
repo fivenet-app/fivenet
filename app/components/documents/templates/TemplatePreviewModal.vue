@@ -59,7 +59,7 @@ async function getTemplate(): Promise<Template> {
                         {{ $t('common.preview') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -141,7 +141,7 @@ async function getTemplate(): Promise<Template> {
             </div>
 
             <template #footer>
-                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                <UButton class="flex-1" color="black" block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

@@ -27,7 +27,7 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 <UToggle v-model="templateSchema.users.req" />
             </UFormGroup>
 
-            <UFormGroup name="users.min" :label="$t('common.min')" class="flex-1">
+            <UFormGroup class="flex-1" name="users.min" :label="$t('common.min')">
                 <UInput
                     v-model="templateSchema.users.min"
                     type="number"
@@ -38,7 +38,7 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 />
             </UFormGroup>
 
-            <UFormGroup name="users.max" :label="$t('common.max')" class="flex-1">
+            <UFormGroup class="flex-1" name="users.max" :label="$t('common.max')">
                 <UInput
                     v-model="templateSchema.users.max"
                     type="number"
@@ -54,7 +54,7 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 <UToggle v-model="templateSchema.documents.req" />
             </UFormGroup>
 
-            <UFormGroup name="documents.min" :label="$t('common.min')" class="flex-1">
+            <UFormGroup class="flex-1" name="documents.min" :label="$t('common.min')">
                 <UInput
                     v-model="templateSchema.documents.min"
                     type="number"
@@ -65,7 +65,7 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 />
             </UFormGroup>
 
-            <UFormGroup name="documents.max" :label="$t('common.max')" class="flex-1">
+            <UFormGroup class="flex-1" name="documents.max" :label="$t('common.max')">
                 <UInput
                     v-model="templateSchema.documents.max"
                     type="number"
@@ -81,7 +81,7 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 <UToggle v-model="templateSchema.vehicles.req" />
             </UFormGroup>
 
-            <UFormGroup name="vehicles.min" :label="$t('common.min')" class="flex-1">
+            <UFormGroup class="flex-1" name="vehicles.min" :label="$t('common.min')">
                 <UInput
                     v-model="templateSchema.vehicles.min"
                     type="number"
@@ -91,7 +91,7 @@ const templateSchema = useVModel(props, 'modelValue', emit);
                 />
             </UFormGroup>
 
-            <UFormGroup name="vehicles.max" :label="$t('common.max')" class="flex-1">
+            <UFormGroup class="flex-1" name="vehicles.max" :label="$t('common.max')">
                 <UInput
                     v-model="templateSchema.vehicles.max"
                     type="number"

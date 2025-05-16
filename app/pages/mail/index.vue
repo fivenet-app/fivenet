@@ -212,6 +212,7 @@ onBeforeMount(async () => {
                 <ClientOnly>
                     <UInput
                         v-if="emails.length === 1"
+                        class="pt-1"
                         type="text"
                         disabled
                         :model-value="
@@ -221,18 +222,17 @@ onBeforeMount(async () => {
                             selectedEmail?.email ??
                             $t('common.none')
                         "
-                        class="pt-1"
                     />
                     <USelectMenu
                         v-else
                         v-model="selectedEmail"
+                        class="pt-1"
                         :options="emails"
                         :placeholder="$t('common.mail')"
                         searchable
                         :searchable-placeholder="$t('common.search_field')"
                         :search-attributes="['label', 'email']"
                         trailing
-                        class="pt-1"
                         by="id"
                     >
                         <template #label>
@@ -346,7 +346,7 @@ onBeforeMount(async () => {
                     <template #toggle>
                         <UDashboardNavbarToggle icon="i-mdi-close" />
 
-                        <UDivider orientation="vertical" class="mx-1.5 lg:hidden" />
+                        <UDivider class="mx-1.5 lg:hidden" orientation="vertical" />
                     </template>
 
                     <template #left>
@@ -477,7 +477,7 @@ onBeforeMount(async () => {
                 v-else
                 class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
             >
-                <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
+                <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
                 <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
             </div>
         </DashboardPanel>

@@ -283,10 +283,10 @@ const isOpen = ref(false);
                     >
                         <UButton
                             v-if="can('CalendarService.CreateCalendar').value"
+                            class="flex-1"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
-                            class="flex-1"
                             @click="modal.open(CalendarCreateOrUpdateModal, {})"
                         >
                             {{ $t('common.calendar') }}
@@ -294,10 +294,10 @@ const isOpen = ref(false);
 
                         <UButton
                             v-if="hasEditAccessToCalendar"
+                            class="flex-1"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
-                            class="flex-1"
                             @click="modal.open(EntryCreateOrUpdateModal, {})"
                         >
                             {{ $t('common.entry', 1) }}
@@ -340,8 +340,8 @@ const isOpen = ref(false);
                                                 class="inline-flex items-center gap-2"
                                             >
                                                 <UCheckbox
-                                                    :model-value="activeCalendarIds.includes(calendar.id)"
                                                     class="truncate"
+                                                    :model-value="activeCalendarIds.includes(calendar.id)"
                                                     @change="calendarIdChange(calendar.id, $event)"
                                                 />
 
@@ -455,9 +455,9 @@ const isOpen = ref(false);
                                             (calendarEntries.entries.past.length > 0 ||
                                                 calendarEntries.entries.upcoming.length > 0)
                                         "
+                                        class="my-1"
                                         size="sm"
                                         :ui="{ border: { base: 'border-red-300 dark:border-red-600' } }"
-                                        class="my-1"
                                     />
                                 </li>
 
@@ -484,8 +484,8 @@ const isOpen = ref(false);
 
                                             <UIcon
                                                 v-if="attr.customData.ongoing"
-                                                name="i-mdi-timer-sand"
                                                 class="size-3 text-amber-800"
+                                                name="i-mdi-timer-sand"
                                             />
 
                                             {{ attr.customData.title }}
@@ -502,23 +502,23 @@ const isOpen = ref(false);
 
             <div class="flex justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
                 <UFormGroup
+                    class="flex flex-row items-center gap-2"
                     :label="$t('common.view')"
                     :ui="{ container: '', label: { base: 'hidden md:inline-flex' } }"
-                    class="flex flex-row items-center gap-2"
                 >
                     <ClientOnly>
                         <USelectMenu v-model="view" :options="viewOptions" value-attribute="value">
                             <template #label>
                                 <UIcon
-                                    :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
                                     class="size-5"
+                                    :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
                                 />
 
                                 {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                             </template>
 
                             <template #option="{ option }">
-                                <UIcon :name="option.icon" class="size-5" />
+                                <UIcon class="size-5" :name="option.icon" />
                                 <span class="truncate">{{ option.label }}</span>
                             </template>
                         </USelectMenu>
@@ -538,13 +538,13 @@ const isOpen = ref(false);
                     </UButton>
                 </UTooltip>
 
-                <UButton icon="i-mdi-search" class="font-semibold" @click="modal.open(FindCalendarsModal, {})">
+                <UButton class="font-semibold" icon="i-mdi-search" @click="modal.open(FindCalendarsModal, {})">
                     {{ $t('components.calendar.FindCalendarsModal.title') }}
                 </UButton>
             </div>
         </UDashboardPanel>
 
-        <UDashboardPanel v-model="isOpen" collapsible side="right" class="!hidden max-w-64 flex-1 xl:!flex">
+        <UDashboardPanel v-model="isOpen" class="!hidden max-w-64 flex-1 xl:!flex" collapsible side="right">
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup
@@ -553,10 +553,10 @@ const isOpen = ref(false);
                     >
                         <UButton
                             v-if="can('CalendarService.CreateCalendar').value"
+                            class="flex-1"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
-                            class="flex-1"
                             @click="modal.open(CalendarCreateOrUpdateModal, {})"
                         >
                             {{ $t('common.calendar') }}
@@ -564,10 +564,10 @@ const isOpen = ref(false);
 
                         <UButton
                             v-if="hasEditAccessToCalendar"
+                            class="flex-1"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
-                            class="flex-1"
                             @click="modal.open(EntryCreateOrUpdateModal, {})"
                         >
                             {{ $t('common.entry', 1) }}
@@ -614,31 +614,31 @@ const isOpen = ref(false);
 
                 <UDivider class="sticky bottom-0" />
 
-                <UFormGroup :label="$t('common.view')" class="flex flex-row items-center gap-2">
+                <UFormGroup class="flex flex-row items-center gap-2" :label="$t('common.view')">
                     <ClientOnly>
-                        <USelectMenu v-model="view" :options="viewOptions" value-attribute="value" class="min-w-44">
+                        <USelectMenu v-model="view" class="min-w-44" :options="viewOptions" value-attribute="value">
                             <template #label>
                                 <UIcon
-                                    :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
                                     class="size-5"
+                                    :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
                                 />
 
                                 {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                             </template>
 
                             <template #option="{ option }">
-                                <UIcon :name="option.icon" class="size-5" />
+                                <UIcon class="size-5" :name="option.icon" />
                                 <span class="truncate">{{ option.label }}</span>
                             </template>
                         </USelectMenu>
                     </ClientOnly>
                 </UFormGroup>
 
-                <UTooltip :text="$t('common.refresh')" class="inline-flex w-full">
+                <UTooltip class="inline-flex w-full" :text="$t('common.refresh')">
                     <UButton
+                        class="w-full"
                         icon="i-mdi-refresh"
                         variant="outline"
-                        class="w-full"
                         :disabled="loading || loadingState"
                         :loading="loading || loadingState"
                         @click="refresh()"
@@ -647,7 +647,7 @@ const isOpen = ref(false);
                     </UButton>
                 </UTooltip>
 
-                <UButton icon="i-mdi-search" class="font-semibold" @click="modal.open(FindCalendarsModal, {})">
+                <UButton class="font-semibold" icon="i-mdi-search" @click="modal.open(FindCalendarsModal, {})">
                     {{ $t('components.calendar.FindCalendarsModal.title') }}
                 </UButton>
             </div>

@@ -92,12 +92,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.upload') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="category" :label="$t('common.category')" class="flex-1" required>
+                    <UFormGroup class="flex-1" name="category" :label="$t('common.category')" required>
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.category"
@@ -107,11 +107,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1" required>
+                    <UFormGroup class="flex-1" name="name" :label="$t('common.name')" required>
                         <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
                     </UFormGroup>
 
-                    <UFormGroup name="file" :label="$t('common.file')" class="flex-1">
+                    <UFormGroup class="flex-1" name="file" :label="$t('common.file')">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UInput
@@ -127,11 +127,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton block class="flex-1" color="black" @click="isOpen = false">
+                        <UButton class="flex-1" block color="black" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('common.save') }}
                         </UButton>
                     </UButtonGroup>

@@ -105,9 +105,9 @@ const playerMarkersFiltered = computedAsync(async () =>
     <LControl position="topleft">
         <UTooltip v-if="ownMarker" :text="$t('common.my_location')" :popper="{ placement: 'right' }">
             <UButton
+                class="inset-0 border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                 icon="i-mdi-my-location"
                 block
-                class="inset-0 border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                 @click="async () => await goto({ x: ownMarker!.x, y: ownMarker!.y }, false)"
             />
         </UTooltip>

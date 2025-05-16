@@ -75,7 +75,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                         {{ $t('components.calendar.FindCalendarsModal.title') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -93,7 +93,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
                     icon="i-mdi-calendar"
                 />
 
-                <ul v-else role="list" class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                <ul v-else class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800" role="list">
                     <li
                         v-for="calendar in data?.calendars"
                         :key="calendar.id"
@@ -130,7 +130,7 @@ async function subscribeToCalendar(calendarId: number, subscribe: boolean): Prom
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton class="flex-1" color="black" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

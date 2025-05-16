@@ -51,7 +51,7 @@ const { game } = useAppConfig();
                     v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
                     class="inline-flex items-center gap-1"
                 >
-                    <UIcon name="i-mdi-island" class="size-5" />
+                    <UIcon class="size-5" name="i-mdi-island" />
                     <GenericTime :value="colleague.props?.absenceBegin" type="date" />
                     <span>{{ $t('common.to') }}</span>
                     <GenericTime :value="colleague.props?.absenceEnd" type="date" />

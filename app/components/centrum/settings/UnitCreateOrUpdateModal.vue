@@ -143,20 +143,20 @@ onMounted(async () => updateUnitInForm());
                             </template>
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
+                    <UFormGroup class="flex-1" name="name" :label="$t('common.name')">
                         <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
                     </UFormGroup>
 
-                    <UFormGroup name="initials" :label="$t('common.initials')" class="flex-1">
+                    <UFormGroup class="flex-1" name="initials" :label="$t('common.initials')">
                         <UInput v-model="state.initials" name="initials" type="text" :placeholder="$t('common.initials')" />
                     </UFormGroup>
 
-                    <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                    <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
                         <UInput
                             v-model="state.description"
                             name="description"
@@ -165,7 +165,7 @@ onMounted(async () => updateUnitInForm());
                         />
                     </UFormGroup>
 
-                    <UFormGroup name="attributes" :label="$t('common.attributes', 2)" class="flex-1">
+                    <UFormGroup class="flex-1" name="attributes" :label="$t('common.attributes', 2)">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.attributes"
@@ -193,14 +193,14 @@ onMounted(async () => updateUnitInForm());
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
+                    <UFormGroup class="flex-1" name="color" :label="$t('common.color')">
                         <ColorPickerClient v-model="state.color" />
                     </UFormGroup>
 
                     <UFormGroup
+                        class="flex-1"
                         name="homePostal"
                         :label="`${$t('common.department')} ${$t('common.postal_code')}`"
-                        class="flex-1"
                     >
                         <UInput
                             v-model="state.homePostal"
@@ -230,11 +230,11 @@ onMounted(async () => updateUnitInForm());
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :loading="!canSubmit" :disabled="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :loading="!canSubmit" :disabled="!canSubmit">
                             <template v-if="unit && unit?.id">
                                 {{ $t('components.centrum.units.update_unit') }}
                             </template>

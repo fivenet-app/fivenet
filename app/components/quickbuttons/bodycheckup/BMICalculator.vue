@@ -27,7 +27,7 @@ onBeforeMount(() => bmiCalculate());
         </h3>
         <div>
             <div>
-                <label for="height" class="block text-sm font-medium leading-6">
+                <label class="block text-sm font-medium leading-6" for="height">
                     {{ $t('components.bodycheckup.height') }}
                 </label>
                 <div>
@@ -35,11 +35,11 @@ onBeforeMount(() => bmiCalculate());
                         <UInput
                             v-model="height"
                             v-maska
-                            data-maska="###"
                             name="height"
                             type="text"
                             :placeholder="$t('components.bodycheckup.height')"
                             :label="$t('components.bodycheckup.height')"
+                            data-maska="###"
                         />
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                             <span class="sm:text-sm">cm</span>
@@ -49,7 +49,7 @@ onBeforeMount(() => bmiCalculate());
             </div>
 
             <div>
-                <label for="mass" class="block text-sm font-medium leading-6">
+                <label class="block text-sm font-medium leading-6" for="mass">
                     {{ $t('components.bodycheckup.mass') }}
                 </label>
                 <div>
@@ -57,11 +57,11 @@ onBeforeMount(() => bmiCalculate());
                         <UInput
                             v-model="mass"
                             v-maska
-                            data-maska="###,##"
                             name="mass"
                             type="text"
                             :placeholder="$t('components.bodycheckup.mass')"
                             :label="$t('components.bodycheckup.mass')"
+                            data-maska="###,##"
                         />
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                             <span class="sm:text-sm">kg</span>

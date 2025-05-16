@@ -81,12 +81,12 @@ watchOnce(opened, async () => {
     </template>
     <UPopover v-else :ui="{ container: 'max-w-[50%]' }">
         <UButton
-            v-bind="$attrs"
-            variant="link"
-            :padded="false"
             class="line-clamp-2 inline-flex w-full items-center gap-1 whitespace-normal break-words p-px"
             :class="buttonClass"
+            variant="link"
+            :padded="false"
             :trailing-icon="!hideTrailing ? 'i-mdi-chevron-down' : undefined"
+            v-bind="$attrs"
             @click="opened = true"
         >
             <slot name="title" :document="document" :loading="loading">
@@ -153,7 +153,7 @@ watchOnce(opened, async () => {
 
                     <div>
                         <UBadge v-if="document.state" class="inline-flex gap-1" size="xs">
-                            <UIcon name="i-mdi-note-check" class="size-5" />
+                            <UIcon class="size-5" name="i-mdi-note-check" />
                             <span>
                                 {{ document.state }}
                             </span>
@@ -172,7 +172,7 @@ watchOnce(opened, async () => {
                         </div>
 
                         <div v-if="document.deletedAt" class="flex flex-row items-center gap-1 font-bold">
-                            <UIcon name="i-mdi-delete" class="mr-1.5 size-5 shrink-0" />
+                            <UIcon class="mr-1.5 size-5 shrink-0" name="i-mdi-delete" />
                             <span>{{ $t('common.deleted') }}</span>
                         </div>
                     </div>

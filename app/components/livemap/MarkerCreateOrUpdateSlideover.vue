@@ -128,7 +128,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
-        <UForm :schema="schema" :state="state" class="flex flex-1" @submit="onSubmitThrottle">
+        <UForm class="flex flex-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
                 :ui="{
@@ -151,10 +151,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </h3>
 
                         <UButton
+                            class="-my-1"
                             color="gray"
                             variant="ghost"
                             icon="i-mdi-window-close"
-                            class="-my-1"
                             @click="
                                 $emit('close');
                                 isOpen = false;
@@ -167,7 +167,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="name" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="name">
                                     {{ $t('common.name') }}
                                 </label>
                             </dt>
@@ -179,7 +179,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="description" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="description">
                                     {{ $t('common.description') }}
                                 </label>
                             </dt>
@@ -196,7 +196,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="expiresAt" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="expiresAt">
                                     {{ $t('common.expires_at') }}
                                 </label>
                             </dt>
@@ -214,7 +214,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="color" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="color">
                                     {{ $t('common.color') }}
                                 </label>
                             </dt>
@@ -226,7 +226,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="markerType" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="markerType">
                                     {{ $t('common.marker') }}
                                 </label>
                             </dt>
@@ -261,7 +261,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                         >
                             <dt class="text-sm font-medium leading-6">
-                                <label for="circleRadius" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="circleRadius">
                                     {{ $t('common.radius') }}
                                 </label>
                             </dt>
@@ -283,7 +283,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                         >
                             <dt class="text-sm font-medium leading-6">
-                                <label for="icon" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="icon">
                                     {{ $t('common.icon') }}
                                 </label>
                             </dt>
@@ -298,14 +298,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ !marker ? $t('common.create') : $t('common.save') }}
                         </UButton>
 
                         <UButton
+                            class="flex-1"
                             color="black"
                             block
-                            class="flex-1"
                             @click="
                                 $emit('close');
                                 isOpen = false;

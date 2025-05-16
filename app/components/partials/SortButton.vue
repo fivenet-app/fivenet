@@ -43,11 +43,11 @@ function changeColumn(col: string): void {
     <div class="flex gap-2">
         <ClientOnly v-if="fields.length > 1">
             <USelectMenu
+                class="w-full"
                 :model-value="sort.column"
                 :placeholder="$t('common.na')"
                 value-attribute="value"
                 :options="fields"
-                class="w-full"
                 @update:model-value="changeColumn($event)"
             >
                 <template #label>

@@ -76,9 +76,9 @@ const version = APP_VERSION;
     <UDashboardPanelContent>
         <UDashboardSection :title="$t('components.debug_info.title')" :description="$t('components.debug_info.subtitle')">
             <UFormGroup
+                class="grid grid-cols-2 items-center gap-2"
                 name="version"
                 :label="$t('components.debug_info.version')"
-                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <div class="inline-flex w-full justify-between">
@@ -89,9 +89,9 @@ const version = APP_VERSION;
 
             <UFormGroup
                 v-if="activeChar"
+                class="grid grid-cols-2 items-center gap-2"
                 name="activeCharId"
                 :label="$t('components.debug_info.active_char_id')"
-                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <div class="inline-flex w-full justify-between">
@@ -104,9 +104,9 @@ const version = APP_VERSION;
 
             <UFormGroup
                 v-if="activeChar"
+                class="grid grid-cols-2 items-center gap-2"
                 name="activeCharJob"
                 :label="$t('common.job')"
-                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <div class="inline-flex w-full justify-between">
@@ -117,9 +117,9 @@ const version = APP_VERSION;
 
             <UFormGroup
                 v-if="accessTokenExpiration"
+                class="grid grid-cols-2 items-center gap-2"
                 name="accessTokenExpiration"
                 :label="$t('components.debug_info.access_token_expiration')"
-                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <GenericTime :value="accessTokenExpiration" ago />
@@ -127,9 +127,9 @@ const version = APP_VERSION;
             </UFormGroup>
 
             <UFormGroup
+                class="grid grid-cols-2 items-center gap-2"
                 name="nuiInfo"
                 :label="$t('components.debug_info.nui_info')"
-                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
@@ -137,9 +137,9 @@ const version = APP_VERSION;
             </UFormGroup>
 
             <UFormGroup
+                class="grid grid-cols-2 items-center gap-2"
                 name="status"
                 :label="$t('common.status')"
-                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 {{ $t('common.active') }}: {{ wsInitiated ? $t('common.yes') : $t('common.no') }}<br />
@@ -147,9 +147,9 @@ const version = APP_VERSION;
             </UFormGroup>
 
             <UFormGroup
+                class="grid grid-cols-2 items-center gap-2"
                 name="debugFunctions"
                 :label="$t('components.debug_info.debug_functions')"
-                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <UButtonGroup class="flex w-full break-words" orientation="vertical">
@@ -178,9 +178,9 @@ const version = APP_VERSION;
             </UFormGroup>
 
             <UFormGroup
+                class="grid grid-cols-2 items-center gap-2"
                 name="permissions"
                 :label="$t('components.debug_info.perms')"
-                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <UAccordion
@@ -192,13 +192,13 @@ const version = APP_VERSION;
                         <p v-if="!activeChar">
                             {{ $t('components.debug_info.no_char_selected') }}
                         </p>
-                        <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                        <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
                             <li
                                 v-for="perm in permissions"
                                 :key="perm"
                                 class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
                             >
-                                <UIcon name="i-mdi-key" class="size-5 shrink-0 text-gray-400" />
+                                <UIcon class="size-5 shrink-0 text-gray-400" name="i-mdi-key" />
                                 <div class="ml-4 flex min-w-0 flex-1 gap-2">
                                     <span class="truncate font-medium">
                                         {{ perm }}

@@ -60,7 +60,7 @@ const isDev = import.meta.dev;
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
         <div class="flex h-full flex-col items-center justify-center">
-            <UButton icon="i-mdi-home" :label="$t('common.home')" to="/" color="black" class="absolute top-4 z-10" />
+            <UButton class="absolute top-4 z-10" icon="i-mdi-home" :label="$t('common.home')" to="/" color="black" />
 
             <UCard class="w-full max-w-md bg-white/75 backdrop-blur dark:bg-white/5">
                 <template #header>
@@ -128,9 +128,9 @@ const isDev = import.meta.dev;
                     <div class="flex flex-col gap-2">
                         <div class="flex w-full gap-2">
                             <UButton
+                                class="flex-1"
                                 color="primary"
                                 block
-                                class="flex-1"
                                 size="lg"
                                 :disabled="buttonDisabled"
                                 @click="handleError()"
@@ -139,8 +139,8 @@ const isDev = import.meta.dev;
                             </UButton>
 
                             <UButton
-                                block
                                 class="flex-1"
+                                block
                                 size="lg"
                                 color="green"
                                 :disabled="buttonDisabled"
@@ -152,8 +152,8 @@ const isDev = import.meta.dev;
                             <!-- @vue-ignore -->
                             <UButton
                                 v-if="error && (error.statusMessage || error.message)"
-                                block
                                 class="flex-1"
+                                block
                                 size="lg"
                                 color="amber"
                                 @click="copyError"

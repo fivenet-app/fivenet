@@ -104,7 +104,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                         {{ $t('components.centrum.take_dispatch.title') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 

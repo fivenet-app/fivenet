@@ -181,15 +181,15 @@ function changeQuestionType(qt: string): void {
 </script>
 
 <template>
-    <UForm v-if="question" :schema="schema" :state="question" class="flex items-center gap-2">
-        <UIcon name="i-mdi-drag-horizontal" class="size-7" />
+    <UForm v-if="question" class="flex items-center gap-2" :schema="schema" :state="question">
+        <UIcon class="size-7" name="i-mdi-drag-horizontal" />
 
         <UFormGroup name="data.data.oneofKind">
             <ClientOnly>
                 <USelectMenu
                     v-model="question.data!.data.oneofKind"
-                    :options="questionTypes"
                     class="w-40 max-w-40"
+                    :options="questionTypes"
                     @update:model-value="changeQuestionType($event)"
                 >
                     <template #label>
@@ -219,7 +219,7 @@ function changeQuestionType(qt: string): void {
                     <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" />
                 </UFormGroup>
 
-                <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
                     <UTextarea v-model="question.description" type="text" :rows="3" :placeholder="$t('common.description')" />
                 </UFormGroup>
             </div>
@@ -244,7 +244,7 @@ function changeQuestionType(qt: string): void {
                             />
                         </template>
 
-                        <NuxtImg v-if="imageUrl" :src="imageUrl" class="min-h-4 min-w-4" loading="lazy" />
+                        <NuxtImg v-if="imageUrl" class="min-h-4 min-w-4" :src="imageUrl" loading="lazy" />
                     </div>
                 </template>
 
@@ -260,7 +260,7 @@ function changeQuestionType(qt: string): void {
                 <template v-else-if="question.data!.data.oneofKind === 'freeText'">
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2">
-                            <UFormGroup name="data.data.freeText.minLength" :label="$t('common.min')" class="flex-1">
+                            <UFormGroup class="flex-1" name="data.data.freeText.minLength" :label="$t('common.min')">
                                 <UInput
                                     v-model="question.data!.data.freeText.minLength"
                                     type="number"
@@ -269,7 +269,7 @@ function changeQuestionType(qt: string): void {
                                 />
                             </UFormGroup>
 
-                            <UFormGroup name="data.data.freeText.maxLength" :label="$t('common.max')" class="flex-1">
+                            <UFormGroup class="flex-1" name="data.data.freeText.maxLength" :label="$t('common.max')">
                                 <UInput
                                     v-model="question.data!.data.freeText.maxLength"
                                     type="number"
@@ -286,10 +286,10 @@ function changeQuestionType(qt: string): void {
                 <template v-else-if="question.data!.data.oneofKind === 'singleChoice'">
                     <div class="flex flex-col gap-2">
                         <UFormGroup
+                            class="flex-1"
                             name="data.data.singleChoices.choices"
                             :label="$t('common.option', 2)"
                             required
-                            class="flex-1"
                         >
                             <VueDraggable v-model="question.data!.data.singleChoice.choices" class="flex flex-col gap-2">
                                 <div
@@ -297,21 +297,21 @@ function changeQuestionType(qt: string): void {
                                     :key="idx"
                                     class="inline-flex items-center gap-2"
                                 >
-                                    <UIcon name="i-mdi-drag-horizontal" class="size-6" />
+                                    <UIcon class="size-6" name="i-mdi-drag-horizontal" />
                                     <URadio disabled />
                                     <UFormGroup :name="`data.data.singleChoices.choices.${idx}`">
                                         <UInput
                                             v-model="question.data!.data.singleChoice.choices[idx]"
-                                            type="text"
                                             class="w-full"
+                                            type="text"
                                         />
                                     </UFormGroup>
 
                                     <UTooltip :text="$t('components.qualifications.remove_option')">
                                         <UButton
+                                            class="flex-initial"
                                             icon="i-mdi-close"
                                             :ui="{ rounded: 'rounded-full' }"
-                                            class="flex-initial"
                                             @click="question.data!.data.singleChoice.choices.splice(idx, 1)"
                                         />
                                     </UTooltip>
@@ -320,9 +320,9 @@ function changeQuestionType(qt: string): void {
 
                             <UTooltip :text="$t('components.qualifications.add_option')">
                                 <UButton
+                                    :class="question.data!.data.singleChoice.choices.length ? 'mt-2' : ''"
                                     icon="i-mdi-plus"
                                     :ui="{ rounded: 'rounded-full' }"
-                                    :class="question.data!.data.singleChoice.choices.length ? 'mt-2' : ''"
                                     @click="question.data!.data.singleChoice.choices.push('')"
                                 />
                             </UTooltip>
@@ -341,27 +341,27 @@ function changeQuestionType(qt: string): void {
                             />
                         </UFormGroup>
 
-                        <UFormGroup :label="$t('common.option', 2)" required class="flex-1">
+                        <UFormGroup class="flex-1" :label="$t('common.option', 2)" required>
                             <VueDraggable v-model="question.data!.data.multipleChoice.choices" class="flex flex-col gap-2">
                                 <div
                                     v-for="(_, idx) in question.data!.data.multipleChoice?.choices"
                                     :key="idx"
                                     class="inline-flex items-center gap-2"
                                 >
-                                    <UIcon name="i-mdi-drag-horizontal" class="size-6" />
+                                    <UIcon class="size-6" name="i-mdi-drag-horizontal" />
                                     <UCheckbox disabled />
                                     <UInput
                                         v-model="question.data!.data.multipleChoice.choices[idx]"
+                                        class="w-full"
                                         type="text"
                                         block
-                                        class="w-full"
                                     />
 
                                     <UTooltip :text="$t('components.qualifications.remove_option')">
                                         <UButton
+                                            class="flex-initial"
                                             icon="i-mdi-close"
                                             :ui="{ rounded: 'rounded-full' }"
-                                            class="flex-initial"
                                             @click="question.data!.data.multipleChoice.choices.splice(idx, 1)"
                                         />
                                     </UTooltip>
@@ -370,9 +370,9 @@ function changeQuestionType(qt: string): void {
 
                             <UTooltip :text="$t('components.qualifications.add_option')">
                                 <UButton
+                                    :class="question.data!.data.multipleChoice.choices.length ? 'mt-2' : ''"
                                     icon="i-mdi-plus"
                                     :ui="{ rounded: 'rounded-full' }"
-                                    :class="question.data!.data.multipleChoice.choices.length ? 'mt-2' : ''"
                                     @click="question.data!.data.multipleChoice.choices.push('')"
                                 />
                             </UTooltip>
@@ -384,11 +384,11 @@ function changeQuestionType(qt: string): void {
                     v-if="question.data!.data.oneofKind !== 'separator' && question.data!.data.oneofKind !== 'image'"
                     class="mt-2 flex flex-row gap-2"
                 >
-                    <UFormGroup name="answer.answerKey" :label="$t('common.answer_key')" class="flex-1">
+                    <UFormGroup class="flex-1" name="answer.answerKey" :label="$t('common.answer_key')">
                         <UTextarea v-model="question.answer!.answerKey" :placeholder="$t('common.answer_key')" />
                     </UFormGroup>
 
-                    <UFormGroup name="points" :label="$t('common.points', 2)" class="max-w-24">
+                    <UFormGroup class="max-w-24" name="points" :label="$t('common.points', 2)">
                         <UInput
                             v-model="question.points"
                             type="number"
@@ -403,9 +403,9 @@ function changeQuestionType(qt: string): void {
 
         <UTooltip :text="$t('components.qualifications.remove_question')">
             <UButton
+                class="mt-1 flex-initial self-start"
                 icon="i-mdi-close"
                 :ui="{ rounded: 'rounded-full' }"
-                class="mt-1 flex-initial self-start"
                 @click="$emit('delete')"
             />
         </UTooltip>

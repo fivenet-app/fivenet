@@ -28,17 +28,17 @@ const content = useVModel(props, 'content', emit);
                         {{ $t('common.source_code') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
             <div class="mx-auto flex w-full max-w-screen-xl flex-1 flex-col">
-                <UTextarea v-model="content" autoresize class="flex flex-1 flex-col" :ui="{ base: 'flex-1' }" />
+                <UTextarea v-model="content" class="flex flex-1 flex-col" autoresize :ui="{ base: 'flex-1' }" />
             </div>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                    <UButton class="flex-1" block color="black" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

@@ -111,7 +111,7 @@ watchDebounced(
                         <p
                             class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
                         >
-                            <UIcon v-if="error" name="i-mdi-alert-circle" class="size-5" />
+                            <UIcon v-if="error" class="size-5" name="i-mdi-alert-circle" />
                             <USkeleton v-else-if="stat.value === undefined" class="h-8 w-[175px]" />
                             <template v-else>
                                 {{

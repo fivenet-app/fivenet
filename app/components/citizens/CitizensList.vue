@@ -181,7 +181,7 @@ defineShortcuts({
 
 <template>
     <UDashboardToolbar>
-        <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+        <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
             <div class="flex w-full flex-row gap-2">
                 <UFormGroup class="flex-1" :label="$t('common.search')">
                     <UInput
@@ -206,17 +206,17 @@ defineShortcuts({
                         v-maska
                         type="text"
                         name="dateofbirth"
-                        data-maska="##[./]##[./]####"
                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
                         block
+                        data-maska="##[./]##[./]####"
                     />
                 </UFormGroup>
 
                 <UFormGroup
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted').value"
+                    class="flex flex-initial flex-col"
                     name="wanted"
                     :label="$t('components.citizens.CitizensList.only_wanted')"
-                    class="flex flex-initial flex-col"
                     :ui="{ container: 'flex-1 flex' }"
                 >
                     <div class="flex flex-1 items-center">
@@ -240,9 +240,9 @@ defineShortcuts({
                     <div class="flex flex-row gap-2">
                         <UFormGroup
                             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber').value"
+                            class="flex-1"
                             name="phoneNumber"
                             :label="$t('common.phone_number')"
-                            class="flex-1"
                         >
                             <UInput
                                 v-model="query.phoneNumber"
@@ -255,9 +255,9 @@ defineShortcuts({
 
                         <UFormGroup
                             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'TrafficInfractionPoints').value"
+                            class="flex-1"
                             name="trafficInfractionPoints"
                             :label="$t('common.traffic_infraction_points', 2)"
-                            class="flex-1"
                         >
                             <UInput
                                 v-model="query.trafficInfractionPoints"
@@ -271,9 +271,9 @@ defineShortcuts({
 
                         <UFormGroup
                             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines').value"
+                            class="flex-1"
                             name="openFines"
                             :label="$t('components.citizens.CitizensList.open_fine')"
-                            class="flex-1"
                         >
                             <UInput
                                 v-model="query.openFines"
@@ -300,12 +300,12 @@ defineShortcuts({
     <UTable
         v-else
         v-model:sort="sort"
+        class="flex-1"
         :loading="loading"
         :columns="columns"
         :rows="data?.users"
         :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
         sort-mode="manual"
-        class="flex-1"
     >
         <template #name-data="{ row: citizen }">
             <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">

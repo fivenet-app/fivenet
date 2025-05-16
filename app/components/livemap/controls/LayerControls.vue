@@ -32,9 +32,9 @@ const groupedLayers = computed(() => {
         <UTooltip :text="$t('common.layer', 2)" :popper="{ placement: 'left' }">
             <UPopover :popper="{ arrow: true }" :ui="{ arrow: { base: 'mt-2' } }">
                 <UButton
+                    class="border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                     size="xl"
                     icon="i-mdi-layers-triple"
-                    class="border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
                     :ui="{ icon: { base: '!size-8' } }"
                 />
 

@@ -117,8 +117,8 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                     <Pane :size="65">
                         <div class="max-h-full overflow-y-auto">
                             <div class="mb-2 px-2">
-                                <UForm :schema="schema" :state="query" class="flex flex-row gap-2" @submit="refresh()">
-                                    <UFormGroup name="postal" :label="$t('common.postal')" class="flex-1">
+                                <UForm class="flex flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                                    <UFormGroup class="flex-1" name="postal" :label="$t('common.postal')">
                                         <UInput
                                             ref="input"
                                             v-model="query.postal"
@@ -131,7 +131,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                                             </template>
                                         </UInput>
                                     </UFormGroup>
-                                    <UFormGroup name="id" :label="$t('common.id')" class="flex-1">
+                                    <UFormGroup class="flex-1" name="id" :label="$t('common.id')">
                                         <UInput
                                             v-model="query.id"
                                             type="text"

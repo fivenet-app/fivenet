@@ -157,8 +157,8 @@ defineShortcuts({
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="schema" :state="query" class="flex w-full flex-row gap-2" @submit="refresh()">
-                <UFormGroup name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
+            <UForm class="flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                <UFormGroup class="flex-1" name="licensePlate" :label="$t('common.license_plate')">
                     <UInput
                         ref="input"
                         v-model="query.licensePlate"
@@ -174,11 +174,11 @@ defineShortcuts({
                     </UInput>
                 </UFormGroup>
 
-                <UFormGroup v-if="!hideVehicleModell" name="model" :label="$t('common.model')" class="flex-1">
+                <UFormGroup v-if="!hideVehicleModell" class="flex-1" name="model" :label="$t('common.model')">
                     <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" block />
                 </UFormGroup>
 
-                <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.owner')" class="flex-1">
+                <UFormGroup v-if="userId === undefined" class="flex-1" name="selectedUser" :label="$t('common.owner')">
                     <ClientOnly>
                         <UInputMenu
                             v-model="selectedUser"
@@ -228,15 +228,15 @@ defineShortcuts({
     <UTable
         v-else
         v-model:sort="sort"
+        class="flex-1"
         :loading="loading"
         :columns="columns"
         :rows="data?.vehicles"
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
         sort-mode="manual"
-        class="flex-1"
     >
         <template #plate-data="{ row: vehicle }">
-            <LicensePlate :plate="vehicle.plate" class="mr-2" />
+            <LicensePlate class="mr-2" :plate="vehicle.plate" />
         </template>
 
         <template #type-data="{ row: vehicle }">

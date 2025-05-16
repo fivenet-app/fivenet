@@ -91,7 +91,7 @@ const columns = [
 <template>
     <UForm :state="query" :schema="schema">
         <div class="flex flex-row flex-wrap gap-2">
-            <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
+            <UFormGroup class="flex-1" name="closed" :label="$t('common.close', 2)">
                 <ClientOnly>
                     <USelectMenu
                         v-model="query.closed"
@@ -120,6 +120,7 @@ const columns = [
     />
     <UTable
         v-else
+        class="flex-1"
         :loading="loading"
         :columns="columns"
         :rows="data?.relations"
@@ -127,7 +128,6 @@ const columns = [
             icon: 'i-mdi-file-multiple',
             label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
         }"
-        class="flex-1"
     >
         <template #document-data="{ row: relation }">
             <DocumentInfoPopover :document="relation.document" />

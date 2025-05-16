@@ -98,11 +98,11 @@ watch(data, async () => {
                 <div class="flex justify-between gap-2">
                     <div class="flex gap-2">
                         <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1">
-                            <UIcon name="i-mdi-clock" class="size-4" />
+                            <UIcon class="size-4" name="i-mdi-clock" />
                             {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}s
                         </UBadge>
                         <UBadge class="inline-flex gap-1">
-                            <UIcon name="i-mdi-question-mark" class="size-4" />
+                            <UIcon class="size-4" name="i-mdi-question-mark" />
                             {{ $t('common.count') }}: {{ data?.questionCount }}
                             {{ $t('common.question', data?.questionCount ?? 1) }}
                         </UBadge>
@@ -130,11 +130,11 @@ watch(data, async () => {
                 </UAlert>
                 <UButton
                     v-else-if="!data?.examUser?.endedAt"
+                    class="w-full"
                     size="xl"
                     color="gray"
                     icon="i-mdi-play"
                     block
-                    class="w-full"
                     @click="takeExam(false)"
                 >
                     {{ $t('components.qualifications.take_test') }}

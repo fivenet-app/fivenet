@@ -358,9 +358,9 @@ const categoriesLoading = ref(false);
 
 <template>
     <UForm
+        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         @submit="onSubmitThrottle"
     >
         <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
@@ -384,8 +384,8 @@ const categoriesLoading = ref(false);
         <UDashboardPanelContent class="p-0 sm:pb-0">
             <UTabs
                 v-model="selectedTab"
-                :items="items"
                 class="flex flex-1 flex-col"
+                :items="items"
                 :ui="{
                     wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
@@ -424,13 +424,13 @@ const categoriesLoading = ref(false);
                                 />
                             </UFormGroup>
 
-                            <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row" required>
+                            <UFormGroup class="flex-1 flex-row" name="color" :label="$t('common.color')" required>
                                 <div class="flex flex-1 gap-1">
                                     <ColorPickerTW v-model="state.color" class="flex-1" />
                                 </div>
                             </UFormGroup>
 
-                            <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
+                            <UFormGroup class="flex-1" name="icon" :label="$t('common.icon')">
                                 <div class="flex flex-1 gap-1">
                                     <IconSelectMenu
                                         v-model="state.icon"
@@ -549,10 +549,10 @@ const categoriesLoading = ref(false);
                         </UFormGroup>
 
                         <UFormGroup
+                            class="flex flex-1 flex-col overflow-y-hidden"
                             name="content"
                             :label="`${$t('common.content')} ${$t('common.template')}`"
                             required
-                            class="flex flex-1 flex-col overflow-y-hidden"
                             :ui="{ container: 'flex flex-1 overflow-y-hidden' }"
                         >
                             <ClientOnly>

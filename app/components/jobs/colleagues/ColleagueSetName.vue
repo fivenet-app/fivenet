@@ -96,7 +96,7 @@ const editing = ref(false);
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-2" @submit="onSubmitThrottle">
+    <UForm class="flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <div>
             <UTooltip v-if="!editing" :text="$t('common.edit')">
                 <UButton icon="i-mdi-pencil" @click="editing = true" />

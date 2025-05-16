@@ -23,7 +23,7 @@ const leeway = computed(() => props.reduction / 100);
             >
                 <template #icon>
                     <div class="flex gap-1 truncate">
-                        <UIcon name="i-mdi-attach-money" class="text-primary h-10 w-10" />
+                        <UIcon class="text-primary h-10 w-10" name="i-mdi-attach-money" />
 
                         <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
                             {{ $t('common.fine') }}
@@ -55,7 +55,7 @@ const leeway = computed(() => props.reduction / 100);
             >
                 <template #icon>
                     <div class="flex gap-1 truncate">
-                        <UIcon name="i-mdi-clock" class="text-primary h-10 w-10" />
+                        <UIcon class="text-primary h-10 w-10" name="i-mdi-clock" />
 
                         <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
                             {{ $t('common.detention_time') }}
@@ -92,7 +92,7 @@ const leeway = computed(() => props.reduction / 100);
             >
                 <template #icon>
                     <div class="flex gap-1 truncate">
-                        <UIcon name="i-mdi-car" class="text-primary h-10 w-10" />
+                        <UIcon class="text-primary h-10 w-10" name="i-mdi-car" />
 
                         <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
                             {{ $t('common.traffic_infraction_points', 2) }}
@@ -129,7 +129,7 @@ const leeway = computed(() => props.reduction / 100);
             >
                 <template #icon>
                     <div class="flex gap-1 truncate">
-                        <UIcon name="i-mdi-equal" class="text-primary h-10 w-10" />
+                        <UIcon class="text-primary h-10 w-10" name="i-mdi-equal" />
 
                         <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
                             {{ $t('common.total_count') }}

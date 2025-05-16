@@ -80,12 +80,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             {{ $t('components.auth.RegistrationForm.title') }}
         </h2>
 
-        <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+        <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UAlert v-if="!nuiEnabled" icon="i-mdi-info-circle">
                 <template #description>
                     <I18nT keypath="components.auth.RegistrationForm.subtitle">
                         <template #command>
-                            <UKbd size="md" :ui="{ size: { md: '' } }" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
+                            <UKbd class="h-7 min-w-[24px] text-[13px]" size="md" :ui="{ size: { md: '' } }">/fivenet</UKbd>
                         </template>
                     </I18nT>
                 </template>
@@ -103,7 +103,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <template #description>
                     <I18nT keypath="components.auth.RegistrationForm.open_server_account_management">
                         <template #command>
-                            <UKbd size="md" :ui="{ size: { md: '' } }" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
+                            <UKbd class="h-7 min-w-[24px] text-[13px]" size="md" :ui="{ size: { md: '' } }">/fivenet</UKbd>
                         </template>
                     </I18nT>
                 </template>
@@ -143,7 +143,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
                     </template>
                 </UInput>
-                <PasswordStrengthMeter :input="state.password" class="mt-2" />
+                <PasswordStrengthMeter class="mt-2" :input="state.password" />
             </UFormGroup>
 
             <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">

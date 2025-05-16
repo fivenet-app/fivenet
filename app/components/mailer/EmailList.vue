@@ -63,10 +63,10 @@ defineShortcuts({
 <template>
     <UDashboardPanelContent class="p-0 sm:pb-0">
         <div v-if="!loaded" class="space-y-2">
-            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
-            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
-            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
-            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
         </div>
 
         <template v-else>

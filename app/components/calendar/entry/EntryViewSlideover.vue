@@ -114,13 +114,13 @@ const canDo = computed(() => ({
                         </h3>
 
                         <div class="inline-flex gap-2">
-                            <UButton icon="i-mdi-share" class="-my-1" @click="copyLinkToClipboard()" />
+                            <UButton class="-my-1" icon="i-mdi-share" @click="copyLinkToClipboard()" />
 
                             <UButton
+                                class="-my-1"
                                 color="gray"
                                 variant="ghost"
                                 icon="i-mdi-window-close"
-                                class="-my-1"
                                 @click="isOpen = false"
                             />
                         </div>
@@ -140,8 +140,8 @@ const canDo = computed(() => ({
 
                 <template v-else>
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
-                        <UBadge color="black" class="inline-flex items-center gap-1" size="lg">
-                            <UIcon name="i-mdi-access-time" class="size-5" />
+                        <UBadge class="inline-flex items-center gap-1" color="black" size="lg">
+                            <UIcon class="size-5" name="i-mdi-access-time" />
                             <span>
                                 {{ $t('common.date') }}
                                 <GenericTime :value="entry?.startTime" type="long" />
@@ -155,8 +155,8 @@ const canDo = computed(() => ({
                             </span>
                         </UBadge>
 
-                        <UBadge color="black" class="inline-flex items-center gap-1" size="md">
-                            <UIcon name="i-mdi-calendar" class="size-5" />
+                        <UBadge class="inline-flex items-center gap-1" color="black" size="md">
+                            <UIcon class="size-5" name="i-mdi-calendar" />
                             <span>
                                 {{ $t('common.calendar') }}
                                 <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" size="lg" />
@@ -169,24 +169,24 @@ const canDo = computed(() => ({
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge :closed="entry.closed" />
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-account" class="size-5" />
+                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                            <UIcon class="size-5" name="i-mdi-account" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
                                 <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
                             </span>
                         </UBadge>
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-calendar" class="size-5" />
+                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                            <UIcon class="size-5" name="i-mdi-calendar" />
                             <span>
                                 {{ $t('common.created_at') }}
                                 <GenericTime :value="entry.createdAt" type="long" />
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="entry.updatedAt" color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-calendar-edit" class="size-5" />
+                        <UBadge v-if="entry.updatedAt" class="inline-flex gap-1" color="black" size="md">
+                            <UIcon class="size-5" name="i-mdi-calendar-edit" />
                             <span>
                                 {{ $t('common.updated_at') }}
                                 <GenericTime :value="entry.updatedAt" type="long" />
@@ -217,7 +217,7 @@ const canDo = computed(() => ({
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton class="flex-1" color="black" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

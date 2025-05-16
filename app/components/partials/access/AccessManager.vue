@@ -221,13 +221,13 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
         <AccessEntry
             v-for="(entry, idx) in access"
             :key="entry.id"
-            v-bind="$attrs"
             v-model="access[idx]!"
             :access-types="aTypes"
             :access-roles="accessRoles"
             :disabled="disabled"
             :show-required="showRequired"
             :jobs="jobsList"
+            v-bind="$attrs"
             @delete="access?.splice(idx, 1)"
         />
 

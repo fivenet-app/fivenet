@@ -56,8 +56,8 @@ onMounted(() => {
                     activeChar?.userId === colleagueSelf.colleague?.userId &&
                     can('JobsService.SetJobsUserProps').value
                 "
-                block
                 class="flex-1"
+                block
                 icon="i-mdi-island"
                 @click="
                     modal.open(SelfServicePropsAbsenceDateModal, {
@@ -68,7 +68,7 @@ onMounted(() => {
             >
                 <span>{{ $t('components.jobs.self_service.set_absence_date') }}</span>
             </UButton>
-            <UButton block class="flex-1" icon="i-mdi-camera" @click="modal.open(SelfServicePropsProfilePictureModal, {})">
+            <UButton class="flex-1" block icon="i-mdi-camera" @click="modal.open(SelfServicePropsProfilePictureModal, {})">
                 <span>{{ $t('components.jobs.self_service.set_profile_picture') }}</span>
             </UButton>
         </div>

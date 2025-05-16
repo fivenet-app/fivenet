@@ -25,7 +25,7 @@ defineOptions({
 <template>
     <div class="flex flex-col gap-2">
         <div class="flex flex-row flex-wrap gap-1">
-            <UBadge v-for="entry in jobs" :key="entry.id" color="black" class="inline-flex gap-1" size="md" v-bind="$attrs">
+            <UBadge v-for="entry in jobs" :key="entry.id" class="inline-flex gap-1" color="black" size="md" v-bind="$attrs">
                 <span class="size-2 rounded-full border bg-info-500" />
                 <span>
                     <template v-if="entry.jobLabel">
@@ -45,7 +45,7 @@ defineOptions({
         </div>
 
         <div class="flex flex-row flex-wrap gap-1">
-            <UBadge v-for="entry in users" :key="entry.id" color="black" class="inline-flex gap-1" size="md" v-bind="$attrs">
+            <UBadge v-for="entry in users" :key="entry.id" class="inline-flex gap-1" color="black" size="md" v-bind="$attrs">
                 <span class="size-2 rounded-full bg-amber-500" />
 
                 <span :title="`${$t('common.id')} ${entry.userId}`">

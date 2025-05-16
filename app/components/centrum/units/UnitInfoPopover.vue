@@ -31,7 +31,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
         </span>
     </template>
     <UPopover v-else>
-        <UButton variant="outline" :padded="false" size="xs" class="inline-flex items-center gap-1 p-0.5">
+        <UButton class="inline-flex items-center gap-1 p-0.5" variant="outline" :padded="false" size="xs">
             <slot name="before" />
 
             <span>
@@ -41,7 +41,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                 </template>
             </span>
 
-            <UIcon v-if="assignment?.expiresAt" name="i-mdi-timer" class="size-4 text-amber-600" />
+            <UIcon v-if="assignment?.expiresAt" class="size-4 text-amber-600" name="i-mdi-timer" />
         </UButton>
 
         <template #panel>
@@ -53,7 +53,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                 </UBadge>
 
                 <p v-if="assignment?.expiresAt" class="inline-flex items-center gap-1 text-sm font-normal">
-                    <UIcon name="i-mdi-timer" class="size-4 text-amber-600" />
+                    <UIcon class="size-4 text-amber-600" name="i-mdi-timer" />
                     {{
                         useLocaleTimeAgo(toDate(assignment?.expiresAt, timeCorrection), {
                             showSecond: true,

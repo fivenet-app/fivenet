@@ -14,7 +14,7 @@ const { isOpen } = useSlideover();
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false" class="flex flex-1">
+    <USlideover class="flex flex-1" :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
         <UCard
             class="flex flex-1 flex-col"
             :ui="{
@@ -35,7 +35,7 @@ const { isOpen } = useSlideover();
                         </h3>
                     </div>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -105,7 +105,7 @@ const { isOpen } = useSlideover();
             </div>
 
             <template #footer>
-                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                <UButton class="flex-1" color="black" block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

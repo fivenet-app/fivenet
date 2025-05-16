@@ -98,7 +98,7 @@ const selectedTab = computed({
             />
             <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" icon="i-mdi-account" />
 
-            <UTabs v-else v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
+            <UTabs v-else v-model="selectedTab" class="w-full" :items="items" :ui="{ list: { rounded: '' } }">
                 <template #accountInfo>
                     <UDashboardPanelContent>
                         <UDashboardSection
@@ -106,9 +106,9 @@ const selectedTab = computed({
                             :description="$t('components.auth.AccountInfo.subtitle')"
                         >
                             <UFormGroup
+                                class="grid grid-cols-2 items-center gap-2"
                                 name="username"
                                 :label="$t('common.username')"
-                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <div class="inline-flex w-full justify-between gap-2">
@@ -123,9 +123,9 @@ const selectedTab = computed({
                             </UFormGroup>
 
                             <UFormGroup
+                                class="grid grid-cols-2 items-center gap-2"
                                 name="license"
                                 :label="$t('components.auth.AccountInfo.license')"
-                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <div class="inline-flex w-full justify-between gap-2">
@@ -137,9 +137,9 @@ const selectedTab = computed({
                             </UFormGroup>
 
                             <UFormGroup
+                                class="grid grid-cols-2 items-center gap-2"
                                 name="change_username"
                                 :label="$t('components.auth.AccountInfo.change_username')"
-                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <UButton @click="modal.open(ChangeUsernameModal, {})">
@@ -148,9 +148,9 @@ const selectedTab = computed({
                             </UFormGroup>
 
                             <UFormGroup
+                                class="grid grid-cols-2 items-center gap-2"
                                 name="change_password"
                                 :label="$t('components.auth.AccountInfo.change_password')"
-                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <UButton @click="modal.open(ChangePasswordModal, {})">

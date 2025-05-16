@@ -13,8 +13,6 @@ defineOptions({
 
 <template>
     <HTMLContentRenderer
-        v-bind="$attrs"
-        :value="value"
         class="tiptap prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert min-w-full max-w-full break-words"
         :class="[
             'hover:prose-a:text-blue-500',
@@ -47,5 +45,7 @@ defineOptions({
             'prose-video:my-0.5',
             'prose-hr:my-0.5',
         ]"
+        :value="value"
+        v-bind="$attrs"
     />
 </template>

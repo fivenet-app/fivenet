@@ -191,7 +191,7 @@ const isOpen = ref(false);
                         </UButton>
                     </div>
 
-                    <UTabs v-model="selectedTab" :items="items" class="w-full" :unmount="true">
+                    <UTabs v-model="selectedTab" class="w-full" :items="items" :unmount="true">
                         <template #profile>
                             <UContainer>
                                 <CitizenProfile :user="user" />
@@ -220,7 +220,7 @@ const isOpen = ref(false);
             </UDashboardPanelContent>
         </UDashboardPanel>
 
-        <UDashboardPanel v-if="user" v-model="isOpen" collapsible side="right" class="max-w-72 flex-1">
+        <UDashboardPanel v-if="user" v-model="isOpen" class="max-w-72 flex-1" collapsible side="right">
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup class="hidden lg:inline-flex">

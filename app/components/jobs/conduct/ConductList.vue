@@ -181,9 +181,9 @@ const columns = [
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+            <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row gap-2">
-                    <UFormGroup v-if="hideUserSearch !== true" name="user" :label="$t('common.search')" class="flex-1">
+                    <UFormGroup v-if="hideUserSearch !== true" class="flex-1" name="user" :label="$t('common.search')">
                         <ClientOnly>
                             <USelectMenu
                                 ref="input"
@@ -216,7 +216,7 @@ const columns = [
                                 </template>
 
                                 <template #option="{ option: colleague }">
-                                    <ColleagueName :colleague="colleague" birthday class="truncate" />
+                                    <ColleagueName class="truncate" :colleague="colleague" birthday />
                                 </template>
 
                                 <template #option-empty="{ query: search }">
@@ -230,7 +230,7 @@ const columns = [
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="types" :label="$t('common.type')" class="flex-1">
+                    <UFormGroup class="flex-1" name="types" :label="$t('common.type')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.types"
@@ -261,14 +261,14 @@ const columns = [
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="id" :label="$t('common.id')" class="flex-initial">
+                    <UFormGroup class="flex-initial" name="id" :label="$t('common.id')">
                         <UInput v-model="query.id" type="text" name="id" :placeholder="$t('common.id')" />
                     </UFormGroup>
 
                     <UFormGroup
+                        class="flex flex-initial flex-col"
                         name="showExpired"
                         :label="$t('components.jobs.conduct.List.show_expired')"
-                        class="flex flex-initial flex-col"
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
@@ -282,11 +282,11 @@ const columns = [
 
                     <UFormGroup
                         v-if="can('JobsConductService.CreateConductEntry').value"
+                        class="flex-initial"
                         :label="$t('common.create')"
                         trailing-icon="i-mdi-plus"
                         color="gray"
                         truncate
-                        class="flex-initial"
                     >
                         <UButton
                             @click="
@@ -313,12 +313,12 @@ const columns = [
     <UTable
         v-else
         v-model:sort="sort"
+        class="flex-1"
         :loading="loading"
         :columns="columns"
         :rows="data?.entries"
         :empty-state="{ icon: 'i-mdi-list-status', label: $t('common.not_found', [$t('common.entry', 2)]) }"
         sort-mode="manual"
-        class="flex-1"
     >
         <template #createdAt-data="{ row: conduct }">
             <GenericTime :value="conduct.createdAt" />

@@ -94,7 +94,7 @@ function updateReasonField(value: string): void {
                             {{ $t('components.centrum.update_unit_status.title') }}: {{ unit.name }} ({{ unit.initials }})
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -102,7 +102,7 @@ function updateReasonField(value: string): void {
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="status" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="status">
                                     {{ $t('common.status') }}
                                 </label>
                             </dt>
@@ -124,7 +124,7 @@ function updateReasonField(value: string): void {
                                             :disabled="state.status == item.status"
                                             @click="state.status = item.status ?? StatusUnit.UNAVAILABLE"
                                         >
-                                            <UIcon :name="item.icon" class="size-5 shrink-0" />
+                                            <UIcon class="size-5 shrink-0" :name="item.icon" />
                                             <span class="mt-1">
                                                 {{
                                                     item.status
@@ -139,12 +139,12 @@ function updateReasonField(value: string): void {
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="code" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="code">
                                     {{ $t('common.code') }}
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="code" class="flex-1">
+                                <UFormGroup class="flex-1" name="code">
                                     <UInput
                                         v-model="state.code"
                                         type="text"
@@ -157,12 +157,12 @@ function updateReasonField(value: string): void {
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="reason" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="reason">
                                     {{ $t('common.reason') }}
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="reason" class="flex-1" required>
+                                <UFormGroup class="flex-1" name="reason" required>
                                     <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                                 </UFormGroup>
                             </dd>
@@ -172,7 +172,7 @@ function updateReasonField(value: string): void {
                             class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                         >
                             <dt class="text-sm font-medium leading-6">
-                                <label for="unitStatus" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="unitStatus">
                                     {{ $t('common.predefined', 2) }}
                                     {{ $t('common.reason', 2) }}
                                 </label>
@@ -199,11 +199,11 @@ function updateReasonField(value: string): void {
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('common.update') }}
                         </UButton>
                     </UButtonGroup>

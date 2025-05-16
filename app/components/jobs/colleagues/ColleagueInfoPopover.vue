@@ -79,11 +79,11 @@ watchOnce(opened, async () => {
     </template>
     <UPopover v-else>
         <UButton
-            v-bind="$attrs"
+            class="inline-flex items-center gap-1 p-px"
             variant="link"
             :padded="false"
-            class="inline-flex items-center gap-1 p-px"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
+            v-bind="$attrs"
             @click="opened = true"
         >
             <slot name="before" />

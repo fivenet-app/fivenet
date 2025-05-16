@@ -31,7 +31,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
     >
         <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon :name="getDocAtivityIcon(entry.activityType)" class="size-7" />
+                <UIcon class="size-7" :name="getDocAtivityIcon(entry.activityType)" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -79,7 +79,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             <template #default="{ open }">
                 <div class="flex space-x-3">
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                        <UIcon :name="getDocAtivityIcon(entry.activityType)" class="size-7" />
+                        <UIcon class="size-7" :name="getDocAtivityIcon(entry.activityType)" />
                     </div>
 
                     <div class="flex-1 space-y-1">
@@ -90,8 +90,8 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <UIcon
-                                        name="i-mdi-chevron-down"
                                         :class="[open ? '!rotate-180' : '', 'size-5 transition-transform']"
+                                        name="i-mdi-chevron-down"
                                     />
                                 </span>
                             </h3>

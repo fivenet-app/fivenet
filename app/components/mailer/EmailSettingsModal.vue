@@ -66,15 +66,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.settings') }} - {{ selectedEmail?.email }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div class="flex flex-col gap-2">
-                    <UFormGroup name="emails" class="flex-1" :label="$t('common.blocklist')">
+                    <UFormGroup class="flex-1" name="emails" :label="$t('common.blocklist')">
                         <div class="flex flex-col gap-1">
                             <div v-for="(_, idx) in state.emails" :key="idx" class="flex items-center gap-1">
-                                <UFormGroup :name="`emails.${idx}`" class="flex-1">
+                                <UFormGroup class="flex-1" :name="`emails.${idx}`">
                                     <UInput
                                         v-model="state.emails[idx]"
                                         type="text"
@@ -94,10 +94,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                         <UButton
                             v-if="!disabled || canManage"
+                            :class="state.emails.length ? 'mt-2' : ''"
                             :ui="{ rounded: 'rounded-full' }"
                             icon="i-mdi-plus"
                             :disabled="disabled || !canSubmit || state.emails.length >= 25"
-                            :class="state.emails.length ? 'mt-2' : ''"
                             @click="state.emails.push('')"
                         />
                     </UFormGroup>
@@ -111,7 +111,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
                     </UFormGroup>
 
-                    <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
+                    <UFormGroup class="flex-1" name="signature" :label="$t('common.signature')">
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.signature"
@@ -124,16 +124,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
                         <UButton
                             v-if="!disabled || canManage"
+                            class="flex-1"
                             type="submit"
                             :label="$t('common.save')"
                             block
-                            class="flex-1"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
                         />

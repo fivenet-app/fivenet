@@ -117,7 +117,7 @@ const editing = ref(false);
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-2" @submit="onSubmitThrottle">
+    <UForm class="flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <div>
             <UTooltip v-if="!editing" :text="$t('common.edit')">
                 <UButton icon="i-mdi-pencil" @click="editing = true" />
@@ -142,9 +142,9 @@ const editing = ref(false);
                 <UBadge
                     v-for="(attribute, idx) in state.labels"
                     :key="attribute.name"
-                    :style="{ backgroundColor: attribute.color }"
                     class="justify-between gap-2"
                     :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                    :style="{ backgroundColor: attribute.color }"
                     size="lg"
                 >
                     <span class="truncate">
@@ -153,15 +153,15 @@ const editing = ref(false);
 
                     <UTooltip v-if="editing" :text="$t('common.remove')">
                         <UButton
-                            variant="link"
-                            icon="i-mdi-close"
-                            :padded="false"
-                            :ui="{ rounded: 'rounded-full' }"
                             :class="
                                 isColourBright(hexToRgb(attribute.color, RGBBlack)!)
                                     ? '!bg-white/20 !text-black'
                                     : '!bg-black/20 !text-white'
                             "
+                            variant="link"
+                            icon="i-mdi-close"
+                            :padded="false"
+                            :ui="{ rounded: 'rounded-full' }"
                             @click="
                                 changed = true;
                                 state.labels.splice(idx, 1);

@@ -331,7 +331,7 @@ const { game } = useAppConfig();
     />
 
     <UDashboardToolbar>
-        <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
+        <UForm class="flex w-full flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
             <template v-if="query.userMode === TimeclockUserMode.SELF">
                 <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
                     <UTabs
@@ -342,11 +342,11 @@ const { game } = useAppConfig();
                 </div>
 
                 <div class="flex flex-1 justify-between gap-2">
-                    <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
+                    <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
                         <DateRangePickerPopoverClient
                             v-model="query.date"
-                            mode="date"
                             class="flex-1"
+                            mode="date"
                             :popover="{ class: 'flex-1' }"
                             :date-picker="{
                                 disabledDates: [
@@ -359,9 +359,9 @@ const { game } = useAppConfig();
 
                     <UFormGroup
                         v-if="query.mode !== TimeclockMode.TIMELINE"
+                        class="flex flex-initial flex-col"
                         name="perDay"
                         :label="$t('common.per_day')"
-                        class="flex flex-initial flex-col"
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
@@ -427,7 +427,7 @@ const { game } = useAppConfig();
                                     </template>
 
                                     <template #option="{ option: colleague }">
-                                        <ColleagueName :colleague="colleague" birthday class="truncate" />
+                                        <ColleagueName class="truncate" :colleague="colleague" birthday />
                                     </template>
 
                                     <template #option-empty="{ query: search }">
@@ -443,6 +443,7 @@ const { game } = useAppConfig();
 
                         <div class="flex flex-1 flex-row gap-1">
                             <UFormGroup
+                                class="flex-1"
                                 name="end"
                                 :label="
                                     query.mode === TimeclockMode.WEEKLY
@@ -451,13 +452,12 @@ const { game } = useAppConfig();
                                           ? $t('common.day_view')
                                           : $t('common.time_range')
                                 "
-                                class="flex-1"
                             >
                                 <div v-if="query.mode === TimeclockMode.DAILY" class="flex flex-1 flex-col gap-1 sm:flex-row">
                                     <UButton
+                                        class="flex-initial"
                                         square
                                         icon="i-mdi-chevron-left"
-                                        class="flex-initial"
                                         :disabled="isBefore(query.date.end, dateLowerLimit)"
                                         @click="query.date.end = subDays(query.date.end, 1)"
                                     />
@@ -474,9 +474,9 @@ const { game } = useAppConfig();
                                     />
 
                                     <UButton
+                                        class="flex-initial"
                                         square
                                         icon="i-mdi-chevron-right"
-                                        class="flex-initial"
                                         :disabled="isFuture(addDays(query.date.end, 1))"
                                         @click="query.date.end = addDays(query.date.end, 1)"
                                     />
@@ -486,9 +486,9 @@ const { game } = useAppConfig();
                                     class="flex flex-1 flex-col gap-1 sm:flex-row"
                                 >
                                     <UButton
+                                        class="flex-initial"
                                         square
                                         icon="i-mdi-chevron-left"
-                                        class="flex-initial"
                                         :disabled="isBefore(query.date.end, dateLowerLimit)"
                                         @click="query.date.end = subWeeks(query.date.end, 1)"
                                     />
@@ -506,9 +506,9 @@ const { game } = useAppConfig();
                                     />
 
                                     <UButton
+                                        class="flex-initial"
                                         square
                                         icon="i-mdi-chevron-right"
-                                        class="flex-initial"
                                         :disabled="isFuture(addWeeks(query.date.end, 1))"
                                         @click="query.date.end = addWeeks(query.date.end, 1)"
                                     />
@@ -516,8 +516,8 @@ const { game } = useAppConfig();
                                 <DateRangePickerPopoverClient
                                     v-else
                                     v-model="query.date"
-                                    mode="date"
                                     class="flex-1"
+                                    mode="date"
                                     :popover="{ class: 'flex-1' }"
                                     :date-picker="{
                                         disabledDates: [
@@ -530,9 +530,9 @@ const { game } = useAppConfig();
 
                             <UFormGroup
                                 v-if="query.mode !== TimeclockMode.DAILY && query.mode !== TimeclockMode.TIMELINE"
+                                class="flex flex-initial flex-col"
                                 name="perDay"
                                 :label="$t('common.per_day')"
-                                class="flex flex-initial flex-col"
                                 :ui="{ container: 'flex-1 flex' }"
                             >
                                 <div class="flex flex-1 items-center">
@@ -565,6 +565,7 @@ const { game } = useAppConfig();
     <UTable
         v-else-if="query.mode !== TimeclockMode.TIMELINE"
         v-model:sort="sort"
+        class="flex-1"
         :loading="loading"
         :columns="columns"
         :rows="entries"
@@ -573,7 +574,6 @@ const { game } = useAppConfig();
             label: $t('common.not_found', [$t('common.entry', 2)]),
         }"
         sort-mode="manual"
-        class="flex-1"
     >
         <template #caption>
             <caption>
@@ -648,12 +648,12 @@ const { game } = useAppConfig();
     <div class="flex flex-row items-center">
         <Pagination
             v-model="page"
+            class="flex-1"
             :pagination="data?.pagination"
             :loading="loading"
             :refresh="refresh"
             :hide-text="query.mode === TimeclockMode.TIMELINE"
             :hide-buttons="query.mode === TimeclockMode.TIMELINE"
-            class="flex-1"
         >
             <template #default>
                 <div>
@@ -664,7 +664,7 @@ const { game } = useAppConfig();
                         :popper="{ placement: 'left' }"
                         :ui="{ shortcuts: 'inline-flex' }"
                     >
-                        <UIcon name="i-mdi-information-outline" class="size-4" />
+                        <UIcon class="size-4" name="i-mdi-information-outline" />
                     </UTooltip>
                 </div>
             </template>
@@ -673,8 +673,8 @@ const { game } = useAppConfig();
 
     <UAccordion
         v-if="showStats && data && data.stats"
-        :items="[{ slot: 'stats', label: $t('common.stats') }]"
         class="px-3 py-0.5"
+        :items="[{ slot: 'stats', label: $t('common.stats') }]"
     >
         <template #stats>
             <TimeclockStatsBlock

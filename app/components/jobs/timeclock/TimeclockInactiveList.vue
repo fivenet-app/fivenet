@@ -121,15 +121,15 @@ const { game } = useAppConfig();
             <div class="flex w-full flex-col">
                 <UButton
                     v-if="can('JobsTimeclockService.ListTimeclock').value"
+                    class="mb-2 place-self-end"
                     :to="{ name: 'jobs-timeclock' }"
                     icon="i-mdi-arrow-left"
-                    class="mb-2 place-self-end"
                 >
                     {{ $t('common.timeclock') }}
                 </UButton>
 
-                <UForm ref="form" :schema="schema" :state="state" class="flex w-full flex-row gap-2" @submit="refresh()">
-                    <UFormGroup name="days" :label="$t('common.time_ago.day', 2)" class="flex-1">
+                <UForm ref="form" class="flex w-full flex-row gap-2" :schema="schema" :state="state" @submit="refresh()">
+                    <UFormGroup class="flex-1" name="days" :label="$t('common.time_ago.day', 2)">
                         <UInput
                             v-model="state.days"
                             name="days"
@@ -153,12 +153,12 @@ const { game } = useAppConfig();
     <UTable
         v-else
         v-model:sort="sort"
+        class="flex-1"
         :loading="loading"
         :columns="columns"
         :rows="data?.colleagues"
         :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
         sort-mode="manual"
-        class="flex-1"
     >
         <template #name-data="{ row: colleague }">
             <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">

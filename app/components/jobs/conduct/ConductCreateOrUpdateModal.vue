@@ -133,7 +133,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -141,7 +141,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="type" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="type">
                                     {{ $t('common.type') }}
                                 </label>
                             </dt>
@@ -176,7 +176,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="targetUser" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="targetUser">
                                     {{ $t('common.target') }}
                                 </label>
                             </dt>
@@ -211,7 +211,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
 
                                             <template #option="{ option: colleague }">
-                                                <ColleagueName :colleague="colleague" birthday class="truncate" />
+                                                <ColleagueName class="truncate" :colleague="colleague" birthday />
                                             </template>
 
                                             <template #option-empty="{ query: search }">
@@ -228,7 +228,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="message" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="message">
                                     {{ $t('common.message') }}
                                 </label>
                             </dt>
@@ -245,7 +245,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                <label for="expiresAt" class="block text-sm font-medium leading-6">
+                                <label class="block text-sm font-medium leading-6" for="expiresAt">
                                     {{ $t('common.expires_at') }}?
                                 </label>
                             </dt>
@@ -264,11 +264,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
                         </UButton>
                     </UButtonGroup>

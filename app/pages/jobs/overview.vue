@@ -62,7 +62,7 @@ const showRadioFrequency = ref(false);
                         <UCard v-if="jobProps?.radioFrequency">
                             <template #header>
                                 <h3 class="inline-flex items-center gap-1 text-lg font-semibold">
-                                    <UIcon name="i-mdi-radio-handheld" class="size-7" />
+                                    <UIcon class="size-7" name="i-mdi-radio-handheld" />
 
                                     <span>{{ $t('common.radio_frequency') }}</span>
                                 </h3>

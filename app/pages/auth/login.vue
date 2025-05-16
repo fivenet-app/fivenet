@@ -95,7 +95,7 @@ const canSubmit = ref(true);
         <div class="space-y-4">
             <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
-            <UTabs v-model="selectedTab" :items="items" class="w-full">
+            <UTabs v-model="selectedTab" class="w-full" :items="items">
                 <template #login>
                     <LoginForm v-model="canSubmit" />
                 </template>

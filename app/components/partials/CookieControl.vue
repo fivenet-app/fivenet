@@ -31,7 +31,7 @@ const open = ref(cookiesState.value === null);
                         >
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="open = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="open = false" />
                 </div>
             </template>
 
@@ -41,9 +41,9 @@ const open = ref(cookiesState.value === null);
                 <UButtonGroup class="inline-flex w-full flex-1">
                     <UButton
                         v-if="website.links.privacyPolicy"
+                        class="flex-1"
                         variant="link"
                         block
-                        class="flex-1"
                         :to="website.links.privacyPolicy"
                         :external="true"
                     >
@@ -52,16 +52,16 @@ const open = ref(cookiesState.value === null);
 
                     <UButton
                         v-if="website.links.imprint"
+                        class="flex-1"
                         variant="link"
                         block
-                        class="flex-1"
                         :to="website.links.imprint"
                         :external="true"
                     >
                         {{ $t('common.imprint') }}
                     </UButton>
 
-                    <UButton variant="link" block class="flex-1" to="/api/clear-site-data">
+                    <UButton class="flex-1" variant="link" block to="/api/clear-site-data">
                         {{ $t('components.CookieControl.clear_data') }}
                     </UButton>
                 </UButtonGroup>
@@ -71,14 +71,14 @@ const open = ref(cookiesState.value === null);
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="open = false">
+                    <UButton class="flex-1" color="black" block @click="open = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 
                     <UButton
+                        class="flex-1"
                         block
                         color="error"
-                        class="flex-1"
                         :variant="cookiesState === false ? 'soft' : 'solid'"
                         @click="
                             cookiesState = false;
@@ -89,9 +89,9 @@ const open = ref(cookiesState.value === null);
                     </UButton>
 
                     <UButton
+                        class="flex-1"
                         block
                         color="green"
-                        class="flex-1"
                         :variant="cookiesState === true ? 'soft' : 'solid'"
                         @click="
                             cookiesState = true;
@@ -104,6 +104,6 @@ const open = ref(cookiesState.value === null);
             </template>
         </UCard>
 
-        <UButton icon="i-mdi-cookie-cog" size="xl" class="fixed bottom-32 right-6" @click="open = true" />
+        <UButton class="fixed bottom-32 right-6" icon="i-mdi-cookie-cog" size="xl" @click="open = true" />
     </div>
 </template>

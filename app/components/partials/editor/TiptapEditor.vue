@@ -400,8 +400,8 @@ onBeforeUnmount(() => {
                 <UButtonGroup>
                     <UTooltip :text="$t('components.partials.TipTapEditor.bold')" :popper="{ placement: 'top' }">
                         <UButton
-                            :disabled="!editor.can().chain().focus().toggleBold().run()"
                             :class="{ 'is-active': editor.isActive('bold') }"
+                            :disabled="!editor.can().chain().focus().toggleBold().run()"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-bold"
@@ -410,8 +410,8 @@ onBeforeUnmount(() => {
                     </UTooltip>
                     <UTooltip :text="$t('components.partials.TipTapEditor.italic')" :popper="{ placement: 'top' }">
                         <UButton
-                            :disabled="!editor.can().chain().focus().toggleItalic().run()"
                             :class="{ 'is-active': editor.isActive('italic') }"
+                            :disabled="!editor.can().chain().focus().toggleItalic().run()"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-italic"
@@ -429,8 +429,8 @@ onBeforeUnmount(() => {
                     </UTooltip>
                     <UTooltip :text="$t('components.partials.TipTapEditor.strike')" :popper="{ placement: 'top' }">
                         <UButton
-                            :disabled="!editor.can().chain().focus().toggleStrike().run()"
                             :class="{ 'is-active': editor.isActive('strike') }"
+                            :disabled="!editor.can().chain().focus().toggleStrike().run()"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-strikethrough"
@@ -465,8 +465,8 @@ onBeforeUnmount(() => {
                     </UTooltip>
                     <UTooltip :text="$t('components.partials.TipTapEditor.code')" :popper="{ placement: 'top' }">
                         <UButton
-                            :disabled="!editor.can().chain().focus().toggleCode().run()"
                             :class="{ 'is-active': editor.isActive('code') }"
+                            :disabled="!editor.can().chain().focus().toggleCode().run()"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-code-braces"
@@ -527,6 +527,7 @@ onBeforeUnmount(() => {
                 <UTooltip :text="$t('components.partials.TipTapEditor.font_family')" :popper="{ placement: 'top' }">
                     <UInputMenu
                         v-model="selectedFont"
+                        class="max-w-40"
                         name="selectedFont"
                         option-attribute="label"
                         :search-attributes="['label']"
@@ -534,7 +535,6 @@ onBeforeUnmount(() => {
                         :placeholder="$t('common.font', 1)"
                         search-lazy
                         :search-placeholder="$t('common.search_field')"
-                        class="max-w-40"
                     >
                         <template #label>
                             <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{ selectedFont.label }}</span>
@@ -739,10 +739,10 @@ onBeforeUnmount(() => {
                     </UTooltip>
                     <UTooltip :text="$t('components.partials.TipTapEditor.task_list')" :popper="{ placement: 'top' }">
                         <UButton
+                            :class="{ 'is-active': editor.isActive('taskList') }"
                             icon="i-mdi-format-list-checks"
                             color="white"
                             variant="ghost"
-                            :class="{ 'is-active': editor.isActive('taskList') }"
                             @click="editor.chain().focus().toggleTaskList().run()"
                         />
                     </UTooltip>
@@ -820,7 +820,7 @@ onBeforeUnmount(() => {
                                 <slot name="linkModal" :editor="editor" :state="linkState" />
 
                                 <UButtonGroup class="mt-2 w-full">
-                                    <UButton type="submit" icon="i-mdi-link" class="flex-1" :label="$t('common.link')" />
+                                    <UButton class="flex-1" type="submit" icon="i-mdi-link" :label="$t('common.link')" />
 
                                     <UButton
                                         :disabled="!editor.isActive('link')"
@@ -997,7 +997,6 @@ onBeforeUnmount(() => {
 
         <TiptapEditorContent
             ref="contentRef"
-            :editor="editor"
             class="min-h-0 w-full min-w-0 max-w-full flex-auto overflow-y-auto"
             :class="[
                 wrapperClass,
@@ -1031,6 +1030,7 @@ onBeforeUnmount(() => {
                 'prose-video:my-0.5',
                 'prose-hr:my-0.5',
             ]"
+            :editor="editor"
         />
 
         <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">

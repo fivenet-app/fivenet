@@ -138,7 +138,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
 
                     <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5">
-                        <UIcon name="i-mdi-delete" class="size-5 shrink-0" />
+                        <UIcon class="size-5 shrink-0" name="i-mdi-delete" />
                         <span>{{ $t('common.deleted') }}</span>
                     </div>
 
@@ -170,7 +170,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <div v-else-if="canComment" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
-                <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
+                <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
                     <UFormGroup name="comment">
                         <ClientOnly>
                             <TiptapEditor v-model="state.comment" wrapper-class="min-h-44" comment-mode :limit="1250" />

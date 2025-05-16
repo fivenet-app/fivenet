@@ -324,7 +324,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </UTooltip>
                 </div>
 
-                <UDivider :label="$t('common.attributes', 2)" class="mb-1" />
+                <UDivider class="mb-1" :label="$t('common.attributes', 2)" />
 
                 <div class="flex flex-col gap-2">
                     <div class="flex flex-row gap-1">
@@ -345,7 +345,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                             <template #panel>
                                 <div class="p-4">
-                                    <UForm :state="state" :schema="schema" class="flex flex-col gap-1" @submit="pasteRole">
+                                    <UForm class="flex flex-col gap-1" :state="state" :schema="schema" @submit="pasteRole">
                                         <UFormGroup name="input">
                                             <UInput v-model="state.input" type="text" name="input" />
                                         </UFormGroup>
@@ -373,7 +373,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 >
                                     <div class="flex flex-row items-center gap-2">
                                         <div class="flex-1">
-                                            <p :title="`${$t('common.id')}: ${perm.id}`" class="text-gray-900 dark:text-white">
+                                            <p class="text-gray-900 dark:text-white" :title="`${$t('common.id')}: ${perm.id}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </p>
                                             <p class="text-base-500">

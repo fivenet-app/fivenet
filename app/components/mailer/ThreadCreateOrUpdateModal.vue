@@ -111,7 +111,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal fullscreen>
-        <UForm :schema="schema" :state="state" class="flex flex-1 flex-col" @submit="onSubmitThrottle">
+        <UForm class="flex flex-1 flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 :ui="{
                     ring: '',
@@ -126,17 +126,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('components.mailer.create_thread') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div class="mx-auto">
                     <div class="flex w-full max-w-screen-xl flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
-                            <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
+                            <UFormGroup class="w-full flex-1" name="sender" :label="$t('common.sender')">
                                 <ClientOnly>
                                     <UInput
                                         v-if="emails.length === 1"
+                                        class="pt-1"
                                         type="text"
                                         disabled
                                         :model-value="
@@ -146,18 +147,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             selectedEmail?.email ??
                                             $t('common.none')
                                         "
-                                        class="pt-1"
                                     />
                                     <USelectMenu
                                         v-else
                                         v-model="selectedEmail"
+                                        class="pt-1"
                                         :options="emails"
                                         :placeholder="$t('common.mail')"
                                         searchable
                                         :searchable-placeholder="$t('common.search_field')"
                                         :search-attributes="['label', 'email']"
                                         trailing
-                                        class="pt-1"
                                         by="id"
                                     >
                                         <template #label>
@@ -211,12 +211,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </ClientOnly>
                             </UFormGroup>
 
-                            <UFormGroup name="title" :label="$t('common.title')" class="w-full flex-1">
+                            <UFormGroup class="w-full flex-1" name="title" :label="$t('common.title')">
                                 <UInput
                                     v-model="state.title"
+                                    class="font-semibold"
                                     type="text"
                                     size="lg"
-                                    class="font-semibold"
                                     :placeholder="$t('common.title')"
                                     :disabled="!canSubmit"
                                     :ui="{ icon: { trailing: { pointer: '' } } }"
@@ -234,7 +234,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UInput>
                             </UFormGroup>
 
-                            <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.recipient', 2)">
+                            <UFormGroup class="w-full flex-1" name="recipients" :label="$t('common.recipient', 2)">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.recipients"
@@ -288,9 +288,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
 
                         <UFormGroup
+                            class="flex flex-1 flex-col"
                             name="content"
                             :label="$t('common.message')"
-                            class="flex flex-1 flex-col"
                             :ui="{
                                 container: 'flex flex-1 flex-col',
                                 label: { base: 'flex flex-1' },
@@ -324,15 +324,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton block class="flex-1" color="black" @click="isOpen = false">
+                        <UButton class="flex-1" block color="black" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
                         <UButton
+                            class="flex-1"
                             type="submit"
                             :disabled="!canSubmit"
                             block
-                            class="flex-1"
                             :label="$t('components.mailer.send')"
                             trailing-icon="i-mdi-paper-airplane"
                         />

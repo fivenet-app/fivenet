@@ -110,12 +110,12 @@ const canSubmit = ref(true);
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="schema" :state="query" class="flex-1" @submit="refresh()">
+            <UForm class="flex-1" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row gap-2">
                     <UFormGroup
+                        class="flex flex-initial flex-col"
                         name="includeRead"
                         :label="$t('components.notifications.include_read')"
-                        class="flex flex-initial flex-col"
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
@@ -125,7 +125,7 @@ const canSubmit = ref(true);
                         </div>
                     </UFormGroup>
 
-                    <UFormGroup name="categories" :label="$t('common.category', 2)" class="flex-1">
+                    <UFormGroup class="flex-1" name="categories" :label="$t('common.category', 2)">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.categories"
@@ -151,7 +151,7 @@ const canSubmit = ref(true);
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup label="&nbsp;" class="flex-initial">
+                    <UFormGroup class="flex-initial" label="&nbsp;">
                         <UButton
                             icon="i-mdi-notification-clear-all"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
@@ -180,13 +180,13 @@ const canSubmit = ref(true);
                 icon="i-mdi-bell"
             />
 
-            <ul v-else role="list" class="flex flex-1 flex-col divide-y divide-gray-100 dark:divide-gray-800">
+            <ul v-else class="flex flex-1 flex-col divide-y divide-gray-100 dark:divide-gray-800" role="list">
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"
                     class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 sm:px-4 dark:border-gray-900"
                 >
-                    <UIcon :name="notificationCategoryToIcon(not.category)" class="size-6" />
+                    <UIcon class="size-6" :name="notificationCategoryToIcon(not.category)" />
 
                     <div class="flex flex-1 gap-x-2">
                         <div class="min-w-0 flex-auto gap-y-1">

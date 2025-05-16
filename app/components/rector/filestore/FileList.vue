@@ -149,11 +149,11 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
 
         <UTable
             v-else
+            class="flex-1"
             :loading="loading"
             :columns="columns"
             :rows="files?.files"
             :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
-            class="flex-1"
         >
             <template #actions-data="{ row: file }">
                 <UTooltip :text="$t('common.show')">
@@ -187,8 +187,8 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             </template>
 
             <template #preview-data="{ row: file }">
-                <UIcon v-if="!previewTypes.some((ext) => file.name.endsWith(ext))" name="i-mdi-file-outline" class="size-8" />
-                <NuxtImg v-else :src="`/api/filestore/${file.name}`" class="max-h-24 max-w-32" loading="lazy" />
+                <UIcon v-if="!previewTypes.some((ext) => file.name.endsWith(ext))" class="size-8" name="i-mdi-file-outline" />
+                <NuxtImg v-else class="max-h-24 max-w-32" :src="`/api/filestore/${file.name}`" loading="lazy" />
             </template>
 
             <template #fileSize-data="{ row: file }">

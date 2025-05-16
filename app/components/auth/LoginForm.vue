@@ -61,7 +61,7 @@ function togglePasswordVisibility() {
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+    <UForm class="space-y-4" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UFormGroup name="username" :label="$t('common.username')">
             <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
         </UFormGroup>
@@ -96,7 +96,7 @@ function togglePasswordVisibility() {
             </p>
 
             <template v-else>
-                <UDivider :label="$t('common.or')" orientation="horizontal" class="mt-2" />
+                <UDivider class="mt-2" :label="$t('common.or')" orientation="horizontal" />
 
                 <div v-for="provider in login.providers" :key="provider.name">
                     <UButton
@@ -109,9 +109,9 @@ function togglePasswordVisibility() {
                     >
                         <NuxtImg
                             v-if="!provider.icon?.startsWith('i-')"
+                            class="size-5"
                             :src="provider.icon"
                             :alt="provider.name"
-                            class="size-5"
                             placeholder-class="size-5"
                             loading="lazy"
                         />

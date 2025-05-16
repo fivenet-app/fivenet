@@ -47,7 +47,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                         {{ $t('common.unit') }}: {{ unit.initials }} - {{ unit.name }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -165,7 +165,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                 {{ $t('common.member', 0) }}
                             </span>
                             <div v-else class="rounded-md bg-neutral-100 dark:bg-base-900">
-                                <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">
+                                <ul class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800" role="list">
                                     <li
                                         v-for="user in unit.users"
                                         :key="user.userId"
@@ -173,9 +173,9 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     >
                                         <div class="flex flex-1 items-center">
                                             <CitizenInfoPopover
+                                                class="flex items-center justify-center"
                                                 :user="user.user"
                                                 show-avatar-in-name
-                                                class="flex items-center justify-center"
                                             />
                                         </div>
                                     </li>
@@ -219,7 +219,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
             </div>
 
             <template #footer>
-                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                <UButton class="flex-1" color="black" block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

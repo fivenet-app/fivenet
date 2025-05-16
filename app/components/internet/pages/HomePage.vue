@@ -93,9 +93,9 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
         >
             <template #title>
                 <NuxtImg
+                    class="mx-auto h-48"
                     src="/images/components/internet/homepage/logo.png"
                     :alt="$t('common.logo')"
-                    class="mx-auto h-48"
                     loading="lazy"
                 />
             </template>
@@ -103,12 +103,12 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
 
         <ULandingSection :ui="{ wrapper: 'pt-0 sm:pt-0 pb-6 sm:pb-6' }">
             <div class="flex w-full flex-1 flex-col items-center gap-1">
-                <UForm :schema="schema" :state="state" class="inline-flex gap-1" @submit="onSubmitThrottle">
+                <UForm class="inline-flex gap-1" :schema="schema" :state="state" @submit="onSubmitThrottle">
                     <UFormGroup name="search">
                         <UInput
                             v-model="state.search"
-                            type="text"
                             class="w-full"
+                            type="text"
                             size="xl"
                             :placeholder="$t('common.search')"
                             :disabled="!canSubmit"
@@ -158,7 +158,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                                 class="inline-flex items-center gap-1 hover:underline"
                                 @click="internetStore.goTo(`${result.domain?.name}.${result.domain?.tld?.name}`, result.path)"
                             >
-                                <UIcon name="i-mdi-web" class="size-6" />
+                                <UIcon class="size-6" name="i-mdi-web" />
                                 <h3 class="text-xl font-semibold">{{ result.title }}</h3>
                             </ULink>
                         </template>

@@ -26,7 +26,7 @@ watch(notificationsCount, () => {
 
 <template>
     <UDropdown v-slot="{ open }" class="w-full" :ui="{ width: 'w-full' }" :popper="{ strategy: 'absolute' }">
-        <UButton color="gray" variant="ghost" :class="[open && 'bg-gray-50 dark:bg-gray-800']" class="w-full">
+        <UButton class="w-full" :class="[open && 'bg-gray-50 dark:bg-gray-800']" color="gray" variant="ghost">
             <FiveNetLogo class="size-4" />
 
             <span class="truncate font-semibold text-gray-900 dark:text-white">FiveNet</span>
@@ -43,6 +43,7 @@ watch(notificationsCount, () => {
         >
             <UButton color="gray" variant="ghost" square @click="isNotificationsSlideoverOpen = true">
                 <UIcon
+                    class="size-5"
                     :name="
                         doNotDisturb
                             ? 'i-mdi-bell-off-outline'
@@ -50,7 +51,6 @@ watch(notificationsCount, () => {
                               ? 'i-mdi-notifications-none'
                               : 'i-mdi-notifications'
                     "
-                    class="size-5"
                 />
             </UButton>
         </UChip>

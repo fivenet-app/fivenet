@@ -58,9 +58,9 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
         />
         <DataNoDataBlock
             v-else-if="!chars || chars.length === 0"
+            class="w-full min-w-64"
             :type="$t('common.character', 2)"
             :retry="refresh"
-            class="w-full min-w-64"
         />
 
         <div v-else class="relative overflow-hidden rounded-lg">
@@ -68,10 +68,10 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
                 <CharacterSelectorCard
                     v-for="char in chars"
                     :key="char.char!.userId"
+                    class="basis-full sm:basis-1/3 lg:basis-1/4"
                     :char="char.char!"
                     :unavailable="!char.available"
                     :can-submit="canSubmit"
-                    class="basis-full sm:basis-1/3 lg:basis-1/4"
                     @selected="onSubmitThrottle($event)"
                 />
             </div>

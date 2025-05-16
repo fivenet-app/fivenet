@@ -99,18 +99,18 @@ const permCategoriesSorted = computed(() =>
 
                         <UButton variant="link" trailing-icon="i-mdi-refresh" color="primary" @click="refresh()" />
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </div>
             </template>
 
             <div>
                 <UAlert
+                    class="mb-2"
                     :ui="{
                         icon: { base: 'size-6' },
                     }"
                     icon="i-mdi-information-outline"
-                    class="mb-2"
                 >
                     <template #description>
                         {{ $t('components.rector.role_view.effective_permissions.description') }}
@@ -148,7 +148,7 @@ const permCategoriesSorted = computed(() =>
                             >
                                 <div class="flex flex-row items-center gap-2">
                                     <div class="flex-1">
-                                        <p :title="`${$t('common.id')}: ${perm.id}`" class="text-gray-900 dark:text-white">
+                                        <p class="text-gray-900 dark:text-white" :title="`${$t('common.id')}: ${perm.id}`">
                                             {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                         </p>
                                         <p class="text-base-500">
@@ -205,7 +205,7 @@ const permCategoriesSorted = computed(() =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton class="flex-1" color="black" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

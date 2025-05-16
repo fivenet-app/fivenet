@@ -71,7 +71,7 @@ const isOpen = ref(false);
                         </UButton>
                     </UButtonGroup>
 
-                    <UButton trailing-icon="i-mdi-pin" color="gray" class="2xl:hidden" truncate @click="isOpen = true">
+                    <UButton class="2xl:hidden" trailing-icon="i-mdi-pin" color="gray" truncate @click="isOpen = true">
                         <span class="hidden truncate sm:block">
                             {{ $t('common.pinned') }}
                         </span>
@@ -96,9 +96,9 @@ const isOpen = ref(false);
 
         <UDashboardPanel
             v-model="isOpen"
+            class="max-w-72"
             collapsible
             side="right"
-            class="max-w-72"
             breakpoint="2xl"
             :ui="{ collapsible: 'lg:!hidden 2xl:!flex', slideover: 'lg:!flex 2xl:hidden' }"
         >

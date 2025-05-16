@@ -108,8 +108,8 @@ watchDebounced(query, async () => refresh(), {
 
 <template>
     <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
-        <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
-            <UFormGroup v-if="userId === undefined" name="colleagues" :label="$t('common.search')" class="flex-1">
+        <UForm class="flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
+            <UFormGroup v-if="userId === undefined" class="flex-1" name="colleagues" :label="$t('common.search')">
                 <ClientOnly>
                     <USelectMenu
                         v-model="query.colleagues"
@@ -196,20 +196,20 @@ watchDebounced(query, async () => refresh(), {
     <div class="relative flex-1 overflow-x-auto">
         <DataErrorBlock
             v-if="error"
+            class="w-full"
             :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
             :error="error"
             :retry="refresh"
-            class="w-full"
         />
         <DataNoDataBlock
             v-else-if="data?.activity.length === 0"
+            class="w-full"
             icon="i-mdi-pulse"
             :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
-            class="w-full"
         />
 
         <div v-else-if="loading || data?.activity">
-            <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+            <ul class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
                 <template v-if="loading">
                     <li v-for="idx in 10" :key="idx" class="px-2 py-4">
                         <div class="flex space-x-3">

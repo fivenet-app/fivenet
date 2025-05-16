@@ -20,8 +20,8 @@ defineEmits<{
 
 <template>
     <UModal
-        :model-value="open"
         :class="dialogClass"
+        :model-value="open"
         :ui="{ width: 'w-full sm:max-w-5xl' }"
         @update:model-value="$emit('close')"
     >
@@ -32,7 +32,7 @@ defineEmits<{
                         {{ title }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
                 </div>
             </template>
 
@@ -41,7 +41,7 @@ defineEmits<{
             </div>
 
             <template #footer>
-                <UButton block class="flex-1" color="black" @click="$emit('close')">
+                <UButton class="flex-1" block color="black" @click="$emit('close')">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

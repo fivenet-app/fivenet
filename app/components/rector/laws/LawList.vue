@@ -69,7 +69,7 @@ function updateLaw(event: { id: number; law: Law }): void {
         <DataNoDataBlock v-else-if="!lawBooks || lawBooks.length === 0" icon="i-mdi-gavel" :type="$t('common.law', 2)" />
 
         <template v-else>
-            <ul role="list" class="space-y-3">
+            <ul class="space-y-3" role="list">
                 <li v-for="(book, idx) in lawBooks" :key="book.id">
                     <LawBookEntry
                         :id="`book-${lawBooks[idx]?.id}`"

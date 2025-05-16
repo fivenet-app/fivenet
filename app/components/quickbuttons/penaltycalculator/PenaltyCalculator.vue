@@ -197,19 +197,19 @@ const columns = [
     <div class="py-2">
         <div class="pb-2 sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.law', 2)])" class="mt-5" />
+                <DataPendingBlock v-if="loading" class="mt-5" :message="$t('common.loading', [$t('common.law', 2)])" />
                 <DataErrorBlock
                     v-else-if="error"
+                    class="mt-5"
                     :title="$t('common.unable_to_load', [$t('common.law', 2)])"
                     :error="error"
                     :retry="refresh"
-                    class="mt-5"
                 />
                 <DataNoDataBlock
                     v-else-if="lawBooks && lawBooks.length === 0"
+                    class="mt-5"
                     icon="i-mdi-gavel"
                     :type="$t('common.law', 2)"
-                    class="mt-5"
                 />
 
                 <div v-else>
@@ -253,7 +253,7 @@ const columns = [
                                                 </span>
 
                                                 <UTooltip v-if="law.hint" :text="law.hint">
-                                                    <UIcon name="i-mdi-information-outline" class="size-5" />
+                                                    <UIcon class="size-5" name="i-mdi-information-outline" />
                                                 </UTooltip>
                                             </div>
                                         </template>
@@ -320,7 +320,7 @@ const columns = [
 
         <UButtonGroup class="mt-2 inline-flex w-full">
             <UButtonGroup class="inline-flex w-full">
-                <UButton icon="i-mdi-content-copy" class="flex-1" @click="copySummary()">
+                <UButton class="flex-1" icon="i-mdi-content-copy" @click="copySummary()">
                     {{ $t('common.copy') }}
                 </UButton>
                 <UButton trailing-icon="i-mdi-clear-outline" color="error" @click="reset()">

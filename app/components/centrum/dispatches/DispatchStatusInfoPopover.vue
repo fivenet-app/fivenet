@@ -27,10 +27,10 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
     </template>
     <UPopover v-else>
         <UButton
+            class="inline-flex items-center p-0.5"
             variant="outline"
             :padded="false"
             size="xs"
-            class="inline-flex items-center p-0.5"
             trailing-icon="i-mdi-chevron-down"
         >
             <slot name="before" />

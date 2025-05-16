@@ -50,16 +50,16 @@ useIntervalFn(
         </div>
 
         <UChip
+            class="flex w-full max-w-full shrink flex-col items-center"
             :show="dispatchTimeStyle.ping"
             position="top-left"
             size="md"
-            class="flex w-full max-w-full shrink flex-col items-center"
             :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', background: dispatchTimeStyle.class }"
         >
             <UButton
+                class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
                 color="error"
                 :padded="false"
-                class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
                 @click="
                     slideover.open(DispatchDetailsSlideover, {
                         dispatchId: dispatch.id,
@@ -68,7 +68,7 @@ useIntervalFn(
             >
                 <span class="mb-0.5 inline-flex w-full flex-col place-content-between items-center md:flex-row md:gap-1">
                     <span class="inline-flex items-center font-bold md:gap-1">
-                        <UIcon name="i-mdi-car-emergency" class="hidden h-3 w-auto md:block" />
+                        <UIcon class="hidden h-3 w-auto md:block" name="i-mdi-car-emergency" />
                         DSP-{{ dispatch.id }}
                     </span>
                     <span>

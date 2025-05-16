@@ -18,7 +18,7 @@ const clipboardStore = useClipboardStore();
                         {{ $t('components.clipboard.clipboard_modal.title') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -32,11 +32,11 @@ const clipboardStore = useClipboardStore();
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton class="flex-1" color="black" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 
-                    <UButton block class="flex-1" color="error" @click="clipboardStore.clear()">
+                    <UButton class="flex-1" block color="error" @click="clipboardStore.clear()">
                         {{ $t('components.clipboard.clipboard_modal.clear') }}
                     </UButton>
                 </UButtonGroup>

@@ -31,8 +31,8 @@ defineProps<{
         </div>
         <div class="flex shrink-0 items-center gap-x-2">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
-                <UBadge v-if="result.status" :color="resultStatusToBadgeColor(result?.status ?? 0)" class="inline-flex gap-1">
-                    <UIcon name="i-mdi-list-status" class="size-5" />
+                <UBadge v-if="result.status" class="inline-flex gap-1" :color="resultStatusToBadgeColor(result?.status ?? 0)">
+                    <UIcon class="size-5" name="i-mdi-list-status" />
                     <span>
                         {{ $t('common.result') }}:
                         {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[result.status ?? 0]}`) }}
@@ -44,7 +44,7 @@ defineProps<{
                 </p>
             </div>
 
-            <UIcon name="i-mdi-chevron-right" class="size-5 flex-none" />
+            <UIcon class="size-5 flex-none" name="i-mdi-chevron-right" />
         </div>
     </li>
 </template>

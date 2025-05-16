@@ -79,7 +79,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
 
             <div>
-                <UFormGroup name="participants" :label="$t('common.guest', 2)" class="flex-1">
+                <UFormGroup class="flex-1" name="participants" :label="$t('common.guest', 2)">
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.users"
@@ -120,7 +120,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </UFormGroup>
 
                 <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900">
-                    <ul role="list" class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3">
+                    <ul class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3" role="list">
                         <li
                             v-for="user in state.users"
                             :key="user.userId"
@@ -134,11 +134,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="$emit('close')">
+                    <UButton class="flex-1" color="black" block @click="$emit('close')">
                         {{ $t('common.cancel', 1) }}
                     </UButton>
 
-                    <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                    <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                         {{ $t('common.save') }}
                     </UButton>
                 </UButtonGroup>

@@ -70,7 +70,7 @@ const grouped = computedAsync(async () => {
                 <p class="-mb-1.5 text-sm">
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
                 </p>
-                <ul role="list" class="@md:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2">
+                <ul class="@md:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2" role="list">
                     <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" />
                 </ul>
             </template>

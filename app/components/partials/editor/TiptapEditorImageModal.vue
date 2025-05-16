@@ -98,7 +98,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         {{ $t('common.image') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -110,9 +110,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UButtonGroup class="mt-2 w-full">
                         <UButton
+                            class="flex-1"
                             type="submit"
                             icon="i-mdi-image"
-                            class="flex-1"
                             :label="$t('common.insert')"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
@@ -120,19 +120,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UButtonGroup>
                 </UForm>
 
-                <UDivider :label="$t('common.or')" orientation="horizontal" class="mb-2 mt-2" />
+                <UDivider class="mb-2 mt-2" :label="$t('common.or')" orientation="horizontal" />
 
                 <ULink class="w-full" @click="chooseFiles">
                     <div ref="dropZoneRef" class="flex w-full items-center justify-center">
                         <label
-                            for="dropzone-file"
                             class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+                            for="dropzone-file"
                         >
                             <div class="flex flex-col items-center justify-center pb-6 pt-5">
                                 <UIcon
-                                    :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
                                     class="size-14"
                                     :class="!canSubmit && 'animate-spin'"
+                                    :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
                                 />
 
                                 <p class="mb-2 text-base text-gray-500 dark:text-gray-400">
@@ -148,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                    <UButton class="flex-1" block color="black" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

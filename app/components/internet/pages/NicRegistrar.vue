@@ -116,16 +116,16 @@ const items = [
             <UTabs :items="items" :unmount="true">
                 <template #search>
                     <UForm
+                        class="mb-2 flex place-content-center gap-1"
                         :schema="schema"
                         :state="state"
-                        class="mb-2 flex place-content-center gap-1"
                         @submit="onSubmitThrottle"
                     >
                         <UFormGroup name="search">
                             <UInput
                                 v-model="state.search"
-                                type="text"
                                 class="w-full"
+                                type="text"
                                 size="xl"
                                 :placeholder="$t('common.domain', 1)"
                             />

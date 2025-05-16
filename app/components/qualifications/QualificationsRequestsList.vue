@@ -94,7 +94,7 @@ watch(offset, async () => refresh());
                 icon="i-mdi-account-school"
             />
 
-            <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+            <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
                 <QualificationsRequestsListEntry
                     v-for="request in data?.requests"
                     :key="`${request.qualificationId}-${request.userId}`"

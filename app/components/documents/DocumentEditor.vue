@@ -459,9 +459,9 @@ logger.info(
 
 <template>
     <UForm
+        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         @submit="onSubmitThrottle"
     >
         <UDashboardNavbar :title="documentId ? $t('pages.documents.edit.title') : $t('pages.documents.create.title')">
@@ -493,8 +493,8 @@ logger.info(
         <UDashboardPanelContent class="p-0 sm:pb-0">
             <UTabs
                 v-model="selectedTab"
-                :items="items"
                 class="flex flex-1 flex-col"
+                :items="items"
                 :ui="{
                     wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
@@ -517,7 +517,7 @@ logger.info(
                                 </UFormGroup>
 
                                 <div class="flex flex-row gap-2">
-                                    <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
+                                    <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
                                         <ClientOnly>
                                             <USelectMenu
                                                 v-model="state.category"
@@ -590,7 +590,7 @@ logger.info(
                                         </ClientOnly>
                                     </UFormGroup>
 
-                                    <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
+                                    <UFormGroup class="flex-1" name="state" :label="$t('common.state')">
                                         <UInput
                                             v-model="state.state"
                                             type="text"
@@ -599,7 +599,7 @@ logger.info(
                                         />
                                     </UFormGroup>
 
-                                    <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
+                                    <UFormGroup class="flex-initial" name="closed" :label="`${$t('common.close', 2)}?`">
                                         <UToggle v-model="state.closed" :disabled="!canDo.edit" />
                                     </UFormGroup>
                                 </div>
@@ -622,21 +622,21 @@ logger.info(
 
                     <UFormGroup
                         v-if="canDo.edit"
-                        name="content"
                         class="flex flex-1 overflow-y-hidden"
+                        name="content"
                         :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
                         label="&nbsp;"
                     >
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.content"
-                                :disabled="!canEdit || !canDo.edit"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                :disabled="!canEdit || !canDo.edit"
                                 rounded="rounded-none"
                             >
                                 <template #footer>
                                     <div v-if="saving" class="place-self-start">
-                                        <UIcon name="i-mdi-content-save" class="h-4 w-4 animate-spin" />
+                                        <UIcon class="h-4 w-4 animate-spin" name="i-mdi-content-save" />
                                         <span>{{ $t('common.save', 2) }}...</span>
                                     </div>
                                 </template>

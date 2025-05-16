@@ -267,15 +267,15 @@ const accordionItems = computed(() =>
                     <div class="mb-2 flex gap-2">
                         <OpenClosedBadge :closed="qualification.closed" />
 
-                        <UBadge v-if="qualification.public" color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-earth" class="size-5" />
+                        <UBadge v-if="qualification.public" class="inline-flex gap-1" color="black" size="md">
+                            <UIcon class="size-5" name="i-mdi-earth" />
                             <span>
                                 {{ $t('common.public') }}
                             </span>
                         </UBadge>
 
                         <UBadge class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-test-tube" class="size-5" />
+                            <UIcon class="size-5" name="i-mdi-test-tube" />
                             <span>
                                 {{ $t('common.exam', 1) }}:
                                 {{
@@ -288,11 +288,11 @@ const accordionItems = computed(() =>
 
                         <UBadge
                             v-if="qualification.result?.status"
-                            :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
                             class="inline-flex gap-1"
+                            :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
                             size="md"
                         >
-                            <UIcon name="i-mdi-list-status" class="size-5" />
+                            <UIcon class="size-5" name="i-mdi-list-status" />
                             <span>
                                 {{ $t('common.result') }}:
                                 {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
@@ -300,11 +300,11 @@ const accordionItems = computed(() =>
                         </UBadge>
                         <UBadge
                             v-else-if="qualification.request?.status"
-                            :color="requestStatusToBadgeColor(qualification.request?.status ?? 0)"
                             class="inline-flex gap-1"
+                            :color="requestStatusToBadgeColor(qualification.request?.status ?? 0)"
                             size="md"
                         >
-                            <UIcon name="i-mdi-mail" class="size-5" />
+                            <UIcon class="size-5" name="i-mdi-mail" />
                             <span>
                                 {{ $t('common.request') }}:
                                 {{
@@ -317,16 +317,16 @@ const accordionItems = computed(() =>
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-account" class="size-5" />
+                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                            <UIcon class="size-5" name="i-mdi-account" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
                                 <CitizenInfoPopover :user="qualification?.creator" />
                             </span>
                         </UBadge>
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-calendar" class="size-5" />
+                        <UBadge class="inline-flex gap-1" color="black" size="md">
+                            <UIcon class="size-5" name="i-mdi-calendar" />
 
                             <span>
                                 {{ $t('common.created_at') }}
@@ -334,16 +334,16 @@ const accordionItems = computed(() =>
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="qualification?.updatedAt" color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-calendar-edit" class="size-5" />
+                        <UBadge v-if="qualification?.updatedAt" class="inline-flex gap-1" color="black" size="md">
+                            <UIcon class="size-5" name="i-mdi-calendar-edit" />
                             <span>
                                 {{ $t('common.updated_at') }}
                                 <GenericTime :value="qualification?.updatedAt" type="long" />
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="qualification?.deletedAt" color="amber" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-calendar-remove" class="size-5" />
+                        <UBadge v-if="qualification?.deletedAt" class="inline-flex gap-1" color="amber" size="md">
+                            <UIcon class="size-5" name="i-mdi-calendar-remove" />
                             <span>
                                 {{ $t('common.deleted') }}
                                 <GenericTime :value="qualification?.deletedAt" type="long" />
@@ -387,7 +387,7 @@ const accordionItems = computed(() =>
                         :description="$t('components.qualifications.content_unavailable')"
                     />
 
-                    <UTabs v-else v-model="selectedTab" :items="items" class="w-full">
+                    <UTabs v-else v-model="selectedTab" class="w-full" :items="items">
                         <template #info>
                             <h2 class="sr-only">
                                 {{ $t('common.content') }}

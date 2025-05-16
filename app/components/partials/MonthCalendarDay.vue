@@ -30,8 +30,8 @@ const attributes = computed(() => ({
             <UButton
                 v-for="attr in attributes.past"
                 :key="attr.key"
-                truncate
                 class="vc-day-entry mb-1 mt-0 flex w-full flex-col !items-start justify-start rounded-sm p-1 text-left text-xs leading-tight"
+                truncate
                 :color="attr.customData.color"
                 @click="$emit('selected', attr.customData)"
             >
@@ -51,21 +51,21 @@ const attributes = computed(() => ({
 
             <UDivider
                 v-if="day.isToday && (attributes.past.length > 0 || attributes.upcoming.length > 0)"
+                class="mb-1"
                 size="sm"
                 :ui="{ border: { base: 'border-red-300 dark:border-red-600' } }"
-                class="mb-1"
             />
 
             <UButton
                 v-for="attr in attributes.upcoming"
                 :key="attr.key"
-                truncate
                 class="vc-day-entry mb-1 mt-0 flex w-full flex-col !items-start justify-start rounded-sm p-1 text-left text-xs leading-tight"
+                truncate
                 :color="attr.customData.color"
                 @click="$emit('selected', attr.customData)"
             >
                 <span class="inline-flex items-center gap-0.5">
-                    <UIcon v-if="attr.customData.ongoing" name="i-mdi-timer-sand" class="size-3 text-amber-800" />
+                    <UIcon v-if="attr.customData.ongoing" class="size-3 text-amber-800" name="i-mdi-timer-sand" />
                     {{ attr.customData.title }}
                 </span>
 

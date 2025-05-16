@@ -59,24 +59,24 @@ const modal = useModal();
         <template #title>
             <div class="flex flex-1 gap-2">
                 <UButton
+                    class="inline-flex flex-1 gap-2"
                     variant="ghost"
                     :external="true"
                     :to="provider.homepage"
                     target="_blank"
-                    class="inline-flex flex-1 gap-2"
                 >
                     <NuxtImg
                         v-if="!provider.icon?.startsWith('i-')"
+                        class="size-10"
                         :src="provider.icon"
                         :alt="provider.name"
-                        class="size-10"
                         placeholder-class="size-10"
                         loading="lazy"
                     />
                     <UIcon
                         v-else
-                        :name="provider.icon"
                         class="size-10"
+                        :name="provider.icon"
                         :style="provider.name === 'discord' && { color: '#7289da' }"
                     />
 

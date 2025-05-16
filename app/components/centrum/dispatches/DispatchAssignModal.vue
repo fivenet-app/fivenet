@@ -142,7 +142,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -156,17 +156,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <UButton
                                 v-for="unit in group.units"
                                 :key="unit.name"
-                                :disabled="unit.users.length === 0"
                                 class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
                                 :class="[
                                     unitStatusToBGColor(unit.status?.status),
                                     unit.users.length === 0 ? '!bg-error-600' : '',
                                 ]"
+                                :disabled="unit.users.length === 0"
                                 @click="selectUnit(unit)"
                             >
-                                <UIcon v-if="state.units.includes(unit.id)" name="i-mdi-check" class="size-5" />
-                                <UIcon v-else-if="unit.users.length > 0" name="i-mdi-checkbox-blank-outline" class="size-5" />
-                                <UIcon v-else name="i-mdi-cancel" class="size-5" />
+                                <UIcon v-if="state.units.includes(unit.id)" class="size-5" name="i-mdi-check" />
+                                <UIcon v-else-if="unit.users.length > 0" class="size-5" name="i-mdi-checkbox-blank-outline" />
+                                <UIcon v-else class="size-5" name="i-mdi-cancel" />
 
                                 <div class="ml-0.5 flex w-full flex-col place-items-start">
                                     <span class="font-bold">
@@ -188,11 +188,11 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('common.update') }}
                         </UButton>
                     </UButtonGroup>

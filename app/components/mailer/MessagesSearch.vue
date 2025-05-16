@@ -44,13 +44,13 @@ const groups = [
 
 <template>
     <UButton
-        v-bind="$attrs"
+        class="w-full"
         :icon="appConfig.ui.icons.search"
         color="gray"
-        class="w-full"
         :label="$t('common.search_field')"
         truncate
         aria-label="Search"
+        v-bind="$attrs"
         @click="isOpen = !isOpen"
     />
 

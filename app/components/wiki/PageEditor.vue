@@ -264,9 +264,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm
+        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
-        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         @submit="onSubmitThrottle"
     >
         <UDashboardNavbar :title="$t('common.wiki')">
@@ -280,7 +280,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     {{ $t('common.back') }}
                 </UButton>
 
-                <UButton type="submit" class="ml-2" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
+                <UButton class="ml-2" type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
                     <span class="hidden truncate sm:block">
                         <template v-if="!page.id">
                             {{ $t('common.create') }}
@@ -296,8 +296,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UDashboardPanelContent class="p-0 sm:pb-0">
             <UTabs
                 v-model="selectedTab"
-                :items="items"
                 class="flex flex-1 flex-col"
+                :items="items"
                 :ui="{
                     wrapper: 'space-y-0 overflow-y-hidden',
                     container: 'flex flex-1 flex-col overflow-y-hidden',
@@ -311,9 +311,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <div class="flex w-full flex-col gap-2">
                                 <UFormGroup
                                     v-if="!(modelValue?.meta?.createdAt && modelValue?.parentId === undefined)"
+                                    class="w-full"
                                     name="meta.parentId"
                                     :label="$t('common.parent_page')"
-                                    class="w-full"
                                 >
                                     <ClientOnly>
                                         <USelectMenu
@@ -358,8 +358,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UDashboardToolbar>
 
                     <UFormGroup
-                        name="content"
                         class="flex flex-1 overflow-y-hidden"
+                        name="content"
                         :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
                         label="&nbsp;"
                     >
@@ -370,9 +370,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 rounded="rounded-none"
                             >
                                 <template #linkModal="{ state: linkState }">
-                                    <UDivider :label="$t('common.or')" orientation="horizontal" class="mt-1" />
+                                    <UDivider class="mt-1" :label="$t('common.or')" orientation="horizontal" />
 
-                                    <UFormGroup name="url" :label="`${$t('common.wiki')} ${$t('common.page')}`" class="w-full">
+                                    <UFormGroup class="w-full" name="url" :label="`${$t('common.wiki')} ${$t('common.page')}`">
                                         <ClientOnly>
                                             <USelectMenu
                                                 label-attribute="title"
@@ -403,11 +403,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
                     >
                         <div class="flex flex-1 gap-2">
-                            <UFormGroup name="public" :label="$t('common.public')" class="flex-1">
+                            <UFormGroup class="flex-1" name="public" :label="$t('common.public')">
                                 <UToggle v-model="state.meta.public" :disabled="!canDo.public" />
                             </UFormGroup>
 
-                            <UFormGroup name="closed" :label="`${$t('common.toc', 2)}?`" class="flex-1">
+                            <UFormGroup class="flex-1" name="closed" :label="`${$t('common.toc', 2)}?`">
                                 <UToggle v-model="state.meta.toc" />
                             </UFormGroup>
                         </div>

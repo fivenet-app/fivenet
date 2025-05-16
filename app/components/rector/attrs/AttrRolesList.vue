@@ -172,8 +172,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         <div class="text-right">
                             <UTooltip :text="$t('common.show')">
                                 <UButton
-                                    :to="{ name: 'rector-limiter-id', params: { id: role.id } }"
                                     class="place-self-end"
+                                    :to="{ name: 'rector-limiter-id', params: { id: role.id } }"
                                     variant="link"
                                     icon="i-mdi-eye"
                                 />

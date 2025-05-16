@@ -19,8 +19,8 @@ withDefaults(
     <div class="flex space-x-3">
         <div class="my-auto flex size-10 items-center justify-center rounded-full">
             <UIcon
-                :name="jobsUserActivityTypeIcon(activity.activityType)"
                 :class="[jobsUserActivityTypeBGColor(activity.activityType), 'size-full']"
+                :name="jobsUserActivityTypeIcon(activity.activityType)"
                 :inline="true"
             />
         </div>
@@ -55,9 +55,9 @@ withDefaults(
                                 <UBadge
                                     v-for="label in activity.data.data.labelsChange?.removed"
                                     :key="label.name"
-                                    :style="{ backgroundColor: label.color }"
                                     class="justify-between gap-2 line-through"
                                     :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    :style="{ backgroundColor: label.color }"
                                     size="xs"
                                 >
                                     {{ label.name }}
@@ -66,9 +66,9 @@ withDefaults(
                                 <UBadge
                                     v-for="label in activity.data.data.labelsChange?.added"
                                     :key="label.name"
-                                    :style="{ backgroundColor: label.color }"
                                     class="justify-between gap-2"
                                     :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    :style="{ backgroundColor: label.color }"
                                     size="xs"
                                 >
                                     {{ label.name }}

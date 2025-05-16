@@ -250,7 +250,7 @@ onBeforeUnmount(() => {
             <LayerControls />
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-            <LControl position="bottomleft" class="leaflet-control-attribution">
+            <LControl class="leaflet-control-attribution" position="bottomleft">
                 <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat.toFixed(3) }} |
                 <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong.toFixed(3) }}
             </LControl>

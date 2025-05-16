@@ -118,7 +118,7 @@ watch(dispatch, () => {
                         </UTooltip>
                     </div>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -204,7 +204,7 @@ watch(dispatch, () => {
                                     {{ $t('common.units', dispatch.units.length) }}
                                 </span>
                                 <div v-else class="mb-1 rounded-md bg-neutral-100 dark:bg-base-900">
-                                    <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">
+                                    <ul class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800" role="list">
                                         <li
                                             v-for="unit in dispatch.units"
                                             :key="unit.unitId"
@@ -212,12 +212,12 @@ watch(dispatch, () => {
                                         >
                                             <div class="flex flex-1 items-center">
                                                 <UnitInfoPopover
+                                                    class="flex items-center justify-center"
                                                     :unit="unit.unit"
                                                     :assignment="unit"
-                                                    class="flex items-center justify-center"
                                                 >
                                                     <template #before>
-                                                        <UIcon name="i-mdi-account-group" class="mr-1 size-5 shrink-0" />
+                                                        <UIcon class="mr-1 size-5 shrink-0" name="i-mdi-account-group" />
                                                     </template>
                                                 </UnitInfoPopover>
                                                 <span

@@ -2,9 +2,9 @@
 <template>
     <div
         ref="el"
-        v-bind="{ ...attrs, ...$attrs }"
         :class="[ui.wrapper, grow ? ui.grow : ui.border, collapsible ? ui.collapsible : 'flex']"
         :style="{ '--width': width && !grow ? `${width}px` : undefined }"
+        v-bind="{ ...attrs, ...$attrs }"
     >
         <slot />
 
@@ -17,11 +17,11 @@
         <USlideover
             v-if="collapsible && smallerThanLg"
             v-model="isOpen"
-            :side="side"
-            v-bind="{ ...attrs, ...$attrs }"
-            appear
             :class="ui.slideover"
+            :side="side"
+            appear
             :ui="{ width: 'max-w-screen' }"
+            v-bind="{ ...attrs, ...$attrs }"
         >
             <slot />
         </USlideover>

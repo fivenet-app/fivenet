@@ -118,11 +118,11 @@ const { attr, can } = useAuth();
                                         <UBadge
                                             v-for="label in colleague?.props?.labels?.list"
                                             :key="label.name"
-                                            :style="{ backgroundColor: label.color }"
                                             class="justify-between gap-2"
                                             :class="
                                                 isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'
                                             "
+                                            :style="{ backgroundColor: label.color }"
                                             size="md"
                                         >
                                             {{ label.name }}

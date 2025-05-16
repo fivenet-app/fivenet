@@ -56,12 +56,12 @@ function click(): void {
 <template>
     <UTooltip :text="disableTooltip ? undefined : $t('common.copy')">
         <UButton
+            class="break-keep"
             :ui="{ round: 'rounded-md', base: '' }"
             :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
             :variant="variant"
             :padded="padded"
             :size="size"
-            class="break-keep"
             @click="click"
         >
             <span class="hidden sm:block">

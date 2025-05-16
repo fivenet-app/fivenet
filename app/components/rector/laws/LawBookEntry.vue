@@ -224,7 +224,7 @@ const editing = ref(props.startInEdit);
                     <p v-if="lawBook.description">{{ $t('common.description') }}: {{ lawBook.description }}</p>
                 </div>
 
-                <UTooltip :text="$t('pages.rector.laws.add_new_law')" class="shrink-0">
+                <UTooltip class="shrink-0" :text="$t('pages.rector.laws.add_new_law')">
                     <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLaw">
                         {{ $t('pages.rector.laws.add_new_law') }}
                     </UButton>
@@ -232,9 +232,9 @@ const editing = ref(props.startInEdit);
             </div>
             <UForm
                 v-else
+                class="flex w-full flex-row items-start gap-x-2"
                 :schema="schema"
                 :state="state"
-                class="flex w-full flex-row items-start gap-x-2"
                 @submit="onSubmitThrottle"
             >
                 <UTooltip :text="$t('common.save')">
@@ -252,11 +252,11 @@ const editing = ref(props.startInEdit);
                     />
                 </UTooltip>
 
-                <UFormGroup name="name" :label="$t('common.law_book')" class="flex-initial">
+                <UFormGroup class="flex-initial" name="name" :label="$t('common.law_book')">
                     <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law_book')" />
                 </UFormGroup>
 
-                <UFormGroup name="description" :label="$t('common.description')" class="flex-auto">
+                <UFormGroup class="flex-auto" name="description" :label="$t('common.description')">
                     <UInput
                         v-model="state.description"
                         name="description"

@@ -82,13 +82,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <div>
         <UForm
+            class="mx-auto flex max-w-screen-xl flex-1 flex-col gap-y-2"
             :state="state"
             :schema="schema"
-            class="mx-auto flex max-w-screen-xl flex-1 flex-col gap-y-2"
             @submit="onSubmitThrottle"
         >
             <UButtonGroup class="mb-2 flex">
-                <UButton type="submit" class="flex-1" icon="i-mdi-pencil" :label="$t('common.save')" />
+                <UButton class="flex-1" type="submit" icon="i-mdi-pencil" :label="$t('common.save')" />
 
                 <UButton icon="i-mdi-cancel" color="error" :label="$t('common.cancel')" @click="$emit('close')" />
             </UButtonGroup>
@@ -98,8 +98,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </UFormGroup>
 
             <UFormGroup
-                name="content"
                 class="flex flex-1 overflow-y-hidden"
+                name="content"
                 :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
                 label="&nbsp;"
             >

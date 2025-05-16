@@ -143,7 +143,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -165,22 +165,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     />
 
                     <template v-else>
-                        <UFormGroup name="title" :label="$t('common.name')" class="flex-1" required>
+                        <UFormGroup class="flex-1" name="title" :label="$t('common.name')" required>
                             <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
                         </UFormGroup>
 
-                        <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
+                        <UFormGroup class="flex-1" name="color" :label="$t('common.color')">
                             <ColorPickerTW v-model="state.color" />
                         </UFormGroup>
 
-                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                        <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
                             <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
                         </UFormGroup>
 
                         <UFormGroup
+                            class="flex-1"
                             name="private"
                             :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
-                            class="flex-1"
                         >
                             <UToggle
                                 v-model="state.private"
@@ -192,15 +192,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             />
                         </UFormGroup>
 
-                        <UFormGroup v-if="canDo.publicCalendar" name="public" :label="$t('common.public')" class="flex-1">
+                        <UFormGroup v-if="canDo.publicCalendar" class="flex-1" name="public" :label="$t('common.public')">
                             <UToggle v-model="state.public" />
                         </UFormGroup>
 
-                        <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                        <UFormGroup class="flex-1" name="closed" :label="`${$t('common.close', 2)}?`">
                             <UToggle v-model="state.closed" />
                         </UFormGroup>
 
-                        <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
+                        <UFormGroup class="flex-1" name="access" :label="$t('common.access')">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
                                 :target-id="calendarId ?? 0"
@@ -212,11 +212,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ data ? $t('common.save') : $t('common.create') }}
                         </UButton>
                     </UButtonGroup>

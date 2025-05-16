@@ -41,9 +41,9 @@ function refresh(): void {
     <UContainer class="mt-4">
         <ULandingCard
             v-if="modelValue"
+            class="w-screen max-w-md"
             :title="$t('components.internet.not_found.title')"
             icon="i-mdi-information-outline"
-            class="w-screen max-w-md"
             orientation="vertical"
         >
             <template #description>

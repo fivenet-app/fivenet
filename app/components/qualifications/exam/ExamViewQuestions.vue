@@ -225,7 +225,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
 
                     <div class="inline-flex flex-col items-end gap-2">
-                        <UIcon name="i-mdi-clock" class="size-8" />
+                        <UIcon class="size-8" name="i-mdi-clock" />
 
                         <span class="font-semibold">
                             {{
@@ -273,10 +273,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template v-if="!disabled" #footer>
                     <UButton
+                        class="w-full"
                         type="submit"
                         icon="i-mdi-save-content"
                         block
-                        class="w-full"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
                     >

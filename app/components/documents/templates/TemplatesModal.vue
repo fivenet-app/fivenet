@@ -150,7 +150,7 @@ onBeforeMount(async () => {
                         <template v-if="template">- {{ template.title }} </template>
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="closeDialog()" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="closeDialog()" />
                 </div>
             </template>
 
@@ -229,16 +229,16 @@ onBeforeMount(async () => {
                     v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
                     class="inline-flex w-full"
                 >
-                    <UButton color="black" block class="flex-1" @click="goBackDialog">
+                    <UButton class="flex-1" color="black" block @click="goBackDialog">
                         {{ $t('common.go_back') }}
                     </UButton>
 
-                    <UButton block class="flex-1" :disabled="!readyToCreate" @click="clipboardDialog()">
+                    <UButton class="flex-1" block :disabled="!readyToCreate" @click="clipboardDialog()">
                         {{ $t('common.create') }}
                     </UButton>
                 </UButtonGroup>
 
-                <UButton v-else color="black" block class="flex-1" @click="closeDialog">
+                <UButton v-else class="flex-1" color="black" block @click="closeDialog">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

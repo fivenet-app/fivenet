@@ -268,7 +268,7 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('pages.documents.id.title')" class="print:hidden">
+    <UDashboardNavbar class="print:hidden" :title="$t('pages.documents.id.title')">
         <template #right>
             <PartialsBackButton to="/documents" />
 
@@ -290,8 +290,8 @@ defineShortcuts({
         <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 2)])" :error="error" :retry="refresh" />
         <DocumentRequestAccess
             v-if="error.message.includes('ErrDocViewDenied')"
-            :document-id="documentId"
             class="mt-2 w-full"
+            :document-id="documentId"
         />
     </template>
     <DataNoDataBlock v-else-if="!doc" icon="i-mdi-file-search" :message="$t('common.not_found', [$t('common.document', 2)])" />
@@ -310,8 +310,8 @@ defineShortcuts({
                         :shortcuts="['D', 'T']"
                     >
                         <UButton
-                            block
                             class="flex-1 flex-col"
+                            block
                             :icon="doc.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
                             :ui="{ icon: { base: doc.closed ? 'text-success-500' : 'text-success-500' } }"
                             @click="toggleDocument(documentId, !doc.closed)"
@@ -335,8 +335,8 @@ defineShortcuts({
                         :shortcuts="['D', 'E']"
                     >
                         <UButton
-                            block
                             class="flex-1 flex-col"
+                            block
                             :to="{
                                 name: 'documents-id-edit',
                                 params: { id: doc.id },
@@ -352,13 +352,13 @@ defineShortcuts({
                         class="flex-1"
                         :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
                     >
-                        <UButton block class="flex-1 flex-col" @click="togglePin(documentId, !doc.pinned)">
+                        <UButton class="flex-1 flex-col" block @click="togglePin(documentId, !doc.pinned)">
                             <template v-if="!doc.pinned">
-                                <UIcon name="i-mdi-pin" class="size-5" />
+                                <UIcon class="size-5" name="i-mdi-pin" />
                                 {{ $t('common.pin') }}
                             </template>
                             <template v-else>
-                                <UIcon name="i-mdi-pin-off" class="size-5" />
+                                <UIcon class="size-5" name="i-mdi-pin-off" />
                                 {{ $t('common.unpin') }}
                             </template>
                         </UButton>
@@ -371,8 +371,8 @@ defineShortcuts({
                         :shortcuts="['D', 'R']"
                     >
                         <UButton
-                            block
                             class="flex-1 flex-col"
+                            block
                             icon="i-mdi-frequently-asked-questions"
                             @click="openRequestsModal"
                         >
@@ -382,8 +382,8 @@ defineShortcuts({
 
                     <UButton
                         v-if="can('DocStoreService.SetDocumentReminder').value"
-                        block
                         class="flex-1 flex-col"
+                        block
                         icon="i-mdi-reminder"
                         @click="
                             modal.open(DocumentReminderModal, {
@@ -402,8 +402,8 @@ defineShortcuts({
                             can('DocStoreService.ChangeDocumentOwner').value &&
                             checkDocAccess(access, doc?.creator, AccessLevel.EDIT, 'DocStoreService.ChangeDocumentOwner')
                         "
-                        block
                         class="flex-1 flex-col"
+                        block
                         :disabled="doc?.creatorId === activeChar?.userId"
                         icon="i-mdi-creation"
                         @click="
@@ -420,8 +420,8 @@ defineShortcuts({
                             can('DocStoreService.DeleteDocument').value &&
                             checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                         "
-                        block
                         class="flex-1 flex-col"
+                        block
                         :color="!doc.deletedAt ? 'error' : 'success'"
                         :icon="!doc.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                         :label="!doc.deletedAt ? $t('common.delete') : $t('common.restore')"
@@ -449,14 +449,14 @@ defineShortcuts({
                     <OpenClosedBadge :closed="doc.closed" size="md" />
 
                     <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-note-check" class="size-5" />
+                        <UIcon class="size-5" name="i-mdi-note-check" />
                         <span>
                             {{ doc.state }}
                         </span>
                     </UBadge>
 
-                    <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-comment-text-multiple" class="size-5" />
+                    <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UIcon class="size-5" name="i-mdi-comment-text-multiple" />
                         <span>
                             {{
                                 commentCount !== undefined
@@ -468,55 +468,55 @@ defineShortcuts({
                 </div>
 
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                    <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-account" class="size-5" />
+                    <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UIcon class="size-5" name="i-mdi-account" />
                         <span class="inline-flex items-center gap-1">
                             <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
                             <CitizenInfoPopover :user="doc.creator" />
                         </span>
                     </UBadge>
 
-                    <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar" class="size-5" />
+                    <UBadge class="inline-flex gap-1" color="black" size="md">
+                        <UIcon class="size-5" name="i-mdi-calendar" />
                         <span>
                             {{ $t('common.created_at') }}
                             <GenericTime :value="doc.createdAt" type="long" />
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="doc.updatedAt" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar-edit" class="size-5" />
+                    <UBadge v-if="doc.updatedAt" class="inline-flex gap-1" color="black" size="md">
+                        <UIcon class="size-5" name="i-mdi-calendar-edit" />
                         <span>
                             {{ $t('common.updated_at') }}
                             <GenericTime :value="doc.updatedAt" type="long" />
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="doc.workflowState?.autoCloseTime" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-clock" class="size-5" />
+                    <UBadge v-if="doc.workflowState?.autoCloseTime" class="inline-flex gap-1" color="black" size="md">
+                        <UIcon class="size-5" name="i-mdi-lock-clock" />
                         <span>
                             {{ $t('common.auto_close', 2) }}
                             <GenericTime :value="doc.workflowState.autoCloseTime" ago />
                         </span>
                     </UBadge>
-                    <UBadge v-else-if="doc.workflowState?.nextReminderTime" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-reminder" class="size-5" />
+                    <UBadge v-else-if="doc.workflowState?.nextReminderTime" class="inline-flex gap-1" color="black" size="md">
+                        <UIcon class="size-5" name="i-mdi-reminder" />
                         <span>
                             {{ $t('common.reminder') }}
                             <GenericTime :value="doc.workflowState.nextReminderTime" ago />
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="doc.workflowUser?.manualReminderTime" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-reminder" class="size-5" />
+                    <UBadge v-if="doc.workflowUser?.manualReminderTime" class="inline-flex gap-1" color="black" size="md">
+                        <UIcon class="size-5" name="i-mdi-reminder" />
                         <span>
                             {{ $t('common.reminder') }}
                             <GenericTime :value="doc.workflowUser.manualReminderTime" type="short" />
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="doc.deletedAt" color="amber" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar-remove" class="size-5" />
+                    <UBadge v-if="doc.deletedAt" class="inline-flex gap-1" color="amber" size="md">
+                        <UIcon class="size-5" name="i-mdi-calendar-remove" />
                         <span>
                             {{ $t('common.deleted') }}
                             <GenericTime :value="doc.deletedAt" type="long" />
@@ -536,7 +536,7 @@ defineShortcuts({
             </div>
 
             <template #footer>
-                <UAccordion multiple :items="accordionItems" :unmount="true" class="print:hidden">
+                <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
                     <template #relations>
                         <UContainer>
                             <DocumentRelations :document-id="documentId" :show-document="false" />

@@ -126,19 +126,19 @@ watch(props, (newVal) => {
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>
             <tr>
-                <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
+                <th v-if="showSelect" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
                     {{ $t('common.select') }}
                 </th>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
+                <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
                     {{ $t('common.plate') }}
                 </th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
+                <th class="px-3 py-3.5 text-left text-sm font-semibold" scope="col">
                     {{ $t('common.model') }}
                 </th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
+                <th class="px-3 py-3.5 text-left text-sm font-semibold" scope="col">
                     {{ $t('common.owner') }}
                 </th>
-                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                <th class="relative py-3.5 pl-3 pr-4 sm:pr-0" scope="col">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
                     <UTooltip v-if="selected.length > 0" :text="$t('common.delete')">
                         <UButton variant="link" icon="i-mdi-delete" color="error" @click="removeAll()" />

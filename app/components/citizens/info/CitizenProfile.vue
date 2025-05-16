@@ -135,9 +135,9 @@ const { attr } = useAuth();
                                 <UBadge
                                     v-for="label in user.props?.labels?.list"
                                     :key="label.name"
-                                    :style="{ backgroundColor: label.color }"
                                     class="justify-between gap-2"
                                     :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    :style="{ backgroundColor: label.color }"
                                     size="md"
                                 >
                                     {{ label.name }}
@@ -170,14 +170,14 @@ const { attr } = useAuth();
                         <span v-if="user?.licenses.length === 0">
                             {{ $t('common.no_licenses') }}
                         </span>
-                        <ul v-else role="list" class="w-full divide-y divide-base-200 rounded-md border border-base-200">
+                        <ul v-else class="w-full divide-y divide-base-200 rounded-md border border-base-200" role="list">
                             <li
                                 v-for="license in user?.licenses"
                                 :key="license.type"
                                 class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                             >
                                 <div class="flex flex-1 items-center">
-                                    <UIcon name="i-mdi-license" class="size-5 shrink-0" />
+                                    <UIcon class="size-5 shrink-0" name="i-mdi-license" />
                                     <span class="ml-2 flex-1 truncate" :title="`${license.type.toUpperCase()}`"
                                         >{{ license.label }}
                                     </span>

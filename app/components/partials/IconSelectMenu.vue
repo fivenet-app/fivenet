@@ -41,12 +41,12 @@ async function iconSearch(query: string): Promise<DefineComponent[]> {
 <template>
     <ClientOnly>
         <USelectMenu
-            v-bind="$attrs"
             v-model="icon"
             :searchable="iconSearch"
             searchable-lazy
             :searchable-placeholder="$t('common.search_field')"
             value-attribute="name"
+            v-bind="$attrs"
         >
             <template #label>
                 <component

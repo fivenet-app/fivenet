@@ -123,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         {{ $t('components.qualifications.result_modal.title') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
                 </div>
             </template>
 
@@ -131,10 +131,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <slot />
 
                 <template v-if="!viewOnly">
-                    <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.citizen')" class="flex-1">
+                    <UFormGroup v-if="userId === undefined" class="flex-1" name="selectedUser" :label="$t('common.citizen')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="selectedUser"
+                                class="flex-1"
                                 :searchable="
                                     async (query: string) => {
                                         usersLoading = true;
@@ -148,7 +149,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 searchable-lazy
                                 :searchable-placeholder="$t('common.search_field')"
                                 :search-attributes="['firstname', 'lastname']"
-                                class="flex-1"
                                 :placeholder="$t('common.citizen', 1)"
                                 trailing
                                 by="userId"
@@ -173,7 +173,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
+                    <UFormGroup class="flex-1" name="status" :label="$t('common.status')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.status"
@@ -206,7 +206,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="score" :label="$t('common.score')" class="flex-1">
+                    <UFormGroup class="flex-1" name="score" :label="$t('common.score')">
                         <UInput
                             v-model="state.score"
                             name="score"
@@ -220,7 +220,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
                     </UFormGroup>
 
-                    <UFormGroup name="summary" :label="$t('common.summary')" class="flex-1">
+                    <UFormGroup class="flex-1" name="summary" :label="$t('common.summary')">
                         <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
                     </UFormGroup>
                 </template>
@@ -228,11 +228,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="$emit('close')">
+                    <UButton class="flex-1" color="black" block @click="$emit('close')">
                         {{ $t('common.close', 1) }}
                     </UButton>
 
-                    <UButton v-if="!viewOnly" type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                    <UButton v-if="!viewOnly" class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                         {{ $t('common.submit') }}
                     </UButton>
                 </UButtonGroup>

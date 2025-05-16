@@ -174,23 +174,23 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm :state="state" :schema="schema" class="flex flex-col gap-y-2" @submit="onSubmitThrottle">
+    <UForm class="flex flex-col gap-y-2" :state="state" :schema="schema" @submit="onSubmitThrottle">
         <UFormGroup
+            class="flex flex-1 flex-col"
             :label="$t('common.mail')"
             :description="
                 $t('components.mailer.manage.email.description') +
                 (modelValue?.emailChanged ? ` (${$t('common.last_updated')}: ${$d(toDate(modelValue?.emailChanged))})` : '')
             "
-            class="flex flex-1 flex-col"
         >
             <div class="flex w-full flex-1 flex-col gap-1 sm:flex-row">
-                <UFormGroup name="email" class="flex-1">
+                <UFormGroup class="flex-1" name="email">
                     <USelectMenu
                         v-if="proposals?.emails && proposals.emails.length > 0"
                         v-model="state.email"
+                        class="flex-1"
                         :options="proposals?.emails"
                         :disabled="disabled"
-                        class="flex-1"
                     >
                         <template #empty>
                             {{ $t('common.not_found', [$t('common.mail')]) }}
@@ -199,22 +199,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UInput
                         v-else
                         v-model="state.email"
+                        class="flex-1"
                         type="text"
                         :placeholder="$t('common.mail')"
                         :disabled="disabled"
-                        class="flex-1"
                     />
                 </UFormGroup>
 
                 <span class="flex-initial font-semibold">@</span>
 
-                <UFormGroup name="domain" class="flex-1">
+                <UFormGroup class="flex-1" name="domain">
                     <USelectMenu
                         v-if="proposals?.domains && proposals.domains.length > 1"
                         v-model="state.domain"
+                        class="flex-1"
                         :options="proposals?.domains"
                         :disabled="disabled"
-                        class="flex-1"
                     >
                         <template #empty>
                             {{ $t('common.not_found', [$t('common.mail')]) }}
@@ -223,10 +223,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UInput
                         v-else
                         v-model="state.domain"
+                        class="flex-1"
                         type="text"
                         :placeholder="$t('common.mail')"
                         disabled
-                        class="flex-1"
                     />
                 </UFormGroup>
             </div>

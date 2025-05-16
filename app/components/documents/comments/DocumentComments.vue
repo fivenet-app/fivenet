@@ -151,7 +151,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <template v-if="canComment">
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
-                        <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
+                        <UForm class="relative" :schema="schema" :state="state" @submit="onSubmitThrottle">
                             <UFormGroup name="comment">
                                 <ClientOnly>
                                     <TiptapEditor
@@ -189,7 +189,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 icon="i-mdi-comment-text-multiple"
             />
 
-            <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+            <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
                 <DocumentCommentEntry
                     v-for="(comment, idx) in data.comments"
                     :key="comment.id"

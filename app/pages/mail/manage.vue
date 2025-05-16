@@ -104,7 +104,7 @@ const creating = ref(false);
 
                 <div v-else class="flex flex-1 flex-col items-center">
                     <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
-                        <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
+                        <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
 
                         <div class="text-center text-gray-900 dark:text-white">
                             <h3 class="text-lg font-bold">{{ $t('components.mailer.manage.title') }}</h3>
@@ -164,7 +164,7 @@ const creating = ref(false);
                             <div
                                 class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500"
                             >
-                                <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
+                                <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
                                 <EmailCreateForm v-if="canCreate" :personal-email="false" @refresh="creating = false" />
                             </div>
                         </div>
@@ -176,7 +176,7 @@ const creating = ref(false);
                         <template #toggle>
                             <UDashboardNavbarToggle icon="i-mdi-close" />
 
-                            <UDivider orientation="vertical" class="mx-1.5 lg:hidden" />
+                            <UDivider class="mx-1.5 lg:hidden" orientation="vertical" />
                         </template>
 
                         <template #right>
@@ -238,7 +238,7 @@ const creating = ref(false);
                         <div
                             class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
                         >
-                            <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
+                            <UIcon class="h-32 w-32" name="i-mdi-email-multiple" />
                             <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
                         </div>
                     </UDashboardPanelContent>

@@ -166,7 +166,7 @@ const columnsNew = [
                         {{ $t('common.relation', 2) }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
                 </div>
             </template>
 
@@ -268,7 +268,7 @@ const columnsNew = [
                     </template>
 
                     <template #new>
-                        <UFormGroup name="name" :label="$t('common.search')" class="mb-2">
+                        <UFormGroup class="mb-2" name="name" :label="$t('common.search')">
                             <UInput
                                 v-model="queryCitizens"
                                 type="text"
@@ -335,7 +335,7 @@ const columnsNew = [
             </div>
 
             <template #footer>
-                <UButton block class="flex-1" color="black" @click="$emit('close')">
+                <UButton class="flex-1" block color="black" @click="$emit('close')">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

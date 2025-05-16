@@ -46,13 +46,13 @@ const selectedTemplate = ref<Template | undefined>(undefined);
         <USelectMenu
             v-if="!selectedTemplate"
             v-model="selectedTemplate"
-            v-bind="$attrs"
+            class="min-w-48"
             :options="templates?.templates"
             option-attribute="title"
             by="id"
             searchable
-            class="min-w-48"
             :placeholder="$t('common.template')"
+            v-bind="$attrs"
         >
             <template #option-empty="{ query: search }">
                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}

@@ -58,12 +58,12 @@ const modal = useModal();
                 <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
                 <UButton
                     v-if="appConfig.login.signupEnabled"
+                    class="hidden lg:flex"
                     :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"
                     trailing
                     color="black"
                     to="/auth/registration"
-                    class="hidden lg:flex"
                 />
             </template>
             <template v-else>

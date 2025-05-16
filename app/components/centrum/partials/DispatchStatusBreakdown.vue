@@ -63,19 +63,19 @@ defineOptions({
 <template>
     <UPopover class="flex-1">
         <UButton
-            v-bind="$attrs"
+            class="items-center"
             :ui="{ icon: { base: 'max-md:!hidden' } }"
             variant="ghost"
-            class="items-center"
             trailing-icon="i-mdi-chevron-down"
             block
+            v-bind="$attrs"
         >
             {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
         </UButton>
 
         <template #panel>
             <div class="p-4">
-                <UIcon v-if="!counts" name="i-mdi-refresh" class="size-4 animate-spin" />
+                <UIcon v-if="!counts" class="size-4 animate-spin" name="i-mdi-refresh" />
                 <div v-else class="flex flex-col gap-1 text-nowrap text-sm font-normal">
                     <div class="inline-flex justify-between gap-1.5">
                         <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.UNASSIGNED)" size="sm">

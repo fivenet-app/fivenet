@@ -151,10 +151,10 @@ function reset(): void {
 
                     <template v-for="(pin, idx) in pins" :key="idx">
                         <circle
+                            :class="pin.selected ? 'animate-pulse' : ''"
                             :cx="pin.x"
                             :cy="pin.y"
                             r="12"
-                            :class="pin.selected ? 'animate-pulse' : ''"
                             :data-x="pin.x - 50"
                             :data-y="pin.y - 50"
                             @click="selectPin(pin)"
@@ -182,15 +182,15 @@ function reset(): void {
 
                 <DataNoDataBlock
                     v-if="pins.length === 0"
+                    class="mt-2"
                     :message="$t('components.bodycheckup.no_points')"
                     icon="i-mdi-vector-point-select"
-                    class="mt-2"
                 />
                 <ol v-else>
                     <li v-for="(pin, idx) in pins" :key="idx" class="my-1 inline-flex w-full items-center gap-1">
                         <span class="w-4 text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
 
-                        <UInput v-model="pin.description" type="text" block class="flex-1" @focusin="selectPin(pin)" />
+                        <UInput v-model="pin.description" class="flex-1" type="text" block @focusin="selectPin(pin)" />
 
                         <UTooltip :text="$t('common.delete')">
                             <UButton variant="link" icon="i-mdi-delete" color="error" @click="removePin(idx)" />
@@ -201,7 +201,7 @@ function reset(): void {
 
             <div class="my-2 flow-root">
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton icon="i-mdi-content-copy" class="flex-1" @click="copySummary()">
+                    <UButton class="flex-1" icon="i-mdi-content-copy" @click="copySummary()">
                         {{ $t('common.copy') }}
                     </UButton>
                     <UButton trailing-icon="i-mdi-clear-outline" color="error" @click="reset()">

@@ -97,8 +97,8 @@ watchDebounced(query, async () => refresh(), {
     />
 
     <div v-else>
-        <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
-            <UFormGroup name="types" :label="$t('common.type', 2)" class="flex-1 grow">
+        <UForm class="flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
+            <UFormGroup class="flex-1 grow" name="types" :label="$t('common.type', 2)">
                 <ClientOnly>
                     <USelectMenu
                         v-model="query.types"
@@ -151,7 +151,7 @@ watchDebounced(query, async () => refresh(), {
             />
 
             <div v-else>
-                <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                <ul class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
                     <li
                         v-for="activity in data?.activity"
                         :key="activity.id"

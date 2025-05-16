@@ -46,9 +46,9 @@ function toggleBlur(): void {
 <template>
     <template v-if="!src || !enablePopup">
         <UAvatar
+            :class="[visible ? '' : 'blur', imgClass]"
             :as="NuxtImg"
             :size="size"
-            :class="[visible ? '' : 'blur', imgClass]"
             :src="src"
             :alt="alt"
             :text="text"
@@ -61,9 +61,9 @@ function toggleBlur(): void {
     <UPopover v-else>
         <UButton variant="link" :padded="false">
             <UAvatar
+                :class="[visible ? '' : 'blur', imgClass]"
                 :as="NuxtImg"
                 :size="size"
-                :class="[visible ? '' : 'blur', imgClass]"
                 :src="src"
                 :alt="alt"
                 :text="text"

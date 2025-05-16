@@ -116,7 +116,7 @@ watch(props, () => setFromProps());
 </script>
 
 <template>
-    <UForm :schema="schema" :state="entry" class="my-2 flex flex-row items-center gap-1">
+    <UForm class="my-2 flex flex-row items-center gap-1" :schema="schema" :state="entry">
         <UCheckbox
             v-if="showRequired"
             v-model="entry.required"
@@ -160,10 +160,11 @@ watch(props, () => setFromProps());
         </UFormGroup>
 
         <template v-if="entry.type === 'user'">
-            <UFormGroup name="userId" class="flex-1">
+            <UFormGroup class="flex-1" name="userId">
                 <ClientOnly>
                     <USelectMenu
                         v-model="selectedUser"
+                        class="flex-1"
                         :searchable="
                             async (query: string) => {
                                 usersLoading = true;
@@ -177,7 +178,6 @@ watch(props, () => setFromProps());
                         searchable-lazy
                         :search-attributes="['firstname', 'lastname']"
                         :searchable-placeholder="$t('common.search_field')"
-                        class="flex-1"
                         :placeholder="$t('common.citizen', 1)"
                     >
                         <template #label>
@@ -201,10 +201,11 @@ watch(props, () => setFromProps());
         </template>
 
         <template v-else-if="entry.type === 'qualification'">
-            <UFormGroup name="qualificationId" class="flex-1">
+            <UFormGroup class="flex-1" name="qualificationId">
                 <ClientOnly>
                     <USelectMenu
                         v-model="selectedQualification"
+                        class="flex-1"
                         :searchable="
                             async (query: string) => {
                                 const { response } = await $grpc.qualifications.qualifications.listQualifications({
@@ -219,7 +220,6 @@ watch(props, () => setFromProps());
                         searchable-lazy
                         :search-attributes="['abbreviation', 'title']"
                         :searchable-placeholder="$t('common.search_field')"
-                        class="flex-1"
                         :placeholder="$t('common.qualification', 1)"
                     >
                         <template #label>
@@ -245,12 +245,12 @@ watch(props, () => setFromProps());
         </template>
 
         <template v-else>
-            <UFormGroup name="job" class="flex-1">
+            <UFormGroup class="flex-1" name="job">
                 <ClientOnly>
                     <USelectMenu
                         v-model="entry.job"
-                        :disabled="disabled"
                         class="flex-1"
+                        :disabled="disabled"
                         option-attribute="label"
                         searchable
                         :search-attributes="['name', 'label']"
@@ -268,14 +268,14 @@ watch(props, () => setFromProps());
                 </ClientOnly>
             </UFormGroup>
 
-            <UFormGroup name="minimumGrade" class="flex-1">
+            <UFormGroup class="flex-1" name="minimumGrade">
                 <ClientOnly>
                     <USelectMenu
+                        class="flex-1"
                         :model-value="
                             jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
                         "
                         :disabled="disabled || !entry.job"
-                        class="flex-1"
                         option-attribute="label"
                         searchable
                         :search-attributes="['name', 'label']"
@@ -294,12 +294,12 @@ watch(props, () => setFromProps());
             </UFormGroup>
         </template>
 
-        <UFormGroup name="access" class="w-60 flex-initial">
+        <UFormGroup class="w-60 flex-initial" name="access">
             <ClientOnly>
                 <USelectMenu
                     v-model="entry.access"
-                    :disabled="disabled"
                     class="flex-1"
+                    :disabled="disabled"
                     option-attribute="label"
                     value-attribute="value"
                     :options="accessRoles"
@@ -322,7 +322,7 @@ watch(props, () => setFromProps());
         </UFormGroup>
 
         <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
-            <UButton :ui="{ rounded: 'rounded-full' }" class="flex-initial" icon="i-mdi-close" @click="$emit('delete')" />
+            <UButton class="flex-initial" :ui="{ rounded: 'rounded-full' }" icon="i-mdi-close" @click="$emit('delete')" />
         </UTooltip>
     </UForm>
 </template>

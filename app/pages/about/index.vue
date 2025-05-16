@@ -95,9 +95,9 @@ const faqs = [
                             >
                                 <div class="lg:pr-4">
                                     <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
-                                        <ul role="list" class="mt-8 space-y-8">
+                                        <ul class="mt-8 space-y-8" role="list">
                                             <li class="flex gap-x-3">
-                                                <UIcon name="i-mdi-magnify" class="text-primary-300 mt-1 size-5 flex-none" />
+                                                <UIcon class="text-primary-300 mt-1 size-5 flex-none" name="i-mdi-magnify" />
                                                 <span>
                                                     <span class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_one.title')
@@ -106,7 +106,7 @@ const faqs = [
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
-                                                <UIcon name="i-mdi-lock" class="text-primary-300 mt-1 size-5 flex-none" />
+                                                <UIcon class="text-primary-300 mt-1 size-5 flex-none" name="i-mdi-lock" />
                                                 <span>
                                                     <span class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_two.title')
@@ -115,7 +115,7 @@ const faqs = [
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
-                                                <UIcon name="i-mdi-map" class="text-primary-300 mt-1 size-5 flex-none" />
+                                                <UIcon class="text-primary-300 mt-1 size-5 flex-none" name="i-mdi-map" />
                                                 <span>
                                                     <span class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_three.title')
@@ -164,12 +164,12 @@ const faqs = [
                                 </p>
                                 <div class="mt-8">
                                     <UButton
+                                        class="text-[#5865f2]"
                                         :to="discordLink"
                                         :external="true"
                                         variant="outline"
                                         block
                                         icon="i-simple-icons-discord"
-                                        class="text-[#5865f2]"
                                     >
                                         {{ $t('components.about.join_discord') }}
                                     </UButton>

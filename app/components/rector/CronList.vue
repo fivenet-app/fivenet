@@ -86,11 +86,11 @@ const expand = ref({
     <UTable
         v-else
         v-model:expand="expand"
+        class="flex-1"
         :loading="loading"
         :columns="columns"
         :rows="cronjobs?.jobs"
         :empty-state="{ icon: 'i-mdi-calendar-task', label: $t('common.not_found', [$t('pages.rector.cron.title', 2)]) }"
-        class="flex-1"
     >
         <template #expand="{ row }">
             <div class="p-2">

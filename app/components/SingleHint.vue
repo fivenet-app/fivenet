@@ -22,11 +22,11 @@ const props = withDefaults(
 
 <template>
     <UAlert
-        v-bind="$attrs"
         :ui="{
             icon: { base: 'size-6' },
         }"
         icon="i-mdi-information-outline"
+        v-bind="$attrs"
     >
         <template v-if="!hideTitle" #title>
             <div class="shrink-0 font-semibold">

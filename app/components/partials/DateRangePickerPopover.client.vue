@@ -44,7 +44,6 @@ const open = ref(false);
     <ClientOnly>
         <template v-if="smallerThanSm">
             <UButton
-                v-bind="button"
                 variant="outline"
                 color="black"
                 block
@@ -55,6 +54,7 @@ const open = ref(false);
                         ? `${format(modelValue.start, dateFormat)} - ${format(modelValue.end, dateFormat)}`
                         : `${dateFormat} - ${dateFormat}`
                 "
+                v-bind="button"
                 @click="open = true"
                 @touchstart="open = true"
             />
@@ -68,21 +68,21 @@ const open = ref(false);
                             </h3>
 
                             <UButton
+                                class="-my-1"
                                 color="gray"
                                 variant="ghost"
                                 icon="i-mdi-window-close"
-                                class="-my-1"
                                 @click="open = false"
                             />
                         </div>
                     </template>
 
                     <div class="flex flex-1 items-center">
-                        <DateRangePickerClient v-bind="datePicker" v-model="date" @close="open = false" />
+                        <DateRangePickerClient v-model="date" v-bind="datePicker" @close="open = false" />
                     </div>
 
                     <template #footer>
-                        <UButton color="black" block class="flex-1" @click="open = false">
+                        <UButton class="flex-1" color="black" block @click="open = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
                     </template>
@@ -90,9 +90,8 @@ const open = ref(false);
             </UModal>
         </template>
 
-        <UPopover v-else v-bind="popover" v-model:open="open">
+        <UPopover v-else v-model:open="open" v-bind="popover">
             <UButton
-                v-bind="button"
                 variant="outline"
                 color="black"
                 block
@@ -103,11 +102,12 @@ const open = ref(false);
                         ? `${format(modelValue.start, dateFormat)} - ${format(modelValue.end, dateFormat)}`
                         : `${dateFormat} - ${dateFormat}`
                 "
+                v-bind="button"
                 @touchstart="open = true"
             />
 
             <template #panel="{ close }">
-                <DateRangePickerClient v-bind="datePicker" v-model="date" @close="close" />
+                <DateRangePickerClient v-model="date" v-bind="datePicker" @close="close" />
             </template>
         </UPopover>
     </ClientOnly>

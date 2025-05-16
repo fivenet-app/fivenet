@@ -11,7 +11,7 @@ const color = computed(() => (props.category?.color ? (props.category?.color as 
 
 <template>
     <UBadge v-if="category" class="inline-flex flex-initial gap-1" size="md" :color="color">
-        <UIcon :name="category.icon ? convertComponentIconNameToDynamic(category.icon) : 'i-mdi-shape'" class="size-5" />
+        <UIcon class="size-5" :name="category.icon ? convertComponentIconNameToDynamic(category.icon) : 'i-mdi-shape'" />
         <span :title="category.description ?? $t('common.na')">
             {{ category.name }}
         </span>

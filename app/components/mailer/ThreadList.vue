@@ -64,10 +64,10 @@ defineShortcuts({
 <template>
     <UDashboardPanelContent class="p-0 sm:pb-0">
         <div v-if="!loaded" class="space-y-2">
-            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
-            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
-            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
-            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
+            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
+            <USkeleton class="h-[73px] w-full" :ui="{ rounded: '' }" />
         </div>
 
         <template v-else>
@@ -95,10 +95,10 @@ defineShortcuts({
                             v-if="thread.deletedAt"
                             class="flex shrink-0 flex-row items-center justify-center gap-1.5 font-bold"
                         >
-                            <UIcon name="i-mdi-delete" class="size-4 shrink-0" />
+                            <UIcon class="size-4 shrink-0" name="i-mdi-delete" />
                             {{ $t('common.deleted') }}
                         </div>
-                        <UTooltip v-else :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')" class="shrink-0">
+                        <UTooltip v-else class="shrink-0" :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')">
                             {{
                                 isToday(toDate(thread.updatedAt ?? thread.createdAt))
                                     ? $d(toDate(thread.updatedAt ?? thread.createdAt), 'time')
@@ -110,8 +110,8 @@ defineShortcuts({
                         <p>{{ thread.creatorEmail?.email }}</p>
 
                         <div class="inline-flex gap-1">
-                            <UIcon v-if="thread.state?.important" name="i-mdi-exclamation-thick" class="size-5 text-red-500" />
-                            <UIcon v-if="thread.state?.favorite" name="i-mdi-star" class="size-5 text-yellow-500" />
+                            <UIcon v-if="thread.state?.important" class="size-5 text-red-500" name="i-mdi-exclamation-thick" />
+                            <UIcon v-if="thread.state?.favorite" class="size-5 text-yellow-500" name="i-mdi-star" />
                         </div>
                     </div>
                 </div>

@@ -36,7 +36,7 @@ const selectedDispatch = ref<number | undefined>();
                     "
                 >
                     <span class="sr-only">{{ $t('common.open') }}</span>
-                    <UIcon name="i-mdi-link-variant" class="ml-1 size-5" />
+                    <UIcon class="ml-1 size-5" name="i-mdi-link-variant" />
                 </UButton>
             </span>
         </div>

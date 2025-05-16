@@ -184,13 +184,13 @@ const expand = ref({
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+            <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
-                    <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
+                    <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
                         <DateRangePickerPopoverClient
                             v-model="query.date"
-                            mode="date"
                             class="flex-1"
+                            mode="date"
                             :popover="{ class: 'flex-1' }"
                             :date-picker="{
                                 mode: 'dateTime',
@@ -201,7 +201,7 @@ const expand = ref({
                         />
                     </UFormGroup>
 
-                    <UFormGroup name="user" :label="$t('common.user')" class="flex-1">
+                    <UFormGroup class="flex-1" name="user" :label="$t('common.user')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.users"
@@ -245,7 +245,7 @@ const expand = ref({
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="service" :label="$t('common.service')" class="flex-1">
+                    <UFormGroup class="flex-1" name="service" :label="$t('common.service')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.services"
@@ -266,7 +266,7 @@ const expand = ref({
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="method" :label="$t('common.method')" class="flex-1">
+                    <UFormGroup class="flex-1" name="method" :label="$t('common.method')">
                         <USelectMenu
                             v-model="query.methods"
                             multiple
@@ -285,7 +285,7 @@ const expand = ref({
                         </USelectMenu>
                     </UFormGroup>
 
-                    <UFormGroup name="data" :label="$t('common.data')" class="flex-1">
+                    <UFormGroup class="flex-1" name="data" :label="$t('common.data')">
                         <UInput
                             v-model="query.search"
                             type="text"

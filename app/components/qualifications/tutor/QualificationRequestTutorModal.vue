@@ -98,12 +98,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('components.qualifications.request_modal.title') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
+                    <UFormGroup class="flex-1" name="status" :label="$t('common.status')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.status"
@@ -136,7 +136,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="approverComment" :label="$t('common.message')" class="flex-1">
+                    <UFormGroup class="flex-1" name="approverComment" :label="$t('common.message')">
                         <UTextarea
                             v-model="state.approverComment"
                             name="approverComment"
@@ -148,11 +148,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('common.submit') }}
                         </UButton>
                     </UButtonGroup>

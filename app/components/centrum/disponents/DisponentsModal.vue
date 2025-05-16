@@ -22,15 +22,15 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
                         </UBadge>
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
             <DataNoDataBlock
                 v-if="disponents && disponents.length === 0"
+                class="mt-5"
                 icon="i-mdi-monitor"
                 :type="$t('common.disponents', 2)"
-                class="mt-5"
             />
             <UPageGrid v-else>
                 <UPageCard
@@ -46,7 +46,7 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
             </UPageGrid>
 
             <template #footer>
-                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                <UButton class="flex-1" color="black" block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

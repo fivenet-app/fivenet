@@ -41,15 +41,15 @@ const workflow = useVModel(props, 'modelValue', emit);
                 </UFormGroup>
 
                 <UFormGroup
+                    class="grid flex-1 grid-cols-1 items-center"
                     name="workflow.autoClose.autoCloseSettings.message"
                     :label="$t('common.message')"
-                    class="grid flex-1 grid-cols-1 items-center"
                     :ui="{ container: '' }"
                 >
                     <UInput
                         v-model="workflow.autoClose.autoCloseSettings.message"
-                        type="text"
                         class="w-full flex-1"
+                        type="text"
                         :placeholder="$t('common.message')"
                     />
                 </UFormGroup>
@@ -73,12 +73,12 @@ const workflow = useVModel(props, 'modelValue', emit);
                         :key="idx"
                         class="flex items-center gap-1"
                     >
-                        <UIcon name="i-mdi-drag-horizontal" class="size-6" />
+                        <UIcon class="size-6" name="i-mdi-drag-horizontal" />
 
                         <UFormGroup
+                            class="grid grid-cols-1 items-center"
                             :name="`workflow.reminders.reminders.${idx}.duration`"
                             :label="$t('common.time_ago.day', 2)"
-                            class="grid grid-cols-1 items-center"
                             :ui="{ container: '' }"
                         >
                             <UInput
@@ -98,15 +98,15 @@ const workflow = useVModel(props, 'modelValue', emit);
                         </UFormGroup>
 
                         <UFormGroup
+                            class="grid flex-1 grid-cols-1 items-center"
                             :name="`workflow.reminders.reminders.${idx}.message`"
                             :label="$t('common.message')"
-                            class="grid flex-1 grid-cols-1 items-center"
                             :ui="{ container: '' }"
                         >
                             <UInput
                                 v-model="workflow.reminders.reminderSettings.reminders[idx]!.message"
-                                type="text"
                                 class="w-full flex-1"
+                                type="text"
                                 :placeholder="$t('common.message')"
                             />
                         </UFormGroup>
@@ -123,10 +123,10 @@ const workflow = useVModel(props, 'modelValue', emit);
             </div>
 
             <UButton
+                :class="workflow.reminders.reminderSettings.reminders.length ? 'mt-2' : ''"
                 :ui="{ rounded: 'rounded-full' }"
                 icon="i-mdi-plus"
                 :disabled="workflow.reminders.reminderSettings.reminders.length >= 3"
-                :class="workflow.reminders.reminderSettings.reminders.length ? 'mt-2' : ''"
                 @click="
                     workflow.reminders.reminderSettings.reminders.push({
                         duration: 7,

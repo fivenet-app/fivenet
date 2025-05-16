@@ -113,12 +113,12 @@ const onSubmitThrottle = useThrottleFn(async () => {
         <div class="basis-1/3">
             <UForm
                 v-if="can('RectorService.CreateRole').value"
+                class="flex flex-row gap-2"
                 :schema="schema"
                 :state="state"
-                class="flex flex-row gap-2"
                 @submit="refresh()"
             >
-                <UFormGroup name="grade" :label="$t('common.job_grade')" class="flex-1">
+                <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.jobGrade"
@@ -142,10 +142,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                 <UFormGroup name="submit" label="&nbsp;">
                     <UButton
+                        class="flex-initial justify-end"
                         :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
                         :loading="!canSubmit"
                         icon="i-mdi-plus"
-                        class="flex-initial justify-end"
                         @click="
                             modal.open(ConfirmModal, {
                                 title: $t('components.hints.rector_roles_list.title'),

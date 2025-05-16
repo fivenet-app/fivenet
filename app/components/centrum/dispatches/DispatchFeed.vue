@@ -48,7 +48,7 @@ const { pause, resume } = useIntervalFn(async () => {
         <div class="mt-2 flow-root">
             <div class="-m-2 overflow-y-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <ul role="list" class="space-y-2">
+                    <ul class="space-y-2" role="list">
                         <DispatchFeedItem
                             v-for="(activityItem, activityItemIdx) in data?.activity"
                             :key="activityItem.id"

@@ -299,7 +299,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </UButtonGroup>
                 </div>
 
-                <UDivider :label="$t('common.permission', 2)" class="mb-1" />
+                <UDivider class="mb-1" :label="$t('common.permission', 2)" />
 
                 <div class="flex flex-col gap-2">
                     <UButton
@@ -323,7 +323,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 >
                                     <div class="flex flex-row items-center gap-2">
                                         <div class="flex-1">
-                                            <p :title="`${$t('common.id')}: ${perm.id}`" class="text-gray-900 dark:text-white">
+                                            <p class="text-gray-900 dark:text-white" :title="`${$t('common.id')}: ${perm.id}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </p>
                                             <p class="text-base-500">

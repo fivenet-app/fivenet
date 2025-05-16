@@ -67,7 +67,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" class="my-2 flex flex-1 flex-col gap-2" @submit="onSubmitThrottle">
+    <UForm class="my-2 flex flex-1 flex-col gap-2" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <div class="flex flex-1 flex-row gap-2">
             <UFormGroup class="text-sm font-medium">
                 <UButtonGroup class="inline-flex w-full" orientation="vertical">
@@ -81,13 +81,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </UButtonGroup>
             </UFormGroup>
 
-            <UFormGroup :label="$t('common.law')" name="name" class="flex-1 text-sm font-medium">
+            <UFormGroup class="flex-1 text-sm font-medium" :label="$t('common.law')" name="name">
                 <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law')" />
             </UFormGroup>
         </div>
 
         <div class="flex flex-1 gap-2">
-            <UFormGroup :label="$t('common.fine')" name="fine" class="whitespace-nowrap text-left">
+            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.fine')" name="fine">
                 <UInput
                     v-model="state.fine"
                     name="fine"
@@ -98,7 +98,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
             </UFormGroup>
 
-            <UFormGroup :label="$t('common.detention_time')" name="detentionTime" class="whitespace-nowrap text-left">
+            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.detention_time')" name="detentionTime">
                 <UInput
                     v-model="state.detentionTime"
                     name="detentionTime"
@@ -108,7 +108,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
             </UFormGroup>
 
-            <UFormGroup :label="$t('common.traffic_infraction_points')" name="stvoPoints" class="whitespace-nowrap text-left">
+            <UFormGroup class="whitespace-nowrap text-left" :label="$t('common.traffic_infraction_points')" name="stvoPoints">
                 <UInput
                     v-model="state.stvoPoints"
                     name="stvoPoints"
@@ -119,11 +119,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </UFormGroup>
         </div>
 
-        <UFormGroup :label="$t('common.description')" name="description" class="text-left">
+        <UFormGroup class="text-left" :label="$t('common.description')" name="description">
             <UInput v-model="state.description" name="description" type="text" :placeholder="$t('common.description')" />
         </UFormGroup>
 
-        <UFormGroup :label="$t('common.hint')" name="hint" class="text-left">
+        <UFormGroup class="text-left" :label="$t('common.hint')" name="hint">
             <UInput v-model="state.hint" name="hint" type="text" :placeholder="$t('common.hint')" />
         </UFormGroup>
     </UForm>

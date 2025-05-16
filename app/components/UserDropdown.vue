@@ -86,10 +86,10 @@ const open = ref(false);
 <template>
     <UDropdown
         v-model:open="open"
+        class="w-full"
         :items="items"
         :ui="{ width: 'w-full', item: { disabled: 'cursor-text select-text' } }"
         :popper="{ strategy: 'absolute', placement: 'top' }"
-        class="w-full"
         mode="hover"
     >
         <UChip
@@ -101,11 +101,11 @@ const open = ref(false);
             :ui="{ base: 'top-0 left-1/2' }"
         >
             <UButton
+                class="w-full"
+                :class="[open && 'bg-gray-50 dark:bg-gray-800']"
                 color="gray"
                 variant="ghost"
-                class="w-full"
                 :label="name"
-                :class="[open && 'bg-gray-50 dark:bg-gray-800']"
                 @click="open = !open"
                 @touchstart.passive="open = !open"
             >
@@ -121,7 +121,7 @@ const open = ref(false);
                 </template>
 
                 <template #trailing>
-                    <UIcon name="i-mdi-ellipsis-vertical" class="ml-auto size-5" />
+                    <UIcon class="ml-auto size-5" name="i-mdi-ellipsis-vertical" />
                 </template>
             </UButton>
         </UChip>

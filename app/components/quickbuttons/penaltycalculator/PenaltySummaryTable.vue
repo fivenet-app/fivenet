@@ -45,14 +45,14 @@ const leeway = computed(() => props.reduction / 100);
 </script>
 
 <template>
-    <UButton v-if="selectedLaws.length === 0" disabled variant="outline" class="relative block w-full p-4 text-center">
-        <UIcon name="i-mdi-calculator" class="mx-auto size-12" />
+    <UButton v-if="selectedLaws.length === 0" class="relative block w-full p-4 text-center" disabled variant="outline">
+        <UIcon class="mx-auto size-12" name="i-mdi-calculator" />
         <span class="mt-2 block text-sm font-semibold">
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>
     </UButton>
 
-    <UTable v-else :columns="columns" :rows="selectedLaws" class="max-w-full divide-y divide-base-600">
+    <UTable v-else class="max-w-full divide-y divide-base-600" :columns="columns" :rows="selectedLaws">
         <template #law-data="{ row: law }">
             <div class="inline-flex items-center gap-2">
                 <p class="whitespace-pre-line text-gray-900 dark:text-white">
@@ -60,7 +60,7 @@ const leeway = computed(() => props.reduction / 100);
                 </p>
 
                 <UTooltip v-if="law.law.hint" :text="law.law.hint">
-                    <UIcon name="i-mdi-information-outline" class="size-5" />
+                    <UIcon class="size-5" name="i-mdi-information-outline" />
                 </UTooltip>
             </div>
         </template>

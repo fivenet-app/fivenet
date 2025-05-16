@@ -9,11 +9,11 @@ defineProps<{
 <template>
     <UPageCard :title="ad.title" :description="ad.description">
         <template #header>
-            <UBadge :label="$t('components.internet.ads.sponsored_ad')" class="w-full" />
+            <UBadge class="w-full" :label="$t('components.internet.ads.sponsored_ad')" />
         </template>
 
         <template v-if="ad.image?.url" #icon>
-            <NuxtImg :src="ad.image.url" :alt="$t('common.logo')" class="mx-auto h-40" loading="lazy" />
+            <NuxtImg class="mx-auto h-40" :src="ad.image.url" :alt="$t('common.logo')" loading="lazy" />
         </template>
     </UPageCard>
 </template>

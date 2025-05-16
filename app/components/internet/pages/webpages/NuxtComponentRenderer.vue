@@ -35,7 +35,7 @@ defineOptions({
         :disabled="value.tag === 'input' ? true : undefined"
         v-bind="value.attrs"
     >
-        <template v-for="(slot, slotIdx) in value.slots" #[slot.tag] :key="slotIdx">
+        <template v-for="(slot, slotIdx) in value.slots" :key="slotIdx" #[slot.tag]>
             <NuxtComponentRenderer :value="slot" />
         </template>
         <NuxtComponentRenderer v-for="(child, idx) in value.content" :key="idx" :value="child" />

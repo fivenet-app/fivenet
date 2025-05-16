@@ -124,8 +124,8 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
         <div class="mt-2 flex gap-2">
             <UButtonGroup v-if="rsvpOpen" class="inline-flex w-full">
                 <UButton
-                    block
                     class="flex-1"
+                    block
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="green"
@@ -136,8 +136,8 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 </UButton>
 
                 <UButton
-                    block
                     class="flex-1"
+                    block
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="amber"
@@ -148,8 +148,8 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 </UButton>
 
                 <UButton
-                    block
                     class="flex-1"
+                    block
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="error"
@@ -179,9 +179,9 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
         <EntryShareForm v-if="canShare && openShare" :entry-id="entryId" @close="openShare = false" @refresh="refresh()" />
 
         <UAccordion
+            class="mt-2 flex flex-col"
             variant="ghost"
             :items="[{ slot: 'rsvp', label: $t('common.rsvp'), icon: 'i-mdi-calendar-question' }]"
-            class="mt-2 flex flex-col"
         >
             <template #rsvp>
                 <UContainer>

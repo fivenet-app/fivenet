@@ -68,24 +68,24 @@ watch(labels, () => (state.labels = labels.value ?? []));
                             {{ $t('components.citizens.citizen_labels.title') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <UFormGroup
                     v-if="state && can('CitizenStoreService.ManageCitizenLabels').value"
-                    name="citizenAttributes.list"
                     class="grid items-center gap-2"
+                    name="citizenAttributes.list"
                     :ui="{ container: '' }"
                 >
                     <div class="flex flex-col gap-1">
                         <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
-                            <UFormGroup :name="`labels.${idx}.name`" class="flex-1">
+                            <UFormGroup class="flex-1" :name="`labels.${idx}.name`">
                                 <UInput
                                     v-model="state.labels[idx]!.name"
+                                    class="w-full flex-1"
                                     :name="`labels.${idx}.name`"
                                     type="text"
-                                    class="w-full flex-1"
                                     :placeholder="$t('common.label', 1)"
                                 />
                             </UFormGroup>
@@ -93,8 +93,8 @@ watch(labels, () => (state.labels = labels.value ?? []));
                             <UFormGroup :name="`labels.${idx}.color`">
                                 <ColorPickerClient
                                     v-model="state.labels[idx]!.color"
-                                    :name="`labels.${idx}.color`"
                                     class="min-w-16"
+                                    :name="`labels.${idx}.color`"
                                 />
                             </UFormGroup>
 
@@ -108,21 +108,21 @@ watch(labels, () => (state.labels = labels.value ?? []));
                     </div>
 
                     <UButton
+                        :class="state.labels.length ? 'mt-2' : ''"
                         :ui="{ rounded: 'rounded-full' }"
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
-                        :class="state.labels.length ? 'mt-2' : ''"
                         @click="state.labels.push({ id: 0, name: '', color: '#ffffff' })"
                     />
                 </UFormGroup>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton class="flex-1" type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('common.save') }}
                         </UButton>
                     </UButtonGroup>

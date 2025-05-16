@@ -186,32 +186,32 @@ const accordionItems = computed(() =>
 
                     <template v-if="page.meta.updatedAt || page.meta.deletedAt" #description>
                         <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                            <UBadge v-if="page.meta.createdAt" color="black" class="inline-flex gap-1" size="md">
-                                <UIcon name="i-mdi-calendar" class="size-5" />
+                            <UBadge v-if="page.meta.createdAt" class="inline-flex gap-1" color="black" size="md">
+                                <UIcon class="size-5" name="i-mdi-calendar" />
                                 <span>
                                     {{ $t('common.created') }}
                                     <GenericTime :value="page.meta.createdAt" type="long" />
                                 </span>
                             </UBadge>
 
-                            <UBadge v-if="page.meta.updatedAt" color="black" class="inline-flex gap-1" size="md">
-                                <UIcon name="i-mdi-calendar-edit" class="size-5" />
+                            <UBadge v-if="page.meta.updatedAt" class="inline-flex gap-1" color="black" size="md">
+                                <UIcon class="size-5" name="i-mdi-calendar-edit" />
                                 <span>
                                     {{ $t('common.updated') }}
                                     <GenericTime :value="page.meta.updatedAt" type="long" />
                                 </span>
                             </UBadge>
 
-                            <UBadge v-if="page.meta.deletedAt" color="amber" class="inline-flex gap-1" size="md">
-                                <UIcon name="i-mdi-calendar-remove" class="size-5" />
+                            <UBadge v-if="page.meta.deletedAt" class="inline-flex gap-1" color="amber" size="md">
+                                <UIcon class="size-5" name="i-mdi-calendar-remove" />
                                 <span>
                                     {{ $t('common.deleted') }}
                                     <GenericTime :value="page.meta.deletedAt" type="long" />
                                 </span>
                             </UBadge>
 
-                            <UBadge v-if="page.meta.public" color="black" class="inline-flex gap-1" size="md">
-                                <UIcon name="i-mdi-earth" class="size-5" />
+                            <UBadge v-if="page.meta.public" class="inline-flex gap-1" color="black" size="md">
+                                <UIcon class="size-5" name="i-mdi-earth" />
                                 <span>
                                     {{ $t('common.public') }}
                                 </span>
@@ -230,7 +230,7 @@ const accordionItems = computed(() =>
 
                 <UDivider class="mb-4" />
 
-                <UAccordion multiple :items="accordionItems" :unmount="true" class="print:hidden">
+                <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
                     <template #access>
                         <UContainer>
                             <DataNoDataBlock

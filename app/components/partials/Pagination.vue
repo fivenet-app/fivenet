@@ -92,9 +92,9 @@ function onClickNext() {
             <div v-if="!hideText" class="flex flex-col items-center gap-2">
                 <I18nT
                     v-if="!isInfinite"
+                    class="@md:block hidden truncate text-sm"
                     keypath="components.partials.table_pagination.page_count_with_total"
                     tag="p"
-                    class="@md:block hidden truncate text-sm"
                 >
                     <template #current>
                         <span class="text-neutral font-medium">
@@ -119,9 +119,9 @@ function onClickNext() {
                 </I18nT>
                 <I18nT
                     v-else
+                    class="@md:block hidden truncate text-sm"
                     keypath="components.partials.table_pagination.page_count"
                     tag="p"
-                    class="@md:block hidden truncate text-sm"
                 >
                     <template #current>
                         <span class="text-neutral font-medium">
@@ -139,11 +139,11 @@ function onClickNext() {
 
             <UTooltip v-if="refresh" :text="$t('common.refresh')">
                 <UButton
+                    class="p-px"
                     variant="link"
                     icon="i-mdi-refresh"
                     :disabled="loading || loadingState"
                     :loading="loading || loadingState"
-                    class="p-px"
                     @click="refresh()"
                 >
                     <span class="@md:block hidden">

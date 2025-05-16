@@ -62,11 +62,11 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
                     </h3>
 
                     <UButton
+                        class="-my-1"
                         :disabled="preventClose"
                         color="gray"
                         variant="ghost"
                         icon="i-mdi-window-close"
-                        class="-my-1"
                         @click="isOpen = false"
                     />
                 </div>
@@ -83,7 +83,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
             </UPageGrid>
 
             <template #footer>
-                <UButton block class="flex-1" color="black" :disabled="preventClose" @click="isOpen = false">
+                <UButton class="flex-1" block color="black" :disabled="preventClose" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

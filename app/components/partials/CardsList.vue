@@ -27,12 +27,12 @@ const { can } = useAuth();
     <UPageGrid>
         <UPageCard
             v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission).value)"
-            v-bind="$attrs"
             :key="index"
             :to="module.to"
             :title="module.title"
             :description="module.description"
             :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
+            v-bind="$attrs"
             @click="$emit('selected', index)"
         >
             <template v-if="showIcon && module.icon" #icon>
@@ -46,9 +46,9 @@ const { can } = useAuth();
                 </template>
                 <template v-else>
                     <UIcon
-                        :name="module.icon"
                         class="text-primary h-10 w-10 shrink-0"
                         :class="`text-${module.color}-500 dark:text-${module.color}-400`"
+                        :name="module.icon"
                     />
                 </template>
             </template>

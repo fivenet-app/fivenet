@@ -254,8 +254,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UTooltip
                         v-if="isSuperuser"
-                        :text="!message.deletedAt ? $t('common.delete') : $t('common.restore')"
                         class="ml-2"
+                        :text="!message.deletedAt ? $t('common.delete') : $t('common.restore')"
                     >
                         <UButton
                             :color="!message.deletedAt ? 'error' : 'success'"
@@ -312,8 +312,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <template v-for="(attachment, idx) in message.data.attachments" :key="idx">
                                 <DocumentInfoPopover
                                     v-if="attachment.data.oneofKind === 'document'"
-                                    :document-id="attachment.data.document.id"
                                     class="flex-1"
+                                    :document-id="attachment.data.document.id"
                                     button-class="flex-1"
                                     show-id
                                     load-on-open
@@ -338,16 +338,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         }"
     >
         <UAccordion
+            class="mt-2 max-h-[50vh] overflow-y-auto"
             variant="outline"
             :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
             :ui="{ default: { class: 'mb-0' }, item: { base: 'overflow-x-hidden' } }"
-            class="mt-2 max-h-[50vh] overflow-y-auto"
         >
             <template #compose>
                 <UForm
+                    class="flex flex-1 grow-0 flex-col gap-2 px-1"
                     :schema="schema"
                     :state="state"
-                    class="flex flex-1 grow-0 flex-col gap-2 px-1"
                     @submit="onSubmitThrottle"
                 >
                     <UFormGroup name="recipients" :label="$t('common.additional_recipients')">
@@ -405,9 +405,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
                             <UInput
                                 v-model="state.title"
+                                class="w-full font-semibold text-gray-900 dark:text-white"
                                 type="text"
                                 size="lg"
-                                class="w-full font-semibold text-gray-900 dark:text-white"
                                 :placeholder="$t('common.title')"
                                 :disabled="!canSubmit"
                                 :ui="{ icon: { trailing: { pointer: '' } } }"
@@ -424,7 +424,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </template>
                             </UInput>
 
-                            <TemplateSelector v-model="state.content" size="lg" class="ml-auto" />
+                            <TemplateSelector v-model="state.content" class="ml-auto" size="lg" />
                         </div>
                     </UFormGroup>
 
@@ -436,9 +436,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <div class="inline-flex gap-1">
                         <UButton
+                            class="flex-1"
                             type="submit"
                             :disabled="!canSubmit"
-                            class="flex-1"
                             :label="$t('components.mailer.send')"
                             trailing-icon="i-mdi-paper-airplane"
                         />

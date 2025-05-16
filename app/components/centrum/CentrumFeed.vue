@@ -17,7 +17,7 @@ defineProps<{
             </h2>
         </div>
         <div class="flex-1">
-            <ul role="list" class="space-y-2">
+            <ul class="space-y-2" role="list">
                 <template v-for="(activityItem, activityItemIdx) in items">
                     <DispatchFeedItem
                         v-if="'dispatchId' in activityItem"

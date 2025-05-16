@@ -4,7 +4,7 @@
             class="text-primary-500 bg-background inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding p-1.5"
         >
             <div class="mx-0.5 flex items-center gap-1 text-xs">
-                <UIcon name="i-mdi-refresh" class="size-4 animate-spin" />
+                <UIcon class="size-4 animate-spin" name="i-mdi-refresh" />
                 {{ $t('components.livemap.restarting_datastream') }}
             </div>
         </div>

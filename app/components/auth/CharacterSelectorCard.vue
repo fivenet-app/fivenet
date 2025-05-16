@@ -87,8 +87,8 @@ const { game } = useAppConfig();
 
         <template #footer>
             <UButton
-                block
                 class="inline-flex items-center"
+                block
                 :disabled="unavailable || !canSubmit"
                 :loading="!canSubmit"
                 :icon="unavailable ? 'i-mdi-lock' : undefined"

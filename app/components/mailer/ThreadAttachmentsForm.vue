@@ -45,11 +45,11 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
         <div class="flex flex-col gap-1">
             <div v-for="(_, idx) in attachments" :key="idx" class="flex items-center gap-1">
                 <template v-if="attachments[idx]?.data.oneofKind === 'document'">
-                    <UFormGroup :name="`attachments.${idx}.data.documentId`" class="flex-1">
+                    <UFormGroup class="flex-1" :name="`attachments.${idx}.data.documentId`">
                         <USelectMenu
+                            class="w-full flex-1"
                             option-attribute="title"
                             :disabled="!canSubmit"
-                            class="w-full flex-1"
                             :searchable="listDocuments"
                             searchable-lazy
                             :placeholder="$t('common.document')"
@@ -85,10 +85,10 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
         </div>
 
         <UButton
+            :class="attachments.length ? 'mt-2' : ''"
             :ui="{ rounded: 'rounded-full' }"
             icon="i-mdi-plus"
             :disabled="!canSubmit || attachments.length >= 3"
-            :class="attachments.length ? 'mt-2' : ''"
             @click="
                 attachments.push({
                     data: { oneofKind: 'document', document: { id: 0 } },

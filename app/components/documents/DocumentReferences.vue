@@ -90,18 +90,18 @@ const columns = computed(() =>
         <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden">
-                <ul role="list" class="divide-y divide-gray-600 rounded-lg sm:hidden">
+                <ul class="divide-y divide-gray-600 rounded-lg sm:hidden" role="list">
                     <li v-for="reference in references" :key="reference.id">
                         <ULink
+                            class="block p-4 hover:bg-base-900"
                             :to="{
                                 name: 'documents-id',
                                 params: { id: reference.targetDocumentId },
                             }"
-                            class="block p-4 hover:bg-base-900"
                         >
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
-                                    <UIcon name="i-mdi-arrow-collapse" class="size-5 shrink-0" />
+                                    <UIcon class="size-5 shrink-0" name="i-mdi-arrow-collapse" />
                                     <span class="flex flex-col truncate text-sm">
                                         <span>
                                             {{ reference.targetDocument?.title
@@ -149,13 +149,13 @@ const columns = computed(() =>
                             >
                                 <template #targetDocument-data="{ row: reference }">
                                     <ULink
+                                        class="inline-flex items-center gap-1 truncate"
                                         :to="{
                                             name: 'documents-id',
                                             params: {
                                                 id: reference.targetDocumentId,
                                             },
                                         }"
-                                        class="inline-flex items-center gap-1 truncate"
                                     >
                                         <DocumentCategoryBadge :category="reference.targetDocument.category" />
 
@@ -171,13 +171,13 @@ const columns = computed(() =>
                                 </template>
                                 <template v-if="showSource" #sourceDocument-data="{ row: reference }">
                                     <ULink
+                                        class="inline-flex items-center gap-1 truncate"
                                         :to="{
                                             name: 'documents-id',
                                             params: {
                                                 id: reference.sourceDocumentId,
                                             },
                                         }"
-                                        class="inline-flex items-center gap-1 truncate"
                                     >
                                         <DocumentCategoryBadge :category="reference.sourceDocument.category" />
 

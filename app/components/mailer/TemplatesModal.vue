@@ -65,7 +65,7 @@ const editing = ref(false);
                         {{ $t('common.template', 2) }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -134,7 +134,7 @@ const editing = ref(false);
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                    <UButton class="flex-1" block color="black" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

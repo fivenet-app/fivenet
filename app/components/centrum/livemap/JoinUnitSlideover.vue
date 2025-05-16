@@ -81,10 +81,10 @@ const filteredUnits = computed(() => ({
                     <h3 class="inline-flex items-center gap-2 text-2xl font-semibold leading-6">
                         {{ $t('common.leave_unit') }}
 
-                        <UIcon v-if="!canSubmit" name="i-mdi-loading" class="size-6 animate-spin" />
+                        <UIcon v-if="!canSubmit" class="size-6 animate-spin" name="i-mdi-loading" />
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -104,9 +104,9 @@ const filteredUnits = computed(() => ({
                         <UButton
                             v-for="unit in filteredUnits.available"
                             :key="unit.name"
+                            class="flex flex-col"
                             :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
                             :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
-                            class="flex flex-col"
                             @click="onSubmitThrottle(unit.id)"
                         >
                             <span class="text-base">
@@ -130,9 +130,9 @@ const filteredUnits = computed(() => ({
                             <UButton
                                 v-for="unit in filteredUnits.unavailable"
                                 :key="unit.name"
+                                class="flex flex-col"
                                 :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
                                 :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
-                                class="flex flex-col"
                                 @click="onSubmitThrottle(unit.id)"
                             >
                                 <span class="text-base">
@@ -156,16 +156,16 @@ const filteredUnits = computed(() => ({
                 <UButtonGroup class="inline-flex w-full">
                     <UButton
                         v-if="ownUnitId !== undefined"
+                        class="flex-1"
                         block
                         color="error"
-                        class="flex-1"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle()"
                     >
                         {{ $t('common.leave') }}
                     </UButton>
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    <UButton class="flex-1" color="black" block @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

@@ -72,7 +72,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" class="w-full flex-col" @submit="onSubmitThrottle">
+    <UForm class="w-full flex-col" :schema="schema" :state="state" @submit="onSubmitThrottle">
         <div class="flex items-center">
             <h4 v-if="data && (data.motd.length > 0 || canDo)" class="flex-1 text-base font-semibold leading-6">
                 {{ $t('common.motd') }}
@@ -103,7 +103,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
             </template>
             <template v-else>
-                <UFormGroup name="motd" class="w-full">
+                <UFormGroup class="w-full" name="motd">
                     <UTextarea v-model="state.motd" :rows="2" :maxrows="6" name="motd" />
                 </UFormGroup>
             </template>

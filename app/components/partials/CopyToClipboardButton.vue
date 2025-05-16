@@ -23,12 +23,12 @@ function addToClipboard(): void {
 <template>
     <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
         <UButton
+            class="px-1 py-1"
             icon="i-mdi-clipboard-plus"
             variant="outline"
             color="black"
             size="xs"
             :ui="{ padding: { xs: '' } }"
-            class="px-1 py-1"
             @click="addToClipboard()"
         />
     </UTooltip>

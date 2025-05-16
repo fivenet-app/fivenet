@@ -40,7 +40,7 @@ const open = ref(false);
 <template>
     <template v-if="smallerBreakpoint">
         <UButton
-            v-bind="$attrs"
+            :class="$attrs.class"
             variant="outline"
             color="white"
             :disabled="disabled"
@@ -48,7 +48,7 @@ const open = ref(false);
             :icon="!hideIcon ? 'i-mdi-palette' : ''"
             :label="!hideIcon ? '' : '&nbsp;'"
             :style="{ backgroundColor: color }"
-            :class="$attrs.class"
+            v-bind="$attrs"
             @click="open = true"
             @touchstart="open = true"
         />
@@ -61,7 +61,7 @@ const open = ref(false);
                             {{ $t('common.color') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="open = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="open = false" />
                     </div>
                 </template>
 
@@ -78,7 +78,7 @@ const open = ref(false);
                 </div>
 
                 <template #footer>
-                    <UButton color="black" block class="flex-1" @click="open = false">
+                    <UButton class="flex-1" color="black" block @click="open = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </template>
@@ -86,9 +86,9 @@ const open = ref(false);
         </UModal>
     </template>
 
-    <UPopover v-else v-bind="$attrs" v-model:open="open" :popper="{ placement: 'bottom-start' }">
+    <UPopover v-else v-model:open="open" :popper="{ placement: 'bottom-start' }" v-bind="$attrs">
         <UButton
-            v-bind="$attrs"
+            :class="$attrs.class"
             variant="outline"
             color="white"
             :disabled="disabled"
@@ -96,7 +96,7 @@ const open = ref(false);
             :icon="!hideIcon ? 'i-mdi-palette' : ''"
             :label="!hideIcon ? '' : '&nbsp;'"
             :style="{ backgroundColor: color }"
-            :class="$attrs.class"
+            v-bind="$attrs"
             @touchstart="open = true"
         />
 

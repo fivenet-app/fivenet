@@ -396,16 +396,16 @@ defineShortcuts({
                                     :class="open || getOwnUnit !== undefined ? 'px-2' : ''"
                                 >
                                     <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
-                                        <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
+                                        <ul class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400" role="list">
                                             <li>
-                                                <ul role="list" class="-mx-1 space-y-0.5">
+                                                <ul class="-mx-1 space-y-0.5" role="list">
                                                     <li>
                                                         <UButton
                                                             v-if="getOwnUnit !== undefined"
-                                                            icon="i-mdi-information-outline"
-                                                            block
                                                             class="flex flex-col"
                                                             :class="ownUnitStatus"
+                                                            icon="i-mdi-information-outline"
+                                                            block
                                                             @click="
                                                                 slideover.open(UnitDetailsSlideover, {
                                                                     unit: getOwnUnit,
@@ -428,7 +428,7 @@ defineShortcuts({
                                                             </span>
                                                         </UButton>
 
-                                                        <UButtonGroup orientation="vertical" class="w-full">
+                                                        <UButtonGroup class="w-full" orientation="vertical">
                                                             <UButton
                                                                 variant="soft"
                                                                 color="primary"
@@ -467,13 +467,13 @@ defineShortcuts({
 
                                             <template v-if="getOwnUnit !== undefined">
                                                 <li>
-                                                    <ul role="list" class="-mx-1 space-y-0.5">
+                                                    <ul class="-mx-1 space-y-0.5" role="list">
                                                         <li class="inline-flex items-center text-xs font-semibold leading-6">
                                                             {{ $t('common.units') }}
                                                             <UIcon
                                                                 v-if="!canSubmitUnitStatus"
-                                                                name="i-mdi-loading"
                                                                 class="ml-1 size-4 animate-spin"
+                                                                name="i-mdi-loading"
                                                             />
                                                         </li>
 
@@ -482,6 +482,7 @@ defineShortcuts({
                                                                 <UButton
                                                                     v-for="item in unitStatuses"
                                                                     :key="item.name"
+                                                                    :class="[item.status && unitStatusToBGColor(item.status)]"
                                                                     :ui="{
                                                                         gap: { xs: 'gap-x-0.5' },
                                                                         padding: { xs: 'px-1.5 py-1.5' },
@@ -489,7 +490,6 @@ defineShortcuts({
                                                                     size="xs"
                                                                     :disabled="!canSubmitUnitStatus"
                                                                     :icon="item.icon"
-                                                                    :class="[item.status && unitStatusToBGColor(item.status)]"
                                                                     truncate
                                                                     @click="
                                                                         onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)
@@ -529,13 +529,13 @@ defineShortcuts({
                                                 </li>
 
                                                 <li>
-                                                    <ul role="list" class="-mx-1 space-y-0.5">
+                                                    <ul class="-mx-1 space-y-0.5" role="list">
                                                         <li class="inline-flex items-center text-xs font-semibold leading-6">
                                                             {{ $t('common.dispatch') }} {{ $t('common.status') }}
                                                             <UIcon
                                                                 v-if="!canSubmitDispatchStatus"
-                                                                name="i-mdi-loading"
                                                                 class="ml-1 size-4 animate-spin"
+                                                                name="i-mdi-loading"
                                                             />
                                                         </li>
 
@@ -546,6 +546,9 @@ defineShortcuts({
                                                                         (s) => s.status !== StatusDispatch.CANCELLED,
                                                                     )"
                                                                     :key="item.name"
+                                                                    :class="[
+                                                                        item.status && dispatchStatusToBGColor(item.status),
+                                                                    ]"
                                                                     :ui="{
                                                                         gap: { xs: 'gap-x-0.5' },
                                                                         padding: { xs: 'px-1.5 py-1.5' },
@@ -553,9 +556,6 @@ defineShortcuts({
                                                                     size="xs"
                                                                     :disabled="!canSubmitDispatchStatus"
                                                                     :icon="item.icon"
-                                                                    :class="[
-                                                                        item.status && dispatchStatusToBGColor(item.status),
-                                                                    ]"
                                                                     @click="
                                                                         onSubmitDispatchStatusThrottle(
                                                                             selectedDispatch,
@@ -577,11 +577,11 @@ defineShortcuts({
                                                                 </UButton>
 
                                                                 <UTooltip
+                                                                    class="col-span-2"
                                                                     :text="
                                                                         $t('components.centrum.update_dispatch_status.title')
                                                                     "
                                                                     :shortcuts="['S', 'D']"
-                                                                    class="col-span-2"
                                                                 >
                                                                     <UButton
                                                                         variant="soft"
@@ -603,7 +603,7 @@ defineShortcuts({
                                                 </li>
 
                                                 <li>
-                                                    <ul role="list" class="-mx-1 space-y-0.5">
+                                                    <ul class="-mx-1 space-y-0.5" role="list">
                                                         <li class="inline-flex items-center text-xs font-semibold leading-6">
                                                             {{ $t('common.your_dispatches') }}
                                                         </li>
@@ -658,11 +658,11 @@ defineShortcuts({
                                 >
                                     <UTooltip :text="$t('components.centrum.take_dispatch.title')" :shortcuts="['M', 'D']">
                                         <UButton
+                                            class="flex size-12 items-center justify-center"
+                                            :class="[getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full']"
                                             :color="pendingDispatches.length > 0 ? 'error' : 'primary'"
                                             size="xl"
                                             icon="i-mdi-car-emergency"
-                                            class="flex size-12 items-center justify-center"
-                                            :class="[getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full']"
                                             @click="openTakeDispatches"
                                         />
                                     </UTooltip>

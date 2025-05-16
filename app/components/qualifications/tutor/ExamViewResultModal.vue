@@ -130,11 +130,11 @@ const correctCount = ref(0);
                                 <UFormGroup :label="$t('common.points', 2)">
                                     <UInput
                                         v-model="data.grading!.responses[getGradingIndex(question.question.questionId)]!.points"
+                                        class="max-w-24"
                                         type="number"
                                         :step="0.5"
                                         :min="0"
                                         :max="question.question.question?.points"
-                                        class="max-w-24"
                                     />
                                 </UFormGroup>
                             </div>

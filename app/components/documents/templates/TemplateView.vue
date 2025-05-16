@@ -87,8 +87,8 @@ const contentAccessTypes: AccessType[] = [
             <UButtonGroup v-if="template" class="inline-flex">
                 <UButton
                     v-if="can('DocStoreService.CreateTemplate').value"
-                    block
                     class="flex-1"
+                    block
                     color="white"
                     trailing-icon="i-mdi-print-preview"
                     @click="
@@ -102,8 +102,8 @@ const contentAccessTypes: AccessType[] = [
 
                 <UButton
                     v-if="can('DocStoreService.CreateTemplate').value"
-                    block
                     class="flex-1"
+                    block
                     trailing-icon="i-mdi-pencil"
                     :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
                 >
@@ -112,8 +112,8 @@ const contentAccessTypes: AccessType[] = [
 
                 <UButton
                     v-if="can('DocStoreService.DeleteTemplate').value"
-                    block
                     class="flex-1"
+                    block
                     trailing-icon="i-mdi-delete"
                     color="error"
                     @click="
@@ -144,9 +144,9 @@ const contentAccessTypes: AccessType[] = [
                     <div>
                         <h2 class="inline-flex items-center gap-2 text-2xl">
                             <UIcon
-                                :name="template.icon ? convertComponentIconNameToDynamic(template.icon) : 'i-mdi-file-outline'"
-                                :class="`text-${template.color}-500 dark:text-${template.color}-400`"
                                 class="shrink-0"
+                                :class="`text-${template.color}-500 dark:text-${template.color}-400`"
+                                :name="template.icon ? convertComponentIconNameToDynamic(template.icon) : 'i-mdi-file-outline'"
                             />
 
                             <span>
@@ -196,8 +196,8 @@ const contentAccessTypes: AccessType[] = [
                             </h3>
                             <div class="my-2">
                                 <UTextarea
-                                    name="contentTitle"
                                     class="w-full whitespace-pre-wrap"
+                                    name="contentTitle"
                                     disabled
                                     resize
                                     :rows="3"
@@ -212,9 +212,9 @@ const contentAccessTypes: AccessType[] = [
                             </h3>
                             <div class="my-2">
                                 <UInput
+                                    class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-900 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     type="text"
                                     name="state"
-                                    class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-900 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     disabled
                                     :value="template.state"
                                 />
@@ -236,8 +236,8 @@ const contentAccessTypes: AccessType[] = [
                             </h3>
                             <div class="my-2">
                                 <UTextarea
-                                    name="content"
                                     class="w-full whitespace-pre-wrap"
+                                    name="content"
                                     disabled
                                     resize
                                     :rows="4"

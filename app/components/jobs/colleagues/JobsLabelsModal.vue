@@ -93,25 +93,25 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                             {{ $t('common.label', 2) }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.label', 2)])" />
                 <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
 
-                <UFormGroup v-else name="list" class="grid items-center gap-2" :ui="{ container: '' }">
+                <UFormGroup v-else class="grid items-center gap-2" name="list" :ui="{ container: '' }">
                     <div class="flex flex-col gap-1">
                         <VueDraggable v-model="state.labels" class="flex flex-col gap-2">
                             <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
-                                <UIcon name="i-mdi-drag-horizontal" class="size-6" />
+                                <UIcon class="size-6" name="i-mdi-drag-horizontal" />
 
-                                <UFormGroup :name="`labels.${idx}.name`" class="flex-1">
+                                <UFormGroup class="flex-1" :name="`labels.${idx}.name`">
                                     <UInput
                                         v-model="state.labels[idx]!.name"
+                                        class="w-full flex-1"
                                         :name="`labels.${idx}.name`"
                                         type="text"
-                                        class="w-full flex-1"
                                         :placeholder="$t('common.label', 1)"
                                     />
                                 </UFormGroup>
@@ -119,8 +119,8 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                                 <UFormGroup :name="`${idx}.color`">
                                     <ColorPickerClient
                                         v-model="state.labels[idx]!.color"
-                                        :name="`${idx}.color`"
                                         class="min-w-16"
+                                        :name="`${idx}.color`"
                                     />
                                 </UFormGroup>
 
@@ -135,24 +135,24 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                     </div>
 
                     <UButton
+                        :class="state.labels.length ? 'mt-2' : ''"
                         :ui="{ rounded: 'rounded-full' }"
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
-                        :class="state.labels.length ? 'mt-2' : ''"
                         @click="state.labels.push({ id: 0, name: '', color: '#ffffff', order: 0 })"
                     />
                 </UFormGroup>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton class="flex-1" color="black" block @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
                         <UButton
+                            class="flex-1"
                             type="submit"
                             block
-                            class="flex-1"
                             :loading="loading || !canSubmit"
                             :disabled="!canSubmit || !!error"
                         >
