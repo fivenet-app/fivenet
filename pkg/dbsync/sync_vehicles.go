@@ -30,7 +30,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	limit := 1000
+	limit := int64(1000)
 	var offset uint64
 	if s.state != nil && s.state.Offset > 0 {
 		offset = s.state.Offset
@@ -73,7 +73,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 
 	// If less vehicles than limit are returned, we probably have reached the "end" of the table
 	// and need to reset the offset to 0
-	if len(vehicles) < limit {
+	if int64(len(vehicles)) < limit {
 		offset = 0
 		s.state.SyncedUp = true
 	}

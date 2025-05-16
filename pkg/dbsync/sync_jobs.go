@@ -30,7 +30,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	limit := 200
+	limit := int64(200)
 
 	sQuery := s.cfg.Tables.Jobs
 	query := prepareStringQuery(sQuery, s.state, 0, limit)

@@ -29,7 +29,7 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	limit := 200
+	limit := int64(200)
 
 	sQuery := s.cfg.Tables.Licenses
 	query := prepareStringQuery(sQuery, s.state, 0, limit)
