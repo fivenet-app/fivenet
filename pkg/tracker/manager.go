@@ -291,5 +291,5 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 }
 
 func userIdKey(id int32) string {
-	return strconv.Itoa(int(id))
+	return strconv.FormatInt(int64(id), 10)
 }

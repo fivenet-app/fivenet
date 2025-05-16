@@ -56,7 +56,7 @@ func (p *Generic) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 	avatar := avatarRaw.(string)
 
 	user := &UserInfo{
-		ID:       strconv.Itoa(int(subId)),
+		ID:       strconv.FormatInt(int64(subId), 10),
 		Username: username,
 		Avatar:   avatar,
 	}

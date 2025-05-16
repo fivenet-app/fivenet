@@ -34,7 +34,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	limit := 500
+	limit := int64(500)
 	var offset uint64
 	if s.state != nil && s.state.Offset > 0 {
 		offset = s.state.Offset
@@ -131,12 +131,12 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	// If less users than limit are returned, we probably have reached the "end" of the table
 	// and need to reset the offset to 0. That means we are "synced up" and can start the normal
 	// sync loop of checking the "updatedAt" date.
-	if len(users) < limit {
+	if int64(len(users)) < limit {
 		offset = 0
 		s.state.SyncedUp = true
 	}
 
-	lastUserId := strconv.Itoa(int(users[len(users)-1].UserId))
+	lastUserId := strconv.FormatInt(int64(users[len(users)-1].UserId), 10)
 	s.state.Set(uint64(limit)+offset, &lastUserId)
 
 	return nil
@@ -148,7 +148,7 @@ func (s *usersSync) retrieveLicenses(ctx context.Context, userId int32, identifi
 
 	args := []any{}
 	if strings.Contains(query, "$userId") {
-		query = strings.ReplaceAll(query, "$userId", strconv.Itoa(int(userId)))
+		query = strings.ReplaceAll(query, "$userId", strconv.FormatInt(int64(userId), 10))
 		args = append(args, userId)
 	} else if strings.Contains(query, "$identifier") {
 		query = strings.ReplaceAll(query, "$identifier", identifier)

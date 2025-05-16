@@ -316,9 +316,9 @@ func (s *Sync) syncBaseData(ctx context.Context) error {
 	return errs
 }
 
-func prepareStringQuery(query DBSyncTable, state *TableSyncState, offset uint64, limit int) string {
-	offsetStr := strconv.Itoa(int(offset))
-	limitStr := strconv.Itoa(limit)
+func prepareStringQuery(query DBSyncTable, state *TableSyncState, offset uint64, limit int64) string {
+	offsetStr := strconv.FormatUint(offset, 10)
+	limitStr := strconv.FormatInt(int64(limit), 10)
 
 	q := strings.ReplaceAll(query.Query, "$offset", offsetStr)
 	q = strings.ReplaceAll(q, "$limit", limitStr)

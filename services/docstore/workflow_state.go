@@ -423,12 +423,12 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 		UserId: userInfo.UserId,
 		Title: &common.TranslateItem{
 			Key:        "notifications.docstore.document_auto_closed.title",
-			Parameters: map[string]string{"id": strconv.Itoa(int(state.DocumentId))},
+			Parameters: map[string]string{"id": strconv.FormatUint(state.DocumentId, 10)},
 		},
 		Content: &common.TranslateItem{
 			Key: "notifications.docstore.document_auto_closed.content",
 			Parameters: map[string]string{
-				"id":      strconv.Itoa(int(state.DocumentId)),
+				"id":      strconv.FormatUint(state.DocumentId, 10),
 				"title":   state.Document.Title,
 				"message": message,
 			},
@@ -473,12 +473,12 @@ func (w *Workflow) sendDocumentReminder(ctx context.Context, documentId uint64, 
 		UserId: userId,
 		Title: &common.TranslateItem{
 			Key:        "notifications.docstore.document_reminder.title",
-			Parameters: map[string]string{"id": strconv.Itoa(int(documentId))},
+			Parameters: map[string]string{"id": strconv.FormatUint(documentId, 10)},
 		},
 		Content: &common.TranslateItem{
 			Key: "notifications.docstore.document_reminder.content",
 			Parameters: map[string]string{
-				"id":    strconv.Itoa(int(documentId)),
+				"id":    strconv.FormatUint(documentId, 10),
 				"title": document.Title,
 			},
 		},
