@@ -41,6 +41,7 @@ When writing code, please follow the following guidelines:
 - Follow the existing coding style and conventions used in the project.
 - Use meaningful variable and function names.
 - Write clear and concise comments to explain complex code or logic.
+    - Comments should be in English and should explain the "why" behind the code, not just the "what".
 - Ensure that your code is properly formatted and adheres to the project's style guide.
     - Make sure to use the project's linter and formatter to check your code (e.g., `eslint` + `prettier` for frontend code, gofmt for backend code).
 - Use consistent indentation and spacing.
