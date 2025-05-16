@@ -1,11 +1,12 @@
 <script lang="ts" setup>
+import { NuxtImg } from '#components';
 import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
 
 defineProps<{
     value: JSONNode;
 }>();
 
-const tagRemapping = {
+const tagRemapping: Record<string, Component> = {
     img: NuxtImg,
 };
 </script>
