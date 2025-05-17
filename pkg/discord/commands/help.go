@@ -11,7 +11,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	lang "github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 var helpTopics = []string{
@@ -33,27 +32,19 @@ func NewHelpCommand(p CommandParams) (Command, error) {
 }
 
 func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
-	lEN := c.l.I18n("en")
-	lDE := c.l.I18n("de")
+	lEN := c.l.Translator("en")
+	lDE := c.l.Translator("de")
 
 	cmdData := api.CreateCommandData{
 		Type: discord.ChatInputCommand,
-		Name: lEN.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.help.name",
-		}),
+		Name: lEN("discord.commands.help.name", nil),
 		NameLocalizations: discord.StringLocales{
-			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "discord.commands.help.name",
-			}),
+			discord.German: lDE("discord.commands.help.name", nil),
 		},
 
-		Description: lEN.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.help.desc",
-		}),
+		Description: lEN("discord.commands.help.desc", nil),
 		DescriptionLocalizations: discord.StringLocales{
-			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "discord.commands.help.desc",
-			}),
+			discord.German: lDE("discord.commands.help.desc", nil),
 		},
 
 		Options:                  []discord.CommandOption{},
@@ -61,22 +52,14 @@ func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommand
 	}
 
 	choices := &discord.StringOption{
-		OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.help.topic.name",
-		}),
+		OptionName: lEN("discord.commands.help.topic.name", nil),
 		OptionNameLocalizations: discord.StringLocales{
-			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "discord.commands.help.topic.name",
-			}),
+			discord.German: lDE("discord.commands.help.topic.name", nil),
 		},
 
-		Description: lEN.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.help.topic.desc",
-		}),
+		Description: lEN("discord.commands.help.topic.desc", nil),
 		DescriptionLocalizations: discord.StringLocales{
-			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "discord.commands.help.topic.desc",
-			}),
+			discord.German: lDE("discord.commands.help.topic.desc", nil),
 		},
 
 		Choices: []discord.StringChoice{},
@@ -87,13 +70,9 @@ func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommand
 
 	for _, option := range helpTopics {
 		choices.Choices = append(choices.Choices, discord.StringChoice{
-			Name: lEN.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: fmt.Sprintf("discord.commands.help.%s.name", option),
-			}),
+			Name: lEN(fmt.Sprintf("discord.commands.help.%s.name", option), nil),
 			NameLocalizations: discord.StringLocales{
-				discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: fmt.Sprintf("discord.commands.help.%s.name", option),
-				}),
+				discord.German: lDE(fmt.Sprintf("discord.commands.help.%s.name", option), nil),
 			},
 			Value: option,
 		})
@@ -105,7 +84,7 @@ func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommand
 }
 
 func (c *HelpCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
-	localizer := c.l.I18n(string(cmd.Event.Locale))
+	localizer := c.l.Translator(string(cmd.Event.Locale))
 
 	messageId := "discord.commands.help.empty"
 
@@ -122,15 +101,9 @@ func (c *HelpCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandDat
 		Flags: discord.EphemeralMessage,
 		Embeds: &[]discord.Embed{
 			{
-				Title: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: messageId + ".title",
-				}),
-				Description: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: messageId + ".msg",
-					TemplateData: map[string]string{
-						"URL": c.url,
-					},
-				}),
+				Title: localizer(messageId+".title", nil),
+				Description: localizer(messageId+".msg",
+					map[string]any{"url": c.url}),
 				URL: c.url,
 				Provider: &discord.EmbedProvider{
 					Name: "FiveNet",

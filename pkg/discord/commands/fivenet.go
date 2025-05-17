@@ -8,7 +8,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	lang "github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 type FivenetCommand struct {
@@ -25,39 +24,33 @@ func NewFivenetCommand(p CommandParams) (Command, error) {
 }
 
 func (c *FivenetCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
-	lEN := c.l.I18n("en")
-	lDE := c.l.I18n("de")
+	lEN := c.l.Translator("en")
+	lDE := c.l.Translator("de")
 
 	router.Add("fivenet", c)
 
 	return api.CreateCommandData{
-		Type: discord.ChatInputCommand,
-		Name: "fivenet",
-		Description: lEN.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.fivenet.desc",
-		}),
+		Type:        discord.ChatInputCommand,
+		Name:        "fivenet",
+		Description: lEN("discord.commands.fivenet.desc", nil),
 		DescriptionLocalizations: discord.StringLocales{
-			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "discord.commands.fivenet.desc",
-			}),
+			discord.German: lDE("discord.commands.fivenet.desc", nil),
 		},
 		DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
 	}
 }
 
 func (c *FivenetCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
-	localizer := c.l.I18n(string(cmd.Event.Locale))
+	localizer := c.l.Translator(string(cmd.Event.Locale))
 
 	return &api.InteractionResponseData{
 		Flags: discord.EphemeralMessage,
 		Embeds: &[]discord.Embed{
 			{
-				Title: "FiveNet",
-				Description: localizer.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "discord.commands.fivenet.summary",
-				}),
-				URL:  c.url,
-				Type: discord.LinkEmbed,
+				Title:       "FiveNet",
+				Description: localizer("discord.commands.fivenet.summary", nil),
+				URL:         c.url,
+				Type:        discord.LinkEmbed,
 				Provider: &discord.EmbedProvider{
 					Name: "FiveNet",
 					URL:  c.url,

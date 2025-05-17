@@ -2,13 +2,15 @@ package i18n
 
 import (
 	"embed"
-	"encoding/json"
 	"fmt"
+	"io/fs"
+	"strings"
 
-	"github.com/nicksnyder/go-i18n/v2/i18n"
+	jsoniter "github.com/json-iterator/go"
 	"go.uber.org/fx"
-	"golang.org/x/text/language"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var Module = fx.Module("lang",
 	fx.Provide(New),
@@ -20,40 +22,35 @@ var langFS embed.FS
 var defaultLanguage = "en"
 
 func New() (*I18n, error) {
-	bundle := i18n.NewBundle(language.English)
-	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
+	i := &I18n{}
+	i.SetFallbackLanguage(defaultLanguage)
 
-	i := &I18n{
-		bundle: bundle,
-	}
-
-	for _, filePath := range map[language.Tag]string{
-		language.English: "en.json",
-		language.German:  "de.json",
-	} {
-		f, err := bundle.LoadMessageFileFS(langFS, filePath)
+	if err := fs.WalkDir(langFS, "locales", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
-			return nil, fmt.Errorf("failed to load message file. %w", err)
+			return err
 		}
 
-		i.availableLangs = append(i.availableLangs, f.Tag.String())
+		if d.IsDir() || !d.Type().IsRegular() {
+			return nil
+		}
+
+		lang := strings.TrimSuffix(d.Name(), ".json")
+
+		data, err := langFS.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("failed to read file %s. %w", path, err)
+		}
+
+		if err := i.LoadFromJSON(lang, data); err != nil {
+			return fmt.Errorf("failed to load translations from file %s. %w", path, err)
+		}
+
+		i.availableLangs = append(i.availableLangs, lang)
+
+		return nil
+	}); err != nil {
+		return nil, fmt.Errorf("failed to walk locales dir. %w", err)
 	}
 
 	return i, nil
-}
-
-type I18n struct {
-	bundle *i18n.Bundle
-
-	availableLangs []string
-}
-
-func (i *I18n) I18n(lang string) *i18n.Localizer {
-	// Include default language for fallback to not error/panic
-	// https://github.com/nicksnyder/go-i18n/issues/234#issuecomment-722796413
-	return i18n.NewLocalizer(i.bundle, lang, defaultLanguage)
-}
-
-func (i *I18n) Langs() []string {
-	return i.availableLangs
 }

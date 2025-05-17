@@ -24,7 +24,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 var (
@@ -55,44 +54,44 @@ func NewAbsentCommand(p CommandParams) (Command, error) {
 func (c *AbsentCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
 	router.Add("absent", c)
 
-	lEN := c.l.I18n("en")
-	lDE := c.l.I18n("de")
+	lEN := c.l.Translator("en")
+	lDE := c.l.Translator("de")
 
 	return api.CreateCommandData{
 		Type: discord.ChatInputCommand,
-		Name: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.name"}),
+		Name: lEN("discord.commands.absent.name", nil),
 		NameLocalizations: discord.StringLocales{
-			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.name"}),
+			discord.German: lDE("discord.commands.absent.name", nil),
 		},
-		Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.desc"}),
+		Description: lEN("discord.commands.absent.desc", nil),
 		DescriptionLocalizations: discord.StringLocales{
-			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.desc"}),
+			discord.German: lDE("discord.commands.absent.desc", nil),
 		},
 		Options: discord.CommandOptions{
 			&discord.StringOption{
-				OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
+				OptionName: lEN("discord.commands.absent.options.start-date.name", nil),
 				OptionNameLocalizations: discord.StringLocales{
-					discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
+					discord.German: lDE("discord.commands.absent.options.start-date.name", nil),
 				},
-				Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.desc"}),
+				Description: lEN("discord.commands.absent.options.start-date.desc", nil),
 				Required:    true,
 			},
 			&discord.IntegerOption{
-				OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
+				OptionName: lEN("discord.commands.absent.options.days.name", nil),
 				OptionNameLocalizations: discord.StringLocales{
-					discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
+					discord.German: lDE("discord.commands.absent.options.days.name", nil),
 				},
-				Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.desc"}),
+				Description: lEN("discord.commands.absent.options.days.desc", nil),
 				Required:    true,
 				Min:         option.NewInt(1),
 				Max:         option.NewInt(31),
 			},
 			&discord.StringOption{
-				OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
+				OptionName: lEN("discord.commands.absent.options.reason.name", nil),
 				OptionNameLocalizations: discord.StringLocales{
-					discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
+					discord.German: lDE("discord.commands.absent.options.reason.name", nil),
 				},
-				Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.desc"}),
+				Description: lEN("discord.commands.absent.options.reason.desc", nil),
 				Required:    true,
 				MinLength:   option.NewInt(3),
 				MaxLength:   option.NewInt(200),
@@ -124,7 +123,7 @@ func (c *AbsentCommand) getBaseResponse() *api.InteractionResponseData {
 }
 
 func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
-	localizer := c.l.I18n(string(cmd.Event.Locale))
+	localizer := c.l.Translator(string(cmd.Event.Locale))
 	resp := c.getBaseResponse()
 
 	if cmd.Event.GuildID == discord.NullGuildID {
@@ -132,29 +131,29 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	}
 
 	if cmd.Event.Member == nil {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.wrong_discord.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.wrong_discord.desc"})
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.wrong_discord.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.wrong_discord.desc", nil)
 		(*resp.Embeds)[0].Color = embeds.ColorInfo
 		return resp
 	}
 
 	job, ok := c.b.GetJobFromGuildID(cmd.Event.GuildID)
 	if !ok {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.wrong_discord.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.wrong_discord.desc"})
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.wrong_discord.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.wrong_discord.desc", nil)
 		(*resp.Embeds)[0].Color = embeds.ColorInfo
 		return resp
 	}
 
 	userId, jobGrade, err := c.getUserIDByJobAndDiscordID(ctx, job, cmd.Event.Member.User.ID)
 	if err != nil {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.desc"})
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.no_user_found.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.no_user_found.desc", nil)
 		return resp
 	}
 	if userId <= 0 || jobGrade < 0 {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.desc"})
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.no_user_found.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.no_user_found.desc", nil)
 		return resp
 	}
 
@@ -165,13 +164,9 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		JobGrade: jobGrade,
 	}
 	if !c.perms.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm) {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.absent.results.no_perms.desc",
-			TemplateData: map[string]string{
-				"Code": "perm",
-			},
-		})
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.no_perms.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.no_perms.desc",
+			map[string]any{"code": "perm"})
 		return resp
 	}
 
@@ -183,15 +178,15 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	if startDateValue != "today" {
 		parsed, err := time.Parse(absentDateFormat, startDateValue)
 		if err != nil {
-			(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.title"})
-			(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.desc"})
+			(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.invalid_date.title", nil)
+			(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.invalid_date.desc", nil)
 			return resp
 		}
 		startDate = parsed
 
 		if !(now.Equal(startDate) || startDate.After(now)) {
-			(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.title"})
-			(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.desc"})
+			(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.invalid_date.title", nil)
+			(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.invalid_date.desc", nil)
 			return resp
 		}
 	}
@@ -199,13 +194,9 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	daysOptions := cmd.Data.Options.Find("days")
 	days, err := daysOptions.IntValue()
 	if err != nil || days <= 0 {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.absent.results.failed.desc",
-			TemplateData: map[string]string{
-				"Code": "Days wrong",
-			},
-		})
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.failed.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.failed.desc",
+			map[string]any{"code": "Days wrong"})
 		return resp
 	}
 	endDate := startDate.AddDate(0, 0, int(days))
@@ -216,37 +207,30 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 
 	check, err := c.createAbsenceForUser(ctx, userId, job, startDate, endDate, reason)
 	if err != nil {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.absent.results.failed.title",
-		})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.absent.results.failed.desc",
-			TemplateData: map[string]string{
-				"Code": "Internal Error",
-			},
-		})
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.failed.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.failed.desc",
+			map[string]any{"code": "Internal Error"},
+		)
 		return resp
 	}
 
 	if !check {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.success.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.absent.results.success.desc",
-			TemplateData: map[string]string{
-				"AbsenceBegin": startDate.Format(absentDateFormat),
-				"AbsenceEnd":   endDate.Format(absentDateFormat),
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.success.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.success.desc",
+			map[string]any{
+				"absenceBegin": startDate.Format(absentDateFormat),
+				"absenceEnd":   endDate.Format(absentDateFormat),
 			},
-		})
+		)
 		(*resp.Embeds)[0].Color = embeds.ColorSuccess
 	} else {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.already_absent.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.absent.results.already_absent.desc",
-			TemplateData: map[string]string{
-				"AbsenceBegin": startDate.Format(absentDateFormat),
-				"AbsenceEnd":   endDate.Format(absentDateFormat),
+		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.already_absent.title", nil)
+		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.already_absent.desc",
+			map[string]any{
+				"absenceBegin": startDate.Format(absentDateFormat),
+				"absenceEnd":   endDate.Format(absentDateFormat),
 			},
-		})
+		)
 		(*resp.Embeds)[0].Color = embeds.ColorInfo
 	}
 

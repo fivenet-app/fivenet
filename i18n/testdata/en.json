@@ -1,0 +1,13 @@
+{
+    "greeting": {
+        "hello": "Hello",
+        "welcome": "Welcome, {name}!",
+        "nested": {
+            "hello": "Hello from nested"
+        },
+        "non_existing_in_other_lang": "Not existing, fallback :-("
+    },
+    "items": "No items | {n} item | {n} items",
+    "books": "No books | {n} books",
+    "computers": "No computers | {n} computer | {n} computers"
+}

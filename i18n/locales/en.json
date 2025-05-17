@@ -3101,13 +3101,13 @@
                     "name": "discord",
                     "desc": "Steps to connect Discord with FiveNet.",
                     "title": "Connecting Discord with FiveNet",
-                    "msg": "1. Navigate to [your FiveNet account information]({{.URL}}/auth/account-info?tab=oauth2Connections#).\n2. If the \"Social Login Connections\" tab isn't already selected, select it.\n3. Click on the \"Connect\"-button for Discord.\n4. You might need to login to your Discord account, before Discord asks for confirmation that you want to connect Discord with FiveNet, the \"Connect\"-button should have changed to a \"Disconnect\"-button.\n5. Congrats, you are done! If you have connected the correct Discord account, the FiveNet Discord sync should give set your roles in a few minutes.\n\n(If you have connected the wrong Discord account, use the \"Disconnect\"-button to disconnect the Discord account from FiveNet, and continue with step 3)"
+                    "msg": "1. Navigate to [your FiveNet account information]({url}/auth/account-info?tab=oauth2Connections#).\n2. If the \"Social Login Connections\" tab isn't already selected, select it.\n3. Click on the \"Connect\"-button for Discord.\n4. You might need to login to your Discord account, before Discord asks for confirmation that you want to connect Discord with FiveNet, the \"Connect\"-button should have changed to a \"Disconnect\"-button.\n5. Congrats, you are done! If you have connected the correct Discord account, the FiveNet Discord sync should give set your roles in a few minutes.\n\n(If you have connected the wrong Discord account, use the \"Disconnect\"-button to disconnect the Discord account from FiveNet, and continue with step 3)"
                 },
                 "registration": {
                     "name": "registration",
                     "desc": "Info regarding FiveNet Account registration.",
                     "title": "FiveNet Account Registration",
-                    "msg": "1. Join the gameserver.\n2. When connected and in-game, use the `/fivenet` command to retrieve your **registration token**.\n3. Click on the registration token and your browser will open the FiveNet registration page automatically.\n4. Now fill in the registration form, with an username and password, and you should be ready to create your account.\n5. You should now be able to login with the chosen username and password.\n\n(In case your browser doesn't automatically, [click me]({{.URL}}/auth/registration/) to get to the FiveNet registration page)"
+                    "msg": "1. Join the gameserver.\n2. When connected and in-game, use the `/fivenet` command to retrieve your **registration token**.\n3. Click on the registration token and your browser will open the FiveNet registration page automatically.\n4. Now fill in the registration form, with an username and password, and you should be ready to create your account.\n5. You should now be able to login with the chosen username and password.\n\n(In case your browser doesn't automatically, [click me]({url}/auth/registration/) to get to the FiveNet registration page)"
                 }
             },
             "absent": {
@@ -3138,7 +3138,7 @@
                     },
                     "no_perms": {
                         "title": "No permissions!",
-                        "desc": "You don't have enough permissions to submit an absence (Code: {{.Code}})."
+                        "desc": "You don't have enough permissions to submit an absence (Code: {code})."
                     },
                     "invalid_date": {
                         "title": "Invalid date",
@@ -3146,15 +3146,15 @@
                     },
                     "failed": {
                         "title": "Error creating your Absence",
-                        "desc": "Failed to create your absence entry. Make sure that all input fields are filled out correctly (Reason: {{.Code}}."
+                        "desc": "Failed to create your absence entry. Make sure that all input fields are filled out correctly (Reason: {code})"
                     },
                     "success": {
                         "title": "Successfully submitted your Absence",
-                        "desc": "Your absence has been submitted successfully.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                        "desc": "Your absence has been submitted successfully.\n({absenceBegin} - {absenceEnd})"
                     },
                     "already_absent": {
                         "title": "An Absence already been subbmited!",
-                        "desc": "You already have an absence for the same dates.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                        "desc": "You already have an absence for the same dates.\n({absenceBegin} - {absenceEnd})"
                     }
                 }
             },

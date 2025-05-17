@@ -1,0 +1,11 @@
+{
+    "greeting": {
+        "hello": "Hallo",
+        "welcome": "Willkommen, {name}!",
+        "nested": {
+            "hello": "Hello from nested"
+        }
+    },
+    "items": "Keine Artikel | {n} Artikel | {n} Artikel",
+    "books": "Keine Bücher | {n} Buch | {n} Bücher"
+}
