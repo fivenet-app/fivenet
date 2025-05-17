@@ -19,7 +19,7 @@ body = """
 {% else %}\
     ## [unreleased]
 {% endif %}\
-{% for group, commits in commits | group_by(attribute="group") %}
+{% for group, commits in commits | unique(attribute="message") | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits %}
         - {% if commit.scope %}*({{ commit.scope }})* {% endif %}\
@@ -60,6 +60,7 @@ commit_preprocessors = [
 ]
 # regex for parsing and grouping commits
 commit_parsers = [
+  { body = "$^", skip = true },
   { message = ".*breaking change.*", group = "<!-- 0 -->🏗️ Breaking changes" },
   { field = "github.pr_labels", pattern = "breaking-change", group = "<!-- 0 -->🏗️ Breaking changes" },
   { message = "^feat", group = "<!-- 1 -->🚀 Features" },
@@ -92,6 +93,6 @@ filter_commits = true
 topo_order = false
 # sort the commits inside sections by oldest/newest order
 sort_commits = "oldest"
-ignore_tags = "^v0\\..+"
+#ignore_tags = "^(v0\\..+)"
 
 tag_pattern = "^v[0-9]+\\..*"
