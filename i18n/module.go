@@ -1,4 +1,4 @@
-package lang
+package i18n
 
 import (
 	"embed"
@@ -14,7 +14,7 @@ var Module = fx.Module("lang",
 	fx.Provide(New),
 )
 
-//go:embed *.json
+//go:embed locales/*.json
 var langFS embed.FS
 
 var defaultLanguage = "en"

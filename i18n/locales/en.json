@@ -2,7 +2,7 @@
     "pages": {
         "index": {
             "welcome": "Welcome to FiveNet!",
-            "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a map of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet.",
+            "subtext": "Search the state's citizen and vehicle database, fill documents for investigations or court, and view a map of your colleagues and dispatches. All that and more is (mostly) ready in FiveNet.",
             "whats_new_in": "See what's new in {version}"
         },
         "overview": {
@@ -13,7 +13,7 @@
                 "jobs": "Infos about your job and employee management.",
                 "livemap": "Live position of dispatches and your colleagues.",
                 "centrum": "Dispatch Center, for dispatching Dispatches.",
-                "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions.",
+                "qualifications": "Expand your knowledge by taking qualifications provided by your faction or others.",
                 "calendar": "Public, private and job events all in this nice calendar.",
                 "wiki": "Wiki for simple knowledge sharing.",
                 "mailer": "E-Mail for quick and simple communication with citizens and colleagues.",
@@ -123,8 +123,8 @@
             "title": "Vehicles"
         },
         "error": {
-            "title": "Error occured",
-            "subtitle": "A fatal error occured, please try again in a few seconds.",
+            "title": "Error occurred",
+            "subtitle": "A fatal error occurred, please try again in a few seconds.",
             "error_message": "Error message:",
             "copy_error": "Copy Error message"
         },
@@ -151,10 +151,10 @@
             }
         },
         "dereferer": {
-            "title": "Redirecting",
-            "subtitle": "You are leaving FiveNet.",
+            "title": "You are being redirected",
+            "subtitle": "You are about to leave FiveNet.",
             "description": "Please note that you will be redirected to a website for whose content we are not responsible and to which our privacy policy does not apply.",
-            "goto": "If the automatic forwarding does not work, please click here!"
+            "goto": "If the automatic redirection does not work, please click here!"
         },
         "stats": {
             "title": "Statistics",
@@ -217,7 +217,7 @@
             },
             "join_discord": "Join Galexrt Discord server",
             "licenses_list": "FiveNet License and list of third-party licenses used",
-            "subtitle": "About FiveNet and it's creators.",
+            "subtitle": "About FiveNet and its creators.",
             "licenses": {
                 "subtitle": "List and information about the Licenses of code, libraries and software, used by FiveNet."
             }
@@ -452,7 +452,7 @@
         "comments": "No Comments | {n} Comment | {n} Comments",
         "dispatches": "Dispatches",
         "refresh": "Refresh",
-        "forward": "Foward",
+        "forward": "Forward",
         "points": "Point | Points",
         "hints": "Hint | Hints",
         "icon": "Icon",
@@ -777,7 +777,7 @@
         },
         "livemap": {
             "starting_datastream": "Starting Map data stream...",
-            "failed_datastream": "Failed to stream Map data!",
+            "failed_datastream": "Unable to stream map data!",
             "center_selected_marker": "Center selected Marker",
             "paused_datastream": "Map data stream paused (window not in focus).",
             "settings": {
@@ -804,7 +804,7 @@
                 "quick_buttons": "Quick Access Buttons",
                 "discord_sync_settings": {
                     "title": "Discord Bot Settings",
-                    "subtitle": "Manage the basic Discord Bot  settings. To get started with the Discord bot, invite the bot, set your Discord server ID below and configure the settings as you want.",
+                    "subtitle": "Manage the basic Discord Bot settings. To get started with the Discord bot, invite the bot, set your Discord server ID below, and configure the settings as you want.",
                     "discord_guild_id": "Discord Guild/ Server ID",
                     "invite_bot": "Invite Bot",
                     "last_sync": "Last Sync",
@@ -934,7 +934,7 @@
         },
         "debug_info": {
             "title": "Debug Info",
-            "subtitle": "Information imporant when reporting issues with FiveNet.",
+            "subtitle": "Information important when reporting issues with FiveNet.",
             "perms": "Current Permissions",
             "active_char_id": "Active Character ID",
             "access_token_expiration": "Access Token Expiration",
@@ -1309,8 +1309,8 @@
         },
         "CookieControl": {
             "title": "We use cookies!",
-            "subtitle": "The main purpose of our cookies is to enable you to login with our social login providers. For more information on cookies and your data, take a look at our privacy policy.",
-            "description": "Please note that the \"Remove local data\" function might not be able to remove all data based on your browser's functionality.",
+            "subtitle": "The main purpose of our cookies is to enable you to log in with our social login providers.",
+            "description": "Please note that the \"Remove local data\" function might not remove all data depending on your browser's functionality.",
             "clear_data": "Remove local data"
         },
         "UserDropdown": {
@@ -1428,7 +1428,7 @@
             },
             "not_found": {
                 "title": "Server not Found",
-                "description": "Can't find the server at \"{domain}\". Check the address for typing errors. If you are unable to load any pages, check your internet connection."
+                "description": "Cannot find the server at \"{domain}\". Check the address for typing errors. If you cannot load any pages, check your internet connection."
             },
             "transfer_code": "Transfer Code"
         },
@@ -1594,7 +1594,7 @@
             },
             "error_logout": {
                 "title": "Logout: Encountered an error",
-                "content": "Error message: {0}"
+                "content": "An error occurred: {0}"
             },
             "oauth2_login": {
                 "success": {
@@ -1608,7 +1608,7 @@
             },
             "no_permission": {
                 "title": "You don't have permission!",
-                "content": "No permission to go to {path}."
+                "content": "You do not have permission to access {path}."
             },
             "oauth2_connect": {
                 "success": {
@@ -2675,7 +2675,7 @@
     "system": {
         "update_available": {
             "title": "New FiveNet version available ({version})!",
-            "content": "To continue using FiveNet, you need to reload the page if you currently can."
+            "content": "Please reload the page to continue using FiveNet."
         },
         "streamer_mode": {
             "title": "Streamer mode enabled!",
@@ -2949,7 +2949,7 @@
     "commandpalette": {
         "empty": {
             "title": "No results found.",
-            "content": "We couldn't find anything with that term. Please try again."
+            "content": "No results found for that term. Please try again."
         },
         "categories": {
             "general": "General",
@@ -2959,7 +2959,7 @@
     },
     "zodI18n": {
         "errors": {
-            "custom": {
+            "custom_types": {
                 "duration": {
                     "invalid": "Invalid duration format, must be in format of \"1.23s\" and be at least \"0.01s\""
                 },
@@ -2967,6 +2967,221 @@
                     "required": "File must be provided",
                     "wrong_file_type": "File must be one of the valid file types: {types}",
                     "size_too_big": "File must be less than {size}MB"
+                }
+            },
+            "invalid_type": "Expected {expected}, received {received}",
+            "invalid_type_received_undefined": "Required",
+            "invalid_type_received_null": "Required",
+            "invalid_literal": "Invalid literal value. Expected {expected}",
+            "unrecognized_keys": "Unrecognized key(s) in the object: {keys}",
+            "invalid_union": "Invalid input for union type",
+            "invalid_union_discriminator": "Invalid union discriminator value. Expected {options}",
+            "invalid_enum_value": "Invalid enum value. Expected one of {options}, but received '{received}'",
+            "invalid_arguments": "Invalid function arguments",
+            "invalid_return_type": "Invalid function return type",
+            "invalid_date": "Invalid date",
+            "custom": "Invalid input",
+            "invalid_intersection_types": "Intersection types could not be merged",
+            "not_multiple_of": "The number must be a multiple of {multipleOf}",
+            "not_finite": "The number must be finite",
+            "invalid_string": {
+                "email": "Invalid {validation}",
+                "url": "Invalid {validation}",
+                "uuid": "Invalid {validation}",
+                "cuid": "Invalid {validation}",
+                "regex": "Invalid string format",
+                "datetime": "Invalid {validation}",
+                "startsWith": "Invalid input: must start with \"{startsWith}\"",
+                "endsWith": "Invalid input: must end with \"{endsWith}\""
+            },
+            "too_small": {
+                "array": {
+                    "exact": "The list must contain exactly {minimum} element(s)",
+                    "inclusive": "List must contain at least {minimum} element(s)",
+                    "not_inclusive": "List must contain more than {minimum} element(s)"
+                },
+                "string": {
+                    "exact": "The field must contain exactly {minimum} character(s)",
+                    "inclusive": "Field must contain at least {minimum} character(s)",
+                    "not_inclusive": "Field must contain over {minimum} character(s)"
+                },
+                "number": {
+                    "exact": "The number must be exactly {minimum}",
+                    "inclusive": "Number must be greater than or equal to {minimum}",
+                    "not_inclusive": "Number must be greater than {minimum}"
+                },
+                "set": {
+                    "exact": "Invalid input",
+                    "inclusive": "Invalid input",
+                    "not_inclusive": "Invalid input"
+                },
+                "date": {
+                    "exact": "Date must be exactly {minimum}",
+                    "inclusive": "Date must be greater than or equal to {minimum}",
+                    "not_inclusive": "Date must be greater than {minimum}"
+                }
+            },
+            "too_big": {
+                "array": {
+                    "exact": "The list must contain exactly {maximum} element(s)",
+                    "inclusive": "List must contain at most {maximum} element(s)",
+                    "not_inclusive": "List must contain less than {maximum} element(s)"
+                },
+                "string": {
+                    "exact": "The field must contain exactly {maximum} character(s)",
+                    "inclusive": "Field must contain at most {maximum} character(s)",
+                    "not_inclusive": "Field must contain under {maximum} character(s)"
+                },
+                "number": {
+                    "exact": "The number must be exactly {maximum}",
+                    "inclusive": "Number must be less than or equal to {maximum}",
+                    "not_inclusive": "Number must be less than {maximum}"
+                },
+                "set": {
+                    "exact": "Invalid input",
+                    "inclusive": "Invalid input",
+                    "not_inclusive": "Invalid input"
+                },
+                "date": {
+                    "exact": "Date must be exactly {maximum}",
+                    "inclusive": "Date must be smaller than or equal to {maximum}",
+                    "not_inclusive": "Date must be smaller than {maximum}"
+                }
+            }
+        },
+        "validations": {
+            "email": "email",
+            "url": "url",
+            "uuid": "uuid",
+            "cuid": "cuid",
+            "regex": "regex",
+            "datetime": "datetime"
+        },
+        "types": {
+            "function": "function",
+            "number": "number",
+            "string": "field",
+            "nan": "nan",
+            "integer": "integer",
+            "float": "float",
+            "boolean": "boolean",
+            "date": "date",
+            "bigint": "bigint",
+            "undefined": "undefined",
+            "symbol": "symbol",
+            "null": "null",
+            "array": "list",
+            "object": "object",
+            "unknown": "unknown",
+            "promise": "promise",
+            "void": "void",
+            "never": "never",
+            "map": "map",
+            "set": "set"
+        }
+    },
+    "discord": {
+        "commands": {
+            "fivenet": {
+                "desc": "Link to the FiveNet web app.",
+                "summary": "FiveNet is also available in your browser! Link to the FiveNet web app."
+            },
+            "help": {
+                "name": "help",
+                "desc": "Help topics for FiveNet.",
+                "topic": {
+                    "name": "help-topic",
+                    "desc": "List of available help topics."
+                },
+                "empty": {
+                    "title": "No help topic chosen!",
+                    "msg": "Available topics:\n* discord\n* registration"
+                },
+                "discord": {
+                    "name": "discord",
+                    "desc": "Steps to connect Discord with FiveNet.",
+                    "title": "Connecting Discord with FiveNet",
+                    "msg": "1. Navigate to [your FiveNet account information]({{.URL}}/auth/account-info?tab=oauth2Connections#).\n2. If the \"Social Login Connections\" tab isn't already selected, select it.\n3. Click on the \"Connect\"-button for Discord.\n4. You might need to login to your Discord account, before Discord asks for confirmation that you want to connect Discord with FiveNet, the \"Connect\"-button should have changed to a \"Disconnect\"-button.\n5. Congrats, you are done! If you have connected the correct Discord account, the FiveNet Discord sync should give set your roles in a few minutes.\n\n(If you have connected the wrong Discord account, use the \"Disconnect\"-button to disconnect the Discord account from FiveNet, and continue with step 3)"
+                },
+                "registration": {
+                    "name": "registration",
+                    "desc": "Info regarding FiveNet Account registration.",
+                    "title": "FiveNet Account Registration",
+                    "msg": "1. Join the gameserver.\n2. When connected and in-game, use the `/fivenet` command to retrieve your **registration token**.\n3. Click on the registration token and your browser will open the FiveNet registration page automatically.\n4. Now fill in the registration form, with an username and password, and you should be ready to create your account.\n5. You should now be able to login with the chosen username and password.\n\n(In case your browser doesn't automatically, [click me]({{.URL}}/auth/registration/) to get to the FiveNet registration page)"
+                }
+            },
+            "absent": {
+                "name": "absent",
+                "desc": "Create absence in FiveNet.",
+                "options": {
+                    "start-date": {
+                        "name": "start-date",
+                        "desc": "Absence start date in form of either `today` or `YYYY-MM-DD` format (e.g., 2024-10-12)."
+                    },
+                    "days": {
+                        "name": "days",
+                        "desc": "How many days will you be absent?"
+                    },
+                    "reason": {
+                        "name": "reason",
+                        "desc": "Reason for absence"
+                    }
+                },
+                "results": {
+                    "wrong_discord": {
+                        "title": "Discord not associated with a job!",
+                        "desc": "This Discord isn't FiveNet enabled. Please contact the Discord server administrator."
+                    },
+                    "no_user_found": {
+                        "title": "Unable to find your char!",
+                        "desc": "FiveNet Bot was unable to find a character that is connected with your Discord ID.\nMake sure to connect your Discord account with your FiveNet account and try again."
+                    },
+                    "no_perms": {
+                        "title": "No permissions!",
+                        "desc": "You don't have enough permissions to submit an absence (Code: {{.Code}})."
+                    },
+                    "invalid_date": {
+                        "title": "Invalid date",
+                        "desc": "Please make sure that the date is in the correct format, and is not in the past."
+                    },
+                    "failed": {
+                        "title": "Error creating your Absence",
+                        "desc": "Failed to create your absence entry. Make sure that all input fields are filled out correctly (Reason: {{.Code}}."
+                    },
+                    "success": {
+                        "title": "Successfully submitted your Absence",
+                        "desc": "Your absence has been submitted successfully.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                    },
+                    "already_absent": {
+                        "title": "An Absence already been subbmited!",
+                        "desc": "You already have an absence for the same dates.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                    }
+                }
+            },
+            "sync": {
+                "name": "sync",
+                "desc": "Trigger a FiveNet Discord sync.",
+                "results": {
+                    "wrong_discord": {
+                        "title": "Sync command must be run on a FiveNet enabled Discord server!",
+                        "desc": "Either you are sending a DM or this Discord isn't FiveNet enabled. Please contact the Discord server administrator."
+                    },
+                    "permission_denied": {
+                        "title": "Discord admin permission required",
+                        "desc": "Discord admin permission is required to run the sync command."
+                    },
+                    "start_error": {
+                        "title": "Failed to start manual sync",
+                        "desc": "There was an error to start the manual sync."
+                    },
+                    "already_running": {
+                        "title": "Sync is already running",
+                        "desc": "Please wait for the current sync to finish before trying to start the sync manually."
+                    },
+                    "started": {
+                        "title": "Sync successfully requested!",
+                        "desc": "The sync should start in a moment."
+                    }
                 }
             }
         }

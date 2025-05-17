@@ -2,7 +2,7 @@
     "pages": {
         "index": {
             "welcome": "Willkommen bei FiveNet!",
-            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Karte Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit.",
+            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen und Gerichtsverfahren bis hin zu einer Karte Ihrer Kollegen und Einsätze. All das und mehr bietet Ihnen dieses Netzwerk, das FiveNet.",
             "whats_new_in": "Siehe die Neuerungen in Version {version}"
         },
         "overview": {
@@ -49,9 +49,9 @@
             "features": {
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Mitarbeiter-Marker-Farbe).",
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
-                "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
-                "limiter": "Begrenzen was Fraktionen sehen können (Mitarbeiter Standorte, Einsätze...).",
-                "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates.",
+                "audit_log": "Ein Protokoll der Aktionen, die von Ihren Kollegen durchgeführt wurden.",
+                "limiter": "Einschränken, welche Informationen Fraktionen sehen können (z. B. Mitarbeiterstandorte, Einsätze).",
+                "laws": "Erstellen und Aktualisieren der Gesetzbücher des Staates.",
                 "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle.",
                 "filestore": "Auflisten und verwalten aller Dateien.",
                 "settings": "Verwalten von FiveNet-Einstellungen.",
@@ -89,7 +89,7 @@
             "title": "404 Nicht gefunden",
             "page_not_found": "Seite nicht gefunden",
             "error": "4😵‍💫4 Fehler",
-            "fun_error": "Es scheint, als hätten Sie sich verirrt. Lass uns zurück zum Anfang gehen!"
+            "fun_error": "Es sieht so aus, als hätten Sie sich verirrt. Kehren wir zurück zur Startseite!"
         },
         "citizens": {
             "title": "Bürger",
@@ -333,17 +333,17 @@
             "just-now": "gerade jetzt",
             "ago": "vor {0}",
             "in": "in {0}",
-            "last-month": "Letzter Monat",
-            "next-month": "Nächster Monat",
-            "month": "Monat | Monate",
-            "last-year": "Letztes Jahr",
-            "next-year": "Nächstes Jahr",
-            "year": "Jahr | Jahre",
+            "last-month": "Vergangener Monat",
+            "next-month": "Kommender Monat",
+            "month": "Monat | Monaten",
+            "last-year": "Vergangenes Jahr",
+            "next-year": "Kommendes Jahr",
+            "year": "Jahr | Jahren",
             "yesterday": "gestern",
             "tomorrow": "morgen",
-            "day": "Tag | Tage",
-            "last-week": "Letzte Woche",
-            "next-week": "Nächste Woche",
+            "day": "Tag | Tagen",
+            "last-week": "Vergangene Woche",
+            "next-week": "Kommende Woche",
             "week": "Woche | Wochen",
             "hour": "Stunde | Stunden",
             "minute": "Minute | Minuten",
@@ -2720,7 +2720,7 @@
                 "ACCESS_UPDATED": "Dokument Zugriff aktualisiert",
                 "OWNER_CHANGED": "Dokument Besitzer geändert",
                 "DELETED": "Dokument gelöscht",
-                "REQUESTED_ACCESS": "Zugriff auf Dokument beanfragt | Zugriff auf Dokument",
+                "REQUESTED_ACCESS": "Zugriff auf Dokument beantragt | Zugriff auf Dokument",
                 "REQUESTED_CLOSURE": "Schließung des Dokument beantragt | Schließung des Dokument",
                 "REQUESTED_UPDATE": "Aktualisierung des Dokument beantragt | Aktualisierung des Dokument",
                 "REQUESTED_DELETION": "Löschung des Dokument beantragt | Löschung des Dokument",
@@ -2958,7 +2958,7 @@
     },
     "zodI18n": {
         "errors": {
-            "custom": {
+            "custom_types": {
                 "duration": {
                     "invalid": "Ungültiges Dauerformat, muss im Format \"1.23s\" sein und mindestens \"0.01s\" betragen"
                 },
@@ -2966,6 +2966,221 @@
                     "required": "Datei muss ausgewählt sein",
                     "wrong_file_type": "Die Datei muss einer der gültigen Dateitypen sein: {types}",
                     "size_too_big": "Datei darf nicht größer als {size}MB sein."
+                }
+            },
+            "invalid_type": "{expected} erwartet, {received} erhalten",
+            "invalid_type_received_undefined": "Darf nicht leer sein",
+            "invalid_type_received_null": "Darf nicht leer sein",
+            "invalid_literal": "Ungültiger Literalwert: {expected} wurde erwartet",
+            "unrecognized_keys": "Unbekannte Schlüssel im Objekt: {keys}",
+            "invalid_union": "Ungültige Eingabe",
+            "invalid_union_discriminator": "Ungültiger Diskriminatorwert: {options} wurde erwartet",
+            "invalid_enum_value": "Ungültiger Enum-Wert: {options} wurde erwartet, aber '{received}' wurde erhalten",
+            "invalid_arguments": "Ungültige Funktionsargumente",
+            "invalid_return_type": "Ungültiger Funktionsrückgabewert",
+            "invalid_date": "Ungültiges Datum",
+            "custom": "Ungültige Eingabe",
+            "invalid_intersection_types": "Die Ergebnisse der Schnittmenge konnten nicht zusammengeführt werden",
+            "not_multiple_of": "Die Zahl muss ein Vielfaches von {multipleOf} sein",
+            "not_finite": "Die Zahl muss eine endliche Zahl sein",
+            "invalid_string": {
+                "email": "Ungültige {validation}",
+                "url": "Ungültige {validation}",
+                "uuid": "Ungültige {validation}",
+                "cuid": "Ungültige {validation}",
+                "regex": "Ungültige Eingabe",
+                "datetime": "Ungültiger {validation}",
+                "startsWith": "Ungültige Eingabe: muss mit \"{startsWith}\" beginnen",
+                "endsWith": "Ungültige Eingabe: muss mit \"{endsWith}\" enden"
+            },
+            "too_small": {
+                "array": {
+                    "exact": "Liste muss genau {minimum} Element(e) enthalten",
+                    "inclusive": "Liste muss mindestens {minimum} Element(e) enthalten",
+                    "not_inclusive": "Liste muss mehr als {minimum} Element(e) enthalten"
+                },
+                "string": {
+                    "exact": "Feld muss genau {minimum} Zeichen enthalten",
+                    "inclusive": "Feld muss mindestens {minimum} Zeichen enthalten",
+                    "not_inclusive": "Feld muss mehr als {minimum} Zeichen enthalten"
+                },
+                "number": {
+                    "exact": "Zahl muss genau {minimum} sein",
+                    "inclusive": "Zahl muss größer oder gleich {minimum} sein",
+                    "not_inclusive": "Zahl muss größer als {minimum} sein"
+                },
+                "set": {
+                    "exact": "Die Menge muss genau {minimum} Element(e) enthalten",
+                    "inclusive": "Die Menge muss mindestens {minimum} Element(e) enthalten",
+                    "not_inclusive": "Die Menge muss mehr als {minimum} Element(e) enthalten"
+                },
+                "date": {
+                    "exact": "Datum muss genau {minimum} sein",
+                    "inclusive": "Datum muss größer oder gleich {minimum} sein",
+                    "not_inclusive": "Datum muss größer als {minimum} sein"
+                }
+            },
+            "too_big": {
+                "array": {
+                    "exact": "Liste muss genau {maximum} Element(e) enthalten",
+                    "inclusive": "Liste darf höchstens {maximum} Element(e) enthalten",
+                    "not_inclusive": "Liste muss weniger als {maximum} Element(e) enthalten"
+                },
+                "string": {
+                    "exact": "Feld muss genau {maximum} Zeichen enthalten",
+                    "inclusive": "Feld darf höchstens {maximum} Zeichen enthalten",
+                    "not_inclusive": "Feld muss weniger als {maximum} Zeichen enthalten"
+                },
+                "number": {
+                    "exact": "Zahl muss genau {maximum} sein",
+                    "inclusive": "Zahl muss kleiner oder gleich {maximum} sein",
+                    "not_inclusive": "Zahl muss kleiner als {maximum} sein"
+                },
+                "set": {
+                    "exact": "Die Menge darf höchstens {maximum} Element(e) enthalten",
+                    "inclusive": "Die Menge darf höchstens {maximum} Element(e) enthalten",
+                    "not_inclusive": "Die Menge muss weniger als {maximum} Element(e) enthalten"
+                },
+                "date": {
+                    "exact": "Datum muss genau {maximum} sein",
+                    "inclusive": "Datum muss kleiner oder gleich {maximum} sein",
+                    "not_inclusive": "Datum muss kleiner als {maximum} sein"
+                }
+            }
+        },
+        "validations": {
+            "email": "E-Mail-Adresse",
+            "url": "URL",
+            "uuid": "UUID",
+            "cuid": "CUID",
+            "regex": "Regex",
+            "datetime": "Datums- und Uhrzeitwert"
+        },
+        "types": {
+            "function": "Funktion",
+            "number": "Zahl",
+            "string": "Feld",
+            "nan": "NaN",
+            "integer": "Ganzzahl",
+            "float": "Gleitkommazahl",
+            "boolean": "Boolean",
+            "date": "Datum",
+            "bigint": "Bigint",
+            "undefined": "Undefined",
+            "symbol": "Symbol",
+            "null": "Nullwert",
+            "array": "Liste",
+            "object": "Objekt",
+            "unknown": "Unknown",
+            "promise": "Promise",
+            "void": "Void",
+            "never": "Never",
+            "map": "Map",
+            "set": "Set"
+        }
+    },
+    "discord": {
+        "commands": {
+            "fivenet": {
+                "desc": "Link zur FiveNet Web App.",
+                "summary": "FiveNet auch im Browser nutzen! Link zur FiveNet Web App."
+            },
+            "help": {
+                "name": "hilfe",
+                "desc": "Hilfe-Themen rundum FiveNet.",
+                "topic": {
+                    "name": "hilfe-thema",
+                    "desc": "Verfügbare Hilfe-Themen Auswahl."
+                },
+                "empty": {
+                    "title": "Kein Hilfe-Thema ausgewählt!",
+                    "msg": "Verfügbare Themen:\n* discord\n* registrierung"
+                },
+                "discord": {
+                    "name": "discord",
+                    "desc": "Anleitung um Discord mit FiveNet zu verknüpfen.",
+                    "title": "Discord Account verknüpfen",
+                    "msg": "1. Navigiere zu [deiner FiveNet Konto-Informationen Seite]({{.URL}}/auth/account-info?tab=oauth2Connections#).\n 2. Sollte der \"Social Login-Verbindungen\" Tab noch nicht ausgewählt sein, so wählen sie diesen aus.\n3. Klicken sie auf den \"Verbinden\"-Knopf für Discord.\n4. Es kann sein dass sie sich bei Discord anmelden müssen, bevor sie bestätigen dass ihr Discord Account mit FiveNet verknüpft wird.\n5. Glückwunsch, damit sollte die Verbindung hergestellt sein! Sollten sie den richtigen Discord Account verknüpft haben, wird der FiveNet Discord Sync in wenigen Minuten ihre Rollen entsprechend setzen.\n\n(Sollten sie sich mit dem falschen Discord Account verknüpft haben, so nutzen sie den \"Trennen\"-Knopf, um die Verbindung zu trennen, und fangen bei Schritt 3 erneut an)"
+                },
+                "registration": {
+                    "name": "registrierung",
+                    "desc": "Informationen rundum die FiveNet Account Registrierung.",
+                    "title": "FiveNet Account Registrierung",
+                    "msg": "1. Tritt dem Gameserver bei.\n2. Wenn du im Spiel bist, benutze den Befehl `/fivenet`, um Ihren **Registrierungs-Token** abzurufen.\n3. Klicke auf den Registrierungs-Token und Ihr Browser sollte automatisch die FiveNet-Registrierungsseite öffnen.\n4. Dort füllen Sie das Registrierungsformular aus, geben einen Benutzernamen und ein Passwort an, und schon können Sie den \"Konto erstellen\"-Knopf nutzen.\n5. Sie sollten nun in der Lage sein, sich mit dem gewählten Benutzernamen und Passwort anzumelden.\n\n(Falls Ihr Browser die FiveNet-Registrierungsseite nicht automatisch öffnet, [hier]({{.URL}}/auth/registration/) gelangen Sie zur FiveNet-Registrierungsseite)"
+                }
+            },
+            "absent": {
+                "name": "abwesenheit",
+                "desc": "Abwesendmeldung im FiveNet erstellen.",
+                "options": {
+                    "start-date": {
+                        "name": "start-datum",
+                        "desc": "Beginn der Abwesehnheit in Form von `heute` oder `YYYY-MM-DD` Format (e.g., 2024-10-12)."
+                    },
+                    "days": {
+                        "name": "tage",
+                        "desc": "Abwesenheits Tage"
+                    },
+                    "reason": {
+                        "name": "grund",
+                        "desc": "Grund für Abwesenheit"
+                    }
+                },
+                "results": {
+                    "wrong_discord": {
+                        "title": "Discord keiner Fraktion angehörig!",
+                        "desc": "Dieser Discord ist nicht als Fraktionsdiscord registriert. Bitte kontaktieren sie die Leitung dieses Discord."
+                    },
+                    "no_user_found": {
+                        "title": "Kein Character gefunden!",
+                        "desc": "Der FiveNet Bot konnte keinen Charakter finden, der Ihrer Discord ID verbunden ist.\nVergewisseren Sie sich, dass Ihr Discord-Konto mit Ihrem FiveNet-Konto verbunden ist und versuchen Sie es erneut."
+                    },
+                    "no_perms": {
+                        "title": "Keine Berechtigung!",
+                        "desc": "Sie haben keine Berechtigung eine Abwesenheit einzutragen (Code: {{.Code}})."
+                    },
+                    "invalid_date": {
+                        "title": "Falsches Datum!",
+                        "desc": "Fehlerhaftes Datumsformat oder Datum in der Vergangenheit."
+                    },
+                    "failed": {
+                        "title": "Fehler beim Eintragen der Abwesenheit",
+                        "desc": "Es ist ein Fehler beim Eintragen der Abwesenheit aufgetreten. Stellen sie sicher, dass alle Angaben korrekt sind (Grund: {{.Code}}."
+                    },
+                    "success": {
+                        "title": "Abwesenheit eingetragen",
+                        "desc": "Abwesenheit erfolgreich eingetragen.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                    },
+                    "already_absent": {
+                        "title": "Abwesenheit bereits eingetragen",
+                        "desc": "Eine Abwesenheit für den gleichen Zeitraum ist bereits hinterlegt.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                    }
+                }
+            },
+            "sync": {
+                "name": "sync",
+                "desc": "FiveNet Discord-Synchronisation auslösen.",
+                "results": {
+                    "wrong_discord": {
+                        "title": "Sync Befehl muss auf einem Discord Server mit FiveNet-Verbindung ausgeführt werden!",
+                        "desc": "Either you are sending a DM or this Discord isn't FiveNet enabled. Please contact the Discord server administrator."
+                    },
+                    "permission_denied": {
+                        "title": "Discord Admin Rechte benötigt",
+                        "desc": "Discord Admin Rechte sind benötigt um den Sync Befehl auszuführen."
+                    },
+                    "start_error": {
+                        "title": "Fehler beim manuellen starten des Syncs",
+                        "desc": "Es ist ein Fehler aufgetreten den Sync manuell zu starten."
+                    },
+                    "already_running": {
+                        "title": "Der Sync läuft bereits",
+                        "desc": "Bitte warten Sie bis der momentane Sync abgeschlossen ist, bevor Sie es probieren können den Sync erneut manuell zustarten."
+                    },
+                    "started": {
+                        "title": "Sync Anfrage erfolgreich!",
+                        "desc": "Der Sync sollte in wenigen Momenten starten."
+                    }
                 }
             }
         }

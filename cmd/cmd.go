@@ -30,6 +30,7 @@ import (
 	pbwiki "github.com/fivenet-app/fivenet/v2025/services/wiki"
 
 	// Modules
+	"github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/internal/modules"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
@@ -45,7 +46,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
-	"github.com/fivenet-app/fivenet/v2025/pkg/lang"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
@@ -109,7 +109,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		grpc.ServerModule,
 		htmlsanitizer.Module,
 		htmldiffer.Module,
-		lang.Module,
+		i18n.Module,
 		centrummanager.HousekeeperModule,
 		centrummanager.Module,
 		modules.LoggerModule,
