@@ -147,8 +147,19 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		defer cancel()
 
 		start := time.Now()
+		defer func() {
+			elapsed = time.Since(start)
+
+			// Recover from a panic and set err accordingly nil otherwise.
+			if e := recover(); e != nil {
+				if er, ok := e.(error); ok {
+					err = fmt.Errorf("recovered from panic. %w", er)
+				} else {
+					err = fmt.Errorf("recovered from panic. %v", e)
+				}
+			}
+		}()
 		err = fn(ctx, job.Cronjob.Data)
-		elapsed = time.Since(start)
 	}()
 
 	// Update timestamp in cronjob data
