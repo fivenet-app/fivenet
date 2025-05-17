@@ -103,8 +103,8 @@ func setupSanitizer() {
 	// # ProseMirror / Tiptap Editor
 	sanitizer.AllowAttrs("class").Matching(prosemirrorClassRegex).OnElements("br")
 	// ## Checkboxes
-	sanitizer.AllowAttrs("data-checked").OnElements("li")
-	sanitizer.AllowAttrs("data-type").OnElements("ul", "ol")
+	sanitizer.AllowAttrs("data-checked").OnElements("li", "span")
+	sanitizer.AllowAttrs("data-type").OnElements("ul", "ol", "li", "span")
 }
 
 func New(cfg *config.Config) (*bluemonday.Policy, error) {

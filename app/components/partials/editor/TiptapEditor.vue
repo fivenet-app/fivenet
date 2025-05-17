@@ -39,6 +39,7 @@ import Underline from '@tiptap/extension-underline';
 import FontSize from 'tiptap-extension-font-size';
 // @ts-expect-error doesn't have types
 import UniqueId from 'tiptap-unique-id';
+import { CheckboxStandalone } from '~/composables/tiptap/extensions/checkboxStandalone';
 import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
 import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
 import TiptapEditorImageModal from './TiptapEditorImageModal.vue';
@@ -148,6 +149,7 @@ const extensions: Extensions = [
     TaskItem.configure({
         nested: true,
     }),
+    CheckboxStandalone,
     CharacterCount.configure({
         limit: props.limit,
     }),
@@ -744,6 +746,16 @@ onBeforeUnmount(() => {
                             color="white"
                             variant="ghost"
                             @click="editor.chain().focus().toggleTaskList().run()"
+                        />
+                    </UTooltip>
+
+                    <UTooltip>
+                        <UButton
+                            :class="{ 'is-active': editor.isActive('checkboxStandalone') }"
+                            icon="i-mdi-checkbox-marked-outline"
+                            color="white"
+                            variant="ghost"
+                            @click="editor.chain().focus().addCheckboxStandalone().run()"
                         />
                     </UTooltip>
                 </UButtonGroup>

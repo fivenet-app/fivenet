@@ -340,8 +340,8 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 					in.Grades[job].Grades = slices.DeleteFunc(in.Grades[job].Grades, func(ig int32) bool {
 						return grade > vg
 					})
-					newLen := len(in.Grades[job].Grades)
-					if currentLen != newLen {
+
+					if currentLen != len(in.Grades[job].Grades) {
 						changed = true
 					}
 				} else {
@@ -357,8 +357,8 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 						in.Grades[job].Grades = slices.DeleteFunc(in.Grades[job].Grades, func(ig int32) bool {
 							return grade > vg
 						})
-						newLen := len(in.Grades[job].Grades)
-						if currentLen != newLen {
+
+						if currentLen != len(in.Grades[job].Grades) {
 							changed = true
 						}
 					} else {

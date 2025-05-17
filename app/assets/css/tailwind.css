@@ -75,6 +75,10 @@ html {
         }
     }
 
+    span[data-type='checkboxStandalone'] {
+        display: inline-flex;
+    }
+
     /* Search And Replace */
     .search-result {
         background-color: rgba(255, 217, 0, 0.5);
