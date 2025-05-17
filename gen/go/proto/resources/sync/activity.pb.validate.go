@@ -481,7 +481,18 @@ func (m *UserUpdate) validate(all bool) error {
 	}
 
 	if m.Job != nil {
-		// no validation rules for Job
+
+		if utf8.RuneCountInString(m.GetJob()) > 20 {
+			err := UserUpdateValidationError{
+				field:  "Job",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.JobGrade != nil {

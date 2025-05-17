@@ -79,25 +79,6 @@ export const CheckboxStandalone = Node.create<CheckboxStandaloneOptions>({
     },
 
     renderHTML({ node, HTMLAttributes }) {
-        console.log('renderHTML', [
-            'span',
-            mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-                'data-type': this.name,
-            }),
-            [
-                'label',
-                {
-                    innerText: '&nbsp;',
-                },
-                [
-                    'input',
-                    {
-                        type: 'checkbox',
-                        checked: node.attrs.checked ? 'checked' : null,
-                    },
-                ],
-            ],
-        ]);
         return [
             'span',
             mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
@@ -119,7 +100,6 @@ export const CheckboxStandalone = Node.create<CheckboxStandaloneOptions>({
 
     addNodeView() {
         return ({ node, HTMLAttributes, getPos, editor }) => {
-            console.log('addNodeView', node);
             const listItem = document.createElement('span');
             const checkboxWrapper = document.createElement('label');
             const checkboxStyler = document.createElement('span');

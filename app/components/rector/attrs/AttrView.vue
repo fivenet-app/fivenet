@@ -8,15 +8,15 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import type { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
+import type { Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import type { AttrsUpdate, GetJobLimitsResponse, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
 const props = defineProps<{
-    roleId: number;
+    job: string;
 }>();
 
 const emit = defineEmits<{
-    (e: 'deleted'): void;
+    (e: 'deleted', job: string): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -30,11 +30,11 @@ const modal = useModal();
 const notifications = useNotificatorStore();
 
 const {
-    data: role,
+    data: jobLimits,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`rector-roles-${props.roleId}`, () => getRole(props.roleId));
+} = useLazyAsyncData(`rector-limiter-${props.job}`, () => getJobLimits(props.job));
 
 const changed = ref(false);
 
@@ -44,37 +44,31 @@ const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
 
-async function getRole(id: number): Promise<Role> {
+async function getJobLimits(job: string): Promise<GetJobLimitsResponse> {
     try {
-        const call = $grpc.rector.rector.getRole({
-            id: id,
-            filtered: false,
+        const call = $grpc.rector.rector.getJobLimits({
+            job: job,
         });
         const { response } = await call;
 
-        if (response.role === undefined) {
-            throw new Error('failed to get role from server response');
-        }
-
-        return response.role;
+        return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
-async function getPermissions(roleId: number): Promise<void> {
+async function getAllPermissions(job: string): Promise<void> {
     try {
-        const call = $grpc.rector.rector.getPermissions({
-            roleId,
-            filtered: false,
+        const call = $grpc.rector.rector.getAllPermissions({
+            job: job,
         });
         const { response } = await call;
 
         permList.value = response.permissions;
         attrList.value = response.attributes;
 
-        genPermissionCategories();
+        await genPermissionCategories();
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -92,8 +86,17 @@ async function genPermissionCategories(): Promise<void> {
 async function propogatePermissionStates(): Promise<void> {
     permStates.value.clear();
 
-    role.value?.permissions.forEach((perm) => {
+    jobLimits.value?.permissions.forEach((perm) => {
         permStates.value.set(perm.id, Boolean(perm.val));
+    });
+
+    jobLimits.value?.attributes.forEach((attr) => {
+        const idx = attrList.value.findIndex((a) => a.attrId === attr.attrId);
+        if (idx > -1 && attrList.value[idx]) {
+            attrList.value[idx].maxValues = attr.maxValues;
+        } else {
+            attrList.value.push(attr);
+        }
     });
 }
 
@@ -102,8 +105,8 @@ async function updatePermissionState(perm: number, state: boolean | undefined): 
     permStates.value.set(perm, state);
 }
 
-async function updatePermissions(): Promise<void> {
-    const currentPermissions = role.value?.permissions.map((p) => p.id) ?? [];
+async function updateJobLimits(): Promise<void> {
+    const currentPermissions = jobLimits.value?.permissions.map((p) => p.id) ?? [];
 
     const perms: PermsUpdate = {
         toRemove: [],
@@ -111,7 +114,7 @@ async function updatePermissions(): Promise<void> {
     };
     permStates.value.forEach((state, perm) => {
         if (state !== undefined) {
-            const p = role.value?.permissions.find((v) => v.id === perm);
+            const p = jobLimits.value?.permissions.find((v) => v.id === perm);
 
             if (p?.val !== state) {
                 const item: PermItem = {
@@ -136,7 +139,7 @@ async function updatePermissions(): Promise<void> {
 
         if (perm === undefined || attr.value === undefined) {
             attrs.toRemove.push({
-                roleId: role.value!.id,
+                roleId: 0,
                 attrId: attr.attrId,
                 category: '',
                 key: '',
@@ -146,7 +149,7 @@ async function updatePermissions(): Promise<void> {
             });
         } else if (attr.value !== undefined) {
             attrs.toUpdate.push({
-                roleId: role.value!.id,
+                roleId: 0,
                 attrId: attr.attrId,
                 maxValues: attr.maxValues,
                 category: '',
@@ -169,8 +172,8 @@ async function updatePermissions(): Promise<void> {
     }
 
     try {
-        await $grpc.rector.rector.updateRoleLimits({
-            roleId: props.roleId,
+        await $grpc.rector.rector.updateJobLimits({
+            job: props.job,
             perms: perms,
             attrs: attrs,
         });
@@ -200,16 +203,16 @@ function clearState(): void {
 async function initializeRoleView(): Promise<void> {
     clearState();
 
-    await getPermissions(props.roleId);
+    await getAllPermissions(props.job);
     await propogatePermissionStates();
 }
 
-watch(role, async () => {
+watch(jobLimits, async () => {
     initializeRoleView();
 });
 
-watch(props, async () => {
-    if (!role.value || role.value?.id !== props.roleId) {
+watch(props, async (value) => {
+    if (!jobLimits.value || value.job !== props.job) {
         refresh();
     }
 });
@@ -217,9 +220,9 @@ watch(props, async () => {
 async function copyRole(): Promise<void> {
     copyToClipboardWrapper(
         JSON.stringify({
-            role: role.value,
+            job: props.job,
             attrList: attrList.value,
-        }),
+        } as CopyRole),
     );
 
     notifications.add({
@@ -241,7 +244,7 @@ const state = reactive<Schema>({
 });
 
 type CopyRole = {
-    role: Role;
+    job: string;
     attrList: RoleAttribute[];
 };
 
@@ -266,19 +269,19 @@ const accordionCategories = computed(() =>
     }),
 );
 
-async function deleteFaction(id: number): Promise<void> {
+async function deleteFaction(job: string): Promise<void> {
     try {
         await $grpc.rector.rector.deleteFaction({
-            roleId: id,
+            job: job,
         });
 
         notifications.add({
-            title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
-            description: { key: 'notifications.rector.role_deleted.content', parameters: {} },
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
-        emit('deleted');
+        emit('deleted', job);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -288,7 +291,7 @@ async function deleteFaction(id: number): Promise<void> {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
-    await updatePermissions().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await updateJobLimits().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
@@ -302,13 +305,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" />
+            <DataNoDataBlock v-else-if="!jobLimits" :type="$t('common.role', 2)" />
 
             <template v-else>
                 <div class="flex justify-between">
-                    <h2 class="text-3xl" :title="`ID: ${role.id}`">
-                        {{ role?.jobLabel! }}
+                    <h2 class="line-clamp-2 text-3xl" :title="`${$t('common.job')}: ${jobLimits?.job}`">
+                        {{ jobLimits?.jobLabel! }}
                     </h2>
+
+                    <UTooltip :text="$t('common.refresh')">
+                        <UButton variant="link" icon="i-mdi-refresh" color="primary" @click="refresh()" />
+                    </UTooltip>
 
                     <UTooltip v-if="isSuperuser" :text="$t('common.delete')">
                         <UButton
@@ -317,7 +324,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             color="error"
                             @click="
                                 modal.open(ConfirmModal, {
-                                    confirm: async () => deleteFaction(role!.id),
+                                    confirm: async () => deleteFaction(jobLimits!.job),
                                 })
                             "
                         />

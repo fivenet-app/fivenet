@@ -29,7 +29,9 @@ const (
 	RectorService_GetPermissions_FullMethodName          = "/services.rector.RectorService/GetPermissions"
 	RectorService_GetEffectivePermissions_FullMethodName = "/services.rector.RectorService/GetEffectivePermissions"
 	RectorService_ViewAuditLog_FullMethodName            = "/services.rector.RectorService/ViewAuditLog"
-	RectorService_UpdateRoleLimits_FullMethodName        = "/services.rector.RectorService/UpdateRoleLimits"
+	RectorService_GetAllPermissions_FullMethodName       = "/services.rector.RectorService/GetAllPermissions"
+	RectorService_GetJobLimits_FullMethodName            = "/services.rector.RectorService/GetJobLimits"
+	RectorService_UpdateJobLimits_FullMethodName         = "/services.rector.RectorService/UpdateJobLimits"
 	RectorService_DeleteFaction_FullMethodName           = "/services.rector.RectorService/DeleteFaction"
 )
 
@@ -58,7 +60,11 @@ type RectorServiceClient interface {
 	// @perm
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
-	UpdateRoleLimits(ctx context.Context, in *UpdateRoleLimitsRequest, opts ...grpc.CallOption) (*UpdateRoleLimitsResponse, error)
+	GetAllPermissions(ctx context.Context, in *GetAllPermissionsRequest, opts ...grpc.CallOption) (*GetAllPermissionsResponse, error)
+	// @perm: Name=SuperUser
+	GetJobLimits(ctx context.Context, in *GetJobLimitsRequest, opts ...grpc.CallOption) (*GetJobLimitsResponse, error)
+	// @perm: Name=SuperUser
+	UpdateJobLimits(ctx context.Context, in *UpdateJobLimitsRequest, opts ...grpc.CallOption) (*UpdateJobLimitsResponse, error)
 	// @perm: Name=SuperUser
 	DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error)
 }
@@ -171,10 +177,30 @@ func (c *rectorServiceClient) ViewAuditLog(ctx context.Context, in *ViewAuditLog
 	return out, nil
 }
 
-func (c *rectorServiceClient) UpdateRoleLimits(ctx context.Context, in *UpdateRoleLimitsRequest, opts ...grpc.CallOption) (*UpdateRoleLimitsResponse, error) {
+func (c *rectorServiceClient) GetAllPermissions(ctx context.Context, in *GetAllPermissionsRequest, opts ...grpc.CallOption) (*GetAllPermissionsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateRoleLimitsResponse)
-	err := c.cc.Invoke(ctx, RectorService_UpdateRoleLimits_FullMethodName, in, out, cOpts...)
+	out := new(GetAllPermissionsResponse)
+	err := c.cc.Invoke(ctx, RectorService_GetAllPermissions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rectorServiceClient) GetJobLimits(ctx context.Context, in *GetJobLimitsRequest, opts ...grpc.CallOption) (*GetJobLimitsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetJobLimitsResponse)
+	err := c.cc.Invoke(ctx, RectorService_GetJobLimits_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *rectorServiceClient) UpdateJobLimits(ctx context.Context, in *UpdateJobLimitsRequest, opts ...grpc.CallOption) (*UpdateJobLimitsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateJobLimitsResponse)
+	err := c.cc.Invoke(ctx, RectorService_UpdateJobLimits_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -216,7 +242,11 @@ type RectorServiceServer interface {
 	// @perm
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
-	UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error)
+	GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error)
+	// @perm: Name=SuperUser
+	GetJobLimits(context.Context, *GetJobLimitsRequest) (*GetJobLimitsResponse, error)
+	// @perm: Name=SuperUser
+	UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error)
 	// @perm: Name=SuperUser
 	DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
@@ -259,8 +289,14 @@ func (UnimplementedRectorServiceServer) GetEffectivePermissions(context.Context,
 func (UnimplementedRectorServiceServer) ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ViewAuditLog not implemented")
 }
-func (UnimplementedRectorServiceServer) UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoleLimits not implemented")
+func (UnimplementedRectorServiceServer) GetAllPermissions(context.Context, *GetAllPermissionsRequest) (*GetAllPermissionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPermissions not implemented")
+}
+func (UnimplementedRectorServiceServer) GetJobLimits(context.Context, *GetJobLimitsRequest) (*GetJobLimitsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJobLimits not implemented")
+}
+func (UnimplementedRectorServiceServer) UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateJobLimits not implemented")
 }
 func (UnimplementedRectorServiceServer) DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFaction not implemented")
@@ -466,20 +502,56 @@ func _RectorService_ViewAuditLog_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RectorService_UpdateRoleLimits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateRoleLimitsRequest)
+func _RectorService_GetAllPermissions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllPermissionsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RectorServiceServer).UpdateRoleLimits(ctx, in)
+		return srv.(RectorServiceServer).GetAllPermissions(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RectorService_UpdateRoleLimits_FullMethodName,
+		FullMethod: RectorService_GetAllPermissions_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).UpdateRoleLimits(ctx, req.(*UpdateRoleLimitsRequest))
+		return srv.(RectorServiceServer).GetAllPermissions(ctx, req.(*GetAllPermissionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RectorService_GetJobLimits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJobLimitsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).GetJobLimits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RectorService_GetJobLimits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).GetJobLimits(ctx, req.(*GetJobLimitsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RectorService_UpdateJobLimits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateJobLimitsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).UpdateJobLimits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RectorService_UpdateJobLimits_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).UpdateJobLimits(ctx, req.(*UpdateJobLimitsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -550,8 +622,16 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RectorService_ViewAuditLog_Handler,
 		},
 		{
-			MethodName: "UpdateRoleLimits",
-			Handler:    _RectorService_UpdateRoleLimits_Handler,
+			MethodName: "GetAllPermissions",
+			Handler:    _RectorService_GetAllPermissions_Handler,
+		},
+		{
+			MethodName: "GetJobLimits",
+			Handler:    _RectorService_GetJobLimits_Handler,
+		},
+		{
+			MethodName: "UpdateJobLimits",
+			Handler:    _RectorService_UpdateJobLimits_Handler,
 		},
 		{
 			MethodName: "DeleteFaction",

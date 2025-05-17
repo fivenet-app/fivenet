@@ -161,7 +161,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbrector.SetJobPropsReque
 }
 
 func (s *Server) DeleteFaction(ctx context.Context, req *pbrector.DeleteFactionRequest) (*pbrector.DeleteFactionResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", req.Job))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -174,14 +174,9 @@ func (s *Server) DeleteFaction(ctx context.Context, req *pbrector.DeleteFactionR
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	role, err := s.ps.GetRole(ctx, req.RoleId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
-	}
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", req.Job))
 
-	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", role.Job))
-
-	roles, err := s.ps.GetJobRoles(ctx, role.Job)
+	roles, err := s.ps.GetJobRoles(ctx, req.Job)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
@@ -194,22 +189,22 @@ func (s *Server) DeleteFaction(ctx context.Context, req *pbrector.DeleteFactionR
 		}
 	}
 
-	if err := s.ps.ClearJobAttributes(ctx, role.Job); err != nil {
+	if err := s.ps.ClearJobAttributes(ctx, req.Job); err != nil {
 		errs = multierr.Append(errs, err)
 		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
 	}
 
-	if err := s.ps.ClearJobPermissions(ctx, role.Job); err != nil {
+	if err := s.ps.ClearJobPermissions(ctx, req.Job); err != nil {
 		errs = multierr.Append(errs, err)
 		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
 	}
 
-	if err := s.ps.ApplyJobPermissions(ctx, role.Job); err != nil {
+	if err := s.ps.ApplyJobPermissions(ctx, req.Job); err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
-	// Set job props to be deleted as last action to remove a faction and it's data from the database
-	if err := s.deleteJobProps(ctx, s.db, role.Job); err != nil {
+	// Set job props to be deleted as last action to start the removal of a faction and it's data from the database
+	if err := s.deleteJobProps(ctx, s.db, req.Job); err != nil {
 		errs = multierr.Append(errs, err)
 	}
 

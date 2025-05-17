@@ -445,7 +445,7 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 		toRemove := []*permissions.RoleAttribute{}
 		toUpdate := []*permissions.RoleAttribute{}
 		for _, attr := range attrs {
-			maxValues, _ := p.GetJobAttrMaxVals(role.Job, attr.AttrId)
+			maxValues, _ := p.GetJobAttribute(role.Job, attr.AttrId)
 
 			if slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
 				return in.Id == attr.PermissionId
@@ -470,7 +470,7 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 
 		if len(toUpdate) > 0 {
 			p.logger.Debug("updating attribute on role due to job perms change", zap.String("job", role.Job), zap.Int("perms_length", len(toUpdate)))
-			if err := p.AddOrUpdateAttributesToRole(ctx, role.Job, role.ID, toUpdate...); err != nil {
+			if err := p.UpdateRoleAttributes(ctx, role.Job, role.ID, toUpdate...); err != nil {
 				return fmt.Errorf("failed to update attributes for role %d. %w", role.ID, err)
 			}
 		}

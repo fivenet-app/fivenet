@@ -68,7 +68,16 @@ func (m *TimeclockEntry) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := TimeclockEntryValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetDate()).(type) {

@@ -367,10 +367,10 @@ var File_resources_jobs_timeclock_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_timeclock_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/jobs/timeclock.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xf4\x02\n" +
+	"\x1eresources/jobs/timeclock.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xfd\x02\n" +
 	"\x0eTimeclockEntry\x12 \n" +
-	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\x122\n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x12\x19\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x122\n" +
 	"\x04date\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\x04date\x122\n" +
 	"\x04user\x18\x04 \x01(\v2\x19.resources.jobs.ColleagueH\x00R\x04user\x88\x01\x01\x12B\n" +
 	"\n" +

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AttrRolesList from '~/components/rector/attrs/AttrRolesList.vue';
+import AttrJobList from '~/components/rector/attrs/AttrJobList.vue';
 
 useHead({
     title: 'pages.rector.limiter.title',
@@ -21,7 +21,7 @@ definePageMeta({
                 </template>
             </UDashboardNavbar>
 
-            <AttrRolesList :all="true" />
+            <AttrJobList />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

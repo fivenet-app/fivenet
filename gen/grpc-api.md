@@ -827,8 +827,12 @@
     - [DeleteFactionResponse](#services-rector-DeleteFactionResponse)
     - [DeleteRoleRequest](#services-rector-DeleteRoleRequest)
     - [DeleteRoleResponse](#services-rector-DeleteRoleResponse)
+    - [GetAllPermissionsRequest](#services-rector-GetAllPermissionsRequest)
+    - [GetAllPermissionsResponse](#services-rector-GetAllPermissionsResponse)
     - [GetEffectivePermissionsRequest](#services-rector-GetEffectivePermissionsRequest)
     - [GetEffectivePermissionsResponse](#services-rector-GetEffectivePermissionsResponse)
+    - [GetJobLimitsRequest](#services-rector-GetJobLimitsRequest)
+    - [GetJobLimitsResponse](#services-rector-GetJobLimitsResponse)
     - [GetJobPropsRequest](#services-rector-GetJobPropsRequest)
     - [GetJobPropsResponse](#services-rector-GetJobPropsResponse)
     - [GetPermissionsRequest](#services-rector-GetPermissionsRequest)
@@ -841,8 +845,8 @@
     - [PermsUpdate](#services-rector-PermsUpdate)
     - [SetJobPropsRequest](#services-rector-SetJobPropsRequest)
     - [SetJobPropsResponse](#services-rector-SetJobPropsResponse)
-    - [UpdateRoleLimitsRequest](#services-rector-UpdateRoleLimitsRequest)
-    - [UpdateRoleLimitsResponse](#services-rector-UpdateRoleLimitsResponse)
+    - [UpdateJobLimitsRequest](#services-rector-UpdateJobLimitsRequest)
+    - [UpdateJobLimitsResponse](#services-rector-UpdateJobLimitsResponse)
     - [UpdateRolePermsRequest](#services-rector-UpdateRolePermsRequest)
     - [UpdateRolePermsResponse](#services-rector-UpdateRolePermsResponse)
     - [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest)
@@ -12488,7 +12492,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
 
 
 
@@ -12530,6 +12534,37 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-rector-GetAllPermissionsRequest"></a>
+
+### GetAllPermissionsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-rector-GetAllPermissionsResponse"></a>
+
+### GetAllPermissionsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+
 <a name="services-rector-GetEffectivePermissionsRequest"></a>
 
 ### GetEffectivePermissionsRequest
@@ -12554,6 +12589,39 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `role` | [resources.permissions.Role](#resources-permissions-Role) |  |  |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="services-rector-GetJobLimitsRequest"></a>
+
+### GetJobLimitsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-rector-GetJobLimitsResponse"></a>
+
+### GetJobLimitsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
 | `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
 | `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
 
@@ -12742,15 +12810,15 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services-rector-UpdateRoleLimitsRequest"></a>
+<a name="services-rector-UpdateJobLimitsRequest"></a>
 
-### UpdateRoleLimitsRequest
+### UpdateJobLimitsRequest
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
 | `perms` | [PermsUpdate](#services-rector-PermsUpdate) | optional |  |
 | `attrs` | [AttrsUpdate](#services-rector-AttrsUpdate) | optional |  |
 
@@ -12759,9 +12827,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services-rector-UpdateRoleLimitsResponse"></a>
+<a name="services-rector-UpdateJobLimitsResponse"></a>
 
-### UpdateRoleLimitsResponse
+### UpdateJobLimitsResponse
 
 
 
@@ -12857,7 +12925,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetPermissions` | [GetPermissionsRequest](#services-rector-GetPermissionsRequest) | [GetPermissionsResponse](#services-rector-GetPermissionsResponse) | @perm: Name=GetRoles |
 | `GetEffectivePermissions` | [GetEffectivePermissionsRequest](#services-rector-GetEffectivePermissionsRequest) | [GetEffectivePermissionsResponse](#services-rector-GetEffectivePermissionsResponse) | @perm: Name=GetRoles |
 | `ViewAuditLog` | [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest) | [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse) | @perm |
-| `UpdateRoleLimits` | [UpdateRoleLimitsRequest](#services-rector-UpdateRoleLimitsRequest) | [UpdateRoleLimitsResponse](#services-rector-UpdateRoleLimitsResponse) | @perm: Name=SuperUser |
+| `GetAllPermissions` | [GetAllPermissionsRequest](#services-rector-GetAllPermissionsRequest) | [GetAllPermissionsResponse](#services-rector-GetAllPermissionsResponse) | @perm: Name=SuperUser |
+| `GetJobLimits` | [GetJobLimitsRequest](#services-rector-GetJobLimitsRequest) | [GetJobLimitsResponse](#services-rector-GetJobLimitsResponse) | @perm: Name=SuperUser |
+| `UpdateJobLimits` | [UpdateJobLimitsRequest](#services-rector-UpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#services-rector-UpdateJobLimitsResponse) | @perm: Name=SuperUser |
 | `DeleteFaction` | [DeleteFactionRequest](#services-rector-DeleteFactionRequest) | [DeleteFactionResponse](#services-rector-DeleteFactionResponse) | @perm: Name=SuperUser |
 
  <!-- end services -->

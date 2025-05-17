@@ -401,7 +401,7 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 
 func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.UserInfo, role *model.FivenetRoles, attrUpdates *pbrector.AttrsUpdate) error {
 	if len(attrUpdates.ToUpdate) > 0 {
-		if err := s.ps.AddOrUpdateAttributesToRole(ctx, userInfo.Job, role.ID, attrUpdates.ToUpdate...); err != nil {
+		if err := s.ps.UpdateRoleAttributes(ctx, userInfo.Job, role.ID, attrUpdates.ToUpdate...); err != nil {
 			return err
 		}
 	}
@@ -444,9 +444,9 @@ func (s *Server) GetPermissions(ctx context.Context, req *pbrector.GetPermission
 		return nil, errorsrector.ErrInvalidRequest
 	}
 
-	attrs, err := s.ps.GetAllAttributes(ctx, role.Job, role.Grade)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsrector.ErrInvalidRequest)
+	attrs, ok := s.ps.GetJobAttributes(role.Job)
+	if !ok {
+		return nil, errorsrector.ErrInvalidRequest
 	}
 	resp.Attributes = attrs
 
@@ -492,47 +492,120 @@ func (s *Server) GetEffectivePermissions(ctx context.Context, req *pbrector.GetE
 	return resp, nil
 }
 
-func (s *Server) UpdateRoleLimits(ctx context.Context, req *pbrector.UpdateRoleLimitsRequest) (*pbrector.UpdateRoleLimitsResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
+func (s *Server) GetAllPermissions(ctx context.Context, req *pbrector.GetAllPermissionsRequest) (*pbrector.GetAllPermissionsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", req.Job))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: pbrector.RectorService_ServiceDesc.ServiceName,
-		Method:  "UpdateRoleLimits",
+		Method:  "GetAllPermissions",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	role, err := s.ps.GetRole(ctx, req.RoleId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsrector.ErrInvalidRequest)
+	job := s.enricher.GetJobByName(req.Job)
+	if job == nil {
+		return nil, errorsrector.ErrInvalidRequest
 	}
+
+	perms, err := s.ps.GetAllPermissions(ctx)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+	}
+
+	attrs, err := s.ps.GetAllAttributes(ctx)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+	}
+
+	resp := &pbrector.GetAllPermissionsResponse{}
+	resp.Permissions = perms
+	resp.Attributes = attrs
+
+	return resp, nil
+}
+
+func (s *Server) GetJobLimits(ctx context.Context, req *pbrector.GetJobLimitsRequest) (*pbrector.GetJobLimitsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", req.Job))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: pbrector.RectorService_ServiceDesc.ServiceName,
+		Method:  "GetJobLimits",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	job := s.enricher.GetJobByName(req.Job)
+	if job == nil {
+		return nil, errorsrector.ErrInvalidRequest
+	}
+
+	resp := &pbrector.GetJobLimitsResponse{}
+
+	perms, err := s.ps.GetJobPermissions(ctx, job.Name)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+	}
+	resp.Permissions = perms
+
+	attrs, _ := s.ps.GetJobAttributes(job.Name)
+	resp.Attributes = attrs
+
+	resp.Job = job.Name
+	resp.JobLabel = &job.Label
+
+	return resp, nil
+}
+
+func (s *Server) UpdateJobLimits(ctx context.Context, req *pbrector.UpdateJobLimitsRequest) (*pbrector.UpdateJobLimitsResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", req.Job))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: pbrector.RectorService_ServiceDesc.ServiceName,
+		Method:  "UpdateJobLimits",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	job := s.enricher.GetJobByName(req.Job)
+	if job == nil {
+		return nil, errorsrector.ErrInvalidRequest
+	}
+
 	for _, attr := range req.Attrs.ToUpdate {
-		if err := s.ps.UpdateJobAttributeMaxValues(ctx, role.Job, attr.AttrId, attr.MaxValues); err != nil {
+		if err := s.ps.UpdateJobAttributes(ctx, job.Name, attr.AttrId, attr.MaxValues); err != nil {
 			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 	}
 
 	for _, ps := range req.Perms.ToUpdate {
-		if err := s.ps.UpdateJobPermissions(ctx, role.Job, ps.Id, ps.Val); err != nil {
+		if err := s.ps.UpdateJobPermissions(ctx, job.Name, ps.Id, ps.Val); err != nil {
 			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 	}
 
 	for _, ps := range req.Perms.ToRemove {
-		if err := s.ps.UpdateJobPermissions(ctx, role.Job, ps, false); err != nil {
+		if err := s.ps.UpdateJobPermissions(ctx, job.Name, ps, false); err != nil {
 			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 		}
 	}
 
-	if err := s.ps.ApplyJobPermissions(ctx, role.Job); err != nil {
+	if err := s.ps.ApplyJobPermissions(ctx, job.Name); err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	return &pbrector.UpdateRoleLimitsResponse{}, nil
+	return &pbrector.UpdateJobLimitsResponse{}, nil
 }

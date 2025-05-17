@@ -125,16 +125,36 @@ message ViewAuditLogResponse {
   repeated resources.rector.AuditEntry logs = 2;
 }
 
-message UpdateRoleLimitsRequest {
-  uint64 role_id = 1;
+message GetAllPermissionsRequest {
+  string job = 1 [(validate.rules).string.max_len = 20];
+}
+
+message GetAllPermissionsResponse {
+  repeated resources.permissions.Permission permissions = 1;
+  repeated resources.permissions.RoleAttribute attributes = 2;
+}
+
+message GetJobLimitsRequest {
+  string job = 1 [(validate.rules).string.max_len = 20];
+}
+
+message GetJobLimitsResponse {
+  string job = 1 [(validate.rules).string.max_len = 20];
+  optional string job_label = 2;
+  repeated resources.permissions.Permission permissions = 3;
+  repeated resources.permissions.RoleAttribute attributes = 4;
+}
+
+message UpdateJobLimitsRequest {
+  string job = 1 [(validate.rules).string.max_len = 20];
   optional PermsUpdate perms = 2;
   optional AttrsUpdate attrs = 3;
 }
 
-message UpdateRoleLimitsResponse {}
+message UpdateJobLimitsResponse {}
 
 message DeleteFactionRequest {
-  uint64 role_id = 1;
+  string job = 1 [(validate.rules).string.max_len = 20];
 }
 
 message DeleteFactionResponse {}
@@ -166,7 +186,11 @@ service RectorService {
   rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
 
   // @perm: Name=SuperUser
-  rpc UpdateRoleLimits(UpdateRoleLimitsRequest) returns (UpdateRoleLimitsResponse);
+  rpc GetAllPermissions(GetAllPermissionsRequest) returns (GetAllPermissionsResponse);
+  // @perm: Name=SuperUser
+  rpc GetJobLimits(GetJobLimitsRequest) returns (GetJobLimitsResponse);
+  // @perm: Name=SuperUser
+  rpc UpdateJobLimits(UpdateJobLimitsRequest) returns (UpdateJobLimitsResponse);
   // @perm: Name=SuperUser
   rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse);
 }

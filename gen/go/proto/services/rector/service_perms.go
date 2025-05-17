@@ -37,10 +37,12 @@ var PermsRemap = map[string]string{
 
 	// Service: RectorService
 	"RectorService/DeleteFaction":           "SuperUser",
+	"RectorService/GetAllPermissions":       "SuperUser",
 	"RectorService/GetEffectivePermissions": "RectorService/GetRoles",
+	"RectorService/GetJobLimits":            "SuperUser",
 	"RectorService/GetPermissions":          "RectorService/GetRoles",
 	"RectorService/GetRole":                 "RectorService/GetRoles",
-	"RectorService/UpdateRoleLimits":        "SuperUser",
+	"RectorService/UpdateJobLimits":         "SuperUser",
 }
 
 func init() {

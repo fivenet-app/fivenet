@@ -59,7 +59,16 @@ func (m *OAuth2Account) validate(all bool) error {
 
 	// no validation rules for AccountId
 
-	// no validation rules for ProviderName
+	if utf8.RuneCountInString(m.GetProviderName()) > 255 {
+		err := OAuth2AccountValidationError{
+			field:  "ProviderName",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetProvider()).(type) {
@@ -90,11 +99,38 @@ func (m *OAuth2Account) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for ExternalId
+	if utf8.RuneCountInString(m.GetExternalId()) > 128 {
+		err := OAuth2AccountValidationError{
+			field:  "ExternalId",
+			reason: "value length must be at most 128 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Username
+	if utf8.RuneCountInString(m.GetUsername()) > 255 {
+		err := OAuth2AccountValidationError{
+			field:  "Username",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Avatar
+	if utf8.RuneCountInString(m.GetAvatar()) > 255 {
+		err := OAuth2AccountValidationError{
+			field:  "Avatar",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.CreatedAt != nil {
 

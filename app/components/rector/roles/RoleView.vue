@@ -119,7 +119,7 @@ async function updatePermissionState(perm: number, state: boolean | undefined): 
     permStates.value.set(perm, state);
 }
 
-async function updatePermissions(): Promise<void> {
+async function updateRolePerms(): Promise<void> {
     const currentPermissions = role.value?.permissions.map((p) => p.id) ?? [];
 
     const perms: PermsUpdate = {
@@ -243,7 +243,7 @@ const canUpdate = can('RectorService.UpdateRolePerms');
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
-    await updatePermissions().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await updateRolePerms().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
@@ -261,8 +261,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
             <template v-else>
                 <div class="flex justify-between">
-                    <h2 class="shrink-0 text-3xl" :title="`ID: ${role.id}`">
-                        {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
+                    <h2 class="line-clamp-2 flex-1 text-3xl" :title="`ID: ${role.id}`">
+                        {{ role?.jobLabel }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
                     </h2>
 
                     <UButtonGroup>

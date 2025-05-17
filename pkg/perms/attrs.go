@@ -256,13 +256,43 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 	return nil
 }
 
-func (p *Perms) GetJobAttrMaxVals(job string, attrId uint64) (*permissions.AttributeValues, bool) {
+func (p *Perms) GetJobAttribute(job string, attrId uint64) (*permissions.AttributeValues, bool) {
 	jas, ok := p.attrsJobMaxValuesMap.Load(job)
 	if !ok {
 		return nil, false
 	}
 
 	return jas.Load(attrId)
+}
+
+func (p *Perms) GetJobAttributes(job string) ([]*permissions.RoleAttribute, bool) {
+	jas, ok := p.attrsJobMaxValuesMap.Load(job)
+	if !ok {
+		return nil, false
+	}
+
+	var attrs []*permissions.RoleAttribute
+	jas.Range(func(attrId uint64, value *permissions.AttributeValues) bool {
+		attr, ok := p.LookupAttributeByID(attrId)
+		if !ok {
+			return true
+		}
+
+		attrs = append(attrs, &permissions.RoleAttribute{
+			AttrId:       attr.ID,
+			PermissionId: attr.PermissionID,
+			Key:          string(attr.Key),
+			Type:         string(attr.Type),
+			Category:     string(attr.Category),
+			Name:         string(attr.Name),
+			ValidValues:  attr.ValidValues,
+			MaxValues:    value,
+		})
+
+		return true
+	})
+
+	return attrs, true
 }
 
 func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.AttributeValues, error) {
@@ -381,9 +411,11 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, j
 			res[i].ValidValues.Default(permissions.AttributeTypes(in[i].Type))
 		}
 
-		res[i].MaxValues, _ = p.GetJobAttrMaxVals(job, in[i].AttrId)
-		if res[i].MaxValues != nil {
-			res[i].MaxValues.Default(permissions.AttributeTypes(res[i].Type))
+		if job != "" {
+			res[i].MaxValues, _ = p.GetJobAttribute(job, in[i].AttrId)
+			if res[i].MaxValues != nil {
+				res[i].MaxValues.Default(permissions.AttributeTypes(res[i].Type))
+			}
 		}
 	}
 
@@ -400,7 +432,7 @@ func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal s
 	return nil
 }
 
-func (p *Perms) GetAllAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) GetAllAttributes(ctx context.Context) ([]*permissions.RoleAttribute, error) {
 	stmt := tAttrs.
 		SELECT(
 			tAttrs.ID.AS("rawroleattribute.attr_id"),
@@ -424,23 +456,7 @@ func (p *Perms) GetAllAttributes(ctx context.Context, job string, grade int32) (
 		}
 	}
 
-	attrs := p.convertRawToRoleAttributes(dest, job)
-
-	roleAttrs, err := p.GetRoleAttributes(job, grade)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get role attributes. %w", err)
-	}
-
-	for _, attr := range attrs {
-		idx := slices.IndexFunc(roleAttrs, func(ra *permissions.RoleAttribute) bool {
-			return ra.AttrId == attr.AttrId
-		})
-		if idx > -1 {
-			attr.Value = roleAttrs[idx].Value
-		}
-	}
-
-	return attrs, nil
+	return p.convertRawToRoleAttributes(dest, ""), nil
 }
 
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
@@ -472,7 +488,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			return false
 		}
 
-		maxVal, _ := p.GetJobAttrMaxVals(job, attr.ID)
+		maxVal, _ := p.GetJobAttribute(job, attr.ID)
 
 		dest = append(dest, &permissions.RoleAttribute{
 			RoleId:       roleId,
@@ -571,7 +587,7 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	return as, nil
 }
 
-func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error {
+func (p *Perms) UpdateRoleAttributes(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	for i := range attrs {
 		attrs[i].RoleId = roleId
 
@@ -583,7 +599,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, rol
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
 
-			max, _ := p.GetJobAttrMaxVals(job, a.ID)
+			max, _ := p.GetJobAttribute(job, a.ID)
 
 			valid, _ := attrs[i].Value.Check(a.Type, a.ValidValues, max)
 			if !valid {
@@ -695,7 +711,7 @@ func (p *Perms) GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions
 		return nil, false
 	}
 
-	maxVals, _ := p.GetJobAttrMaxVals(ra.Job, ra.AttrID)
+	maxVals, _ := p.GetJobAttribute(ra.Job, ra.AttrID)
 
 	return &permissions.RoleAttribute{
 		RoleId:    roleId,
@@ -706,7 +722,7 @@ func (p *Perms) GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions
 	}, true
 }
 
-func (p *Perms) UpdateJobAttributeMaxValues(ctx context.Context, job string, attrId uint64, maxValues *permissions.AttributeValues) error {
+func (p *Perms) UpdateJobAttributes(ctx context.Context, job string, attrId uint64, maxValues *permissions.AttributeValues) error {
 	a, ok := p.LookupAttributeByID(attrId)
 	if !ok {
 		return fmt.Errorf("unable to update role attribute max values, didn't find attribute by ID %d. %w", attrId, fmt.Errorf("attribute not found"))

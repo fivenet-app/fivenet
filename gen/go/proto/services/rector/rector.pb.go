@@ -1170,30 +1170,238 @@ func (x *ViewAuditLogResponse) GetLogs() []*rector.AuditEntry {
 	return nil
 }
 
-type UpdateRoleLimitsRequest struct {
+type GetAllPermissionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoleId        uint64                 `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAllPermissionsRequest) Reset() {
+	*x = GetAllPermissionsRequest{}
+	mi := &file_services_rector_rector_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAllPermissionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllPermissionsRequest) ProtoMessage() {}
+
+func (x *GetAllPermissionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_rector_rector_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllPermissionsRequest.ProtoReflect.Descriptor instead.
+func (*GetAllPermissionsRequest) Descriptor() ([]byte, []int) {
+	return file_services_rector_rector_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *GetAllPermissionsRequest) GetJob() string {
+	if x != nil {
+		return x.Job
+	}
+	return ""
+}
+
+type GetAllPermissionsResponse struct {
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Permissions   []*permissions.Permission    `protobuf:"bytes,1,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,2,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAllPermissionsResponse) Reset() {
+	*x = GetAllPermissionsResponse{}
+	mi := &file_services_rector_rector_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAllPermissionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAllPermissionsResponse) ProtoMessage() {}
+
+func (x *GetAllPermissionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_rector_rector_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAllPermissionsResponse.ProtoReflect.Descriptor instead.
+func (*GetAllPermissionsResponse) Descriptor() ([]byte, []int) {
+	return file_services_rector_rector_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *GetAllPermissionsResponse) GetPermissions() []*permissions.Permission {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+func (x *GetAllPermissionsResponse) GetAttributes() []*permissions.RoleAttribute {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
+}
+
+type GetJobLimitsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetJobLimitsRequest) Reset() {
+	*x = GetJobLimitsRequest{}
+	mi := &file_services_rector_rector_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetJobLimitsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetJobLimitsRequest) ProtoMessage() {}
+
+func (x *GetJobLimitsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_rector_rector_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetJobLimitsRequest.ProtoReflect.Descriptor instead.
+func (*GetJobLimitsRequest) Descriptor() ([]byte, []int) {
+	return file_services_rector_rector_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *GetJobLimitsRequest) GetJob() string {
+	if x != nil {
+		return x.Job
+	}
+	return ""
+}
+
+type GetJobLimitsResponse struct {
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Job           string                       `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string                      `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	Permissions   []*permissions.Permission    `protobuf:"bytes,3,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,4,rep,name=attributes,proto3" json:"attributes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetJobLimitsResponse) Reset() {
+	*x = GetJobLimitsResponse{}
+	mi := &file_services_rector_rector_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetJobLimitsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetJobLimitsResponse) ProtoMessage() {}
+
+func (x *GetJobLimitsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_rector_rector_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetJobLimitsResponse.ProtoReflect.Descriptor instead.
+func (*GetJobLimitsResponse) Descriptor() ([]byte, []int) {
+	return file_services_rector_rector_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *GetJobLimitsResponse) GetJob() string {
+	if x != nil {
+		return x.Job
+	}
+	return ""
+}
+
+func (x *GetJobLimitsResponse) GetJobLabel() string {
+	if x != nil && x.JobLabel != nil {
+		return *x.JobLabel
+	}
+	return ""
+}
+
+func (x *GetJobLimitsResponse) GetPermissions() []*permissions.Permission {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+func (x *GetJobLimitsResponse) GetAttributes() []*permissions.RoleAttribute {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
+}
+
+type UpdateJobLimitsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	Perms         *PermsUpdate           `protobuf:"bytes,2,opt,name=perms,proto3,oneof" json:"perms,omitempty"`
 	Attrs         *AttrsUpdate           `protobuf:"bytes,3,opt,name=attrs,proto3,oneof" json:"attrs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateRoleLimitsRequest) Reset() {
-	*x = UpdateRoleLimitsRequest{}
-	mi := &file_services_rector_rector_proto_msgTypes[23]
+func (x *UpdateJobLimitsRequest) Reset() {
+	*x = UpdateJobLimitsRequest{}
+	mi := &file_services_rector_rector_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateRoleLimitsRequest) String() string {
+func (x *UpdateJobLimitsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateRoleLimitsRequest) ProtoMessage() {}
+func (*UpdateJobLimitsRequest) ProtoMessage() {}
 
-func (x *UpdateRoleLimitsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_rector_rector_proto_msgTypes[23]
+func (x *UpdateJobLimitsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_rector_rector_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1204,53 +1412,53 @@ func (x *UpdateRoleLimitsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateRoleLimitsRequest.ProtoReflect.Descriptor instead.
-func (*UpdateRoleLimitsRequest) Descriptor() ([]byte, []int) {
-	return file_services_rector_rector_proto_rawDescGZIP(), []int{23}
+// Deprecated: Use UpdateJobLimitsRequest.ProtoReflect.Descriptor instead.
+func (*UpdateJobLimitsRequest) Descriptor() ([]byte, []int) {
+	return file_services_rector_rector_proto_rawDescGZIP(), []int{27}
 }
 
-func (x *UpdateRoleLimitsRequest) GetRoleId() uint64 {
+func (x *UpdateJobLimitsRequest) GetJob() string {
 	if x != nil {
-		return x.RoleId
+		return x.Job
 	}
-	return 0
+	return ""
 }
 
-func (x *UpdateRoleLimitsRequest) GetPerms() *PermsUpdate {
+func (x *UpdateJobLimitsRequest) GetPerms() *PermsUpdate {
 	if x != nil {
 		return x.Perms
 	}
 	return nil
 }
 
-func (x *UpdateRoleLimitsRequest) GetAttrs() *AttrsUpdate {
+func (x *UpdateJobLimitsRequest) GetAttrs() *AttrsUpdate {
 	if x != nil {
 		return x.Attrs
 	}
 	return nil
 }
 
-type UpdateRoleLimitsResponse struct {
+type UpdateJobLimitsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateRoleLimitsResponse) Reset() {
-	*x = UpdateRoleLimitsResponse{}
-	mi := &file_services_rector_rector_proto_msgTypes[24]
+func (x *UpdateJobLimitsResponse) Reset() {
+	*x = UpdateJobLimitsResponse{}
+	mi := &file_services_rector_rector_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateRoleLimitsResponse) String() string {
+func (x *UpdateJobLimitsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateRoleLimitsResponse) ProtoMessage() {}
+func (*UpdateJobLimitsResponse) ProtoMessage() {}
 
-func (x *UpdateRoleLimitsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_rector_rector_proto_msgTypes[24]
+func (x *UpdateJobLimitsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_rector_rector_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1261,21 +1469,21 @@ func (x *UpdateRoleLimitsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateRoleLimitsResponse.ProtoReflect.Descriptor instead.
-func (*UpdateRoleLimitsResponse) Descriptor() ([]byte, []int) {
-	return file_services_rector_rector_proto_rawDescGZIP(), []int{24}
+// Deprecated: Use UpdateJobLimitsResponse.ProtoReflect.Descriptor instead.
+func (*UpdateJobLimitsResponse) Descriptor() ([]byte, []int) {
+	return file_services_rector_rector_proto_rawDescGZIP(), []int{28}
 }
 
 type DeleteFactionRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	RoleId        uint64                 `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
+	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteFactionRequest) Reset() {
 	*x = DeleteFactionRequest{}
-	mi := &file_services_rector_rector_proto_msgTypes[25]
+	mi := &file_services_rector_rector_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1287,7 +1495,7 @@ func (x *DeleteFactionRequest) String() string {
 func (*DeleteFactionRequest) ProtoMessage() {}
 
 func (x *DeleteFactionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_rector_rector_proto_msgTypes[25]
+	mi := &file_services_rector_rector_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1300,14 +1508,14 @@ func (x *DeleteFactionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFactionRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFactionRequest) Descriptor() ([]byte, []int) {
-	return file_services_rector_rector_proto_rawDescGZIP(), []int{25}
+	return file_services_rector_rector_proto_rawDescGZIP(), []int{29}
 }
 
-func (x *DeleteFactionRequest) GetRoleId() uint64 {
+func (x *DeleteFactionRequest) GetJob() string {
 	if x != nil {
-		return x.RoleId
+		return x.Job
 	}
-	return 0
+	return ""
 }
 
 type DeleteFactionResponse struct {
@@ -1318,7 +1526,7 @@ type DeleteFactionResponse struct {
 
 func (x *DeleteFactionResponse) Reset() {
 	*x = DeleteFactionResponse{}
-	mi := &file_services_rector_rector_proto_msgTypes[26]
+	mi := &file_services_rector_rector_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1330,7 +1538,7 @@ func (x *DeleteFactionResponse) String() string {
 func (*DeleteFactionResponse) ProtoMessage() {}
 
 func (x *DeleteFactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_rector_rector_proto_msgTypes[26]
+	mi := &file_services_rector_rector_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1343,7 +1551,7 @@ func (x *DeleteFactionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFactionResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFactionResponse) Descriptor() ([]byte, []int) {
-	return file_services_rector_rector_proto_rawDescGZIP(), []int{26}
+	return file_services_rector_rector_proto_rawDescGZIP(), []int{30}
 }
 
 var File_services_rector_rector_proto protoreflect.FileDescriptor
@@ -1432,17 +1640,36 @@ const file_services_rector_rector_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x120\n" +
-	"\x04logs\x18\x02 \x03(\v2\x1c.resources.rector.AuditEntryR\x04logs\"\xb8\x01\n" +
-	"\x17UpdateRoleLimitsRequest\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x04R\x06roleId\x127\n" +
+	"\x04logs\x18\x02 \x03(\v2\x1c.resources.rector.AuditEntryR\x04logs\"5\n" +
+	"\x18GetAllPermissionsRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\"\xa6\x01\n" +
+	"\x19GetAllPermissionsResponse\x12C\n" +
+	"\vpermissions\x18\x01 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\n" +
+	"attributes\x18\x02 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributes\"0\n" +
+	"\x13GetJobLimitsRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\"\xec\x01\n" +
+	"\x14GetJobLimitsResponse\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12 \n" +
+	"\tjob_label\x18\x02 \x01(\tH\x00R\bjobLabel\x88\x01\x01\x12C\n" +
+	"\vpermissions\x18\x03 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\n" +
+	"attributes\x18\x04 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributesB\f\n" +
+	"\n" +
+	"_job_label\"\xb9\x01\n" +
+	"\x16UpdateJobLimitsRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x127\n" +
 	"\x05perms\x18\x02 \x01(\v2\x1c.services.rector.PermsUpdateH\x00R\x05perms\x88\x01\x01\x127\n" +
 	"\x05attrs\x18\x03 \x01(\v2\x1c.services.rector.AttrsUpdateH\x01R\x05attrs\x88\x01\x01B\b\n" +
 	"\x06_permsB\b\n" +
-	"\x06_attrs\"\x1a\n" +
-	"\x18UpdateRoleLimitsResponse\"/\n" +
-	"\x14DeleteFactionRequest\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x04R\x06roleId\"\x17\n" +
-	"\x15DeleteFactionResponse2\xfd\b\n" +
+	"\x06_attrs\"\x19\n" +
+	"\x17UpdateJobLimitsResponse\"1\n" +
+	"\x14DeleteFactionRequest\x12\x19\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\"\x17\n" +
+	"\x15DeleteFactionResponse2\xc3\n" +
+	"\n" +
 	"\rRectorService\x12X\n" +
 	"\vGetJobProps\x12#.services.rector.GetJobPropsRequest\x1a$.services.rector.GetJobPropsResponse\x12X\n" +
 	"\vSetJobProps\x12#.services.rector.SetJobPropsRequest\x1a$.services.rector.SetJobPropsResponse\x12O\n" +
@@ -1455,8 +1682,10 @@ const file_services_rector_rector_proto_rawDesc = "" +
 	"\x0fUpdateRolePerms\x12'.services.rector.UpdateRolePermsRequest\x1a(.services.rector.UpdateRolePermsResponse\x12a\n" +
 	"\x0eGetPermissions\x12&.services.rector.GetPermissionsRequest\x1a'.services.rector.GetPermissionsResponse\x12|\n" +
 	"\x17GetEffectivePermissions\x12/.services.rector.GetEffectivePermissionsRequest\x1a0.services.rector.GetEffectivePermissionsResponse\x12[\n" +
-	"\fViewAuditLog\x12$.services.rector.ViewAuditLogRequest\x1a%.services.rector.ViewAuditLogResponse\x12g\n" +
-	"\x10UpdateRoleLimits\x12(.services.rector.UpdateRoleLimitsRequest\x1a).services.rector.UpdateRoleLimitsResponse\x12^\n" +
+	"\fViewAuditLog\x12$.services.rector.ViewAuditLogRequest\x1a%.services.rector.ViewAuditLogResponse\x12j\n" +
+	"\x11GetAllPermissions\x12).services.rector.GetAllPermissionsRequest\x1a*.services.rector.GetAllPermissionsResponse\x12[\n" +
+	"\fGetJobLimits\x12$.services.rector.GetJobLimitsRequest\x1a%.services.rector.GetJobLimitsResponse\x12d\n" +
+	"\x0fUpdateJobLimits\x12'.services.rector.UpdateJobLimitsRequest\x1a(.services.rector.UpdateJobLimitsResponse\x12^\n" +
 	"\rDeleteFaction\x12%.services.rector.DeleteFactionRequest\x1a&.services.rector.DeleteFactionResponseBJZHgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/rector;rectorb\x06proto3"
 
 var (
@@ -1471,7 +1700,7 @@ func file_services_rector_rector_proto_rawDescGZIP() []byte {
 	return file_services_rector_rector_proto_rawDescData
 }
 
-var file_services_rector_rector_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
+var file_services_rector_rector_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
 var file_services_rector_rector_proto_goTypes = []any{
 	(*GetJobPropsRequest)(nil),              // 0: services.rector.GetJobPropsRequest
 	(*GetJobPropsResponse)(nil),             // 1: services.rector.GetJobPropsResponse
@@ -1496,74 +1725,86 @@ var file_services_rector_rector_proto_goTypes = []any{
 	(*GetEffectivePermissionsResponse)(nil), // 20: services.rector.GetEffectivePermissionsResponse
 	(*ViewAuditLogRequest)(nil),             // 21: services.rector.ViewAuditLogRequest
 	(*ViewAuditLogResponse)(nil),            // 22: services.rector.ViewAuditLogResponse
-	(*UpdateRoleLimitsRequest)(nil),         // 23: services.rector.UpdateRoleLimitsRequest
-	(*UpdateRoleLimitsResponse)(nil),        // 24: services.rector.UpdateRoleLimitsResponse
-	(*DeleteFactionRequest)(nil),            // 25: services.rector.DeleteFactionRequest
-	(*DeleteFactionResponse)(nil),           // 26: services.rector.DeleteFactionResponse
-	(*users.JobProps)(nil),                  // 27: resources.users.JobProps
-	(*permissions.Role)(nil),                // 28: resources.permissions.Role
-	(*permissions.RoleAttribute)(nil),       // 29: resources.permissions.RoleAttribute
-	(*permissions.Permission)(nil),          // 30: resources.permissions.Permission
-	(*database.PaginationRequest)(nil),      // 31: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                   // 32: resources.common.database.Sort
-	(*timestamp.Timestamp)(nil),             // 33: resources.timestamp.Timestamp
-	(*database.PaginationResponse)(nil),     // 34: resources.common.database.PaginationResponse
-	(*rector.AuditEntry)(nil),               // 35: resources.rector.AuditEntry
+	(*GetAllPermissionsRequest)(nil),        // 23: services.rector.GetAllPermissionsRequest
+	(*GetAllPermissionsResponse)(nil),       // 24: services.rector.GetAllPermissionsResponse
+	(*GetJobLimitsRequest)(nil),             // 25: services.rector.GetJobLimitsRequest
+	(*GetJobLimitsResponse)(nil),            // 26: services.rector.GetJobLimitsResponse
+	(*UpdateJobLimitsRequest)(nil),          // 27: services.rector.UpdateJobLimitsRequest
+	(*UpdateJobLimitsResponse)(nil),         // 28: services.rector.UpdateJobLimitsResponse
+	(*DeleteFactionRequest)(nil),            // 29: services.rector.DeleteFactionRequest
+	(*DeleteFactionResponse)(nil),           // 30: services.rector.DeleteFactionResponse
+	(*users.JobProps)(nil),                  // 31: resources.users.JobProps
+	(*permissions.Role)(nil),                // 32: resources.permissions.Role
+	(*permissions.RoleAttribute)(nil),       // 33: resources.permissions.RoleAttribute
+	(*permissions.Permission)(nil),          // 34: resources.permissions.Permission
+	(*database.PaginationRequest)(nil),      // 35: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                   // 36: resources.common.database.Sort
+	(*timestamp.Timestamp)(nil),             // 37: resources.timestamp.Timestamp
+	(*database.PaginationResponse)(nil),     // 38: resources.common.database.PaginationResponse
+	(*rector.AuditEntry)(nil),               // 39: resources.rector.AuditEntry
 }
 var file_services_rector_rector_proto_depIdxs = []int32{
-	27, // 0: services.rector.GetJobPropsResponse.job_props:type_name -> resources.users.JobProps
-	27, // 1: services.rector.SetJobPropsRequest.job_props:type_name -> resources.users.JobProps
-	27, // 2: services.rector.SetJobPropsResponse.job_props:type_name -> resources.users.JobProps
-	28, // 3: services.rector.GetRolesResponse.roles:type_name -> resources.permissions.Role
-	28, // 4: services.rector.GetRoleResponse.role:type_name -> resources.permissions.Role
-	28, // 5: services.rector.CreateRoleResponse.role:type_name -> resources.permissions.Role
+	31, // 0: services.rector.GetJobPropsResponse.job_props:type_name -> resources.users.JobProps
+	31, // 1: services.rector.SetJobPropsRequest.job_props:type_name -> resources.users.JobProps
+	31, // 2: services.rector.SetJobPropsResponse.job_props:type_name -> resources.users.JobProps
+	32, // 3: services.rector.GetRolesResponse.roles:type_name -> resources.permissions.Role
+	32, // 4: services.rector.GetRoleResponse.role:type_name -> resources.permissions.Role
+	32, // 5: services.rector.CreateRoleResponse.role:type_name -> resources.permissions.Role
 	13, // 6: services.rector.UpdateRolePermsRequest.perms:type_name -> services.rector.PermsUpdate
 	15, // 7: services.rector.UpdateRolePermsRequest.attrs:type_name -> services.rector.AttrsUpdate
 	14, // 8: services.rector.PermsUpdate.to_update:type_name -> services.rector.PermItem
-	29, // 9: services.rector.AttrsUpdate.to_update:type_name -> resources.permissions.RoleAttribute
-	29, // 10: services.rector.AttrsUpdate.to_remove:type_name -> resources.permissions.RoleAttribute
-	30, // 11: services.rector.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	29, // 12: services.rector.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	28, // 13: services.rector.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
-	30, // 14: services.rector.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	29, // 15: services.rector.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	31, // 16: services.rector.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	32, // 17: services.rector.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
-	33, // 18: services.rector.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp
-	33, // 19: services.rector.ViewAuditLogRequest.to:type_name -> resources.timestamp.Timestamp
-	34, // 20: services.rector.ViewAuditLogResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	35, // 21: services.rector.ViewAuditLogResponse.logs:type_name -> resources.rector.AuditEntry
-	13, // 22: services.rector.UpdateRoleLimitsRequest.perms:type_name -> services.rector.PermsUpdate
-	15, // 23: services.rector.UpdateRoleLimitsRequest.attrs:type_name -> services.rector.AttrsUpdate
-	0,  // 24: services.rector.RectorService.GetJobProps:input_type -> services.rector.GetJobPropsRequest
-	2,  // 25: services.rector.RectorService.SetJobProps:input_type -> services.rector.SetJobPropsRequest
-	4,  // 26: services.rector.RectorService.GetRoles:input_type -> services.rector.GetRolesRequest
-	6,  // 27: services.rector.RectorService.GetRole:input_type -> services.rector.GetRoleRequest
-	8,  // 28: services.rector.RectorService.CreateRole:input_type -> services.rector.CreateRoleRequest
-	10, // 29: services.rector.RectorService.DeleteRole:input_type -> services.rector.DeleteRoleRequest
-	12, // 30: services.rector.RectorService.UpdateRolePerms:input_type -> services.rector.UpdateRolePermsRequest
-	17, // 31: services.rector.RectorService.GetPermissions:input_type -> services.rector.GetPermissionsRequest
-	19, // 32: services.rector.RectorService.GetEffectivePermissions:input_type -> services.rector.GetEffectivePermissionsRequest
-	21, // 33: services.rector.RectorService.ViewAuditLog:input_type -> services.rector.ViewAuditLogRequest
-	23, // 34: services.rector.RectorService.UpdateRoleLimits:input_type -> services.rector.UpdateRoleLimitsRequest
-	25, // 35: services.rector.RectorService.DeleteFaction:input_type -> services.rector.DeleteFactionRequest
-	1,  // 36: services.rector.RectorService.GetJobProps:output_type -> services.rector.GetJobPropsResponse
-	3,  // 37: services.rector.RectorService.SetJobProps:output_type -> services.rector.SetJobPropsResponse
-	5,  // 38: services.rector.RectorService.GetRoles:output_type -> services.rector.GetRolesResponse
-	7,  // 39: services.rector.RectorService.GetRole:output_type -> services.rector.GetRoleResponse
-	9,  // 40: services.rector.RectorService.CreateRole:output_type -> services.rector.CreateRoleResponse
-	11, // 41: services.rector.RectorService.DeleteRole:output_type -> services.rector.DeleteRoleResponse
-	16, // 42: services.rector.RectorService.UpdateRolePerms:output_type -> services.rector.UpdateRolePermsResponse
-	18, // 43: services.rector.RectorService.GetPermissions:output_type -> services.rector.GetPermissionsResponse
-	20, // 44: services.rector.RectorService.GetEffectivePermissions:output_type -> services.rector.GetEffectivePermissionsResponse
-	22, // 45: services.rector.RectorService.ViewAuditLog:output_type -> services.rector.ViewAuditLogResponse
-	24, // 46: services.rector.RectorService.UpdateRoleLimits:output_type -> services.rector.UpdateRoleLimitsResponse
-	26, // 47: services.rector.RectorService.DeleteFaction:output_type -> services.rector.DeleteFactionResponse
-	36, // [36:48] is the sub-list for method output_type
-	24, // [24:36] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	33, // 9: services.rector.AttrsUpdate.to_update:type_name -> resources.permissions.RoleAttribute
+	33, // 10: services.rector.AttrsUpdate.to_remove:type_name -> resources.permissions.RoleAttribute
+	34, // 11: services.rector.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	33, // 12: services.rector.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	32, // 13: services.rector.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
+	34, // 14: services.rector.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	33, // 15: services.rector.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	35, // 16: services.rector.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	36, // 17: services.rector.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
+	37, // 18: services.rector.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp
+	37, // 19: services.rector.ViewAuditLogRequest.to:type_name -> resources.timestamp.Timestamp
+	38, // 20: services.rector.ViewAuditLogResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	39, // 21: services.rector.ViewAuditLogResponse.logs:type_name -> resources.rector.AuditEntry
+	34, // 22: services.rector.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	33, // 23: services.rector.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	34, // 24: services.rector.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
+	33, // 25: services.rector.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	13, // 26: services.rector.UpdateJobLimitsRequest.perms:type_name -> services.rector.PermsUpdate
+	15, // 27: services.rector.UpdateJobLimitsRequest.attrs:type_name -> services.rector.AttrsUpdate
+	0,  // 28: services.rector.RectorService.GetJobProps:input_type -> services.rector.GetJobPropsRequest
+	2,  // 29: services.rector.RectorService.SetJobProps:input_type -> services.rector.SetJobPropsRequest
+	4,  // 30: services.rector.RectorService.GetRoles:input_type -> services.rector.GetRolesRequest
+	6,  // 31: services.rector.RectorService.GetRole:input_type -> services.rector.GetRoleRequest
+	8,  // 32: services.rector.RectorService.CreateRole:input_type -> services.rector.CreateRoleRequest
+	10, // 33: services.rector.RectorService.DeleteRole:input_type -> services.rector.DeleteRoleRequest
+	12, // 34: services.rector.RectorService.UpdateRolePerms:input_type -> services.rector.UpdateRolePermsRequest
+	17, // 35: services.rector.RectorService.GetPermissions:input_type -> services.rector.GetPermissionsRequest
+	19, // 36: services.rector.RectorService.GetEffectivePermissions:input_type -> services.rector.GetEffectivePermissionsRequest
+	21, // 37: services.rector.RectorService.ViewAuditLog:input_type -> services.rector.ViewAuditLogRequest
+	23, // 38: services.rector.RectorService.GetAllPermissions:input_type -> services.rector.GetAllPermissionsRequest
+	25, // 39: services.rector.RectorService.GetJobLimits:input_type -> services.rector.GetJobLimitsRequest
+	27, // 40: services.rector.RectorService.UpdateJobLimits:input_type -> services.rector.UpdateJobLimitsRequest
+	29, // 41: services.rector.RectorService.DeleteFaction:input_type -> services.rector.DeleteFactionRequest
+	1,  // 42: services.rector.RectorService.GetJobProps:output_type -> services.rector.GetJobPropsResponse
+	3,  // 43: services.rector.RectorService.SetJobProps:output_type -> services.rector.SetJobPropsResponse
+	5,  // 44: services.rector.RectorService.GetRoles:output_type -> services.rector.GetRolesResponse
+	7,  // 45: services.rector.RectorService.GetRole:output_type -> services.rector.GetRoleResponse
+	9,  // 46: services.rector.RectorService.CreateRole:output_type -> services.rector.CreateRoleResponse
+	11, // 47: services.rector.RectorService.DeleteRole:output_type -> services.rector.DeleteRoleResponse
+	16, // 48: services.rector.RectorService.UpdateRolePerms:output_type -> services.rector.UpdateRolePermsResponse
+	18, // 49: services.rector.RectorService.GetPermissions:output_type -> services.rector.GetPermissionsResponse
+	20, // 50: services.rector.RectorService.GetEffectivePermissions:output_type -> services.rector.GetEffectivePermissionsResponse
+	22, // 51: services.rector.RectorService.ViewAuditLog:output_type -> services.rector.ViewAuditLogResponse
+	24, // 52: services.rector.RectorService.GetAllPermissions:output_type -> services.rector.GetAllPermissionsResponse
+	26, // 53: services.rector.RectorService.GetJobLimits:output_type -> services.rector.GetJobLimitsResponse
+	28, // 54: services.rector.RectorService.UpdateJobLimits:output_type -> services.rector.UpdateJobLimitsResponse
+	30, // 55: services.rector.RectorService.DeleteFaction:output_type -> services.rector.DeleteFactionResponse
+	42, // [42:56] is the sub-list for method output_type
+	28, // [28:42] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_services_rector_rector_proto_init() }
@@ -1576,14 +1817,15 @@ func file_services_rector_rector_proto_init() {
 	file_services_rector_rector_proto_msgTypes[12].OneofWrappers = []any{}
 	file_services_rector_rector_proto_msgTypes[17].OneofWrappers = []any{}
 	file_services_rector_rector_proto_msgTypes[21].OneofWrappers = []any{}
-	file_services_rector_rector_proto_msgTypes[23].OneofWrappers = []any{}
+	file_services_rector_rector_proto_msgTypes[26].OneofWrappers = []any{}
+	file_services_rector_rector_proto_msgTypes[27].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_rector_rector_proto_rawDesc), len(file_services_rector_rector_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   27,
+			NumMessages:   31,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

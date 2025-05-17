@@ -71,11 +71,11 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         super("resources.accounts.OAuth2Account", [
             { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "provider", kind: "message", T: () => OAuth2Provider },
-            { no: 5, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 5, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 6, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 7, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<OAuth2Account>): OAuth2Account {

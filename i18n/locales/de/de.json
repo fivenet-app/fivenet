@@ -306,7 +306,7 @@
         "other": "Andere",
         "result": "Ergebnis | Ergebnisse",
         "total_count": "Gesamtanzahl",
-        "none_selected": "Keine {0} ausgewählt",
+        "none_selected": "Keine {0} ausgewählt | Keinen {0} ausgewählt",
         "no_licenses": "Keine Lizenzen",
         "available": "verfügbar",
         "reason": "Grund | Gründe",

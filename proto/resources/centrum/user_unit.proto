@@ -9,7 +9,7 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 
 message UserUnitMapping {
   uint64 unit_id = 1;
-  string job = 2;
+  string job = 2 [(validate.rules).string.max_len = 20];
   int32 user_id = 3 [(validate.rules).int32.gte = 0];
   resources.timestamp.Timestamp created_at = 4;
 }

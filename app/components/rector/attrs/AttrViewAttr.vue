@@ -7,11 +7,13 @@ const props = defineProps<{
     modelValue: RoleAttribute;
     disabled?: boolean;
     permission: Permission;
+    defaultOpen?: boolean;
 }>();
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: AttributeValues): void;
     (e: 'changed'): void;
+    (e: 'opened', value: boolean): void;
 }>();
 
 const completorStore = useCompletorStore();
@@ -61,7 +63,8 @@ if (attribute.value?.validValues === undefined) {
         }
     }
 }
-if (attribute.value?.maxValues === undefined) {
+
+if (attribute.value?.maxValues === undefined || attribute.value?.maxValues.validValues.oneofKind === undefined) {
     switch (lowercaseFirstLetter(attribute.value.type)) {
         case 'stringList': {
             attribute.value.maxValues = {
@@ -103,40 +106,40 @@ if (attribute.value?.maxValues === undefined) {
     }
 }
 
-const attrValue = ref<AttributeValues>(attribute.value.maxValues!);
+const attrValues = ref<AttributeValues>(attribute.value.maxValues!);
 
 const validValues = computed<AttributeValues | undefined>(() => attribute.value.validValues);
 
-watchOnce(attrValue, () => emit('changed'), { deep: true });
+watchOnce(attrValues, () => emit('changed'), { deep: true });
 
 async function toggleStringListValue(value: string): Promise<void> {
-    if (attrValue.value.validValues.oneofKind !== 'stringList') {
+    if (attrValues.value.validValues.oneofKind !== 'stringList') {
         return;
     }
 
-    const idx = attrValue.value.validValues.stringList.strings.findIndex((v) => v === value);
+    const idx = attrValues.value.validValues.stringList.strings.findIndex((v) => v === value);
     if (idx === -1) {
-        attrValue.value.validValues.stringList.strings.push(value);
+        attrValues.value.validValues.stringList.strings.push(value);
     } else {
-        attrValue.value.validValues.stringList.strings.splice(idx, 1);
+        attrValues.value.validValues.stringList.strings.splice(idx, 1);
     }
 }
 
 async function toggleJobListValue(value: string): Promise<void> {
-    if (attrValue.value.validValues.oneofKind !== 'jobList') {
+    if (attrValues.value.validValues.oneofKind !== 'jobList') {
         return;
     }
 
-    const idx = attrValue.value.validValues.jobList.strings.findIndex((v) => v === value);
+    const idx = attrValues.value.validValues.jobList.strings.findIndex((v) => v === value);
     if (idx === -1) {
-        attrValue.value.validValues.jobList.strings.push(value);
+        attrValues.value.validValues.jobList.strings.push(value);
     } else {
-        attrValue.value.validValues.jobList.strings.splice(idx, 1);
+        attrValues.value.validValues.jobList.strings.splice(idx, 1);
     }
 }
 
 async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
-    if (attrValue.value.validValues.oneofKind !== 'jobGradeList') {
+    if (attrValues.value.validValues.oneofKind !== 'jobGradeList') {
         return;
     }
 
@@ -144,16 +147,27 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
         return;
     }
 
-    if (checked && !attrValue.value.validValues.jobGradeList.jobs[job.name]) {
-        attrValue.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
-    } else if (!checked && attrValue.value.validValues.jobGradeList.jobs[job.name]) {
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete attrValue.value.validValues.jobGradeList.jobs[job.name];
+    if (!attrValues.value.validValues.jobGradeList.fineGrained) {
+        if (checked && !attrValues.value.validValues.jobGradeList.jobs[job.name]) {
+            attrValues.value.validValues.jobGradeList.jobs[job.name] = job.grades[0].grade;
+        } else if (!checked && attrValues.value.validValues.jobGradeList.jobs[job.name]) {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+            delete attrValues.value.validValues.jobGradeList.jobs[job.name];
+        }
+    } else {
+        if (checked && !attrValues.value.validValues.jobGradeList.grades[job.name]) {
+            attrValues.value.validValues.jobGradeList.grades[job.name] = {
+                grades: [job.grades[0].grade],
+            };
+        } else if (!checked && attrValues.value.validValues.jobGradeList.grades[job.name]) {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+            delete attrValues.value.validValues.jobGradeList.grades[job.name];
+        }
     }
 }
 
 onBeforeMount(async () => {
-    if (attrValue.value.validValues.oneofKind === 'jobList' || attrValue.value.validValues.oneofKind === 'jobGradeList')
+    if (attrValues.value.validValues.oneofKind === 'jobList' || attrValues.value.validValues.oneofKind === 'jobGradeList')
         await listJobs();
 });
 
@@ -164,58 +178,67 @@ const { game } = useAppConfig();
     <div v-if="attribute">
         <UAccordion
             variant="outline"
-            :items="[{ label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }]"
+            :items="[
+                {
+                    label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`),
+                    disabled: defaultOpen,
+                },
+            ]"
             :unmount="true"
+            :default-open="defaultOpen"
             :ui="{ default: { class: 'mb-0.5' } }"
         >
             <template #item>
                 <div class="flex flex-col gap-2">
                     <div
                         v-if="
-                            attrValue.validValues.oneofKind === 'stringList' &&
-                            validValues?.validValues &&
+                            attrValues.validValues.oneofKind === 'stringList' &&
                             validValues?.validValues.oneofKind === 'stringList'
                         "
                         class="flex flex-row flex-wrap gap-2"
                     >
-                        <div
-                            v-for="value in validValues.validValues.stringList.strings"
-                            :key="value"
-                            class="flex flex-initial flex-row flex-nowrap gap-1"
-                        >
-                            <UToggle
-                                :name="value"
-                                :model-value="!!attrValue.validValues.stringList.strings.find((v) => v === value)"
-                                @update:model-value="toggleStringListValue(value)"
-                            />
-                            <span>{{
-                                $t(`perms.${permission.category}.${permission.name}.attrs.${value.replaceAll('.', '_')}`)
-                            }}</span>
-                        </div>
+                        <span v-if="validValues.validValues.stringList.strings.length === 0">
+                            {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                        </span>
+                        <template v-else>
+                            <div
+                                v-for="value in validValues.validValues.stringList.strings"
+                                :key="value"
+                                class="flex flex-initial flex-row flex-nowrap gap-1"
+                            >
+                                <UToggle
+                                    :name="value"
+                                    :model-value="!!validValues.validValues.stringList.strings.find((v) => v === value)"
+                                    :disabled="disabled"
+                                    @update:model-value="toggleStringListValue(value)"
+                                />
+                                <span>{{
+                                    $t(`perms.${permission.category}.${permission.name}.attrs.${value.replaceAll('.', '_')}`)
+                                }}</span>
+                            </div>
+                        </template>
                     </div>
                     <div
                         v-else-if="
-                            attrValue.validValues.oneofKind === 'jobList' &&
-                            validValues?.validValues &&
-                            validValues?.validValues.oneofKind === 'jobList' &&
-                            jobs !== undefined
+                            attrValues.validValues.oneofKind === 'jobList' && validValues?.validValues.oneofKind === 'jobList'
                         "
                         class="flex flex-row flex-wrap gap-2"
                     >
                         <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-1">
                             <UToggle
                                 :name="job.name"
-                                :model-value="!!attrValue.validValues.jobList?.strings.find((v) => v === job.name)"
+                                :model-value="!!validValues.validValues.jobList?.strings.find((v) => v === job.name)"
+                                :disabled="disabled"
                                 @update:model-value="toggleJobListValue(job.name)"
                             />
                             <span>{{ job.label }}</span>
                         </div>
                     </div>
+
                     <div
                         v-else-if="
-                            attrValue.validValues.oneofKind === 'jobGradeList' &&
-                            validValues?.validValues &&
-                            validValues.validValues.oneofKind === 'jobGradeList'
+                            attrValues.validValues.oneofKind === 'jobGradeList' &&
+                            validValues?.validValues.oneofKind === 'jobGradeList'
                         "
                         class="flex flex-col flex-wrap gap-2"
                     >
@@ -226,7 +249,8 @@ const { game } = useAppConfig();
                         >
                             <UToggle
                                 :name="job.name"
-                                :model-value="!!attrValue.validValues?.jobGradeList.jobs[job.name]"
+                                :model-value="!!attrValues.validValues?.jobGradeList.jobs[job.name]"
+                                :disabled="disabled"
                                 @update:model-value="toggleJobGradeValue(job, $event)"
                             />
 
@@ -234,29 +258,36 @@ const { game } = useAppConfig();
 
                             <ClientOnly>
                                 <USelectMenu
-                                    v-model="attrValue.validValues.jobGradeList.jobs[job.name]"
+                                    v-model="attrValues.validValues.jobGradeList.jobs[job.name]"
                                     class="flex-1"
-                                    nullable
-                                    :disabled="!attrValue.validValues?.jobGradeList.jobs[job.name]"
-                                    :options="job.grades"
+                                    :disabled="disabled || !attrValues.validValues?.jobGradeList.jobs[job.name]"
+                                    :options="
+                                        job.grades.filter(
+                                            (g) =>
+                                                attrValues &&
+                                                attrValues.validValues.oneofKind === 'jobGradeList' &&
+                                                (attrValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) >=
+                                                    g.grade,
+                                        )
+                                    "
                                     :search-attributes="['label']"
                                     :searchable-placeholder="$t('common.search_field')"
                                     :placeholder="$t('common.rank')"
                                     value-attribute="grade"
                                 >
                                     <template #label>
-                                        <template v-if="job.grades && attrValue.validValues.jobGradeList.jobs[job.name]">
-                                            <span class="truncate"
+                                        <template v-if="job.grades && attrValues.validValues.jobGradeList.jobs[job.name]">
+                                            <span class="truncate text-gray-900 dark:text-white"
                                                 >{{
                                                     job.grades.find(
                                                         (g) =>
-                                                            attrValue.validValues.oneofKind === 'jobGradeList' &&
+                                                            attrValues.validValues.oneofKind === 'jobGradeList' &&
                                                             g.grade ===
-                                                                (attrValue.validValues.jobGradeList.jobs[job.name] ??
+                                                                (attrValues.validValues.jobGradeList.jobs[job.name] ??
                                                                     game.startJobGrade),
                                                     )?.label ?? $t('common.na')
                                                 }}
-                                                ({{ attrValue.validValues.jobGradeList.jobs[job.name] }})</span
+                                                ({{ attrValues.validValues.jobGradeList.jobs[job.name] }})</span
                                             >
                                         </template>
                                     </template>
@@ -275,7 +306,8 @@ const { game } = useAppConfig();
                             </ClientOnly>
                         </div>
                     </div>
-                    <div v-else>{{ attrValue.validValues.oneofKind }} {{ validValues }}</div>
+
+                    <div v-else>{{ attrValues.validValues.oneofKind }} {{ validValues }}</div>
                 </div>
             </template>
         </UAccordion>

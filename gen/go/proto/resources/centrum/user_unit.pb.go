@@ -95,10 +95,10 @@ var File_resources_centrum_user_unit_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_user_unit_proto_rawDesc = "" +
 	"\n" +
-	"!resources/centrum/user_unit.proto\x12\x11resources.centrum\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x9d\x01\n" +
+	"!resources/centrum/user_unit.proto\x12\x11resources.centrum\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xa6\x01\n" +
 	"\x0fUserUnitMapping\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x04R\x06unitId\x12\x10\n" +
-	"\x03job\x18\x02 \x01(\tR\x03job\x12 \n" +
+	"\aunit_id\x18\x01 \x01(\x04R\x06unitId\x12\x19\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12 \n" +
 	"\auser_id\x18\x03 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x12=\n" +
 	"\n" +
 	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAtBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"

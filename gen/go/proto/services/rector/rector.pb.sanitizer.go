@@ -96,6 +96,46 @@ func (m *DeleteRoleResponse) Sanitize() error {
 	return nil
 }
 
+func (m *GetAllPermissionsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetAllPermissionsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Permissions
+	for idx, item := range m.Permissions {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *GetEffectivePermissionsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -140,6 +180,46 @@ func (m *GetEffectivePermissionsResponse) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+func (m *GetJobLimitsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetJobLimitsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Permissions
+	for idx, item := range m.Permissions {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -325,7 +405,7 @@ func (m *SetJobPropsResponse) Sanitize() error {
 	return nil
 }
 
-func (m *UpdateRoleLimitsRequest) Sanitize() error {
+func (m *UpdateJobLimitsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -351,7 +431,7 @@ func (m *UpdateRoleLimitsRequest) Sanitize() error {
 	return nil
 }
 
-func (m *UpdateRoleLimitsResponse) Sanitize() error {
+func (m *UpdateJobLimitsResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

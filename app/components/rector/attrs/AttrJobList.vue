@@ -75,7 +75,7 @@ async function createRole(): Promise<void> {
 
         roles.value?.push(response.role!);
 
-        await navigateTo({ name: 'rector-limiter-id', params: { id: response.role.id } });
+        await navigateTo({ name: 'rector-limiter-job', params: { job: response.role.job } });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -98,7 +98,7 @@ const columns = [
     },
 ];
 
-const route = useRoute('rector-limiter-id');
+const route = useRoute('rector-limiter-job');
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
@@ -173,7 +173,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <UTooltip :text="$t('common.show')">
                                 <UButton
                                     class="place-self-end"
-                                    :to="{ name: 'rector-limiter-id', params: { id: role.id } }"
+                                    :to="{ name: 'rector-limiter-job', params: { job: role.job } }"
                                     variant="link"
                                     icon="i-mdi-eye"
                                 />
@@ -188,9 +188,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
         <div class="w-full basis-2/3">
             <DataNoDataBlock
-                v-if="!route.params.id"
+                v-if="!route.params.job"
                 icon="i-mdi-select"
-                :message="$t('common.none_selected', [$t('common.role')])"
+                :message="$t('common.none_selected', [$t('common.job')], 2)"
             />
             <NuxtPage v-else />
         </div>

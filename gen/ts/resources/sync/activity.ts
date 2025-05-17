@@ -293,7 +293,7 @@ class UserUpdate$Type extends MessageType<UserUpdate> {
         super("resources.sync.UserUpdate", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 4, name: "job_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "firstname", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "lastname", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }

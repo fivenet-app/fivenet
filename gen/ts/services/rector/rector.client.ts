@@ -6,8 +6,12 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { RectorService } from "./rector";
 import type { DeleteFactionResponse } from "./rector";
 import type { DeleteFactionRequest } from "./rector";
-import type { UpdateRoleLimitsResponse } from "./rector";
-import type { UpdateRoleLimitsRequest } from "./rector";
+import type { UpdateJobLimitsResponse } from "./rector";
+import type { UpdateJobLimitsRequest } from "./rector";
+import type { GetJobLimitsResponse } from "./rector";
+import type { GetJobLimitsRequest } from "./rector";
+import type { GetAllPermissionsResponse } from "./rector";
+import type { GetAllPermissionsRequest } from "./rector";
 import type { ViewAuditLogResponse } from "./rector";
 import type { ViewAuditLogRequest } from "./rector";
 import type { GetEffectivePermissionsResponse } from "./rector";
@@ -98,9 +102,21 @@ export interface IRectorServiceClient {
     /**
      * @perm: Name=SuperUser
      *
-     * @generated from protobuf rpc: UpdateRoleLimits(services.rector.UpdateRoleLimitsRequest) returns (services.rector.UpdateRoleLimitsResponse);
+     * @generated from protobuf rpc: GetAllPermissions(services.rector.GetAllPermissionsRequest) returns (services.rector.GetAllPermissionsResponse);
      */
-    updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>;
+    getAllPermissions(input: GetAllPermissionsRequest, options?: RpcOptions): UnaryCall<GetAllPermissionsRequest, GetAllPermissionsResponse>;
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: GetJobLimits(services.rector.GetJobLimitsRequest) returns (services.rector.GetJobLimitsResponse);
+     */
+    getJobLimits(input: GetJobLimitsRequest, options?: RpcOptions): UnaryCall<GetJobLimitsRequest, GetJobLimitsResponse>;
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: UpdateJobLimits(services.rector.UpdateJobLimitsRequest) returns (services.rector.UpdateJobLimitsResponse);
+     */
+    updateJobLimits(input: UpdateJobLimitsRequest, options?: RpcOptions): UnaryCall<UpdateJobLimitsRequest, UpdateJobLimitsResponse>;
     /**
      * @perm: Name=SuperUser
      *
@@ -210,11 +226,29 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
     /**
      * @perm: Name=SuperUser
      *
-     * @generated from protobuf rpc: UpdateRoleLimits(services.rector.UpdateRoleLimitsRequest) returns (services.rector.UpdateRoleLimitsResponse);
+     * @generated from protobuf rpc: GetAllPermissions(services.rector.GetAllPermissionsRequest) returns (services.rector.GetAllPermissionsResponse);
      */
-    updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse> {
+    getAllPermissions(input: GetAllPermissionsRequest, options?: RpcOptions): UnaryCall<GetAllPermissionsRequest, GetAllPermissionsResponse> {
         const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<GetAllPermissionsRequest, GetAllPermissionsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: GetJobLimits(services.rector.GetJobLimitsRequest) returns (services.rector.GetJobLimitsResponse);
+     */
+    getJobLimits(input: GetJobLimitsRequest, options?: RpcOptions): UnaryCall<GetJobLimitsRequest, GetJobLimitsResponse> {
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetJobLimitsRequest, GetJobLimitsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: UpdateJobLimits(services.rector.UpdateJobLimitsRequest) returns (services.rector.UpdateJobLimitsResponse);
+     */
+    updateJobLimits(input: UpdateJobLimitsRequest, options?: RpcOptions): UnaryCall<UpdateJobLimitsRequest, UpdateJobLimitsResponse> {
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateJobLimitsRequest, UpdateJobLimitsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=SuperUser
@@ -222,7 +256,7 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
      * @generated from protobuf rpc: DeleteFaction(services.rector.DeleteFactionRequest) returns (services.rector.DeleteFactionResponse);
      */
     deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteFactionRequest, DeleteFactionResponse>("unary", this._transport, method, opt, input);
     }
 }

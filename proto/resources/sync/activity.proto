@@ -32,7 +32,7 @@ message UserUpdate {
   optional string group = 2;
 
   // Char details
-  optional string job = 3;
+  optional string job = 3 [(validate.rules).string.max_len = 20];
   optional int32 job_grade = 4;
   optional string firstname = 5;
   optional string lastname = 6;

@@ -7,6 +7,7 @@
 package accounts
 
 import (
+	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -186,18 +187,18 @@ var File_resources_accounts_oauth2_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_oauth2_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/accounts/oauth2.proto\x12\x12resources.accounts\x1a#resources/timestamp/timestamp.proto\"\xbb\x02\n" +
+	"\x1fresources/accounts/oauth2.proto\x12\x12resources.accounts\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xe3\x02\n" +
 	"\rOAuth2Account\x12\x1d\n" +
 	"\n" +
 	"account_id\x18\x01 \x01(\x04R\taccountId\x12B\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12#\n" +
-	"\rprovider_name\x18\x03 \x01(\tR\fproviderName\x12>\n" +
-	"\bprovider\x18\x04 \x01(\v2\".resources.accounts.OAuth2ProviderR\bprovider\x12\x1f\n" +
-	"\vexternal_id\x18\x05 \x01(\tR\n" +
-	"externalId\x12\x1a\n" +
-	"\busername\x18\x06 \x01(\tR\busername\x12\x16\n" +
-	"\x06avatar\x18\a \x01(\tR\x06avatarB\r\n" +
+	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12-\n" +
+	"\rprovider_name\x18\x03 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\fproviderName\x12>\n" +
+	"\bprovider\x18\x04 \x01(\v2\".resources.accounts.OAuth2ProviderR\bprovider\x12)\n" +
+	"\vexternal_id\x18\x05 \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01R\n" +
+	"externalId\x12$\n" +
+	"\busername\x18\x06 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\busername\x12 \n" +
+	"\x06avatar\x18\a \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\x06avatarB\r\n" +
 	"\v_created_at\"x\n" +
 	"\x0eOAuth2Provider\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
