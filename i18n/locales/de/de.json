@@ -643,7 +643,8 @@
                 "search_and_replace": "Suchen und Ersetzen",
                 "undo": "Rückgängig",
                 "redo": "Wiederholen",
-                "source_code": "Quellcode"
+                "source_code": "Quellcode",
+                "checkbox": "Kontrollkästchen"
             }
         },
         "clipboard": {

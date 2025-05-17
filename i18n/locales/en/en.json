@@ -643,7 +643,8 @@
                 "search_and_replace": "Search and Replace",
                 "undo": "Undo",
                 "redo": "Redo",
-                "source_code": "Source Code"
+                "source_code": "Source Code",
+                "checkbox": "Checkbox"
             }
         },
         "clipboard": {
