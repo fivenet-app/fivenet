@@ -157,7 +157,7 @@ const { pause, resume } = useIntervalFn(
 );
 
 function toggleRequireUnitNotification(): void {
-    if (canStream.value) {
+    if (canStream.value && settings.value?.enabled) {
         if (settings.value?.timings?.requireUnit === true && getOwnUnit.value === undefined) {
             resume();
         } else {
@@ -253,7 +253,7 @@ watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), 
 });
 
 onBeforeMount(async () => {
-    if (!canStream.value) {
+    if (!canStream.value && settings.value?.enabled) {
         return;
     }
 

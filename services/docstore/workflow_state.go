@@ -308,7 +308,7 @@ func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
 		*state.NextReminderCount++
 	}
 
-	if len(state.Workflow.ReminderSettings.Reminders) >= int(*state.NextReminderCount) {
+	if len(state.Workflow.ReminderSettings.Reminders) > int(*state.NextReminderCount) {
 		reminder := state.Workflow.ReminderSettings.Reminders[*state.NextReminderCount]
 
 		// Now + reminder duration = next reminder time
