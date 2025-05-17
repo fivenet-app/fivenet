@@ -309,7 +309,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
             <template v-else>
                 <div class="flex justify-between">
-                    <h2 class="line-clamp-2 text-3xl" :title="`${$t('common.job')}: ${jobLimits?.job}`">
+                    <h2 class="line-clamp-2 flex-1 text-3xl" :title="`${$t('common.job')}: ${jobLimits?.job}`">
                         {{ jobLimits?.jobLabel! }}
                     </h2>
 
