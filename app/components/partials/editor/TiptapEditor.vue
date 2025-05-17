@@ -749,7 +749,7 @@ onBeforeUnmount(() => {
                         />
                     </UTooltip>
 
-                    <UTooltip>
+                    <UTooltip :text="$t('components.partials.TipTapEditor.checkbox')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('checkboxStandalone') }"
                             icon="i-mdi-checkbox-marked-outline"
