@@ -78,9 +78,14 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 	}
 
 	provider := s.cfg.OAuth2.Providers[idx]
-	accountId := uint64(0)
 
 	tAccounts := table.FivenetAccounts
+
+	// Struct to hold the query result
+	type Account struct {
+		ID uint64
+	}
+	var account Account
 
 	// Retrieve account via identifier
 	stmt := tAccounts.
@@ -91,13 +96,13 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 		WHERE(tAccounts.License.EQ(jet.String(data.UserOauth2.Identifier))).
 		LIMIT(1)
 
-	if err := stmt.QueryContext(ctx, s.db, &accountId); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}
 
-	if accountId == 0 {
+	if account.ID == 0 {
 		return fmt.Errorf("no fivenet account found for identifier")
 	}
 
@@ -112,7 +117,7 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 			tOAuth2Accs.Avatar,
 		).
 		VALUES(
-			accountId,
+			account.ID,
 			provider.Name,
 			data.UserOauth2.ExternalId,
 			data.UserOauth2.Username,
