@@ -81,7 +81,7 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 
 	tAccounts := table.FivenetAccounts
 
-	// Struct für das Query-Ergebnis
+	// Struct to hold the query result
 	type Account struct {
 		ID uint64
 	}
