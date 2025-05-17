@@ -550,6 +550,8 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifica
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
+	tQualiResults := table.FivenetQualificationsResults
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
