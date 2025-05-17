@@ -583,7 +583,9 @@
         "started_time": "Started Time",
         "end_date": "End Date",
         "monthly_view": "Monthly View",
-        "effective_permissions": "Effective Permissions"
+        "effective_permissions": "Effective Permissions",
+        "check_all": "Check All",
+        "uncheck_all": "Uncheck All"
     },
     "components": {
         "partials": {

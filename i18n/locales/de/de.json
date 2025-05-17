@@ -583,7 +583,9 @@
         "started_time": "Startzeit",
         "end_date": "Enddatum",
         "monthly_view": "Monatsansicht",
-        "effective_permissions": "Effektive Berechtigungen"
+        "effective_permissions": "Effektive Berechtigungen",
+        "check_all": "Alle auswählen",
+        "uncheck_all": "Alle abwählen"
     },
     "components": {
         "partials": {

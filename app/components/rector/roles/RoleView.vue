@@ -112,6 +112,15 @@ async function propogatePermissionStates(): Promise<void> {
     role.value?.permissions.forEach((perm) => {
         permStates.value.set(perm.id, Boolean(perm.val));
     });
+
+    role.value?.attributes.forEach((attr) => {
+        const idx = attrList.value.findIndex((a) => a.attrId === attr.attrId);
+        if (idx > -1 && attrList.value[idx]) {
+            attrList.value[idx].value = attr.value;
+        } else {
+            attrList.value.push(attr);
+        }
+    });
 }
 
 async function updatePermissionState(perm: number, state: boolean | undefined): Promise<void> {
