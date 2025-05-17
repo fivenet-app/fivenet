@@ -4,11 +4,11 @@ import '~/assets/css/herofull-pattern.css';
 const { t } = useI18n();
 
 useHead({
-    title: 'common.about',
+    title: 'pages.about.title',
 });
 
 definePageMeta({
-    title: 'common.about',
+    title: 'pages.about.title',
     layout: 'landing',
     requiresAuth: false,
     redirectIfAuthed: false,
@@ -20,20 +20,20 @@ const repoLink = 'https://github.com/fivenet-app/fivenet';
 
 const faqs = [
     {
-        label: t('components.about.faq.one.question'),
-        content: t('components.about.faq.one.answer'),
+        label: t('pages.about.faq.one.question'),
+        content: t('pages.about.faq.one.answer'),
     },
     {
-        label: t('components.about.faq.two.question'),
-        content: t('components.about.faq.two.answer'),
+        label: t('pages.about.faq.two.question'),
+        content: t('pages.about.faq.two.answer'),
     },
     {
-        label: t('components.about.faq.three.question'),
-        content: t('components.about.faq.three.answer', { repoLink: repoLink }),
+        label: t('pages.about.faq.three.question'),
+        content: t('pages.about.faq.three.answer', { repoLink: repoLink }),
     },
     {
-        label: t('components.about.faq.four.question'),
-        content: t('components.about.faq.four.answer', { discordLink: discordLink, repoLink: repoLink }),
+        label: t('pages.about.faq.four.question'),
+        content: t('pages.about.faq.four.answer', { discordLink: discordLink, repoLink: repoLink }),
     },
 ] as { label: string; content: string }[];
 </script>
@@ -50,10 +50,10 @@ const faqs = [
 
                         <div class="mx-auto max-w-2xl text-center">
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
-                                {{ $t('common.about') }}
+                                {{ $t('pages.about.title') }}
                             </h2>
                             <p class="mt-6 text-lg leading-8">
-                                {{ $t('components.about.subtitle') }}
+                                {{ $t('pages.about.subtitle') }}
                             </p>
                         </div>
                     </div>
@@ -69,13 +69,13 @@ const faqs = [
                                 <div class="lg:pr-4">
                                     <div class="lg:max-w-lg">
                                         <p class="text-primary-300 text-base font-semibold leading-7">
-                                            {{ $t('components.about.introduction.pre_title') }}
+                                            {{ $t('pages.about.introduction.pre_title') }}
                                         </p>
                                         <h1 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                                            {{ $t('components.about.introduction.title') }}
+                                            {{ $t('pages.about.introduction.title') }}
                                         </h1>
                                         <p class="mt-6 text-xl leading-8 text-gray-100">
-                                            {{ $t('components.about.introduction.content') }}
+                                            {{ $t('pages.about.introduction.content') }}
                                         </p>
                                     </div>
                                 </div>
@@ -100,27 +100,27 @@ const faqs = [
                                                 <UIcon class="text-primary-300 mt-1 size-5 flex-none" name="i-mdi-magnify" />
                                                 <span>
                                                     <span class="font-semibold text-gray-200">{{
-                                                        $t('components.about.introduction.feature_one.title')
+                                                        $t('pages.about.introduction.feature_one.title')
                                                     }}</span>
-                                                    {{ $t('components.about.introduction.feature_one.content') }}
+                                                    {{ $t('pages.about.introduction.feature_one.content') }}
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
                                                 <UIcon class="text-primary-300 mt-1 size-5 flex-none" name="i-mdi-lock" />
                                                 <span>
                                                     <span class="font-semibold text-gray-200">{{
-                                                        $t('components.about.introduction.feature_two.title')
+                                                        $t('pages.about.introduction.feature_two.title')
                                                     }}</span>
-                                                    {{ $t('components.about.introduction.feature_two.content') }}
+                                                    {{ $t('pages.about.introduction.feature_two.content') }}
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
                                                 <UIcon class="text-primary-300 mt-1 size-5 flex-none" name="i-mdi-map" />
                                                 <span>
                                                     <span class="font-semibold text-gray-200">{{
-                                                        $t('components.about.introduction.feature_three.title')
+                                                        $t('pages.about.introduction.feature_three.title')
                                                     }}</span>
-                                                    {{ $t('components.about.introduction.feature_three.content') }}
+                                                    {{ $t('pages.about.introduction.feature_three.content') }}
                                                 </span>
                                             </li>
                                         </ul>
@@ -134,7 +134,7 @@ const faqs = [
                         <div class="mx-auto max-w-7xl px-6 py-8">
                             <div class="mx-auto max-w-4xl">
                                 <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                                    {{ $t('components.about.faq.title') }}
+                                    {{ $t('pages.about.faq.title') }}
                                 </h2>
                                 <dl class="mt-4">
                                     <UAccordion :items="faqs" multiple>
@@ -157,10 +157,10 @@ const faqs = [
                         <div class="mx-auto max-w-7xl px-6 py-8">
                             <div class="mx-auto max-w-4xl">
                                 <h2 class="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                                    {{ $t('components.about.questions_or_issues.title') }}
+                                    {{ $t('pages.about.questions_or_issues.title') }}
                                 </h2>
                                 <p class="mt-6 text-base leading-7">
-                                    {{ $t('components.about.questions_or_issues.content') }}
+                                    {{ $t('pages.about.questions_or_issues.content') }}
                                 </p>
                                 <div class="mt-8">
                                     <UButton
@@ -171,7 +171,7 @@ const faqs = [
                                         block
                                         icon="i-simple-icons-discord"
                                     >
-                                        {{ $t('components.about.join_discord') }}
+                                        {{ $t('pages.about.join_discord') }}
                                     </UButton>
                                 </div>
                             </div>
@@ -186,7 +186,7 @@ const faqs = [
                                 </p>
                                 <div class="mt-8">
                                     <UButton variant="outline" block icon="i-mdi-license" :to="{ name: 'about-licenses' }">
-                                        {{ $t('components.about.licenses_list') }}
+                                        {{ $t('pages.about.licenses_list') }}
                                     </UButton>
                                 </div>
                             </div>

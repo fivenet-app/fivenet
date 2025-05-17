@@ -5,16 +5,22 @@ const { t } = useI18n();
 
 const { website } = useAppConfig();
 
-const footerLinks = [
-    {
-        label: t('common.privacy_policy'),
-        to: website.links?.privacyPolicy,
-    },
-    {
-        label: t('common.imprint'),
-        to: website.links?.imprint,
-    },
-].filter((l) => l.to !== undefined);
+const footerLinks = computed(() =>
+    [
+        {
+            label: t('common.privacy_policy'),
+            to: website.links?.privacyPolicy,
+        },
+        {
+            label: t('common.imprint'),
+            to: website.links?.imprint,
+        },
+        {
+            label: t('pages.about.title'),
+            to: '/about',
+        },
+    ].filter((l) => l.to !== undefined),
+);
 
 const year = new Date().getFullYear();
 </script>
@@ -39,6 +45,7 @@ const year = new Date().getFullYear();
                 to="https://github.com/fivenet-app/fivenet"
                 target="_blank"
             />
+
             <UButton
                 icon="i-simple-icons-discord"
                 color="gray"

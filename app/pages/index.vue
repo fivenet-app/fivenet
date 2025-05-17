@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { ButtonColor, ButtonSize } from '#ui/types';
 import '~/assets/css/herofull-pattern.css';
+import LanguageSwitcherModal from '~/components/partials/LanguageSwitcherModal.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/stores/auth';
 
 useHead({
@@ -16,7 +18,9 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const appConfig = useAppConfig();
+const modal = useModal();
+
+const { login } = useAppConfig();
 
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
@@ -33,11 +37,11 @@ const links = computed(() =>
                   size: 'lg' as ButtonSize,
                   to: '/auth/login',
               },
-        appConfig.login.signupEnabled
+        login.signupEnabled
             ? {
                   label: t('components.auth.RegistrationForm.title'),
                   trailingIcon: 'i-mdi-account-plus',
-                  color: 'gray' as ButtonColor,
+                  color: 'white' as ButtonColor,
                   size: 'lg' as ButtonSize,
                   to: '/auth/registration',
               }
@@ -47,22 +51,54 @@ const links = computed(() =>
 </script>
 
 <template>
-    <div class="flex min-h-[calc(100dvh-(2*var(--header-height)))] flex-col">
+    <div class="flex flex-1 flex-col">
         <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
 
-        <ULandingHero class="flex-1" :title="$t('pages.index.welcome')" :description="$t('pages.index.subtext')" :links="links">
-            <template #headline>
+        <div
+            class="flex max-h-[calc(100dvh-(var(--header-height)))] min-h-[calc(100dvh-(var(--header-height)))] flex-col items-center justify-center"
+        >
+            <div class="absolute top-4 z-10 flex gap-2">
                 <UButton
-                    class="rounded-full"
-                    color="gray"
-                    :to="`https://github.com/fivenet-app/fivenet/v2025/releases/tag/${appVersion}`"
-                    :external="true"
-                    :label="$t('pages.index.whats_new_in', { version: appVersion })"
-                    trailing-icon="i-mdi-arrow-right"
-                    size="xs"
+                    color="white"
+                    :label="$t('common.language')"
+                    icon="i-mdi-translate"
+                    @click="modal.open(LanguageSwitcherModal, {})"
                 />
-            </template>
-        </ULandingHero>
+            </div>
+
+            <UCard class="w-full max-w-4xl bg-white/75 backdrop-blur dark:bg-white/5">
+                <div class="space-y-4">
+                    <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
+
+                    <ULandingHero
+                        :title="$t('pages.index.welcome')"
+                        :description="$t('pages.index.subtext')"
+                        :links="links"
+                        :ui="{ wrapper: 'py-0 sm:py-0 md:py-0 relative', title: 'text-4xl' }"
+                    >
+                        <template #headline>
+                            <UButton
+                                class="rounded-full"
+                                color="gray"
+                                :to="`https://github.com/fivenet-app/fivenet/releases/tag/${appVersion}`"
+                                :external="true"
+                                :label="$t('pages.index.whats_new_in', { version: appVersion })"
+                                trailing-icon="i-mdi-arrow-right"
+                                size="xs"
+                            />
+                        </template>
+                    </ULandingHero>
+                </div>
+            </UCard>
+
+            <UButton
+                class="absolute bottom-4 z-10"
+                icon="i-mdi-information-outline"
+                :label="$t('pages.about.title')"
+                to="/about"
+                color="white"
+            />
+        </div>
     </div>
 </template>
 

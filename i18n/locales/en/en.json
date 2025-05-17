@@ -172,6 +172,55 @@
             "manage": {
                 "title": "Manage E-Mails"
             }
+        },
+        "about": {
+            "title": "Über FiveNet",
+            "introduction": {
+                "pre_title": "More time for FiveM RolePlay.",
+                "title": "A better workflow",
+                "content": "Easily search for citizens and vehicles. With the document access system it is easy to create and securely share documents with your colleagues. A Map that shows last few dispatches and your colleagues locations.",
+                "feature_one": {
+                    "title": "Search State Data.",
+                    "content": "You can search through citizens and vehicles. You can also set a citizen as wanted."
+                },
+                "feature_two": {
+                    "title": "Secure Document Sharing.",
+                    "content": "Documents can easily be shared with your colleagues and other factions on the server."
+                },
+                "feature_three": {
+                    "title": "Map.",
+                    "content": "See the location of your colleagues and dispatches live. Different map styles are available as well."
+                }
+            },
+            "faq": {
+                "title": "Frequently asked questions",
+                "one": {
+                    "question": "Who has created FiveNet?",
+                    "answer": "Galexrt and Clover, are the main people working on FiveNet at the moment."
+                },
+                "two": {
+                    "question": "Why was FiveNet created?",
+                    "answer": "It started out as a way for Galexrt to learn frontend development and then it spiraled into a way for ModernV server to have an alternative to VPC CopNet/ MedicNet."
+                },
+                "three": {
+                    "question": "Where can I find the FiveNet development roadmap?",
+                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Click here (GitHub galexrt/fivenet README)</a>."
+                },
+                "four": {
+                    "question": "I found a bug or other issue with FiveNet. Where do I report it?",
+                    "answer": "Please report on <a class=\"underline\" href=\"{discordLink}\">the Galexrt Discord server</a> or on <a class=\"underline\" href=\"{repoLink}\">the FiveNet GitHub project</a>."
+                }
+            },
+            "questions_or_issues": {
+                "title": "Got any questions or issues?",
+                "content": "Be sure to join the Discord server should you encounter any issues or have questions regarding FiveNet."
+            },
+            "join_discord": "Join Galexrt Discord server",
+            "licenses_list": "FiveNet License and list of third-party licenses used",
+            "subtitle": "About FiveNet and it's creators.",
+            "licenses": {
+                "subtitle": "List and information about the Licenses of code, libraries and software, used by FiveNet."
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt All rights reserved.",
@@ -1064,54 +1113,6 @@
             "unread": "Unread",
             "do_not_disturb": "Do Not Disturb",
             "mark_unread": "Mark as unread"
-        },
-        "about": {
-            "introduction": {
-                "pre_title": "More time for FiveM RolePlay.",
-                "title": "A better workflow",
-                "content": "Easily search for citizens and vehicles. With the document access system it is easy to create and securely share documents with your colleagues. A Map that shows last few dispatches and your colleagues locations.",
-                "feature_one": {
-                    "title": "Search State Data.",
-                    "content": "You can search through citizens and vehicles. You can also set a citizen as wanted."
-                },
-                "feature_two": {
-                    "title": "Secure Document Sharing.",
-                    "content": "Documents can easily be shared with your colleagues and other factions on the server."
-                },
-                "feature_three": {
-                    "title": "Map.",
-                    "content": "See the location of your colleagues and dispatches live. Different map styles are available as well."
-                }
-            },
-            "faq": {
-                "title": "Frequently asked questions",
-                "one": {
-                    "question": "Who has created FiveNet?",
-                    "answer": "Galexrt and Clover, are the main people working on FiveNet at the moment."
-                },
-                "two": {
-                    "question": "Why was FiveNet created?",
-                    "answer": "It started out as a way for Galexrt to learn frontend development and then it spiraled into a way for ModernV server to have an alternative to VPC CopNet/ MedicNet."
-                },
-                "three": {
-                    "question": "Where can I find the FiveNet development roadmap?",
-                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Click here (GitHub galexrt/fivenet README)</a>."
-                },
-                "four": {
-                    "question": "I found a bug or other issue with FiveNet. Where do I report it?",
-                    "answer": "Please report on <a class=\"underline\" href=\"{discordLink}\">the Galexrt Discord server</a> or on <a class=\"underline\" href=\"{repoLink}\">the FiveNet GitHub project</a>."
-                }
-            },
-            "questions_or_issues": {
-                "title": "Got any questions or issues?",
-                "content": "Be sure to join the Discord server should you encounter any issues or have questions regarding FiveNet."
-            },
-            "join_discord": "Join Galexrt Discord server",
-            "licenses_list": "FiveNet License and list of third-party licenses used",
-            "subtitle": "About FiveNet and it's creators.",
-            "licenses": {
-                "subtitle": "List and information about the Licenses of code, libraries and software, used by FiveNet."
-            }
         },
         "qualifications": {
             "create_new_qualification": "Create New Qualification",

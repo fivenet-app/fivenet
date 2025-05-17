@@ -5,7 +5,7 @@ import { useAuthStore } from '~/stores/auth';
 
 const { t } = useI18n();
 
-const appConfig = useAppConfig();
+const { login } = useAppConfig();
 
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
@@ -41,9 +41,11 @@ const modal = useModal();
 </script>
 
 <template>
-    <UHeader :links="links">
+    <UHeader :links="links" :ui="{ logo: 'inline-flex items-center gap-2' }">
         <template #logo>
             <FiveNetLogo class="h-10 w-auto" />
+
+            <span class="text-xl font-semibold text-gray-900 dark:text-white">FiveNet</span>
         </template>
 
         <template #right>
@@ -56,8 +58,9 @@ const modal = useModal();
 
             <template v-if="!username">
                 <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
+
                 <UButton
-                    v-if="appConfig.login.signupEnabled"
+                    v-if="login.signupEnabled"
                     class="hidden lg:flex"
                     :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"
@@ -65,9 +68,6 @@ const modal = useModal();
                     color="black"
                     to="/auth/registration"
                 />
-            </template>
-            <template v-else>
-                <UButton :label="$t('common.overview')" icon="i-mdi-home" to="/overview" />
             </template>
         </template>
     </UHeader>
