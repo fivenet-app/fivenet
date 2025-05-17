@@ -208,7 +208,7 @@ const { game } = useAppConfig();
                             >
                                 <UToggle
                                     :name="value"
-                                    :model-value="!!validValues.validValues.stringList.strings.find((v) => v === value)"
+                                    :model-value="!!attrValues.validValues.stringList.strings.find((v) => v === value)"
                                     :disabled="disabled"
                                     @update:model-value="toggleStringListValue(value)"
                                 />
@@ -227,7 +227,7 @@ const { game } = useAppConfig();
                         <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-1">
                             <UToggle
                                 :name="job.name"
-                                :model-value="!!validValues.validValues.jobList?.strings.find((v) => v === job.name)"
+                                :model-value="!!attrValues.validValues.jobList?.strings.find((v) => v === job.name)"
                                 :disabled="disabled"
                                 @update:model-value="toggleJobListValue(job.name)"
                             />
