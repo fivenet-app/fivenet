@@ -203,7 +203,10 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 
 	stmt := tJobProps.
 		SELECT(tJobProps.Job).
-		WHERE(tJobProps.DeletedAt.IS_NOT_NULL()).
+		WHERE(jet.AND(
+			tJobProps.DeletedAt.IS_NOT_NULL(),
+			tJobProps.DeletedAt.LT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(1, jet.DAY))),
+		)).
 		ORDER_BY(tJobProps.Job.ASC())
 
 	var jobs []string
