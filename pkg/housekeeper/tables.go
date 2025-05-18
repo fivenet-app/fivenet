@@ -23,23 +23,30 @@ type Table struct {
 
 	TimestampColumn jet.ColumnTimestamp
 	DateColumn      jet.ColumnDate
-	Condition       jet.BoolExpression
 	MinDays         int
 
-	DependentTables []*Table // Allow tables to have their dependents
+	DependantTables []*Table // Allow tables to have their dependants
 }
 
 func AddTable(tbl *Table) {
 	tableListsMu.Lock()
 	defer tableListsMu.Unlock()
 
-	if tbl.MinDays < 30 {
-		tbl.MinDays = 30
-	}
-
 	if tbl.DeletedAtColumn == nil && tbl.TimestampColumn == nil && tbl.DateColumn == nil {
 		panic(fmt.Sprintf("table %s must have a DeletedAt, TimestampColumn, or DateColumn column set for soft delete!", tbl.Table.TableName()))
 	}
 
+	ensureMinDays(tbl)
+
 	tablesList[tbl.Table.TableName()] = tbl
+}
+
+func ensureMinDays(tbl *Table) {
+	if tbl.MinDays < 30 {
+		tbl.MinDays = 30
+	}
+
+	for _, t := range tbl.DependantTables {
+		ensureMinDays(t)
+	}
 }

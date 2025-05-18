@@ -1,14 +1,11 @@
 package jobs
 
 import (
-	"context"
 	"database/sql"
 	sync "sync"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
@@ -44,8 +41,6 @@ type Params struct {
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Audit             audit.IAuditer
 	Config            *config.Config
-
-	Cron croner.IRegistry
 }
 
 func NewServer(p Params) *Server {
@@ -60,20 +55,6 @@ func NewServer(p Params) *Server {
 
 		customDB: p.Config.Database.Custom,
 	}
-
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
-			Name:     "jobs.timeclock_cleanup",
-			Schedule: "@hourly",
-		}); err != nil {
-			return err
-		}
-
-		p.Cron.UnregisterCronjob(ctx, "jobs.timeclock_handling")
-		p.Cron.UnregisterCronjob(ctx, "jobs-timeclock-handling")
-
-		return nil
-	}))
 
 	return s
 }

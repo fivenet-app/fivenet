@@ -39,20 +39,19 @@ func init() {
 		Table:           table.FivenetCentrumMarkers,
 		IDColumn:        table.FivenetCentrumMarkers.ID,
 		TimestampColumn: table.FivenetCentrumMarkers.ExpiresAt,
+		DeletedAtColumn: table.FivenetCentrumMarkers.DeletedAt,
 		JobColumn:       table.FivenetCentrumMarkers.Job,
 
 		MinDays: 5,
 	})
+	// User locations - Make sure to delete them after 1 day when not updated (buggy events from server)
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetUserLocations,
+		DeletedAtColumn: table.FivenetUserLocations.UpdatedAt,
+		JobColumn:       table.FivenetUserLocations.Job,
 
-	housekeeper.AddTable(
-		&housekeeper.Table{
-			Table:           table.FivenetUserLocations,
-			DeletedAtColumn: table.FivenetUserLocations.UpdatedAt,
-			JobColumn:       table.FivenetUserLocations.Job,
-
-			MinDays: 3,
-		},
-	)
+		MinDays: 1,
+	})
 }
 
 type Server struct {

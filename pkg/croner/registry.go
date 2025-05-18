@@ -40,6 +40,11 @@ type IRegistry interface {
 	UnregisterCronjob(ctx context.Context, name string) error
 }
 
+type CronRegister interface {
+	RegisterCronjobs(ctx context.Context, c IRegistry) error
+	RegisterCronjobHandlers(h *Handlers) error
+}
+
 type RegistryParams struct {
 	fx.In
 
@@ -47,6 +52,8 @@ type RegistryParams struct {
 
 	Logger *zap.Logger
 	JS     *events.JSWrapper
+
+	Jobs []CronRegister `group:"cronjobregister"`
 }
 
 type Registry struct {
@@ -65,7 +72,7 @@ type RegistryResult struct {
 	IRegistry IRegistry
 }
 
-func NewRegistry(p RegistryParams) RegistryResult {
+func NewRegistry(p RegistryParams) (RegistryResult, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	r := &Registry{
@@ -104,6 +111,12 @@ func NewRegistry(p RegistryParams) RegistryResult {
 			return err
 		}
 
+		for _, reg := range p.Jobs {
+			if err := reg.RegisterCronjobs(ctxStartup, r); err != nil {
+				return err
+			}
+		}
+
 		return nil
 	}))
 
@@ -116,7 +129,7 @@ func NewRegistry(p RegistryParams) RegistryResult {
 	return RegistryResult{
 		Registry:  r,
 		IRegistry: r,
-	}
+	}, nil
 }
 
 func (r *Registry) ListCronjobs(ctx context.Context) []*cron.Cronjob {

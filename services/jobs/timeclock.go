@@ -34,7 +34,7 @@ func init() {
 		DateColumn: table.FivenetJobsTimeclock.Date,
 		JobColumn:  table.FivenetJobsTimeclock.Job,
 
-		MinDays: 365, // One year
+		MinDays: 365, // One year retention
 	})
 }
 

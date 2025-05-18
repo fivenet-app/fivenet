@@ -17,40 +17,41 @@ import (
 )
 
 func init() {
-	housekeeper.AddTable(
-		&housekeeper.Table{
-			Table:           table.FivenetMailerEmails,
-			IDColumn:        table.FivenetMailerEmails.ID,
-			JobColumn:       table.FivenetMailerEmails.Job,
-			DeletedAtColumn: table.FivenetMailerEmails.DeletedAt,
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetMailerEmails,
+		IDColumn:        table.FivenetMailerEmails.ID,
+		JobColumn:       table.FivenetMailerEmails.Job,
+		DeletedAtColumn: table.FivenetMailerEmails.DeletedAt,
 
-			MinDays: 60,
+		MinDays: 60,
 
-			DependentTables: []*housekeeper.Table{
-				{
-					Table:           table.FivenetMailerThreads,
-					IDColumn:        table.FivenetMailerThreads.ID,
-					ForeignKey:      table.FivenetMailerThreads.CreatorEmailID,
-					DeletedAtColumn: table.FivenetMailerThreads.DeletedAt,
-					MinDays:         60,
-				},
-				{
-					Table:           table.FivenetMailerMessages,
-					IDColumn:        table.FivenetMailerMessages.ID,
-					ForeignKey:      table.FivenetMailerMessages.SenderID,
-					DeletedAtColumn: table.FivenetMailerMessages.DeletedAt,
-					MinDays:         60,
-				},
-				{
-					Table:           table.FivenetMailerTemplates,
-					IDColumn:        table.FivenetMailerTemplates.ID,
-					ForeignKey:      table.FivenetMailerTemplates.EmailID,
-					DeletedAtColumn: table.FivenetMailerTemplates.DeletedAt,
-					MinDays:         60,
-				},
+		DependantTables: []*housekeeper.Table{
+			{
+				Table:           table.FivenetMailerThreads,
+				IDColumn:        table.FivenetMailerThreads.ID,
+				ForeignKey:      table.FivenetMailerThreads.CreatorEmailID,
+				DeletedAtColumn: table.FivenetMailerThreads.DeletedAt,
+
+				MinDays: 60,
+			},
+			{
+				Table:           table.FivenetMailerMessages,
+				IDColumn:        table.FivenetMailerMessages.ID,
+				ForeignKey:      table.FivenetMailerMessages.SenderID,
+				DeletedAtColumn: table.FivenetMailerMessages.DeletedAt,
+
+				MinDays: 60,
+			},
+			{
+				Table:           table.FivenetMailerTemplates,
+				IDColumn:        table.FivenetMailerTemplates.ID,
+				ForeignKey:      table.FivenetMailerTemplates.EmailID,
+				DeletedAtColumn: table.FivenetMailerTemplates.DeletedAt,
+
+				MinDays: 60,
 			},
 		},
-	)
+	})
 }
 
 type Server struct {

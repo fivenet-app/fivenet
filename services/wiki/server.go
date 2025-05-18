@@ -25,9 +25,10 @@ func init() {
 		IDColumn:        table.FivenetWikiPages.ID,
 		DeletedAtColumn: table.FivenetWikiPages.DeletedAt,
 		JobColumn:       table.FivenetWikiPages.Job,
-		MinDays:         60,
 
-		DependentTables: []*housekeeper.Table{
+		MinDays: 60,
+
+		DependantTables: []*housekeeper.Table{
 			{
 				Table:      table.FivenetWikiPageActivity,
 				ForeignKey: table.FivenetWikiPageActivity.PageID,

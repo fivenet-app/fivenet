@@ -26,29 +26,30 @@ func init() {
 		JobColumn:       table.FivenetQualifications.Job,
 		DeletedAtColumn: table.FivenetQualifications.DeletedAt,
 
-		MinDays: 30,
+		MinDays: 60,
 
-		DependentTables: []*housekeeper.Table{
+		DependantTables: []*housekeeper.Table{
 			{
 				Table:           table.FivenetQualificationsExamUsers,
 				DeletedAtColumn: table.FivenetQualificationsExamUsers.EndsAt,
 				ForeignKey:      table.FivenetQualificationsExamUsers.QualificationID,
+
+				MinDays: 60,
 			},
 			{
 				Table:           table.FivenetQualificationsRequests,
 				DeletedAtColumn: table.FivenetQualificationsRequests.DeletedAt,
 				ForeignKey:      table.FivenetQualificationsRequests.QualificationID,
 
-				MinDays: 30,
+				MinDays: 60,
 			},
 			{
 				Table:           table.FivenetQualificationsResults,
 				IDColumn:        table.FivenetQualificationsResults.ID,
 				DeletedAtColumn: table.FivenetQualificationsResults.DeletedAt,
+				ForeignKey:      table.FivenetQualificationsResults.QualificationID,
 
-				ForeignKey: table.FivenetQualificationsResults.QualificationID,
-
-				MinDays: 30,
+				MinDays: 60,
 			},
 		},
 	})

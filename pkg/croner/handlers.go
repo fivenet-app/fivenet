@@ -24,7 +24,7 @@ type HandlersParams struct {
 	LC fx.Lifecycle
 
 	Logger   *zap.Logger
-	Handlers []CronHandlersRegister `group:"cronjobhandlers"`
+	Handlers []CronRegister `group:"cronjobregister"`
 }
 
 type Handlers struct {
@@ -85,18 +85,4 @@ func (h *Handlers) getCronjobHandler(name string) CronjobHandlerFn {
 	name = events.SanitizeKey(name)
 
 	return h.handlers[name]
-}
-
-type CronHandlersRegister interface {
-	RegisterCronjobHandlers(h *Handlers) error
-}
-
-// AsCronjobHandlers annotates the given constructor to state that
-// it provides a GRPC service to the "cronjobhandlers" group.
-func AsCronjobHandlers(f any) any {
-	return fx.Annotate(
-		f,
-		fx.As(new(CronHandlersRegister)),
-		fx.ResultTags(`group:"cronjobhandlers"`),
-	)
 }

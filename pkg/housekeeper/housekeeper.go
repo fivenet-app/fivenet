@@ -3,13 +3,16 @@ package housekeeper
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"slices"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -37,6 +40,8 @@ type Housekeeper struct {
 	db *sql.DB
 
 	getTablesListFn func() map[string]*Table
+
+	dryRun bool
 }
 
 type Params struct {
@@ -47,52 +52,58 @@ type Params struct {
 	Logger *zap.Logger
 	DB     *sql.DB
 	TP     *tracesdk.TracerProvider
-
-	Cron croner.IRegistry
 }
 
 type Result struct {
 	fx.Out
 
 	Housekeeper  *Housekeeper
-	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
 func New(p Params) Result {
 	h := &Housekeeper{
 		logger: p.Logger.Named("housekeeper"),
 		tracer: p.TP.Tracer("housekeeper"),
-		db:     p.DB,
+
+		db: p.DB,
+
 		getTablesListFn: func() map[string]*Table {
 			return tablesList
 		},
+
+		dryRun: false,
 	}
-
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
-			Name:     "housekeeper.run",
-			Schedule: "*/3 * * * *", // Every 3 minutes
-			Timeout:  durationpb.New(1 * time.Minute),
-		}); err != nil {
-			return err
-		}
-
-		if err := p.Cron.UnregisterCronjob(ctx, "housekeeper.job_delete"); err != nil {
-			return err
-		}
-
-		return nil
-	}))
 
 	return Result{
 		Housekeeper:  h,
-		CronHandlers: h,
+		CronRegister: h,
 	}
 }
 
-func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
-	h.Add("housekeeper.run", func(ctx context.Context, data *cron.CronjobData) error {
-		ctx, span := s.tracer.Start(ctx, "housekeeper.run")
+func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "housekeeper.run",
+		Schedule: "* * * * *", // Every 3 minutes
+		Timeout:  durationpb.New(2 * time.Minute),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "housekeeper.job_delete",
+		Schedule: "* * * * *", // Every 3 minutes
+		Timeout:  durationpb.New(2 * time.Minute),
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
+	hand.Add("housekeeper.run", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := h.tracer.Start(ctx, "housekeeper.run")
 		defer span.End()
 
 		dest := &cron.GenericCronData{
@@ -103,21 +114,21 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 		}
 
 		if err := data.Data.UnmarshalTo(dest); err != nil {
-			s.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
+			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
-		if err := s.runHousekeeper(ctx, dest); err != nil {
-			return fmt.Errorf("error during docstore workflow handling. %w", err)
+		if err := h.runHardDelete(ctx, dest); err != nil {
+			return fmt.Errorf("error during housekeeper (hard delete). %w", err)
 		}
 
 		if err := data.Data.MarshalFrom(dest); err != nil {
-			return fmt.Errorf("failed to marshal updated housekeeper cron data. %w", err)
+			return fmt.Errorf("failed to marshal updated housekeeper (hard delete) cron data. %w", err)
 		}
 
 		return nil
 	})
 
-	/* p.CronHandlers.Add("housekeeper.job_delete", func(ctx context.Context, data *cron.CronjobData) error {
+	hand.Add("housekeeper.job_delete", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := h.tracer.Start(ctx, "housekeeper.job_delete")
 		defer span.End()
 
@@ -132,77 +143,80 @@ func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
-		tJobProps := table.FivenetJobProps
-
-		stmt := tJobProps.
-			SELECT(tJobProps.Job).
-			WHERE(tJobProps.DeletedAt.IS_NOT_NULL()).
-			LIMIT(10)
-
-		var jobs []string
-		if err := stmt.QueryContext(ctx, h.db, &jobs); err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return fmt.Errorf("failed to query jobs: %w", err)
-			}
+		if err := h.runJobSoftDelete(ctx, dest); err != nil {
+			return fmt.Errorf("error during housekeeper (soft delete). %w", err)
 		}
-
-		tableListsMu.Lock()
-		defer tableListsMu.Unlock()
-
-		tablesList := h.getTablesListFn()
-
-		keys := []string{}
-		for key := range tablesList {
-			keys = append(keys, key)
-		}
-		slices.Sort(keys)
-		if len(keys) == 0 {
-			return nil
-		}
-
-		lastTblKey, ok := dest.Attributes[lastTableMapIndex]
-		if !ok {
-			// Take first table
-			lastTblKey = keys[0]
-		} else {
-			idx := slices.Index(keys, lastTblKey)
-			if idx == -1 || len(keys) <= idx+1 {
-				h.logger.Debug("last table key not found in keys, starting from the beginning again")
-				lastTblKey = keys[0]
-			} else {
-				lastTblKey = keys[idx+1]
-			}
-		}
-
-		tbl, ok := tablesList[lastTblKey]
-		if !ok {
-			return nil
-		}
-
-		jobName := "usms"
-
-		markedRows, err := h.SoftDeleteJobData(ctx, tbl, jobName)
-		if err != nil {
-			return fmt.Errorf("failed to soft delete rows from main table fivenet_wiki_pages: %w", err)
-		}
-		fmt.Println("markedRows", markedRows)
-
-		dest.Attributes[lastTableMapIndex] = lastTblKey
-		dest.Attributes[lastJobName] = jobName
 
 		if err := data.Data.MarshalFrom(dest); err != nil {
-			return fmt.Errorf("failed to marshal updated housekeeper cron data. %w", err)
+			return fmt.Errorf("failed to marshal updated housekeeper (soft delete) cron data. %w", err)
 		}
 
 		return nil
-	}) */
+	})
 
 	return nil
 }
 
-func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCronData) error {
-	tableListsMu.Lock()
-	defer tableListsMu.Unlock()
+func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronData) error {
+	tablesList := h.getTablesListFn()
+
+	keys := []string{}
+	for key := range tablesList {
+		keys = append(keys, key)
+	}
+	slices.Sort(keys)
+	if len(keys) == 0 {
+		return nil
+	}
+
+	lastTblKey, ok := data.Attributes[lastTableMapIndex]
+	if !ok {
+		// Take first table
+		lastTblKey = keys[0]
+	} else {
+		idx := slices.Index(keys, lastTblKey)
+		if idx == -1 || len(keys) <= idx+1 {
+			h.logger.Debug("last table key not found in keys, starting from the beginning again")
+			lastTblKey = keys[0]
+		} else {
+			lastTblKey = keys[idx+1]
+		}
+	}
+
+	tbl, ok := tablesList[lastTblKey]
+	if !ok {
+		return nil
+	}
+
+	_, err := h.HardDelete(ctx, tbl)
+	if err != nil {
+		return err
+	}
+
+	data.Attributes[lastTableMapIndex] = lastTblKey
+
+	return nil
+}
+
+func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCronData) error {
+	tJobProps := table.FivenetJobProps
+
+	stmt := tJobProps.
+		SELECT(tJobProps.Job).
+		WHERE(tJobProps.DeletedAt.IS_NOT_NULL()).
+		LIMIT(1)
+
+	var jobs []string
+	if err := stmt.QueryContext(ctx, h.db, &jobs); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to query jobs. %w", err)
+		}
+	}
+
+	if len(jobs) == 0 {
+		h.logger.Debug("no jobs found to soft delete")
+		return nil
+	}
 
 	tablesList := h.getTablesListFn()
 
@@ -234,123 +248,81 @@ func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCron
 		return nil
 	}
 
-	var condition jet.BoolExpression
-	if tbl.DeletedAtColumn != nil {
-		condition = jet.AND(
-			tbl.DeletedAtColumn.IS_NOT_NULL(),
-			tbl.DeletedAtColumn.LT_EQ(
-				jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
-			),
-		)
-	} else if tbl.DateColumn != nil {
-		condition = jet.AND(
-			tbl.DateColumn.IS_NOT_NULL(),
-			tbl.DateColumn.LT_EQ(
-				jet.CAST(
-					jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
-				).AS_DATE(),
-			),
-		)
-	} else {
-		condition = jet.AND(
-			tbl.TimestampColumn.IS_NOT_NULL(),
-			tbl.TimestampColumn.LT_EQ(
-				jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
-			),
-		)
-	}
+	jobName := jobs[0]
 
-	if tbl.Condition != nil {
-		condition = condition.AND(tbl.Condition)
-	}
-
-	stmt := tbl.Table.
-		DELETE().
-		WHERE(condition).
-		LIMIT(DefaultDeleteLimit)
-
-	res, err := stmt.ExecContext(ctx, h.db)
+	_, err := h.SoftDeleteJobData(ctx, tbl, jobName)
 	if err != nil {
-		return err
-	}
-
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected > 0 {
-		h.logger.Info("housekeeper run deleted rows", zap.String("table", lastTblKey), zap.Int64("rows", rowsAffected))
+		return fmt.Errorf("failed to soft delete rows for table %s (job: %s). %w", tbl.Table.TableName(), jobName, err)
 	}
 
 	data.Attributes[lastTableMapIndex] = lastTblKey
+	data.Attributes[lastJobName] = jobName
 
 	return nil
 }
 
-// SoftDeleteJobData marks rows as deleted in the main table and its dependent tables
+// SoftDeleteJobData marks rows as deleted in the main table and its dependant tables
 // by setting the DeletedAt column to the current timestamp.
 func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobName string) (int64, error) {
-	h.logger.Info("starting soft delete", zap.String("table", table.Table.TableName()), zap.String("job", jobName))
+	h.logger.Debug("starting soft delete", zap.String("table", table.Table.TableName()), zap.String("job", jobName))
 
-	markedRows := int64(0)
+	rowsAffected := int64(0)
 
-	if table.DeletedAtColumn != nil {
+	if table.DeletedAtColumn != nil && table.JobColumn != nil {
 		// Mark rows as deleted in the current table for the given job
-		if err := h.markRowsAsDeletedInJob(ctx, table, jobName); err != nil {
-			return markedRows, fmt.Errorf("failed to soft delete rows from main table %s: %w", table.Table.TableName(), err)
+		r, err := h.markRowsAsDeletedInJob(ctx, table, jobName)
+		if err != nil {
+			return rowsAffected, fmt.Errorf("failed to soft delete rows from main table %s: %w", table.Table.TableName(), err)
 		}
+		rowsAffected += r
 	}
 
 	// Traverse dependencies
-	for _, dep := range table.DependentTables {
-		if dep.DeletedAtColumn == nil {
+	for _, dep := range table.DependantTables {
+		if dep.DeletedAtColumn == nil && table.JobColumn == nil {
 			continue
 		}
 
 		r, err := h.softDeleteJobData(ctx, table, dep, jobName)
 		if err != nil {
-			return markedRows, fmt.Errorf("failed to soft delete rows from dependent table %s: %w", dep.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to soft delete rows from dependant table %s: %w", dep.Table.TableName(), err)
 		}
-		markedRows += r
+		rowsAffected += r
 	}
 
-	h.logger.Info("soft delete completed", zap.String("table", table.Table.TableName()), zap.String("job", jobName))
-	return markedRows, nil
+	h.logger.Debug("soft delete completed", zap.String("table", table.Table.TableName()), zap.String("job", jobName))
+	return rowsAffected, nil
 }
 
 func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, table *Table, jobName string) (int64, error) {
-	h.logger.Info("starting soft delete", zap.String("table", parent.Table.TableName()), zap.String("job", jobName))
+	rowsAffected := int64(0)
 
-	markedRows := int64(0)
-
-	if table.DeletedAtColumn != nil {
+	if table.DeletedAtColumn != nil && table.JobColumn != nil {
 		// Mark rows as deleted in the current table for the given job
 		r, err := h.markRowsAsDeleted(ctx, parent, table, jobName)
 		if err != nil {
-			return markedRows, fmt.Errorf("failed to soft delete rows from dependent table %s: %w", parent.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to soft delete rows from dependant table %s: %w", parent.Table.TableName(), err)
 		}
-		markedRows += r
+		rowsAffected += r
 	}
 
 	// Traverse dependencies
-	for _, child := range table.DependentTables {
-		if child.DeletedAtColumn == nil {
+	for _, child := range table.DependantTables {
+		if child.DeletedAtColumn == nil && child.JobColumn == nil {
 			continue
 		}
 
 		r, err := h.markRowsAsDeleted(ctx, table, child, jobName)
 		if err != nil {
-			return markedRows, fmt.Errorf("failed to soft delete dependent rows from dependent table %s: %w", child.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to soft delete dependant rows from dependant table %s: %w", child.Table.TableName(), err)
 		}
-		markedRows += r
+		rowsAffected += r
 	}
 
-	h.logger.Info("soft delete dependent completed", zap.String("table", parent.Table.TableName()), zap.String("job", jobName))
-	return markedRows, nil
+	return rowsAffected, nil
 }
 
-func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, jobName string) error {
+func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, jobName string) (rowsAffected int64, err error) {
 	condition := jet.AND(
 		table.JobColumn.EQ(jet.String(jobName)),
 		table.DeletedAtColumn.IS_NULL(),
@@ -364,21 +336,25 @@ func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, 
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)
 
-	res, err := stmt.ExecContext(ctx, h.db)
-	if err != nil {
-		return err
+	if !h.dryRun {
+		res, err := stmt.ExecContext(ctx, h.db)
+		if err != nil {
+			return rowsAffected, err
+		}
+
+		rowsAffected, err = res.RowsAffected()
+		if err != nil {
+			return rowsAffected, err
+		}
+	} else {
+		h.logger.Debug("dry run markRowsAsDeleted statement", zap.String("query", stmt.DebugSql()))
 	}
 
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	h.logger.Info("marked rows as deleted", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
-	return nil
+	h.logger.Debug("soft deleted rows", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
+	return rowsAffected, nil
 }
 
-func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table, table *Table, jobName string) (int64, error) {
+func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table, table *Table, jobName string) (rowsAffected int64, err error) {
 	var condition jet.BoolExpression
 	if table.JobColumn != nil {
 		condition = table.JobColumn.EQ(jet.String(jobName))
@@ -408,71 +384,72 @@ func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table,
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)
 
-	res, err := stmt.ExecContext(ctx, h.db)
-	if err != nil {
-		return 0, err
+	if !h.dryRun {
+		res, err := stmt.ExecContext(ctx, h.db)
+		if err != nil {
+			return rowsAffected, err
+		}
+
+		rowsAffected, err = res.RowsAffected()
+		if err != nil {
+			return rowsAffected, err
+		}
+	} else {
+		h.logger.Debug("dry run markRowsAsDeleted statement", zap.String("query", stmt.DebugSql()))
 	}
 
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return 0, err
-	}
-
-	h.logger.Info("marked rows as deleted", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
+	h.logger.Debug("soft deleted rows", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
 	return rowsAffected, nil
 }
 
 func (h *Housekeeper) HardDelete(ctx context.Context, table *Table) (int64, error) {
-	h.logger.Info("starting hard delete", zap.String("table", table.Table.TableName()))
+	h.logger.Debug("starting hard delete", zap.String("table", table.Table.TableName()))
 
-	rows := int64(0)
+	rowsAffected := int64(0)
 
 	// Traverse dependencies
-	for _, dep := range table.DependentTables {
+	for _, dep := range table.DependantTables {
 		r, err := h.hardDelete(ctx, table, dep, table.MinDays)
 		if err != nil {
-			return rows, fmt.Errorf("failed to hard delete rows from dependent table %s: %w", dep.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to hard delete rows from dependant table %s: %w", dep.Table.TableName(), err)
 		}
-		rows += r
+		rowsAffected += r
 	}
 
 	// Mark rows as deleted in the current table for the given job
 	r, err := h.deleteRows(ctx, nil, table, table.MinDays)
 	if err != nil {
-		return rows, fmt.Errorf("failed to hard delete rows from main table %s: %w", table.Table.TableName(), err)
+		return rowsAffected, fmt.Errorf("failed to hard delete rows from main table %s: %w", table.Table.TableName(), err)
 	}
-	rows += r
+	rowsAffected += r
 
-	h.logger.Info("hard delete completed", zap.String("table", table.Table.TableName()))
-	return rows, nil
+	h.logger.Debug("hard delete completed", zap.String("table", table.Table.TableName()))
+	return rowsAffected, nil
 }
 
 func (h *Housekeeper) hardDelete(ctx context.Context, parent *Table, table *Table, minDays int) (int64, error) {
-	h.logger.Info("starting hard delete", zap.String("table", parent.Table.TableName()))
-
-	rows := int64(0)
+	rowsAffected := int64(0)
 
 	// Traverse dependencies
-	for _, child := range table.DependentTables {
+	for _, child := range table.DependantTables {
 		r, err := h.deleteRows(ctx, table, child, minDays)
 		if err != nil {
-			return rows, fmt.Errorf("failed to hard delete dependent rows from dependent table %s: %w", child.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to hard delete dependant rows from dependant table %s: %w", child.Table.TableName(), err)
 		}
-		rows += r
+		rowsAffected += r
 	}
 
 	// Mark rows as deleted in the current table for the given job
 	r, err := h.deleteRows(ctx, parent, table, minDays)
 	if err != nil {
-		return rows, fmt.Errorf("failed to hard delete rows from dependent table %s: %w", parent.Table.TableName(), err)
+		return rowsAffected, fmt.Errorf("failed to hard delete rows from dependant table %s: %w", parent.Table.TableName(), err)
 	}
-	rows += r
+	rowsAffected += r
 
-	h.logger.Info("hard delete dependent completed", zap.String("table", parent.Table.TableName()))
-	return rows, nil
+	return rowsAffected, nil
 }
 
-func (h *Housekeeper) deleteRows(ctx context.Context, parent *Table, table *Table, minDays int) (int64, error) {
+func (h *Housekeeper) deleteRows(ctx context.Context, parent *Table, table *Table, minDays int) (rowsAffected int64, err error) {
 	var condition jet.BoolExpression
 
 	if parent != nil {
@@ -491,12 +468,29 @@ func (h *Housekeeper) deleteRows(ctx context.Context, parent *Table, table *Tabl
 			),
 		)
 	} else {
-		condition = jet.AND(
-			table.DeletedAtColumn.IS_NOT_NULL(),
-			table.DeletedAtColumn.LT_EQ(
-				jet.CURRENT_DATE().SUB(jet.INTERVAL(minDays, jet.DAY)),
-			),
-		)
+		if table.DateColumn != nil {
+			condition = jet.AND(
+				table.DateColumn.IS_NOT_NULL(),
+				table.DateColumn.LT_EQ(
+					jet.CAST(
+						jet.CURRENT_DATE().SUB(jet.INTERVAL(minDays, jet.DAY)),
+					).AS_DATE(),
+				),
+			)
+		} else {
+			var col jet.ColumnTimestamp
+			if table.TimestampColumn != nil {
+				col = table.TimestampColumn
+			} else {
+				col = table.DeletedAtColumn
+			}
+			condition = jet.AND(
+				col.IS_NOT_NULL(),
+				col.LT_EQ(
+					jet.CURRENT_DATE().SUB(jet.INTERVAL(minDays, jet.DAY)),
+				),
+			)
+		}
 	}
 
 	stmt := table.Table.
@@ -504,16 +498,20 @@ func (h *Housekeeper) deleteRows(ctx context.Context, parent *Table, table *Tabl
 		WHERE(condition).
 		LIMIT(DefaultDeleteLimit)
 
-	res, err := stmt.ExecContext(ctx, h.db)
-	if err != nil {
-		return 0, err
+	if !h.dryRun {
+		res, err := stmt.ExecContext(ctx, h.db)
+		if err != nil {
+			return 0, err
+		}
+
+		rowsAffected, err = res.RowsAffected()
+		if err != nil {
+			return 0, err
+		}
+	} else {
+		h.logger.Debug("dry run deleteRows statement", zap.String("query", stmt.DebugSql()))
 	}
 
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return 0, err
-	}
-
-	h.logger.Info("deleted rows", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
+	h.logger.Debug("hard deleted rows", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
 	return rowsAffected, nil
 }

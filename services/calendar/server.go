@@ -37,20 +37,23 @@ func init() {
 		DeletedAtColumn: table.FivenetCalendar.DeletedAt,
 		IDColumn:        table.FivenetCalendar.ID,
 
-		MinDays: 61, // Delete calendars later than entries to lessen the load on the database
+		MinDays: 60,
 
-		DependentTables: []*housekeeper.Table{
+		DependantTables: []*housekeeper.Table{
 			{
 				Table:      table.FivenetCalendarSubs,
 				ForeignKey: table.FivenetCalendarSubs.CalendarID,
 			},
 			{
 				Table:           table.FivenetCalendarEntries,
+				IDColumn:        table.FivenetCalendarEntries.ID,
+				JobColumn:       table.FivenetCalendarEntries.Job,
 				ForeignKey:      table.FivenetCalendarEntries.CalendarID,
 				DeletedAtColumn: table.FivenetCalendarEntries.DeletedAt,
-				MinDays:         60,
 
-				DependentTables: []*housekeeper.Table{
+				MinDays: 60,
+
+				DependantTables: []*housekeeper.Table{
 					{
 						Table:      table.FivenetCalendarRsvp,
 						ForeignKey: table.FivenetCalendarRsvp.EntryID,

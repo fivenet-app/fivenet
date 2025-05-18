@@ -25,7 +25,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 
@@ -52,18 +51,16 @@ type WorkflowParams struct {
 	TP     *tracesdk.TracerProvider
 	Notif  notifi.INotifi
 	Ui     userinfo.UserInfoRetriever
-
-	Cron croner.IRegistry
 }
 
 type WorkflowResult struct {
 	fx.Out
 
 	Workflow     *Workflow
-	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
-func NewWorkflow(p WorkflowParams) WorkflowResult {
+func NewWorkflow(p WorkflowParams) (WorkflowResult, error) {
 	w := &Workflow{
 		logger: p.Logger.Named("docstore.workflow"),
 		tracer: p.TP.Tracer("docstore_workflow"),
@@ -74,28 +71,28 @@ func NewWorkflow(p WorkflowParams) WorkflowResult {
 		access: newAccess(p.DB),
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
-			Name:     "docstore.workflow_run",
-			Schedule: "* * * * *", // Every minute
-		}); err != nil {
-			return err
-		}
-
-		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
-			Name:     "docstore.workflow_users_run",
-			Schedule: "* * * * *", // Every minute
-		}); err != nil {
-			return err
-		}
-
-		return nil
-	}))
-
 	return WorkflowResult{
 		Workflow:     w,
-		CronHandlers: w,
+		CronRegister: w,
+	}, nil
+}
+
+func (w *Workflow) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "docstore.workflow_run",
+		Schedule: "* * * * *", // Every minute
+	}); err != nil {
+		return err
 	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "docstore.workflow_users_run",
+		Schedule: "* * * * *", // Every minute
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
@@ -110,7 +107,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 			data.Data = &anypb.Any{}
 		}
 
-		if err := anypb.UnmarshalTo(data.Data, dest, proto.UnmarshalOptions{}); err != nil {
+		if err := data.Data.UnmarshalTo(dest); err != nil {
 			w.logger.Warn("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
 
@@ -136,7 +133,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 			data.Data = &anypb.Any{}
 		}
 
-		if err := anypb.UnmarshalTo(data.Data, dest, proto.UnmarshalOptions{}); err != nil {
+		if err := data.Data.UnmarshalTo(dest); err != nil {
 			w.logger.Error("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
 

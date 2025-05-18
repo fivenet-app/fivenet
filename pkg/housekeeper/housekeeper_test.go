@@ -33,14 +33,14 @@ func TestSoftDeleteJobData(t *testing.T) {
 		IDColumn:        jet.IntegerColumn("id"),
 		MinDays:         30,
 
-		DependentTables: []*Table{
+		DependantTables: []*Table{
 			{
 				Table:           jet.NewTable("", "calendar_entries", ""),
 				DeletedAtColumn: jet.TimestampColumn("deleted_at"),
 				ForeignKey:      jet.IntegerColumn("calendar_id"),
 				IDColumn:        jet.IntegerColumn("id"),
 
-				DependentTables: []*Table{
+				DependantTables: []*Table{
 					{
 						Table:      jet.NewTable("", "calendar_rsvp", ""),
 						ForeignKey: jet.IntegerColumn("entry_id"),
@@ -64,7 +64,7 @@ func TestSoftDeleteJobData(t *testing.T) {
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 10))
 
-	// Mock queries for dependent table `calendar_entries`
+	// Mock queries for dependant table `calendar_entries`
 	mock.ExpectExec("UPDATE calendar_entries SET deleted_at = CURRENT_TIMESTAMP WHERE \\(\\(job = \\?\\) AND deleted_at IS NULL\\) AND \\(calendar_id IN \\(\\( SELECT id AS \"id\" FROM calendars WHERE .+\\(job = \\?\\) AND deleted_at IS NULL.+ LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
@@ -106,14 +106,14 @@ func TestHardDelete(t *testing.T) {
 		IDColumn:        jet.IntegerColumn("id"),
 		MinDays:         30,
 
-		DependentTables: []*Table{
+		DependantTables: []*Table{
 			{
 				Table:           jet.NewTable("", "calendar_entries", ""),
 				DeletedAtColumn: jet.TimestampColumn("deleted_at"),
 				ForeignKey:      jet.IntegerColumn("calendar_id"),
 				IDColumn:        jet.IntegerColumn("id"),
 
-				DependentTables: []*Table{
+				DependantTables: []*Table{
 					{
 						Table:      jet.NewTable("", "calendar_rsvp", ""),
 						ForeignKey: jet.IntegerColumn("entry_id"),
@@ -127,7 +127,7 @@ func TestHardDelete(t *testing.T) {
 		},
 	}
 
-	// Mock queries for dependent table `calendar_rsvp`
+	// Mock queries for dependant table `calendar_rsvp`
 	mock.ExpectExec("DELETE FROM calendar_rsvp WHERE \\(entry_id IN \\(\\( SELECT id AS \"id\" FROM calendar_entries WHERE \\( deleted_at IS NOT NULL AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) \\)\\)\\) LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
@@ -137,7 +137,7 @@ func TestHardDelete(t *testing.T) {
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 10))
 
-	// Mock queries for dependent table `calendar_subscriptions`
+	// Mock queries for dependant table `calendar_subscriptions`
 	mock.ExpectExec("DELETE FROM calendar_subscriptions WHERE \\(calendar_id IN \\(\\( SELECT id AS \"id\" FROM calendars WHERE \\( deleted_at IS NOT NULL AND \\(deleted_at <= \\(CURRENT_DATE - INTERVAL 30 DAY\\)\\) \\) \\)\\)\\) LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))

@@ -46,15 +46,13 @@ type Params struct {
 	DB     *sql.DB
 	JS     *events.JSWrapper
 	Config *config.Config
-
-	Cron croner.IRegistry
 }
 
 type JobsResult struct {
 	fx.Out
 
 	Jobs         *Jobs
-	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
 func NewJobs(p Params) (JobsResult, error) {
@@ -87,13 +85,6 @@ func NewJobs(p Params) (JobsResult, error) {
 			return err
 		}
 
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "mstlystcdata.jobs",
-			Schedule: "* * * * *", // Every minute
-		}); err != nil {
-			return err
-		}
-
 		return nil
 	}))
 
@@ -105,8 +96,19 @@ func NewJobs(p Params) (JobsResult, error) {
 
 	return JobsResult{
 		Jobs:         c,
-		CronHandlers: c,
+		CronRegister: c,
 	}, nil
+}
+
+func (c *Jobs) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "mstlystcdata.jobs",
+		Schedule: "* * * * *", // Every minute
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {

@@ -14,25 +14,21 @@ import (
 )
 
 func init() {
-	housekeeper.AddTable(
-		&housekeeper.Table{
-			Table:           table.FivenetInternetPages,
-			IDColumn:        table.FivenetInternetPages.ID,
-			DeletedAtColumn: table.FivenetInternetPages.DeletedAt,
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetInternetPages,
+		IDColumn:        table.FivenetInternetPages.ID,
+		DeletedAtColumn: table.FivenetInternetPages.DeletedAt,
 
-			MinDays: 60,
-		},
-	)
+		MinDays: 60,
+	})
 
-	housekeeper.AddTable(
-		&housekeeper.Table{
-			Table:           table.FivenetInternetAds,
-			IDColumn:        table.FivenetInternetAds.ID,
-			DeletedAtColumn: table.FivenetInternetAds.DeletedAt,
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetInternetAds,
+		IDColumn:        table.FivenetInternetAds.ID,
+		DeletedAtColumn: table.FivenetInternetAds.DeletedAt,
 
-			MinDays: 60,
-		},
-	)
+		MinDays: 60,
+	})
 }
 
 type Server struct {

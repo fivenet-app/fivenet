@@ -33,7 +33,7 @@ type DocumentCategoriesResult struct {
 	fx.Out
 
 	DocumentCategories *DocumentCategories
-	CronHandlers       croner.CronHandlersRegister `group:"cronjobhandlers"`
+	CronRegister       croner.CronRegister `group:"cronjobregister"`
 }
 
 func NewDocumentCategories(p Params) DocumentCategoriesResult {
@@ -65,13 +65,6 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 			return err
 		}
 
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "mstlystcdata.doccategories",
-			Schedule: "* * * * *", // Every minute
-		}); err != nil {
-			return err
-		}
-
 		return nil
 	}))
 
@@ -83,8 +76,19 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 
 	return DocumentCategoriesResult{
 		DocumentCategories: c,
-		CronHandlers:       c,
+		CronRegister:       c,
 	}
+}
+
+func (c *DocumentCategories) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "mstlystcdata.doccategories",
+		Schedule: "* * * * *", // Every minute
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *DocumentCategories) RegisterCronjobHandlers(h *croner.Handlers) error {

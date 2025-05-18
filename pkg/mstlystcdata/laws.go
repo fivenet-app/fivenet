@@ -33,7 +33,7 @@ type LawsResult struct {
 	fx.Out
 
 	Laws         *Laws
-	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
 func NewLaws(p Params) LawsResult {
@@ -54,13 +54,6 @@ func NewLaws(p Params) LawsResult {
 			return err
 		}
 
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "mstlystcdata.laws",
-			Schedule: "* * * * *", // Every minute
-		}); err != nil {
-			return err
-		}
-
 		return nil
 	}))
 
@@ -72,8 +65,19 @@ func NewLaws(p Params) LawsResult {
 
 	return LawsResult{
 		Laws:         c,
-		CronHandlers: c,
+		CronRegister: c,
 	}
+}
+
+func (c *Laws) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "mstlystcdata.laws",
+		Schedule: "* * * * *", // Every minute
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Laws) RegisterCronjobHandlers(h *croner.Handlers) error {

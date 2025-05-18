@@ -33,8 +33,8 @@ func NewEnricher(jobs *Jobs, appCfg appconfig.IConfig, cfg *config.Config) *Enri
 	}
 }
 
-// Jobs
-
+// EnrichJobInfo enriches the job information of an object that
+// implements the `common.IJobInfo` interface.
 func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 	job, ok := e.jobs.Get(usr.GetJob())
 	if ok {

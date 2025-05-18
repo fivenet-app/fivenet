@@ -61,15 +61,13 @@ type HousekeeperParams struct {
 	DB      *sql.DB
 	Manager *Manager
 	Config  *config.Config
-
-	Cron croner.IRegistry
 }
 
 type HousekeeperResult struct {
 	fx.Out
 
 	Housekeeper  *Housekeeper
-	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
 func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
@@ -99,54 +97,6 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 			s.ConvertPhoneJobMsgToDispatch()
 		}()
 
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.dispatch_assignment_expiration",
-			Schedule: "*/2 * * * * * *", // Every 2 seconds
-			Timeout:  durationpb.New(3 * time.Second),
-		}); err != nil {
-			return err
-		}
-
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.dispatch_deduplication",
-			Schedule: "*/2 * * * * * *", // Every 2 seconds
-			Timeout:  durationpb.New(5 * time.Second),
-		}); err != nil {
-			return err
-		}
-
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.cleanup_units",
-			Schedule: "*/5 * * * * * *", // Every 5 seconds
-			Timeout:  durationpb.New(10 * time.Second),
-		}); err != nil {
-			return err
-		}
-
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
-			Schedule: "*/15 * * * * * *", // Every 15 seconds
-			Timeout:  durationpb.New(20 * time.Second),
-		}); err != nil {
-			return err
-		}
-
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.load_new_dispatches",
-			Schedule: "*/2 * * * * * *", // Every 2 seconds
-			Timeout:  durationpb.New(5 * time.Second),
-		}); err != nil {
-			return err
-		}
-
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.delete_old_dispatches",
-			Schedule: "*/2 * * * *", // Every 2 minutes
-			Timeout:  durationpb.New(15 * time.Second),
-		}); err != nil {
-			return err
-		}
-
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
@@ -169,8 +119,60 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 
 	return HousekeeperResult{
 		Housekeeper:  s,
-		CronHandlers: s,
+		CronRegister: s,
 	}
+}
+
+func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.manager_housekeeper.dispatch_assignment_expiration",
+		Schedule: "*/2 * * * * * *", // Every 2 seconds
+		Timeout:  durationpb.New(3 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.manager_housekeeper.dispatch_deduplication",
+		Schedule: "*/2 * * * * * *", // Every 2 seconds
+		Timeout:  durationpb.New(5 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.manager_housekeeper.cleanup_units",
+		Schedule: "*/5 * * * * * *", // Every 5 seconds
+		Timeout:  durationpb.New(10 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
+		Schedule: "*/15 * * * * * *", // Every 15 seconds
+		Timeout:  durationpb.New(20 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.manager_housekeeper.load_new_dispatches",
+		Schedule: "*/2 * * * * * *", // Every 2 seconds
+		Timeout:  durationpb.New(5 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.manager_housekeeper.delete_old_dispatches",
+		Schedule: "*/2 * * * *", // Every 2 minutes
+		Timeout:  durationpb.New(15 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {

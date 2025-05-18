@@ -32,7 +32,7 @@ type HousekeeperResult struct {
 	fx.Out
 
 	Housekeeper  *Housekeeper
-	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
 func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
@@ -44,8 +44,22 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 
 	return HousekeeperResult{
 		Housekeeper:  s,
-		CronHandlers: s,
+		CronRegister: s,
 	}
+}
+
+func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "jobs.timeclock_cleanup",
+		Schedule: "@hourly",
+	}); err != nil {
+		return err
+	}
+
+	registry.UnregisterCronjob(ctx, "jobs.timeclock_handling")
+	registry.UnregisterCronjob(ctx, "jobs-timeclock-handling")
+
+	return nil
 }
 
 func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {

@@ -373,7 +373,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 	}
 
 	if err := msg.InProgress(); err != nil {
-		s.logger.Error("failed to send in progress for cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
+		s.logger.Error("failed to send in progress for cron completion msg", zap.String("subject", msg.Subject()), zap.String("job_name", event.Name), zap.Error(err))
 	}
 
 	if err := s.registry.store.ComputeUpdate(s.ctxCancel, event.Name, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
@@ -397,12 +397,12 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 
 		return existing, true, nil
 	}); err != nil {
-		s.logger.Error("failed to update cronjob state after completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
+		s.logger.Error("failed to update cronjob state after completion msg", zap.String("subject", msg.Subject()), zap.String("job_name", event.Name), zap.Error(err))
 		return
 	}
 
 	if err := msg.Ack(); err != nil {
-		s.logger.Error("failed to ack cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
+		s.logger.Error("failed to ack cron completion msg", zap.String("subject", msg.Subject()), zap.String("job_name", event.Name), zap.Error(err))
 		return
 	}
 }
