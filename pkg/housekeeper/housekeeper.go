@@ -251,6 +251,20 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 		if idx == -1 || len(keys) <= idx+1 {
 			h.logger.Debug("next table key not found in keys, starting from the beginning again")
 			lastTblKey = keys[0]
+
+			// All job's data should be deleted now, delete the job props
+			stmt := tJobProps.
+				DELETE().
+				WHERE(tJobProps.Job.EQ(jet.String(jobName))).
+				LIMIT(1)
+
+			if !h.dryRun {
+				if _, err := stmt.ExecContext(ctx, h.db); err != nil {
+					return fmt.Errorf("failed to delete job %s. %w", jobName, err)
+				}
+			} else {
+				h.logger.Debug("dry run delete job props statement", zap.String("query", stmt.DebugSql()))
+			}
 		} else {
 			lastTblKey = keys[idx+1]
 		}
