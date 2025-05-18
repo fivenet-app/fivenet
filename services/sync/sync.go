@@ -47,7 +47,7 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	s := &Server{
-		logger: p.Logger,
+		logger: p.Logger.Named("sync"),
 		db:     p.DB,
 		js:     p.JS,
 		auth:   p.Auth,

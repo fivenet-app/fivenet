@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
@@ -33,7 +34,7 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 		}
 
 		if resp.AffectedRows, err = s.handleJobsData(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle jobs data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Licenses:
@@ -42,7 +43,7 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 		}
 
 		if resp.AffectedRows, err = s.handleLicensesData(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle licenses data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Users:
@@ -51,7 +52,7 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 		}
 
 		if resp.AffectedRows, err = s.handleUsersData(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle users data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_Vehicles:
@@ -60,12 +61,12 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 		}
 
 		if resp.AffectedRows, err = s.handleVehiclesData(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle vehicles data. %w", err)
 		}
 
 	case *pbsync.SendDataRequest_UserLocations:
 		if resp.AffectedRows, err = s.handleUserLocations(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle user locations data. %w", err)
 		}
 	}
 
@@ -100,17 +101,17 @@ func (s *Server) handleJobsData(ctx context.Context, data *pbsync.SendDataReques
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to execute job insert statement. %w", err)
 	}
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to retrieve rows affected for job insert. %w", err)
 	}
 
 	for _, job := range data.Jobs.Jobs {
 		rowCounts, err := s.handleJobGrades(ctx, job)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to handle job grades for job %s. %w", job.Name, err)
 		}
 
 		rowsAffected += rowCounts
@@ -143,7 +144,7 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 	currentGrades := []*users.JobGrade{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return 0, err
+			return 0, fmt.Errorf("failed to query current job grades for job %s. %w", job.Name, err)
 		}
 	}
 
@@ -218,11 +219,11 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to execute job grades insert statement. %w", err)
 		}
 		rowsAffected, err := res.RowsAffected()
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to retrieve rows affected for job grades insert. %w", err)
 		}
 
 		rowsAffectedCount += rowsAffected
@@ -248,11 +249,11 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 
 			res, err := stmt.ExecContext(ctx, s.db)
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to execute job grades update statement for grade %d. %w", grade.Grade, err)
 			}
 			rowsAffected, err := res.RowsAffected()
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to retrieve rows affected for job grades update. %w", err)
 			}
 
 			rowsAffectedCount += rowsAffected
@@ -271,11 +272,11 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 
 			res, err := stmt.ExecContext(ctx, s.db)
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to execute job grades delete statement for grade %d. %w", grade.Grade, err)
 			}
 			rowsAffected, err := res.RowsAffected()
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to retrieve rows affected for job grades delete. %w", err)
 			}
 
 			rowsAffectedCount += rowsAffected
@@ -308,15 +309,13 @@ func (s *Server) handleLicensesData(ctx context.Context, data *pbsync.SendDataRe
 		)
 	}
 
-	// ??? Shoud we delete licenses, that are not part of the list, from the database?
-
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to execute licenses insert statement. %w", err)
 	}
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to retrieve rows affected for licenses insert. %w", err)
 	}
 
 	return rowsAffected, nil
@@ -348,7 +347,7 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 	var existing []int32
 	if err := checkStmt.QueryContext(ctx, s.db, &existing); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return 0, err
+			return 0, fmt.Errorf("failed to query existing users. %w", err)
 		}
 	}
 
@@ -420,17 +419,17 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 
 			res, err := insertStmt.ExecContext(ctx, s.db)
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to execute user insert statement. %w", err)
 			}
 			rows, err := res.RowsAffected()
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to retrieve rows affected for user insert. %w", err)
 			}
 
 			rowsAffected += rows
 
 			if err := s.handleUserLicenses(ctx, *user.Identifier, user.Licenses); err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to handle user licenses for user %s. %w", *user.Identifier, err)
 			}
 		}
 	}
@@ -472,11 +471,11 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 
 			res, err := stmt.ExecContext(ctx, s.db)
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to execute user update statement. %w", err)
 			}
 			rows, err := res.RowsAffected()
 			if err != nil {
-				return 0, err
+				return 0, fmt.Errorf("failed to retrieve rows affected for user update. %w", err)
 			}
 
 			rowsAffected += rows
@@ -490,14 +489,14 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 	tUserLicenses := tables.UserLicenses()
 
 	if len(licenses) == 0 {
-		// User has no licenses? Delete all from the database.
+		// User has no licenses? Delete all user licenses from the database.
 		stmt := tUserLicenses.
 			DELETE().
 			WHERE(tUserLicenses.Owner.EQ(jet.String(identifier))).
 			LIMIT(25)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
 		}
 
 		return nil
@@ -513,7 +512,7 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentLicenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query current user licenses for identifier %s. %w", identifier, err)
 		}
 	}
 
@@ -543,7 +542,7 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 		}
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			return fmt.Errorf("failed to execute user licenses insert statement. %w", err)
 		}
 	}
 
@@ -562,7 +561,7 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 			LIMIT(25)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			return fmt.Errorf("failed to execute user licenses delete statement. %w", err)
 		}
 	}
 
@@ -643,11 +642,11 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to execute vehicles insert statement. %w", err)
 	}
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to retrieve rows affected for vehicles insert. %w", err)
 	}
 
 	return rowsAffected, nil
@@ -663,7 +662,7 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 			WHERE(tLocations.Identifier.IS_NOT_NULL().OR(tLocations.Identifier.IS_NULL()))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to execute user locations clear all statement. %w", err)
 		}
 	}
 
@@ -708,12 +707,12 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 	if atLeastOne {
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to execute user locations insert statement. %w", err)
 		}
 
 		rowsAffected, err = res.RowsAffected()
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to retrieve rows affected for user locations insert. %w", err)
 		}
 	}
 
@@ -731,12 +730,11 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 
 		res, err := delStmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to execute user locations delete statement. %w", err)
 		}
-
 		rows, err := res.RowsAffected()
 		if err != nil {
-			return 0, err
+			return 0, fmt.Errorf("failed to retrieve rows affected for user locations delete. %w", err)
 		}
 		rowsAffected += rows
 	}
@@ -767,12 +765,11 @@ func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) 
 
 		res, err := delStmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to execute users delete statement. %w", err)
 		}
-
 		rows, err := res.RowsAffected()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve rows affected for users delete. %w", err)
 		}
 
 		rowsAffected += rows
@@ -792,12 +789,11 @@ func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) 
 
 		res, err := delStmt.ExecContext(ctx, s.db)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to execute vehicles delete statement. %w", err)
 		}
-
 		rows, err := res.RowsAffected()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve rows affected for vehicles delete. %w", err)
 		}
 
 		rowsAffected += rows

@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 )
 
 func (s *Server) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest) (*pbsync.AddActivityResponse, error) {
@@ -23,46 +24,46 @@ func (s *Server) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest
 	switch d := req.Activity.(type) {
 	case *pbsync.AddActivityRequest_UserOauth2:
 		if err := s.handleUserOauth2(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle UserOauth2 activity. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_Dispatch:
 		if _, err := s.centrum.CreateDispatch(ctx, d.Dispatch); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create dispatch. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_UserActivity:
 		if err := users.CreateUserActivities(ctx, s.db, d.UserActivity); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create user activities. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_UserProps:
 		if err := s.handleUserProps(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_JobsUserActivity:
 		if err := jobs.CreateJobsUserActivities(ctx, s.db, d.JobsUserActivity); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_JobsUserProps:
 		if err := s.handleJobsUserProps(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle JobsUserProps activity. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_JobsTimeclock:
 		if err := s.handleTimeclockEntry(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle JobsTimeclock activity. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_UserUpdate:
 		if s.esxCompat {
-			return nil, ErrSendDataDisabled
+			return nil, fmt.Errorf("ESX compatibility mode is enabled, cannot send data. %w", ErrSendDataDisabled)
 		}
 
 		if err := s.handleUserUpdate(ctx, d); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to handle UserUpdate activity. %w", err)
 		}
 	}
 
@@ -74,11 +75,10 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 		return in.Name == data.UserOauth2.ProviderName
 	})
 	if idx == -1 {
-		return fmt.Errorf("invalid provider name")
+		return fmt.Errorf("invalid provider name. %s", data.UserOauth2.ProviderName)
 	}
 
 	provider := s.cfg.OAuth2.Providers[idx]
-
 	tAccounts := table.FivenetAccounts
 
 	// Struct to hold the query result
@@ -98,12 +98,14 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 
 	if err := stmt.QueryContext(ctx, s.db, &account); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query account by identifier. %w", err)
 		}
 	}
 
 	if account.ID == 0 {
-		return fmt.Errorf("no fivenet account found for identifier")
+		s.logger.Warn("no fivenet account found for identifier in user oauth2 sync connect", zap.String("provider", data.UserOauth2.ProviderName),
+			zap.String("identifier", data.UserOauth2.Identifier), zap.String("external_id", data.UserOauth2.ExternalId))
+		return nil
 	}
 
 	tOAuth2Accs := table.FivenetOauth2Accounts
@@ -126,7 +128,7 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 
 	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {
-			return nil
+			return fmt.Errorf("failed to insert OAuth2 account. %w", err)
 		}
 	}
 
@@ -137,14 +139,14 @@ func (s *Server) handleUserProps(ctx context.Context, data *pbsync.AddActivityRe
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to begin transaction. %w", err)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
 	props, err := users.GetUserProps(ctx, tx, data.UserProps.Props.UserId, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get user props. %w", err)
 	}
 
 	reason := ""
@@ -154,18 +156,18 @@ func (s *Server) handleUserProps(ctx context.Context, data *pbsync.AddActivityRe
 
 	activities, err := props.HandleChanges(ctx, tx, data.UserProps.Props, &data.UserProps.Props.UserId, reason)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to handle user props changes. %w", err)
 	}
 
 	if data.UserProps.Reason != nil && *data.UserProps.Reason != "" {
 		if err := users.CreateUserActivities(ctx, tx, activities...); err != nil {
-			return err
+			return fmt.Errorf("failed to create user activities. %w", err)
 		}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return err
+		return fmt.Errorf("failed to commit transaction. %w", err)
 	}
 
 	return nil
@@ -175,14 +177,14 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *pbsync.AddActivi
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to begin transaction. %w", err)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
 	props, err := jobs.GetJobsUserProps(ctx, tx, data.JobsUserProps.Props.Job, data.JobsUserProps.Props.UserId, nil)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to get jobs user props. %w", err)
 	}
 
 	reason := ""
@@ -192,18 +194,18 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *pbsync.AddActivi
 
 	activities, err := props.HandleChanges(ctx, tx, data.JobsUserProps.Props, data.JobsUserProps.Props.Job, &data.JobsUserProps.Props.UserId, reason)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to handle jobs user props changes. %w", err)
 	}
 
 	if data.JobsUserProps.Reason != nil && *data.JobsUserProps.Reason != "" {
 		if err := jobs.CreateJobsUserActivities(ctx, tx, activities...); err != nil {
-			return err
+			return fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return err
+		return fmt.Errorf("failed to commit transaction. %w", err)
 	}
 
 	return nil
@@ -231,7 +233,7 @@ func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActiv
 		dest := &jobs.TimeclockEntry{}
 		if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
-				return err
+				return fmt.Errorf("failed to query timeclock entry. %w", err)
 			}
 		}
 
@@ -254,7 +256,7 @@ func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActiv
 
 		if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
 			if !dbutils.IsDuplicateError(err) {
-				return err
+				return fmt.Errorf("failed to insert timeclock entry. %w", err)
 			}
 		}
 	} else {
@@ -270,7 +272,7 @@ func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActiv
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			return fmt.Errorf("failed to update timeclock entry. %w", err)
 		}
 	}
 
@@ -291,7 +293,7 @@ func (s *Server) handleUserUpdate(ctx context.Context, data *pbsync.AddActivityR
 	user := &users.User{}
 	if err := selectStmt.QueryContext(ctx, s.db, user); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query user by ID. %w", err)
 		}
 
 		return nil
@@ -321,7 +323,7 @@ func (s *Server) handleUserUpdate(ctx context.Context, data *pbsync.AddActivityR
 			WHERE(tUser.ID.EQ(jet.Int32(data.UserUpdate.UserId)))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			return fmt.Errorf("failed to update user. %w", err)
 		}
 	}
 

@@ -3,6 +3,7 @@ package sync
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
@@ -45,7 +46,7 @@ func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.A
 func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccountRequest) (*pbsync.RegisterAccountResponse, error) {
 	acc, accToken, err := s.getAccount(ctx, req.Identifier)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to retrieve account. %w", err)
 	}
 
 	if acc == nil || acc.Id > 0 {
@@ -61,7 +62,7 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 	// Generate new token
 	regToken, err := utils.GenerateRandomNumberString(6)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to generate registration token. %w", err)
 	}
 
 	var stmt jet.Statement
@@ -99,7 +100,7 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 	}
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute statement. %w", err)
 	}
 
 	resp := &pbsync.RegisterAccountResponse{
@@ -119,7 +120,7 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 func (s *Server) TransferAccount(ctx context.Context, req *pbsync.TransferAccountRequest) (*pbsync.TransferAccountResponse, error) {
 	acc, _, err := s.getAccount(ctx, req.OldLicense)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to retrieve account with old license. %w", err)
 	}
 
 	resp := &pbsync.TransferAccountResponse{}
@@ -136,7 +137,7 @@ func (s *Server) TransferAccount(ctx context.Context, req *pbsync.TransferAccoun
 		LIMIT(1)
 
 	if _, err := delStmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to delete new account. %w", err)
 	}
 
 	// Update old account's license
@@ -152,7 +153,7 @@ func (s *Server) TransferAccount(ctx context.Context, req *pbsync.TransferAccoun
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to update old account's license. %w", err)
 	}
 
 	return resp, nil

@@ -17,12 +17,12 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create consumer: %w", err)
 	}
 
 	cons, err := c.Messages()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to fetch messages consumer. %w", err)
 	}
 	defer cons.Stop()
 
@@ -60,7 +60,7 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 			case TopicUser:
 				dest := &pbsync.StreamResponse{}
 				if err := protojson.Unmarshal(msg.Data(), dest); err != nil {
-					return err
+					return fmt.Errorf("failed to unmarshal dbsync event data: %w", err)
 				}
 
 				if dest.UserId == 0 {
@@ -68,7 +68,7 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 				}
 
 				if err := srv.Send(dest); err != nil {
-					return err
+					return fmt.Errorf("failed to send stream response: %w", err)
 				}
 			}
 		}
