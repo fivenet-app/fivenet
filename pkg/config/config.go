@@ -10,6 +10,8 @@ type Config struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
 	Mode     string `default:"debug" yaml:"mode"`
 
+	LogLevels map[string][]string `yaml:"logLevels"`
+
 	Tracing Tracing `yaml:"tracing"`
 
 	HTTP        HTTP       `yaml:"http"`

@@ -7,6 +7,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
@@ -16,40 +17,54 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
-var AgentModule = fx.Module("cron",
+var ExecutorModule = fx.Module("executor",
 	fx.Provide(
-		NewAgent,
+		NewExecutor,
 	),
 )
 
-type AgentParams struct {
+type ExecutorParams struct {
 	fx.In
 
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
 	JS     *events.JSWrapper
+	Cfg    *config.Config
 
 	Handlers *Handlers
 }
 
-type Agent struct {
+// Executor is responsible for executing cron jobs.
+// Previously, it was called Agent.
+type Executor struct {
 	logger *zap.Logger
-	ctx    context.Context
-	js     *events.JSWrapper
+
+	nodeName string
+
+	ctx context.Context
+	js  *events.JSWrapper
 
 	jsCons jetstream.ConsumeContext
 
 	handlers *Handlers
 }
 
-func NewAgent(p AgentParams) (*Agent, error) {
+func NewExecutor(p ExecutorParams) (*Executor, error) {
+	nodeName, err := getNodeName(p.Cfg.HTTP.AdminListen)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get node name. %w", err)
+	}
+
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	ag := &Agent{
-		logger: p.Logger.Named("cron_agent"),
-		ctx:    ctxCancel,
-		js:     p.JS,
+	ag := &Executor{
+		logger: p.Logger.Named("cron.executor"),
+
+		nodeName: nodeName,
+
+		ctx: ctxCancel,
+		js:  p.JS,
 
 		handlers: p.Handlers,
 	}
@@ -71,7 +86,7 @@ func NewAgent(p AgentParams) (*Agent, error) {
 	return ag, nil
 }
 
-func (ag *Agent) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+func (ag *Executor) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
 	consumer, err := ag.js.CreateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
@@ -96,7 +111,7 @@ func (ag *Agent) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 	return nil
 }
 
-func (ag *Agent) watchForEvents(msg jetstream.Msg) {
+func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 	job := &cron.CronjobSchedulerEvent{}
 	if err := protojson.Unmarshal(msg.Data(), job); err != nil {
 		ag.logger.Error("failed to unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
@@ -125,25 +140,20 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		}
 	}
 
-	var timeout *time.Duration
+	var timeout time.Duration
 	if job.Cronjob.Timeout != nil {
-		ct := job.Cronjob.Timeout.AsDuration()
-		timeout = &ct
+		timeout = job.Cronjob.Timeout.AsDuration()
+	} else {
+		timeout = DefaultCronjobTimeout
 	}
 
-	ag.logger.Debug("running cron job", zap.String("name", job.Cronjob.Name), zap.Durationp("timeout", timeout))
+	ag.logger.Debug("running cron job", zap.String("name", job.Cronjob.Name), zap.Duration("timeout", timeout))
 
 	var elapsed time.Duration
 
 	var err error
 	func() {
-		var ctx context.Context
-		var cancel context.CancelFunc
-		if timeout != nil {
-			ctx, cancel = context.WithTimeout(ag.ctx, *timeout)
-		} else {
-			ctx, cancel = context.WithCancel(ag.ctx)
-		}
+		ctx, cancel := context.WithTimeout(ag.ctx, timeout)
 		defer cancel()
 
 		start := time.Now()
@@ -167,12 +177,14 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 	job.Cronjob.Data.UpdatedAt = now
 
 	if _, err := ag.js.PublishProto(ag.ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic), &cron.CronjobCompletedEvent{
-		Name:    job.Cronjob.Name,
-		Success: err == nil,
-		Elapsed: durationpb.New(elapsed),
-		EndDate: now,
+		Name:      job.Cronjob.Name,
+		Success:   err == nil,
+		Cancelled: err != nil && err == context.Canceled,
+		Elapsed:   durationpb.New(elapsed),
+		EndDate:   now,
 
-		Data: job.Cronjob.Data,
+		NodeName: ag.nodeName,
+		Data:     job.Cronjob.Data,
 	}); err != nil {
 		ag.logger.Error("failed to publish cron schedule completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		return

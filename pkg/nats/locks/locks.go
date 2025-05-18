@@ -18,7 +18,7 @@ import (
 const (
 	LockTimeout = 750 * time.Millisecond
 
-	keyPrefix = "LOCK."
+	KeyPrefix = "LOCK."
 )
 
 type Locks struct {
@@ -64,7 +64,7 @@ func New(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge ti
 // failure or system crash.
 func (l *Locks) Lock(ctx context.Context, key string) error {
 	l.logger.Debug("lock", zap.String("key", key))
-	lockKey := keyPrefix + key
+	lockKey := KeyPrefix + key
 
 loop:
 	for {
@@ -144,7 +144,7 @@ func (l *Locks) IsLocked(ctx context.Context, key string) (bool, error) {
 // out. Unlock cleans up any resources allocated during Lock.
 func (l *Locks) Unlock(ctx context.Context, key string) error {
 	l.logger.Debug("unlock", zap.String("key", key))
-	lockKey := keyPrefix + key
+	lockKey := KeyPrefix + key
 	return l.kv.Delete(ctx, lockKey, jetstream.LastRevision(l.getRev(lockKey)))
 }
 

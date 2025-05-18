@@ -25,6 +25,10 @@ var Module = fx.Module("db_housekeeper",
 )
 
 const DefaultDeleteLimit = 500
+const (
+	lastTableMapIndex = "last_key"
+	lastJobName       = "last_job_name"
+)
 
 type Housekeeper struct {
 	logger *zap.Logger
@@ -44,16 +48,17 @@ type Params struct {
 	DB     *sql.DB
 	TP     *tracesdk.TracerProvider
 
-	Cron         croner.ICron
-	CronHandlers *croner.Handlers
+	Cron croner.IRegistry
 }
 
-const (
-	lastTableMapIndex = "last_key"
-	lastJobName       = "last_job_name"
-)
+type Result struct {
+	fx.Out
 
-func New(p Params) *Housekeeper {
+	Housekeeper  *Housekeeper
+	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+}
+
+func New(p Params) Result {
 	h := &Housekeeper{
 		logger: p.Logger.Named("housekeeper"),
 		tracer: p.TP.Tracer("housekeeper"),
@@ -72,15 +77,45 @@ func New(p Params) *Housekeeper {
 			return err
 		}
 
-		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
-			Name:     "housekeeper.job_delete",
-			Schedule: "@everysecond", // Every second
-		}); err != nil {
+		if err := p.Cron.UnregisterCronjob(ctx, "housekeeper.job_delete"); err != nil {
 			return err
 		}
 
 		return nil
 	}))
+
+	return Result{
+		Housekeeper:  h,
+		CronHandlers: h,
+	}
+}
+
+func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add("housekeeper.run", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := s.tracer.Start(ctx, "housekeeper.run")
+		defer span.End()
+
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
+		}
+		if data.Data == nil {
+			data.Data = &anypb.Any{}
+		}
+
+		if err := data.Data.UnmarshalTo(dest); err != nil {
+			s.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
+		}
+
+		if err := s.runHousekeeper(ctx, dest); err != nil {
+			return fmt.Errorf("error during docstore workflow handling. %w", err)
+		}
+
+		if err := data.Data.MarshalFrom(dest); err != nil {
+			return fmt.Errorf("failed to marshal updated housekeeper cron data. %w", err)
+		}
+
+		return nil
+	})
 
 	/* p.CronHandlers.Add("housekeeper.job_delete", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := h.tracer.Start(ctx, "housekeeper.job_delete")
@@ -162,33 +197,7 @@ func New(p Params) *Housekeeper {
 		return nil
 	}) */
 
-	p.CronHandlers.Add("housekeeper.run", func(ctx context.Context, data *cron.CronjobData) error {
-		ctx, span := h.tracer.Start(ctx, "housekeeper.run")
-		defer span.End()
-
-		dest := &cron.GenericCronData{
-			Attributes: map[string]string{},
-		}
-		if data.Data == nil {
-			data.Data = &anypb.Any{}
-		}
-
-		if err := data.Data.UnmarshalTo(dest); err != nil {
-			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
-		}
-
-		if err := h.runHousekeeper(ctx, dest); err != nil {
-			return fmt.Errorf("error during docstore workflow handling. %w", err)
-		}
-
-		if err := data.Data.MarshalFrom(dest); err != nil {
-			return fmt.Errorf("failed to marshal updated housekeeper cron data. %w", err)
-		}
-
-		return nil
-	})
-
-	return h
+	return nil
 }
 
 func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCronData) error {

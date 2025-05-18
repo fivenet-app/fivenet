@@ -37,6 +37,25 @@ function copyLinkToClipboard(text: string): void {
     });
 }
 
+const uiState = useUIState();
+const { windowFocus } = storeToRefs(uiState);
+
+// Auto refresh the list every minute (if window is active)
+const { remaining, start, pause, resume } = useCountdown(60, {
+    onComplete() {
+        refresh();
+    },
+});
+start();
+
+watchDebounced(windowFocus, () => {
+    if (!windowFocus) {
+        pause();
+    } else {
+        resume();
+    }
+});
+
 const columns = [
     {
         key: 'name',
@@ -169,5 +188,9 @@ const expand = ref({
         </template>
     </UTable>
 
-    <Pagination :loading="loading" :refresh="refresh" hide-text hide-buttons />
+    <Pagination :loading="loading" :refresh="refresh" hide-text hide-buttons>
+        <p>
+            {{ $t('common.refresh_in_x', { d: remaining, unit: $t('common.time_ago.second', remaining) }) }}
+        </p>
+    </Pagination>
 </template>

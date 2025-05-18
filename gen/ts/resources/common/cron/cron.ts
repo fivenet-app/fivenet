@@ -132,6 +132,12 @@ export interface CronjobCompletedEvent {
      */
     success: boolean;
     /**
+     * Cronjob execution was cancelled
+     *
+     * @generated from protobuf field: bool cancelled = 7;
+     */
+    cancelled: boolean;
+    /**
      * Cronjob end time
      *
      * @generated from protobuf field: resources.timestamp.Timestamp endDate = 3;
@@ -149,6 +155,12 @@ export interface CronjobCompletedEvent {
      * @generated from protobuf field: optional resources.common.cron.CronjobData data = 5;
      */
     data?: CronjobData;
+    /**
+     * Name of the node where the cronjob was executed
+     *
+     * @generated from protobuf field: string node_name = 6;
+     */
+    nodeName: string;
 }
 /**
  * @generated from protobuf message resources.common.cron.GenericCronData
@@ -450,15 +462,19 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
         super("resources.common.cron.CronjobCompletedEvent", [
             { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "cancelled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "endDate", kind: "message", T: () => Timestamp },
             { no: 4, name: "elapsed", kind: "message", T: () => Duration },
-            { no: 5, name: "data", kind: "message", T: () => CronjobData }
+            { no: 5, name: "data", kind: "message", T: () => CronjobData },
+            { no: 6, name: "node_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CronjobCompletedEvent>): CronjobCompletedEvent {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.name = "";
         message.success = false;
+        message.cancelled = false;
+        message.nodeName = "";
         if (value !== undefined)
             reflectionMergePartial<CronjobCompletedEvent>(this, message, value);
         return message;
@@ -474,6 +490,9 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
                 case /* bool success */ 2:
                     message.success = reader.bool();
                     break;
+                case /* bool cancelled */ 7:
+                    message.cancelled = reader.bool();
+                    break;
                 case /* resources.timestamp.Timestamp endDate */ 3:
                     message.endDate = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.endDate);
                     break;
@@ -482,6 +501,9 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
                     break;
                 case /* optional resources.common.cron.CronjobData data */ 5:
                     message.data = CronjobData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
+                case /* string node_name */ 6:
+                    message.nodeName = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -510,6 +532,12 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
         /* optional resources.common.cron.CronjobData data = 5; */
         if (message.data)
             CronjobData.internalBinaryWrite(message.data, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string node_name = 6; */
+        if (message.nodeName !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.nodeName);
+        /* bool cancelled = 7; */
+        if (message.cancelled !== false)
+            writer.tag(7, WireType.Varint).bool(message.cancelled);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

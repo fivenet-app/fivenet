@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -38,6 +39,8 @@ type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
 	Keys(ctx context.Context, prefix string) []string
 	List() []U
 	Range(ctx context.Context, fn func(key string, value U) bool)
+	Count() int
+	WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], error)
 }
 
 type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
@@ -47,7 +50,8 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	l      *locks.Locks
 	cl     bool
 
-	prefix string
+	prefix      string
+	ignoredKeys []string
 
 	mu   *xsync.Map[string, *sync.Mutex]
 	data *xsync.Map[string, U]
@@ -401,100 +405,8 @@ func (s *Store[T, U]) List() []U {
 	return list
 }
 
-func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
-	watcher, err := s.kv.WatchAll(ctx)
-	if err != nil {
-		return err
-	}
-
-	var ready atomic.Bool
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	go func() {
-		updateCh := watcher.Updates()
-		for {
-			select {
-			case <-ctx.Done():
-				if err := watcher.Stop(); err != nil {
-					if !errors.Is(err, nats.ErrConsumerNotFound) {
-						s.logger.Error("error while stopping watcher", zap.Error(err))
-					}
-				} else {
-					s.logger.Debug("store watcher done")
-				}
-				return
-
-			case entry := <-updateCh:
-				// After all initial keys have been received, a nil entry is returned
-				if entry == nil {
-					if !ready.Swap(true) {
-						wg.Done()
-					}
-					continue
-				}
-
-				// Ignore keys that don't have the specified prefix (if any is set)
-				if s.prefix != "" && !strings.HasPrefix(entry.Key(), s.prefix) {
-					continue
-				}
-
-				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()), zap.Uint64("delta", entry.Delta()), zap.Uint8("op", uint8(entry.Operation())))
-
-				switch entry.Operation() {
-				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
-					// Handle delete and purge operations
-					func() {
-						mu, _ := s.mu.LoadOrCompute(entry.Key(), mutexCompute)
-						mu.Lock()
-						defer mu.Unlock()
-
-						if s.onDelete != nil {
-							item, _ := s.data.LoadAndDelete(entry.Key())
-							if err := s.onDelete(s, entry, item); err != nil {
-								s.logger.Error("failed to run on delete logic in store watcher", zap.String("key", entry.Key()), zap.Error(err))
-							}
-						}
-
-						s.mu.Delete(entry.Key())
-					}()
-
-				case jetstream.KeyValuePut:
-					// Handle put operations
-					func() {
-						mu, _ := s.mu.LoadOrCompute(entry.Key(), mutexCompute)
-						mu.Lock()
-						defer mu.Unlock()
-
-						if _, err := s.update(entry); err != nil {
-							s.logger.Error("failed to run on update logic in store watcher", zap.String("key", entry.Key()), zap.Error(err))
-						}
-					}()
-
-				default:
-					s.logger.Error("unknown key operation received", zap.String("key", entry.Key()), zap.Uint8("op", uint8(entry.Operation())))
-				}
-			}
-		}
-	}()
-
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-
-			case <-time.After(15 * time.Second):
-				metricDataMapCount.WithLabelValues(s.bucket).Set(float64(s.data.Size()))
-			}
-		}
-	}()
-
-	if wait {
-		wg.Wait()
-	}
-
-	return nil
+func (s *Store[T, U]) Count() int {
+	return s.data.Size()
 }
 
 func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bool) {
@@ -527,4 +439,161 @@ func (s *Store[T, U]) Clear(ctx context.Context) error {
 
 func (s *Store[T, U]) ReadOnly() StoreRO[T, U] {
 	return s
+}
+
+func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], error) {
+	watcher, err := s.kv.Watch(ctx, s.prefix+">", jetstream.UpdatesOnly())
+	if err != nil {
+		return nil, fmt.Errorf("failed to start kv watch in store. %w", err)
+	}
+
+	ch := make(chan *KeyValueEntry[T, U], 100)
+
+	go func() {
+		updateCh := watcher.Updates()
+		for {
+			select {
+			case <-ctx.Done():
+				if err := watcher.Stop(); err != nil {
+					if !errors.Is(err, nats.ErrConsumerNotFound) {
+						s.logger.Error("error while stopping watcher", zap.Error(err))
+					}
+				} else {
+					s.logger.Debug("store watcher done")
+				}
+				return
+
+			case entry := <-updateCh:
+				ch <- &KeyValueEntry[T, U]{
+					key:       entry.Key(),
+					operation: entry.Operation(),
+					value:     entry.Value(),
+				}
+			}
+		}
+	}()
+
+	return ch, nil
+}
+
+func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
+	watcher, err := s.kv.Watch(ctx, s.prefix+">")
+	if err != nil {
+		return fmt.Errorf("failed to start kv. %w", err)
+	}
+
+	var ready atomic.Bool
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		updateCh := watcher.Updates()
+		for {
+			select {
+			case <-ctx.Done():
+				if err := watcher.Stop(); err != nil {
+					if !errors.Is(err, nats.ErrConsumerNotFound) {
+						s.logger.Error("error while stopping watcher", zap.Error(err))
+					}
+				} else {
+					s.logger.Debug("store watcher done")
+				}
+				return
+
+			case entry := <-updateCh:
+				// After all initial keys have been received, a nil entry is returned
+				if entry == nil {
+					if !ready.Swap(true) {
+						wg.Done()
+					}
+					continue
+				}
+
+				key := entry.Key()
+				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+					continue
+				}
+
+				s.logger.Debug("key update received via watcher", zap.String("key", key), zap.Uint64("delta", entry.Delta()), zap.Uint8("op", uint8(entry.Operation())))
+
+				switch entry.Operation() {
+				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
+					// Handle delete and purge operations
+					func() {
+						mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+						mu.Lock()
+						defer mu.Unlock()
+
+						if s.onDelete != nil {
+							item, _ := s.data.LoadAndDelete(key)
+							if err := s.onDelete(s, entry, item); err != nil {
+								s.logger.Error("failed to run on delete logic in store watcher", zap.String("key", key), zap.Error(err))
+							}
+						}
+
+						s.mu.Delete(key)
+					}()
+
+				case jetstream.KeyValuePut:
+					// Handle put operations
+					func() {
+						mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+						mu.Lock()
+						defer mu.Unlock()
+
+						if _, err := s.update(entry); err != nil {
+							s.logger.Error("failed to run on update logic in store watcher", zap.String("key", key), zap.Error(err))
+						}
+					}()
+
+				default:
+					s.logger.Warn("unknown key operation received", zap.String("key", key), zap.Uint8("op", uint8(entry.Operation())))
+				}
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-time.After(15 * time.Second):
+				metricDataMapCount.WithLabelValues(s.bucket).Set(float64(s.data.Size()))
+			}
+		}
+	}()
+
+	if wait {
+		wg.Wait()
+	}
+
+	return nil
+}
+
+type KeyValueEntry[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
+	key       string
+	operation jetstream.KeyValueOp
+	value     []byte
+}
+
+// Key is the name of the key that was retrieved.
+func (k *KeyValueEntry[T, U]) Key() string {
+	return k.key
+}
+
+// Operation is the operation that was performed on the key.
+func (k *KeyValueEntry[T, U]) Operation() jetstream.KeyValueOp {
+	return k.operation
+}
+
+// Value is the value of the key that was retrieved.
+func (k *KeyValueEntry[T, U]) Value() (U, error) {
+	data := U(new(T))
+	if err := proto.Unmarshal(k.value, data); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal store watcher update: %w", err)
+	}
+
+	return data, nil
 }

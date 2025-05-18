@@ -47,11 +47,17 @@ type Params struct {
 	JS     *events.JSWrapper
 	Config *config.Config
 
-	Cron         croner.ICron
-	CronHandlers *croner.Handlers
+	Cron croner.IRegistry
 }
 
-func NewJobs(p Params) (*Jobs, error) {
+type JobsResult struct {
+	fx.Out
+
+	Jobs         *Jobs
+	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+}
+
+func NewJobs(p Params) (JobsResult, error) {
 	c := &Jobs{
 		logger: p.Logger,
 		db:     p.DB,
@@ -81,24 +87,6 @@ func NewJobs(p Params) (*Jobs, error) {
 			return err
 		}
 
-		p.CronHandlers.Add("mstlystcdata.jobs", func(ctx context.Context, data *cron.CronjobData) error {
-			ctx, span := c.tracer.Start(ctx, "mstlystcdata-jobs")
-			defer span.End()
-
-			if err := c.loadJobs(ctx); err != nil {
-				c.logger.Error("failed to refresh jobs cache", zap.Error(err))
-				return err
-			}
-
-			for _, fn := range c.updateCallbacks {
-				if err := fn(ctx); err != nil {
-					return err
-				}
-			}
-
-			return nil
-		})
-
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "mstlystcdata.jobs",
 			Schedule: "* * * * *", // Every minute
@@ -115,7 +103,32 @@ func NewJobs(p Params) (*Jobs, error) {
 		return nil
 	}))
 
-	return c, nil
+	return JobsResult{
+		Jobs:         c,
+		CronHandlers: c,
+	}, nil
+}
+
+func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add("mstlystcdata.jobs", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := c.tracer.Start(ctx, "mstlystcdata-jobs")
+		defer span.End()
+
+		if err := c.loadJobs(ctx); err != nil {
+			c.logger.Error("failed to refresh jobs cache", zap.Error(err))
+			return err
+		}
+
+		for _, fn := range c.updateCallbacks {
+			if err := fn(ctx); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	return nil
 }
 
 func (c *Jobs) loadJobs(ctx context.Context) error {

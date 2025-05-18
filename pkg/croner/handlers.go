@@ -12,11 +12,20 @@ import (
 
 type CronjobHandlerFn func(ctx context.Context, data *cron.CronjobData) error
 
-var HandlerModule = fx.Module("cron_handlers",
+var HandlersModule = fx.Module("cron_handlers",
 	fx.Provide(
 		NewHandlers,
 	),
 )
+
+type HandlersParams struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger   *zap.Logger
+	Handlers []CronHandlersRegister `group:"cronjobhandlers"`
+}
 
 type Handlers struct {
 	logger *zap.Logger
@@ -25,13 +34,25 @@ type Handlers struct {
 	handlers map[string]CronjobHandlerFn
 }
 
-func NewHandlers(logger *zap.Logger) *Handlers {
-	return &Handlers{
-		logger: logger.Named("cron_handlers"),
+func NewHandlers(p HandlersParams) (*Handlers, error) {
+	h := &Handlers{
+		logger: p.Logger.Named("cron.handlers"),
 
 		mu:       sync.Mutex{},
 		handlers: map[string]CronjobHandlerFn{},
 	}
+
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		for _, reg := range p.Handlers {
+			if err := reg.RegisterCronjobHandlers(h); err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}))
+
+	return h, nil
 }
 
 func (h *Handlers) Add(name string, fn CronjobHandlerFn) {
@@ -64,4 +85,18 @@ func (h *Handlers) getCronjobHandler(name string) CronjobHandlerFn {
 	name = events.SanitizeKey(name)
 
 	return h.handlers[name]
+}
+
+type CronHandlersRegister interface {
+	RegisterCronjobHandlers(h *Handlers) error
+}
+
+// AsCronjobHandlers annotates the given constructor to state that
+// it provides a GRPC service to the "cronjobhandlers" group.
+func AsCronjobHandlers(f any) any {
+	return fx.Annotate(
+		f,
+		fx.As(new(CronHandlersRegister)),
+		fx.ResultTags(`group:"cronjobhandlers"`),
+	)
 }

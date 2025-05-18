@@ -62,11 +62,17 @@ type HousekeeperParams struct {
 	Manager *Manager
 	Config  *config.Config
 
-	Cron         croner.ICron
-	CronHandlers *croner.Handlers
+	Cron croner.IRegistry
 }
 
-func NewHousekeeper(p HousekeeperParams) *Housekeeper {
+type HousekeeperResult struct {
+	fx.Out
+
+	Housekeeper  *Housekeeper
+	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+}
+
+func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Housekeeper{
@@ -93,16 +99,14 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			s.ConvertPhoneJobMsgToDispatch()
 		}()
 
-		p.CronHandlers.Add("centrum.manager_housekeeper.dispatch_assignment_expiration", s.runHandleDispatchAssignmentExpiration)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.dispatch_assignment_expiration",
-			Schedule: "@everysecond", // Every second
+			Schedule: "*/2 * * * * * *", // Every 2 seconds
 			Timeout:  durationpb.New(3 * time.Second),
 		}); err != nil {
 			return err
 		}
 
-		p.CronHandlers.Add("centrum.manager_housekeeper.dispatch_deduplication", s.runDispatchDeduplication)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.dispatch_deduplication",
 			Schedule: "*/2 * * * * * *", // Every 2 seconds
@@ -111,7 +115,6 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			return err
 		}
 
-		p.CronHandlers.Add("centrum.manager_housekeeper.cleanup_units", s.runCleanupUnits)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.cleanup_units",
 			Schedule: "*/5 * * * * * *", // Every 5 seconds
@@ -120,7 +123,6 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			return err
 		}
 
-		p.CronHandlers.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
 			Schedule: "*/15 * * * * * *", // Every 15 seconds
@@ -129,20 +131,18 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			return err
 		}
 
-		p.CronHandlers.Add("centrum.manager_housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.delete_old_dispatches",
-			Schedule: "*/2 * * * *", // Every 2 minutes
-			Timeout:  durationpb.New(15 * time.Second),
+			Name:     "centrum.manager_housekeeper.load_new_dispatches",
+			Schedule: "*/2 * * * * * *", // Every 2 seconds
+			Timeout:  durationpb.New(5 * time.Second),
 		}); err != nil {
 			return err
 		}
 
-		p.CronHandlers.Add("centrum.manager_housekeeper.load_new_dispatches", s.loadNewDispatches)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.load_new_dispatches",
-			Schedule: "@everysecond", // Every second
-			Timeout:  durationpb.New(5 * time.Second),
+			Name:     "centrum.manager_housekeeper.delete_old_dispatches",
+			Schedule: "*/2 * * * *", // Every 2 minutes
+			Timeout:  durationpb.New(15 * time.Second),
 		}); err != nil {
 			return err
 		}
@@ -167,7 +167,21 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		return nil
 	}))
 
-	return s
+	return HousekeeperResult{
+		Housekeeper:  s,
+		CronHandlers: s,
+	}
+}
+
+func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add("centrum.manager_housekeeper.dispatch_assignment_expiration", s.runHandleDispatchAssignmentExpiration)
+	h.Add("centrum.manager_housekeeper.dispatch_deduplication", s.runDispatchDeduplication)
+	h.Add("centrum.manager_housekeeper.cleanup_units", s.runCleanupUnits)
+	h.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
+	h.Add("centrum.manager_housekeeper.load_new_dispatches", s.loadNewDispatches)
+	h.Add("centrum.manager_housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
+
+	return nil
 }
 
 func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobData) error {

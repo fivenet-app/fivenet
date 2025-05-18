@@ -9,6 +9,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
+	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -28,7 +29,14 @@ type Laws struct {
 	lawBooks *xsync.Map[uint64, *laws.LawBook]
 }
 
-func NewLaws(p Params) *Laws {
+type LawsResult struct {
+	fx.Out
+
+	Laws         *Laws
+	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+}
+
+func NewLaws(p Params) LawsResult {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	c := &Laws{
@@ -46,18 +54,6 @@ func NewLaws(p Params) *Laws {
 			return err
 		}
 
-		p.CronHandlers.Add("mstlystcdata.laws", func(ctx context.Context, data *cron.CronjobData) error {
-			ctx, span := c.tracer.Start(ctx, "mstlystcdata-laws")
-			defer span.End()
-
-			if err := c.loadLaws(ctx, 0); err != nil {
-				c.logger.Error("failed to refresh laws in cache", zap.Error(err))
-				return err
-			}
-
-			return nil
-		})
-
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "mstlystcdata.laws",
 			Schedule: "* * * * *", // Every minute
@@ -74,7 +70,26 @@ func NewLaws(p Params) *Laws {
 		return nil
 	}))
 
-	return c
+	return LawsResult{
+		Laws:         c,
+		CronHandlers: c,
+	}
+}
+
+func (c *Laws) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add("mstlystcdata.laws", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := c.tracer.Start(ctx, "mstlystcdata-laws")
+		defer span.End()
+
+		if err := c.loadLaws(ctx, 0); err != nil {
+			c.logger.Error("failed to refresh laws in cache", zap.Error(err))
+			return err
+		}
+
+		return nil
+	})
+
+	return nil
 }
 
 func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {

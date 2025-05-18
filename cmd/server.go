@@ -17,7 +17,7 @@ func (c *ServerCmd) Run(ctx *Context) error {
 	fxOpts = append(fxOpts, fx.Invoke(func(server.HTTPServer) {}))
 
 	if c.ModuleCronAgent {
-		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Agent) {}))
+		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Executor) {}))
 		fxOpts = append(fxOpts, fx.Invoke(func(*pbjobs.Housekeeper) {}))
 		fxOpts = append(fxOpts, fx.Invoke(func(*housekeeper.Housekeeper) {}))
 	}

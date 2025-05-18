@@ -52,7 +52,7 @@ type Params struct {
 	DB     *sql.DB
 	Config *config.Config
 
-	Cron croner.ICron
+	Cron croner.IRegistry
 }
 
 func New(p Params) IAuditer {

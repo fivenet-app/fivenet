@@ -2055,9 +2055,11 @@ To generate Cronjob schedule expressions, you can also use web tools like https:
 | ----- | ---- | ----- | ----------- |
 | `name` | [string](#string) |  | Cronjob name |
 | `success` | [bool](#bool) |  | Cronjob execution success status |
+| `cancelled` | [bool](#bool) |  | Cronjob execution was cancelled |
 | `endDate` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | Cronjob end time |
 | `elapsed` | [google.protobuf.Duration](#google-protobuf-Duration) |  | Cronjob execution time/elapsed time |
 | `data` | [CronjobData](#resources-common-cron-CronjobData) | optional | Cronjob data (can be empty if not touched by the Cronjob handler) |
+| `node_name` | [string](#string) |  | Name of the node where the cronjob was executed |
 
 
 

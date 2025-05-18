@@ -66,6 +66,8 @@ message CronjobCompletedEvent {
   string name = 1;
   // Cronjob execution success status
   bool success = 2;
+  // Cronjob execution was cancelled
+  bool cancelled = 7;
   // Cronjob end time
   resources.timestamp.Timestamp endDate = 3;
   // Cronjob execution time/elapsed time
@@ -73,6 +75,9 @@ message CronjobCompletedEvent {
 
   // Cronjob data (can be empty if not touched by the Cronjob handler)
   optional CronjobData data = 5;
+
+  // Name of the node where the cronjob was executed
+  string node_name = 6;
 }
 
 message GenericCronData {

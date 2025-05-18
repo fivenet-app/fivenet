@@ -23,20 +23,33 @@ type Housekeeper struct {
 type HousekeeperParams struct {
 	fx.In
 
-	Logger       *zap.Logger
-	DB           *sql.DB
-	TP           *tracesdk.TracerProvider
-	CronHandlers *croner.Handlers
+	Logger *zap.Logger
+	DB     *sql.DB
+	TP     *tracesdk.TracerProvider
 }
 
-func NewHousekeeper(p HousekeeperParams) *Housekeeper {
+type HousekeeperResult struct {
+	fx.Out
+
+	Housekeeper  *Housekeeper
+	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+}
+
+func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 	s := &Housekeeper{
 		logger: p.Logger.Named("jobs_housekeeper"),
 		tracer: p.TP.Tracer("jobs_housekeeper"),
 		db:     p.DB,
 	}
 
-	p.CronHandlers.Add("jobs.timeclock_cleanup", func(ctx context.Context, data *cron.CronjobData) error {
+	return HousekeeperResult{
+		Housekeeper:  s,
+		CronHandlers: s,
+	}
+}
+
+func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add("jobs.timeclock_cleanup", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := s.tracer.Start(ctx, "jobs.timeclock_cleanup")
 		defer span.End()
 
@@ -48,7 +61,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		return nil
 	})
 
-	return s
+	return nil
 }
 
 func (s *Housekeeper) timeclockCleanup(ctx context.Context) error {

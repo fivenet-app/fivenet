@@ -353,14 +353,14 @@ defineShortcuts({
     <UDashboardPanel grow>
         <UDashboardNavbar :title="$t('common.livemap')">
             <template #right>
-                <DisponentsInfo v-if="canStream && !!settings?.enabled" :hide-join="true" />
+                <DisponentsInfo v-if="canStream && settings?.enabled" :hide-join="true" />
             </template>
         </UDashboardNavbar>
 
         <UMain>
             <div class="relative z-0 size-full">
                 <LivemapBase>
-                    <template v-if="canStream" #default>
+                    <template v-if="canStream && settings?.enabled" #default>
                         <DispatchesLayer
                             :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
                         />

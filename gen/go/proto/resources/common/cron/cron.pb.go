@@ -353,12 +353,16 @@ type CronjobCompletedEvent struct {
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Cronjob execution success status
 	Success bool `protobuf:"varint,2,opt,name=success,proto3" json:"success,omitempty"`
+	// Cronjob execution was cancelled
+	Cancelled bool `protobuf:"varint,7,opt,name=cancelled,proto3" json:"cancelled,omitempty"`
 	// Cronjob end time
 	EndDate *timestamp.Timestamp `protobuf:"bytes,3,opt,name=endDate,proto3" json:"endDate,omitempty"`
 	// Cronjob execution time/elapsed time
 	Elapsed *durationpb.Duration `protobuf:"bytes,4,opt,name=elapsed,proto3" json:"elapsed,omitempty"`
 	// Cronjob data (can be empty if not touched by the Cronjob handler)
-	Data          *CronjobData `protobuf:"bytes,5,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	Data *CronjobData `protobuf:"bytes,5,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	// Name of the node where the cronjob was executed
+	NodeName      string `protobuf:"bytes,6,opt,name=node_name,json=nodeName,proto3" json:"node_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -407,6 +411,13 @@ func (x *CronjobCompletedEvent) GetSuccess() bool {
 	return false
 }
 
+func (x *CronjobCompletedEvent) GetCancelled() bool {
+	if x != nil {
+		return x.Cancelled
+	}
+	return false
+}
+
 func (x *CronjobCompletedEvent) GetEndDate() *timestamp.Timestamp {
 	if x != nil {
 		return x.EndDate
@@ -426,6 +437,13 @@ func (x *CronjobCompletedEvent) GetData() *CronjobData {
 		return x.Data
 	}
 	return nil
+}
+
+func (x *CronjobCompletedEvent) GetNodeName() string {
+	if x != nil {
+		return x.NodeName
+	}
+	return ""
 }
 
 type GenericCronData struct {
@@ -503,13 +521,15 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"Q\n" +
 	"\x15CronjobSchedulerEvent\x128\n" +
-	"\acronjob\x18\x01 \x01(\v2\x1e.resources.common.cron.CronjobR\acronjob\"\xfa\x01\n" +
+	"\acronjob\x18\x01 \x01(\v2\x1e.resources.common.cron.CronjobR\acronjob\"\xb5\x02\n" +
 	"\x15CronjobCompletedEvent\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
-	"\asuccess\x18\x02 \x01(\bR\asuccess\x128\n" +
+	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x1c\n" +
+	"\tcancelled\x18\a \x01(\bR\tcancelled\x128\n" +
 	"\aendDate\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aendDate\x123\n" +
 	"\aelapsed\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\aelapsed\x12;\n" +
-	"\x04data\x18\x05 \x01(\v2\".resources.common.cron.CronjobDataH\x00R\x04data\x88\x01\x01B\a\n" +
+	"\x04data\x18\x05 \x01(\v2\".resources.common.cron.CronjobDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
+	"\tnode_name\x18\x06 \x01(\tR\bnodeNameB\a\n" +
 	"\x05_data\"\xa8\x01\n" +
 	"\x0fGenericCronData\x12V\n" +
 	"\n" +

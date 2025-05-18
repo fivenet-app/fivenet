@@ -56,7 +56,6 @@ INSERT INTO `fivenet_permissions` (`id`, `created_at`, `category`, `name`, `guar
 (24,'2023-03-31 15:35:22.498','DocStoreService','GetDocumentAccess','docstoreservice-getdocumentaccess'),
 (26,'2023-03-31 15:35:22.554','DocStoreService','ListUserDocuments','docstoreservice-listuserdocuments'),
 (27,'2023-03-31 15:35:22.577','DocStoreService','ListTemplates','docstoreservice-listtemplates'),
-(28,'2023-03-31 15:35:22.606','DocStoreService','PostComment','docstoreservice-postcomment'),
 (29,'2023-03-31 15:35:22.626','DocStoreService','SetDocumentAccess','docstoreservice-setdocumentaccess'),
 (30,'2023-03-31 15:35:22.651','DocStoreService','UpdateDocument','docstoreservice-updatedocument'),
 (31,'2023-03-31 15:35:22.680','LivemapperService','Stream','livemapperservice-stream'),

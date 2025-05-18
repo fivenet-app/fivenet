@@ -780,6 +780,8 @@ func (m *CronjobCompletedEvent) validate(all bool) error {
 
 	// no validation rules for Success
 
+	// no validation rules for Cancelled
+
 	if all {
 		switch v := interface{}(m.GetEndDate()).(type) {
 		case interface{ ValidateAll() error }:
@@ -837,6 +839,8 @@ func (m *CronjobCompletedEvent) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for NodeName
 
 	if m.Data != nil {
 

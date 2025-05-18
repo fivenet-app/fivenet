@@ -7,10 +7,10 @@ import (
 )
 
 type NoopCron struct {
-	ICron
+	IRegistry
 }
 
-func NewNoopCron() ICron {
+func NewNoopRegistry() IRegistry {
 	return &NoopCron{}
 }
 

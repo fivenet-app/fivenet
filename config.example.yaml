@@ -4,6 +4,8 @@
 logLevel: "DEBUG"
 # debug or release
 mode: "release"
+logLevels:
+  nats.store: "INFO"
 tracing:
   enabled: false
   # Can be "stdout", "otlptracegrpc", "otlptracehttp"

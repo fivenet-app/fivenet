@@ -35,7 +35,7 @@ type Server struct {
 	cfg       *config.Config
 	appCfg    appconfig.IConfig
 	js        *events.JSWrapper
-	cronState *croner.State
+	cronState *croner.Registry
 }
 
 type Params struct {
@@ -51,7 +51,7 @@ type Params struct {
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	JS        *events.JSWrapper
-	CronState *croner.State
+	CronState *croner.Registry
 }
 
 func NewServer(p Params) *Server {

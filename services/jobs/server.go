@@ -45,7 +45,7 @@ type Params struct {
 	Audit             audit.IAuditer
 	Config            *config.Config
 
-	Cron croner.ICron
+	Cron croner.IRegistry
 }
 
 func NewServer(p Params) *Server {
@@ -64,7 +64,7 @@ func NewServer(p Params) *Server {
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "jobs.timeclock_cleanup",
-			Schedule: "@daily", // Daily
+			Schedule: "@hourly",
 		}); err != nil {
 			return err
 		}

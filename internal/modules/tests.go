@@ -32,8 +32,8 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 		fx.Provide(postals.NewForTests),
 		auth.AuthModule,
 		auth.PermsModule,
-		croner.HandlerModule,
-		fx.Provide(croner.NewNoopCron),
+		croner.HandlersModule,
+		fx.Provide(croner.NewNoopRegistry),
 		fx.Provide(storage.NewNoop),
 
 		fx.Provide(

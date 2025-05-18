@@ -19,7 +19,7 @@ func (c *DiscordCmd) Run(ctx *Context) error {
 	)
 
 	if c.ModuleCronAgent {
-		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Agent) {}))
+		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Executor) {}))
 	}
 
 	app := fx.New(fxOpts...)

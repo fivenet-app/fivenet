@@ -634,7 +634,8 @@
         "monthly_view": "Monthly View",
         "effective_permissions": "Effective Permissions",
         "check_all": "Check All",
-        "uncheck_all": "Uncheck All"
+        "uncheck_all": "Uncheck All",
+        "refresh_in_x": "Refresh in {d} {unit}"
     },
     "components": {
         "partials": {

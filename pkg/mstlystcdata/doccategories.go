@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
@@ -28,7 +29,14 @@ type DocumentCategories struct {
 	store.StoreRO[documents.Category, *documents.Category]
 }
 
-func NewDocumentCategories(p Params) *DocumentCategories {
+type DocumentCategoriesResult struct {
+	fx.Out
+
+	DocumentCategories *DocumentCategories
+	CronHandlers       croner.CronHandlersRegister `group:"cronjobhandlers"`
+}
+
+func NewDocumentCategories(p Params) DocumentCategoriesResult {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	c := &DocumentCategories{
@@ -57,18 +65,6 @@ func NewDocumentCategories(p Params) *DocumentCategories {
 			return err
 		}
 
-		p.CronHandlers.Add("mstlystcdata.doccategories", func(ctx context.Context, data *cron.CronjobData) error {
-			ctx, span := c.tracer.Start(ctx, "mstlystcdata-doccategories")
-			defer span.End()
-
-			if err := c.loadCategories(ctx); err != nil {
-				c.logger.Error("failed to refresh doccategories cache", zap.Error(err))
-				return err
-			}
-
-			return nil
-		})
-
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "mstlystcdata.doccategories",
 			Schedule: "* * * * *", // Every minute
@@ -85,7 +81,26 @@ func NewDocumentCategories(p Params) *DocumentCategories {
 		return nil
 	}))
 
-	return c
+	return DocumentCategoriesResult{
+		DocumentCategories: c,
+		CronHandlers:       c,
+	}
+}
+
+func (c *DocumentCategories) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add("mstlystcdata.doccategories", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := c.tracer.Start(ctx, "mstlystcdata-doccategories")
+		defer span.End()
+
+		if err := c.loadCategories(ctx); err != nil {
+			c.logger.Error("failed to refresh doccategories cache", zap.Error(err))
+			return err
+		}
+
+		return nil
+	})
+
+	return nil
 }
 
 func (c *DocumentCategories) loadCategories(ctx context.Context) error {

@@ -633,7 +633,8 @@
         "monthly_view": "Monatsansicht",
         "effective_permissions": "Effektive Berechtigungen",
         "check_all": "Alle auswählen",
-        "uncheck_all": "Alle abwählen"
+        "uncheck_all": "Alle abwählen",
+        "refresh_in_x": "Aktualisierung in {d} {unit}"
     },
     "components": {
         "partials": {

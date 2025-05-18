@@ -100,11 +100,10 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		auth.TokenMgrModule,
 		centrumbot.Module,
 		config.Module,
-		croner.AgentModule,
-		croner.HandlerModule,
-		croner.Module,
+		croner.ExecutorModule,
+		croner.HandlersModule,
 		croner.SchedulerModule,
-		croner.StateModule,
+		croner.RegistryModule,
 		events.Module,
 		grpc.ServerModule,
 		htmlsanitizer.Module,
@@ -186,7 +185,8 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 	if withServer {
 		opts = append(opts,
 			fx.Invoke(func(admin.AdminServer) {}),
-			fx.Invoke(func(croner.ICron) {}),
+			fx.Invoke(func(croner.IRegistry) {}),
+			fx.Invoke(func(*croner.Scheduler) {}),
 		)
 	}
 

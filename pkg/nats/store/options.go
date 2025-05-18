@@ -45,3 +45,9 @@ func WithJetstreamKV[T any, U protoutils.ProtoMessageWithMerge[T]](kv jetstream.
 		s.kv = kv
 	}
 }
+
+func WithIgnoredKeys[T any, U protoutils.ProtoMessageWithMerge[T]](keys ...string) Option[T, U] {
+	return func(s *Store[T, U]) {
+		s.ignoredKeys = keys
+	}
+}

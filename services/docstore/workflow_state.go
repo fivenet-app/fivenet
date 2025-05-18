@@ -53,11 +53,17 @@ type WorkflowParams struct {
 	Notif  notifi.INotifi
 	Ui     userinfo.UserInfoRetriever
 
-	Cron         croner.ICron
-	CronHandlers *croner.Handlers
+	Cron croner.IRegistry
 }
 
-func NewWorkflow(p WorkflowParams) *Workflow {
+type WorkflowResult struct {
+	fx.Out
+
+	Workflow     *Workflow
+	CronHandlers croner.CronHandlersRegister `group:"cronjobhandlers"`
+}
+
+func NewWorkflow(p WorkflowParams) WorkflowResult {
 	w := &Workflow{
 		logger: p.Logger.Named("docstore.workflow"),
 		tracer: p.TP.Tracer("docstore_workflow"),
@@ -86,7 +92,14 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 		return nil
 	}))
 
-	p.CronHandlers.Add("docstore.workflow_run", func(ctx context.Context, data *cron.CronjobData) error {
+	return WorkflowResult{
+		Workflow:     w,
+		CronHandlers: w,
+	}
+}
+
+func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
+	h.Add("docstore.workflow_run", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := w.tracer.Start(ctx, "docstore.workflow_run")
 		defer span.End()
 
@@ -112,7 +125,7 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 		return nil
 	})
 
-	p.CronHandlers.Add("docstore.workflow_users_run", func(ctx context.Context, data *cron.CronjobData) error {
+	h.Add("docstore.workflow_users_run", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := w.tracer.Start(ctx, "docstore.workflow_users_run")
 		defer span.End()
 
@@ -138,7 +151,7 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 		return nil
 	})
 
-	return w
+	return nil
 }
 
 func (w *Workflow) handleDocuments(ctx context.Context, data *documents.WorkflowCronData) error {
@@ -244,7 +257,7 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 		if state.Workflow != nil && state.Workflow.AutoCloseSettings != nil && state.Workflow.AutoClose && state.Workflow.AutoCloseSettings.Message != "" {
 			// Auto close document and null "next reminder time"
 			if err := w.autoCloseDocument(ctx, state, state.Workflow.AutoCloseSettings.Message); err != nil {
-				return err
+				return fmt.Errorf("failed to auto close document. %w", err)
 			}
 		}
 
@@ -259,7 +272,7 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 
 			// Send notification when the document has a creator that is still part of the document's job
 			if err := w.sendDocumentReminder(ctx, state.DocumentId, *state.Document.CreatorId, state.Document, reminderMessage, false); err != nil {
-				return err
+				return fmt.Errorf("failed to send document reminder. %w", err)
 			}
 
 			w.updateAutoReminderTime(state)
@@ -275,7 +288,7 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 	}
 
 	if err := w.updateWorkflowState(ctx, state); err != nil {
-		return err
+		return fmt.Errorf("failed to update workflow state. %w", err)
 	}
 
 	return nil
@@ -287,7 +300,7 @@ func (w *Workflow) getAutoReminder(state *documents.WorkflowState) *documents.Re
 		count = *state.NextReminderCount
 	}
 
-	if state.Workflow == nil || state.Workflow.ReminderSettings == nil || len(state.Workflow.ReminderSettings.Reminders) < int(count) {
+	if state.Workflow == nil || state.Workflow.ReminderSettings == nil || len(state.Workflow.ReminderSettings.Reminders) <= int(count) {
 		return nil
 	}
 
@@ -308,12 +321,19 @@ func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
 		*state.NextReminderCount++
 	}
 
-	if len(state.Workflow.ReminderSettings.Reminders) > int(*state.NextReminderCount) {
-		reminder := state.Workflow.ReminderSettings.Reminders[*state.NextReminderCount]
-
-		// Now + reminder duration = next reminder time
-		state.NextReminderTime = timestamp.New(time.Now().Add(reminder.Duration.AsDuration()))
+	if len(state.Workflow.ReminderSettings.Reminders) <= int(*state.NextReminderCount) {
+		*state.NextReminderCount = 0
 	}
+
+	// No reminders? How did we end up here? Unset reminder time
+	if len(state.Workflow.ReminderSettings.Reminders) == 0 {
+		state.NextReminderTime = nil
+	}
+
+	reminder := state.Workflow.ReminderSettings.Reminders[*state.NextReminderCount]
+
+	// Now + reminder duration = next reminder time
+	state.NextReminderTime = timestamp.New(time.Now().Add(reminder.Duration.AsDuration()))
 }
 
 func (w *Workflow) updateWorkflowState(ctx context.Context, state *documents.WorkflowState) error {
