@@ -29,8 +29,8 @@ var Module = fx.Module("db_housekeeper",
 
 const DefaultDeleteLimit = 500
 const (
-	lastTableMapIndex = "last_key"
 	lastJobName       = "last_job_name"
+	lastTableMapIndex = "last_key"
 )
 
 type Housekeeper struct {
@@ -204,7 +204,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 	stmt := tJobProps.
 		SELECT(tJobProps.Job).
 		WHERE(tJobProps.DeletedAt.IS_NOT_NULL()).
-		LIMIT(1)
+		ORDER_BY(tJobProps.Job.ASC())
 
 	var jobs []string
 	if err := stmt.QueryContext(ctx, h.db, &jobs); err != nil {
@@ -229,6 +229,16 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 		return nil
 	}
 
+	jobName := jobs[0]
+	lastJob, ok := data.Attributes[lastJobName]
+	if ok {
+		if lastJob != jobName {
+			h.logger.Debug("job name changed, starting from the beginning again")
+			data.Attributes[lastJobName] = jobName
+			data.Attributes[lastTableMapIndex] = keys[0]
+		}
+	}
+
 	lastTblKey, ok := data.Attributes[lastTableMapIndex]
 	if !ok {
 		// Take first table
@@ -236,7 +246,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 	} else {
 		idx := slices.Index(keys, lastTblKey)
 		if idx == -1 || len(keys) <= idx+1 {
-			h.logger.Debug("last table key not found in keys, starting from the beginning again")
+			h.logger.Debug("next table key not found in keys, starting from the beginning again")
 			lastTblKey = keys[0]
 		} else {
 			lastTblKey = keys[idx+1]
@@ -248,15 +258,15 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 		return nil
 	}
 
-	jobName := jobs[0]
-
-	_, err := h.SoftDeleteJobData(ctx, tbl, jobName)
+	rowsAffected, err := h.SoftDeleteJobData(ctx, tbl, jobName)
 	if err != nil {
 		return fmt.Errorf("failed to soft delete rows for table %s (job: %s). %w", tbl.Table.TableName(), jobName, err)
 	}
 
-	data.Attributes[lastTableMapIndex] = lastTblKey
-	data.Attributes[lastJobName] = jobName
+	// Only update the last table key if no rows were affected (empty table)
+	if rowsAffected == 0 {
+		data.Attributes[lastTableMapIndex] = lastTblKey
+	}
 
 	return nil
 }
@@ -297,7 +307,7 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, table *Table, jobName string) (int64, error) {
 	rowsAffected := int64(0)
 
-	if table.DeletedAtColumn != nil && table.JobColumn != nil {
+	if table.DeletedAtColumn != nil && parent.JobColumn != nil {
 		// Mark rows as deleted in the current table for the given job
 		r, err := h.markRowsAsDeleted(ctx, parent, table, jobName)
 		if err != nil {
@@ -308,7 +318,7 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 
 	// Traverse dependencies
 	for _, child := range table.DependantTables {
-		if child.DeletedAtColumn == nil && child.JobColumn == nil {
+		if child.DeletedAtColumn == nil && table.JobColumn == nil {
 			continue
 		}
 

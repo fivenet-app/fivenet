@@ -7,11 +7,16 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetCentrumSettings struct {
-	Job              string  `sql:"primary_key" json:"job"`
-	Enabled          bool    `json:"enabled"`
-	Mode             *int32  `json:"mode"`
-	FallbackMode     *int32  `json:"fallback_mode"`
-	PredefinedStatus *string `json:"predefined_status"`
-	Timings          *string `json:"timings"`
+	Job              string     `sql:"primary_key" json:"job"`
+	DeletedAt        *time.Time `json:"deleted_at"`
+	Enabled          bool       `json:"enabled"`
+	Mode             *int32     `json:"mode"`
+	FallbackMode     *int32     `json:"fallback_mode"`
+	PredefinedStatus *string    `json:"predefined_status"`
+	Timings          *string    `json:"timings"`
 }

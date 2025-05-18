@@ -37,7 +37,7 @@ function copyLinkToClipboard(text: string): void {
     });
 }
 
-const uiState = useUIState();
+const uiState = useUIStateStore();
 const { windowFocus } = storeToRefs(uiState);
 
 // Auto refresh the list every minute (if window is active)

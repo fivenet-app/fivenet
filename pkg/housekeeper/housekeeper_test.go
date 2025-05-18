@@ -28,17 +28,20 @@ func TestSoftDeleteJobData(t *testing.T) {
 	// Define table and job details
 	table := &Table{
 		Table:           jet.NewTable("", "calendars", ""),
-		DeletedAtColumn: jet.TimestampColumn("deleted_at"),
-		JobColumn:       jet.StringColumn("job"),
 		IDColumn:        jet.IntegerColumn("id"),
-		MinDays:         30,
+		JobColumn:       jet.StringColumn("job"),
+		DeletedAtColumn: jet.TimestampColumn("deleted_at"),
+
+		MinDays: 30,
 
 		DependantTables: []*Table{
 			{
 				Table:           jet.NewTable("", "calendar_entries", ""),
+				IDColumn:        jet.IntegerColumn("id"),
 				DeletedAtColumn: jet.TimestampColumn("deleted_at"),
 				ForeignKey:      jet.IntegerColumn("calendar_id"),
-				IDColumn:        jet.IntegerColumn("id"),
+
+				MinDays: 30,
 
 				DependantTables: []*Table{
 					{
@@ -101,17 +104,20 @@ func TestHardDelete(t *testing.T) {
 	// Define table details
 	table := &Table{
 		Table:           jet.NewTable("", "calendars", ""),
-		DeletedAtColumn: jet.TimestampColumn("deleted_at"),
-		JobColumn:       jet.StringColumn("job"),
 		IDColumn:        jet.IntegerColumn("id"),
-		MinDays:         30,
+		JobColumn:       jet.StringColumn("job"),
+		DeletedAtColumn: jet.TimestampColumn("deleted_at"),
+
+		MinDays: 30,
 
 		DependantTables: []*Table{
 			{
 				Table:           jet.NewTable("", "calendar_entries", ""),
-				DeletedAtColumn: jet.TimestampColumn("deleted_at"),
-				ForeignKey:      jet.IntegerColumn("calendar_id"),
 				IDColumn:        jet.IntegerColumn("id"),
+				ForeignKey:      jet.IntegerColumn("calendar_id"),
+				DeletedAtColumn: jet.TimestampColumn("deleted_at"),
+
+				MinDays: 30,
 
 				DependantTables: []*Table{
 					{

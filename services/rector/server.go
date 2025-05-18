@@ -8,14 +8,26 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetJobProps,
+		JobColumn:       table.FivenetJobProps.Job,
+		DeletedAtColumn: table.FivenetJobProps.DeletedAt,
+
+		MinDays: 7,
+	})
+}
 
 type Server struct {
 	pbrector.RectorServiceServer

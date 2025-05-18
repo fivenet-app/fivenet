@@ -11,10 +11,12 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbrokers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
 	"github.com/nats-io/nats.go/jetstream"
@@ -24,6 +26,33 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCentrumSettings,
+		JobColumn:       table.FivenetCentrumSettings.Job,
+		DeletedAtColumn: table.FivenetCentrumSettings.DeletedAt,
+
+		MinDays: 30,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCentrumUnits,
+		IDColumn:        table.FivenetCentrumUnits.ID,
+		JobColumn:       table.FivenetCentrumUnits.Job,
+		DeletedAtColumn: table.FivenetCentrumUnits.DeletedAt,
+
+		MinDays: 30,
+
+		DependantTables: []*housekeeper.Table{
+			{
+				Table:      table.FivenetCentrumUnitsStatus,
+				IDColumn:   table.FivenetCentrumUnitsStatus.ID,
+				ForeignKey: table.FivenetCentrumUnitsStatus.UnitID,
+			},
+		},
+	})
+}
 
 type Server struct {
 	pbcentrum.CentrumServiceServer
