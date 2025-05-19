@@ -891,7 +891,6 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Jo
 			tJobGrades.Grade.AS("job_grade"),
 			tJobProps.Job,
 			tJobProps.UpdatedAt,
-			tJobProps.Theme,
 			tJobProps.LivemapMarkerColor,
 			tJobProps.RadioFrequency,
 			tJobProps.QuickButtons,

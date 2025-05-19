@@ -28,7 +28,6 @@ func GetJobProps(ctx context.Context, tx qrm.DB, job string) (*JobProps, error) 
 			tJobProps.Job,
 			tJobProps.UpdatedAt,
 			tJobProps.DeletedAt,
-			tJobProps.Theme,
 			tJobProps.LivemapMarkerColor,
 			tJobProps.RadioFrequency,
 			tJobProps.QuickButtons,
