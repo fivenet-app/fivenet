@@ -120,7 +120,7 @@ jobs:
 
   image-build:
     name: Image Build
-    if: ${{ github.event_name != 'pull_request' && !skipImageBuild }}
+    if: ${{ github.event_name != 'pull_request' && !inputs.skipImageBuild }}
     needs:
       - container-build
       - binary-build
