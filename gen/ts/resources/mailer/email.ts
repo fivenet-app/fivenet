@@ -67,15 +67,11 @@ export interface Email {
      */
     label?: string;
     /**
-     * @generated from protobuf field: bool internal = 12;
-     */
-    internal: boolean;
-    /**
-     * @generated from protobuf field: resources.mailer.Access access = 13;
+     * @generated from protobuf field: resources.mailer.Access access = 12;
      */
     access?: Access;
     /**
-     * @generated from protobuf field: optional resources.mailer.EmailSettings settings = 14;
+     * @generated from protobuf field: optional resources.mailer.EmailSettings settings = 13;
      */
     settings?: EmailSettings;
 }
@@ -94,9 +90,8 @@ class Email$Type extends MessageType<Email> {
             { no: 9, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } },
             { no: 10, name: "email_changed", kind: "message", T: () => Timestamp },
             { no: 11, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 12, name: "internal", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 13, name: "access", kind: "message", T: () => Access },
-            { no: 14, name: "settings", kind: "message", T: () => EmailSettings }
+            { no: 12, name: "access", kind: "message", T: () => Access },
+            { no: 13, name: "settings", kind: "message", T: () => EmailSettings }
         ]);
     }
     create(value?: PartialMessage<Email>): Email {
@@ -104,7 +99,6 @@ class Email$Type extends MessageType<Email> {
         message.id = 0;
         message.deactivated = false;
         message.email = "";
-        message.internal = false;
         if (value !== undefined)
             reflectionMergePartial<Email>(this, message, value);
         return message;
@@ -147,13 +141,10 @@ class Email$Type extends MessageType<Email> {
                 case /* optional string label */ 11:
                     message.label = reader.string();
                     break;
-                case /* bool internal */ 12:
-                    message.internal = reader.bool();
-                    break;
-                case /* resources.mailer.Access access */ 13:
+                case /* resources.mailer.Access access */ 12:
                     message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
-                case /* optional resources.mailer.EmailSettings settings */ 14:
+                case /* optional resources.mailer.EmailSettings settings */ 13:
                     message.settings = EmailSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
                 default:
@@ -201,15 +192,12 @@ class Email$Type extends MessageType<Email> {
         /* optional string label = 11; */
         if (message.label !== undefined)
             writer.tag(11, WireType.LengthDelimited).string(message.label);
-        /* bool internal = 12; */
-        if (message.internal !== false)
-            writer.tag(12, WireType.Varint).bool(message.internal);
-        /* resources.mailer.Access access = 13; */
+        /* resources.mailer.Access access = 12; */
         if (message.access)
-            Access.internalBinaryWrite(message.access, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.mailer.EmailSettings settings = 14; */
+            Access.internalBinaryWrite(message.access, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.mailer.EmailSettings settings = 13; */
         if (message.settings)
-            EmailSettings.internalBinaryWrite(message.settings, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+            EmailSettings.internalBinaryWrite(message.settings, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

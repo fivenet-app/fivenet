@@ -39,9 +39,8 @@ type Email struct {
 	EmailChanged *timestamp.Timestamp `protobuf:"bytes,10,opt,name=email_changed,json=emailChanged,proto3,oneof" json:"email_changed,omitempty"`
 	// @sanitize: method=StripTags
 	Label         *string        `protobuf:"bytes,11,opt,name=label,proto3,oneof" json:"label,omitempty"`
-	Internal      bool           `protobuf:"varint,12,opt,name=internal,proto3" json:"internal,omitempty"`
-	Access        *Access        `protobuf:"bytes,13,opt,name=access,proto3" json:"access,omitempty"`
-	Settings      *EmailSettings `protobuf:"bytes,14,opt,name=settings,proto3,oneof" json:"settings,omitempty"`
+	Access        *Access        `protobuf:"bytes,12,opt,name=access,proto3" json:"access,omitempty"`
+	Settings      *EmailSettings `protobuf:"bytes,13,opt,name=settings,proto3,oneof" json:"settings,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -153,13 +152,6 @@ func (x *Email) GetLabel() string {
 	return ""
 }
 
-func (x *Email) GetInternal() bool {
-	if x != nil {
-		return x.Internal
-	}
-	return false
-}
-
 func (x *Email) GetAccess() *Access {
 	if x != nil {
 		return x.Access
@@ -178,7 +170,7 @@ var File_resources_mailer_email_proto protoreflect.FileDescriptor
 
 const file_resources_mailer_email_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/mailer/email.proto\x12\x10resources.mailer\x1a\x1dresources/mailer/access.proto\x1a\x1fresources/mailer/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x80\x06\n" +
+	"\x1cresources/mailer/email.proto\x12\x10resources.mailer\x1a\x1dresources/mailer/access.proto\x1a\x1fresources/mailer/settings.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xe4\x05\n" +
 	"\x05Email\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
 	"\n" +
@@ -194,10 +186,9 @@ const file_resources_mailer_email_proto_rawDesc = "" +
 	"\x05email\x18\t \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PR\x05email\x12H\n" +
 	"\remail_changed\x18\n" +
 	" \x01(\v2\x1e.resources.timestamp.TimestampH\x05R\femailChanged\x88\x01\x01\x12#\n" +
-	"\x05label\x18\v \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01H\x06R\x05label\x88\x01\x01\x12\x1a\n" +
-	"\binternal\x18\f \x01(\bR\binternal\x120\n" +
-	"\x06access\x18\r \x01(\v2\x18.resources.mailer.AccessR\x06access\x12@\n" +
-	"\bsettings\x18\x0e \x01(\v2\x1f.resources.mailer.EmailSettingsH\aR\bsettings\x88\x01\x01B\r\n" +
+	"\x05label\x18\v \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01H\x06R\x05label\x88\x01\x01\x120\n" +
+	"\x06access\x18\f \x01(\v2\x18.resources.mailer.AccessR\x06access\x12@\n" +
+	"\bsettings\x18\r \x01(\v2\x1f.resources.mailer.EmailSettingsH\aR\bsettings\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x06\n" +
 	"\x04_jobB\n" +

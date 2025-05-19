@@ -472,13 +472,6 @@
     - [PageRootInfo](#resources-wiki-PageRootInfo)
     - [PageShort](#resources-wiki-PageShort)
   
-- [resources/sync/activity.proto](#resources_sync_activity-proto)
-    - [JobsUserProps](#resources-sync-JobsUserProps)
-    - [TimeclockUpdate](#resources-sync-TimeclockUpdate)
-    - [UserOAuth2Conn](#resources-sync-UserOAuth2Conn)
-    - [UserProps](#resources-sync-UserProps)
-    - [UserUpdate](#resources-sync-UserUpdate)
-  
 - [resources/sync/data.proto](#resources_sync_data-proto)
     - [DataJobs](#resources-sync-DataJobs)
     - [DataLicenses](#resources-sync-DataLicenses)
@@ -489,6 +482,13 @@
     - [DeleteUsers](#resources-sync-DeleteUsers)
     - [DeleteVehicles](#resources-sync-DeleteVehicles)
     - [UserLocation](#resources-sync-UserLocation)
+  
+- [resources/sync/activity.proto](#resources_sync_activity-proto)
+    - [JobsUserProps](#resources-sync-JobsUserProps)
+    - [TimeclockUpdate](#resources-sync-TimeclockUpdate)
+    - [UserOAuth2Conn](#resources-sync-UserOAuth2Conn)
+    - [UserProps](#resources-sync-UserProps)
+    - [UserUpdate](#resources-sync-UserUpdate)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -819,6 +819,16 @@
   
     - [RectorLawsService](#services-rector-RectorLawsService)
   
+- [services/rector/accounts.proto](#services_rector_accounts-proto)
+    - [DeleteAccountRequest](#services-rector-DeleteAccountRequest)
+    - [DeleteAccountResponse](#services-rector-DeleteAccountResponse)
+    - [ListAccountsRequest](#services-rector-ListAccountsRequest)
+    - [ListAccountsResponse](#services-rector-ListAccountsResponse)
+    - [UpdateAccountRequest](#services-rector-UpdateAccountRequest)
+    - [UpdateAccountResponse](#services-rector-UpdateAccountResponse)
+  
+    - [RectorAccountsService](#services-rector-RectorAccountsService)
+  
 - [services/rector/rector.proto](#services_rector_rector-proto)
     - [AttrsUpdate](#services-rector-AttrsUpdate)
     - [CreateRoleRequest](#services-rector-CreateRoleRequest)
@@ -853,16 +863,6 @@
     - [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse)
   
     - [RectorService](#services-rector-RectorService)
-  
-- [services/rector/accounts.proto](#services_rector_accounts-proto)
-    - [DeleteAccountRequest](#services-rector-DeleteAccountRequest)
-    - [DeleteAccountResponse](#services-rector-DeleteAccountResponse)
-    - [ListAccountsRequest](#services-rector-ListAccountsRequest)
-    - [ListAccountsResponse](#services-rector-ListAccountsResponse)
-    - [UpdateAccountRequest](#services-rector-UpdateAccountRequest)
-    - [UpdateAccountResponse](#services-rector-UpdateAccountResponse)
-  
-    - [RectorAccountsService](#services-rector-RectorAccountsService)
   
 - [services/calendar/calendar.proto](#services_calendar_calendar-proto)
     - [CreateCalendarRequest](#services-calendar-CreateCalendarRequest)
@@ -7028,7 +7028,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `email` | [string](#string) |  | @sanitize: method=StripTags |
 | `email_changed` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `label` | [string](#string) | optional | @sanitize: method=StripTags |
-| `internal` | [bool](#bool) |  |  |
 | `access` | [Access](#resources-mailer-Access) |  |  |
 | `settings` | [EmailSettings](#resources-mailer-EmailSettings) | optional |  |
 
@@ -7656,109 +7655,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_sync_activity-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/sync/activity.proto
-
-
-
-<a name="resources-sync-JobsUserProps"></a>
-
-### JobsUserProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `reason` | [string](#string) | optional |  |
-| `props` | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) |  |  |
-
-
-
-
-
-
-<a name="resources-sync-TimeclockUpdate"></a>
-
-### TimeclockUpdate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `start` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="resources-sync-UserOAuth2Conn"></a>
-
-### UserOAuth2Conn
-Connect an identifier/license to the provider with the specified external id (e.g., auto discord social connect on server join)
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `provider_name` | [string](#string) |  |  |
-| `identifier` | [string](#string) |  |  |
-| `external_id` | [string](#string) |  |  |
-| `username` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-sync-UserProps"></a>
-
-### UserProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `reason` | [string](#string) | optional |  |
-| `props` | [resources.users.UserProps](#resources-users-UserProps) |  |  |
-
-
-
-
-
-
-<a name="resources-sync-UserUpdate"></a>
-
-### UserUpdate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `group` | [string](#string) | optional |  |
-| `job` | [string](#string) | optional | Char details |
-| `job_grade` | [int32](#int32) | optional |  |
-| `firstname` | [string](#string) | optional |  |
-| `lastname` | [string](#string) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_sync_data-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -7900,6 +7796,109 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `coords` | [resources.livemap.Coords](#resources-livemap-Coords) |  |  |
 | `hidden` | [bool](#bool) |  |  |
 | `remove` | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_sync_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/sync/activity.proto
+
+
+
+<a name="resources-sync-JobsUserProps"></a>
+
+### JobsUserProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `reason` | [string](#string) | optional |  |
+| `props` | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) |  |  |
+
+
+
+
+
+
+<a name="resources-sync-TimeclockUpdate"></a>
+
+### TimeclockUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `start` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-sync-UserOAuth2Conn"></a>
+
+### UserOAuth2Conn
+Connect an identifier/license to the provider with the specified external id (e.g., auto discord social connect on server join)
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `provider_name` | [string](#string) |  |  |
+| `identifier` | [string](#string) |  |  |
+| `external_id` | [string](#string) |  |  |
+| `username` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-sync-UserProps"></a>
+
+### UserProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `reason` | [string](#string) | optional |  |
+| `props` | [resources.users.UserProps](#resources-users-UserProps) |  |  |
+
+
+
+
+
+
+<a name="resources-sync-UserUpdate"></a>
+
+### UserUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `group` | [string](#string) | optional |  |
+| `job` | [string](#string) | optional | Char details |
+| `job_grade` | [int32](#int32) | optional |  |
+| `firstname` | [string](#string) | optional |  |
+| `lastname` | [string](#string) | optional |  |
 
 
 
@@ -12432,6 +12431,125 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services_rector_accounts-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/rector/accounts.proto
+
+
+
+<a name="services-rector-DeleteAccountRequest"></a>
+
+### DeleteAccountRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-rector-DeleteAccountResponse"></a>
+
+### DeleteAccountResponse
+
+
+
+
+
+
+
+<a name="services-rector-ListAccountsRequest"></a>
+
+### ListAccountsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `license` | [string](#string) | optional | Search params |
+| `enabled` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-rector-ListAccountsResponse"></a>
+
+### ListAccountsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `accounts` | [resources.accounts.Account](#resources-accounts-Account) | repeated |  |
+
+
+
+
+
+
+<a name="services-rector-UpdateAccountRequest"></a>
+
+### UpdateAccountRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `enabled` | [bool](#bool) | optional |  |
+| `last_char` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-rector-UpdateAccountResponse"></a>
+
+### UpdateAccountResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account` | [resources.accounts.Account](#resources-accounts-Account) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-rector-RectorAccountsService"></a>
+
+### RectorAccountsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListAccounts` | [ListAccountsRequest](#services-rector-ListAccountsRequest) | [ListAccountsResponse](#services-rector-ListAccountsResponse) | @perm: Name=SuperUser |
+| `UpdateAccount` | [UpdateAccountRequest](#services-rector-UpdateAccountRequest) | [UpdateAccountResponse](#services-rector-UpdateAccountResponse) | @perm: Name=SuperUser |
+| `DeleteAccount` | [DeleteAccountRequest](#services-rector-DeleteAccountRequest) | [DeleteAccountResponse](#services-rector-DeleteAccountResponse) | @perm: Name=SuperUser |
+
+ <!-- end services -->
+
+
+
 <a name="services_rector_rector-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -12931,125 +13049,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetJobLimits` | [GetJobLimitsRequest](#services-rector-GetJobLimitsRequest) | [GetJobLimitsResponse](#services-rector-GetJobLimitsResponse) | @perm: Name=SuperUser |
 | `UpdateJobLimits` | [UpdateJobLimitsRequest](#services-rector-UpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#services-rector-UpdateJobLimitsResponse) | @perm: Name=SuperUser |
 | `DeleteFaction` | [DeleteFactionRequest](#services-rector-DeleteFactionRequest) | [DeleteFactionResponse](#services-rector-DeleteFactionResponse) | @perm: Name=SuperUser |
-
- <!-- end services -->
-
-
-
-<a name="services_rector_accounts-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/rector/accounts.proto
-
-
-
-<a name="services-rector-DeleteAccountRequest"></a>
-
-### DeleteAccountRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteAccountResponse"></a>
-
-### DeleteAccountResponse
-
-
-
-
-
-
-
-<a name="services-rector-ListAccountsRequest"></a>
-
-### ListAccountsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `license` | [string](#string) | optional | Search params |
-| `enabled` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-ListAccountsResponse"></a>
-
-### ListAccountsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `accounts` | [resources.accounts.Account](#resources-accounts-Account) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateAccountRequest"></a>
-
-### UpdateAccountRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `enabled` | [bool](#bool) | optional |  |
-| `last_char` | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateAccountResponse"></a>
-
-### UpdateAccountResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `account` | [resources.accounts.Account](#resources-accounts-Account) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-rector-RectorAccountsService"></a>
-
-### RectorAccountsService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListAccounts` | [ListAccountsRequest](#services-rector-ListAccountsRequest) | [ListAccountsResponse](#services-rector-ListAccountsResponse) | @perm: Name=SuperUser |
-| `UpdateAccount` | [UpdateAccountRequest](#services-rector-UpdateAccountRequest) | [UpdateAccountResponse](#services-rector-UpdateAccountResponse) | @perm: Name=SuperUser |
-| `DeleteAccount` | [DeleteAccountRequest](#services-rector-DeleteAccountRequest) | [DeleteAccountResponse](#services-rector-DeleteAccountResponse) | @perm: Name=SuperUser |
 
  <!-- end services -->
 

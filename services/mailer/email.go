@@ -169,7 +169,6 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 			tEmails.Email,
 			tEmails.EmailChanged,
 			tEmails.Label,
-			tEmails.Internal,
 		).
 		FROM(
 			tEmails.
@@ -217,7 +216,6 @@ func (s *Server) getEmailByCondition(ctx context.Context, tx qrm.DB, condition j
 			tEmails.Email,
 			tEmails.EmailChanged,
 			tEmails.Label,
-			tEmails.Internal,
 		).
 		FROM(tEmails).
 		WHERE(condition).
@@ -413,7 +411,6 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *pbmailer.CreateOr
 
 		sets := []any{
 			tEmails.Label.SET(jet.StringExp(label)),
-			tEmails.Internal.SET(jet.Bool(req.Email.Internal)),
 			tEmails.CreatorID.SET(jet.Int32(userInfo.UserId)),
 		}
 
@@ -525,7 +522,6 @@ func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email
 			tEmails.UserID,
 			tEmails.Email,
 			tEmails.Label,
-			tEmails.Internal,
 			tEmails.CreatorID,
 		).
 		VALUES(
@@ -533,7 +529,6 @@ func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email
 			email.UserId,
 			email.Email,
 			email.Label,
-			email.Internal,
 			userInfo.UserId,
 		)
 

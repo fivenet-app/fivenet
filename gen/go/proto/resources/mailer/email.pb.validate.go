@@ -100,8 +100,6 @@ func (m *Email) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Internal
-
 	if all {
 		switch v := interface{}(m.GetAccess()).(type) {
 		case interface{ ValidateAll() error }:

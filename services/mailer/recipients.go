@@ -50,7 +50,6 @@ func (s *Server) getThreadRecipients(ctx context.Context, tx qrm.DB, threadId ui
 			tThreadsRecipients.EmailID,
 			tEmails.ID,
 			tThreadsRecipients.Email.AS("email.email"),
-			tEmails.Internal,
 		).
 		FROM(
 			tThreadsRecipients.
@@ -89,7 +88,6 @@ func (s *Server) resolveRecipientsToEmails(ctx context.Context, senderEmail *mai
 			tEmails.ID.AS("thread_recipient_email.email_id"),
 			tEmails.Email,
 			tEmails.Deactivated,
-			tEmails.Internal,
 		).
 		FROM(tEmails).
 		WHERE(jet.AND(
