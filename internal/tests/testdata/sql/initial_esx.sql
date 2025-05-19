@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   KEY `idx_users_dateofbirth` (`dateofbirth`),
   FULLTEXT KEY `idx_users_firstname_lastname_fulltext` (`firstname`,`lastname`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1;
--- Table data: Add 5 users into the database
+-- Table data: Add 5 chars into the database
 INSERT INTO users (id, identifier, license, `group`, skin, job, job_grade, loadout, `position`, firstname, lastname, dateofbirth, sex, height, is_dead, last_property, jail, inventory, phone_number, accounts, tattoos, disabled, visum, playtime, levelData, onDuty, health, armor, created_at, last_seen, meta)
 VALUES(1, 'char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', NULL, 'user', '{}', 'ambulance', 17, '{}', '{"z":49.45,"heading":141.73,"x":-1820.74,"y":-353.96}', 'Dr. Amy', 'Clockwork', '08.04.2003', 'f', '182', 0, NULL, 0, '{}', '3542786', '{}', '[]', 0, 139, 1493920, '{}', 0, 138, 0, '2023-01-26 09:01:51.000', '2023-03-10 22:11:09.000', NULL);
 INSERT INTO users (id, identifier, license, `group`, skin, job, job_grade, loadout, `position`, firstname, lastname, dateofbirth, sex, height, is_dead, last_property, jail, inventory, phone_number, accounts, tattoos, disabled, visum, playtime, levelData, onDuty, health, armor, created_at, last_seen, meta)

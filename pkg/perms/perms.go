@@ -52,7 +52,7 @@ type Permissions interface {
 	CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
 	DeleteRole(ctx context.Context, id uint64) error
 	GetRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
-	GetRoleEffectivePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
+	GetEffectiveRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
 	UpdateRolePermissions(ctx context.Context, id uint64, perms ...AddPerm) error
 	RemovePermissionsFromRole(ctx context.Context, id uint64, perms ...uint64) error
 
@@ -99,8 +99,6 @@ type Perms struct {
 	js     *events.JSWrapper
 	jsCons jetstream.ConsumeContext
 
-	// Enable fast "init" mode, skipping clean ups. Should only be used for dev/test environments
-	devMode                    bool
 	cleanupRolesForMissingJobs bool
 	startJobGrade              int32
 
@@ -162,7 +160,6 @@ func New(p Params) (Permissions, error) {
 
 		js: p.JS,
 
-		devMode:                    false,
 		cleanupRolesForMissingJobs: p.Cfg.Game.CleanupRolesForMissingJobs,
 		startJobGrade:              p.Cfg.Game.StartJobGrade,
 
@@ -249,19 +246,16 @@ func (p *Perms) init(ctxCancel context.Context, ctxStartup context.Context, para
 		return fmt.Errorf("failed to register permissions. %w", err)
 	}
 
-	// Skip apply job perms when in dev mode
-	if !p.devMode {
-		p.wg.Add(1)
-		go func() {
-			defer p.wg.Done()
+	p.wg.Add(1)
+	go func() {
+		defer p.wg.Done()
 
-			if err := p.ApplyJobPermissions(ctxCancel, ""); err != nil {
-				p.logger.Error("failed to apply job permissions", zap.Error(err))
-				return
-			}
-			p.logger.Debug("successfully applied job permissions")
-		}()
-	}
+		if err := p.ApplyJobPermissions(ctxCancel, ""); err != nil {
+			p.logger.Error("failed to apply job permissions", zap.Error(err))
+			return
+		}
+		p.logger.Debug("successfully applied job permissions")
+	}()
 
 	return nil
 }

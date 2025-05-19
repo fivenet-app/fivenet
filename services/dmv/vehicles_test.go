@@ -41,14 +41,14 @@ func TestListVehicles(t *testing.T) {
 	require.NoError(t, err)
 
 	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{
-		1: {
-			AccountId: 1,
+		3: {
+			AccountId: 3,
 			Enabled:   true,
-			UserId:    1,
-			License:   "3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4",
+			UserId:    3,
+			License:   "db7e039146d5bf1b6781e7bc1bef31f0bb1298ea",
 			Group:     "user",
-			Job:       "ambulance",
-			JobGrade:  17,
+			Job:       "doj",
+			JobGrade:  16,
 		},
 	})
 
@@ -79,13 +79,13 @@ func TestListVehicles(t *testing.T) {
 
 	tm := auth.NewTokenMgr("")
 	token, err := tm.NewWithClaims(&auth.CitizenInfoClaims{
-		AccID:    1,
-		Username: "user-1",
-		CharID:   1,
+		AccID:    3,
+		Username: "user-3",
+		CharID:   3,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
-			Subject:  "3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4",
-			ID:       "1",
+			Subject:  "db7e039146d5bf1b6781e7bc1bef31f0bb1298ea",
+			ID:       "3",
 			Audience: []string{"fivenet"},
 		},
 	})

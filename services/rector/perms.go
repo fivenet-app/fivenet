@@ -466,7 +466,7 @@ func (s *Server) GetEffectivePermissions(ctx context.Context, req *pbrector.GetE
 		return nil, errswrap.NewError(err, errorsrector.ErrNoPermission)
 	}
 
-	perms, err := s.ps.GetRoleEffectivePermissions(ctx, role.ID)
+	perms, err := s.ps.GetEffectiveRolePermissions(ctx, role.ID)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}

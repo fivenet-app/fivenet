@@ -58,10 +58,8 @@ func BuildGuardWithKey(category Category, name Name, key Key) string {
 }
 
 func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
-	if !p.devMode {
-		if err := p.cleanupRoles(ctx); err != nil {
-			return fmt.Errorf("failed to cleanup roles. %w", err)
-		}
+	if err := p.cleanupRoles(ctx); err != nil {
+		return fmt.Errorf("failed to cleanup roles. %w", err)
 	}
 
 	for _, perm := range permsList {
@@ -325,6 +323,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 }
 
 func (p *Perms) updateDefaultRole(ctx context.Context) error {
+	// Make sure the start job grade is set correctly
 	stmt := tRoles.
 		UPDATE(
 			tRoles.Grade,

@@ -54,7 +54,7 @@ const links = computed(() =>
     <div class="flex flex-1 flex-col">
         <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
 
-        <div class="flex max-h-[calc(100dvh)] min-h-[calc(100dvh)] flex-col items-center justify-center">
+        <div class="flex min-h-[calc(100dvh-2*var(--header-height))] flex-col items-center justify-center">
             <div class="absolute top-4 z-10 flex gap-2">
                 <UButton
                     color="white"

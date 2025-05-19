@@ -31,7 +31,6 @@ func TestBasicPerms(t *testing.T) {
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
-	_ = ctx
 
 	var ps perms.Permissions
 	app := fxtest.New(t,
@@ -49,44 +48,75 @@ func TestBasicPerms(t *testing.T) {
 	defer app.RequireStop()
 	assert.NotNil(t, ps)
 
-	superuserUI := &userinfo.UserInfo{
+	userInfo := &userinfo.UserInfo{
 		UserId:    testdata.Users[0].UserId,
 		Job:       testdata.Users[0].Job,
 		JobGrade:  testdata.Users[0].JobGrade,
 		SuperUser: true,
 	}
 	// 1. Superuser can do everything
-	can := ps.Can(superuserUI, "CitizenStoreService", "ListCitizens")
+	can := ps.Can(userInfo, "CitizenStoreService", "ListCitizens")
 	assert.True(t, can, "Superuser has all permissions (CitizenStoreService.ListCitizens)")
-	can = ps.Can(superuserUI, "DocStoreService", "DeleteComment")
+	can = ps.Can(userInfo, "DocStoreService", "DeleteComment")
 	assert.True(t, can, "Superuser has all permissions (DocStoreService.DeleteComment)")
 
-	// 2. Non-superuser can do only some things
-	ui := &userinfo.UserInfo{
-		UserId:   testdata.Users[0].UserId,
-		Job:      testdata.Users[0].Job,
-		JobGrade: testdata.Users[0].JobGrade,
-	}
-	can = ps.Can(ui, "CitizenStoreService", "ListCitizens")
-	assert.True(t, can, "User should have permission to CitizenStoreService.ListCitizens")
-	can = ps.Can(ui, "CitizenStoreService", "SetUserProps")
-	assert.True(t, can, "User should have permission to CitizenStoreService.SetUserProps")
+	// 2. Non-superuser (ambulance, 17) - Some basic tests that role permissions and attributes are working
+	userInfo.SuperUser = false
+	can = ps.Can(userInfo, "CitizenStoreService", "ListCitizens")
+	assert.True(t, can, "User should have permission `CitizenStoreService.ListCitizens`")
+	can = ps.Can(userInfo, "JobsTimeclockService", "ListTimeclock")
+	assert.True(t, can, "User should have permission `JobsTimeclockService.ListTimeclock`")
 
-	can = ps.Can(ui, "RectorService", "UpdateRolePerms")
-	assert.False(t, can, "User should not have permission to RectorService.UpdateRolePerms")
+	can = ps.Can(userInfo, "RectorLawsService", "CreateOrUpdateLawBook")
+	assert.False(t, can, "User should not have permission `RectorLawsService.CreateOrUpdateLawBook`")
+	can = ps.Can(userInfo, "RectorLawsService", "DeleteLawBook")
+	assert.False(t, can, "User should not have permission `RectorService.DeleteLawBook`")
 
-	attributes, err := ps.FlattenRoleAttributes(ui.Job, ui.JobGrade)
+	attributes, err := ps.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
 	assert.NoError(t, err, "FlattenRoleAttributes should not return an error")
 	assert.NotEmpty(t, attributes, "FlattenRoleAttributes should return non-empty attributes")
-	// Check if the SetUserProps attributes contain specific permissions
-	assert.Contains(t, attributes, "citizenstoreservice-setuserprops-fields-userprops-wanted")
-	assert.Contains(t, attributes, "citizenstoreservice-setuserprops-fields-userprops-job")
-	// Check if jobgradelist attributes are present
-	assert.Contains(t, attributes, "livemapperservice-stream-players-ambulance")
-	assert.Contains(t, attributes, "livemapperservice-stream-players-police")
-	assert.NotContains(t, attributes, "livemapperservice-stream-players-doj")
+	// Check if the expected flattened role attributes are returned
+	assert.Len(t, attributes, 29, "FlattenRoleAttributes should return 29 attributes")
+	for _, attr := range []string{"citizenstoreservice-getuser-jobs-ambulance", "livemapperservice-stream-players-ambulance", "mailerservice-createorupdateemail-fields-job", "jobsconductservice-listconductentries-access-own", "jobsconductservice-listconductentries-access-all", "wikiservice-createpage-fields-public", "qualificationsservice-deletequalification-access-own", "qualificationsservice-deletequalification-access-lower_rank", "qualificationsservice-deletequalification-access-same_rank", "qualificationsservice-deletequalification-access-any", "livemapperservice-stream-markers-ambulance", "citizenstoreservice-listcitizens-fields-userprops-bloodtype", "citizenstoreservice-listcitizens-fields-phonenumber", "qualificationsservice-updatequalification-access-own", "qualificationsservice-updatequalification-access-lower_rank", "qualificationsservice-updatequalification-access-same_rank", "qualificationsservice-updatequalification-access-any", "livemapperservice-deletemarker-access-own", "livemapperservice-deletemarker-access-lower_rank", "livemapperservice-deletemarker-access-same_rank", "livemapperservice-deletemarker-access-any", "calendarservice-createcalendar-fields-job", "calendarservice-createcalendar-fields-public", "livemapperservice-createorupdatemarker-access-own", "livemapperservice-createorupdatemarker-access-lower_rank", "livemapperservice-createorupdatemarker-access-same_rank", "livemapperservice-createorupdatemarker-access-any", "qualificationsservice-createqualification-fields-public", "completorservice-completedocumentcategories-jobs-ambulance"} {
+		assert.Contains(t, attributes, attr, "Make sure ambulance job has the expected attributes set for ambulance rank 17")
+	}
+	for _, attr := range []string{"livemapperservice-stream-players-doj", "livemapperservice-stream-players-police"} {
+		assert.NotContains(t, attributes, attr, "livemapperservice-stream-players for doj and police should not be in the list of attributes for ambulance rank 17")
+	}
 
-	attr, err := ps.AttrJobGradeList(ui, "", "", "")
-	assert.NoError(t, err, "AttrJobGradeList should not return an error")
-	assert.NotEmpty(t, attr, "AttrJobGradeList should return non-empty attributes")
+	role, err := ps.GetRoleByJobAndGrade(ctx, userInfo.Job, userInfo.JobGrade)
+	assert.NoError(t, err, "GetRoleByJobAndGrade should not return an error")
+	require.NotNil(t, role, "GetRoleByJobAndGrade should return non-nil role")
+
+	rolePerms, err := ps.GetEffectiveRolePermissions(ctx, role.ID)
+	assert.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
+	assert.Len(t, rolePerms, 43, "GetEffectiveRolePermissions should return 43 perms")
+
+	// 3. Non-superuser (ambulance, 20) - should have more attributes than ambulance, 17 (further player locations access)
+	userInfo = &userinfo.UserInfo{
+		Job:      testdata.Users[1].Job,
+		JobGrade: testdata.Users[1].JobGrade,
+	}
+	attributes, err = ps.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
+	assert.NoError(t, err, "FlattenRoleAttributes should not return an error")
+	assert.Len(t, attributes, 31, "FlattenRoleAttributes should now return 31 attributes")
+	for _, attr := range []string{"livemapperservice-stream-players-ambulance", "livemapperservice-stream-players-doj", "livemapperservice-stream-players-police"} {
+		assert.Contains(t, attributes, attr, "livemapperservice-stream-players for ambulance, doj and police should be in the list of attributes for ambulance rank 20")
+	}
+
+	// 4. unemployed user - should not have any attributes but default perms
+	userInfo = &userinfo.UserInfo{
+		Job:      "unemployed",
+		JobGrade: 0,
+	}
+	// Retrieve the default role id (technically this is a bit of a hack, but to make `GetEffectiveRolePermissions` work)
+	role, err = ps.GetRoleByJobAndGrade(ctx, perms.DefaultRoleJob, userInfo.JobGrade)
+	assert.NoError(t, err, "GetRoleByJobAndGrade should not return an error")
+	require.NotNil(t, role, "GetRoleByJobAndGrade should return non-nil role")
+	rolePerms, err = ps.GetEffectiveRolePermissions(ctx, role.ID)
+	assert.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
+	assert.Len(t, rolePerms, 4, "GetEffectiveRolePermissions should return 4 perms")
+	attributes, err = ps.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
+	assert.NoError(t, err, "FlattenRoleAttributes should not return an error")
+	assert.Len(t, attributes, 0, "FlattenRoleAttributes should now return 0 attributes")
 }

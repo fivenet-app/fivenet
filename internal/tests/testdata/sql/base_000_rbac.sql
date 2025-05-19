@@ -20,17 +20,35 @@
 
 LOCK TABLES `fivenet_attrs` WRITE;
 /*!40000 ALTER TABLE `fivenet_attrs` DISABLE KEYS */;
-INSERT INTO `fivenet_attrs` (`id`, `created_at`, `permission_id`, `key`, `type`, `valid_values`) VALUES (1,'2023-05-12 18:00:13.327',7595,'Jobs','JobGradeList',NULL),
-(2,'2023-05-12 18:00:13.345',3,'Fields','StringList','{"stringList":{"strings":["PhoneNumber","Licenses","UserProps.Wanted","UserProps.Job","UserProps.TrafficInfractionPoints","UserProps.OpenFines","UserProps.BloodType"]}}'),
-(3,'2023-05-12 18:00:13.356',6,'Fields','StringList','{"stringList":{"strings":["SourceUser","Own"]}}'),
-(4,'2023-05-12 18:00:13.366',8,'Fields','StringList','{"stringList":{"strings":["Wanted","Job","TrafficInfractionPoints"]}}'),
-(5,'2023-05-12 18:00:13.378',11,'Jobs','JobList','{"jobList":{}}'),
-(6,'2023-05-12 18:00:13.410',31,'Dispatches','JobList','{"jobList":{}}'),
-(7,'2023-05-12 18:00:13.419',31,'Players','JobList','{"jobList":{}}'),
-(8,'2023-05-12 18:00:13.434',77,'Jobs','JobList','{"jobList":{}}'),
-(9,'2023-05-24 17:11:04.280',5497,'Access','StringList','{"stringList":{"strings":["Own","Lower_Rank","Same_Rank","Any"]}}'),
-(10,'2023-05-24 17:11:04.291',21,'Access','StringList','{"stringList":{"strings":["Own","Lower_Rank","Same_Rank","Any"]}}'),
-(11,'2023-05-24 17:11:04.304',30,'Access','StringList','{"stringList":{"strings":["Own","Lower_Rank","Same_Rank","Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(1, '2025-05-19 20:32:17.384', 2, 'Fields', 'StringList', '{"stringList":{"strings":["Job", "Public"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(2, '2025-05-19 20:32:17.543', 12, 'Jobs', 'JobGradeList', '{"jobGradeList":{}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(3, '2025-05-19 20:32:17.578', 13, 'Fields', 'StringList', '{"stringList":{"strings":["PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(4, '2025-05-19 20:32:17.604', 14, 'Fields', 'StringList', '{"stringList":{"strings":["SourceUser", "Own"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(5, '2025-05-19 20:32:17.642', 16, 'Fields', 'StringList', '{"stringList":{"strings":["Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(6, '2025-05-19 20:32:17.678', 17, 'Jobs', 'JobList', '{"jobList":{}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(7, '2025-05-19 20:32:17.720', 19, 'Jobs', 'JobList', '{"jobList":{}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(8, '2025-05-19 20:32:17.804', 23, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(9, '2025-05-19 20:32:17.845', 25, 'Types', 'StringList', '{"stringList":{"strings":["Access", "Closure", "Update", "Deletion", "OwnerChange"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(10, '2025-05-19 20:32:17.920', 29, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(11, '2025-05-19 20:32:17.949', 30, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(12, '2025-05-19 20:32:18.136', 40, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(13, '2025-05-19 20:32:18.183', 42, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(14, '2025-05-19 20:32:18.241', 45, 'Access', 'StringList', '{"stringList":{"strings":["Own", "All"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(15, '2025-05-19 20:32:18.287', 47, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(16, '2025-05-19 20:32:18.303', 47, 'Types', 'StringList', '{"stringList":{"strings":["Note", "Labels"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(17, '2025-05-19 20:32:18.332', 48, 'Types', 'StringList', '{"stringList":{"strings":["HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(18, '2025-05-19 20:32:18.399', 51, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(19, '2025-05-19 20:32:18.416', 51, 'Types', 'StringList', '{"stringList":{"strings":["AbsenceDate", "Note", "Labels", "Name"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(20, '2025-05-19 20:32:18.482', 54, 'Access', 'StringList', '{"stringList":{"strings":["All"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(21, '2025-05-19 20:32:18.507', 55, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(22, '2025-05-19 20:32:18.540', 56, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(23, '2025-05-19 20:32:18.568', 57, 'Markers', 'JobList', '{"jobList":{}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(24, '2025-05-19 20:32:18.585', 57, 'Players', 'JobGradeList', '{"jobGradeList":{}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(25, '2025-05-19 20:32:18.618', 58, 'Fields', 'StringList', '{"stringList":{"strings":["Job"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(26, '2025-05-19 20:32:18.682', 61, 'Fields', 'StringList', '{"stringList":{"strings":["Public"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(27, '2025-05-19 20:32:18.710', 62, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(28, '2025-05-19 20:32:18.759', 64, 'Access', 'StringList', '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_attrs (id, created_at, permission_id, `key`, `type`, valid_values) VALUES(29, '2025-05-19 20:32:18.925', 74, 'Fields', 'StringList', '{"stringList":{"strings":["Public"]}}');
 /*!40000 ALTER TABLE `fivenet_attrs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -40,40 +58,83 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_permissions` WRITE;
 /*!40000 ALTER TABLE `fivenet_permissions` DISABLE KEYS */;
-INSERT INTO `fivenet_permissions` (`id`, `created_at`, `category`, `name`, `guard_name`) VALUES (1,'2023-03-31 15:35:21.865','AuthService','ChooseCharacter','authservice-choosecharacter'),
-(3,'2023-03-31 15:35:21.920','CitizenStoreService','ListCitizens','citizenstoreservice-listcitizens'),
-(6,'2023-03-31 15:35:22.001','CitizenStoreService','ListUserActivity','citizenstoreservice-listuseractivity'),
-(8,'2023-03-31 15:35:22.057','CitizenStoreService','SetUserProps','citizenstoreservice-setuserprops'),
-(10,'2023-03-31 15:35:22.109','CompletorService','CompleteCitizens','completorservice-completecitizens'),
-(11,'2023-03-31 15:35:22.140','CompletorService','CompleteCategories','completorservice-completedocumentcategories'),
-(16,'2023-03-31 15:35:22.283','CompletorService','CompleteJobs','completorservice-completejobs'),
-(17,'2023-03-31 15:35:22.310','DMVService','ListVehicles','dmvservice-listvehicles'),
-(18,'2023-03-31 15:35:22.338','DocStoreService','AddDocumentReference','docstoreservice-adddocumentreference'),
-(19,'2023-03-31 15:35:22.367','DocStoreService','AddDocumentRelation','docstoreservice-adddocumentrelation'),
-(20,'2023-03-31 15:35:22.387','DocStoreService','CreateDocument','docstoreservice-createdocument'),
-(21,'2023-03-31 15:35:22.414','DocStoreService','DeleteComment','docstoreservice-deletecomment'),
-(22,'2023-03-31 15:35:22.440','DocStoreService','ListDocuments','docstoreservice-listdocuments'),
-(24,'2023-03-31 15:35:22.498','DocStoreService','GetDocumentAccess','docstoreservice-getdocumentaccess'),
-(26,'2023-03-31 15:35:22.554','DocStoreService','ListUserDocuments','docstoreservice-listuserdocuments'),
-(27,'2023-03-31 15:35:22.577','DocStoreService','ListTemplates','docstoreservice-listtemplates'),
-(29,'2023-03-31 15:35:22.626','DocStoreService','SetDocumentAccess','docstoreservice-setdocumentaccess'),
-(30,'2023-03-31 15:35:22.651','DocStoreService','UpdateDocument','docstoreservice-updatedocument'),
-(31,'2023-03-31 15:35:22.680','LivemapperService','Stream','livemapperservice-stream'),
-(74,'2023-04-03 12:17:15.106','RectorService','UpdateRolePerms','rectorservice-updateroleperms'),
-(75,'2023-04-03 12:17:15.119','RectorService','CreateRole','rectorservice-createrole'),
-(76,'2023-04-03 12:17:15.132','RectorService','DeleteRole','rectorservice-deleterole'),
-(77,'2023-04-03 12:17:15.144','RectorService','GetPermissions','rectorservice-getpermissions'),
-(82,'2023-04-03 12:17:15.208','RectorService','GetRoles','rectorservice-getroles'),
-(2198,'2023-04-05 17:52:13.377','DocStoreService','CreateOrUpdateCategory','docstoreservice-createorupdatecategory'),
-(2199,'2023-04-05 17:52:13.438','DocStoreService','DeleteCategory','docstoreservice-deletecategory'),
-(3056,'2023-04-06 20:26:04.619','DocStoreService','ListCategories','docstoreservice-listcategories'),
-(3392,'2023-04-08 16:51:59.783','DocStoreService','CreateTemplate','docstoreservice-createtemplate'),
-(3395,'2023-04-08 16:51:59.983','DocStoreService','DeleteTemplate','docstoreservice-deletetemplate'),
-(3671,'2023-04-09 02:04:57.236','RectorService','ViewAuditLog','rectorservice-viewauditlog'),
-(5497,'2023-04-11 17:38:42.619','DocStoreService','DeleteDocument','docstoreservice-deletedocument'),
-(7595,'2023-04-18 15:40:04.382','CitizenStoreService','GetUser','citizenstoreservice-getuser'),
-(8848,'2023-04-23 20:44:58.283','RectorService','GetJobProps','rectorservice-getjobprops'),
-(8855,'2023-04-23 20:44:58.851','RectorService','SetJobProps','rectorservice-setjobprops');
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(1, '2025-05-19 20:32:17.344', 'AuthService', 'ChooseCharacter', 'authservice-choosecharacter', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(2, '2025-05-19 20:32:17.360', 'CalendarService', 'CreateCalendar', 'calendarservice-createcalendar', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(3, '2025-05-19 20:32:17.396', 'CentrumService', 'CreateDispatch', 'centrumservice-createdispatch', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(4, '2025-05-19 20:32:17.413', 'CentrumService', 'CreateOrUpdateUnit', 'centrumservice-createorupdateunit', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(5, '2025-05-19 20:32:17.425', 'CentrumService', 'DeleteDispatch', 'centrumservice-deletedispatch', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(6, '2025-05-19 20:32:17.444', 'CentrumService', 'DeleteUnit', 'centrumservice-deleteunit', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(7, '2025-05-19 20:32:17.456', 'CentrumService', 'Stream', 'centrumservice-stream', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(8, '2025-05-19 20:32:17.468', 'CentrumService', 'TakeControl', 'centrumservice-takecontrol', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(9, '2025-05-19 20:32:17.484', 'CentrumService', 'TakeDispatch', 'centrumservice-takedispatch', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(10, '2025-05-19 20:32:17.501', 'CentrumService', 'UpdateDispatch', 'centrumservice-updatedispatch', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(11, '2025-05-19 20:32:17.515', 'CentrumService', 'UpdateSettings', 'centrumservice-updatesettings', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(12, '2025-05-19 20:32:17.530', 'CitizenStoreService', 'GetUser', 'citizenstoreservice-getuser', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(13, '2025-05-19 20:32:17.560', 'CitizenStoreService', 'ListCitizens', 'citizenstoreservice-listcitizens', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(14, '2025-05-19 20:32:17.591', 'CitizenStoreService', 'ListUserActivity', 'citizenstoreservice-listuseractivity', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(15, '2025-05-19 20:32:17.617', 'CitizenStoreService', 'ManageCitizenLabels', 'citizenstoreservice-managecitizenlabels', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(16, '2025-05-19 20:32:17.630', 'CitizenStoreService', 'SetUserProps', 'citizenstoreservice-setuserprops', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(17, '2025-05-19 20:32:17.660', 'CompletorService', 'CompleteCitizenLabels', 'completorservice-completecitizenlabels', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(18, '2025-05-19 20:32:17.690', 'CompletorService', 'CompleteCitizens', 'completorservice-completecitizens', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(19, '2025-05-19 20:32:17.708', 'CompletorService', 'CompleteDocumentCategories', 'completorservice-completedocumentcategories', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(20, '2025-05-19 20:32:17.737', 'DMVService', 'ListVehicles', 'dmvservice-listvehicles', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(21, '2025-05-19 20:32:17.753', 'DocStoreService', 'AddDocumentReference', 'docstoreservice-adddocumentreference', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(22, '2025-05-19 20:32:17.771', 'DocStoreService', 'AddDocumentRelation', 'docstoreservice-adddocumentrelation', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(23, '2025-05-19 20:32:17.787', 'DocStoreService', 'ChangeDocumentOwner', 'docstoreservice-changedocumentowner', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(24, '2025-05-19 20:32:17.816', 'DocStoreService', 'CreateDocument', 'docstoreservice-createdocument', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(25, '2025-05-19 20:32:17.833', 'DocStoreService', 'CreateDocumentReq', 'docstoreservice-createdocumentreq', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(26, '2025-05-19 20:32:17.862', 'DocStoreService', 'CreateOrUpdateCategory', 'docstoreservice-createorupdatecategory', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(27, '2025-05-19 20:32:17.880', 'DocStoreService', 'CreateTemplate', 'docstoreservice-createtemplate', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(28, '2025-05-19 20:32:17.892', 'DocStoreService', 'DeleteCategory', 'docstoreservice-deletecategory', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(29, '2025-05-19 20:32:17.908', 'DocStoreService', 'DeleteComment', 'docstoreservice-deletecomment', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(30, '2025-05-19 20:32:17.937', 'DocStoreService', 'DeleteDocument', 'docstoreservice-deletedocument', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(31, '2025-05-19 20:32:17.966', 'DocStoreService', 'DeleteDocumentReq', 'docstoreservice-deletedocumentreq', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(32, '2025-05-19 20:32:18.001', 'DocStoreService', 'DeleteTemplate', 'docstoreservice-deletetemplate', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(33, '2025-05-19 20:32:18.018', 'DocStoreService', 'ListCategories', 'docstoreservice-listcategories', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(34, '2025-05-19 20:32:18.034', 'DocStoreService', 'ListDocumentActivity', 'docstoreservice-listdocumentactivity', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(35, '2025-05-19 20:32:18.051', 'DocStoreService', 'ListDocumentReqs', 'docstoreservice-listdocumentreqs', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(36, '2025-05-19 20:32:18.064', 'DocStoreService', 'ListDocuments', 'docstoreservice-listdocuments', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(37, '2025-05-19 20:32:18.077', 'DocStoreService', 'ListTemplates', 'docstoreservice-listtemplates', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(38, '2025-05-19 20:32:18.095', 'DocStoreService', 'ListUserDocuments', 'docstoreservice-listuserdocuments', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(39, '2025-05-19 20:32:18.108', 'DocStoreService', 'SetDocumentReminder', 'docstoreservice-setdocumentreminder', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(40, '2025-05-19 20:32:18.125', 'DocStoreService', 'ToggleDocument', 'docstoreservice-toggledocument', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(41, '2025-05-19 20:32:18.154', 'DocStoreService', 'ToggleDocumentPin', 'docstoreservice-toggledocumentpin', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(42, '2025-05-19 20:32:18.166', 'DocStoreService', 'UpdateDocument', 'docstoreservice-updatedocument', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(43, '2025-05-19 20:32:18.195', 'JobsConductService', 'CreateConductEntry', 'jobsconductservice-createconductentry', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(44, '2025-05-19 20:32:18.212', 'JobsConductService', 'DeleteConductEntry', 'jobsconductservice-deleteconductentry', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(45, '2025-05-19 20:32:18.224', 'JobsConductService', 'ListConductEntries', 'jobsconductservice-listconductentries', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(46, '2025-05-19 20:32:18.252', 'JobsConductService', 'UpdateConductEntry', 'jobsconductservice-updateconductentry', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(47, '2025-05-19 20:32:18.270', 'JobsService', 'GetColleague', 'jobsservice-getcolleague', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(48, '2025-05-19 20:32:18.320', 'JobsService', 'ListColleagueActivity', 'jobsservice-listcolleagueactivity', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(49, '2025-05-19 20:32:18.349', 'JobsService', 'ListColleagues', 'jobsservice-listcolleagues', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(50, '2025-05-19 20:32:18.361', 'JobsService', 'ManageColleagueLabels', 'jobsservice-managecolleaguelabels', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(51, '2025-05-19 20:32:18.387', 'JobsService', 'SetJobsUserProps', 'jobsservice-setjobsuserprops', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(52, '2025-05-19 20:32:18.428', 'JobsService', 'SetMOTD', 'jobsservice-setmotd', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(53, '2025-05-19 20:32:18.445', 'JobsTimeclockService', 'ListInactiveEmployees', 'jobstimeclockservice-listinactiveemployees', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(54, '2025-05-19 20:32:18.464', 'JobsTimeclockService', 'ListTimeclock', 'jobstimeclockservice-listtimeclock', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(55, '2025-05-19 20:32:18.494', 'LivemapperService', 'CreateOrUpdateMarker', 'livemapperservice-createorupdatemarker', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(56, '2025-05-19 20:32:18.523', 'LivemapperService', 'DeleteMarker', 'livemapperservice-deletemarker', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(57, '2025-05-19 20:32:18.552', 'LivemapperService', 'Stream', 'livemapperservice-stream', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(58, '2025-05-19 20:32:18.601', 'MailerService', 'CreateOrUpdateEmail', 'mailerservice-createorupdateemail', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(59, '2025-05-19 20:32:18.634', 'MailerService', 'DeleteEmail', 'mailerservice-deleteemail', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(60, '2025-05-19 20:32:18.647', 'MailerService', 'ListEmails', 'mailerservice-listemails', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(61, '2025-05-19 20:32:18.663', 'QualificationsService', 'CreateQualification', 'qualificationsservice-createqualification', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(62, '2025-05-19 20:32:18.698', 'QualificationsService', 'DeleteQualification', 'qualificationsservice-deletequalification', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(63, '2025-05-19 20:32:18.728', 'QualificationsService', 'ListQualifications', 'qualificationsservice-listqualifications', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(64, '2025-05-19 20:32:18.740', 'QualificationsService', 'UpdateQualification', 'qualificationsservice-updatequalification', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(65, '2025-05-19 20:32:18.771', 'RectorLawsService', 'CreateOrUpdateLawBook', 'rectorlawsservice-createorupdatelawbook', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(66, '2025-05-19 20:32:18.788', 'RectorLawsService', 'DeleteLawBook', 'rectorlawsservice-deletelawbook', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(67, '2025-05-19 20:32:18.801', 'RectorService', 'CreateRole', 'rectorservice-createrole', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(68, '2025-05-19 20:32:18.818', 'RectorService', 'DeleteRole', 'rectorservice-deleterole', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(69, '2025-05-19 20:32:18.834', 'RectorService', 'GetJobProps', 'rectorservice-getjobprops', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(70, '2025-05-19 20:32:18.850', 'RectorService', 'GetRoles', 'rectorservice-getroles', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(71, '2025-05-19 20:32:18.862', 'RectorService', 'SetJobProps', 'rectorservice-setjobprops', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(72, '2025-05-19 20:32:18.879', 'RectorService', 'UpdateRolePerms', 'rectorservice-updateroleperms', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(73, '2025-05-19 20:32:18.897', 'RectorService', 'ViewAuditLog', 'rectorservice-viewauditlog', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(74, '2025-05-19 20:32:18.909', 'WikiService', 'CreatePage', 'wikiservice-createpage', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(75, '2025-05-19 20:32:18.939', 'WikiService', 'DeletePage', 'wikiservice-deletepage', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(76, '2025-05-19 20:32:18.951', 'WikiService', 'ListPageActivity', 'wikiservice-listpageactivity', 0);
+INSERT INTO fivenet_permissions (id, created_at, category, name, guard_name, `order`) VALUES(77, '2025-05-19 20:32:18.969', 'WikiService', 'ListPages', 'wikiservice-listpages', 0);
 /*!40000 ALTER TABLE `fivenet_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -83,14 +144,12 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_roles` WRITE;
 /*!40000 ALTER TABLE `fivenet_roles` DISABLE KEYS */;
-INSERT INTO `fivenet_roles` (`id`, `created_at`, `job`, `grade`) VALUES (1,'2023-05-16 14:37:57.379','__default__',1),
-(3,'2023-04-03 12:20:11.642','ambulance',1),
-(4,'2023-04-03 12:20:28.416','doj',1),
-(5,'2023-04-03 12:20:28.433','police',1),
-(6,'2023-04-03 12:24:14.457','ambulance',20),
-(19,'2023-04-03 16:58:24.661','police',22),
-(54,'2023-04-10 16:37:23.277','ambulance',19),
-(97,'2023-04-19 23:24:25.057','doj',21);
+INSERT INTO fivenet_roles (id, created_at, job, grade) VALUES(1, '2025-05-19 20:32:18.985', '__default__', 0);
+INSERT INTO fivenet_roles (id, created_at, job, grade) VALUES(2, '2025-05-19 20:34:40.861', 'ambulance', 1);
+INSERT INTO fivenet_roles (id, created_at, job, grade) VALUES(3, '2025-05-19 20:34:43.338', 'police', 1);
+INSERT INTO fivenet_roles (id, created_at, job, grade) VALUES(4, '2025-05-19 20:34:45.044', 'doj', 1);
+INSERT INTO fivenet_roles (id, created_at, job, grade) VALUES(5, '2025-05-19 20:41:53.396', 'ambulance', 17);
+INSERT INTO fivenet_roles (id, created_at, job, grade) VALUES(8, '2025-05-19 21:40:51.834', 'ambulance', 19);
 /*!40000 ALTER TABLE `fivenet_roles` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,10 +159,31 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_role_attrs` WRITE;
 /*!40000 ALTER TABLE `fivenet_role_attrs` DISABLE KEYS */;
-INSERT INTO `fivenet_role_attrs` (`role_id`, `created_at`, `updated_at`, `attr_id`, `value`) VALUES (3,'2023-05-16 18:05:22.073','2023-05-16 20:06:25.640',4,'{"stringList":{"strings":["UserProps.Wanted","UserProps.Job"]}}'),
-(3,'2023-05-16 18:09:00.879','2023-05-16 20:06:25.649',6,'{"jobList":{"strings":["ambulance","police"]}}'),
-(3,'2023-05-16 18:09:02.555','2023-05-16 20:15:20.546',7,'{"jobList":{"strings":["ambulance","police"]}}'),
-(6,'2023-05-13 17:06:22.053',NULL,4,'{"stringList":{"strings":["UserProps.Wanted","UserProps.Job"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(2, '2025-05-19 20:41:48.591', NULL, 2, '{"jobGradeList":{"jobs":{"ambulance":20}}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(2, '2025-05-19 20:41:48.609', NULL, 3, '{"stringList":{"strings":["UserProps.BloodType", "PhoneNumber"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(2, '2025-05-19 20:41:48.663', NULL, 7, '{"jobList":{"strings":["ambulance"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(2, '2025-05-19 20:41:48.647', NULL, 20, '{"stringList":{}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(2, '2025-05-19 20:41:48.677', NULL, 23, '{"jobList":{"strings":["ambulance"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(2, '2025-05-19 20:41:48.627', NULL, 24, '{"jobGradeList":{"jobs":{"ambulance":20}}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(4, '2025-05-19 21:09:20.416', NULL, 8, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(4, '2025-05-19 21:09:20.477', NULL, 9, '{"stringList":{"strings":["Access", "Closure", "Update", "Deletion", "OwnerChange"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(4, '2025-05-19 21:09:20.403', NULL, 10, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(4, '2025-05-19 21:09:20.461', NULL, 11, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(4, '2025-05-19 21:09:20.449', NULL, 12, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(4, '2025-05-19 21:09:20.433', NULL, 13, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.282', NULL, 1, '{"stringList":{"strings":["Job", "Public"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.295', NULL, 14, '{"stringList":{"strings":["Own", "All"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.361', NULL, 21, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.313', NULL, 22, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.395', NULL, 25, '{"stringList":{"strings":["Job"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.265', NULL, 26, '{"stringList":{"strings":["Public"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.378', NULL, 27, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.332', NULL, 28, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(5, '2025-05-19 20:42:36.349', NULL, 29, '{"stringList":{"strings":["Public"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(8, '2025-05-19 21:41:10.271', NULL, 21, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(8, '2025-05-19 21:41:10.316', NULL, 22, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(8, '2025-05-19 21:41:10.300', NULL, 23, '{"jobList":{"strings":["ambulance"]}}');
+INSERT INTO fivenet_role_attrs (role_id, created_at, updated_at, attr_id, value) VALUES(8, '2025-05-19 21:41:10.288', NULL, 24, '{"jobGradeList":{"jobs":{"ambulance":20, "doj":6, "police":27}}}');
 /*!40000 ALTER TABLE `fivenet_role_attrs` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -113,175 +193,360 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_role_permissions` WRITE;
 /*!40000 ALTER TABLE `fivenet_role_permissions` DISABLE KEYS */;
-INSERT INTO `fivenet_role_permissions` (`role_id`, `permission_id`, `val`) VALUES (1,1,1),
-(1,16,1),
-(1,22,1),
-(1,23,1),
-(1,25,1),
-(1,28,1),
-(3,1,1),
-(3,3,1),
-(3,6,0),
-(3,8,0),
-(3,10,1),
-(3,11,1),
-(3,16,1),
-(3,17,1),
-(3,18,1),
-(3,19,1),
-(3,22,1),
-(3,31,1),
-(3,7595,0),
-(4,1,1),
-(4,3,1),
-(4,6,1),
-(4,8,1),
-(4,10,1),
-(4,11,1),
-(4,16,1),
-(4,17,1),
-(4,27,1),
-(4,31,1),
-(4,3056,1),
-(5,1,1),
-(5,3,1),
-(5,6,1),
-(5,8,1),
-(5,10,1),
-(5,11,1),
-(5,16,1),
-(5,17,1),
-(5,27,1),
-(5,31,1),
-(5,3056,1),
-(6,1,1),
-(6,3,1),
-(6,6,1),
-(6,8,1),
-(6,10,1),
-(6,11,1),
-(6,16,1),
-(6,17,1),
-(6,18,1),
-(6,19,1),
-(6,20,1),
-(6,21,1),
-(6,22,1),
-(6,23,1),
-(6,24,1),
-(6,25,1),
-(6,26,1),
-(6,27,1),
-(6,28,1),
-(6,29,1),
-(6,30,1),
-(6,31,1),
-(6,74,1),
-(6,75,1),
-(6,76,1),
-(6,77,1),
-(6,82,1),
-(6,2198,1),
-(6,2199,1),
-(6,3056,1),
-(6,3392,1),
-(6,3395,1),
-(6,3671,1),
-(6,7595,1),
-(19,1,1),
-(19,3,1),
-(19,6,1),
-(19,8,1),
-(19,10,1),
-(19,11,1),
-(19,16,1),
-(19,17,1),
-(19,18,1),
-(19,19,1),
-(19,20,1),
-(19,21,1),
-(19,22,1),
-(19,23,1),
-(19,24,1),
-(19,25,1),
-(19,26,1),
-(19,27,1),
-(19,28,1),
-(19,29,1),
-(19,30,1),
-(19,31,1),
-(19,74,1),
-(19,75,1),
-(19,76,1),
-(19,77,1),
-(19,82,1),
-(19,2198,1),
-(19,2199,1),
-(19,3056,1),
-(19,3392,1),
-(19,3395,1),
-(19,3671,1),
-(54,1,1),
-(54,31,1),
-(97,1,1),
-(97,3,1),
-(97,6,1),
-(97,10,1),
-(97,11,1),
-(97,16,1),
-(97,18,1),
-(97,19,1),
-(97,20,1),
-(97,22,1),
-(97,23,1),
-(97,24,1),
-(97,25,1),
-(97,26,1),
-(97,27,1),
-(97,31,1),
-(97,74,1),
-(97,75,1),
-(97,76,1),
-(97,77,1),
-(97,82,1),
-(97,2198,1),
-(97,2199,1),
-(97,3392,1),
-(97,3395,1),
-(97,3671,1),
-(97,5497,1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(1, 1, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(1, 36, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(1, 63, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(1, 77, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 1, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 7, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 9, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 12, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 13, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 18, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 19, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 49, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 53, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 54, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 57, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 60, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 63, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 76, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(2, 77, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 1, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 20, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 21, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 22, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 23, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 24, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 25, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 26, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 27, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 28, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 29, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 30, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 31, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 32, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 33, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 34, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 35, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 36, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 37, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 38, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 39, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 40, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 41, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(4, 42, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 1, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 2, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 3, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 4, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 5, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 6, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 8, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 10, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 11, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 43, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 44, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 45, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 46, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 55, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 56, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 58, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 61, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 62, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 64, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 67, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 68, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 69, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 70, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 71, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 72, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 73, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 74, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 75, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 76, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(5, 77, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(8, 55, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(8, 56, 1);
+INSERT INTO fivenet_role_permissions (role_id, permission_id, val) VALUES(8, 57, 1);
 /*!40000 ALTER TABLE `fivenet_role_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 LOCK TABLES `fivenet_job_permissions` WRITE;
 /*!40000 ALTER TABLE `fivenet_job_permissions` DISABLE KEYS */;
-INSERT INTO `fivenet_job_permissions` (`job`, `permission_id`, `val`) VALUES ('ambulance',1,1),
-('ambulance',3,1),
-('ambulance',6,0),
-('ambulance',8,0),
-('ambulance',10,1),
-('ambulance',11,1),
-('ambulance',16,1),
-('ambulance',17,1),
-('ambulance',18,1),
-('ambulance',19,1),
-('ambulance',22,1),
-('ambulance',23,1),
-('ambulance',24,1),
-('ambulance',25,1),
-('ambulance',26,1),
-('ambulance',27,1),
-('ambulance',28,1),
-('ambulance',29,1),
-('ambulance',30,1),
-('ambulance',31,1),
-('ambulance',74,1),
-('ambulance',75,1),
-('ambulance',76,1),
-('ambulance',77,1),
-('ambulance',82,1),
-('ambulance',7595,0);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 1, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 2, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 3, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 4, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 5, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 6, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 7, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 8, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 9, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 10, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 11, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 12, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 13, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 17, 0);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 18, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 19, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 21, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 22, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 23, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 24, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 25, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 26, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 27, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 28, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 29, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 30, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 31, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 32, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 33, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 34, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 35, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 36, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 37, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 38, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 39, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 40, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 41, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 42, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 43, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 44, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 45, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 46, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 47, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 48, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 49, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 50, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 51, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 52, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 53, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 54, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 55, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 56, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 57, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 58, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 59, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 60, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 61, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 62, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 63, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 64, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 67, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 68, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 69, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 70, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 71, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 72, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 73, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 74, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 75, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 76, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('ambulance', 77, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 1, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 2, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 3, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 4, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 5, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 6, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 7, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 8, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 9, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 10, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 11, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 12, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 13, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 14, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 15, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 16, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 17, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 18, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 19, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 20, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 21, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 22, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 23, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 24, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 25, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 26, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 27, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 28, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 29, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 30, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 31, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 32, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 33, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 34, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 35, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 36, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 37, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 38, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 39, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 40, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 41, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 42, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 43, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 44, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 45, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 46, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 47, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 49, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 50, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 51, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 52, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 53, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 54, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 55, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 56, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 57, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 58, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 59, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 60, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 61, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 62, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 63, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 64, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 65, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 66, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 67, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 68, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 69, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 70, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 71, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 72, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 73, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 74, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 75, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 76, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('doj', 77, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 1, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 3, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 4, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 5, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 6, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 7, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 8, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 9, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 10, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 11, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 20, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 21, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 22, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 23, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 24, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 25, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 26, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 27, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 28, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 29, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 30, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 31, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 32, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 33, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 34, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 35, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 36, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 37, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 38, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 39, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 40, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 41, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 42, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 43, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 44, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 45, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 46, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 47, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 48, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 49, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 50, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 51, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 52, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 53, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 54, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 55, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 56, 1);
+INSERT INTO fivenet_job_permissions (job, permission_id, val) VALUES('police', 57, 1);
 /*!40000 ALTER TABLE `fivenet_job_permissions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+LOCK TABLES `fivenet_job_attrs` WRITE;
+/*!40000 ALTER TABLE `fivenet_job_attrs` DISABLE KEYS */;
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 1, '{"stringList":{"strings":["Public", "Job"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 2, '{"jobGradeList":{"jobs":{"ambulance":20}}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 3, '{"stringList":{"strings":["PhoneNumber", "UserProps.BloodType"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 6, '{"jobList":{}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 7, '{"jobList":{"strings":["ambulance"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 8, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 9, '{"stringList":{"strings":["Access", "Closure", "Update", "Deletion", "OwnerChange"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 10, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 11, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 12, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 13, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 14, '{"stringList":{"strings":["Own", "All"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 15, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 16, '{"stringList":{"strings":["Note", "Labels"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 17, '{"stringList":{"strings":["HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 18, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 19, '{"stringList":{"strings":["AbsenceDate", "Note", "Labels", "Name"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 20, '{"stringList":{"strings":["All"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 21, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 22, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 23, '{"jobList":{"strings":["ambulance"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 24, '{"jobGradeList":{"jobs":{"ambulance":20, "doj":6, "police":27}}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 25, '{"stringList":{"strings":["Job"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 26, '{"stringList":{"strings":["Public"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 27, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 28, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('ambulance', 29, '{"stringList":{"strings":["Public"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 1, '{"stringList":{"strings":["Job", "Public"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 2, '{"jobGradeList":{"jobs":{"ambulance":20, "doj":22, "police":27}}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 3, '{"stringList":{"strings":["PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 4, '{"stringList":{"strings":["SourceUser", "Own"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 5, '{"stringList":{"strings":["Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 6, '{"jobList":{"strings":["doj"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 7, '{"jobList":{"strings":["doj"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 8, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 9, '{"stringList":{"strings":["Access", "Closure", "Update", "Deletion", "OwnerChange"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 10, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 11, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 12, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 13, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 14, '{"stringList":{"strings":["Own", "All"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 15, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 16, '{"stringList":{"strings":["Note", "Labels"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 18, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 19, '{"stringList":{"strings":["AbsenceDate", "Note", "Labels", "Name"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 20, '{"stringList":{"strings":["All"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 21, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 22, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 23, '{"jobList":{"strings":["doj"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 24, '{"jobGradeList":{"jobs":{"ambulance":20, "doj":22, "police":27}}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 25, '{"stringList":{"strings":["Job"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 26, '{"stringList":{"strings":["Public"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 27, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 28, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('doj', 29, '{"stringList":{"strings":["Public"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 8, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 9, '{"stringList":{"strings":["Access", "Closure", "Update", "Deletion", "OwnerChange"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 10, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 11, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 12, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 13, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 14, '{"stringList":{"strings":["Own", "All"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 15, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 16, '{"stringList":{"strings":["Note", "Labels"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 17, '{"stringList":{"strings":["HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 18, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 19, '{"stringList":{"strings":["AbsenceDate", "Note", "Labels", "Name"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 20, '{"stringList":{"strings":["All"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 21, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 22, '{"stringList":{"strings":["Own", "Lower_Rank", "Same_Rank", "Any"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 23, '{"jobList":{"strings":["police"]}}');
+INSERT INTO fivenet_job_attrs (job, attr_id, max_values) VALUES('police', 24, '{"jobGradeList":{"jobs":{"ambulance":20, "doj":22, "police":27}}}');
+/*!40000 ALTER TABLE `fivenet_job_attrs` ENABLE KEYS */;
 UNLOCK TABLES;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

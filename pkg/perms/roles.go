@@ -342,7 +342,7 @@ func (p *Perms) GetRolePermissions(ctx context.Context, id uint64) ([]*permissio
 	return dest, nil
 }
 
-func (p *Perms) GetRoleEffectivePermissions(ctx context.Context, roleId uint64) ([]*permissions.Permission, error) {
+func (p *Perms) GetEffectiveRolePermissions(ctx context.Context, roleId uint64) ([]*permissions.Permission, error) {
 	defaultRoleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
 	if !ok {
 		return nil, fmt.Errorf("failed to fallback to default role")
