@@ -10,9 +10,12 @@ jobs:
   run-tests:
     uses: ./.github/workflows/push.yml
     secrets: inherit
+    with:
+      skipImageBuild: true
 
   run_release_it:
     runs-on: ubuntu-latest
+    if: github.ref_name == github.event.repository.default_branch
     needs: [run-tests]
     steps:
       - uses: actions/checkout@v4

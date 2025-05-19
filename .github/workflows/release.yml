@@ -12,8 +12,6 @@ jobs:
     name: Build Images
     uses: ./.github/workflows/build_image.yml
     secrets: inherit
-    with:
-      push: true
 
   build-binaries:
     name: Build Binaries

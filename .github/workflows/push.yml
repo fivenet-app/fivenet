@@ -10,6 +10,12 @@ on:
       - develop
 
   workflow_call:
+    inputs:
+      skipImageBuild:
+        description: 'If images should be built'
+        default: false
+        required: false
+        type: boolean
 
 permissions:
   contents: write
@@ -114,11 +120,9 @@ jobs:
 
   image-build:
     name: Image Build
+    if: ${{ github.event_name != 'pull_request' && !skipImageBuild }}
     needs:
       - container-build
       - binary-build
     uses: ./.github/workflows/build_image.yml
     secrets: inherit
-    with:
-      # Push images when not a pull request
-      push: ${{ github.event_name != 'pull_request' }}
