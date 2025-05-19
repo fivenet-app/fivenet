@@ -33,7 +33,11 @@ const dispatchesFiltered = computedAsync(async () =>
     ),
 );
 
-onBeforeMount(() => {
+watch(settings, () => {
+    if (!settings.value?.enabled) {
+        return;
+    }
+
     addOrUpdateLivemapCategory({
         key: 'dispatches',
         label: t('common.dispatch', 2),

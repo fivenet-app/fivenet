@@ -366,14 +366,14 @@ defineShortcuts({
         <UMain>
             <div class="relative z-0 size-full">
                 <LivemapBase>
-                    <template v-if="canStream && settings?.enabled" #default>
+                    <template v-if="canStream" #default>
                         <DispatchesLayer
                             :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
                         />
 
                         <LControl position="bottomright">
                             <UButton
-                                v-if="canStream && settings?.enabled"
+                                v-if="settings?.enabled"
                                 class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
                                 size="2xs"
                                 :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
