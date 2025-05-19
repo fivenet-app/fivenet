@@ -27,7 +27,7 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 
 	ps := p.getRolePermissionsFromCache(roleIds)
 	if len(ps) == 0 {
-		return collections.Permissions{}, nil
+		return nil, nil
 	}
 
 	perms := make(collections.Permissions, len(ps))
@@ -126,10 +126,12 @@ func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) (bool, bool
 		if !ok {
 			continue
 		}
+
 		val, ok := ps.Load(permId)
 		if !ok {
 			continue
 		}
+
 		return val, true
 	}
 

@@ -192,7 +192,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 icon="i-mdi-select"
                 :message="$t('common.none_selected', [$t('common.job')], 2)"
             />
-            <NuxtPage v-else />
+            <NuxtPage v-else @deleted="refresh()" />
         </div>
     </UDashboardPanelContent>
 </template>

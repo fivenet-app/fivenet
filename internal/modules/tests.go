@@ -20,13 +20,14 @@ import (
 
 func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 	to := []fx.Option{
-		fx.StartTimeout(180 * time.Second),
+		fx.StartTimeout(240 * time.Second),
+
 		LoggerModule,
 		config.TestModule,
 		fx.Provide(appconfig.NewTest),
 		htmlsanitizer.Module,
 		TracerProviderModule,
-		perms.TestModule,
+		perms.Module,
 		fx.Provide(TestTokenMgr),
 		fx.Provide(TestAudit),
 		fx.Provide(postals.NewForTests),

@@ -136,6 +136,8 @@ discord:
 game:
   # First grade "number/id", some servers start at 0, but I have seen some start at 1
   startJobGrade: 0
+  # If enabled it will automatically delete roles which no jobs/grades are found for
+  cleanupRolesForMissingJobs: false
 sync:
   enabled: false
   apiTokens: []

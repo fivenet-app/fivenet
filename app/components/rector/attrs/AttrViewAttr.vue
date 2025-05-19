@@ -335,15 +335,7 @@ const { game } = useAppConfig();
                                     v-model="attrValues.validValues.jobGradeList.jobs[job.name]"
                                     class="flex-1"
                                     :disabled="disabled || !attrValues.validValues?.jobGradeList.jobs[job.name]"
-                                    :options="
-                                        job.grades.filter(
-                                            (g) =>
-                                                attrValues &&
-                                                attrValues.validValues.oneofKind === 'jobGradeList' &&
-                                                (attrValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) >=
-                                                    g.grade,
-                                        )
-                                    "
+                                    :options="job.grades"
                                     :search-attributes="['label']"
                                     :searchable-placeholder="$t('common.search_field')"
                                     :placeholder="$t('common.rank')"

@@ -77,7 +77,7 @@ async function clickListener(event: MouseEvent): Promise<void> {
         return;
     }
     const href = element.getAttribute('href');
-    if (href?.startsWith('/') || href?.startsWith('#')) {
+    if (href?.startsWith('/') || href?.startsWith('#') || href === '') {
         return;
     }
 

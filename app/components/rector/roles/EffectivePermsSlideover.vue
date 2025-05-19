@@ -28,7 +28,6 @@ async function getEffectivePermissions(roleId: number): Promise<GetEffectivePerm
         attrList.value = response.attributes;
 
         await genPermissionCategories();
-        await propogatePermissionStates();
 
         return response;
     } catch (e) {
@@ -61,10 +60,16 @@ async function genPermissionCategories(): Promise<void> {
 async function propogatePermissionStates(): Promise<void> {
     permStates.value.clear();
 
-    role.value?.permissions.forEach((perm) => {
+    permList.value.forEach((perm) => {
         permStates.value.set(perm.id, Boolean(perm.val));
     });
 }
+
+async function initializeRoleView(): Promise<void> {
+    await propogatePermissionStates();
+}
+
+watch(role, async () => initializeRoleView());
 
 const permCategoriesSorted = computed(() =>
     [...permCategories.value.entries()].map((category) => {
@@ -195,6 +200,7 @@ const permCategoriesSorted = computed(() =>
                                         :permission="perm"
                                         disabled
                                         default-open
+                                        hide-fine-grained
                                     />
                                 </template>
                             </div>

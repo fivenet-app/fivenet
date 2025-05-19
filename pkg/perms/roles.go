@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
+	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
@@ -338,6 +340,68 @@ func (p *Perms) GetRolePermissions(ctx context.Context, id uint64) ([]*permissio
 	}
 
 	return dest, nil
+}
+
+func (p *Perms) GetRoleEffectivePermissions(ctx context.Context, roleId uint64) ([]*permissions.Permission, error) {
+	defaultRoleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
+	if !ok {
+		return nil, fmt.Errorf("failed to fallback to default role")
+	}
+
+	role, err := p.GetRole(ctx, roleId)
+	if err != nil {
+		return nil, err
+	}
+
+	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(role.Job, role.Grade)
+	if !ok {
+		// Fallback to default role
+		roleIds = []uint64{defaultRoleId}
+	} else {
+		// Prepend default role to default perms
+		roleIds = append([]uint64{defaultRoleId}, roleIds...)
+	}
+
+	perms := map[uint64]bool{}
+	for i := range slices.Backward(roleIds) {
+		permsRoleMap, ok := p.permsRoleMap.Load(roleIds[i])
+		if !ok {
+			continue
+		}
+
+		permsRoleMap.Range(func(key uint64, value bool) bool {
+			// Only allow the first perm "value" to be set (because that's how role perms inheritance works)
+			if _, ok := perms[key]; !ok {
+				perms[key] = value
+			}
+
+			return true
+		})
+	}
+
+	ps := []*permissions.Permission{}
+	for i, v := range perms {
+		p, ok := p.lookupPermByID(i)
+		if !ok {
+			continue
+		}
+
+		ps = append(ps, &permissions.Permission{
+			Id:        p.ID,
+			Category:  string(p.Category),
+			Name:      string(p.Name),
+			GuardName: p.GuardName,
+			Val:       v,
+			Order:     p.Order,
+		})
+	}
+
+	// Order by `GuardName` ascending
+	slices.SortFunc(ps, func(a, b *permissions.Permission) int {
+		return strings.Compare(a.GuardName, b.GuardName)
+	})
+
+	return ps, nil
 }
 
 func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms ...AddPerm) error {

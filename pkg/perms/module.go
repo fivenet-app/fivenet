@@ -16,7 +16,7 @@ func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("perms")
 }
 
-var TestModule = fx.Module("perms",
+/* var TestModule = fx.Module("perms",
 	fx.Provide(func(p Params) (Permissions, error) {
 		ps, err := New(p)
 		if err != nil {
@@ -30,3 +30,4 @@ var TestModule = fx.Module("perms",
 	}),
 	fx.Decorate(wrapLogger),
 )
+*/

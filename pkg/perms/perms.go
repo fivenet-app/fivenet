@@ -52,6 +52,7 @@ type Permissions interface {
 	CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
 	DeleteRole(ctx context.Context, id uint64) error
 	GetRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
+	GetRoleEffectivePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
 	UpdateRolePermissions(ctx context.Context, id uint64, perms ...AddPerm) error
 	RemovePermissionsFromRole(ctx context.Context, id uint64, perms ...uint64) error
 
@@ -59,6 +60,7 @@ type Permissions interface {
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions.RoleAttribute, bool)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
+	GetEffectiveRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	UpdateRoleAttributes(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 
@@ -98,8 +100,9 @@ type Perms struct {
 	jsCons jetstream.ConsumeContext
 
 	// Enable fast "init" mode, skipping clean ups. Should only be used for dev/test environments
-	devMode       bool
-	startJobGrade int32
+	devMode                    bool
+	cleanupRolesForMissingJobs bool
+	startJobGrade              int32
 
 	permsMap *xsync.Map[uint64, *cachePerm]
 	// Guard name to permission ID
@@ -159,8 +162,9 @@ func New(p Params) (Permissions, error) {
 
 		js: p.JS,
 
-		devMode:       false,
-		startJobGrade: p.Cfg.Game.StartJobGrade,
+		devMode:                    false,
+		cleanupRolesForMissingJobs: p.Cfg.Game.CleanupRolesForMissingJobs,
+		startJobGrade:              p.Cfg.Game.StartJobGrade,
 
 		permsMap:          xsync.NewMap[uint64, *cachePerm](),
 		permsGuardToIDMap: xsync.NewMap[string, uint64](),
@@ -178,41 +182,7 @@ func New(p Params) (Permissions, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		cfgDefaultPerms := p.AppConfig.Get().Perms.Default
-		defaultPerms := make([]string, len(cfgDefaultPerms))
-		for i := range cfgDefaultPerms {
-			defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
-		}
-
-		if err := ps.load(ctxStartup); err != nil {
-			return err
-		}
-		ps.logger.Debug("permissions loaded")
-
-		if err := ps.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
-			return fmt.Errorf("failed to register events subscriptions. %w", err)
-		}
-		ps.logger.Debug("registered events subscription")
-
-		if err := ps.register(ctxStartup, defaultPerms); err != nil {
-			return fmt.Errorf("failed to register permissions. %w", err)
-		}
-
-		// Skip apply job perms when in dev mode
-		if !ps.devMode {
-			ps.wg.Add(1)
-			go func() {
-				defer ps.wg.Done()
-
-				if err := ps.ApplyJobPermissions(ctxCancel, ""); err != nil {
-					ps.logger.Error("failed to apply job permissions", zap.Error(err))
-					return
-				}
-				ps.logger.Debug("successfully applied job permissions")
-			}()
-		}
-
-		return nil
+		return ps.init(ctxCancel, ctxStartup, p)
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
@@ -236,6 +206,7 @@ type cachePerm struct {
 	Category  Category
 	Name      Name
 	GuardName string
+	Order     *int32
 }
 
 type cacheAttr struct {
@@ -255,6 +226,44 @@ type cacheRoleAttr struct {
 	Key          Key
 	Type         permissions.AttributeTypes
 	Value        *permissions.AttributeValues
+}
+
+func (p *Perms) init(ctxCancel context.Context, ctxStartup context.Context, params Params) error {
+	cfgDefaultPerms := params.AppConfig.Get().Perms.Default
+	defaultPerms := make([]string, len(cfgDefaultPerms))
+	for i := range cfgDefaultPerms {
+		defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
+	}
+
+	if err := p.load(ctxStartup); err != nil {
+		return err
+	}
+	p.logger.Debug("permissions loaded")
+
+	if err := p.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
+		return fmt.Errorf("failed to register events subscriptions. %w", err)
+	}
+	p.logger.Debug("registered events subscription")
+
+	if err := p.register(ctxStartup, defaultPerms); err != nil {
+		return fmt.Errorf("failed to register permissions. %w", err)
+	}
+
+	// Skip apply job perms when in dev mode
+	if !p.devMode {
+		p.wg.Add(1)
+		go func() {
+			defer p.wg.Done()
+
+			if err := p.ApplyJobPermissions(ctxCancel, ""); err != nil {
+				p.logger.Error("failed to apply job permissions", zap.Error(err))
+				return
+			}
+			p.logger.Debug("successfully applied job permissions")
+		}()
+	}
+
+	return nil
 }
 
 func (p *Perms) load(ctx context.Context) error {
@@ -296,6 +305,7 @@ func (p *Perms) loadPermissions(ctx context.Context) error {
 			tPerms.Category,
 			tPerms.Name,
 			tPerms.GuardName,
+			tPerms.Order,
 		).
 		FROM(tPerms)
 
@@ -312,6 +322,7 @@ func (p *Perms) loadPermissions(ctx context.Context) error {
 			Category:  perm.Category,
 			Name:      perm.Name,
 			GuardName: BuildGuard(perm.Category, perm.Name),
+			Order:     perm.Order,
 		})
 		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), perm.ID)
 	}

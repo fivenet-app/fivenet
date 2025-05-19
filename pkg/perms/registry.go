@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -73,6 +74,7 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 			Category:  perm.Category,
 			Name:      perm.Name,
 			GuardName: BuildGuard(perm.Category, perm.Name),
+			Order:     &perm.Order,
 		})
 		p.permsGuardToIDMap.Store(BuildGuard(perm.Category, perm.Name), permId)
 
@@ -247,6 +249,10 @@ func (p *Perms) registerOrUpdateAttribute(ctx context.Context, permId uint64, ke
 }
 
 func (p *Perms) cleanupRoles(ctx context.Context) error {
+	if err := p.updateDefaultRole(ctx); err != nil {
+		return err
+	}
+
 	tJobs := tables.Jobs().AS("job")
 	tJobGrades := tables.JobGrades().AS("jobgrade")
 
@@ -258,10 +264,12 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 			tJobGrades.Grade,
 			tJobGrades.Label,
 		).
-		FROM(tJobs.
-			INNER_JOIN(tJobGrades,
-				tJobGrades.JobName.EQ(tJobs.Name),
-			))
+		FROM(
+			tJobs.
+				INNER_JOIN(tJobGrades,
+					tJobGrades.JobName.EQ(tJobs.Name),
+				),
+		)
 
 	var dest []*users.Job
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
@@ -269,23 +277,16 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 			return fmt.Errorf("failed to query jobs and job grades. %w", err)
 		}
 	}
-	jobName := DefaultRoleJob
-	// Add default job to avoid it being deleted
-	dest = append(dest, &users.Job{
-		Name: DefaultRoleJob,
-		Grades: []*users.JobGrade{
-			{
-				JobName: &jobName,
-				Grade:   p.startJobGrade,
-			},
-		},
-	})
 
-	allRoles, err := p.GetRoles(ctx, false)
+	existingRoles, err := p.GetRoles(ctx, false)
 	if err != nil {
 		return fmt.Errorf("failed to get roles. %w", err)
 	}
-	existingRoles := allRoles.IDs()
+
+	// Remove default role from the list of roles
+	existingRoles = slices.DeleteFunc(existingRoles, func(role *model.FivenetRoles) bool {
+		return role.Job == DefaultRoleJob && role.Grade == p.startJobGrade
+	})
 
 	// Iterate over current job and job grades to find any non-existent roles in our database
 	for i := range dest {
@@ -298,18 +299,44 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 				continue
 			}
 
-			index := slices.Index(existingRoles, role.ID)
-			if index >= 0 {
+			index := slices.IndexFunc(existingRoles, func(r *model.FivenetRoles) bool {
+				return role.ID == r.ID
+			})
+			if index > -1 {
 				existingRoles = slices.Delete(existingRoles, index, index+1)
 			}
 		}
 	}
 
+	// Skip removal of roles if the cleanup is disabled
+	if !p.cleanupRolesForMissingJobs {
+		p.logger.Debug("skipping cleanup of roles for missing jobs", zap.Any("roles", existingRoles))
+		return nil
+	}
+
 	// Remove all roles that shouldn't exist anymore
 	for i := range existingRoles {
-		if err := p.DeleteRole(ctx, existingRoles[i]); err != nil {
+		if err := p.DeleteRole(ctx, existingRoles[i].ID); err != nil {
 			return fmt.Errorf("failed to delete role. %w", err)
 		}
+	}
+
+	return nil
+}
+
+func (p *Perms) updateDefaultRole(ctx context.Context) error {
+	stmt := tRoles.
+		UPDATE(
+			tRoles.Grade,
+		).
+		SET(
+			tRoles.Grade.SET(jet.Int32(p.startJobGrade)),
+		).
+		WHERE(tRoles.Job.EQ(jet.String(DefaultRoleJob))).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		return fmt.Errorf("failed to update default role grade. %w", err)
 	}
 
 	return nil

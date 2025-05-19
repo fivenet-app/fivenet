@@ -466,12 +466,12 @@ func (s *Server) GetEffectivePermissions(ctx context.Context, req *pbrector.GetE
 		return nil, errswrap.NewError(err, errorsrector.ErrNoPermission)
 	}
 
-	perms, err := s.ps.GetRolePermissions(ctx, role.ID)
+	perms, err := s.ps.GetRoleEffectivePermissions(ctx, role.ID)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
-	attrs, err := s.ps.GetRoleAttributes(role.Job, role.Grade)
+	attrs, err := s.ps.GetEffectiveRoleAttributes(role.Job, role.Grade)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}

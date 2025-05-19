@@ -210,7 +210,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UToggle
                                     v-model="state.enabled"
                                     name="enabled"
-                                    :disabled="!isSuperuser"
+                                    :disabled="!canSubmit"
                                     :placeholder="$t('common.enabled')"
                                 />
                             </UFormGroup>
@@ -227,6 +227,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="modes"
                                         value-attribute="mode"
                                         :searchable-placeholder="$t('common.search_field')"
+                                        :disabled="!canSubmit"
                                     >
                                         <template #label>
                                             <span class="truncate">{{
@@ -255,6 +256,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="modes"
                                         value-attribute="mode"
                                         :searchable-placeholder="$t('common.search_field')"
+                                        :disabled="!canSubmit"
                                     >
                                         <template #label>
                                             <span class="truncate">{{
@@ -299,6 +301,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 class="w-full flex-1"
                                                 type="text"
                                                 :placeholder="$t('common.reason')"
+                                                :disabled="!canSubmit"
                                             />
                                         </UFormGroup>
 
@@ -306,6 +309,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <UButton
                                                 :ui="{ rounded: 'rounded-full' }"
                                                 icon="i-mdi-close"
+                                                :disabled="!canSubmit"
                                                 @click="state.predefinedStatus.unitStatus.splice(idx, 1)"
                                             />
                                         </UTooltip>
@@ -342,6 +346,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 class="w-full flex-1"
                                                 type="text"
                                                 :placeholder="$t('common.reason')"
+                                                :disabled="!canSubmit"
                                             />
                                         </UFormGroup>
 
@@ -389,6 +394,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :min="30"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
+                                    :disabled="!canSubmit"
                                 />
                             </UFormGroup>
 
@@ -398,7 +404,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :label="$t('components.centrum.settings.timings.require_unit')"
                                 :ui="{ container: '' }"
                             >
-                                <UToggle v-model="state.timings.requireUnit" />
+                                <UToggle v-model="state.timings.requireUnit" :disabled="!canSubmit" />
                             </UFormGroup>
 
                             <UFormGroup
@@ -413,6 +419,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :min="60"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
+                                    :disabled="!canSubmit"
                                 />
                             </UFormGroup>
                         </UDashboardSection>

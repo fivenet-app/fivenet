@@ -159,7 +159,7 @@ type Cache struct {
 }
 
 type Audit struct {
-	RetentionDays int `default:"120" yaml:"auditRetentionDays"`
+	RetentionDays int `default:"180" yaml:"auditRetentionDays"`
 }
 
 type OAuth2 struct {
@@ -252,7 +252,8 @@ type DiscordCommands struct {
 }
 
 type Game struct {
-	StartJobGrade int32 `default:"0" yaml:"startJobGrade"`
+	StartJobGrade              int32 `default:"0" yaml:"startJobGrade"`
+	CleanupRolesForMissingJobs bool  `default:"false" yaml:"cleanupRolesForMissingJobs"`
 }
 
 type Sync struct {

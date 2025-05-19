@@ -252,22 +252,28 @@ watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), 
     maxWait: 200,
 });
 
-onBeforeMount(async () => {
-    if (!canStream.value && settings.value?.enabled) {
+watch(settings, () => {
+    if (!settings.value?.enabled) {
         return;
     }
 
     useIntervalFn(() => checkup(), 1 * 60 * 1000);
+    toggleSidebarBasedOnUnit();
+    toggleRequireUnitNotification();
+});
+
+onBeforeMount(async () => {
+    if (!canStream.value) {
+        return;
+    }
+
     useTimeoutFn(async () => {
         try {
             startStream();
         } catch (e) {
             logger.error('exception during centrum stream', e);
         }
-    }, 500);
-
-    toggleSidebarBasedOnUnit();
-    toggleRequireUnitNotification();
+    }, 400);
 });
 
 onBeforeRouteLeave(async () => {

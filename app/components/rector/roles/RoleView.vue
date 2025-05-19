@@ -83,7 +83,7 @@ async function deleteRole(id: number): Promise<void> {
 async function getPermissions(roleId: number): Promise<void> {
     try {
         const call = $grpc.rector.rector.getPermissions({
-            roleId,
+            roleId: roleId,
             filtered: true,
         });
         const { response } = await call;

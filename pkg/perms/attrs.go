@@ -474,7 +474,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 	}
 
 	var err error
-	dest := []*permissions.RoleAttribute{}
+	attrs := []*permissions.RoleAttribute{}
 	attrMap.Range(func(key uint64, value *cacheRoleAttr) bool {
 		attr, ok := p.LookupAttributeByID(key)
 		if !ok {
@@ -490,7 +490,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 
 		maxVal, _ := p.GetJobAttribute(job, attr.ID)
 
-		dest = append(dest, &permissions.RoleAttribute{
+		attrs = append(attrs, &permissions.RoleAttribute{
 			RoleId:       roleId,
 			AttrId:       attr.ID,
 			PermissionId: attr.PermissionID,
@@ -509,7 +509,82 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 		return nil, fmt.Errorf("failed to range over attributes. %w", err)
 	}
 
-	return dest, nil
+	return attrs, nil
+}
+
+func (p *Perms) GetEffectiveRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
+	roleAttrs := map[uint64]interface{}{}
+
+	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
+	if !ok {
+		return nil, nil
+	}
+
+	perms := p.getRolePermissionsFromCache(roleIds)
+
+	var err error
+	attrs := []*permissions.RoleAttribute{}
+	for i := range slices.Backward(roleIds) {
+		attrMap, ok := p.attrsRoleMap.Load(roleIds[i])
+		if !ok {
+			continue
+		}
+
+		attrMap.Range(func(_ uint64, value *cacheRoleAttr) bool {
+			// Skip already added attributes
+			if _, ok := roleAttrs[value.AttrID]; ok {
+				return true
+			}
+
+			// Permission not granted
+			if !slices.ContainsFunc(perms, func(p *cachePerm) bool {
+				return p.ID == value.PermissionID
+			}) {
+				return true
+			}
+
+			attr, ok := p.LookupAttributeByID(value.AttrID)
+			if !ok {
+				err = fmt.Errorf("no attribute found by id for role. %w", fmt.Errorf("attribute ID not found"))
+				return false
+			}
+
+			attrMap, ok := p.attrsRoleMap.Load(roleIds[i])
+			if !ok {
+				return true
+			}
+			attrVal, ok := attrMap.Load(attr.ID)
+			if !ok {
+				err = fmt.Errorf("no role attribute found by id for role. %w", fmt.Errorf("role attribute ID not found"))
+				return false
+			}
+
+			maxVal, _ := p.GetJobAttribute(job, attr.ID)
+
+			attrs = append(attrs, &permissions.RoleAttribute{
+				RoleId:       roleIds[i],
+				AttrId:       value.AttrID,
+				PermissionId: value.PermissionID,
+				Category:     string(attr.Category),
+				Name:         string(attr.Name),
+				Key:          string(attr.Key),
+				Type:         string(attr.Type),
+				Value:        attrVal.Value,
+				ValidValues:  attr.ValidValues,
+				MaxValues:    maxVal,
+			})
+
+			roleAttrs[value.AttrID] = nil
+
+			return true
+		})
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to range over attributes. %w", err)
+	}
+
+	return attrs, nil
 }
 
 func (p *Perms) getRoleAttributesFromCache(job string, grade int32) ([]*cacheRoleAttr, error) {

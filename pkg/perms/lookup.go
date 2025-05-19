@@ -46,6 +46,7 @@ func (p *Perms) lookupRoleIDForJobAndGrade(job string, grade int32) (uint64, boo
 	return roles[len(roles)-1], true
 }
 
+// Lookup all role IDs for a job up to a certain grade.
 func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64, bool) {
 	gradesMap, ok := p.permsJobsRoleMap.Load(job)
 	if !ok {

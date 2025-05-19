@@ -207,9 +207,7 @@ async function initializeRoleView(): Promise<void> {
     await propogatePermissionStates();
 }
 
-watch(jobLimits, async () => {
-    initializeRoleView();
-});
+watch(jobLimits, async () => initializeRoleView());
 
 watch(props, async (value) => {
     if (!jobLimits.value || value.job !== props.job) {

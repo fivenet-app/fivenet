@@ -16,12 +16,23 @@ definePageMeta({
     },
 });
 
+defineEmits<{
+    (e: 'deleted'): void;
+}>();
+
 const roleId = useRoute('rector-roles-id').params.id;
 </script>
 
 <template>
     <div>
         <DataNoDataBlock v-if="!roleId" icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.role', 1)])" />
-        <RoleView v-else :role-id="parseInt(roleId)" @deleted="navigateTo({ name: 'rector-roles' })" />
+        <RoleView
+            v-else
+            :role-id="parseInt(roleId)"
+            @deleted="
+                navigateTo({ name: 'rector-roles' });
+                $emit('deleted');
+            "
+        />
     </div>
 </template>

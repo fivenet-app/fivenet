@@ -16,12 +16,23 @@ definePageMeta({
     },
 });
 
+defineEmits<{
+    (e: 'deleted'): void;
+}>();
+
 const job = useRoute('rector-limiter-job').params.job;
 </script>
 
 <template>
     <div>
         <DataNoDataBlock v-if="!job" icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.job', 2)])" />
-        <AttrView v-else :job="job" @deleted="navigateTo({ name: 'rector-limiter' })" />
+        <AttrView
+            v-else
+            :job="job"
+            @deleted="
+                navigateTo({ name: 'rector-limiter' });
+                $emit('deleted');
+            "
+        />
     </div>
 </template>

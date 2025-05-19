@@ -8,6 +8,7 @@ const props = defineProps<{
     disabled?: boolean;
     permission: Permission;
     defaultOpen?: boolean;
+    hideFineGrained?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -508,20 +509,22 @@ const { game } = useAppConfig();
                                 </ClientOnly>
                             </div>
 
-                            <UDivider />
+                            <template v-if="!hideFineGrained">
+                                <UDivider />
 
-                            <div class="flex flex-row items-center gap-2">
-                                <UToggle
-                                    :model-value="attrValues.validValues.jobGradeList.fineGrained"
-                                    :disabled="disabled"
-                                    @update:model-value="toggleJobGradeListFineGrained($event)"
-                                />
+                                <div class="flex flex-row items-center gap-2">
+                                    <UToggle
+                                        :model-value="attrValues.validValues.jobGradeList.fineGrained"
+                                        :disabled="disabled"
+                                        @update:model-value="toggleJobGradeListFineGrained($event)"
+                                    />
 
-                                <UFormGroup
-                                    :label="$t('components.rector.role_view.fine_grained_toggle.title')"
-                                    :description="$t('components.rector.role_view.fine_grained_toggle.description')"
-                                />
-                            </div>
+                                    <UFormGroup
+                                        :label="$t('components.rector.role_view.fine_grained_toggle.title')"
+                                        :description="$t('components.rector.role_view.fine_grained_toggle.description')"
+                                    />
+                                </div>
+                            </template>
                         </template>
                     </div>
 
