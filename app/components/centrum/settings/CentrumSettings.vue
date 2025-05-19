@@ -13,8 +13,6 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
-const { isSuperuser } = useAuth();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
