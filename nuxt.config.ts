@@ -35,6 +35,8 @@ export default defineNuxtConfig({
             },
         },
         spaLoadingTemplateLocation: 'body',
+
+        granularCachedData: false,
     },
 
     site: {
