@@ -108,7 +108,7 @@
         "eslint-config-prettier": "10.1.5",
         "eslint-plugin-prettier": "5.4.0",
         "nuxi": "3.25.1",
-        "nuxt": "3.16.2",
+        "nuxt": "3.17.3",
         "nuxt-tiptap-editor": "2.2.1",
         "nuxt-typed-router": "3.8.0",
         "pinia-plugin-persistedstate": "4.3.0",
@@ -132,7 +132,7 @@
         "vue-tsc": "2.2.10"
     },
     "resolutions": {
-        "@nuxt/kit": "3.16.2"
+        "@nuxt/kit": "3.17.3"
     },
     "packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977",
     "pnpm": {
