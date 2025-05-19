@@ -372,6 +372,7 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 		return err
 	}
 
+	permsToRemove := []uint64{}
 	if len(toUpdate) > 0 {
 		toUpdatePerms := make([]perms.AddPerm, len(permsUpdate.ToUpdate))
 		for _, v := range toUpdate {
@@ -380,6 +381,10 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 					toUpdatePerms[i] = perms.AddPerm{
 						Id:  permsUpdate.ToUpdate[i].Id,
 						Val: permsUpdate.ToUpdate[i].Val,
+					}
+
+					if !permsUpdate.ToUpdate[i].Val {
+						permsToRemove = append(permsToRemove, permsUpdate.ToUpdate[i].Id)
 					}
 					break
 				}
@@ -390,9 +395,18 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 			return err
 		}
 	}
+
 	if len(toDelete) > 0 {
 		if err := s.ps.RemovePermissionsFromRole(ctx, role.ID, toDelete...); err != nil {
 			return err
+		}
+	}
+
+	if len(permsToRemove) > 0 {
+		for _, perm := range permsToRemove {
+			if err := s.ps.RemoveAttributesFromRoleByPermission(ctx, role.ID, perm); err != nil {
+				return err
+			}
 		}
 	}
 

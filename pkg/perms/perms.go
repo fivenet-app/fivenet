@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -63,6 +64,7 @@ type Permissions interface {
 	GetEffectiveRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	UpdateRoleAttributes(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
+	RemoveAttributesFromRoleByPermission(ctx context.Context, roleId uint64, permissionId uint64) error
 
 	// Limit - Job permissions
 	GetJobPermissions(ctx context.Context, job string) ([]*permissions.Permission, error)
@@ -428,11 +430,33 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 		}
 	}
 
+	found := map[uint64][]uint64{}
 	for _, rolePerms := range dest {
 		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, func() (*xsync.Map[uint64, bool], bool) {
 			return xsync.NewMap[uint64, bool](), false
 		})
 		perms.Store(rolePerms.ID, rolePerms.Val)
+
+		if _, ok := found[rolePerms.RoleID]; !ok {
+			found[rolePerms.RoleID] = []uint64{}
+		}
+
+		found[rolePerms.RoleID] = append(found[rolePerms.RoleID], rolePerms.ID)
+	}
+
+	// Check if any role perms don't exist anymore in the db and need to be deleted
+	for roleId, list := range found {
+		perms, ok := p.permsRoleMap.Load(roleId)
+		if !ok {
+			continue
+		}
+
+		perms.Range(func(permId uint64, _ bool) bool {
+			if !slices.Contains(list, permId) {
+				perms.Delete(permId)
+			}
+			return true
+		})
 	}
 
 	return nil
@@ -469,13 +493,38 @@ func (p *Perms) loadJobAttrs(ctx context.Context, job string) error {
 
 	// No attributes? Delete cached data
 	if len(dest) == 0 {
-		p.attrsJobMaxValuesMap.Delete(job)
+		if job != "" {
+			p.attrsJobMaxValuesMap.Delete(job)
+		} else {
+			p.attrsJobMaxValuesMap.Clear()
+		}
 	} else {
+		found := map[string][]uint64{}
 		for _, jobAttrs := range dest {
 			attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, func() (*xsync.Map[uint64, *permissions.AttributeValues], bool) {
 				return xsync.NewMap[uint64, *permissions.AttributeValues](), false
 			})
 			attrs.Store(jobAttrs.AttrID, jobAttrs.MaxValues)
+
+			if _, ok := found[jobAttrs.Job]; !ok {
+				found[jobAttrs.Job] = []uint64{}
+			}
+			found[jobAttrs.Job] = append(found[jobAttrs.Job], jobAttrs.AttrID)
+		}
+
+		// Check if any job attrs don't exist anymore in the db and need to be deleted
+		for job, list := range found {
+			attrs, ok := p.attrsJobMaxValuesMap.Load(job)
+			if !ok {
+				continue
+			}
+
+			attrs.Range(func(attrId uint64, _ *permissions.AttributeValues) bool {
+				if !slices.Contains(list, attrId) {
+					attrs.Delete(attrId)
+				}
+				return true
+			})
 		}
 	}
 
@@ -520,9 +569,30 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 		}
 	}
 
+	found := map[uint64][]uint64{}
 	for _, ra := range dest {
 		ra.Value.Default(ra.Type)
 		p.updateRoleAttributeInMap(ra.RoleID, ra.PermissionID, ra.AttrID, ra.Key, ra.Type, ra.Value)
+
+		if _, ok := found[ra.RoleID]; !ok {
+			found[ra.RoleID] = []uint64{}
+		}
+		found[ra.RoleID] = append(found[ra.RoleID], ra.AttrID)
+	}
+
+	// Check if any role attrs that don't exist anymore in the db and need to be deleted
+	for roleId, list := range found {
+		attrRoleMap, ok := p.attrsRoleMap.Load(roleId)
+		if !ok {
+			continue
+		}
+
+		attrRoleMap.Range(func(attrId uint64, _ *cacheRoleAttr) bool {
+			if !slices.Contains(list, attrId) {
+				attrRoleMap.Delete(attrId)
+			}
+			return true
+		})
 	}
 
 	return nil
