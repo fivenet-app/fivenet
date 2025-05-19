@@ -10,7 +10,20 @@
 
 ![FiveNet Overview Screenshot](.github/readme/overview.png)
 
-For more screenshots and a detailed overview of the features, please check out the [FiveNet website](https://fivenet.app/).
+For more screenshots and a detailed overview of the features, please check out the [FiveNet documentation](https://fivenet.app/getting-started/features).
+
+## Table of Contents
+
+- [Roadmap](#roadmap)
+- [Features](#features)
+- [Installation](#installation)
+- [Translations (i18n)](#translations-i18n)
+- [Security](#security)
+- [Development](#development)
+- [Community](#community)
+- [FAQ](#faq)
+- [Credits](#credits)
+- [License](#license)
 
 ## Roadmap
 
@@ -19,9 +32,11 @@ For the roadmap [click here](https://github.com/orgs/fivenet-app/projects/1/view
 
 ## Features
 
-Checkout the website for an uptodate list of features with screenshots [here](https://fivenet.app/).
+Checkout the documentation for an uptodate list of features with screenshots [here](https://fivenet.app/user-guides).
 
 ## Installation
+
+For detailed installation methods, please visit the [Getting Started Installation Methods](https://fivenet.app/getting-started/installation/methods) page.
 
 ### Container Images
 
@@ -50,6 +65,32 @@ If you find a vulnerability or a potential vulnerability in FiveNet, please see 
 ## Development
 
 Please see [development documentation](https://fivenet.app/development).
+
+## Community
+
+Join our community on [Discord](https://discord.gg/ASRPPr8CeT) to connect with other users and developers, ask questions, and share feedback.
+
+## FAQ
+
+### What is FiveNet?
+
+FiveNet is a platform designed to provide advanced tools and features for managing and enhancing your server infrastructure. For more details, visit the [FiveNet website](https://fivenet.app/).
+
+### How do I install FiveNet?
+
+You can find detailed installation instructions on the [Getting Started Installation Methods](https://fivenet.app/getting-started/installation/methods) page.
+
+### Where can I get support?
+
+You can join our [Discord community](https://discord.gg/ASRPPr8CeT) to ask questions, share feedback, and connect with other users and developers.
+
+### How can I contribute to FiveNet?
+
+We welcome contributions! Please refer to the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on how to contribute.
+
+### Is FiveNet free to use?
+
+Yes, FiveNet is open-source and licensed under the Apache 2.0 license. You can find more details in the [LICENSE](LICENSE) file.
 
 ## Credits
 
