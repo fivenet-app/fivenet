@@ -335,7 +335,7 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 
 	// Traverse dependencies
 	for _, child := range table.DependantTables {
-		if child.DeletedAtColumn == nil && table.JobColumn == nil {
+		if table.JobColumn == nil || child.DeletedAtColumn == nil {
 			continue
 		}
 
