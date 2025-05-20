@@ -30,15 +30,20 @@ const { activeChar } = useAuth();
 
 const route = useRoute('wiki-job-id-slug');
 
-const { data: pages, error: pagesError, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages`, () => listPages());
+const {
+    data: pages,
+    error: pagesError,
+    refresh: pagesRefresh,
+} = useLazyAsyncData(`wiki-pages:${route.path}`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
+    const job = route.params.job ?? activeChar.value?.job ?? '';
     try {
         const call = $grpc.wiki.wiki.listPages({
             pagination: {
                 offset: 0,
             },
-            job: useRoute('wiki-job-id-slug').params.job ?? activeChar.value?.job ?? '',
+            job: job,
             rootOnly: false,
         });
         const { response } = await call;
@@ -99,6 +104,7 @@ const editing = ref(false);
                     </ClientOnly>
                 </template>
             </PageView>
+
             <PageEditor v-else v-model="page" :pages="pages ?? []" @close="editing = !editing" />
         </UDashboardPanel>
     </UDashboardPage>

@@ -414,8 +414,10 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, all
 }
 
 func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
-	if postal, ok := s.postals.Closest(dsp.X, dsp.Y); postal != nil && ok {
-		dsp.Postal = postal.Code
+	if dsp.Postal == nil || *dsp.Postal == "" {
+		if postal, ok := s.postals.Closest(dsp.X, dsp.Y); postal != nil && ok {
+			dsp.Postal = postal.Code
+		}
 	}
 
 	if dsp.CreatorId != nil {

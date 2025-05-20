@@ -49,7 +49,11 @@ export default defineComponent({
             }
 
             // 4. Resolve tag/component
-            const tag = value.tag === 'body' ? 'div' : (tagRemapping[value.tag] ?? value.tag);
+            if (tagRemapping[value.tag]) {
+                return h(tagRemapping[value.tag]!, value.attrs);
+            }
+
+            const tag = value.tag === 'body' ? 'div' : value.tag;
 
             // 5. Recursively render children
             const children = (value.content || []).map((child: JSONNode, idx: number) =>

@@ -130,19 +130,23 @@ const columns = [
         }"
     >
         <template #document-data="{ row: relation }">
-            <DocumentInfoPopover :document="relation.document" />
+            <DocumentInfoPopover :document="relation.document" load-on-open />
         </template>
+
         <template #closed-data="{ row: relation }">
             <OpenClosedBadge :closed="relation.document?.closed" variant="subtle" />
         </template>
+
         <template #relation-data="{ row: relation }">
             <span class="font-medium">
                 {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
             </span>
         </template>
+
         <template #date-data="{ row: relation }">
             <GenericTime :value="relation.createdAt" />
         </template>
+
         <template #creator-data="{ row: relation }">
             <CitizenInfoPopover :user="relation.sourceUser" />
         </template>

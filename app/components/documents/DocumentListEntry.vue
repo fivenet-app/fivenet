@@ -67,7 +67,7 @@ defineProps<{
                 </div>
 
                 <div class="flex gap-2">
-                    <div class="flex flex-1 items-center justify-start gap-1.5">
+                    <div class="flex flex-1 items-center gap-1.5">
                         <UIcon class="size-4 shrink-0" name="i-mdi-calendar" />
                         <p class="inline-flex gap-1 text-nowrap">
                             <span class="hidden truncate md:block">
@@ -77,41 +77,49 @@ defineProps<{
                         </p>
                     </div>
 
-                    <div v-if="document.workflowState?.autoCloseTime" class="flex flex-1 items-center justify-start gap-1.5">
-                        <UIcon class="size-4 shrink-0" name="i-mdi-lock-clock" />
-                        <p class="inline-flex gap-1 text-nowrap">
-                            <span class="hidden truncate lg:block">
-                                {{ $t('common.auto_close', 2) }}
-                            </span>
-                            <GenericTime :value="document.workflowState.autoCloseTime" ago />
-                        </p>
-                    </div>
-                    <div
-                        v-else-if="document.workflowState?.nextReminderTime"
-                        class="flex flex-1 items-center justify-start gap-1.5"
-                    >
-                        <UIcon class="size-4 shrink-0" name="i-mdi-lock-clock" />
-                        <p class="inline-flex gap-1 text-nowrap">
-                            <span class="hidden truncate lg:block">
-                                {{ $t('common.reminder') }}
-                            </span>
-                            <GenericTime :value="document.workflowState.nextReminderTime" ago />
-                        </p>
+                    <div class="flex flex-1 items-center justify-center gap-1.5">
+                        <template v-if="document.workflowState?.autoCloseTime">
+                            <UIcon class="size-4 shrink-0" name="i-mdi-lock-clock" />
+                            <p class="inline-flex gap-1 text-nowrap">
+                                <span class="hidden truncate lg:block">
+                                    {{ $t('common.auto_close', 2) }}
+                                </span>
+                                <GenericTime :value="document.workflowState.autoCloseTime" ago />
+                            </p>
+                        </template>
+                        <template v-else-if="document.workflowState?.nextReminderTime">
+                            <UIcon class="size-4 shrink-0" name="i-mdi-lock-clock" />
+                            <p class="inline-flex gap-1 text-nowrap">
+                                <span class="hidden truncate lg:block">
+                                    {{ $t('common.reminder') }}
+                                </span>
+                                <GenericTime :value="document.workflowState.nextReminderTime" ago />
+                            </p>
+                        </template>
+                        <div v-else class="flex-1" />
                     </div>
 
-                    <div v-if="document.updatedAt" class="flex flex-1 items-center justify-end gap-1.5">
-                        <p class="inline-flex gap-1 truncate">
-                            <span class="hidden md:block">
-                                {{ $t('common.updated') }}
-                            </span>
-                            <GenericTime :value="document.updatedAt" ago />
-                        </p>
-                        <UIcon class="size-4 shrink-0" name="i-mdi-update" />
+                    <div class="flex flex-1 items-center justify-end gap-1.5">
+                        <template v-if="document.updatedAt">
+                            <p class="inline-flex gap-1 truncate">
+                                <span class="hidden md:block">
+                                    {{ $t('common.updated') }}
+                                </span>
+                                <GenericTime :value="document.updatedAt" ago />
+                            </p>
+                            <UIcon class="size-4 shrink-0" name="i-mdi-update" />
+                        </template>
                     </div>
                 </div>
 
-                <div class="flex gap-2">
-                    <CitizenInfoPopover :user="document.creator" />
+                <div class="flex justify-between gap-2">
+                    <div class="flex-1">
+                        <CitizenInfoPopover :user="document.creator" />
+                    </div>
+
+                    <div v-if="$slots.default" class="flex flex-1 items-center justify-center gap-1.5">
+                        <slot name="default" />
+                    </div>
 
                     <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
                         <span>{{ document.creatorJobLabel }}</span>

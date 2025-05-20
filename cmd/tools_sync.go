@@ -26,10 +26,11 @@ type SyncStatusCmd struct {
 }
 
 func (c *SyncStatusCmd) Run(_ *kong.Context) error {
-	cli, err := c.createGRPCClient(c.Host, c.Port, c.Insecure, c.APIToken)
+	gCli, err := c.createGRPCClient(c.Host, c.Port, c.Insecure, c.APIToken)
 	if err != nil {
 		return err
 	}
+	cli := pbsync.NewSyncServiceClient(gCli)
 
 	ctx := context.Background()
 
@@ -48,7 +49,7 @@ func (c *SyncStatusCmd) Run(_ *kong.Context) error {
 	return nil
 }
 
-func (s *SyncStatusCmd) createGRPCClient(host string, port int, skipTlsVerify bool, apiToken string) (pbsync.SyncServiceClient, error) {
+func (s *SyncStatusCmd) createGRPCClient(host string, port int, skipTlsVerify bool, apiToken string) (*grpc.ClientConn, error) {
 	// Create GRPC client for sync if destination is given
 	transportCreds := insecure.NewCredentials()
 	if !skipTlsVerify {
@@ -66,5 +67,5 @@ func (s *SyncStatusCmd) createGRPCClient(host string, port int, skipTlsVerify bo
 		return nil, err
 	}
 
-	return pbsync.NewSyncServiceClient(cli), nil
+	return cli, nil
 }

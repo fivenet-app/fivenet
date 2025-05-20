@@ -145,7 +145,8 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		ORDER_BY(tPageShort.ParentID.ASC().NULLS_FIRST(), tPageShort.SortKey.ASC()).
+		// .NULLS_FIRST()
+		ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.SortKey.ASC()).
 		GROUP_BY(groupBys...).
 		LIMIT(limit)
 
