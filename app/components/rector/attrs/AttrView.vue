@@ -137,7 +137,7 @@ async function updateJobLimits(): Promise<void> {
         // Make sure the permission is enabled, otherwise attr needs to be removed
         const perm = permStates.value.get(attr.permissionId);
 
-        if (perm === undefined || attr.value === undefined) {
+        if (perm === undefined || attr.maxValues === undefined || attr.maxValues.validValues.oneofKind === undefined) {
             attrs.toRemove.push({
                 roleId: 0,
                 attrId: attr.attrId,
@@ -147,7 +147,7 @@ async function updateJobLimits(): Promise<void> {
                 permissionId: attr.permissionId,
                 type: '',
             });
-        } else if (attr.value !== undefined) {
+        } else if (attr.maxValues !== undefined) {
             attrs.toUpdate.push({
                 roleId: 0,
                 attrId: attr.attrId,
@@ -220,6 +220,7 @@ async function copyRole(): Promise<void> {
         JSON.stringify({
             job: props.job,
             attrList: attrList.value,
+            permStates: [...permStates.value.entries()].map((v) => ({ id: v[0], val: v[1] })),
         } as CopyRole),
     );
 
@@ -244,15 +245,76 @@ const state = reactive<Schema>({
 type CopyRole = {
     job: string;
     attrList: RoleAttribute[];
+    permStates: { id: number; val?: boolean | undefined }[];
 };
 
 async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
     const parsed = JSON.parse(event.data.input) as CopyRole;
 
     if (parsed.attrList) {
-        attrList.value.length = 0;
-        attrList.value.push(...parsed.attrList);
+        parsed.attrList?.forEach((a) => {
+            if (a.maxValues?.validValues.oneofKind === undefined) {
+                return;
+            }
+
+            const at = attrList.value.find((at) => at.attrId === a.attrId);
+            if (at) {
+                if (
+                    at.maxValues?.validValues.oneofKind === 'stringList' &&
+                    a.maxValues?.validValues.oneofKind === 'stringList'
+                ) {
+                    a.maxValues.validValues.stringList.strings = a.maxValues.validValues.stringList.strings.filter(
+                        (s) =>
+                            at.maxValues?.validValues.oneofKind === 'stringList' &&
+                            at.maxValues.validValues.stringList.strings.includes(s),
+                    );
+                } else if (
+                    at.maxValues?.validValues.oneofKind === 'jobList' &&
+                    a.maxValues?.validValues.oneofKind === 'jobList'
+                ) {
+                    a.maxValues.validValues.jobList.strings = a.maxValues.validValues.jobList.strings.filter(
+                        (s) =>
+                            at.maxValues?.validValues.oneofKind === 'jobList' &&
+                            at.maxValues.validValues.jobList.strings.includes(s),
+                    );
+                } else if (
+                    at.maxValues?.validValues.oneofKind === 'jobGradeList' &&
+                    a.maxValues?.validValues.oneofKind === 'jobGradeList'
+                ) {
+                    if (!a.maxValues.validValues.jobGradeList.fineGrained) {
+                        const jobs = Object.keys(a.maxValues.validValues.jobGradeList.jobs);
+                        const maxJobs = Object.keys(at.maxValues.validValues.jobGradeList.jobs);
+
+                        jobs.filter((j) => !maxJobs.includes(j)).forEach(
+                            (j) =>
+                                a.maxValues?.validValues.oneofKind === 'jobGradeList' &&
+                                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                                delete a.maxValues.validValues.jobGradeList.jobs[j],
+                        );
+                    } else {
+                        const jobs = Object.keys(a.maxValues.validValues.jobGradeList.jobs);
+                        const maxJobs = Object.keys(at.maxValues.validValues.jobGradeList.jobs);
+
+                        jobs.filter((j) => !maxJobs.includes(j)).forEach(
+                            (j) =>
+                                a.maxValues?.validValues.oneofKind === 'jobGradeList' &&
+                                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                                delete a.maxValues.validValues.jobGradeList.jobs[j],
+                        );
+                    }
+                }
+                at.maxValues = a.maxValues;
+            } else {
+                attrList.value.push(a);
+            }
+        });
     }
+    parsed.permStates?.forEach((p) => {
+        const pe = permList.value.find((pe) => pe.id === p.id);
+        if (pe) {
+            permStates.value.set(p.id, p.val);
+        }
+    });
 
     state.input = '';
     changed.value = true;
@@ -296,14 +358,14 @@ const onSubmitThrottle = useThrottleFn(async () => {
 <template>
     <div class="w-full">
         <div class="px-1 sm:px-2">
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.role', 2)])" />
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.job', 1)])" />
             <DataErrorBlock
                 v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.role', 2)])"
+                :title="$t('common.unable_to_load', [$t('common.job', 1)])"
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="!jobLimits" :type="$t('common.role', 2)" />
+            <DataNoDataBlock v-else-if="!jobLimits" :type="$t('common.job', 1)" />
 
             <template v-else>
                 <div class="flex justify-between">
