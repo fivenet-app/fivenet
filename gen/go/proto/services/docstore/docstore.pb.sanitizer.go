@@ -820,6 +820,15 @@ func (m *ListUserDocumentsRequest) Sanitize() error {
 
 	}
 
+	// Field: Sort
+	if m.Sort != nil {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

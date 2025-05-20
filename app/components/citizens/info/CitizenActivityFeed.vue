@@ -97,41 +97,45 @@ watchDebounced(query, async () => refresh(), {
     />
 
     <div v-else>
-        <UForm class="flex w-full gap-2" :schema="schema" :state="query" @submit="refresh()">
-            <UFormGroup class="flex-1 grow" name="types" :label="$t('common.type', 2)">
-                <ClientOnly>
-                    <USelectMenu
-                        v-model="query.types"
-                        class="min-w-40 flex-1"
-                        multiple
-                        block
-                        trailing
-                        option-attribute="aType"
-                        :options="options"
-                        value-attribute="aType"
-                        :searchable-placeholder="$t('common.type', 2)"
-                    >
-                        <template #label>
-                            {{ $t('common.selected', query.types.length) }}
-                        </template>
+        <UDashboardToolbar>
+            <template #default>
+                <UForm class="flex w-full flex-row gap-2" :schema="schema" :state="query" @submit="refresh()">
+                    <UFormGroup class="flex-1 grow" name="types" :label="$t('common.type', 2)">
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="query.types"
+                                class="min-w-40 flex-1"
+                                multiple
+                                block
+                                trailing
+                                option-attribute="aType"
+                                :options="options"
+                                value-attribute="aType"
+                                :searchable-placeholder="$t('common.type', 2)"
+                            >
+                                <template #label>
+                                    {{ $t('common.selected', query.types.length) }}
+                                </template>
 
-                        <template #option="{ option }">
-                            {{ $t(`enums.users.UserActivityType.${UserActivityType[option.aType]}`) }}
-                        </template>
+                                <template #option="{ option }">
+                                    {{ $t(`enums.users.UserActivityType.${UserActivityType[option.aType]}`) }}
+                                </template>
 
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                    </USelectMenu>
-                </ClientOnly>
-            </UFormGroup>
+                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormGroup>
 
-            <UFormGroup label="&nbsp;">
-                <SortButton v-model="sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
-            </UFormGroup>
-        </UForm>
+                    <UFormGroup label="&nbsp;">
+                        <SortButton v-model="sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
+                    </UFormGroup>
+                </UForm>
+            </template>
+        </UDashboardToolbar>
 
         <div class="relative mt-2 flex-1">
             <DataPendingBlock

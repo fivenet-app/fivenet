@@ -74,7 +74,7 @@ function checkIfCanAccessOwnJobDocument(activeChar: UserShort, creator: UserShor
 
 // Document Refernces
 
-export function refToIcon(ref: DocReference): string {
+export function docReferenceToIcon(ref: DocReference): string {
     switch (ref) {
         case DocReference.LINKED:
             return 'i-mdi-link';
@@ -89,7 +89,7 @@ export function refToIcon(ref: DocReference): string {
     }
 }
 
-export function refToColor(ref: DocReference): ButtonColor {
+export function docReferenceToColor(ref: DocReference): ButtonColor {
     switch (ref) {
         case DocReference.LINKED:
             return 'blue';
@@ -100,11 +100,11 @@ export function refToColor(ref: DocReference): ButtonColor {
         case DocReference.DEPRECATES:
             return 'amber';
         default:
-            return 'black';
+            return 'white';
     }
 }
 
-export function refToBadge(ref: DocReference): BadgeColor {
+export function docReferenceToBadge(ref: DocReference): BadgeColor {
     switch (ref) {
         case DocReference.LINKED:
             return 'blue';
@@ -115,13 +115,13 @@ export function refToBadge(ref: DocReference): BadgeColor {
         case DocReference.DEPRECATES:
             return 'amber';
         default:
-            return 'black';
+            return 'white';
     }
 }
 
 // Document Relations
 
-export function relationToIcon(ref: DocRelation): string {
+export function docRelationToIcon(ref: DocRelation): string {
     switch (ref) {
         case DocRelation.MENTIONED:
             return 'i-mdi-at';
@@ -134,7 +134,7 @@ export function relationToIcon(ref: DocRelation): string {
     }
 }
 
-export function relationToColor(ref: DocRelation): ButtonColor {
+export function docRelationToColor(ref: DocRelation): ButtonColor {
     switch (ref) {
         case DocRelation.MENTIONED:
             return 'blue';
@@ -143,11 +143,11 @@ export function relationToColor(ref: DocRelation): ButtonColor {
         case DocRelation.CAUSED:
             return 'error';
         default:
-            return 'black';
+            return 'white';
     }
 }
 
-export function relationToBadge(ref: DocRelation): BadgeColor {
+export function docRelationToBadge(ref: DocRelation): BadgeColor {
     switch (ref) {
         case DocRelation.MENTIONED:
             return 'blue';
@@ -156,7 +156,7 @@ export function relationToBadge(ref: DocRelation): BadgeColor {
         case DocRelation.CAUSED:
             return 'error';
         default:
-            return 'black';
+            return 'white';
     }
 }
 

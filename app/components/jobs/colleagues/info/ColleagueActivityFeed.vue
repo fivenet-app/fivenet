@@ -32,7 +32,7 @@ const completorStore = useCompletorStore();
 const usersLoading = ref(false);
 
 const typesAttrs = (
-    isSuperuser
+    isSuperuser.value
         ? listEnumValues(JobsUserActivityType)
               .filter((t) => t.number !== 0)
               .map((t) => t.name)

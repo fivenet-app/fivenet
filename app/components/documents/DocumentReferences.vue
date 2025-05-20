@@ -7,7 +7,7 @@ import DocumentCategoryBadge from '~/components/partials/documents/DocumentCateg
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentReference } from '~~/gen/ts/resources/documents/documents';
 import { DocReference } from '~~/gen/ts/resources/documents/documents';
-import { refToBadge } from './helpers';
+import { docReferenceToBadge } from './helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -165,7 +165,7 @@ const columns = computed(() =>
                                     </ULink>
                                 </template>
                                 <template #reference-data="{ row: reference }">
-                                    <UBadge :color="refToBadge(reference.reference)">
+                                    <UBadge :color="docReferenceToBadge(reference.reference)">
                                         {{ $t(`enums.docstore.DocReference.${DocReference[reference.reference]}`) }}
                                     </UBadge>
                                 </template>

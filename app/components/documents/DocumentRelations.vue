@@ -7,7 +7,7 @@ import DocumentCategoryBadge from '~/components/partials/documents/DocumentCateg
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
-import { relationToBadge } from './helpers';
+import { docRelationToBadge } from './helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -176,7 +176,7 @@ const columns = computed(() =>
                                     </span>
                                 </template>
                                 <template #relation-data="{ row: relation }">
-                                    <UBadge :color="relationToBadge(relation.relation)">
+                                    <UBadge :color="docRelationToBadge(relation.relation)">
                                         {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                                     </UBadge>
                                 </template>

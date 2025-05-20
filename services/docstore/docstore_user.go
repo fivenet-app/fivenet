@@ -59,6 +59,19 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 			jet.Bool(*req.Closed),
 		))
 	}
+	if len(req.Relations) > 0 {
+		types := []jet.Expression{}
+		for _, t := range req.Relations {
+			types = append(types, jet.Int16(int16(*t.Enum())))
+		}
+
+		condition = condition.AND(tDocRel.Relation.IN(types...))
+	} else {
+		return &pbdocstore.ListUserDocumentsResponse{
+			Pagination: &database.PaginationResponse{},
+			Relations:  []*documents.DocumentRelation{},
+		}, nil
+	}
 
 	countStmt := tDocRel.
 		SELECT(
@@ -121,8 +134,32 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 		}
 	}
 
-	if len(dbRelIds) <= 0 {
+	if len(dbRelIds) == 0 {
 		return resp, nil
+	}
+
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "createdAt":
+			fallthrough
+		default:
+			column = tDocument.CreatedAt
+		}
+
+		if req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys,
+				column.ASC(),
+			)
+		} else {
+			orderBys = append(orderBys,
+				column.DESC(),
+			)
+		}
+	} else {
+		orderBys = append(orderBys, tDocument.CreatedAt.DESC())
 	}
 
 	rIds := make([]jet.Expression, len(dbRelIds))
@@ -189,9 +226,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 			tDocument.DeletedAt.IS_NULL(),
 			tDocRel.ID.IN(rIds...),
 		)).
-		ORDER_BY(
-			tDocRel.CreatedAt.DESC(),
-		).
+		ORDER_BY(orderBys...).
 		GROUP_BY(tDocument.ID).
 		LIMIT(limit)
 

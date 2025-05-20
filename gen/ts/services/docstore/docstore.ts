@@ -755,15 +755,19 @@ export interface ListUserDocumentsRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: int32 user_id = 2;
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
+     * @generated from protobuf field: int32 user_id = 3;
      */
     userId: number;
     /**
-     * @generated from protobuf field: repeated resources.documents.DocRelation relations = 3;
+     * @generated from protobuf field: repeated resources.documents.DocRelation relations = 4;
      */
     relations: DocRelation[];
     /**
-     * @generated from protobuf field: optional bool closed = 8;
+     * @generated from protobuf field: optional bool closed = 5;
      */
     closed?: boolean;
 }
@@ -3926,9 +3930,10 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
     constructor() {
         super("services.docstore.ListUserDocumentsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 3, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocRelation", DocRelation, "DOC_RELATION_"], options: { "validate.rules": { repeated: { maxItems: "3" } } } },
-            { no: 8, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 4, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocRelation", DocRelation, "DOC_RELATION_"], options: { "validate.rules": { repeated: { maxItems: "3" } } } },
+            { no: 5, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListUserDocumentsRequest>): ListUserDocumentsRequest {
@@ -3947,17 +3952,20 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* int32 user_id */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
-                case /* repeated resources.documents.DocRelation relations */ 3:
+                case /* repeated resources.documents.DocRelation relations */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.relations.push(reader.int32());
                     else
                         message.relations.push(reader.int32());
                     break;
-                case /* optional bool closed */ 8:
+                case /* optional bool closed */ 5:
                     message.closed = reader.bool();
                     break;
                 default:
@@ -3975,19 +3983,22 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_id = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id = 3; */
         if (message.userId !== 0)
-            writer.tag(2, WireType.Varint).int32(message.userId);
-        /* repeated resources.documents.DocRelation relations = 3; */
+            writer.tag(3, WireType.Varint).int32(message.userId);
+        /* repeated resources.documents.DocRelation relations = 4; */
         if (message.relations.length) {
-            writer.tag(3, WireType.LengthDelimited).fork();
+            writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.relations.length; i++)
                 writer.int32(message.relations[i]);
             writer.join();
         }
-        /* optional bool closed = 8; */
+        /* optional bool closed = 5; */
         if (message.closed !== undefined)
-            writer.tag(8, WireType.Varint).bool(message.closed);
+            writer.tag(5, WireType.Varint).bool(message.closed);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
