@@ -65,7 +65,7 @@ async function getRole(id: number): Promise<Role> {
 async function deleteRole(id: number): Promise<void> {
     try {
         await $grpc.rector.rector.deleteRole({
-            id,
+            id: id,
         });
 
         notifications.add({

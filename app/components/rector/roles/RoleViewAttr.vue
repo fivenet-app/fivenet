@@ -421,7 +421,9 @@ const { game } = useAppConfig();
                                         v-if="!attrValues.validValues.jobGradeList.fineGrained"
                                         v-model="attrValues.validValues.jobGradeList.jobs[job.name]"
                                         class="flex-1"
-                                        :disabled="disabled || !attrValues.validValues?.jobGradeList.jobs[job.name]"
+                                        :disabled="
+                                            disabled || attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined
+                                        "
                                         :options="
                                             job.grades.filter(
                                                 (g) =>
@@ -437,7 +439,12 @@ const { game } = useAppConfig();
                                         value-attribute="grade"
                                     >
                                         <template #label>
-                                            <template v-if="job.grades && attrValues.validValues.jobGradeList.jobs[job.name]">
+                                            <template
+                                                v-if="
+                                                    job.grades &&
+                                                    attrValues.validValues.jobGradeList.jobs[job.name] !== undefined
+                                                "
+                                            >
                                                 <span class="truncate text-gray-900 dark:text-white"
                                                     >{{
                                                         job.grades.find(

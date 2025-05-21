@@ -174,6 +174,7 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
         return;
     }
 
+    attrValues.value.validValues.jobGradeList.jobs[job.name] = game.startJobGrade;
     if (!job.grades[0]) {
         return;
     }
@@ -333,9 +334,10 @@ const { game } = useAppConfig();
 
                             <ClientOnly>
                                 <USelectMenu
+                                    v-if="job.grades.length > 0"
                                     v-model="attrValues.validValues.jobGradeList.jobs[job.name]"
                                     class="flex-1"
-                                    :disabled="disabled || !attrValues.validValues?.jobGradeList.jobs[job.name]"
+                                    :disabled="disabled || attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined"
                                     :options="job.grades"
                                     :search-attributes="['label']"
                                     :searchable-placeholder="$t('common.search_field')"
