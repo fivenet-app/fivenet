@@ -90,18 +90,24 @@ const selectedTab = computed({
                 v-if="loading"
                 :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"
             />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
-                :error="error"
-                :retry="refresh"
-            />
-            <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" icon="i-mdi-account" />
 
             <UTabs v-else v-model="selectedTab" class="w-full" :items="items" :ui="{ list: { rounded: '' } }">
                 <template #accountInfo>
                     <UDashboardPanelContent>
+                        <DataErrorBlock
+                            v-if="error"
+                            :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
+                            :error="error"
+                            :retry="refresh"
+                        />
+                        <DataNoDataBlock
+                            v-else-if="!account"
+                            :type="`${$t('common.account')} ${$t('common.data')}`"
+                            icon="i-mdi-account"
+                        />
+
                         <UDashboardSection
+                            v-else
                             :title="$t('components.auth.AccountInfo.title')"
                             :description="$t('components.auth.AccountInfo.subtitle')"
                         >
@@ -161,12 +167,32 @@ const selectedTab = computed({
                     </UDashboardPanelContent>
                 </template>
 
-                <template v-if="account.oauth2Providers.length > 0" #oauth2Connections>
-                    <OAuth2Connections
-                        :providers="account.oauth2Providers"
-                        :connections="account.oauth2Connections"
-                        @disconnected="removeOAuth2Connection($event)"
-                    />
+                <template v-if="account?.oauth2Providers && account.oauth2Providers.length > 0" #oauth2Connections>
+                    <UDashboardPanelContent>
+                        <DataErrorBlock
+                            v-if="error"
+                            :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
+                            :error="error"
+                            :retry="refresh"
+                        />
+                        <DataNoDataBlock
+                            v-else-if="!account"
+                            :type="`${$t('common.account')} ${$t('common.data')}`"
+                            icon="i-mdi-account"
+                        />
+
+                        <UDashboardSection
+                            v-else
+                            :title="$t('components.auth.OAuth2Connections.title')"
+                            :description="$t('components.auth.OAuth2Connections.subtitle')"
+                        >
+                            <OAuth2Connections
+                                :providers="account.oauth2Providers"
+                                :connections="account.oauth2Connections"
+                                @disconnected="removeOAuth2Connection($event)"
+                            />
+                        </UDashboardSection>
+                    </UDashboardPanelContent>
                 </template>
 
                 <template #debugInfo>
