@@ -422,7 +422,7 @@ const { game } = useAppConfig();
                                         v-model="attrValues.validValues.jobGradeList.jobs[job.name]"
                                         class="flex-1"
                                         :disabled="
-                                            disabled || attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined
+                                            disabled || attrValues.validValues?.jobGradeList.jobs[job.name] === undefined
                                         "
                                         :options="
                                             job.grades.filter(
@@ -476,7 +476,9 @@ const { game } = useAppConfig();
                                         v-model="attrValues.validValues.jobGradeList.grades[job.name]!.grades"
                                         class="flex-1"
                                         multiple
-                                        :disabled="disabled || !attrValues.validValues?.jobGradeList.grades[job.name]"
+                                        :disabled="
+                                            disabled || attrValues.validValues?.jobGradeList.grades[job.name] === undefined
+                                        "
                                         :options="
                                             job.grades.filter(
                                                 (g) =>

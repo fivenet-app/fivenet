@@ -337,7 +337,7 @@ const { game } = useAppConfig();
                                     v-if="job.grades.length > 0"
                                     v-model="attrValues.validValues.jobGradeList.jobs[job.name]"
                                     class="flex-1"
-                                    :disabled="disabled || attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined"
+                                    :disabled="disabled || attrValues.validValues?.jobGradeList.jobs[job.name] === undefined"
                                     :options="job.grades"
                                     :search-attributes="['label']"
                                     :searchable-placeholder="$t('common.search_field')"
@@ -345,7 +345,11 @@ const { game } = useAppConfig();
                                     value-attribute="grade"
                                 >
                                     <template #label>
-                                        <template v-if="job.grades && attrValues.validValues.jobGradeList.jobs[job.name]">
+                                        <template
+                                            v-if="
+                                                job.grades && attrValues.validValues.jobGradeList.jobs[job.name] !== undefined
+                                            "
+                                        >
                                             <span class="truncate text-gray-900 dark:text-white"
                                                 >{{
                                                     job.grades.find(
