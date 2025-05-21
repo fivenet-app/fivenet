@@ -17,7 +17,7 @@ import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 import { Permission } from "../../resources/permissions/permissions";
-import { RoleAttribute } from "../../resources/permissions/permissions";
+import { RoleAttribute } from "../../resources/permissions/attributes";
 import { Role } from "../../resources/permissions/permissions";
 import { JobProps } from "../../resources/users/job_props";
 /**

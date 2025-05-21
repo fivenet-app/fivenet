@@ -1558,7 +1558,7 @@ var File_services_rector_rector_proto protoreflect.FileDescriptor
 
 const file_services_rector_rector_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservices/rector/rector.proto\x12\x0fservices.rector\x1a(resources/common/database/database.proto\x1a'resources/permissions/permissions.proto\x1a\x1cresources/rector/audit.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1fresources/users/job_props.proto\x1a\x17validate/validate.proto\"\x14\n" +
+	"\x1cservices/rector/rector.proto\x12\x0fservices.rector\x1a(resources/common/database/database.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1cresources/rector/audit.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1fresources/users/job_props.proto\x1a\x17validate/validate.proto\"\x14\n" +
 	"\x12GetJobPropsRequest\"M\n" +
 	"\x13GetJobPropsResponse\x126\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x19.resources.users.JobPropsR\bjobProps\"L\n" +

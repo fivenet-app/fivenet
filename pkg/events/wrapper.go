@@ -141,3 +141,7 @@ func (j *JSWrapper) PublishAsyncProto(ctx context.Context, subject string, msg p
 
 	return j.PublishAsync(ctx, subject, data, opts...)
 }
+
+func (j *JSWrapper) BeginTx() *Transaction {
+	return NewTransaction(j)
+}

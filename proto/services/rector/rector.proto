@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.rector;
 
 import "resources/common/database/database.proto";
+import "resources/permissions/attributes.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
 import "resources/timestamp/timestamp.proto";

@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.permissions;
 
 import "resources/timestamp/timestamp.proto";
+import "resources/permissions/attributes.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissions";
@@ -25,58 +26,5 @@ message Role {
   int32 grade = 5 [(validate.rules).int32.gte = 0];
   optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
   repeated Permission permissions = 7;
-  repeated RoleAttribute attributes = 8;
-}
-
-message RawRoleAttribute {
-  uint64 role_id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  uint64 attr_id = 3;
-  uint64 permission_id = 4;
-  string category = 5 [(validate.rules).string.max_len = 128];
-  string name = 6 [(validate.rules).string.max_len = 255];
-  string key = 7 [(validate.rules).string.max_len = 255];
-  string type = 8 [(validate.rules).string.max_len = 255];
-  AttributeValues valid_values = 9;
-  AttributeValues value = 10;
-}
-
-message RoleAttribute {
-  uint64 role_id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  uint64 attr_id = 3;
-  uint64 permission_id = 4;
-  string category = 5 [(validate.rules).string.max_len = 128];
-  string name = 6 [(validate.rules).string.max_len = 255];
-  string key = 7 [(validate.rules).string.max_len = 255];
-  string type = 8 [(validate.rules).string.max_len = 255];
-  AttributeValues valid_values = 9;
-  AttributeValues value = 10;
-  optional AttributeValues max_values = 11;
-}
-
-// @dbscanner: json
-message AttributeValues {
-  oneof valid_values {
-    option (validate.required) = true;
-
-    StringList string_list = 1;
-    StringList job_list = 2;
-    JobGradeList job_grade_list = 3;
-  }
-}
-
-message StringList {
-  // @sanitize: method=StripTags
-  repeated string strings = 1;
-}
-
-message JobGradeList {
-  bool fine_grained = 2;
-  map<string, int32> jobs = 1;
-  map<string, JobGrades> grades = 3;
-}
-
-message JobGrades {
-  repeated int32 grades = 1;
+  repeated resources.permissions.RoleAttribute attributes = 8;
 }

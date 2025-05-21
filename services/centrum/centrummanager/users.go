@@ -13,7 +13,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, error) {
+func (s *Manager) RetrieveUserById(ctx context.Context, u int32) (*users.User, error) {
 	tUsers := tables.Users().AS("user")
 
 	stmt := tUsers.
@@ -50,7 +50,7 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 	dest := users.User{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, fmt.Errorf("failed to resolve user by id %d: %w", u, err)
+			return nil, fmt.Errorf("failed to retrieve user by id %d: %w", u, err)
 		}
 
 		return nil, nil
@@ -63,8 +63,8 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 	return &dest, nil
 }
 
-func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*jobs.Colleague, error) {
-	us, err := s.resolveColleagueById(ctx, u)
+func (s *Manager) retrieveUserShortById(ctx context.Context, u int32) (*jobs.Colleague, error) {
+	us, err := s.retrieveColleagueById(ctx, u)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*jobs.Coll
 	return us[0], nil
 }
 
-func (s *Manager) resolveColleagueById(ctx context.Context, u ...int32) ([]*jobs.Colleague, error) {
+func (s *Manager) retrieveColleagueById(ctx context.Context, u ...int32) ([]*jobs.Colleague, error) {
 	if len(u) == 0 {
 		return nil, nil
 	}
@@ -117,7 +117,7 @@ func (s *Manager) resolveColleagueById(ctx context.Context, u ...int32) ([]*jobs
 
 	dest := []*jobs.Colleague{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, fmt.Errorf("failed to resolve colleagues by ids %+v: %w", u, err)
+		return nil, fmt.Errorf("failed to retrieve colleagues by ids %+v: %w", u, err)
 	}
 	for i := range dest {
 		if dest[i] != nil {
@@ -128,7 +128,7 @@ func (s *Manager) resolveColleagueById(ctx context.Context, u ...int32) ([]*jobs
 	return dest, nil
 }
 
-func (s *Manager) resolveUsersForUnit(ctx context.Context, u *[]*centrum.UnitAssignment) error {
+func (s *Manager) retrieveUsersForUnit(ctx context.Context, u *[]*centrum.UnitAssignment) error {
 	userIds := make([]int32, len(*u))
 	for i := 0; i < len(*u); i++ {
 		userIds[i] = (*u)[i].UserId
@@ -138,7 +138,7 @@ func (s *Manager) resolveUsersForUnit(ctx context.Context, u *[]*centrum.UnitAss
 		return nil
 	}
 
-	us, err := s.resolveColleagueById(ctx, userIds...)
+	us, err := s.retrieveColleagueById(ctx, userIds...)
 	if err != nil {
 		return err
 	}

@@ -53,7 +53,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = s.resolveUserShortById(ctx, *in.UserId)
+		in.User, err = s.retrieveUserShortById(ctx, *in.UserId)
 		if err != nil {
 			return nil, err
 		}
@@ -70,7 +70,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 			in.Creator = in.User
 		} else {
 			var err error
-			in.Creator, err = s.resolveUserShortById(ctx, *in.CreatorId)
+			in.Creator, err = s.retrieveUserShortById(ctx, *in.CreatorId)
 			if err != nil {
 				return nil, err
 			}
@@ -285,7 +285,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				notFound = append(notFound, toAdd[i])
 			}
 
-			users, err := s.resolveColleagueById(ctx, notFound...)
+			users, err := s.retrieveColleagueById(ctx, notFound...)
 			if err != nil {
 				return nil, false, err
 			}

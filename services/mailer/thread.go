@@ -268,7 +268,7 @@ func (s *Server) CreateThread(ctx context.Context, req *pbmailer.CreateThreadReq
 		return nil, errorsmailer.ErrEmailDisabled
 	}
 
-	emails, err := s.resolveRecipientsToEmails(ctx, senderEmail, req.Recipients)
+	emails, err := s.retrieveRecipientsToEmails(ctx, senderEmail, req.Recipients)
 	if err != nil {
 		return nil, err
 	}

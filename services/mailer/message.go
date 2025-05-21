@@ -171,7 +171,7 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 
 	var emails []*mailer.ThreadRecipientEmail
 	if len(req.Recipients) > 0 {
-		emails, err = s.resolveRecipientsToEmails(ctx, senderEmail, req.Recipients)
+		emails, err = s.retrieveRecipientsToEmails(ctx, senderEmail, req.Recipients)
 		if err != nil {
 			return nil, err
 		}

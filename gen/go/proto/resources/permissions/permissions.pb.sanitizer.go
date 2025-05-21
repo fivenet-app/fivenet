@@ -3,80 +3,6 @@
 
 package permissions
 
-import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
-)
-
-func (m *AttributeValues) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: JobGradeList
-	switch v := m.ValidValues.(type) {
-
-	case *AttributeValues_JobGradeList:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: JobList
-	case *AttributeValues_JobList:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: StringList
-	case *AttributeValues_StringList:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *JobGradeList) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Grades
-	for idx, item := range m.Grades {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Jobs
-	for idx, item := range m.Jobs {
-		_, _ = idx, item
-
-	}
-
-	return nil
-}
-
-func (m *JobGrades) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
 func (m *Permission) Sanitize() error {
 	if m == nil {
 		return nil
@@ -85,41 +11,6 @@ func (m *Permission) Sanitize() error {
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
 		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *RawRoleAttribute) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: ValidValues
-	if m.ValidValues != nil {
-		if v, ok := any(m.GetValidValues()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Value
-	if m.Value != nil {
-		if v, ok := any(m.GetValue()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -164,66 +55,6 @@ func (m *Role) Sanitize() error {
 				return err
 			}
 		}
-
-	}
-
-	return nil
-}
-
-func (m *RoleAttribute) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: MaxValues
-	if m.MaxValues != nil {
-		if v, ok := any(m.GetMaxValues()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: ValidValues
-	if m.ValidValues != nil {
-		if v, ok := any(m.GetValidValues()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Value
-	if m.Value != nil {
-		if v, ok := any(m.GetValue()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *StringList) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Strings
-	for idx, item := range m.Strings {
-		_, _ = idx, item
-
-		m.Strings[idx] = htmlsanitizer.StripTags(m.Strings[idx])
 
 	}
 

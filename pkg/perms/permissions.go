@@ -68,8 +68,8 @@ func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name stri
 		)
 
 	var dest model.FivenetPermissions
-	err := stmt.QueryContext(ctx, p.db, &dest)
-	if err != nil {
+
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to query permission by guard. %w", err)
 	}
 
@@ -94,8 +94,7 @@ func (p *Perms) UpdatePermission(ctx context.Context, id uint64, category Catego
 			tPerms.ID.EQ(jet.Uint64(id)),
 		)
 
-	_, err := stmt.ExecContext(ctx, p.db)
-	if err != nil {
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return fmt.Errorf("failed to execute update statement. %w", err)
 	}
 
@@ -142,10 +141,10 @@ func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...uint64) error
 		DELETE().
 		WHERE(
 			tPerms.ID.IN(wIds...),
-		)
+		).
+		LIMIT(int64(len(wIds)))
 
-	_, err := stmt.ExecContext(ctx, p.db)
-	if err != nil {
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return fmt.Errorf("failed to execute delete statement. %w", err)
 	}
 
@@ -181,8 +180,7 @@ func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*perm
 		)
 
 	var dest []*permissions.Permission
-	err := stmt.QueryContext(ctx, p.db, &dest)
-	if err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to query permissions by IDs. %w", err)
 	}
 
@@ -208,8 +206,7 @@ func (p *Perms) GetPermission(ctx context.Context, category Category, name Name)
 		LIMIT(1)
 
 	var dest permissions.Permission
-	err := stmt.QueryContext(ctx, p.db, &dest)
-	if err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to query permission by category and name. %w", err)
 	}
 

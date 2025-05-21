@@ -217,7 +217,7 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		}
 		units[i].Status = status
 
-		if err := s.resolveUsersForUnit(ctx, &units[i].Users); err != nil {
+		if err := s.retrieveUsersForUnit(ctx, &units[i].Users); err != nil {
 			return err
 		}
 
@@ -349,7 +349,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		}
 
 		if dsps[i].CreatorId != nil {
-			dsps[i].Creator, err = s.ResolveUserById(ctx, *dsps[i].CreatorId)
+			dsps[i].Creator, err = s.RetrieveUserById(ctx, *dsps[i].CreatorId)
 			if err != nil {
 				return err
 			}
@@ -419,7 +419,7 @@ func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispa
 		}
 	}
 
-	// Resolve units based on the dispatch unit assignments
+	// Retrieve units based on the dispatch unit assignments
 	for i := range dest {
 		unit, err := s.GetUnit(ctx, job, dest[i].UnitId)
 		if unit == nil || err != nil {

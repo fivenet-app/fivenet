@@ -246,16 +246,6 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 		return fmt.Errorf("failed to retrieve role for deletion with ID %d. %w", id, err)
 	}
 
-	if err := p.publishMessage(ctx, RoleDeletedSubject, RoleIDEvent{
-		RoleID: role.ID,
-		Job:    role.Job,
-		Grade:  role.Grade,
-	}); err != nil {
-		return fmt.Errorf("failed to publish role deletion message for role ID %d. %w", role.ID, err)
-	}
-
-	p.deleteRole(role.ID, role.Job, role.Grade)
-
 	stmt := tRoles.
 		DELETE().
 		WHERE(
@@ -265,6 +255,16 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return fmt.Errorf("failed to delete role with ID %d. %w", id, err)
 	}
+
+	if err := p.publishMessage(ctx, RoleDeletedSubject, RoleIDEvent{
+		RoleID: role.ID,
+		Job:    role.Job,
+		Grade:  role.Grade,
+	}); err != nil {
+		return fmt.Errorf("failed to publish role deletion message for role ID %d. %w", role.ID, err)
+	}
+
+	p.deleteRole(role.ID, role.Job, role.Grade)
 
 	return nil
 }
@@ -555,6 +555,12 @@ func (p *Perms) ClearJobPermissions(ctx context.Context, job string) error {
 		if !dbutils.IsDuplicateError(err) {
 			return fmt.Errorf("failed to clear job permissions for job %s. %w", job, err)
 		}
+	}
+
+	if err := p.publishMessage(ctx, JobAttrUpdateSubject, RoleIDEvent{
+		Job: job,
+	}); err != nil {
+		return fmt.Errorf("failed to publish job attribute update message for job %s. %w", job, err)
 	}
 
 	return nil

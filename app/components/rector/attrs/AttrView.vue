@@ -8,7 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
 import type { AttrsUpdate, GetJobLimitsResponse, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
 const props = defineProps<{

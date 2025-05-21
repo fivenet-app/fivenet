@@ -76,8 +76,7 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 		LIMIT(1)
 
 	var dest []*model.FivenetAttrs
-	err := stmt.QueryContext(ctx, p.db, &dest)
-	if err != nil {
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
 
@@ -121,8 +120,8 @@ func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key
 		LIMIT(1)
 
 	var dest model.FivenetAttrs
-	err := stmt.QueryContext(ctx, p.db, &dest)
-	if err != nil {
+
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to query attribute from database. %w", err)
 	}
 
@@ -687,6 +686,12 @@ func (p *Perms) UpdateRoleAttributes(ctx context.Context, job string, roleId uin
 		return fmt.Errorf("failed to add or update attributes to role. %w", err)
 	}
 
+	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
+		RoleID: roleId,
+	}); err != nil {
+		return fmt.Errorf("failed to publish role attribute update message. %w", err)
+	}
+
 	return nil
 }
 
@@ -737,12 +742,6 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 		p.updateRoleAttributeInMap(roleId, a.PermissionID, a.ID, a.Key, a.Type, attrs[i].Value)
 	}
 
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
-		RoleID: roleId,
-	}); err != nil {
-		return fmt.Errorf("failed to publish role attribute update message. %w", err)
-	}
-
 	return nil
 }
 
@@ -769,6 +768,40 @@ func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, att
 
 	for i := range attrs {
 		p.removeRoleAttributeFromMap(roleId, attrs[i].AttrId)
+	}
+
+	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
+		RoleID: roleId,
+	}); err != nil {
+		return fmt.Errorf("failed to publish role attribute removal message. %w", err)
+	}
+
+	return nil
+}
+
+func (p *Perms) RemoveAttributesFromRoleByPermission(ctx context.Context, roleId uint64, permissionId uint64) error {
+	as, ok := p.attrsPermsMap.Load(permissionId)
+	if !ok {
+		return nil
+	}
+
+	attrs := []uint64{}
+	as.Range(func(key string, attrId uint64) bool {
+		attrs = append(attrs, attrId)
+		return true
+	})
+
+	if len(attrs) > 0 {
+		ras := []*permissions.RoleAttribute{}
+		for i := range attrs {
+			ras = append(ras, &permissions.RoleAttribute{
+				AttrId: attrs[i],
+			})
+		}
+
+		if err := p.RemoveAttributesFromRole(ctx, roleId, ras...); err != nil {
+			return fmt.Errorf("failed to remove attributes from role by perm. %w", err)
+		}
 	}
 
 	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
@@ -858,40 +891,6 @@ func (p *Perms) ClearJobAttributes(ctx context.Context, job string) error {
 		Job: job,
 	}); err != nil {
 		return fmt.Errorf("failed to publish job attribute clear message. %w", err)
-	}
-
-	return nil
-}
-
-func (p *Perms) RemoveAttributesFromRoleByPermission(ctx context.Context, roleId uint64, permissionId uint64) error {
-	as, ok := p.attrsPermsMap.Load(permissionId)
-	if !ok {
-		return nil
-	}
-
-	attrs := []uint64{}
-	as.Range(func(key string, attrId uint64) bool {
-		attrs = append(attrs, attrId)
-		return true
-	})
-
-	if len(attrs) > 0 {
-		ras := []*permissions.RoleAttribute{}
-		for i := range attrs {
-			ras = append(ras, &permissions.RoleAttribute{
-				AttrId: attrs[i],
-			})
-		}
-
-		if err := p.RemoveAttributesFromRole(ctx, roleId, ras...); err != nil {
-			return fmt.Errorf("failed to remove attributes from role by perm. %w", err)
-		}
-	}
-
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
-		RoleID: roleId,
-	}); err != nil {
-		return fmt.Errorf("failed to publish role attribute removal message. %w", err)
 	}
 
 	return nil

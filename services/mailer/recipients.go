@@ -73,7 +73,7 @@ func (s *Server) getThreadRecipients(ctx context.Context, tx qrm.DB, threadId ui
 	return recipients, nil
 }
 
-func (s *Server) resolveRecipientsToEmails(ctx context.Context, senderEmail *mailer.Email, recipients []string) ([]*mailer.ThreadRecipientEmail, error) {
+func (s *Server) retrieveRecipientsToEmails(ctx context.Context, senderEmail *mailer.Email, recipients []string) ([]*mailer.ThreadRecipientEmail, error) {
 	if len(recipients) == 0 {
 		return nil, errorsmailer.ErrRecipientMinium
 	}

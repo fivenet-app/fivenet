@@ -61,7 +61,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 
 	if in.UserId != nil {
 		var err error
-		in.User, err = s.resolveUserShortById(ctx, *in.UserId)
+		in.User, err = s.retrieveUserShortById(ctx, *in.UserId)
 		if err != nil {
 			return nil, err
 		}
@@ -422,12 +422,16 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 
 	if dsp.CreatorId != nil {
 		var err error
-		dsp.Creator, err = s.ResolveUserById(ctx, *dsp.CreatorId)
+		dsp.Creator, err = s.RetrieveUserById(ctx, *dsp.CreatorId)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve user for dispatch creator. %w", err)
 		}
-		// Remove creator props when job isn't equal
-		if dsp.Creator.Job != dsp.Job {
+		// Unset creator in case we don't have a user
+		if dsp.Creator == nil {
+			dsp.Creator = nil
+			dsp.CreatorId = nil
+		} else if dsp.Creator.Job != dsp.Job {
+			// Remove creator props when job isn't equal
 			dsp.Creator.Props = nil
 		}
 	}

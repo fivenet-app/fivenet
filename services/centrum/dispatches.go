@@ -176,7 +176,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 		}
 
 		if resp.Dispatches[i].CreatorId != nil {
-			resp.Dispatches[i].Creator, err = s.state.ResolveUserById(ctx, *resp.Dispatches[i].CreatorId)
+			resp.Dispatches[i].Creator, err = s.state.RetrieveUserById(ctx, *resp.Dispatches[i].CreatorId)
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
@@ -290,7 +290,7 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 	}
 
 	if resp.Dispatch.CreatorId != nil {
-		creator, err := s.state.ResolveUserById(ctx, *resp.Dispatch.CreatorId)
+		creator, err := s.state.RetrieveUserById(ctx, *resp.Dispatch.CreatorId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
