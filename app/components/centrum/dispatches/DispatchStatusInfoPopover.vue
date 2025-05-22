@@ -48,6 +48,7 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
                             @click="
                                 modal.open(DispatchDetailsByIDSlideover, {
                                     dispatchId: status.dispatchId,
+                                    dispatchJob: status.dispatchJob,
                                 })
                             "
                         >

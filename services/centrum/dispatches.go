@@ -14,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
@@ -128,11 +127,14 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 			tDispatchStatus.ID,
 			tDispatchStatus.CreatedAt,
 			tDispatchStatus.DispatchID,
+			tDispatchStatus.DispatchJob,
 			tDispatchStatus.UnitID,
+			tDispatchStatus.UnitJob,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tDispatchStatus.UserJob,
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
@@ -243,11 +245,14 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 			tDispatchStatus.ID,
 			tDispatchStatus.CreatedAt,
 			tDispatchStatus.DispatchID,
+			tDispatchStatus.DispatchJob,
 			tDispatchStatus.UnitID,
+			tDispatchStatus.UnitJob,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tDispatchStatus.UserJob,
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
@@ -352,6 +357,14 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *pbcentrum.UpdateDispat
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	check, err := s.state.HasAccessToJob(ctx, userInfo.Job, userInfo.JobGrade, req.Dispatch.Job, centrum.AccessLevel_ACCESS_LEVEL_MANAGE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errswrap.NewError(err, errorscentrum.ErrJobAccessDenied)
+	}
+
 	if _, err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch, true); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -362,7 +375,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *pbcentrum.UpdateDispat
 }
 
 func (s *Server) TakeDispatch(ctx context.Context, req *pbcentrum.TakeDispatchRequest) (*pbcentrum.TakeDispatchResponse, error) {
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.dispatch_ids", utils.SliceUint64ToInt64(req.DispatchIds)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.dispatch_ids", int64(req.DispatchId)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -375,12 +388,20 @@ func (s *Server) TakeDispatch(ctx context.Context, req *pbcentrum.TakeDispatchRe
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	unitId, ok := s.state.GetUserUnitID(ctx, userInfo.UserId)
-	if !ok {
-		return nil, errorscentrum.ErrFailedQuery
+	check, err := s.state.HasAccessToJob(ctx, userInfo.Job, userInfo.JobGrade, req.Job, centrum.AccessLevel_ACCESS_LEVEL_PARTICIPATE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errswrap.NewError(err, errorscentrum.ErrJobAccessDenied)
 	}
 
-	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, unitId, req.Resp, req.DispatchIds); err != nil {
+	ua, ok := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
+	if !ok {
+		return nil, errorscentrum.ErrNotPartOfUnit
+	}
+
+	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, ua.UnitJob, ua.UnitId, req.Resp, req.Job, req.DispatchId); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
@@ -401,7 +422,15 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	dsp, err := s.state.GetDispatch(ctx, userInfo.Job, req.DispatchId)
+	check, err := s.state.HasAccessToJob(ctx, userInfo.Job, userInfo.JobGrade, req.Job, centrum.AccessLevel_ACCESS_LEVEL_PARTICIPATE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errswrap.NewError(err, errorscentrum.ErrJobAccessDenied)
+	}
+
+	dsp, err := s.state.GetDispatch(ctx, req.Job, req.DispatchId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -410,24 +439,24 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 		return nil, errorscentrum.ErrNotPartOfDispatch
 	}
 
-	var statusUnitId *uint64
-	unitId, ok := s.state.GetUserUnitID(ctx, userInfo.UserId)
+	ua, ok := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
 	if !ok {
 		if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
 			return nil, errorscentrum.ErrNotPartOfDispatch
 		}
-	} else {
-		statusUnitId = &unitId
 	}
 
 	if _, err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp.Id, &centrum.DispatchStatus{
-		CreatedAt:  timestamp.Now(),
-		DispatchId: dsp.Id,
-		UnitId:     statusUnitId,
-		Status:     req.Status,
-		Code:       req.Code,
-		Reason:     req.Reason,
-		UserId:     &userInfo.UserId,
+		CreatedAt:   timestamp.Now(),
+		DispatchId:  dsp.Id,
+		DispatchJob: dsp.Job,
+		UnitId:      &ua.UnitId,
+		UnitJob:     &ua.UnitJob,
+		Status:      req.Status,
+		Code:        req.Code,
+		Reason:      req.Reason,
+		UserId:      &userInfo.UserId,
+		UserJob:     &userInfo.Job,
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -435,15 +464,17 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 	if req.Status == centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
 		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
 		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE {
-		if unit, err := s.state.GetUnit(ctx, userInfo.Job, unitId); err == nil {
+		if unit, err := s.state.GetUnit(ctx, userInfo.Job, ua.UnitId); err == nil {
 			// Set unit to busy when unit accepts a dispatch
 			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
-				if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unitId, &centrum.UnitStatus{
-					CreatedAt: timestamp.Now(),
-					UnitId:    unit.Id,
-					Status:    centrum.StatusUnit_STATUS_UNIT_BUSY,
-					UserId:    &userInfo.UserId,
-					CreatorId: &userInfo.UserId,
+				if _, err := s.state.UpdateUnitStatus(ctx, ua.UnitJob, ua.UnitId, &centrum.UnitStatus{
+					UnitId:     unit.Id,
+					UnitJob:    unit.Job,
+					Status:     centrum.StatusUnit_STATUS_UNIT_BUSY,
+					UserId:     &userInfo.UserId,
+					UserJob:    &userInfo.Job,
+					CreatorId:  &userInfo.UserId,
+					CreatorJob: &userInfo.Job,
 				}); err != nil {
 					return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
@@ -458,8 +489,6 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 
 func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispatchRequest) (*pbcentrum.AssignDispatchResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.dispatch_id", int64(req.DispatchId)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.units.to_add", utils.SliceUint64ToInt64(req.ToAdd)))
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64Slice("fivenet.centrum.units.to_remove", utils.SliceUint64ToInt64(req.ToRemove)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -472,7 +501,15 @@ func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispat
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	dsp, err := s.state.GetDispatch(ctx, userInfo.Job, req.DispatchId)
+	check, err := s.state.HasAccessToJob(ctx, userInfo.Job, userInfo.JobGrade, req.Job, centrum.AccessLevel_ACCESS_LEVEL_MANAGE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errswrap.NewError(err, errorscentrum.ErrJobAccessDenied)
+	}
+
+	dsp, err := s.state.GetDispatch(ctx, req.Job, req.DispatchId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -486,7 +523,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispat
 		expiresAt = s.state.DispatchAssignmentExpirationTime()
 	}
 
-	if err := s.state.UpdateDispatchAssignments(ctx, userInfo.Job, &userInfo.UserId, dsp.Id, req.ToAdd, req.ToRemove, expiresAt); err != nil {
+	if err := s.state.UpdateDispatchAssignments(ctx, &userInfo.Job, &userInfo.UserId, dsp.Job, dsp.Id, req.ToAdd, req.ToRemove, expiresAt); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 

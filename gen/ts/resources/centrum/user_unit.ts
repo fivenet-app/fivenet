@@ -20,15 +20,19 @@ export interface UserUnitMapping {
      */
     unitId: number;
     /**
-     * @generated from protobuf field: string job = 2;
+     * @generated from protobuf field: string unit_job = 2;
      */
-    job: string;
+    unitJob: string;
     /**
      * @generated from protobuf field: int32 user_id = 3;
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 4;
+     * @generated from protobuf field: string user_job = 4;
+     */
+    userJob: string;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 5;
      */
     createdAt?: Timestamp;
 }
@@ -37,16 +41,18 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
     constructor() {
         super("resources.centrum.UserUnitMapping", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 2, name: "unit_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
-            { no: 4, name: "created_at", kind: "message", T: () => Timestamp }
+            { no: 4, name: "user_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "created_at", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<UserUnitMapping>): UserUnitMapping {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.unitId = 0;
-        message.job = "";
+        message.unitJob = "";
         message.userId = 0;
+        message.userJob = "";
         if (value !== undefined)
             reflectionMergePartial<UserUnitMapping>(this, message, value);
         return message;
@@ -59,13 +65,16 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
                 case /* uint64 unit_id */ 1:
                     message.unitId = reader.uint64().toNumber();
                     break;
-                case /* string job */ 2:
-                    message.job = reader.string();
+                case /* string unit_job */ 2:
+                    message.unitJob = reader.string();
                     break;
                 case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
-                case /* resources.timestamp.Timestamp created_at */ 4:
+                case /* string user_job */ 4:
+                    message.userJob = reader.string();
+                    break;
+                case /* resources.timestamp.Timestamp created_at */ 5:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
                 default:
@@ -83,15 +92,18 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
         /* uint64 unit_id = 1; */
         if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
-        /* string job = 2; */
-        if (message.job !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        /* string unit_job = 2; */
+        if (message.unitJob !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.unitJob);
         /* int32 user_id = 3; */
         if (message.userId !== 0)
             writer.tag(3, WireType.Varint).int32(message.userId);
-        /* resources.timestamp.Timestamp created_at = 4; */
+        /* string user_job = 4; */
+        if (message.userJob !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.userJob);
+        /* resources.timestamp.Timestamp created_at = 5; */
         if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

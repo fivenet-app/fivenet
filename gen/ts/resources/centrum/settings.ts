@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Access } from "./access";
 /**
  * @generated from protobuf message resources.centrum.Settings
  */
@@ -38,6 +39,10 @@ export interface Settings {
      * @generated from protobuf field: resources.centrum.Timings timings = 6;
      */
     timings?: Timings;
+    /**
+     * @generated from protobuf field: resources.centrum.Access access = 7;
+     */
+    access?: Access;
 }
 /**
  * @dbscanner: json
@@ -111,7 +116,8 @@ class Settings$Type extends MessageType<Settings> {
             { no: 3, name: "mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "predefined_status", kind: "message", T: () => PredefinedStatus },
-            { no: 6, name: "timings", kind: "message", T: () => Timings }
+            { no: 6, name: "timings", kind: "message", T: () => Timings },
+            { no: 7, name: "access", kind: "message", T: () => Access }
         ]);
     }
     create(value?: PartialMessage<Settings>): Settings {
@@ -147,6 +153,9 @@ class Settings$Type extends MessageType<Settings> {
                 case /* resources.centrum.Timings timings */ 6:
                     message.timings = Timings.internalBinaryRead(reader, reader.uint32(), options, message.timings);
                     break;
+                case /* resources.centrum.Access access */ 7:
+                    message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -177,6 +186,9 @@ class Settings$Type extends MessageType<Settings> {
         /* resources.centrum.Timings timings = 6; */
         if (message.timings)
             Timings.internalBinaryWrite(message.timings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.Access access = 7; */
+        if (message.access)
+            Access.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

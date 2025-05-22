@@ -54,9 +54,13 @@ const canStream = can('CentrumService.Stream');
 
 const selectedDispatch = ref<number | undefined>();
 
-async function updateDispatchStatus(dispatchId: number, status: StatusDispatch): Promise<void> {
+async function updateDispatchStatus(dispatchId: number, dispatchJob: string, status: StatusDispatch): Promise<void> {
     try {
-        const call = $grpc.centrum.centrum.updateDispatchStatus({ dispatchId, status });
+        const call = $grpc.centrum.centrum.updateDispatchStatus({
+            dispatchId: dispatchId,
+            job: dispatchJob,
+            status: status,
+        });
         await call;
 
         notifications.add({
@@ -80,22 +84,29 @@ async function updateDspStatus(dispatchId?: number, status?: StatusDispatch): Pr
         return;
     }
 
+    const dispatch = dispatches.value.get(dispatchId);
+    if (!dispatch) {
+        return;
+    }
+
     if (status === undefined) {
         modal.open(DispatchStatusUpdateModal, {
             dispatchId: dispatchId,
+            dispatchJob: dispatch.job,
             status: status,
         });
         return;
     }
 
-    await updateDispatchStatus(dispatchId, status);
+    await updateDispatchStatus(dispatchId, dispatch.job, status);
 }
 
-async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
+async function updateUnitStatus(unitId: number, job: string, status: StatusUnit): Promise<void> {
     try {
         const call = $grpc.centrum.centrum.updateUnitStatus({
-            unitId: id,
-            status,
+            job: job,
+            unitId: unitId,
+            status: status,
         });
         await call;
 
@@ -110,7 +121,7 @@ async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
     }
 }
 
-async function updateUtStatus(id: number, status?: StatusUnit): Promise<void> {
+async function updateUtStatus(id: number, job: string, status?: StatusUnit): Promise<void> {
     if (status === undefined) {
         if (!getOwnUnit.value) {
             return;
@@ -122,7 +133,7 @@ async function updateUtStatus(id: number, status?: StatusUnit): Promise<void> {
         return;
     }
 
-    await updateUnitStatus(id, status);
+    await updateUnitStatus(id, job, status);
 }
 
 const open = ref(false);
@@ -179,9 +190,9 @@ watch(open, async () => {
 });
 
 const canSubmitUnitStatus = ref(true);
-const onSubmitUnitStatusThrottle = useThrottleFn(async (unitId: number, status?: StatusUnit) => {
+const onSubmitUnitStatusThrottle = useThrottleFn(async (unitId: number, unitJob: string, status?: StatusUnit) => {
     canSubmitUnitStatus.value = false;
-    await updateUtStatus(unitId, status).finally(() => useTimeoutFn(() => (canSubmitUnitStatus.value = true), 300));
+    await updateUtStatus(unitId, unitJob, status).finally(() => useTimeoutFn(() => (canSubmitUnitStatus.value = true), 300));
 }, 1000);
 
 const canSubmitDispatchStatus = ref(true);
@@ -350,8 +361,8 @@ function openTakeDispatches(): void {
 defineShortcuts({
     'm-d': () => getOwnUnit.value && openTakeDispatches(),
     'm-h': () => getOwnUnit.value?.homePostal && setWaypointPLZ(getOwnUnit.value.homePostal),
-    'c-u': () => getOwnUnit.value && updateUtStatus(getOwnUnit.value.id),
-    'c-d': () => getOwnUnit.value && updateDspStatus(),
+    'c-u': () => getOwnUnit.value && onSubmitUnitStatusThrottle(getOwnUnit.value.id, getOwnUnit.value.job),
+    'c-d': () => getOwnUnit.value && onSubmitDispatchStatusThrottle(),
 });
 </script>
 
@@ -498,7 +509,11 @@ defineShortcuts({
                                                                     :icon="item.icon"
                                                                     truncate
                                                                     @click="
-                                                                        onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)
+                                                                        onSubmitUnitStatusThrottle(
+                                                                            getOwnUnit.id,
+                                                                            getOwnUnit.job,
+                                                                            item.status,
+                                                                        )
                                                                     "
                                                                 >
                                                                     <span class="line-clamp-2">
@@ -524,7 +539,12 @@ defineShortcuts({
                                                                         color="primary"
                                                                         size="xs"
                                                                         block
-                                                                        @click="updateUtStatus(getOwnUnit.id)"
+                                                                        @click="
+                                                                            onSubmitUnitStatusThrottle(
+                                                                                getOwnUnit.id,
+                                                                                getOwnUnit.job,
+                                                                            )
+                                                                        "
                                                                     >
                                                                         {{ $t('components.centrum.update_unit_status.title') }}
                                                                     </UButton>
@@ -594,7 +614,9 @@ defineShortcuts({
                                                                         color="primary"
                                                                         size="xs"
                                                                         block
-                                                                        @click="updateDspStatus(selectedDispatch)"
+                                                                        @click="
+                                                                            onSubmitDispatchStatusThrottle(selectedDispatch)
+                                                                        "
                                                                     >
                                                                         {{
                                                                             $t(

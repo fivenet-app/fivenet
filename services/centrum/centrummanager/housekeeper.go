@@ -10,7 +10,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -206,13 +205,19 @@ func (s *Housekeeper) runHandleDispatchAssignmentExpiration(ctx context.Context,
 	return nil
 }
 
+type dispatchassignmentExpiration struct {
+	Assignment *centrum.DispatchAssignment
+	List       map[uint64][]*centrum.DispatchAssignment
+}
+
 // Handle expired dispatch unit assignments
 func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) error {
 	stmt := tDispatchUnit.
 		SELECT(
 			tDispatchUnit.DispatchID.AS("dispatch_id"),
+			tDispatchUnit.DispatchJob.AS("dispatch_job"),
 			tDispatchUnit.UnitID.AS("unit_id"),
-			tUnits.Job.AS("job"),
+			tDispatchUnit.UnitJob.AS("unit_job"),
 		).
 		FROM(
 			tDispatchUnit.
@@ -225,31 +230,33 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 			tDispatchUnit.ExpiresAt.LT_EQ(jet.CURRENT_TIMESTAMP()),
 		))
 
-	var dest []*struct {
-		DispatchID uint64
-		UnitID     uint64
-		Job        string
-	}
+	var dest []*centrum.DispatchAssignment
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
 
-	assignments := map[string]map[uint64][]uint64{}
+	assignments := map[string]dispatchassignmentExpiration{}
 	for _, ua := range dest {
-		if _, ok := assignments[ua.Job]; !ok {
-			assignments[ua.Job] = map[uint64][]uint64{}
+		if _, ok := assignments[ua.UnitJob]; !ok {
+			assignments[ua.UnitJob] = dispatchassignmentExpiration{
+				Assignment: ua,
+				List:       map[uint64][]*centrum.DispatchAssignment{},
+			}
 		}
-		if _, ok := assignments[ua.Job][ua.DispatchID]; !ok {
-			assignments[ua.Job][ua.DispatchID] = []uint64{}
+		if _, ok := assignments[ua.UnitJob].List[ua.DispatchId]; !ok {
+			assignments[ua.UnitJob].List[ua.DispatchId] = []*centrum.DispatchAssignment{}
 		}
 
-		assignments[ua.Job][ua.DispatchID] = append(assignments[ua.Job][ua.DispatchID], ua.UnitID)
+		assignments[ua.UnitJob].List[ua.DispatchId] = append(assignments[ua.UnitJob].List[ua.DispatchId], &centrum.DispatchAssignment{
+			UnitId:  ua.UnitId,
+			UnitJob: ua.UnitJob,
+		})
 	}
 
 	for job, dsps := range assignments {
-		s.logger.Debug("handling dispatch assignment expiration", zap.String("job", job), zap.Int("expired_assignments", len(dsps)))
-		for dispatchId, units := range dsps {
-			if err := s.UpdateDispatchAssignments(ctx, job, nil, dispatchId, nil, units, time.Time{}); err != nil {
+		s.logger.Debug("handling dispatch assignment expiration", zap.String("job", job), zap.Int("expired_assignments", len(dsps.List)))
+		for dispatchId, units := range dsps.List {
+			if err := s.UpdateDispatchAssignments(ctx, &job, nil, dsps.Assignment.DispatchJob, dsps.Assignment.DispatchId, nil, units, time.Time{}); err != nil {
 				return fmt.Errorf("failed to update dispatch %d assignments. %w", dispatchId, err)
 			}
 		}
@@ -329,7 +336,6 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		}
 
 		if _, err := s.UpdateDispatchStatus(ctx, ds.Job, ds.DispatchID, &centrum.DispatchStatus{
-			CreatedAt:  timestamp.Now(),
 			DispatchId: ds.DispatchID,
 			Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		}); err != nil {
@@ -539,8 +545,9 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 
 					// Add close by dispatch as a reference
 					refs.Add(&centrum.DispatchReference{
-						TargetDispatchId: closeByDsp.Id,
-						ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
+						TargetDispatchId:  closeByDsp.Id,
+						TargetDispatchJob: closeByDsp.Job,
+						ReferenceType:     centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
 					})
 
 					activeDispatchesCloseBy = append(activeDispatchesCloseBy, closeByDsp)
@@ -562,8 +569,9 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				}
 
 				sourceDspRef := &centrum.DispatchReference{
-					TargetDispatchId: dsp.Id,
-					ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATE_OF,
+					TargetDispatchId:  dsp.Id,
+					TargetDispatchJob: dsp.Job,
+					ReferenceType:     centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATE_OF,
 				}
 
 				for _, closeByDsp := range activeDispatchesCloseBy {
@@ -586,7 +594,6 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					}
 
 					if _, err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp.Id, &centrum.DispatchStatus{
-						CreatedAt:  timestamp.Now(),
 						DispatchId: closeByDsp.Id,
 						Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 					}); err != nil {
@@ -594,11 +601,14 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						return
 					}
 
-					toRemove := []uint64{}
+					toRemove := []*centrum.DispatchAssignment{}
 					for _, ua := range closeByDsp.Units {
-						toRemove = append(toRemove, ua.UnitId)
+						toRemove = append(toRemove, &centrum.DispatchAssignment{
+							UnitId:  ua.UnitId,
+							UnitJob: ua.UnitJob,
+						})
 					}
-					if err := s.UpdateDispatchAssignments(ctx, closeByDsp.Job, nil, closeByDsp.Id, nil, toRemove, time.Time{}); err != nil {
+					if err := s.UpdateDispatchAssignments(ctx, &job, nil, closeByDsp.Job, closeByDsp.Id, nil, toRemove, time.Time{}); err != nil {
 						s.logger.Error("failed to remove assigned units from duplicate dispatch", zap.Error(err))
 						return
 					}
@@ -655,7 +665,6 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 				s.logger.Debug("updating dispatch status to unassigned because it has no assignments",
 					zap.String("job", job), zap.Uint64("dispatch_id", dsp.Id))
 				if _, err := s.UpdateDispatchStatus(ctx, dsp.Job, dsp.Id, &centrum.DispatchStatus{
-					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
 				}); err != nil {
@@ -688,7 +697,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 				s.logger.Debug("removing empty unit from dispatch",
 					zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Uint64("dispatch_id", dsp.Id))
 
-				if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp.Id, nil, []uint64{unitId}, time.Time{}); err != nil {
+				if err := s.UpdateDispatchAssignments(ctx, &job, nil, dsp.Job, dsp.Id, nil, []*centrum.DispatchAssignment{{UnitId: unit.Id, UnitJob: unit.Job}}, time.Time{}); err != nil {
 					s.logger.Error("failed to remove empty unit from dispatch",
 						zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Uint64("dispatch_id", dsp.Id), zap.Error(err))
 					continue
@@ -705,11 +714,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 	for _, settings := range s.ListSettings(ctx) {
 		job := settings.Job
 
-		units, ok := s.ListUnits(ctx, job)
-		if !ok {
-			continue
-		}
-
+		units := s.ListUnits(ctx, job)
 		for _, unit := range units {
 			// Either unit has users but is static and in a wrong status
 			if len(unit.Users) > 0 {
@@ -739,10 +744,10 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 			s.logger.Debug("setting unit status to unavailable it is empty or static attribute (wrong status)",
 				zap.String("job", job), zap.Uint64("unit_id", unit.Id), zap.Int32p("user_id", userId))
 			if _, err := s.UpdateUnitStatus(ctx, job, unit.Id, &centrum.UnitStatus{
-				CreatedAt: timestamp.Now(),
-				UnitId:    unit.Id,
-				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-				UserId:    userId,
+				UnitId:  unit.Id,
+				UnitJob: unit.Job,
+				Status:  centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				UserId:  userId,
 			}); err != nil {
 				s.logger.Error("failed to update empty unit status to unavailable",
 					zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))
@@ -759,15 +764,11 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 	foundUserIds := []int32{}
 
 	for _, settings := range s.ListSettings(ctx) {
-		job := settings.Job
+		unitJob := settings.Job
 
-		units, ok := s.ListUnits(ctx, job)
-		if !ok {
-			continue
-		}
-
+		units := s.ListUnits(ctx, unitJob)
 		for _, u := range units {
-			unit, err := s.GetUnit(ctx, job, u.Id)
+			unit, err := s.GetUnit(ctx, unitJob, u.Id)
 			if err != nil {
 				continue
 			}
@@ -788,21 +789,21 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 					continue
 				}
 
-				unitId, found := s.GetUserUnitID(ctx, userId)
+				ua, found := s.GetUserUnitMapping(ctx, userId)
 				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-				if found && unit.Id == unitId && s.tracker.IsUserOnDuty(userId) {
+				if found && unit.Id == ua.UnitId && s.tracker.IsUserOnDuty(userId) {
 					foundUserIds = append(foundUserIds, userId)
 					continue
 				}
 
-				toRemove = append(toRemove, userId)
+				toRemove = append(toRemove, ua.UserId)
 			}
 
 			if len(toRemove) > 0 {
 				s.logger.Debug("removing off-duty users from unit",
-					zap.String("job", job), zap.Uint64("unit_id", unit.Id), zap.Int32s("to_remove", toRemove))
+					zap.String("job", unitJob), zap.Uint64("unit_id", unit.Id), zap.Int32s("to_remove", toRemove))
 
-				if err := s.UpdateUnitAssignments(ctx, job, nil, unit.Id, nil, toRemove); err != nil {
+				if err := s.UpdateUnitAssignments(ctx, nil, nil, unit.Job, unit.Id, nil, toRemove, nil); err != nil {
 					s.logger.Error("failed to remove off-duty users from unit",
 						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32s("user_ids", toRemove), zap.Error(err))
 				}
@@ -858,24 +859,24 @@ func (s *Housekeeper) watchUserChanges() {
 
 				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))
 				for _, userMarker := range event.Added {
-					if _, ok := s.GetUserUnitID(ctx, userMarker.UserId); ok {
+					if _, ok := s.GetUserUnitMapping(ctx, userMarker.UserId); ok {
 						break
 					}
 
-					unitId, err := s.LoadUnitIDForUserID(ctx, userMarker.UserId)
+					ua, err := s.LoadUnitAssignmentForUserID(ctx, userMarker.UserId)
 					if err != nil {
 						s.logger.Error("failed to load user unit id", zap.Error(err))
 						continue
 					}
 
-					if unitId == 0 {
+					if ua == nil || ua.UnitId == 0 {
 						if err := s.UnsetUnitIDForUser(ctx, userMarker.UserId); err != nil {
 							s.logger.Error("failed to unset user's unit id", zap.Error(err))
 						}
 						continue
 					}
 
-					if err := s.SetUnitForUser(ctx, userMarker.Job, userMarker.UserId, unitId); err != nil {
+					if err := s.SetUnitForUser(ctx, userMarker.Job, userMarker.UserId, ua.UnitJob, ua.UnitId); err != nil {
 						s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
 						continue
 					}
@@ -899,14 +900,14 @@ func (s *Housekeeper) handleRemovedUserDisponents(ctx context.Context, job strin
 	}
 }
 
-func (s *Housekeeper) handleRemovedUserUnit(ctx context.Context, job string, userId int32) bool {
-	unitId, ok := s.GetUserUnitID(ctx, userId)
+func (s *Housekeeper) handleRemovedUserUnit(ctx context.Context, userJob string, userId int32) bool {
+	ua, ok := s.GetUserUnitMapping(ctx, userId)
 	if !ok {
 		// Nothing to do
 		return false
 	}
 
-	unit, err := s.GetUnit(ctx, job, unitId)
+	unit, err := s.GetUnit(ctx, ua.UnitJob, ua.UnitId)
 	if err != nil {
 		if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
 			s.logger.Error("failed to unset user's unit id", zap.Error(err))
@@ -914,7 +915,7 @@ func (s *Housekeeper) handleRemovedUserUnit(ctx context.Context, job string, use
 		return false
 	}
 
-	if err := s.UpdateUnitAssignments(ctx, job, &userId, unit.Id, nil, []int32{userId}); err != nil {
+	if err := s.UpdateUnitAssignments(ctx, &userJob, &userId, unit.Job, unit.Id, nil, []int32{userId}, nil); err != nil {
 		s.logger.Error("failed to remove user from unit", zap.Error(err))
 		return false
 	}

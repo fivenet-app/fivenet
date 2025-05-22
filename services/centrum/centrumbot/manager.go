@@ -15,6 +15,7 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -159,8 +160,15 @@ func (b *Manager) stopBot(job string) error {
 }
 
 func (s *Manager) checkIfBotsAreNeeded(ctx context.Context) error {
+	var errs error
+
 	for _, settings := range s.state.ListSettings(ctx) {
-		if s.state.CheckIfBotNeeded(ctx, settings.Job) {
+		check, err := s.state.CheckIfBotNeeded(ctx, settings.Job)
+		if err != nil {
+			errs = multierr.Append(errs, err)
+			continue
+		}
+		if check {
 			if err := s.startBot(ctx, settings.Job); err != nil {
 				s.logger.Error("failed to start dispatch center bot for job", zap.String("job", settings.Job))
 			}
@@ -171,5 +179,5 @@ func (s *Manager) checkIfBotsAreNeeded(ctx context.Context) error {
 		}
 	}
 
-	return nil
+	return errs
 }

@@ -16,4 +16,5 @@ var (
 
 	ErrModeForbidsAction        = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrModeForbidsAction.content"}, &common.TranslateItem{Key: "errors.CentrumService.ErrModeForbidsAction.title"})
 	ErrDispatchAlreadyCompleted = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrDispatchAlreadyCompleted.content"}, &common.TranslateItem{Key: "errors.CentrumService.ErrDispatchAlreadyCompleted.title"})
+	ErrJobAccessDenied          = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrJobAccessDenied.content"}, &common.TranslateItem{Key: "errors.CentrumService.ErrJobAccessDenied.title"})
 )

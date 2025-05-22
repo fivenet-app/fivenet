@@ -24,6 +24,7 @@ type fivenetCentrumSettingsTable struct {
 	FallbackMode     mysql.ColumnInteger
 	PredefinedStatus mysql.ColumnString
 	Timings          mysql.ColumnString
+	Access           mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -72,8 +73,9 @@ func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fiv
 		FallbackModeColumn     = mysql.IntegerColumn("fallback_mode")
 		PredefinedStatusColumn = mysql.StringColumn("predefined_status")
 		TimingsColumn          = mysql.StringColumn("timings")
-		allColumns             = mysql.ColumnList{JobColumn, DeletedAtColumn, EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn}
-		mutableColumns         = mysql.ColumnList{DeletedAtColumn, EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn}
+		AccessColumn           = mysql.StringColumn("access")
+		allColumns             = mysql.ColumnList{JobColumn, DeletedAtColumn, EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn, AccessColumn}
+		mutableColumns         = mysql.ColumnList{DeletedAtColumn, EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn, AccessColumn}
 		defaultColumns         = mysql.ColumnList{EnabledColumn, ModeColumn, FallbackModeColumn}
 	)
 
@@ -88,6 +90,7 @@ func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fiv
 		FallbackMode:     FallbackModeColumn,
 		PredefinedStatus: PredefinedStatusColumn,
 		Timings:          TimingsColumn,
+		Access:           AccessColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

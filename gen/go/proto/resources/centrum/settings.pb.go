@@ -85,6 +85,7 @@ type Settings struct {
 	FallbackMode     CentrumMode            `protobuf:"varint,4,opt,name=fallback_mode,json=fallbackMode,proto3,enum=resources.centrum.CentrumMode" json:"fallback_mode,omitempty"`
 	PredefinedStatus *PredefinedStatus      `protobuf:"bytes,5,opt,name=predefined_status,json=predefinedStatus,proto3,oneof" json:"predefined_status,omitempty"`
 	Timings          *Timings               `protobuf:"bytes,6,opt,name=timings,proto3" json:"timings,omitempty"`
+	Access           *Access                `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -157,6 +158,13 @@ func (x *Settings) GetPredefinedStatus() *PredefinedStatus {
 func (x *Settings) GetTimings() *Timings {
 	if x != nil {
 		return x.Timings
+	}
+	return nil
+}
+
+func (x *Settings) GetAccess() *Access {
+	if x != nil {
+		return x.Access
 	}
 	return nil
 }
@@ -281,14 +289,15 @@ var File_resources_centrum_settings_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\n" +
-	" resources/centrum/settings.proto\x12\x11resources.centrum\x1a\x17validate/validate.proto\"\xef\x02\n" +
+	" resources/centrum/settings.proto\x12\x11resources.centrum\x1a\x1eresources/centrum/access.proto\x1a\x17validate/validate.proto\"\xa2\x03\n" +
 	"\bSettings\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12\x18\n" +
 	"\aenabled\x18\x02 \x01(\bR\aenabled\x12<\n" +
 	"\x04mode\x18\x03 \x01(\x0e2\x1e.resources.centrum.CentrumModeB\b\xfaB\x05\x82\x01\x02\x10\x01R\x04mode\x12M\n" +
 	"\rfallback_mode\x18\x04 \x01(\x0e2\x1e.resources.centrum.CentrumModeB\b\xfaB\x05\x82\x01\x02\x10\x01R\ffallbackMode\x12U\n" +
 	"\x11predefined_status\x18\x05 \x01(\v2#.resources.centrum.PredefinedStatusH\x00R\x10predefinedStatus\x88\x01\x01\x124\n" +
-	"\atimings\x18\x06 \x01(\v2\x1a.resources.centrum.TimingsR\atimingsB\x14\n" +
+	"\atimings\x18\x06 \x01(\v2\x1a.resources.centrum.TimingsR\atimings\x121\n" +
+	"\x06access\x18\a \x01(\v2\x19.resources.centrum.AccessR\x06accessB\x14\n" +
 	"\x12_predefined_status\"|\n" +
 	"\x10PredefinedStatus\x12/\n" +
 	"\vunit_status\x18\x01 \x03(\tB\x0e\xfaB\v\x92\x01\b\x10\x05\"\x04r\x02\x18@R\n" +
@@ -326,17 +335,19 @@ var file_resources_centrum_settings_proto_goTypes = []any{
 	(*Settings)(nil),         // 1: resources.centrum.Settings
 	(*PredefinedStatus)(nil), // 2: resources.centrum.PredefinedStatus
 	(*Timings)(nil),          // 3: resources.centrum.Timings
+	(*Access)(nil),           // 4: resources.centrum.Access
 }
 var file_resources_centrum_settings_proto_depIdxs = []int32{
 	0, // 0: resources.centrum.Settings.mode:type_name -> resources.centrum.CentrumMode
 	0, // 1: resources.centrum.Settings.fallback_mode:type_name -> resources.centrum.CentrumMode
 	2, // 2: resources.centrum.Settings.predefined_status:type_name -> resources.centrum.PredefinedStatus
 	3, // 3: resources.centrum.Settings.timings:type_name -> resources.centrum.Timings
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	4, // 4: resources.centrum.Settings.access:type_name -> resources.centrum.Access
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_settings_proto_init() }
@@ -344,6 +355,7 @@ func file_resources_centrum_settings_proto_init() {
 	if File_resources_centrum_settings_proto != nil {
 		return
 	}
+	file_resources_centrum_access_proto_init()
 	file_resources_centrum_settings_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

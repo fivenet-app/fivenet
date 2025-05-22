@@ -58,6 +58,7 @@ onBeforeMount(() => {
                         () =>
                             slideover.open(DispatchDetailsSlideover, {
                                 dispatchId: dispatch.id,
+                                dispatchJob: dispatch.job,
                             })
                     "
                 />

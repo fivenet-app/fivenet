@@ -91,7 +91,7 @@ func (b *Bot) Run() {
 				break
 			}
 
-			if err := b.state.UpdateDispatchAssignments(b.ctx, b.job, nil, dsp.Id, []uint64{unit.Id}, nil,
+			if err := b.state.UpdateDispatchAssignments(b.ctx, &b.job, nil, dsp.Job, dsp.Id, []*centrum.DispatchAssignment{{UnitId: unit.Id, UnitJob: unit.Job}}, nil,
 				b.state.DispatchAssignmentExpirationTime()); err != nil {
 				b.logger.Error("failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id), zap.Error(err))
 				break
@@ -145,10 +145,7 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*centrum.Unit, bool) {
 	delay := 0 * time.Second
 	unitCount := len(units)
 	if unitCount > MinUnitCountForDelay {
-		delay = time.Duration(unitCount*PerUnitDelaySeconds) * time.Second
-		if delay >= MaxDelayCap {
-			delay = MaxDelayCap
-		}
+		delay = min(time.Duration(unitCount*PerUnitDelaySeconds)*time.Second, MaxDelayCap)
 	}
 
 	b.lastAssignedUnits[selectedUnit.Id] = time.Now().Add(DelayBetweenDispatchAssignment).Add(delay)

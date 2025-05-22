@@ -53,7 +53,7 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICentrumServiceClient {
     /**
-     * @perm
+     * @perm: Attrs=Access/StringList:[]string{"Shared"}
      *
      * @generated from protobuf rpc: UpdateSettings(services.centrum.UpdateSettingsRequest) returns (services.centrum.UpdateSettingsResponse);
      */
@@ -183,7 +183,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm
+     * @perm: Attrs=Access/StringList:[]string{"Shared"}
      *
      * @generated from protobuf rpc: UpdateSettings(services.centrum.UpdateSettingsRequest) returns (services.centrum.UpdateSettingsResponse);
      */

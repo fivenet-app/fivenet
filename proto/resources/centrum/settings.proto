@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.centrum;
 
+import "resources/centrum/access.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
@@ -21,6 +22,7 @@ message Settings {
   CentrumMode fallback_mode = 4 [(validate.rules).enum.defined_only = true];
   optional PredefinedStatus predefined_status = 5;
   Timings timings = 6;
+  Access access = 7;
 }
 
 // @dbscanner: json

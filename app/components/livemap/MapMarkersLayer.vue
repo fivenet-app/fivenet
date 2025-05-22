@@ -37,6 +37,7 @@ onBeforeMount(async () =>
     addOrUpdateLivemapCategory({
         key: 'markers',
         label: t('common.marker', 2),
+        order: 3,
     }),
 );
 </script>

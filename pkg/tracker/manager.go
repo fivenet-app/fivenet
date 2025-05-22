@@ -243,11 +243,10 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			dest[i].Postal = postal.Code
 		}
 
-		unitId, ok := m.state.GetUserUnitID(ctx, dest[i].UserId)
+		ua, ok := m.state.GetUserUnitMapping(ctx, dest[i].UserId)
 		if ok {
-			dest[i].UnitId = &unitId
-			job := dest[i].User.Job
-			if unit, err := m.state.GetUnit(ctx, job, unitId); err == nil {
+			dest[i].UnitId = &ua.UnitId
+			if unit, err := m.state.GetUnit(ctx, ua.UnitJob, ua.UnitId); err == nil {
 				dest[i].Unit = unit
 			}
 		}

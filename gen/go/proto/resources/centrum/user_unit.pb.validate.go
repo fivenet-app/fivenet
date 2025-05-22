@@ -59,9 +59,9 @@ func (m *UserUnitMapping) validate(all bool) error {
 
 	// no validation rules for UnitId
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetUnitJob()) > 20 {
 		err := UserUnitMappingValidationError{
-			field:  "Job",
+			field:  "UnitJob",
 			reason: "value length must be at most 20 runes",
 		}
 		if !all {
@@ -74,6 +74,17 @@ func (m *UserUnitMapping) validate(all bool) error {
 		err := UserUnitMappingValidationError{
 			field:  "UserId",
 			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetUserJob()) > 20 {
+		err := UserUnitMappingValidationError{
+			field:  "UserJob",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err

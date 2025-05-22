@@ -1,10 +1,11 @@
 <script lang="ts" setup generic="JobsT extends JobAccessEntry, UsersT extends UserAccessEntry">
+import type { EnumLike } from 'zod';
 import JobInfoPopover from '../JobInfoPopover.vue';
 import type { JobAccessEntry, UserAccessEntry } from './helpers';
 
 withDefaults(
     defineProps<{
-        accessLevel: Zod.EnumLike;
+        accessLevel: EnumLike;
         jobs?: JobsT[];
         users?: UsersT[];
         i18nKey: string;

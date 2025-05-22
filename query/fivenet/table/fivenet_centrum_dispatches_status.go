@@ -17,17 +17,20 @@ type fivenetCentrumDispatchesStatusTable struct {
 	mysql.Table
 
 	// Columns
-	ID         mysql.ColumnInteger
-	CreatedAt  mysql.ColumnTimestamp
-	DispatchID mysql.ColumnInteger
-	UnitID     mysql.ColumnInteger
-	Status     mysql.ColumnInteger
-	Reason     mysql.ColumnString
-	Code       mysql.ColumnString
-	X          mysql.ColumnFloat
-	Y          mysql.ColumnFloat
-	Postal     mysql.ColumnString
-	UserID     mysql.ColumnInteger
+	ID          mysql.ColumnInteger
+	CreatedAt   mysql.ColumnTimestamp
+	DispatchID  mysql.ColumnInteger
+	DispatchJob mysql.ColumnString
+	UnitID      mysql.ColumnInteger
+	UnitJob     mysql.ColumnString
+	Status      mysql.ColumnInteger
+	Reason      mysql.ColumnString
+	Code        mysql.ColumnString
+	X           mysql.ColumnFloat
+	Y           mysql.ColumnFloat
+	Postal      mysql.ColumnString
+	UserID      mysql.ColumnInteger
+	UserJob     mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -69,37 +72,43 @@ func newFivenetCentrumDispatchesStatusTable(schemaName, tableName, alias string)
 
 func newFivenetCentrumDispatchesStatusTableImpl(schemaName, tableName, alias string) fivenetCentrumDispatchesStatusTable {
 	var (
-		IDColumn         = mysql.IntegerColumn("id")
-		CreatedAtColumn  = mysql.TimestampColumn("created_at")
-		DispatchIDColumn = mysql.IntegerColumn("dispatch_id")
-		UnitIDColumn     = mysql.IntegerColumn("unit_id")
-		StatusColumn     = mysql.IntegerColumn("status")
-		ReasonColumn     = mysql.StringColumn("reason")
-		CodeColumn       = mysql.StringColumn("code")
-		XColumn          = mysql.FloatColumn("x")
-		YColumn          = mysql.FloatColumn("y")
-		PostalColumn     = mysql.StringColumn("postal")
-		UserIDColumn     = mysql.IntegerColumn("user_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn}
-		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
+		IDColumn          = mysql.IntegerColumn("id")
+		CreatedAtColumn   = mysql.TimestampColumn("created_at")
+		DispatchIDColumn  = mysql.IntegerColumn("dispatch_id")
+		DispatchJobColumn = mysql.StringColumn("dispatch_job")
+		UnitIDColumn      = mysql.IntegerColumn("unit_id")
+		UnitJobColumn     = mysql.StringColumn("unit_job")
+		StatusColumn      = mysql.IntegerColumn("status")
+		ReasonColumn      = mysql.StringColumn("reason")
+		CodeColumn        = mysql.StringColumn("code")
+		XColumn           = mysql.FloatColumn("x")
+		YColumn           = mysql.FloatColumn("y")
+		PostalColumn      = mysql.StringColumn("postal")
+		UserIDColumn      = mysql.IntegerColumn("user_id")
+		UserJobColumn     = mysql.StringColumn("user_job")
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, DispatchIDColumn, DispatchJobColumn, UnitIDColumn, UnitJobColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn, UserJobColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, DispatchIDColumn, DispatchJobColumn, UnitIDColumn, UnitJobColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn, UserJobColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumDispatchesStatusTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:         IDColumn,
-		CreatedAt:  CreatedAtColumn,
-		DispatchID: DispatchIDColumn,
-		UnitID:     UnitIDColumn,
-		Status:     StatusColumn,
-		Reason:     ReasonColumn,
-		Code:       CodeColumn,
-		X:          XColumn,
-		Y:          YColumn,
-		Postal:     PostalColumn,
-		UserID:     UserIDColumn,
+		ID:          IDColumn,
+		CreatedAt:   CreatedAtColumn,
+		DispatchID:  DispatchIDColumn,
+		DispatchJob: DispatchJobColumn,
+		UnitID:      UnitIDColumn,
+		UnitJob:     UnitJobColumn,
+		Status:      StatusColumn,
+		Reason:      ReasonColumn,
+		Code:        CodeColumn,
+		X:           XColumn,
+		Y:           YColumn,
+		Postal:      PostalColumn,
+		UserID:      UserIDColumn,
+		UserJob:     UserJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

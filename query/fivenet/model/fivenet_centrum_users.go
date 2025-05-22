@@ -8,7 +8,6 @@
 package model
 
 type FivenetCentrumUsers struct {
-	Job        string `json:"job"`
-	UserID     int32  `sql:"primary_key" json:"user_id"`
-	Identifier string `json:"identifier"`
+	Job    string `json:"job"`
+	UserID int32  `sql:"primary_key" json:"user_id"`
 }

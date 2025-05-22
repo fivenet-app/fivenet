@@ -52,6 +52,7 @@ onBeforeMount(async () => {
     addOrUpdateLivemapCategory({
         key: 'users',
         label: t('common.employee', 2),
+        order: 2,
     });
 
     useTimeoutFn(async () => {

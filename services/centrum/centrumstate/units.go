@@ -13,7 +13,7 @@ func (s *State) GetUnit(ctx context.Context, job string, id uint64) (*centrum.Un
 	return s.units.GetOrLoad(ctx, JobIdKey(job, id))
 }
 
-func (s *State) ListUnits(ctx context.Context, job string) ([]*centrum.Unit, bool) {
+func (s *State) ListUnits(ctx context.Context, job string) []*centrum.Unit {
 	us := []*centrum.Unit{}
 
 	ids := s.units.Keys(ctx, job)
@@ -30,14 +30,11 @@ func (s *State) ListUnits(ctx context.Context, job string) ([]*centrum.Unit, boo
 		return strings.Compare(a.Name, b.Name)
 	})
 
-	return us, true
+	return us
 }
 
 func (s *State) FilterUnits(ctx context.Context, job string, statuses []centrum.StatusUnit, notStatuses []centrum.StatusUnit, filterFn func(unit *centrum.Unit) bool) []*centrum.Unit {
-	units, ok := s.ListUnits(ctx, job)
-	if !ok {
-		return nil
-	}
+	units := s.ListUnits(ctx, job)
 
 	us := []*centrum.Unit{}
 	for i := range units {

@@ -1032,6 +1032,10 @@
                     "dispatch_max_wait": "Dispatch: Max Wait (in seconds)",
                     "require_unit": "Require colleagues to be in an unit",
                     "require_unit_reminder_seconds": "Reminder interval (in seconds) to ping colleagues not in an unit to join an unit"
+                },
+                "access": {
+                    "title": "Access",
+                    "description": "Access settings for the dispatch center."
                 }
             }
         },
@@ -2202,7 +2206,13 @@
             },
             "UpdateSettings": {
                 "key": "Update Dispatch Center Settings",
-                "description": "Allows to update the dispatch center settings via the control panel."
+                "description": "Allows to update the dispatch center settings via the control panel.",
+                "attrs": {
+                    "Shared": "Allows to configure shared dispatch center"
+                },
+                "attrs_types": {
+                    "Access": "Access to shared dispatch centers"
+                }
             },
             "DeleteDispatch": {
                 "key": "Delete Dispatches",
@@ -2789,6 +2799,13 @@
             "UnitAttribute": {
                 "STATIC": "Static",
                 "NO_DISPATCH_AUTO_ASSIGN": "No Dispatch Auto Assign"
+            },
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "PARTICIPATE": "Participate",
+                "MANAGE": "Manage"
             }
         },
         "livemap": {

@@ -5,7 +5,7 @@ import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useSettingsStore } from '~/stores/settings';
 
-defineProps<{
+const props = defineProps<{
     showAllDispatches?: boolean;
 }>();
 
@@ -13,8 +13,11 @@ const { t } = useI18n();
 
 const slideover = useSlideover();
 
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
+
 const centrumStore = useCentrumStore();
-const { dispatches, ownDispatches, settings } = storeToRefs(centrumStore);
+const { dispatches, ownDispatches, jobs, settings } = storeToRefs(centrumStore);
 
 const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
@@ -38,21 +41,47 @@ watch(settings, () => {
         return;
     }
 
-    addOrUpdateLivemapCategory({
-        key: 'dispatches',
-        label: t('common.dispatch', 2),
-    });
     addOrUpdateLivemapLayer({
         key: 'dispatches_own',
         category: 'dispatches',
         label: t('common.your_dispatches'),
         perm: 'CentrumService.Stream',
+        disabled: true,
     });
     addOrUpdateLivemapLayer({
         key: 'dispatches_all',
         category: 'dispatches',
         label: t('common.all_dispatches'),
         perm: 'CentrumService.Stream',
+        disabled: props.showAllDispatches,
+        visible: props.showAllDispatches ? true : undefined,
+    });
+});
+
+watch(jobs, () => {
+    addOrUpdateLivemapLayer({
+        key: 'dispatches_own',
+        category: 'dispatches',
+        label: t('common.your_dispatches'),
+        perm: 'CentrumService.Stream',
+        disabled: true,
+    });
+
+    jobs.value.forEach((job) =>
+        addOrUpdateLivemapLayer({
+            key: `dispatches_${job.name}`,
+            category: 'dispatches',
+            label: job.label,
+            perm: 'CentrumService.Stream',
+        }),
+    );
+});
+
+onBeforeMount(async () => {
+    addOrUpdateLivemapCategory({
+        key: 'dispatches',
+        label: t('common.dispatch', 2),
+        order: 0,
     });
 });
 </script>
@@ -67,6 +96,7 @@ watch(settings, () => {
             @selected="
                 slideover.open(DispatchDetailsSlideover, {
                     dispatchId: $event.id,
+                    dispatchJob: $event.job,
                 })
             "
         />
@@ -81,13 +111,35 @@ watch(settings, () => {
         "
     >
         <DispatchMarker
-            v-for="dispatch in dispatchesFiltered"
+            v-for="dispatch in dispatchesFiltered?.filter((d) => d.job === activeChar?.job)"
             :key="dispatch.id"
             :dispatch="dispatch"
             :size="livemap.markerSize"
             @selected="
                 slideover.open(DispatchDetailsSlideover, {
                     dispatchId: $event.id,
+                    dispatchJob: $event.job,
+                })
+            "
+        />
+    </LLayerGroup>
+
+    <LLayerGroup
+        v-for="job in jobs"
+        :key="job.name"
+        :name="`${$t('common.dispatch', 2)} ${job.label}`"
+        layer-type="overlay"
+        :visible="livemapLayers.find((l) => l.key === `dispatches_${job.name}`)?.visible"
+    >
+        <DispatchMarker
+            v-for="dispatch in dispatchesFiltered?.filter((p) => p.job === job.name)"
+            :key="dispatch.id"
+            :dispatch="dispatch"
+            :size="livemap.markerSize"
+            @selected="
+                slideover.open(DispatchDetailsSlideover, {
+                    dispatchId: $event.id,
+                    dispatchJob: $event.job,
                 })
             "
         />

@@ -11,14 +11,6 @@
     - [OAuth2Account](#resources-accounts-OAuth2Account)
     - [OAuth2Provider](#resources-accounts-OAuth2Provider)
   
-- [resources/centrum/access.proto](#resources_centrum_access-proto)
-    - [UnitAccess](#resources-centrum-UnitAccess)
-    - [UnitJobAccess](#resources-centrum-UnitJobAccess)
-    - [UnitQualificationAccess](#resources-centrum-UnitQualificationAccess)
-    - [UnitUserAccess](#resources-centrum-UnitUserAccess)
-  
-    - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
-  
 - [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
     - [DispatchAttributes](#resources-centrum-DispatchAttributes)
     - [UnitAttributes](#resources-centrum-UnitAttributes)
@@ -58,6 +50,22 @@
   
 - [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
     - [UserUnitMapping](#resources-centrum-UserUnitMapping)
+  
+- [resources/centrum/units_access.proto](#resources_centrum_units_access-proto)
+    - [UnitAccess](#resources-centrum-UnitAccess)
+    - [UnitJobAccess](#resources-centrum-UnitJobAccess)
+    - [UnitQualificationAccess](#resources-centrum-UnitQualificationAccess)
+    - [UnitUserAccess](#resources-centrum-UnitUserAccess)
+  
+    - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
+  
+- [resources/centrum/access.proto](#resources_centrum_access-proto)
+    - [Access](#resources-centrum-Access)
+    - [JobAccess](#resources-centrum-JobAccess)
+    - [QualificationAccess](#resources-centrum-QualificationAccess)
+    - [UserAccess](#resources-centrum-UserAccess)
+  
+    - [AccessLevel](#resources-centrum-AccessLevel)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
@@ -234,10 +242,6 @@
     - [NotificationCategory](#resources-notifications-NotificationCategory)
     - [NotificationType](#resources-notifications-NotificationType)
   
-- [resources/permissions/permissions.proto](#resources_permissions_permissions-proto)
-    - [Permission](#resources-permissions-Permission)
-    - [Role](#resources-permissions-Role)
-  
 - [resources/permissions/attributes.proto](#resources_permissions_attributes-proto)
     - [AttributeValues](#resources-permissions-AttributeValues)
     - [JobGradeList](#resources-permissions-JobGradeList)
@@ -247,6 +251,10 @@
     - [RawRoleAttribute](#resources-permissions-RawRoleAttribute)
     - [RoleAttribute](#resources-permissions-RoleAttribute)
     - [StringList](#resources-permissions-StringList)
+  
+- [resources/permissions/permissions.proto](#resources_permissions_permissions-proto)
+    - [Permission](#resources-permissions-Permission)
+    - [Role](#resources-permissions-Role)
   
 - [resources/qualifications/access.proto](#resources_qualifications_access-proto)
     - [QualificationAccess](#resources-qualifications-QualificationAccess)
@@ -531,10 +539,12 @@
     - [DeleteDispatchResponse](#services-centrum-DeleteDispatchResponse)
     - [DeleteUnitRequest](#services-centrum-DeleteUnitRequest)
     - [DeleteUnitResponse](#services-centrum-DeleteUnitResponse)
+    - [Disponents](#services-centrum-Disponents)
     - [GetDispatchRequest](#services-centrum-GetDispatchRequest)
     - [GetDispatchResponse](#services-centrum-GetDispatchResponse)
     - [GetSettingsRequest](#services-centrum-GetSettingsRequest)
     - [GetSettingsResponse](#services-centrum-GetSettingsResponse)
+    - [JobsList](#services-centrum-JobsList)
     - [JoinUnitRequest](#services-centrum-JoinUnitRequest)
     - [JoinUnitResponse](#services-centrum-JoinUnitResponse)
     - [LatestState](#services-centrum-LatestState)
@@ -1128,103 +1138,6 @@
 
 
 
-<a name="resources_centrum_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/access.proto
-
-
-
-<a name="resources-centrum-UnitAccess"></a>
-
-### UnitAccess
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [UnitJobAccess](#resources-centrum-UnitJobAccess) | repeated | @gotags: alias:"job_access" |
-| `qualifications` | [UnitQualificationAccess](#resources-centrum-UnitQualificationAccess) | repeated | @gotags: alias:"qualification_access" |
-
-
-
-
-
-
-<a name="resources-centrum-UnitJobAccess"></a>
-
-### UnitJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitQualificationAccess"></a>
-
-### UnitQualificationAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
-| `qualification` | [resources.qualifications.QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
-| `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitUserAccess"></a>
-
-### UnitUserAccess
-
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-centrum-UnitAccessLevel"></a>
-
-### UnitAccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `UNIT_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `UNIT_ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `UNIT_ACCESS_LEVEL_JOIN` | 2 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_centrum_attributes-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1318,6 +1231,7 @@
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
 | `status` | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
 | `message` | [string](#string) |  | @sanitize |
 | `description` | [string](#string) | optional | @sanitize |
@@ -1345,7 +1259,9 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `dispatch_id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"dispatch_id" |
-| `unit_id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"unit_id" |
+| `dispatch_job` | [string](#string) |  |  |
+| `unit_id` | [uint64](#uint64) |  |  |
+| `unit_job` | [string](#string) |  |  |
 | `unit` | [Unit](#resources-centrum-Unit) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
@@ -1364,7 +1280,8 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `dispatch_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
+| `dispatch_job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
 | `units` | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
 
 
@@ -1381,6 +1298,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `target_dispatch_id` | [uint64](#uint64) |  |  |
+| `target_dispatch_job` | [string](#string) |  |  |
 | `reference_type` | [DispatchReferenceType](#resources-centrum-DispatchReferenceType) |  |  |
 
 
@@ -1414,12 +1332,15 @@
 | `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `dispatch_id` | [uint64](#uint64) |  |  |
+| `dispatch_job` | [string](#string) |  |  |
 | `unit_id` | [uint64](#uint64) | optional |  |
+| `unit_job` | [string](#string) | optional |  |
 | `unit` | [Unit](#resources-centrum-Unit) | optional |  |
 | `status` | [StatusDispatch](#resources-centrum-StatusDispatch) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
 | `code` | [string](#string) | optional | @sanitize |
 | `user_id` | [int32](#int32) | optional |  |
+| `user_job` | [string](#string) | optional |  |
 | `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
 | `x` | [double](#double) | optional |  |
 | `y` | [double](#double) | optional |  |
@@ -1560,6 +1481,7 @@
 | `fallback_mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
 | `predefined_status` | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
 | `timings` | [Timings](#resources-centrum-Timings) |  |  |
+| `access` | [Access](#resources-centrum-Access) |  |  |
 
 
 
@@ -1626,6 +1548,7 @@
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
 | `name` | [string](#string) |  | @sanitize |
 | `initials` | [string](#string) |  | @sanitize |
 | `color` | [string](#string) |  | @sanitize: method=StripTags |
@@ -1650,7 +1573,9 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `unit_id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"unit_id" |
+| `unit_job` | [string](#string) |  |  |
 | `user_id` | [int32](#int32) |  | @gotags: sql:"primary_key" alias:"user_id" |
+| `user_job` | [string](#string) |  |  |
 | `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
 
 
@@ -1667,7 +1592,8 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `unit_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
+| `unit_job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
 | `users` | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
 
 
@@ -1686,16 +1612,19 @@
 | `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `unit_id` | [uint64](#uint64) |  |  |
+| `unit_job` | [string](#string) |  |  |
 | `unit` | [Unit](#resources-centrum-Unit) | optional |  |
 | `status` | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
 | `code` | [string](#string) | optional | @sanitize |
 | `user_id` | [int32](#int32) | optional |  |
+| `user_job` | [string](#string) | optional |  |
 | `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
 | `x` | [double](#double) | optional |  |
 | `y` | [double](#double) | optional |  |
 | `postal` | [string](#string) | optional | @sanitize |
 | `creator_id` | [int32](#int32) | optional |  |
+| `creator_job` | [string](#string) | optional |  |
 | `creator` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
 
 
@@ -1746,8 +1675,9 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `unit_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
+| `unit_job` | [string](#string) |  |  |
 | `user_id` | [int32](#int32) |  |  |
+| `user_job` | [string](#string) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 
 
@@ -1755,6 +1685,191 @@
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_units_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/units_access.proto
+
+
+
+<a name="resources-centrum-UnitAccess"></a>
+
+### UnitAccess
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [UnitJobAccess](#resources-centrum-UnitJobAccess) | repeated | @gotags: alias:"job_access" |
+| `qualifications` | [UnitQualificationAccess](#resources-centrum-UnitQualificationAccess) | repeated | @gotags: alias:"qualification_access" |
+
+
+
+
+
+
+<a name="resources-centrum-UnitJobAccess"></a>
+
+### UnitJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitQualificationAccess"></a>
+
+### UnitQualificationAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification` | [resources.qualifications.QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
+| `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitUserAccess"></a>
+
+### UnitUserAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-UnitAccessLevel"></a>
+
+### UnitAccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `UNIT_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `UNIT_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `UNIT_ACCESS_LEVEL_JOIN` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/access.proto
+
+
+
+<a name="resources-centrum-Access"></a>
+
+### Access
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobAccess](#resources-centrum-JobAccess) | repeated | @gotags: alias:"job_access" |
+
+
+
+
+
+
+<a name="resources-centrum-JobAccess"></a>
+
+### JobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-centrum-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-QualificationAccess"></a>
+
+### QualificationAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+
+<a name="resources-centrum-UserAccess"></a>
+
+### UserAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_PARTICIPATE` | 3 |  |
+| `ACCESS_LEVEL_MANAGE` | 4 |  |
+
 
  <!-- end enums -->
 
@@ -4218,65 +4333,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_permissions_permissions-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/permissions/permissions.proto
-
-
-
-<a name="resources-permissions-Permission"></a>
-
-### Permission
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `category` | [string](#string) |  |  |
-| `name` | [string](#string) |  |  |
-| `guard_name` | [string](#string) |  |  |
-| `val` | [bool](#bool) |  |  |
-| `order` | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="resources-permissions-Role"></a>
-
-### Role
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `permissions` | [Permission](#resources-permissions-Permission) | repeated |  |
-| `attributes` | [RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_permissions_attributes-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4423,6 +4479,65 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `strings` | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_permissions_permissions-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/permissions/permissions.proto
+
+
+
+<a name="resources-permissions-Permission"></a>
+
+### Permission
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `category` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+| `guard_name` | [string](#string) |  |  |
+| `val` | [bool](#bool) |  |  |
+| `order` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="resources-permissions-Role"></a>
+
+### Role
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `permissions` | [Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
 
 
 
@@ -8306,9 +8421,10 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
 | `dispatch_id` | [uint64](#uint64) |  |  |
-| `to_add` | [uint64](#uint64) | repeated |  |
-| `to_remove` | [uint64](#uint64) | repeated |  |
+| `to_add` | [resources.centrum.DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
+| `to_remove` | [resources.centrum.DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
 | `forced` | [bool](#bool) | optional |  |
 
 
@@ -8334,6 +8450,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
 | `unit_id` | [uint64](#uint64) |  |  |
 | `to_add` | [int32](#int32) | repeated |  |
 | `to_remove` | [int32](#int32) | repeated |  |
@@ -8463,6 +8580,21 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-centrum-Disponents"></a>
+
+### Disponents
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `disponents` | [resources.centrum.Disponents](#resources-centrum-Disponents) | repeated |  |
+
+
+
+
+
+
 <a name="services-centrum-GetDispatchRequest"></a>
 
 ### GetDispatchRequest
@@ -8518,6 +8650,21 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-centrum-JobsList"></a>
+
+### JobsList
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatches` | [resources.users.Job](#resources-users-Job) | repeated |  |
+
+
+
+
+
+
 <a name="services-centrum-JoinUnitRequest"></a>
 
 ### JoinUnitRequest
@@ -8526,6 +8673,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
 | `unit_id` | [uint64](#uint64) | optional |  |
 
 
@@ -8558,7 +8706,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `server_time` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `settings` | [resources.centrum.Settings](#resources-centrum-Settings) |  |  |
-| `disponents` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+| `disponents` | [Disponents](#services-centrum-Disponents) |  |  |
 | `own_unit_id` | [uint64](#uint64) | optional |  |
 | `units` | [resources.centrum.Unit](#resources-centrum-Unit) | repeated | Send the current units and dispatches |
 | `dispatches` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) | repeated |  |
@@ -8715,16 +8863,17 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `jobs` | [JobsList](#services-centrum-JobsList) |  |  |
 | `latest_state` | [LatestState](#services-centrum-LatestState) |  |  |
 | `settings` | [resources.centrum.Settings](#resources-centrum-Settings) |  |  |
 | `disponents` | [resources.centrum.Disponents](#resources-centrum-Disponents) |  |  |
-| `unit_created` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
-| `unit_deleted` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
+| `unit_deleted` | [uint64](#uint64) |  |  |
 | `unit_updated` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
+| `dispatch_deleted` | [uint64](#uint64) |  |  |
+| `dispatch_updated` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
+| `unit_created` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
 | `unit_status` | [resources.centrum.UnitStatus](#resources-centrum-UnitStatus) |  |  |
 | `dispatch_created` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
-| `dispatch_deleted` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
-| `dispatch_updated` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
 | `dispatch_status` | [resources.centrum.DispatchStatus](#resources-centrum-DispatchStatus) |  |  |
 
 
@@ -8765,7 +8914,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatch_ids` | [uint64](#uint64) | repeated |  |
+| `job` | [string](#string) |  |  |
+| `dispatch_id` | [uint64](#uint64) |  |  |
 | `resp` | [resources.centrum.TakeDispatchResp](#resources-centrum-TakeDispatchResp) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
 
@@ -8792,6 +8942,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
 | `dispatch` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
 
 
@@ -8817,6 +8968,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
 | `dispatch_id` | [uint64](#uint64) |  |  |
 | `status` | [resources.centrum.StatusDispatch](#resources-centrum-StatusDispatch) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
@@ -8875,6 +9027,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
 | `unit_id` | [uint64](#uint64) |  |  |
 | `status` | [resources.centrum.StatusUnit](#resources-centrum-StatusUnit) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |
@@ -8908,7 +9061,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `UpdateSettings` | [UpdateSettingsRequest](#services-centrum-UpdateSettingsRequest) | [UpdateSettingsResponse](#services-centrum-UpdateSettingsResponse) | @perm |
+| `UpdateSettings` | [UpdateSettingsRequest](#services-centrum-UpdateSettingsRequest) | [UpdateSettingsResponse](#services-centrum-UpdateSettingsResponse) | @perm: Attrs=Access/StringList:[]string{"Shared"} |
 | `CreateDispatch` | [CreateDispatchRequest](#services-centrum-CreateDispatchRequest) | [CreateDispatchResponse](#services-centrum-CreateDispatchResponse) | @perm |
 | `UpdateDispatch` | [UpdateDispatchRequest](#services-centrum-UpdateDispatchRequest) | [UpdateDispatchResponse](#services-centrum-UpdateDispatchResponse) | @perm |
 | `DeleteDispatch` | [DeleteDispatchRequest](#services-centrum-DeleteDispatchRequest) | [DeleteDispatchResponse](#services-centrum-DeleteDispatchResponse) | @perm |

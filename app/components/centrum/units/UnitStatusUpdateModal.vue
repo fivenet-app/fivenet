@@ -35,10 +35,11 @@ const state = reactive<Schema>({
     status: props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN,
 });
 
-async function updateUnitStatus(id: number, values: Schema): Promise<void> {
+async function updateUnitStatus(unitId: number, unitJob: string, values: Schema): Promise<void> {
     try {
         const call = $grpc.centrum.centrum.updateUnitStatus({
-            unitId: id,
+            job: unitJob,
+            unitId: unitId,
             status: values.status,
             code: values.code,
             reason: values.reason,
@@ -61,7 +62,9 @@ async function updateUnitStatus(id: number, values: Schema): Promise<void> {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await updateUnitStatus(props.unit.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await updateUnitStatus(props.unit.id, props.unit.job, event.data).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
 
 watch(props, () => (state.status = props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN));

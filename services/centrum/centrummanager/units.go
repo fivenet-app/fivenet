@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
@@ -21,8 +22,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint64, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
-	unit, err := s.GetUnit(ctx, job, unitId)
+func (s *Manager) UpdateUnitStatus(ctx context.Context, unitJob string, unitId uint64, in *centrum.UnitStatus) (*centrum.UnitStatus, error) {
+	unit, err := s.GetUnit(ctx, unitJob, unitId)
 	if err != nil {
 		return nil, err
 	}
@@ -77,43 +78,13 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		}
 	}
 
-	tUnitStatus := table.FivenetCentrumUnitsStatus
-	stmt := tUnitStatus.
-		INSERT(
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitStatus.Postal,
-			tUnitStatus.CreatorID,
-		).
-		VALUES(
-			in.UnitId,
-			in.Status,
-			in.Reason,
-			in.Code,
-			in.UserId,
-			in.X,
-			in.Y,
-			in.Postal,
-			in.CreatorId,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
+	status, err := s.AddUnitStatus(ctx, s.db, unitJob, in, false)
 	if err != nil {
 		return nil, err
 	}
+	in.Id = uint64(status.Id)
 
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-	in.Id = uint64(lastId)
-
-	if err := s.State.UpdateUnitStatus(ctx, job, in.UnitId, in); err != nil {
+	if err := s.State.UpdateUnitStatus(ctx, unitJob, in.UnitId, in); err != nil {
 		return nil, err
 	}
 
@@ -122,15 +93,15 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		return nil, err
 	}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, unitJob), data); err != nil {
 		return nil, fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'): %w", len(data), in, err)
 	}
 
 	return in, nil
 }
 
-func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unitId uint64, toAdd []int32, toRemove []int32) error {
-	s.logger.Debug("updating unit assignments", zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
+func (s *Manager) UpdateUnitAssignments(ctx context.Context, userJob *string, userId *int32, unitJob string, unitId uint64, toAdd []int32, toRemove []int32, allowedJobs []string) error {
+	s.logger.Debug("updating unit assignments", zap.String("job", unitJob), zap.Uint64("unit_id", unitId), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
 		return nil
@@ -156,10 +127,17 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
+	usersToRemove := []*jobs.Colleague{}
 	if len(toRemove) > 0 {
-		removeIds := make([]jet.Expression, len(toRemove))
-		for i := range toRemove {
-			removeIds[i] = jet.Int32(toRemove[i])
+		users, err := s.retrieveColleagueById(ctx, toRemove...)
+		if err != nil {
+			return err
+		}
+		usersToRemove = append(usersToRemove, users...)
+
+		removeIds := make([]jet.Expression, len(users))
+		for i := range users {
+			removeIds[i] = jet.Int32(users[i].UserId)
 		}
 
 		stmt := tUnitUser.
@@ -174,39 +152,61 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		}
 	}
 
+	usersToAdd := []*jobs.Colleague{}
 	if len(toAdd) > 0 {
-		addIds := []jet.IntegerExpression{}
 		for i := range toAdd {
-			if um, ok := s.tracker.GetUserById(toAdd[i]); !ok || um.Hidden {
+			um, ok := s.tracker.GetUserById(toAdd[i])
+			if !ok || um.Hidden {
 				continue
 			}
 
-			unit, err := s.GetUnit(ctx, job, unitId)
+			unit, err := s.GetUnit(ctx, unitJob, unitId)
 			if err != nil {
 				return err
 			}
-			// Skip already added units
+
+			// Skip already added users
 			if slices.ContainsFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
 				return in.UserId == toAdd[i]
 			}) {
 				continue
 			}
 
-			addIds = append(addIds, jet.Int32(toAdd[i]))
+			users, err := s.retrieveColleagueById(ctx, toAdd...)
+			if err != nil {
+				return err
+			}
+
+			if allowedJobs == nil {
+				usersToAdd = append(usersToAdd, users...)
+			} else {
+				// Check if users are in a job that the user is allowed to access
+				for _, user := range users {
+					if slices.ContainsFunc(allowedJobs, func(in string) bool {
+						return in == user.Job
+					}) {
+						usersToAdd = append(usersToAdd, user)
+					}
+				}
+			}
 		}
 
-		if len(addIds) > 0 {
+		if len(usersToAdd) > 0 {
 			stmt := tUnitUser.
 				INSERT(
 					tUnitUser.UnitID,
+					tUnitUser.UnitJob,
 					tUnitUser.UserID,
+					tUnitUser.UserJob,
 				)
 
-			for _, id := range addIds {
+			for _, user := range usersToAdd {
 				stmt = stmt.
 					VALUES(
 						unitId,
-						id,
+						unitJob,
+						user.UserId,
+						user.Job,
 					)
 			}
 
@@ -229,18 +229,18 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 	store := s.State.UnitsStore()
 
-	key := centrumstate.JobIdKey(job, unitId)
+	key := centrumstate.JobIdKey(unitJob, unitId)
 	if err := store.ComputeUpdate(ctx, key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, bool, error) {
-		if len(toRemove) > 0 {
-			toAnnounce := []int32{}
+		if len(usersToRemove) > 0 {
+			toAnnounce := []*jobs.Colleague{}
 
 			unit.Users = slices.DeleteFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
-				for k := range toRemove {
-					if in.UserId != toRemove[k] {
+				for k := range usersToRemove {
+					if in.UserId != usersToRemove[k].UserId {
 						continue
 					}
 
-					toAnnounce = append(toAnnounce, toRemove[k])
+					toAnnounce = append(toAnnounce, usersToRemove[k])
 					return true
 				}
 
@@ -249,70 +249,71 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 			// Send updates
 			for _, user := range toAnnounce {
-				if _, err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
-					CreatedAt: timestamp.Now(),
-					UnitId:    unit.Id,
-					Status:    centrum.StatusUnit_STATUS_UNIT_USER_REMOVED,
-					UserId:    &user,
-					CreatorId: userId,
-					X:         x,
-					Y:         y,
-					Postal:    postal,
+				if _, err := s.AddUnitStatus(ctx, s.db, unitJob, &centrum.UnitStatus{
+					CreatedAt:  timestamp.Now(),
+					UnitId:     unit.Id,
+					UnitJob:    unit.Job,
+					Status:     centrum.StatusUnit_STATUS_UNIT_USER_REMOVED,
+					UserId:     &user.UserId,
+					UserJob:    &user.Job,
+					CreatorId:  userId,
+					CreatorJob: userJob,
+					X:          x,
+					Y:          y,
+					Postal:     postal,
 				}, true); err != nil {
 					return nil, false, err
 				}
 
-				if err := s.UnsetUnitIDForUser(ctx, user); err != nil {
+				if err := s.UnsetUnitIDForUser(ctx, user.UserId); err != nil {
 					return nil, false, err
 				}
 			}
 		}
 
-		if len(toAdd) > 0 {
-			notFound := []int32{}
-			for i := range toAdd {
-				if um, ok := s.tracker.GetUserById(toAdd[i]); !ok || um.Hidden {
+		if len(usersToAdd) > 0 {
+			notFound := []*jobs.Colleague{}
+			for _, user := range usersToAdd {
+				if um, ok := s.tracker.GetUserById(user.UserId); !ok || um.Hidden {
 					continue
 				}
 
 				// Skip already added units
 				if slices.ContainsFunc(unit.Users, func(in *centrum.UnitAssignment) bool {
-					return in.UserId == toAdd[i]
+					return in.UserId == user.UserId
 				}) {
 					continue
 				}
 
-				notFound = append(notFound, toAdd[i])
+				notFound = append(notFound, user)
 			}
 
-			users, err := s.retrieveColleagueById(ctx, notFound...)
-			if err != nil {
-				return nil, false, err
-			}
-
-			for _, user := range users {
+			for _, user := range notFound {
 				unit.Users = append(unit.Users, &centrum.UnitAssignment{
-					UnitId: unit.Id,
-					UserId: user.UserId,
-					User:   user,
+					UnitId:  unit.Id,
+					UnitJob: unit.Job,
+					UserId:  user.UserId,
+					UserJob: user.Job,
+					User:    user,
 				})
-			}
 
-			for _, user := range users {
-				if _, err := s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
-					CreatedAt: timestamp.Now(),
-					UnitId:    unit.Id,
-					Status:    centrum.StatusUnit_STATUS_UNIT_USER_ADDED,
-					UserId:    &user.UserId,
-					CreatorId: userId,
-					X:         x,
-					Y:         y,
-					Postal:    postal,
+				if _, err := s.AddUnitStatus(ctx, s.db, unitJob, &centrum.UnitStatus{
+					CreatedAt:  timestamp.Now(),
+					UnitId:     unit.Id,
+					UnitJob:    unit.Job,
+					Status:     centrum.StatusUnit_STATUS_UNIT_USER_ADDED,
+					UserId:     &user.UserId,
+					UserJob:    &user.Job,
+					CreatorId:  userId,
+					CreatorJob: userJob,
+					X:          x,
+					Y:          y,
+					Postal:     postal,
 				}, true); err != nil {
 					return nil, false, err
 				}
 
-				if err := s.SetUnitForUser(ctx, user.Job, user.UserId, unit.Id); err != nil {
+				if err := s.SetUnitForUser(ctx, user.Job, user.UserId, unit.Job, unit.Id); err != nil {
 					return nil, false, err
 				}
 			}
@@ -320,15 +321,18 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 		// Unit is empty, set unit status to be unavailable automatically
 		if len(unit.Users) == 0 {
-			if unit.Status, err = s.AddUnitStatus(ctx, s.db, job, &centrum.UnitStatus{
-				CreatedAt: timestamp.Now(),
-				UnitId:    unit.Id,
-				Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-				UserId:    userId,
-				CreatorId: userId,
-				X:         x,
-				Y:         y,
-				Postal:    postal,
+			if unit.Status, err = s.AddUnitStatus(ctx, s.db, unitJob, &centrum.UnitStatus{
+				CreatedAt:  timestamp.Now(),
+				UnitId:     unit.Id,
+				UnitJob:    unit.Job,
+				Status:     centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				UserId:     userId,
+				UserJob:    userJob,
+				CreatorId:  userId,
+				CreatorJob: userJob,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
 			}, true); err != nil {
 				return nil, false, err
 			}
@@ -339,7 +343,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		return err
 	}
 
-	unit, err := s.GetUnit(ctx, job, unitId)
+	unit, err := s.GetUnit(ctx, unitJob, unitId)
 	if err != nil {
 		return err
 	}
@@ -349,7 +353,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		return err
 	}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, unitJob), data); err != nil {
 		return err
 	}
 
@@ -402,10 +406,11 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 	}
 	unit.Id = uint64(lastId)
 
-	// A new unit shouldn't have a status, so we make sure we add one
+	// A new unit doesn't have a status, so we make sure to add one
 	if unit.Status, err = s.AddUnitStatus(ctx, tx, job, &centrum.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    unit.Id,
+		UnitJob:   unit.Job,
 		Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 	}, false); err != nil {
 		return nil, err
@@ -437,7 +442,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 	return unit, nil
 }
 
-func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit) (*centrum.Unit, error) {
+func (s *Manager) UpdateUnit(ctx context.Context, unit *centrum.Unit) (*centrum.Unit, error) {
 	description := ""
 	if unit.Description != nil {
 		description = *unit.Description
@@ -474,7 +479,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 			unit.HomePostal,
 		).
 		WHERE(jet.AND(
-			tUnits.Job.EQ(jet.String(job)),
+			tUnits.Job.EQ(jet.String(unit.Job)),
 			tUnits.ID.EQ(jet.Uint64(unit.Id)),
 		))
 
@@ -505,39 +510,43 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, err
 	}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, unit.Job), data); err != nil {
 		return nil, err
 	}
 
 	return unit, nil
 }
 
-func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.UnitStatus, publish bool) (*centrum.UnitStatus, error) {
+func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, unitJob string, status *centrum.UnitStatus, publish bool) (*centrum.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
-			tUnitStatus.CreatedAt,
 			tUnitStatus.UnitID,
+			tUnitStatus.UnitJob,
 			tUnitStatus.Status,
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
+			tUnitStatus.UserJob,
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
 			tUnitStatus.CreatorID,
+			tUnitStatus.CreatorJob,
 		).
 		VALUES(
-			jet.CURRENT_TIMESTAMP(),
 			status.UnitId,
+			status.UnitJob,
 			status.Status,
 			status.Reason,
 			status.Code,
 			status.UserId,
+			status.UserJob,
 			status.X,
 			status.Y,
 			status.Postal,
 			status.CreatorId,
+			status.CreatorJob,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -550,9 +559,13 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 		return nil, err
 	}
 
-	newStatus, err := s.GetUnitStatusByID(ctx, tx, job, uint64(lastId))
+	newStatus, err := s.GetUnitStatusByID(ctx, tx, unitJob, uint64(lastId))
 	if err != nil {
 		return nil, err
+	}
+
+	if newStatus != nil && newStatus.CreatedAt == nil {
+		newStatus.CreatedAt = timestamp.Now()
 	}
 
 	if publish {
@@ -561,7 +574,7 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 			return nil, err
 		}
 
-		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
+		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, unitJob), data); err != nil {
 			return nil, err
 		}
 	}
@@ -569,7 +582,7 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 	return newStatus, nil
 }
 
-func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.UnitStatus, error) {
+func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, unitJob string, unitId uint64) (*centrum.UnitStatus, error) {
 	tUsers := tables.Users().AS("colleague")
 
 	stmt := tUnitStatus.
@@ -577,11 +590,17 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 			tUnitStatus.ID,
 			tUnitStatus.CreatedAt,
 			tUnitStatus.UnitID,
+			tUnitStatus.UnitJob,
 			tUnitStatus.Status,
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
+			tUnitStatus.UserJob,
+			tUnitStatus.X,
+			tUnitStatus.Y,
+			tUnitStatus.Postal,
 			tUnitStatus.CreatorID,
+			tUnitStatus.CreatorJob,
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
@@ -613,7 +632,7 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 				),
 		).
 		WHERE(
-			tUnitStatus.ID.EQ(jet.Uint64(id)),
+			tUnitStatus.ID.EQ(jet.Uint64(unitId)),
 		).
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		LIMIT(1)
@@ -630,7 +649,7 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 	return &dest, nil
 }
 
-func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, unitId uint64) (*centrum.UnitStatus, error) {
+func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, unitId uint64) (*centrum.UnitStatus, error) {
 	tUsers := tables.Users().AS("colleague")
 
 	stmt := tUnitStatus.
@@ -638,11 +657,17 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, 
 			tUnitStatus.ID,
 			tUnitStatus.CreatedAt,
 			tUnitStatus.UnitID,
+			tUnitStatus.UnitJob,
 			tUnitStatus.Status,
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
+			tUnitStatus.UserJob,
+			tUnitStatus.X,
+			tUnitStatus.Y,
+			tUnitStatus.Postal,
 			tUnitStatus.CreatorID,
+			tUnitStatus.CreatorJob,
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
@@ -691,13 +716,13 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, 
 	return &dest, nil
 }
 
-func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
-	unit, err := s.State.GetUnit(ctx, job, id)
+func (s *Manager) DeleteUnit(ctx context.Context, unitJob string, unitId uint64) error {
+	unit, err := s.State.GetUnit(ctx, unitJob, unitId)
 	if err != nil {
 		return nil
 	}
 
-	if unit.Job != job {
+	if unit.Job != unitJob {
 		return errorscentrum.ErrFailedQuery
 	}
 
@@ -706,19 +731,19 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 		return err
 	}
 
-	if err := s.State.DeleteUnit(ctx, job, id); err != nil {
+	if err := s.State.DeleteUnit(ctx, unitJob, unitId); err != nil {
 		return err
 	}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, unitJob), data); err != nil {
 		return err
 	}
 
 	stmt := tUnits.
 		DELETE().
 		WHERE(jet.AND(
-			tUnits.Job.EQ(jet.String(job)),
-			tUnits.ID.EQ(jet.Uint64(id)),
+			tUnits.Job.EQ(jet.String(unitJob)),
+			tUnits.ID.EQ(jet.Uint64(unitId)),
 		)).
 		LIMIT(1)
 
@@ -729,10 +754,10 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 	return nil
 }
 
-func (s *Manager) ListUnitAccess(ctx context.Context, id uint64) (*centrum.UnitAccess, error) {
+func (s *Manager) ListUnitAccess(ctx context.Context, unitId uint64) (*centrum.UnitAccess, error) {
 	access := &centrum.UnitAccess{}
 
-	jobsAccess, err := s.unitAccess.Jobs.List(ctx, s.db, id)
+	jobsAccess, err := s.unitAccess.Jobs.List(ctx, s.db, unitId)
 	if err != nil {
 		return nil, err
 	}
@@ -742,7 +767,7 @@ func (s *Manager) ListUnitAccess(ctx context.Context, id uint64) (*centrum.UnitA
 		s.enricher.EnrichJobInfo(access.Jobs[i])
 	}
 
-	qualificationsccess, err := s.unitAccess.Qualifications.List(ctx, s.db, id)
+	qualificationsccess, err := s.unitAccess.Qualifications.List(ctx, s.db, unitId)
 	if err != nil {
 		return nil, err
 	}

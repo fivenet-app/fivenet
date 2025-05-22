@@ -36,6 +36,15 @@ func (m *Settings) Sanitize() error {
 		return nil
 	}
 
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: PredefinedStatus
 	if m.PredefinedStatus != nil {
 		if v, ok := any(m.GetPredefinedStatus()).(interface{ Sanitize() error }); ok {

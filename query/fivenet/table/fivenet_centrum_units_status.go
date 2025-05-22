@@ -17,17 +17,20 @@ type fivenetCentrumUnitsStatusTable struct {
 	mysql.Table
 
 	// Columns
-	ID        mysql.ColumnInteger
-	CreatedAt mysql.ColumnTimestamp
-	UnitID    mysql.ColumnInteger
-	Status    mysql.ColumnInteger
-	Reason    mysql.ColumnString
-	Code      mysql.ColumnString
-	UserID    mysql.ColumnInteger
-	X         mysql.ColumnFloat
-	Y         mysql.ColumnFloat
-	Postal    mysql.ColumnString
-	CreatorID mysql.ColumnInteger
+	ID         mysql.ColumnInteger
+	CreatedAt  mysql.ColumnTimestamp
+	UnitID     mysql.ColumnInteger
+	UnitJob    mysql.ColumnString
+	Status     mysql.ColumnInteger
+	Reason     mysql.ColumnString
+	Code       mysql.ColumnString
+	UserID     mysql.ColumnInteger
+	UserJob    mysql.ColumnString
+	X          mysql.ColumnFloat
+	Y          mysql.ColumnFloat
+	Postal     mysql.ColumnString
+	CreatorID  mysql.ColumnInteger
+	CreatorJob mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -69,37 +72,43 @@ func newFivenetCentrumUnitsStatusTable(schemaName, tableName, alias string) *Fiv
 
 func newFivenetCentrumUnitsStatusTableImpl(schemaName, tableName, alias string) fivenetCentrumUnitsStatusTable {
 	var (
-		IDColumn        = mysql.IntegerColumn("id")
-		CreatedAtColumn = mysql.TimestampColumn("created_at")
-		UnitIDColumn    = mysql.IntegerColumn("unit_id")
-		StatusColumn    = mysql.IntegerColumn("status")
-		ReasonColumn    = mysql.StringColumn("reason")
-		CodeColumn      = mysql.StringColumn("code")
-		UserIDColumn    = mysql.IntegerColumn("user_id")
-		XColumn         = mysql.FloatColumn("x")
-		YColumn         = mysql.FloatColumn("y")
-		PostalColumn    = mysql.StringColumn("postal")
-		CreatorIDColumn = mysql.IntegerColumn("creator_id")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, UserIDColumn, XColumn, YColumn, PostalColumn, CreatorIDColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, UserIDColumn, XColumn, YColumn, PostalColumn, CreatorIDColumn}
-		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
+		IDColumn         = mysql.IntegerColumn("id")
+		CreatedAtColumn  = mysql.TimestampColumn("created_at")
+		UnitIDColumn     = mysql.IntegerColumn("unit_id")
+		UnitJobColumn    = mysql.StringColumn("unit_job")
+		StatusColumn     = mysql.IntegerColumn("status")
+		ReasonColumn     = mysql.StringColumn("reason")
+		CodeColumn       = mysql.StringColumn("code")
+		UserIDColumn     = mysql.IntegerColumn("user_id")
+		UserJobColumn    = mysql.StringColumn("user_job")
+		XColumn          = mysql.FloatColumn("x")
+		YColumn          = mysql.FloatColumn("y")
+		PostalColumn     = mysql.StringColumn("postal")
+		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn = mysql.StringColumn("creator_job")
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UnitIDColumn, UnitJobColumn, StatusColumn, ReasonColumn, CodeColumn, UserIDColumn, UserJobColumn, XColumn, YColumn, PostalColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UnitIDColumn, UnitJobColumn, StatusColumn, ReasonColumn, CodeColumn, UserIDColumn, UserJobColumn, XColumn, YColumn, PostalColumn, CreatorIDColumn, CreatorJobColumn}
+		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumUnitsStatusTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:        IDColumn,
-		CreatedAt: CreatedAtColumn,
-		UnitID:    UnitIDColumn,
-		Status:    StatusColumn,
-		Reason:    ReasonColumn,
-		Code:      CodeColumn,
-		UserID:    UserIDColumn,
-		X:         XColumn,
-		Y:         YColumn,
-		Postal:    PostalColumn,
-		CreatorID: CreatorIDColumn,
+		ID:         IDColumn,
+		CreatedAt:  CreatedAtColumn,
+		UnitID:     UnitIDColumn,
+		UnitJob:    UnitJobColumn,
+		Status:     StatusColumn,
+		Reason:     ReasonColumn,
+		Code:       CodeColumn,
+		UserID:     UserIDColumn,
+		UserJob:    UserJobColumn,
+		X:          XColumn,
+		Y:          YColumn,
+		Postal:     PostalColumn,
+		CreatorID:  CreatorIDColumn,
+		CreatorJob: CreatorJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

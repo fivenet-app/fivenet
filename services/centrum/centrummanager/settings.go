@@ -18,6 +18,7 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 			tCentrumSettings.FallbackMode,
 			tCentrumSettings.PredefinedStatus,
 			tCentrumSettings.Timings,
+			tCentrumSettings.Access,
 		).
 		VALUES(
 			job,
@@ -26,6 +27,7 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 			settings.FallbackMode,
 			settings.PredefinedStatus,
 			settings.Timings,
+			settings.Access,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tCentrumSettings.Job.SET(jet.String(job)),
@@ -34,6 +36,7 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.FallbackMode))),
 			tCentrumSettings.PredefinedStatus.SET(jet.StringExp(jet.Raw("VALUES(`predefined_status`)"))),
 			tCentrumSettings.Timings.SET(jet.StringExp(jet.Raw("VALUES(`timings`)"))),
+			tCentrumSettings.Access.SET(jet.StringExp(jet.Raw("VALUES(`access`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -45,7 +48,10 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 		return nil, err
 	}
 
-	set := s.GetSettings(ctx, job)
+	set, err := s.GetSettings(ctx, job)
+	if err != nil {
+		return nil, err
+	}
 
 	data, err := proto.Marshal(set)
 	if err != nil {

@@ -266,10 +266,6 @@ func NewJobsSearch(p JobsSearchParams) (*JobsSearch, error) {
 		return nil
 	}))
 
-	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		return nil
-	}))
-
 	return c, nil
 }
 

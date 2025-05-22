@@ -13,11 +13,11 @@ func (s *Manager) CheckIfUserIsDisponent(ctx context.Context, job string, userId
 		return false
 	}
 
-	if len(disponents) == 0 {
+	if disponents == nil || len(disponents.Disponents) == 0 {
 		return false
 	}
-	for i := range disponents {
-		if userId == disponents[i].UserId {
+	for i := range disponents.Disponents {
+		if userId == disponents.Disponents[i].UserId {
 			return true
 		}
 	}
@@ -46,9 +46,9 @@ func (s *Manager) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *use
 	return false
 }
 
-func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId int32, unit *centrum.Unit, disponentOkay bool) bool {
+func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, userJob string, userId int32, unit *centrum.Unit, disponentOkay bool) bool {
 	// Check if user is a disponent
-	if disponentOkay && s.CheckIfUserIsDisponent(ctx, job, userId) {
+	if disponentOkay && s.CheckIfUserIsDisponent(ctx, userJob, userId) {
 		return true
 	}
 
@@ -61,28 +61,31 @@ func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId 
 	return false
 }
 
-func (s *Manager) CheckIfBotNeeded(ctx context.Context, job string) bool {
-	settings := s.GetSettings(ctx, job)
+func (s *Manager) CheckIfBotNeeded(ctx context.Context, job string) (bool, error) {
+	settings, err := s.GetSettings(ctx, job)
+	if err != nil {
+		return false, err
+	}
 
 	// If centrum is disabled, why bother with the bot
 	if !settings.Enabled {
-		return false
+		return false, nil
 	}
 
 	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
-		return true
+		return true, nil
 	}
 
 	disponents, err := s.GetDisponents(ctx, job)
 	if err != nil {
-		return false
+		return false, nil
 	}
 
-	if len(disponents) == 0 {
+	if disponents == nil || len(disponents.Disponents) == 0 {
 		if settings.FallbackMode == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
-			return true
+			return true, nil
 		}
 	}
 
-	return false
+	return false, nil
 }

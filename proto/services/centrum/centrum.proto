@@ -7,8 +7,8 @@ import "resources/centrum/dispatches.proto";
 import "resources/centrum/disponents.proto";
 import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
-import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
+import "resources/users/jobs.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrum";
@@ -64,20 +64,22 @@ message DeleteUnitRequest {
 message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
-  uint64 unit_id = 1;
-  resources.centrum.StatusUnit status = 2 [(validate.rules).enum.defined_only = true];
+  string job = 1 [(validate.rules).string.max_len = 20];
+  uint64 unit_id = 2;
+  resources.centrum.StatusUnit status = 3 [(validate.rules).enum.defined_only = true];
   // @sanitize
-  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string reason = 4 [(validate.rules).string.max_len = 255];
   // @sanitize
-  optional string code = 4 [(validate.rules).string.max_len = 20];
+  optional string code = 5 [(validate.rules).string.max_len = 20];
 }
 
 message UpdateUnitStatusResponse {}
 
 message AssignUnitRequest {
-  uint64 unit_id = 1;
-  repeated int32 to_add = 2;
-  repeated int32 to_remove = 3;
+  string job = 1 [(validate.rules).string.max_len = 20];
+  uint64 unit_id = 2;
+  repeated int32 to_add = 3;
+  repeated int32 to_remove = 4;
 }
 
 message AssignUnitResponse {}
@@ -125,7 +127,8 @@ message CreateDispatchResponse {
 }
 
 message UpdateDispatchRequest {
-  resources.centrum.Dispatch dispatch = 1 [(validate.rules).message.required = true];
+  string job = 1 [(validate.rules).string.max_len = 20];
+  resources.centrum.Dispatch dispatch = 2 [(validate.rules).message.required = true];
 }
 
 message UpdateDispatchResponse {}
@@ -137,21 +140,23 @@ message DeleteDispatchRequest {
 message DeleteDispatchResponse {}
 
 message UpdateDispatchStatusRequest {
-  uint64 dispatch_id = 1;
-  resources.centrum.StatusDispatch status = 2 [(validate.rules).enum.defined_only = true];
+  string job = 1 [(validate.rules).string.max_len = 20];
+  uint64 dispatch_id = 2;
+  resources.centrum.StatusDispatch status = 3 [(validate.rules).enum.defined_only = true];
   // @sanitize
-  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string reason = 4 [(validate.rules).string.max_len = 255];
   // @sanitize
-  optional string code = 4;
+  optional string code = 5;
 }
 
 message UpdateDispatchStatusResponse {}
 
 message AssignDispatchRequest {
-  uint64 dispatch_id = 1;
-  repeated uint64 to_add = 2;
-  repeated uint64 to_remove = 3;
-  optional bool forced = 4;
+  string job = 1 [(validate.rules).string.max_len = 20];
+  uint64 dispatch_id = 2;
+  repeated resources.centrum.DispatchAssignment to_add = 3;
+  repeated resources.centrum.DispatchAssignment to_remove = 4;
+  optional bool forced = 5;
 }
 
 message AssignDispatchResponse {}
@@ -162,7 +167,8 @@ message ListDispatchActivityResponse {
 }
 
 message JoinUnitRequest {
-  optional uint64 unit_id = 1;
+  string job = 1 [(validate.rules).string.max_len = 20];
+  optional uint64 unit_id = 2;
 }
 
 message JoinUnitResponse {
@@ -170,10 +176,11 @@ message JoinUnitResponse {
 }
 
 message TakeDispatchRequest {
-  repeated uint64 dispatch_ids = 1 [(validate.rules).repeated.min_items = 1];
-  resources.centrum.TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
+  string job = 1 [(validate.rules).string.max_len = 20];
+  uint64 dispatch_id = 2 [(validate.rules).uint64.gt = 0];
+  resources.centrum.TakeDispatchResp resp = 3 [(validate.rules).enum.defined_only = true];
   // @sanitize
-  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string reason = 4 [(validate.rules).string.max_len = 255];
 }
 
 message TakeDispatchResponse {}
@@ -181,7 +188,7 @@ message TakeDispatchResponse {}
 message LatestState {
   resources.timestamp.Timestamp server_time = 1;
   resources.centrum.Settings settings = 2;
-  repeated resources.jobs.Colleague disponents = 3;
+  Disponents disponents = 3;
   optional uint64 own_unit_id = 4;
   // Send the current units and dispatches
   repeated resources.centrum.Unit units = 5;
@@ -194,25 +201,36 @@ message StreamResponse {
   oneof change {
     option (validate.required) = true;
 
-    LatestState latest_state = 1;
+    JobsList jobs = 1;
+    LatestState latest_state = 2;
 
-    resources.centrum.Settings settings = 2;
-    resources.centrum.Disponents disponents = 3;
+    resources.centrum.Settings settings = 3;
+    resources.centrum.Disponents disponents = 4;
 
-    resources.centrum.Unit unit_created = 4;
-    resources.centrum.Unit unit_deleted = 5;
-    resources.centrum.Unit unit_updated = 6;
-    resources.centrum.UnitStatus unit_status = 7;
+    uint64 unit_deleted = 6;
+    resources.centrum.Unit unit_updated = 7;
+    uint64 dispatch_deleted = 10;
+    resources.centrum.Dispatch dispatch_updated = 11;
 
-    resources.centrum.Dispatch dispatch_created = 8;
-    resources.centrum.Dispatch dispatch_deleted = 9;
-    resources.centrum.Dispatch dispatch_updated = 10;
-    resources.centrum.DispatchStatus dispatch_status = 11;
+    // Old events
+
+    resources.centrum.Unit unit_created = 5;
+    resources.centrum.UnitStatus unit_status = 8;
+    resources.centrum.Dispatch dispatch_created = 9;
+    resources.centrum.DispatchStatus dispatch_status = 12;
   }
 }
 
+message JobsList {
+  repeated resources.users.Job dispatches = 1;
+}
+
+message Disponents {
+  repeated resources.centrum.Disponents disponents = 1;
+}
+
 service CentrumService {
-  // @perm
+  // @perm: Attrs=Access/StringList:[]string{"Shared"}
   rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse);
 
   // @perm

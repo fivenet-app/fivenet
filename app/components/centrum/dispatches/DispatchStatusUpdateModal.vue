@@ -10,6 +10,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const props = defineProps<{
     dispatchId: number;
+    dispatchJob: string;
     status?: StatusDispatch;
 }>();
 
@@ -34,10 +35,11 @@ const state = reactive<Schema>({
     status: props.status ?? StatusDispatch.NEW,
 });
 
-async function updateDispatchStatus(dispatchId: number, values: Schema): Promise<void> {
+async function updateDispatchStatus(dispatchId: number, job: string, values: Schema): Promise<void> {
     try {
         const call = $grpc.centrum.centrum.updateDispatchStatus({
-            dispatchId,
+            job: job,
+            dispatchId: dispatchId,
             status: values.status,
             code: values.code,
             reason: values.reason,
@@ -60,7 +62,9 @@ async function updateDispatchStatus(dispatchId: number, values: Schema): Promise
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await updateDispatchStatus(props.dispatchId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await updateDispatchStatus(props.dispatchId, props.dispatchJob, event.data).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
 
 watch(props, () => {

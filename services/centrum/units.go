@@ -8,7 +8,6 @@ import (
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -94,7 +93,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *pbcentrum.CreateOr
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		unit, err = s.state.UpdateUnit(ctx, userInfo.Job, req.Unit)
+		unit, err = s.state.UpdateUnit(ctx, req.Unit)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
@@ -146,12 +145,20 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnit
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	unit, err := s.state.GetUnit(ctx, userInfo.Job, req.UnitId)
+	check, err := s.state.HasAccessToJob(ctx, userInfo.Job, userInfo.JobGrade, req.Job, centrum.AccessLevel_ACCESS_LEVEL_PARTICIPATE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errswrap.NewError(err, errorscentrum.ErrJobAccessDenied)
+	}
+
+	unit, err := s.state.GetUnit(ctx, req.Job, req.UnitId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	// Only check unit access when not empty
+	// Only check unit access when not nil/empty
 	if unit.Access != nil && !unit.Access.IsEmpty() {
 		// Make sure requestor is not a disponent
 		if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
@@ -169,15 +176,17 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnit
 		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
-	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit.Id, &centrum.UnitStatus{
-		CreatedAt: timestamp.Now(),
-		UnitId:    unit.Id,
-		Unit:      unit,
-		Status:    req.Status,
-		Reason:    req.Reason,
-		Code:      req.Code,
-		UserId:    &userInfo.UserId,
-		CreatorId: &userInfo.UserId,
+	if _, err := s.state.UpdateUnitStatus(ctx, req.Job, unit.Id, &centrum.UnitStatus{
+		UnitId:     unit.Id,
+		UnitJob:    unit.Job,
+		Unit:       unit,
+		Status:     req.Status,
+		Reason:     req.Reason,
+		Code:       req.Code,
+		UserId:     &userInfo.UserId,
+		UserJob:    &userInfo.Job,
+		CreatorId:  &userInfo.UserId,
+		CreatorJob: &userInfo.Job,
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -189,6 +198,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnit
 
 func (s *Server) AssignUnit(ctx context.Context, req *pbcentrum.AssignUnitRequest) (*pbcentrum.AssignUnitResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.unit_id", int64(req.UnitId)))
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.centrum.job", req.Job))
 	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.centrum.users.to_add", utils.SliceInt32ToInt(req.ToAdd)))
 	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.centrum.users.to_remove", utils.SliceInt32ToInt(req.ToRemove)))
 
@@ -203,12 +213,26 @@ func (s *Server) AssignUnit(ctx context.Context, req *pbcentrum.AssignUnitReques
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	unit, err := s.state.GetUnit(ctx, userInfo.Job, req.UnitId)
+	check, err := s.state.HasAccessToJob(ctx, userInfo.Job, userInfo.JobGrade, req.Job, centrum.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
-	if unit.Job != userInfo.Job {
-		return nil, errorscentrum.ErrFailedQuery
+	if !check {
+		return nil, errswrap.NewError(err, errorscentrum.ErrJobAccessDenied)
+	}
+
+	unit, err := s.state.GetUnit(ctx, req.Job, req.UnitId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+
+	// Check if user has access to unit
+	check, err = s.state.HasAccessToJob(ctx, userInfo.Job, userInfo.JobGrade, unit.Job, centrum.AccessLevel_ACCESS_LEVEL_MANAGE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errswrap.NewError(err, errorscentrum.ErrJobAccessDenied)
 	}
 
 	// Only check unit access when not empty
@@ -225,7 +249,13 @@ func (s *Server) AssignUnit(ctx context.Context, req *pbcentrum.AssignUnitReques
 		}
 	}
 
-	if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, unit.Id, req.ToAdd, req.ToRemove); err != nil {
+	jobs, err := s.state.GetJobList(ctx, userInfo.Job, userInfo.JobGrade)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	jobs = append(jobs, userInfo.Job)
+
+	if err := s.state.UpdateUnitAssignments(ctx, &userInfo.Job, &userInfo.UserId, unit.Job, unit.Id, req.ToAdd, req.ToRemove, jobs); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
@@ -253,31 +283,47 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	currentUnitId, _ := s.state.GetUserUnitID(ctx, userInfo.UserId)
+	jobs, err := s.state.GetJobList(ctx, userInfo.Job, userInfo.JobGrade)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	jobs = append(jobs, userInfo.Job)
+
+	ua, _ := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
 
 	resp := &pbcentrum.JoinUnitResponse{}
 	// User tries to join his own unit
-	if req.UnitId != nil && *req.UnitId == currentUnitId {
+	if ua != nil && req.UnitId != nil && *req.UnitId == ua.UnitId {
 		return resp, nil
 	}
+	if ua == nil {
+		ua = &centrum.UserUnitMapping{
+			UserId:  userInfo.UserId,
+			UserJob: userInfo.Job,
+		}
+	}
 
-	currentUnit, err := s.state.GetUnit(ctx, userInfo.Job, currentUnitId)
-	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		return nil, errorscentrum.ErrNotOnDuty
+	var currentUnit *centrum.Unit
+	if ua.UnitId > 0 {
+		currentUnit, err = s.state.GetUnit(ctx, ua.UnitJob, ua.UnitId)
+		if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+			return nil, errorscentrum.ErrNotOnDuty
+		}
 	}
 
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
-		s.logger.Debug("user joining unit", zap.String("job", userInfo.Job), zap.Int32("user_id", userInfo.UserId), zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
-
-		// Remove user from his current unit
-		if currentUnit != nil {
-			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {
-				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-			}
+		check, err := s.state.HasAccessToJob(ctx, userInfo.Job, userInfo.JobGrade, req.Job, centrum.AccessLevel_ACCESS_LEVEL_MANAGE)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+		if !check {
+			return nil, errswrap.NewError(err, errorscentrum.ErrJobAccessDenied)
 		}
 
-		newUnit, err := s.state.GetUnit(ctx, userInfo.Job, *req.UnitId)
+		s.logger.Debug("user joining unit", zap.String("job", req.Job), zap.Int32("user_id", userInfo.UserId), zap.Uint64("current_unit_id", ua.UnitId), zap.String("current_unit_job", ua.UnitJob), zap.Uint64p("unit_id", req.UnitId))
+
+		newUnit, err := s.state.GetUnit(ctx, req.Job, *req.UnitId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
@@ -296,16 +342,37 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 			}
 		}
 
-		if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, newUnit.Id, []int32{userInfo.UserId}, nil); err != nil {
+		// Only check unit access when not empty
+		if newUnit.Access != nil && !newUnit.Access.IsEmpty() {
+			// Make sure requestor is not a disponent
+			if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+				check, err := s.state.GetUnitAccess().CanUserAccessTarget(ctx, newUnit.Id, userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+				if err != nil {
+					return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+				}
+				if !check {
+					return nil, errorscentrum.ErrUnitPermDenied
+				}
+			}
+		}
+
+		// Remove user from his current unit
+		if currentUnit != nil {
+			if err := s.state.UpdateUnitAssignments(ctx, &userInfo.Job, &userInfo.UserId, currentUnit.Job, currentUnit.Id, nil, []int32{userInfo.UserId}, jobs); err != nil {
+				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
+		}
+
+		if err := s.state.UpdateUnitAssignments(ctx, &userInfo.Job, &userInfo.UserId, newUnit.Job, newUnit.Id, []int32{userInfo.UserId}, nil, jobs); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		resp.Unit = newUnit
 	} else {
-		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
+		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", ua.UnitId), zap.String("current_unit_job", ua.UnitJob), zap.Uint64p("unit_id", req.UnitId))
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
-			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {
+			if err := s.state.UpdateUnitAssignments(ctx, &userInfo.Job, &userInfo.UserId, currentUnit.Job, currentUnit.Id, nil, []int32{userInfo.UserId}, jobs); err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 		}
@@ -356,11 +423,14 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 			tUnitStatus.ID,
 			tUnitStatus.CreatedAt,
 			tUnitStatus.UnitID,
+			tUnitStatus.UnitJob,
 			tUnitStatus.Status,
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
+			tUnitStatus.UserJob,
 			tUnitStatus.CreatorID,
+			tUnitStatus.CreatorJob,
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitStatus.Postal,

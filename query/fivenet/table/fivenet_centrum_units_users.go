@@ -17,8 +17,10 @@ type fivenetCentrumUnitsUsersTable struct {
 	mysql.Table
 
 	// Columns
-	UnitID mysql.ColumnInteger
-	UserID mysql.ColumnInteger
+	UnitID  mysql.ColumnInteger
+	UnitJob mysql.ColumnString
+	UserID  mysql.ColumnInteger
+	UserJob mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,9 +63,11 @@ func newFivenetCentrumUnitsUsersTable(schemaName, tableName, alias string) *Five
 func newFivenetCentrumUnitsUsersTableImpl(schemaName, tableName, alias string) fivenetCentrumUnitsUsersTable {
 	var (
 		UnitIDColumn   = mysql.IntegerColumn("unit_id")
+		UnitJobColumn  = mysql.StringColumn("unit_job")
 		UserIDColumn   = mysql.IntegerColumn("user_id")
-		allColumns     = mysql.ColumnList{UnitIDColumn, UserIDColumn}
-		mutableColumns = mysql.ColumnList{}
+		UserJobColumn  = mysql.StringColumn("user_job")
+		allColumns     = mysql.ColumnList{UnitIDColumn, UnitJobColumn, UserIDColumn, UserJobColumn}
+		mutableColumns = mysql.ColumnList{UnitJobColumn, UserJobColumn}
 		defaultColumns = mysql.ColumnList{}
 	)
 
@@ -71,8 +75,10 @@ func newFivenetCentrumUnitsUsersTableImpl(schemaName, tableName, alias string) f
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UnitID: UnitIDColumn,
-		UserID: UserIDColumn,
+		UnitID:  UnitIDColumn,
+		UnitJob: UnitJobColumn,
+		UserID:  UserIDColumn,
+		UserJob: UserJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

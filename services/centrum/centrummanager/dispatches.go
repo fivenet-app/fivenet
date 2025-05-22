@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
@@ -30,8 +31,8 @@ func (s *Manager) DispatchAssignmentExpirationTime() time.Time {
 	return time.Now().Add(DispatchExpirationTime)
 }
 
-func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId uint64, in *centrum.DispatchStatus) (*centrum.DispatchStatus, error) {
-	dsp, err := s.GetDispatch(ctx, job, dspId)
+func (s *Manager) UpdateDispatchStatus(ctx context.Context, dispatchJob string, dspId uint64, in *centrum.DispatchStatus) (*centrum.DispatchStatus, error) {
+	dsp, err := s.GetDispatch(ctx, dispatchJob, dspId)
 	if err != nil {
 		if !errors.Is(err, jetstream.ErrKeyNotFound) {
 			return nil, err
@@ -76,25 +77,29 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
-			tDispatchStatus.CreatedAt,
 			tDispatchStatus.DispatchID,
+			tDispatchStatus.DispatchJob,
 			tDispatchStatus.UnitID,
+			tDispatchStatus.UnitJob,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tDispatchStatus.UserJob,
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
 		).
 		VALUES(
-			jet.CURRENT_TIMESTAMP(),
 			in.DispatchId,
+			in.DispatchJob,
 			in.UnitId,
+			in.UnitJob,
 			in.Status,
 			in.Reason,
 			in.Code,
 			in.UserId,
+			in.UserJob,
 			in.X,
 			in.Y,
 			in.Postal,
@@ -111,7 +116,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 	}
 	in.Id = uint64(lastId)
 
-	if err := s.State.UpdateDispatchStatus(ctx, job, in.DispatchId, in); err != nil {
+	if err := s.State.UpdateDispatchStatus(ctx, dispatchJob, in.DispatchId, in); err != nil {
 		return nil, err
 	}
 
@@ -120,15 +125,15 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 		return nil, err
 	}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, dispatchJob), data); err != nil {
 		return nil, fmt.Errorf("failed to publish dispatch status event (size: %d, message: '%+v'): %w", len(data), in, err)
 	}
 
 	return in, nil
 }
 
-func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, userId *int32, dspId uint64, toAdd []uint64, toRemove []uint64, expiresAt time.Time) error {
-	s.logger.Debug("updating dispatch assignments", zap.String("job", job), zap.Uint64("dispatch_id", dspId), zap.Uint64s("toAdd", toAdd), zap.Uint64s("toRemove", toRemove))
+func (s *Manager) UpdateDispatchAssignments(ctx context.Context, userJob *string, userId *int32, dspJob string, dspId uint64, toAdd []*centrum.DispatchAssignment, toRemove []*centrum.DispatchAssignment, expiresAt time.Time) error {
+	s.logger.Debug("updating dispatch assignments", zap.Stringp("job", userJob), zap.Uint64("dispatch_id", dspId), zap.Any("toAdd", toAdd), zap.Any("toRemove", toRemove))
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
 		return nil
@@ -157,7 +162,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	if len(toRemove) > 0 {
 		removeIds := make([]jet.Expression, len(toRemove))
 		for i := range toRemove {
-			removeIds[i] = jet.Uint64(toRemove[i])
+			removeIds[i] = jet.Uint64(toRemove[i].UnitId)
 		}
 
 		stmt := tDispatchUnit.
@@ -181,8 +186,8 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	}
 
 	if len(toAdd) > 0 {
-		units := []uint64{}
-		dsp, err := s.GetDispatch(ctx, job, dspId)
+		units := []*centrum.Unit{}
+		dsp, err := s.GetDispatch(ctx, dspJob, dspId)
 		if err != nil {
 			return err
 		}
@@ -190,12 +195,12 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 			// Skip already added units
 			if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
-				return in.UnitId == toAdd[i]
+				return in.UnitId == toAdd[i].UnitId
 			}) {
 				continue
 			}
 
-			unit, err := s.GetUnit(ctx, job, toAdd[i])
+			unit, err := s.GetUnit(ctx, toAdd[i].UnitJob, toAdd[i].UnitId)
 			if err != nil {
 				continue
 			}
@@ -206,22 +211,26 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			}
 
 			// Only add unit to dispatch if not already assigned/in list
-			units = append(units, toAdd[i])
+			units = append(units, unit)
 		}
 
 		if len(units) > 0 {
 			stmt := tDispatchUnit.
 				INSERT(
 					tDispatchUnit.DispatchID,
+					tDispatchUnit.DispatchJob,
 					tDispatchUnit.UnitID,
+					tDispatchUnit.UnitJob,
 					tDispatchUnit.ExpiresAt,
 				)
 
-			for _, unitId := range units {
+			for _, unit := range units {
 				stmt = stmt.
 					VALUES(
 						dspId,
-						unitId,
+						dsp.Job,
+						unit.Id,
+						unit.Job,
 						expiresAtVal,
 					)
 			}
@@ -243,7 +252,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		return err
 	}
 
-	key := centrumstate.JobIdKey(job, dspId)
+	key := centrumstate.JobIdKey(dspJob, dspId)
 	if err := s.State.DispatchesStore().ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if dsp == nil {
 			s.logger.Error("nil dispatch in computing dispatch assignment logic", zap.String("key", key), zap.Any("dsp", dsp))
@@ -251,14 +260,17 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		}
 
 		if len(toRemove) > 0 {
-			toAnnounce := []uint64{}
+			toAnnounce := []*centrum.Unit{}
 			dsp.Units = slices.DeleteFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 				for k := range toRemove {
-					if in.UnitId != toRemove[k] {
+					if in.UnitId != toRemove[k].UnitId {
 						continue
 					}
 
-					toAnnounce = append(toAnnounce, toRemove[k])
+					toAnnounce = append(toAnnounce, &centrum.Unit{
+						Id:  toRemove[k].UnitId,
+						Job: toRemove[k].UnitJob,
+					})
 					return true
 				}
 
@@ -266,16 +278,19 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			})
 
 			// Send updates
-			for _, unitId := range toAnnounce {
-				if _, err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
-					CreatedAt:  timestamp.Now(),
-					DispatchId: dsp.Id,
-					UnitId:     &unitId,
-					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
-					UserId:     userId,
-					X:          x,
-					Y:          y,
-					Postal:     postal,
+			for _, unit := range toAnnounce {
+				if _, err := s.AddDispatchStatus(ctx, s.db, dspJob, &centrum.DispatchStatus{
+					CreatedAt:   timestamp.Now(),
+					DispatchId:  dsp.Id,
+					DispatchJob: dsp.Job,
+					UnitId:      &unit.Id,
+					UnitJob:     &unit.Job,
+					Status:      centrum.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
+					UserId:      userId,
+					UserJob:     userJob,
+					X:           x,
+					Y:           y,
+					Postal:      postal,
 				}, true); err != nil {
 					return nil, false, err
 				}
@@ -283,16 +298,16 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		}
 
 		if len(toAdd) > 0 {
-			units := []uint64{}
+			units := []*centrum.Unit{}
 			for i := range toAdd {
 				// Skip already added units
 				if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
-					return in.UnitId == toAdd[i]
+					return in.UnitId == toAdd[i].UnitId
 				}) {
 					continue
 				}
 
-				unit, err := s.GetUnit(ctx, job, toAdd[i])
+				unit, err := s.GetUnit(ctx, toAdd[i].UnitJob, toAdd[i].UnitId)
 				if err != nil {
 					continue
 				}
@@ -303,33 +318,31 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				}
 
 				// Only add unit to dispatch if not already assigned/in list
-				units = append(units, toAdd[i])
+				units = append(units, unit)
 			}
 
-			for _, unitId := range units {
-				unit, err := s.GetUnit(ctx, job, unitId)
-				if err != nil {
-					continue
-				}
-
+			for _, unit := range units {
 				dsp.Units = append(dsp.Units, &centrum.DispatchAssignment{
 					DispatchId: dsp.Id,
 					UnitId:     unit.Id,
+					UnitJob:    unit.Job,
 					Unit:       unit,
 					ExpiresAt:  expiresAtTS,
 				})
 			}
 
-			for _, unitId := range units {
-				if _, err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
-					CreatedAt:  timestamp.Now(),
-					DispatchId: dsp.Id,
-					UnitId:     &unitId,
-					UserId:     userId,
-					Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
-					X:          x,
-					Y:          y,
-					Postal:     postal,
+			for _, unit := range units {
+				if _, err := s.AddDispatchStatus(ctx, s.db, dsp.Job, &centrum.DispatchStatus{
+					DispatchId:  dsp.Id,
+					DispatchJob: dsp.Job,
+					UnitId:      &unit.Id,
+					UnitJob:     &unit.Job,
+					UserId:      userId,
+					UserJob:     userJob,
+					Status:      centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
+					X:           x,
+					Y:           y,
+					Postal:      postal,
 				}, true); err != nil {
 					return nil, false, err
 				}
@@ -341,7 +354,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		return err
 	}
 
-	dsp, err := s.GetDispatch(ctx, job, dspId)
+	dsp, err := s.GetDispatch(ctx, dspJob, dspId)
 	if err != nil {
 		return err
 	}
@@ -350,14 +363,15 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	if len(dsp.Units) == 0 {
 		// Check dispatch status to not be completed/archived, etc.
 		if dsp.Status != nil && !centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-			if _, err := s.UpdateDispatchStatus(ctx, job, dspId, &centrum.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: dspId,
-				Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
-				UserId:     userId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
+			if _, err := s.UpdateDispatchStatus(ctx, dsp.Job, dsp.Id, &centrum.DispatchStatus{
+				CreatedAt:   timestamp.Now(),
+				DispatchId:  dsp.Id,
+				DispatchJob: dsp.Job,
+				Status:      centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
+				UserId:      userId,
+				X:           x,
+				Y:           y,
+				Postal:      postal,
 			}); err != nil {
 				return err
 			}
@@ -369,29 +383,29 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		return err
 	}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, dsp.Job), data); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, allTheWay bool) error {
-	dsp, err := s.GetDispatch(ctx, job, id)
+func (s *Manager) DeleteDispatch(ctx context.Context, dspJob string, dspId uint64, allTheWay bool) error {
+	dsp, err := s.GetDispatch(ctx, dspJob, dspId)
 	if err != nil {
 		return nil
 	}
 
 	data, err := proto.Marshal(dsp)
 	if err != nil {
-		return errorscentrum.ErrFailedQuery
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	if err := s.State.DeleteDispatch(ctx, job, id); err != nil {
+	if err := s.State.DeleteDispatch(ctx, dspJob, dspId); err != nil {
 		return err
 	}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, dspJob), data); err != nil {
 		return err
 	}
 
@@ -400,13 +414,13 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, all
 		stmt := tDispatch.
 			DELETE().
 			WHERE(jet.AND(
-				tDispatch.Job.EQ(jet.String(job)),
-				tDispatch.ID.EQ(jet.Uint64(id)),
+				tDispatch.Job.EQ(jet.String(dspJob)),
+				tDispatch.ID.EQ(jet.Uint64(dspId)),
 			)).
 			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return errorscentrum.ErrFailedQuery
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
 
@@ -495,14 +509,15 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 	}
 
 	if dsp.Status, err = s.AddDispatchStatus(ctx, tx, dsp.Job, &centrum.DispatchStatus{
-		CreatedAt:  timestamp.Now(),
-		DispatchId: dsp.Id,
-		UserId:     userId,
-		User:       statusUser,
-		Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
-		X:          &dsp.X,
-		Y:          &dsp.Y,
-		Postal:     dsp.Postal,
+		CreatedAt:   timestamp.Now(),
+		DispatchId:  dsp.Id,
+		DispatchJob: dsp.Job,
+		UserId:      userId,
+		User:        statusUser,
+		Status:      centrum.StatusDispatch_STATUS_DISPATCH_NEW,
+		X:           &dsp.X,
+		Y:           &dsp.Y,
+		Postal:      dsp.Postal,
 	}, false); err != nil {
 		return nil, err
 	}
@@ -536,6 +551,10 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 }
 
 func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *int32, dsp *centrum.Dispatch, publish bool) (*centrum.Dispatch, error) {
+	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
+		return nil, err
+	}
+
 	dsp.UpdatedAt = timestamp.Now()
 	stmt := tDispatch.
 		UPDATE(
@@ -573,10 +592,6 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 		return nil, err
 	}
 
-	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
-		return nil, err
-	}
-
 	if publish {
 		data, err := proto.Marshal(dsp)
 		if err != nil {
@@ -591,27 +606,33 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 	return dsp, nil
 }
 
-func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.DispatchStatus, publish bool) (*centrum.DispatchStatus, error) {
+func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, dispatchJob string, status *centrum.DispatchStatus, publish bool) (*centrum.DispatchStatus, error) {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
 			tDispatchStatus.DispatchID,
+			tDispatchStatus.DispatchJob,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UnitID,
+			tDispatchStatus.UnitJob,
 			tDispatchStatus.UserID,
+			tDispatchStatus.UserJob,
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
 		).
 		VALUES(
 			status.DispatchId,
+			status.DispatchJob,
 			status.Status,
 			status.Reason,
 			status.Code,
 			status.UnitId,
+			status.UnitJob,
 			status.UserId,
+			status.UserJob,
 			status.X,
 			status.Y,
 			status.Postal,
@@ -627,9 +648,13 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 		return nil, err
 	}
 
-	newStatus, err := s.GetDispatchStatus(ctx, tx, job, uint64(lastId))
+	newStatus, err := s.GetDispatchStatus(ctx, tx, dispatchJob, uint64(lastId))
 	if err != nil {
 		return nil, err
+	}
+
+	if newStatus != nil && newStatus.CreatedAt == nil {
+		newStatus.CreatedAt = timestamp.Now()
 	}
 
 	if publish {
@@ -638,7 +663,7 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 			return nil, err
 		}
 
-		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
+		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, dispatchJob), data); err != nil {
 			return nil, err
 		}
 	}
@@ -646,7 +671,7 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 	return newStatus, nil
 }
 
-func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.DispatchStatus, error) {
+func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, dispatchJob string, dispatchId uint64) (*centrum.DispatchStatus, error) {
 	tUsers := tables.Users().AS("colleague")
 
 	stmt := tDispatchStatus.
@@ -654,11 +679,14 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 			tDispatchStatus.ID,
 			tDispatchStatus.CreatedAt,
 			tDispatchStatus.DispatchID,
+			tDispatchStatus.DispatchJob,
 			tDispatchStatus.UnitID,
+			tDispatchStatus.UnitJob,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tDispatchStatus.UserJob,
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
@@ -678,7 +706,7 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 				),
 		).
 		WHERE(
-			tDispatchStatus.ID.EQ(jet.Uint64(id)),
+			tDispatchStatus.ID.EQ(jet.Uint64(dispatchId)),
 		).
 		ORDER_BY(tDispatchStatus.ID.DESC()).
 		LIMIT(1)
@@ -693,7 +721,7 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 	}
 
 	if dest.UnitId != nil && *dest.UnitId > 0 && dest.User != nil {
-		unit, err := s.GetUnit(ctx, job, *dest.UnitId)
+		unit, err := s.GetUnit(ctx, dispatchJob, *dest.UnitId)
 		if err != nil {
 			return nil, err
 		}
@@ -704,16 +732,19 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 	return &dest, nil
 }
 
-func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, unitId uint64, resp centrum.TakeDispatchResp, dispatchIds []uint64) error {
-	settings := s.GetSettings(ctx, job)
+func (s *Manager) TakeDispatch(ctx context.Context, userJob string, userId int32, unitJob string, unitId uint64, resp centrum.TakeDispatchResp, dispatchJob string, dispatchId uint64) error {
+	settings, err := s.GetSettings(ctx, userJob)
+	if err != nil {
+		return err
+	}
 	// If the dispatch center is in central command mode, units can't self assign dispatches
 	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
 		return errorscentrum.ErrModeForbidsAction
 	}
 
-	unit, err := s.GetUnit(ctx, job, unitId)
+	unit, err := s.GetUnit(ctx, unitJob, unitId)
 	if err != nil {
-		return errorscentrum.ErrFailedQuery
+		return err
 	}
 
 	var x, y *float64
@@ -728,140 +759,134 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 	store := s.State.DispatchesStore()
 
-	for _, dspId := range dispatchIds {
-		if resp == centrum.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-			stmt := tDispatchUnit.
-				INSERT(
-					tDispatchUnit.DispatchID,
-					tDispatchUnit.UnitID,
-					tDispatchUnit.ExpiresAt,
-				).
-				VALUES(
-					dspId,
-					unit.Id,
-					jet.NULL,
-				).
-				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(jet.TimestampExp(jet.NULL)),
-				)
+	if resp == centrum.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
+		stmt := tDispatchUnit.
+			INSERT(
+				tDispatchUnit.DispatchID,
+				tDispatchUnit.DispatchJob,
+				tDispatchUnit.UnitID,
+				tDispatchUnit.UnitJob,
+				tDispatchUnit.ExpiresAt,
+			).
+			VALUES(
+				dispatchId,
+				dispatchJob,
+				unit.Id,
+				unit.Job,
+				jet.NULL,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tDispatchUnit.ExpiresAt.SET(jet.TimestampExp(jet.NULL)),
+			)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return errorscentrum.ErrFailedQuery
-				}
-			}
-		} else {
-			stmt := tDispatchUnit.
-				DELETE().
-				WHERE(jet.AND(
-					tDispatchUnit.DispatchID.EQ(jet.Uint64(dspId)),
-					tDispatchUnit.UnitID.EQ(jet.Uint64(unit.Id)),
-				)).
-				LIMIT(1)
-
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return errorscentrum.ErrFailedQuery
-				}
-			}
-		}
-
-		key := centrumstate.JobIdKey(job, dspId)
-		if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
-			// If dispatch is nil or completed, disallow to accept the dispatch
-			if dsp == nil || (dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status)) {
-				return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
-			}
-
-			status := centrum.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED
-
-			// Dispatch accepted
-			if resp == centrum.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-				status = centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
-
-				found := false
-				accepted := true
-				// Set unit expires at to nil
-				for _, ua := range dsp.Units {
-					if ua.UnitId == unit.Id {
-						found = true
-						// If there's no expiration time the unit has been directly assigned
-						if ua.ExpiresAt == nil {
-							accepted = false
-						}
-						ua.ExpiresAt = nil
-						break
-					}
-				}
-
-				if !found {
-					dsp.Units = append(dsp.Units, &centrum.DispatchAssignment{
-						DispatchId: dsp.Id,
-						UnitId:     unit.Id,
-						Unit:       unit,
-						CreatedAt:  timestamp.Now(),
-					})
-				}
-
-				if accepted {
-					// Set unit to busy when unit accepts a dispatch
-					if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
-						if _, err := s.UpdateUnitStatus(ctx, job, unit.Id, &centrum.UnitStatus{
-							CreatedAt: timestamp.Now(),
-							UnitId:    unit.Id,
-							Status:    centrum.StatusUnit_STATUS_UNIT_BUSY,
-							UserId:    &userId,
-							CreatorId: &userId,
-							X:         x,
-							Y:         y,
-							Postal:    postal,
-						}); err != nil {
-							return nil, false, err
-						}
-					}
-				}
-			} else {
-				// Dispatch declined
-				status = centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
-
-				// Remove the unit's assignment
-				dsp.Units = slices.DeleteFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
-					return in.UnitId == unit.Id
-				})
-			}
-
-			if dsp.Status, err = s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: dspId,
-				Status:     status,
-				UnitId:     &unitId,
-				UserId:     &userId,
-				X:          x,
-				Y:          y,
-				Postal:     postal,
-			}, true); err != nil {
-				return nil, false, err
-			}
-
-			return dsp, true, nil
-		}); err != nil {
-			// Ignore errors that are "okay" to encounter
-			if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if !dbutils.IsDuplicateError(err) {
 				return err
 			}
 		}
+	} else {
+		stmt := tDispatchUnit.
+			DELETE().
+			WHERE(jet.AND(
+				tDispatchUnit.DispatchID.EQ(jet.Uint64(dispatchId)),
+				tDispatchUnit.UnitID.EQ(jet.Uint64(unit.Id)),
+			)).
+			LIMIT(1)
 
-		dsp, err := s.GetDispatch(ctx, job, dspId)
-		if err != nil {
-			return err
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return err
+			}
+		}
+	}
+
+	key := centrumstate.JobIdKey(userJob, dispatchId)
+	if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+		// If dispatch is nil or completed, disallow to accept the dispatch
+		if dsp == nil || (dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status)) {
+			return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
 		}
 
-		data, err := proto.Marshal(dsp)
-		if err != nil {
-			return err
+		status := centrum.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED
+
+		// Dispatch accepted
+		if resp == centrum.TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
+			status = centrum.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
+
+			found := false
+			accepted := true
+			// Set unit expires at to nil
+			for _, ua := range dsp.Units {
+				if ua.UnitId == unit.Id {
+					found = true
+					// If there's no expiration time the unit has been directly assigned
+					if ua.ExpiresAt == nil {
+						accepted = false
+					}
+					ua.ExpiresAt = nil
+					break
+				}
+			}
+
+			if !found {
+				dsp.Units = append(dsp.Units, &centrum.DispatchAssignment{
+					DispatchId:  dsp.Id,
+					DispatchJob: dsp.Job,
+					UnitId:      unit.Id,
+					UnitJob:     unit.Job,
+					Unit:        unit,
+				})
+			}
+
+			if accepted {
+				// Set unit to busy when unit accepts a dispatch
+				if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
+					if _, err := s.UpdateUnitStatus(ctx, userJob, unit.Id, &centrum.UnitStatus{
+						UnitId:     unit.Id,
+						UnitJob:    unit.Job,
+						Status:     centrum.StatusUnit_STATUS_UNIT_BUSY,
+						UserId:     &userId,
+						UserJob:    &userJob,
+						CreatorId:  &userId,
+						CreatorJob: &userJob,
+						X:          x,
+						Y:          y,
+						Postal:     postal,
+					}); err != nil {
+						return nil, false, err
+					}
+				}
+			}
+		} else {
+			// Dispatch declined
+			status = centrum.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
+
+			// Remove the unit's assignment
+			dsp.Units = slices.DeleteFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
+				return in.UnitId == unit.Id
+			})
 		}
 
-		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, job), data); err != nil {
+		if dsp.Status, err = s.AddDispatchStatus(ctx, s.db, userJob, &centrum.DispatchStatus{
+			CreatedAt:   timestamp.Now(),
+			DispatchId:  dispatchId,
+			DispatchJob: dispatchJob,
+			Status:      status,
+			UnitId:      &unitId,
+			UnitJob:     &unitJob,
+			UserId:      &userId,
+			UserJob:     &userJob,
+			X:           x,
+			Y:           y,
+			Postal:      postal,
+		}, true); err != nil {
+			return nil, false, err
+		}
+
+		return dsp, true, nil
+	}); err != nil {
+		// Ignore errors that are "okay" to encounter
+		if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
 			return err
 		}
 	}

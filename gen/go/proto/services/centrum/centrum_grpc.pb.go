@@ -45,7 +45,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CentrumServiceClient interface {
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Shared"}
 	UpdateSettings(ctx context.Context, in *UpdateSettingsRequest, opts ...grpc.CallOption) (*UpdateSettingsResponse, error)
 	// @perm
 	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
@@ -308,7 +308,7 @@ func (c *centrumServiceClient) UpdateDispatchStatus(ctx context.Context, in *Upd
 // All implementations must embed UnimplementedCentrumServiceServer
 // for forward compatibility.
 type CentrumServiceServer interface {
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Shared"}
 	UpdateSettings(context.Context, *UpdateSettingsRequest) (*UpdateSettingsResponse, error)
 	// @perm
 	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)

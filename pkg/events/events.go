@@ -51,6 +51,7 @@ type Params struct {
 type Result struct {
 	fx.Out
 
+	NC *nats.Conn
 	JS *JSWrapper
 }
 
@@ -92,7 +93,9 @@ func New(p Params) (res Result, err error) {
 	if err != nil {
 		return res, err
 	}
+	res.NC = nc
 
+	// Create JetStream context
 	js, err := jetstream.New(nc, jetstream.WithPublishAsyncMaxPending(DefaultDefaultAsyncPubAckInflight))
 	if err != nil {
 		return res, err

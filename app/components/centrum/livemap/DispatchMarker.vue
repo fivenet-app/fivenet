@@ -98,7 +98,15 @@ const zIndexOffset = computed(() => {
 
                 <p class="inline-flex items-center gap-1">
                     <span class="font-semibold">{{ $t('common.dispatch') }}:</span>
-                    <UButton :label="`DSP-${dispatch.id}`" variant="link" :padded="false" @click="selected(dispatch.id)" />
+                    <UButton
+                        class="font-bold"
+                        :label="`DSP-${dispatch.id}`"
+                        variant="link"
+                        :padded="false"
+                        @click="selected(dispatch.id)"
+                    />
+
+                    <span v-if="dispatch.jobLabel">{{ dispatch.jobLabel }}</span>
                 </p>
 
                 <ul role="list">

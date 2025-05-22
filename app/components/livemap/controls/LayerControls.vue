@@ -20,10 +20,21 @@ const groupedLayers = computed(() => {
         },
         {} as Record<string, LivemapLayer[]>,
     );
-
+    // Sort the layers within each category
     Object.keys(reduced).forEach((key) => reduced[key]?.sort((a, b) => a.label.localeCompare(b.label)));
 
-    return reduced;
+    // Reduce object to array and sort the categories by their order
+    return Object.keys(reduced)
+        .map((key) => ({
+            category: livemapLayerCategories.value.find((c) => c.key === key),
+            layers: reduced[key]!,
+        }))
+        .sort((a, b) => {
+            if (a.category?.order !== undefined && b.category?.order !== undefined) {
+                return a.category.order - b.category.order;
+            }
+            return 0;
+        });
 });
 </script>
 
@@ -50,11 +61,15 @@ const groupedLayers = computed(() => {
                                 class="grid min-w-0 grid-flow-row auto-rows-min gap-1 px-1"
                             >
                                 <p class="truncate text-sm font-bold text-gray-900 dark:text-white">
-                                    {{ livemapLayerCategories.find((c) => c.key === key)?.label ?? $t('common.na') }}
+                                    {{ category.category?.label ?? $t('common.na') }}
                                 </p>
 
-                                <div v-for="layer in category" :key="layer.key" class="inline-flex gap-1 overflow-y-hidden">
-                                    <UToggle v-model="layer.visible" />
+                                <div
+                                    v-for="layer in category.layers"
+                                    :key="layer.key"
+                                    class="inline-flex gap-1 overflow-y-hidden"
+                                >
+                                    <UToggle v-model="layer.visible" :disabled="!!layer.disabled" />
                                     <span class="truncate hover:line-clamp-2">{{ layer.label }}</span>
                                 </div>
                             </div>

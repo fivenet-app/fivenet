@@ -12,6 +12,30 @@ func (m *AssignDispatchRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: ToAdd
+	for idx, item := range m.ToAdd {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: ToRemove
+	for idx, item := range m.ToRemove {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -139,6 +163,26 @@ func (m *DeleteUnitResponse) Sanitize() error {
 	return nil
 }
 
+func (m *Disponents) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Disponents
+	for idx, item := range m.Disponents {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *GetDispatchRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -189,6 +233,26 @@ func (m *GetSettingsResponse) Sanitize() error {
 	return nil
 }
 
+func (m *JobsList) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatches
+	for idx, item := range m.Dispatches {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *JoinUnitRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -232,15 +296,12 @@ func (m *LatestState) Sanitize() error {
 	}
 
 	// Field: Disponents
-	for idx, item := range m.Disponents {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+	if m.Disponents != nil {
+		if v, ok := any(m.GetDisponents()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// Field: ServerTime
@@ -483,14 +544,6 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
-		// Field: DispatchDeleted
-	case *StreamResponse_DispatchDeleted:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 		// Field: DispatchStatus
 	case *StreamResponse_DispatchStatus:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -515,6 +568,14 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
+		// Field: Jobs
+	case *StreamResponse_Jobs:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: LatestState
 	case *StreamResponse_LatestState:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -533,14 +594,6 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: UnitCreated
 	case *StreamResponse_UnitCreated:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: UnitDeleted
-	case *StreamResponse_UnitDeleted:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

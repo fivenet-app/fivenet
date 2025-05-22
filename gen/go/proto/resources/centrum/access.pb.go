@@ -8,7 +8,6 @@ package centrum
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	qualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -24,78 +23,83 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type UnitAccessLevel int32
+type AccessLevel int32
 
 const (
-	UnitAccessLevel_UNIT_ACCESS_LEVEL_UNSPECIFIED UnitAccessLevel = 0
-	UnitAccessLevel_UNIT_ACCESS_LEVEL_BLOCKED     UnitAccessLevel = 1
-	UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN        UnitAccessLevel = 2
+	AccessLevel_ACCESS_LEVEL_UNSPECIFIED AccessLevel = 0
+	AccessLevel_ACCESS_LEVEL_BLOCKED     AccessLevel = 1
+	AccessLevel_ACCESS_LEVEL_VIEW        AccessLevel = 2
+	AccessLevel_ACCESS_LEVEL_PARTICIPATE AccessLevel = 3
+	AccessLevel_ACCESS_LEVEL_MANAGE      AccessLevel = 4
 )
 
-// Enum value maps for UnitAccessLevel.
+// Enum value maps for AccessLevel.
 var (
-	UnitAccessLevel_name = map[int32]string{
-		0: "UNIT_ACCESS_LEVEL_UNSPECIFIED",
-		1: "UNIT_ACCESS_LEVEL_BLOCKED",
-		2: "UNIT_ACCESS_LEVEL_JOIN",
+	AccessLevel_name = map[int32]string{
+		0: "ACCESS_LEVEL_UNSPECIFIED",
+		1: "ACCESS_LEVEL_BLOCKED",
+		2: "ACCESS_LEVEL_VIEW",
+		3: "ACCESS_LEVEL_PARTICIPATE",
+		4: "ACCESS_LEVEL_MANAGE",
 	}
-	UnitAccessLevel_value = map[string]int32{
-		"UNIT_ACCESS_LEVEL_UNSPECIFIED": 0,
-		"UNIT_ACCESS_LEVEL_BLOCKED":     1,
-		"UNIT_ACCESS_LEVEL_JOIN":        2,
+	AccessLevel_value = map[string]int32{
+		"ACCESS_LEVEL_UNSPECIFIED": 0,
+		"ACCESS_LEVEL_BLOCKED":     1,
+		"ACCESS_LEVEL_VIEW":        2,
+		"ACCESS_LEVEL_PARTICIPATE": 3,
+		"ACCESS_LEVEL_MANAGE":      4,
 	}
 )
 
-func (x UnitAccessLevel) Enum() *UnitAccessLevel {
-	p := new(UnitAccessLevel)
+func (x AccessLevel) Enum() *AccessLevel {
+	p := new(AccessLevel)
 	*p = x
 	return p
 }
 
-func (x UnitAccessLevel) String() string {
+func (x AccessLevel) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (UnitAccessLevel) Descriptor() protoreflect.EnumDescriptor {
+func (AccessLevel) Descriptor() protoreflect.EnumDescriptor {
 	return file_resources_centrum_access_proto_enumTypes[0].Descriptor()
 }
 
-func (UnitAccessLevel) Type() protoreflect.EnumType {
+func (AccessLevel) Type() protoreflect.EnumType {
 	return &file_resources_centrum_access_proto_enumTypes[0]
 }
 
-func (x UnitAccessLevel) Number() protoreflect.EnumNumber {
+func (x AccessLevel) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use UnitAccessLevel.Descriptor instead.
-func (UnitAccessLevel) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use AccessLevel.Descriptor instead.
+func (AccessLevel) EnumDescriptor() ([]byte, []int) {
 	return file_resources_centrum_access_proto_rawDescGZIP(), []int{0}
 }
 
 // @dbscanner: json
-type UnitAccess struct {
-	state          protoimpl.MessageState     `protogen:"open.v1"`
-	Jobs           []*UnitJobAccess           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`                     // @gotags: alias:"job_access"
-	Qualifications []*UnitQualificationAccess `protobuf:"bytes,3,rep,name=qualifications,proto3" json:"qualifications,omitempty" alias:"qualification_access"` // @gotags: alias:"qualification_access"
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+type Access struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Jobs          []*JobAccess           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"` // @gotags: alias:"job_access"
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UnitAccess) Reset() {
-	*x = UnitAccess{}
+func (x *Access) Reset() {
+	*x = Access{}
 	mi := &file_resources_centrum_access_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UnitAccess) String() string {
+func (x *Access) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UnitAccess) ProtoMessage() {}
+func (*Access) ProtoMessage() {}
 
-func (x *UnitAccess) ProtoReflect() protoreflect.Message {
+func (x *Access) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_centrum_access_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -107,26 +111,19 @@ func (x *UnitAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnitAccess.ProtoReflect.Descriptor instead.
-func (*UnitAccess) Descriptor() ([]byte, []int) {
+// Deprecated: Use Access.ProtoReflect.Descriptor instead.
+func (*Access) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_access_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UnitAccess) GetJobs() []*UnitJobAccess {
+func (x *Access) GetJobs() []*JobAccess {
 	if x != nil {
 		return x.Jobs
 	}
 	return nil
 }
 
-func (x *UnitAccess) GetQualifications() []*UnitQualificationAccess {
-	if x != nil {
-		return x.Qualifications
-	}
-	return nil
-}
-
-type UnitJobAccess struct {
+type JobAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
@@ -135,25 +132,25 @@ type UnitJobAccess struct {
 	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
 	JobGradeLabel *string                `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
-	Access        UnitAccessLevel        `protobuf:"varint,8,opt,name=access,proto3,enum=resources.centrum.UnitAccessLevel" json:"access,omitempty"`
+	Access        AccessLevel            `protobuf:"varint,8,opt,name=access,proto3,enum=resources.centrum.AccessLevel" json:"access,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UnitJobAccess) Reset() {
-	*x = UnitJobAccess{}
+func (x *JobAccess) Reset() {
+	*x = JobAccess{}
 	mi := &file_resources_centrum_access_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UnitJobAccess) String() string {
+func (x *JobAccess) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UnitJobAccess) ProtoMessage() {}
+func (*JobAccess) ProtoMessage() {}
 
-func (x *UnitJobAccess) ProtoReflect() protoreflect.Message {
+func (x *JobAccess) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_centrum_access_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -165,87 +162,88 @@ func (x *UnitJobAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnitJobAccess.ProtoReflect.Descriptor instead.
-func (*UnitJobAccess) Descriptor() ([]byte, []int) {
+// Deprecated: Use JobAccess.ProtoReflect.Descriptor instead.
+func (*JobAccess) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_access_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *UnitJobAccess) GetId() uint64 {
+func (x *JobAccess) GetId() uint64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *UnitJobAccess) GetCreatedAt() *timestamp.Timestamp {
+func (x *JobAccess) GetCreatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *UnitJobAccess) GetTargetId() uint64 {
+func (x *JobAccess) GetTargetId() uint64 {
 	if x != nil {
 		return x.TargetId
 	}
 	return 0
 }
 
-func (x *UnitJobAccess) GetJob() string {
+func (x *JobAccess) GetJob() string {
 	if x != nil {
 		return x.Job
 	}
 	return ""
 }
 
-func (x *UnitJobAccess) GetJobLabel() string {
+func (x *JobAccess) GetJobLabel() string {
 	if x != nil && x.JobLabel != nil {
 		return *x.JobLabel
 	}
 	return ""
 }
 
-func (x *UnitJobAccess) GetMinimumGrade() int32 {
+func (x *JobAccess) GetMinimumGrade() int32 {
 	if x != nil {
 		return x.MinimumGrade
 	}
 	return 0
 }
 
-func (x *UnitJobAccess) GetJobGradeLabel() string {
+func (x *JobAccess) GetJobGradeLabel() string {
 	if x != nil && x.JobGradeLabel != nil {
 		return *x.JobGradeLabel
 	}
 	return ""
 }
 
-func (x *UnitJobAccess) GetAccess() UnitAccessLevel {
+func (x *JobAccess) GetAccess() AccessLevel {
 	if x != nil {
 		return x.Access
 	}
-	return UnitAccessLevel_UNIT_ACCESS_LEVEL_UNSPECIFIED
+	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
-type UnitUserAccess struct {
+// Dummy - DO NOT USE!
+type UserAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UnitUserAccess) Reset() {
-	*x = UnitUserAccess{}
+func (x *UserAccess) Reset() {
+	*x = UserAccess{}
 	mi := &file_resources_centrum_access_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UnitUserAccess) String() string {
+func (x *UserAccess) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UnitUserAccess) ProtoMessage() {}
+func (*UserAccess) ProtoMessage() {}
 
-func (x *UnitUserAccess) ProtoReflect() protoreflect.Message {
+func (x *UserAccess) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_centrum_access_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -257,37 +255,32 @@ func (x *UnitUserAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnitUserAccess.ProtoReflect.Descriptor instead.
-func (*UnitUserAccess) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserAccess.ProtoReflect.Descriptor instead.
+func (*UserAccess) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_access_proto_rawDescGZIP(), []int{2}
 }
 
-type UnitQualificationAccess struct {
-	state           protoimpl.MessageState             `protogen:"open.v1"`
-	Id              uint64                             `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt       *timestamp.Timestamp               `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId        uint64                             `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
-	QualificationId uint64                             `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
-	Qualification   *qualifications.QualificationShort `protobuf:"bytes,5,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
-	Access          UnitAccessLevel                    `protobuf:"varint,6,opt,name=access,proto3,enum=resources.centrum.UnitAccessLevel" json:"access,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+// Dummy - DO NOT USE!
+type QualificationAccess struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UnitQualificationAccess) Reset() {
-	*x = UnitQualificationAccess{}
+func (x *QualificationAccess) Reset() {
+	*x = QualificationAccess{}
 	mi := &file_resources_centrum_access_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UnitQualificationAccess) String() string {
+func (x *QualificationAccess) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UnitQualificationAccess) ProtoMessage() {}
+func (*QualificationAccess) ProtoMessage() {}
 
-func (x *UnitQualificationAccess) ProtoReflect() protoreflect.Message {
+func (x *QualificationAccess) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_centrum_access_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -299,63 +292,20 @@ func (x *UnitQualificationAccess) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UnitQualificationAccess.ProtoReflect.Descriptor instead.
-func (*UnitQualificationAccess) Descriptor() ([]byte, []int) {
+// Deprecated: Use QualificationAccess.ProtoReflect.Descriptor instead.
+func (*QualificationAccess) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_access_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *UnitQualificationAccess) GetId() uint64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *UnitQualificationAccess) GetCreatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *UnitQualificationAccess) GetTargetId() uint64 {
-	if x != nil {
-		return x.TargetId
-	}
-	return 0
-}
-
-func (x *UnitQualificationAccess) GetQualificationId() uint64 {
-	if x != nil {
-		return x.QualificationId
-	}
-	return 0
-}
-
-func (x *UnitQualificationAccess) GetQualification() *qualifications.QualificationShort {
-	if x != nil {
-		return x.Qualification
-	}
-	return nil
-}
-
-func (x *UnitQualificationAccess) GetAccess() UnitAccessLevel {
-	if x != nil {
-		return x.Access
-	}
-	return UnitAccessLevel_UNIT_ACCESS_LEVEL_UNSPECIFIED
 }
 
 var File_resources_centrum_access_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_access_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/centrum/access.proto\x12\x11resources.centrum\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xaa\x01\n" +
-	"\n" +
-	"UnitAccess\x12>\n" +
-	"\x04jobs\x18\x01 \x03(\v2 .resources.centrum.UnitJobAccessB\b\xfaB\x05\x92\x01\x02\x10\x14R\x04jobs\x12\\\n" +
-	"\x0equalifications\x18\x03 \x03(\v2*.resources.centrum.UnitQualificationAccessB\b\xfaB\x05\x92\x01\x02\x10\x14R\x0equalifications\"\xa1\x03\n" +
-	"\rUnitJobAccess\x12\x0e\n" +
+	"\x1eresources/centrum/access.proto\x12\x11resources.centrum\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"D\n" +
+	"\x06Access\x12:\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x1c.resources.centrum.JobAccessB\b\xfaB\x05\x92\x01\x02\x10\n" +
+	"R\x04jobs\"\x99\x03\n" +
+	"\tJobAccess\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
@@ -363,27 +313,21 @@ const file_resources_centrum_access_proto_rawDesc = "" +
 	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12)\n" +
 	"\tjob_label\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12,\n" +
 	"\rminimum_grade\x18\x06 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\fminimumGrade\x124\n" +
-	"\x0fjob_grade_label\x18\a \x01(\tB\a\xfaB\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12D\n" +
-	"\x06access\x18\b \x01(\x0e2\".resources.centrum.UnitAccessLevelB\b\xfaB\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
+	"\x0fjob_grade_label\x18\a \x01(\tB\a\xfaB\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12@\n" +
+	"\x06access\x18\b \x01(\x0e2\x1e.resources.centrum.AccessLevelB\b\xfaB\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
 	"\v_created_atB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
-	"\x10_job_grade_label\"\x10\n" +
-	"\x0eUnitUserAccess\"\xf5\x02\n" +
-	"\x17UnitQualificationAccess\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
+	"\x10_job_grade_label\"\f\n" +
 	"\n" +
-	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1b\n" +
-	"\ttarget_id\x18\x03 \x01(\x04R\btargetId\x12)\n" +
-	"\x10qualification_id\x18\x04 \x01(\x04R\x0fqualificationId\x12W\n" +
-	"\rqualification\x18\x05 \x01(\v2,.resources.qualifications.QualificationShortH\x01R\rqualification\x88\x01\x01\x12D\n" +
-	"\x06access\x18\x06 \x01(\x0e2\".resources.centrum.UnitAccessLevelB\b\xfaB\x05\x82\x01\x02\x10\x01R\x06accessB\r\n" +
-	"\v_created_atB\x10\n" +
-	"\x0e_qualification*o\n" +
-	"\x0fUnitAccessLevel\x12!\n" +
-	"\x1dUNIT_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x1d\n" +
-	"\x19UNIT_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1a\n" +
-	"\x16UNIT_ACCESS_LEVEL_JOIN\x10\x02BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"UserAccess\"\x15\n" +
+	"\x13QualificationAccess*\x93\x01\n" +
+	"\vAccessLevel\x12\x1c\n" +
+	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x18\n" +
+	"\x14ACCESS_LEVEL_BLOCKED\x10\x01\x12\x15\n" +
+	"\x11ACCESS_LEVEL_VIEW\x10\x02\x12\x1c\n" +
+	"\x18ACCESS_LEVEL_PARTICIPATE\x10\x03\x12\x17\n" +
+	"\x13ACCESS_LEVEL_MANAGE\x10\x04BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_access_proto_rawDescOnce sync.Once
@@ -400,27 +344,22 @@ func file_resources_centrum_access_proto_rawDescGZIP() []byte {
 var file_resources_centrum_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_centrum_access_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_centrum_access_proto_goTypes = []any{
-	(UnitAccessLevel)(0),                      // 0: resources.centrum.UnitAccessLevel
-	(*UnitAccess)(nil),                        // 1: resources.centrum.UnitAccess
-	(*UnitJobAccess)(nil),                     // 2: resources.centrum.UnitJobAccess
-	(*UnitUserAccess)(nil),                    // 3: resources.centrum.UnitUserAccess
-	(*UnitQualificationAccess)(nil),           // 4: resources.centrum.UnitQualificationAccess
-	(*timestamp.Timestamp)(nil),               // 5: resources.timestamp.Timestamp
-	(*qualifications.QualificationShort)(nil), // 6: resources.qualifications.QualificationShort
+	(AccessLevel)(0),            // 0: resources.centrum.AccessLevel
+	(*Access)(nil),              // 1: resources.centrum.Access
+	(*JobAccess)(nil),           // 2: resources.centrum.JobAccess
+	(*UserAccess)(nil),          // 3: resources.centrum.UserAccess
+	(*QualificationAccess)(nil), // 4: resources.centrum.QualificationAccess
+	(*timestamp.Timestamp)(nil), // 5: resources.timestamp.Timestamp
 }
 var file_resources_centrum_access_proto_depIdxs = []int32{
-	2, // 0: resources.centrum.UnitAccess.jobs:type_name -> resources.centrum.UnitJobAccess
-	4, // 1: resources.centrum.UnitAccess.qualifications:type_name -> resources.centrum.UnitQualificationAccess
-	5, // 2: resources.centrum.UnitJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	0, // 3: resources.centrum.UnitJobAccess.access:type_name -> resources.centrum.UnitAccessLevel
-	5, // 4: resources.centrum.UnitQualificationAccess.created_at:type_name -> resources.timestamp.Timestamp
-	6, // 5: resources.centrum.UnitQualificationAccess.qualification:type_name -> resources.qualifications.QualificationShort
-	0, // 6: resources.centrum.UnitQualificationAccess.access:type_name -> resources.centrum.UnitAccessLevel
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	2, // 0: resources.centrum.Access.jobs:type_name -> resources.centrum.JobAccess
+	5, // 1: resources.centrum.JobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	0, // 2: resources.centrum.JobAccess.access:type_name -> resources.centrum.AccessLevel
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_access_proto_init() }
@@ -429,7 +368,6 @@ func file_resources_centrum_access_proto_init() {
 		return
 	}
 	file_resources_centrum_access_proto_msgTypes[1].OneofWrappers = []any{}
-	file_resources_centrum_access_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

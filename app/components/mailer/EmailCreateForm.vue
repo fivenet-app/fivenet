@@ -90,7 +90,6 @@ const schema = z.object({
         }),
     label: z.string().max(128).optional(),
     deactivated: z.boolean(),
-    internal: z.boolean(),
     access: z.custom<Access>(),
 });
 
@@ -100,7 +99,6 @@ const state = reactive<Schema>({
     email: '',
     domain: '',
     deactivated: false,
-    internal: false,
     access: {
         jobs: [],
         users: [],
@@ -120,7 +118,6 @@ function setFromProps(): void {
     }
 
     state.deactivated = props.modelValue.deactivated;
-    state.internal = props.modelValue.internal;
     if (props.modelValue.access) {
         state.access = props.modelValue.access;
     }
@@ -136,7 +133,6 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
         email: {
             id: props.modelValue?.id ?? 0,
             email: values.email + '@' + values.domain,
-            internal: values.internal,
             label: values.label !== '' ? values.label : undefined,
             deactivated: values.deactivated,
             job: !props.personalEmail ? (props.modelValue?.job ?? activeChar.value!.job) : undefined,

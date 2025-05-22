@@ -24,6 +24,12 @@ func (x *Settings) Default(job string) {
 	if x.Timings.RequireUnitReminderSeconds == 0 {
 		x.Timings.RequireUnitReminderSeconds = 180
 	}
+
+	if x.Access == nil {
+		x.Access = &Access{
+			Jobs: []*JobAccess{},
+		}
+	}
 }
 
 func (x *Settings) Merge(in *Settings) *Settings {
@@ -44,6 +50,8 @@ func (x *Settings) Merge(in *Settings) *Settings {
 	} else {
 		x.Timings = in.Timings
 	}
+
+	x.Access = in.Access
 
 	return x
 }

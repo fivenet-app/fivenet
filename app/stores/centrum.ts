@@ -5,13 +5,14 @@ import type { NotificationActionI18n } from '~/composables/notifications';
 import { useNotificatorStore } from '~/stores/notificator';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Disponents } from '~~/gen/ts/resources/centrum/disponents';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import type { Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Job } from '~~/gen/ts/resources/users/jobs';
 
 export const logger = useLogger('⛑️ Centrum');
 
@@ -38,9 +39,10 @@ export const useCentrumStore = defineStore(
 
         const timeCorrection = ref<number>(0);
 
+        const jobs = ref<Job[]>([]);
         const settings = ref<Settings | undefined>(undefined);
         const isDisponent = ref<boolean>(false);
-        const disponents = ref<UserShort[]>([]);
+        const disponents = ref<Disponents[]>([]);
         const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
         const isCenter = ref<boolean>(false);
 
@@ -74,6 +76,19 @@ export const useCentrumStore = defineStore(
             return disponents.value.length > 0
                 ? (settings.value?.mode ?? CentrumMode.UNSPECIFIED)
                 : (settings.value?.fallbackMode ?? CentrumMode.UNSPECIFIED);
+        });
+
+        const getOwnDisponents = computed(() => {
+            const { activeChar } = useAuth();
+            return disponents.value.find((d) => d.disponents.find((dd) => dd.job === activeChar.value?.job))?.disponents ?? [];
+        });
+
+        const anyDisponentsActive = computed(() => {
+            return (
+                disponents.value !== undefined &&
+                disponents.value.length > 0 &&
+                disponents.value.map((d) => d.disponents.length).reduce((sum, d) => d + sum) > 0
+            );
         });
 
         const getOwnUnit = computed<Unit | undefined>(() => {
@@ -110,6 +125,7 @@ export const useCentrumStore = defineStore(
                 settings.value.mode = newSettings.mode;
                 settings.value.fallbackMode = newSettings.fallbackMode;
                 settings.value.timings = newSettings.timings;
+                settings.value.access = newSettings.access;
             } else {
                 settings.value = newSettings;
             }
@@ -128,6 +144,7 @@ export const useCentrumStore = defineStore(
                 if (!unit.status) {
                     unit.status = {
                         unitId: unit.id,
+                        unitJob: unit.job,
                         id: 0,
                         status: StatusUnit.UNKNOWN,
                     };
@@ -170,25 +187,28 @@ export const useCentrumStore = defineStore(
             if (!u.status) {
                 u.status = status;
             } else {
-                // user added / removed
+                // User added / Removed are special statuses
                 if (status.status === StatusUnit.USER_ADDED || status.status === StatusUnit.USER_REMOVED) {
                     return;
                 }
 
-                // normal status update
+                // Normal status update
                 u.status.id = status.id;
                 u.status.createdAt = status.createdAt;
                 u.status.unitId = status.unitId;
+                u.status.unitJob = status.unitJob;
                 u.status.status = status.status;
                 u.status.reason = status.reason;
                 u.status.code = status.code;
                 u.status.userId = status.userId;
+                u.status.userJob = status.userJob;
                 u.status.user = status.user;
                 u.status.x = status.x;
                 u.status.y = status.y;
                 u.status.postal = status.postal;
-                u.status.creator = status.creator;
                 u.status.creatorId = status.creatorId;
+                u.status.creatorJob = status.creatorJob;
+                u.status.creator = status.creator;
             }
         };
 
@@ -215,6 +235,7 @@ export const useCentrumStore = defineStore(
                 if (!dispatchObj.status) {
                     dispatchObj.status = {
                         dispatchId: dispatchObj.id,
+                        dispatchJob: dispatchObj.job,
                         id: 0,
                         status: StatusDispatch.NEW,
                     };
@@ -259,12 +280,15 @@ export const useCentrumStore = defineStore(
                 disp.status.id = status.id;
                 disp.status.createdAt = status.createdAt;
                 disp.status.dispatchId = status.dispatchId;
+                disp.status.dispatchJob = status.dispatchJob;
                 disp.status.unitId = status.unitId;
+                disp.status.unitJob = status.unitJob;
                 disp.status.unit = status.unit;
                 disp.status.status = status.status;
                 disp.status.reason = status.reason;
                 disp.status.code = status.code;
                 disp.status.userId = status.userId;
+                disp.status.userJob = status.userJob;
                 disp.status.user = status.user;
                 disp.status.x = status.x;
                 disp.status.y = status.y;
@@ -337,7 +361,7 @@ export const useCentrumStore = defineStore(
 
         // Disponents
         const checkIfDisponent = (userId?: number): boolean => {
-            return !!disponents.value.find((d) => d.userId === userId);
+            return !!disponents.value.find((d) => d.disponents.find((dd) => dd.userId === userId));
         };
 
         // Streams
@@ -370,7 +394,9 @@ export const useCentrumStore = defineStore(
 
                     logger.debug('Received change - Kind:', resp.change.oneofKind, resp.change);
 
-                    if (resp.change.oneofKind === 'latestState') {
+                    if (resp.change.oneofKind === 'jobs') {
+                        jobs.value = resp.change.jobs.dispatches;
+                    } else if (resp.change.oneofKind === 'latestState') {
                         if (resp.change.latestState.serverTime) {
                             calculateTimeCorrection(resp.change.latestState.serverTime);
                         }
@@ -387,7 +413,7 @@ export const useCentrumStore = defineStore(
                         }
 
                         disponents.value.length = 0;
-                        disponents.value.push(...resp.change.latestState.disponents);
+                        disponents.value.push(...(resp.change.latestState.disponents?.disponents ?? []));
                         isDisponent.value = checkIfDisponent(activeChar.value?.userId);
 
                         const foundUnits: number[] = [];
@@ -423,16 +449,22 @@ export const useCentrumStore = defineStore(
                     } else if (resp.change.oneofKind === 'settings') {
                         updateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'disponents') {
-                        disponents.value.length = 0;
-                        disponents.value.push(...resp.change.disponents.disponents);
+                        const disponentsIdx = disponents.value.findIndex(
+                            (d) => resp.change.oneofKind === 'disponents' && d.job === resp.change.disponents.job,
+                        );
+                        if (disponentsIdx > -1) {
+                            disponents.value[disponentsIdx] = resp.change.disponents;
+                        } else {
+                            disponents.value.push(resp.change.disponents);
+                        }
 
                         isDisponent.value = checkIfDisponent(activeChar.value?.userId);
-                        const idx = disponents.value.findIndex((d) => d.userId === activeChar.value?.userId);
+                        const idx = resp.change.disponents.disponents.findIndex((d) => d.userId === activeChar.value?.userId);
                         isDisponent.value = idx > -1;
                     } else if (resp.change.oneofKind === 'unitCreated') {
                         addOrUpdateUnit(resp.change.unitCreated);
                     } else if (resp.change.oneofKind === 'unitDeleted') {
-                        removeUnit(resp.change.unitDeleted.id);
+                        removeUnit(resp.change.unitDeleted);
                     } else if (resp.change.oneofKind === 'unitUpdated') {
                         addOrUpdateUnit(resp.change.unitUpdated);
 
@@ -455,7 +487,7 @@ export const useCentrumStore = defineStore(
 
                             dispatches.value.forEach((d) => handleDispatchAssignment(d));
                         } else {
-                            // user was removed from that unit
+                            // User was removed from that unit
                             if (ownUnitId.value === resp.change.unitUpdated.id) {
                                 notifications.add({
                                     title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
@@ -525,7 +557,7 @@ export const useCentrumStore = defineStore(
                             addFeedItem(resp.change.dispatchCreated.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                        removeDispatch(resp.change.dispatchDeleted.id);
+                        removeDispatch(resp.change.dispatchDeleted);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         addOrUpdateDispatch(resp.change.dispatchUpdated);
 
@@ -677,8 +709,8 @@ export const useCentrumStore = defineStore(
                     return can('CentrumService.TakeControl').value;
                 case 'UpdateDispatchStatus':
                     return (
-                        can('CentrumService.TakeDispatch').value &&
                         dispatchParam !== undefined &&
+                        can('CentrumService.TakeDispatch').value &&
                         checkIfUnitAssignedToDispatch(dispatchParam, ownUnitId.value)
                     );
                 case 'UpdateUnitStatus':
@@ -783,6 +815,7 @@ export const useCentrumStore = defineStore(
             reconnecting,
             reconnectBackoffTime,
             timeCorrection,
+            jobs,
             settings,
             isDisponent,
             disponents,
@@ -796,6 +829,8 @@ export const useCentrumStore = defineStore(
 
             // Getters
             getCurrentMode,
+            getOwnDisponents,
+            anyDisponentsActive,
             getOwnUnit,
             getSortedUnits,
             getSortedDispatches,

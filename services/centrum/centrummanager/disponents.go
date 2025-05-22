@@ -3,9 +3,7 @@ package centrummanager
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
@@ -19,26 +17,14 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 			return errorscentrum.ErrNotOnDuty
 		}
 
-		tUsers := tables.Users()
-
 		stmt := tCentrumUsers.
 			INSERT(
 				tCentrumUsers.Job,
 				tCentrumUsers.UserID,
-				tCentrumUsers.Identifier,
 			).
 			VALUES(
 				job,
 				userId,
-				tUsers.
-					SELECT(
-						tUsers.Identifier.AS("identifier"),
-					).
-					FROM(tUsers).
-					WHERE(
-						tUsers.ID.EQ(jet.Int32(userId)),
-					).
-					LIMIT(1),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -70,11 +56,7 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	change := &centrum.Disponents{
-		Job:        job,
-		Disponents: disponents,
-	}
-	data, err := proto.Marshal(change)
+	data, err := proto.Marshal(disponents)
 	if err != nil {
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}

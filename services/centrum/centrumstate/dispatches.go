@@ -110,8 +110,8 @@ func (s *State) UpdateDispatch(ctx context.Context, job string, id uint64, dsp *
 	return nil
 }
 
-func (s *State) UpdateDispatchStatus(ctx context.Context, job string, id uint64, status *centrum.DispatchStatus) error {
-	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(job, id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+func (s *State) UpdateDispatchStatus(ctx context.Context, dispatchJob string, dispatchId uint64, status *centrum.DispatchStatus) error {
+	if err := s.dispatches.ComputeUpdate(ctx, JobIdKey(dispatchJob, dispatchId), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
 			return existing, false, nil
 		}

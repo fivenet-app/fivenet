@@ -14,11 +14,13 @@ export type LivemapLayer = {
         key: string;
         val: string;
     };
+    disabled?: boolean;
 };
 
 export type LivemapLayerCategory = {
     key: string;
     label: string;
+    order?: number;
 };
 
 export const useSettingsStore = defineStore(
@@ -92,6 +94,7 @@ export const useSettingsStore = defineStore(
                 current.label = category.label;
             }
             current.label = category.label;
+            current.order = category.order;
         };
         const addOrUpdateLivemapLayer = (layer: LivemapLayer): void => {
             const idx = livemapLayers.value.findIndex((l) => l.key === layer.key);
@@ -111,6 +114,7 @@ export const useSettingsStore = defineStore(
             }
             current.perm = layer.perm;
             current.attr = layer.attr;
+            current.disabled = layer.disabled;
         };
 
         // Getters

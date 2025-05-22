@@ -14,7 +14,7 @@ const { isOpen } = useSlideover();
 const centrumStore = useCentrumStore();
 const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
 
-const selectedDispatches = ref<number[]>([]);
+const selectedDispatches = ref<Dispatch[]>([]);
 const queryDispatches = ref('');
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
@@ -24,7 +24,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
         }
 
         const dispatchIds = selectedDispatches.value.filter((sd) => {
-            const dsp = dispatches.value.get(sd);
+            const dsp = dispatches.value.get(sd.id);
             if (dsp === undefined) {
                 return false;
             }
@@ -37,12 +37,15 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
             return;
         }
 
-        // Make sure all selected dispatches are still existing and not in a "completed"
-        const call = $grpc.centrum.centrum.takeDispatch({
-            dispatchIds,
-            resp,
+        dispatchIds.forEach(async (dsp) => {
+            // Make sure all selected dispatches are still existing and not in a "completed"
+            const call = $grpc.centrum.centrum.takeDispatch({
+                job: dsp.job,
+                dispatchId: dsp.id,
+                resp: resp,
+            });
+            await call;
         });
-        await call;
 
         selectedDispatches.value.length = 0;
 
@@ -54,11 +57,15 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
 }
 
 function selectDispatch(id: number, state: boolean): void {
-    const idx = selectedDispatches.value.findIndex((did) => did === id);
+    const dispatch = dispatches.value.get(id);
+    if (!dispatch) {
+        return;
+    }
+    const idx = selectedDispatches.value.findIndex((did) => did.id === id);
     if (idx > -1 && !state) {
         selectedDispatches.value.splice(idx, 1);
     } else if (idx === -1 && state) {
-        selectedDispatches.value.push(id);
+        selectedDispatches.value.push(dispatch);
     }
 }
 

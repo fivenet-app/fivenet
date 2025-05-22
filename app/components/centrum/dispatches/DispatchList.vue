@@ -145,6 +145,7 @@ const columns = [
                                         () =>
                                             modal.open(DispatchAssignModal, {
                                                 dispatchId: dispatch.id,
+                                                dispatchJob: dispatch.job,
                                             })
                                     "
                                 />
@@ -166,6 +167,7 @@ const columns = [
                                         () =>
                                             modal.open(DispatchStatusUpdateModal, {
                                                 dispatchId: dispatch.id,
+                                                dispatchJob: dispatch.job,
                                             })
                                     "
                                 />
@@ -179,6 +181,7 @@ const columns = [
                                         () =>
                                             slideover.open(DispatchDetailsByIDSlideover, {
                                                 dispatchId: dispatch.id,
+                                                dispatchJob: dispatch.job,
                                             })
                                     "
                                 />

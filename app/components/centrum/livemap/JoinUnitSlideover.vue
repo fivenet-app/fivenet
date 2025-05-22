@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useCentrumStore } from '~/stores/centrum';
-import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import { checkUnitAccess } from '../helpers';
 
 const emit = defineEmits<{
@@ -16,9 +16,10 @@ const { isOpen } = useSlideover();
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
-async function joinOrLeaveUnit(unitId?: number): Promise<void> {
+async function joinOrLeaveUnit(job?: string, unitId?: number): Promise<void> {
     try {
         const call = $grpc.centrum.centrum.joinUnit({
+            job: job ?? '',
             unitId: unitId,
         });
         const { response } = await call;
@@ -37,9 +38,9 @@ async function joinOrLeaveUnit(unitId?: number): Promise<void> {
 }
 
 const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (unitID?: number) => {
+const onSubmitThrottle = useThrottleFn(async (job?: string, unitID?: number) => {
     canSubmit.value = false;
-    await joinOrLeaveUnit(unitID).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await joinOrLeaveUnit(job, unitID).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 const queryUnit = ref('');
@@ -107,7 +108,7 @@ const filteredUnits = computed(() => ({
                             class="flex flex-col"
                             :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
                             :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
-                            @click="onSubmitThrottle(unit.id)"
+                            @click="onSubmitThrottle(unit.job, unit.id)"
                         >
                             <span class="text-base">
                                 <span class="font-semibold">{{ unit.initials }}:</span>
@@ -133,7 +134,7 @@ const filteredUnits = computed(() => ({
                                 class="flex flex-col"
                                 :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
                                 :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
-                                @click="onSubmitThrottle(unit.id)"
+                                @click="onSubmitThrottle(unit.job, unit.id)"
                             >
                                 <span class="text-base">
                                     <span class="font-semibold">{{ unit.initials }}:</span>

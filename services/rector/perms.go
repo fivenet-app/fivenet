@@ -30,7 +30,7 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 
 	role, err := s.ps.GetRole(ctx, roleId)
 	if err != nil {
-		return nil, false, err
+		return nil, false, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	if userInfo.SuperUser {

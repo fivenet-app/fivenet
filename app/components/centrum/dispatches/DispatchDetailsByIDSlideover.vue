@@ -5,6 +5,7 @@ import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
     dispatchId: number;
+    dispatchJob: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -39,5 +40,10 @@ watch(props, async () => refresh());
 </script>
 
 <template>
-    <DispatchDetailsSlideover v-if="data?.dispatch" :dispatch-id="dispatchId" :dispatch="data.dispatch" />
+    <DispatchDetailsSlideover
+        v-if="data?.dispatch"
+        :dispatch-id="dispatchId"
+        :dispatch-job="dispatchJob"
+        :dispatch="data.dispatch"
+    />
 </template>

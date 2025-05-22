@@ -10,27 +10,22 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { QualificationShort } from "../qualifications/qualifications";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @dbscanner: json
  *
- * @generated from protobuf message resources.centrum.UnitAccess
+ * @generated from protobuf message resources.centrum.Access
  */
-export interface UnitAccess {
+export interface Access {
     /**
-     * @generated from protobuf field: repeated resources.centrum.UnitJobAccess jobs = 1;
+     * @generated from protobuf field: repeated resources.centrum.JobAccess jobs = 1;
      */
-    jobs: UnitJobAccess[]; // @gotags: alias:"job_access"
-    /**
-     * @generated from protobuf field: repeated resources.centrum.UnitQualificationAccess qualifications = 3;
-     */
-    qualifications: UnitQualificationAccess[]; // @gotags: alias:"qualification_access"
+    jobs: JobAccess[]; // @gotags: alias:"job_access"
 }
 /**
- * @generated from protobuf message resources.centrum.UnitJobAccess
+ * @generated from protobuf message resources.centrum.JobAccess
  */
-export interface UnitJobAccess {
+export interface JobAccess {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -60,87 +55,70 @@ export interface UnitJobAccess {
      */
     jobGradeLabel?: string;
     /**
-     * @generated from protobuf field: resources.centrum.UnitAccessLevel access = 8;
+     * @generated from protobuf field: resources.centrum.AccessLevel access = 8;
      */
-    access: UnitAccessLevel;
+    access: AccessLevel;
 }
 /**
- * @generated from protobuf message resources.centrum.UnitUserAccess
+ * Dummy - DO NOT USE!
+ *
+ * @generated from protobuf message resources.centrum.UserAccess
  */
-export interface UnitUserAccess {
+export interface UserAccess {
 }
 /**
- * @generated from protobuf message resources.centrum.UnitQualificationAccess
+ * Dummy - DO NOT USE!
+ *
+ * @generated from protobuf message resources.centrum.QualificationAccess
  */
-export interface UnitQualificationAccess {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: uint64 target_id = 3;
-     */
-    targetId: number;
-    /**
-     * @generated from protobuf field: uint64 qualification_id = 4;
-     */
-    qualificationId: number;
-    /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 5;
-     */
-    qualification?: QualificationShort;
-    /**
-     * @generated from protobuf field: resources.centrum.UnitAccessLevel access = 6;
-     */
-    access: UnitAccessLevel;
+export interface QualificationAccess {
 }
 /**
- * @generated from protobuf enum resources.centrum.UnitAccessLevel
+ * @generated from protobuf enum resources.centrum.AccessLevel
  */
-export enum UnitAccessLevel {
+export enum AccessLevel {
     /**
-     * @generated from protobuf enum value: UNIT_ACCESS_LEVEL_UNSPECIFIED = 0;
+     * @generated from protobuf enum value: ACCESS_LEVEL_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: UNIT_ACCESS_LEVEL_BLOCKED = 1;
+     * @generated from protobuf enum value: ACCESS_LEVEL_BLOCKED = 1;
      */
     BLOCKED = 1,
     /**
-     * @generated from protobuf enum value: UNIT_ACCESS_LEVEL_JOIN = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 2;
      */
-    JOIN = 2
+    VIEW = 2,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_PARTICIPATE = 3;
+     */
+    PARTICIPATE = 3,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_MANAGE = 4;
+     */
+    MANAGE = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class UnitAccess$Type extends MessageType<UnitAccess> {
+class Access$Type extends MessageType<Access> {
     constructor() {
-        super("resources.centrum.UnitAccess", [
-            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
-            { no: 3, name: "qualifications", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitQualificationAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
+        super("resources.centrum.Access", [
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccess, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);
     }
-    create(value?: PartialMessage<UnitAccess>): UnitAccess {
+    create(value?: PartialMessage<Access>): Access {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.jobs = [];
-        message.qualifications = [];
         if (value !== undefined)
-            reflectionMergePartial<UnitAccess>(this, message, value);
+            reflectionMergePartial<Access>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UnitAccess): UnitAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Access): Access {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.centrum.UnitJobAccess jobs */ 1:
-                    message.jobs.push(UnitJobAccess.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* repeated resources.centrum.UnitQualificationAccess qualifications */ 3:
-                    message.qualifications.push(UnitQualificationAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.centrum.JobAccess jobs */ 1:
+                    message.jobs.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -153,13 +131,10 @@ class UnitAccess$Type extends MessageType<UnitAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: UnitAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.centrum.UnitJobAccess jobs = 1; */
+    internalBinaryWrite(message: Access, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.centrum.JobAccess jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
-            UnitJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.centrum.UnitQualificationAccess qualifications = 3; */
-        for (let i = 0; i < message.qualifications.length; i++)
-            UnitQualificationAccess.internalBinaryWrite(message.qualifications[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            JobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -167,13 +142,13 @@ class UnitAccess$Type extends MessageType<UnitAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.centrum.UnitAccess
+ * @generated MessageType for protobuf message resources.centrum.Access
  */
-export const UnitAccess = new UnitAccess$Type();
+export const Access = new Access$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
+class JobAccess$Type extends MessageType<JobAccess> {
     constructor() {
-        super("resources.centrum.UnitJobAccess", [
+        super("resources.centrum.JobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
@@ -181,10 +156,10 @@ class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.centrum.UnitAccessLevel", UnitAccessLevel, "UNIT_ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.centrum.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<UnitJobAccess>): UnitJobAccess {
+    create(value?: PartialMessage<JobAccess>): JobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.targetId = 0;
@@ -192,10 +167,10 @@ class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
         message.minimumGrade = 0;
         message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<UnitJobAccess>(this, message, value);
+            reflectionMergePartial<JobAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UnitJobAccess): UnitJobAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccess): JobAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -221,7 +196,7 @@ class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
                 case /* optional string job_grade_label */ 7:
                     message.jobGradeLabel = reader.string();
                     break;
-                case /* resources.centrum.UnitAccessLevel access */ 8:
+                case /* resources.centrum.AccessLevel access */ 8:
                     message.access = reader.int32();
                     break;
                 default:
@@ -235,7 +210,7 @@ class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: UnitJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: JobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -257,7 +232,7 @@ class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
         /* optional string job_grade_label = 7; */
         if (message.jobGradeLabel !== undefined)
             writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.centrum.UnitAccessLevel access = 8; */
+        /* resources.centrum.AccessLevel access = 8; */
         if (message.access !== 0)
             writer.tag(8, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
@@ -267,21 +242,21 @@ class UnitJobAccess$Type extends MessageType<UnitJobAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.centrum.UnitJobAccess
+ * @generated MessageType for protobuf message resources.centrum.JobAccess
  */
-export const UnitJobAccess = new UnitJobAccess$Type();
+export const JobAccess = new JobAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UnitUserAccess$Type extends MessageType<UnitUserAccess> {
+class UserAccess$Type extends MessageType<UserAccess> {
     constructor() {
-        super("resources.centrum.UnitUserAccess", []);
+        super("resources.centrum.UserAccess", []);
     }
-    create(value?: PartialMessage<UnitUserAccess>): UnitUserAccess {
+    create(value?: PartialMessage<UserAccess>): UserAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<UnitUserAccess>(this, message, value);
+            reflectionMergePartial<UserAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UnitUserAccess): UnitUserAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserAccess): UserAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -297,7 +272,7 @@ class UnitUserAccess$Type extends MessageType<UnitUserAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: UnitUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: UserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -305,54 +280,25 @@ class UnitUserAccess$Type extends MessageType<UnitUserAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.centrum.UnitUserAccess
+ * @generated MessageType for protobuf message resources.centrum.UserAccess
  */
-export const UnitUserAccess = new UnitUserAccess$Type();
+export const UserAccess = new UserAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UnitQualificationAccess$Type extends MessageType<UnitQualificationAccess> {
+class QualificationAccess$Type extends MessageType<QualificationAccess> {
     constructor() {
-        super("resources.centrum.UnitQualificationAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 5, name: "qualification", kind: "message", T: () => QualificationShort },
-            { no: 6, name: "access", kind: "enum", T: () => ["resources.centrum.UnitAccessLevel", UnitAccessLevel, "UNIT_ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
-        ]);
+        super("resources.centrum.QualificationAccess", []);
     }
-    create(value?: PartialMessage<UnitQualificationAccess>): UnitQualificationAccess {
+    create(value?: PartialMessage<QualificationAccess>): QualificationAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.targetId = 0;
-        message.qualificationId = 0;
-        message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<UnitQualificationAccess>(this, message, value);
+            reflectionMergePartial<QualificationAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UnitQualificationAccess): UnitQualificationAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationAccess): QualificationAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* uint64 target_id */ 3:
-                    message.targetId = reader.uint64().toNumber();
-                    break;
-                case /* uint64 qualification_id */ 4:
-                    message.qualificationId = reader.uint64().toNumber();
-                    break;
-                case /* optional resources.qualifications.QualificationShort qualification */ 5:
-                    message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
-                    break;
-                case /* resources.centrum.UnitAccessLevel access */ 6:
-                    message.access = reader.int32();
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -364,25 +310,7 @@ class UnitQualificationAccess$Type extends MessageType<UnitQualificationAccess> 
         }
         return message;
     }
-    internalBinaryWrite(message: UnitQualificationAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 3; */
-        if (message.targetId !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.targetId);
-        /* uint64 qualification_id = 4; */
-        if (message.qualificationId !== 0)
-            writer.tag(4, WireType.Varint).uint64(message.qualificationId);
-        /* optional resources.qualifications.QualificationShort qualification = 5; */
-        if (message.qualification)
-            QualificationShort.internalBinaryWrite(message.qualification, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.UnitAccessLevel access = 6; */
-        if (message.access !== 0)
-            writer.tag(6, WireType.Varint).int32(message.access);
+    internalBinaryWrite(message: QualificationAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -390,6 +318,6 @@ class UnitQualificationAccess$Type extends MessageType<UnitQualificationAccess> 
     }
 }
 /**
- * @generated MessageType for protobuf message resources.centrum.UnitQualificationAccess
+ * @generated MessageType for protobuf message resources.centrum.QualificationAccess
  */
-export const UnitQualificationAccess = new UnitQualificationAccess$Type();
+export const QualificationAccess = new QualificationAccess$Type();

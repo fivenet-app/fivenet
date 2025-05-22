@@ -35,32 +35,31 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on UnitAccess with the rules defined in the
+// Validate checks the field values on Access with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UnitAccess) Validate() error {
+func (m *Access) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UnitAccess with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UnitAccessMultiError, or
-// nil if none found.
-func (m *UnitAccess) ValidateAll() error {
+// ValidateAll checks the field values on Access with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in AccessMultiError, or nil if none found.
+func (m *Access) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UnitAccess) validate(all bool) error {
+func (m *Access) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if len(m.GetJobs()) > 20 {
-		err := UnitAccessValidationError{
+	if len(m.GetJobs()) > 10 {
+		err := AccessValidationError{
 			field:  "Jobs",
-			reason: "value must contain no more than 20 item(s)",
+			reason: "value must contain no more than 10 item(s)",
 		}
 		if !all {
 			return err
@@ -75,7 +74,7 @@ func (m *UnitAccess) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UnitAccessValidationError{
+					errors = append(errors, AccessValidationError{
 						field:  fmt.Sprintf("Jobs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -83,7 +82,7 @@ func (m *UnitAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, UnitAccessValidationError{
+					errors = append(errors, AccessValidationError{
 						field:  fmt.Sprintf("Jobs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -92,7 +91,7 @@ func (m *UnitAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return UnitAccessValidationError{
+				return AccessValidationError{
 					field:  fmt.Sprintf("Jobs[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -102,64 +101,19 @@ func (m *UnitAccess) validate(all bool) error {
 
 	}
 
-	if len(m.GetQualifications()) > 20 {
-		err := UnitAccessValidationError{
-			field:  "Qualifications",
-			reason: "value must contain no more than 20 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	for idx, item := range m.GetQualifications() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UnitAccessValidationError{
-						field:  fmt.Sprintf("Qualifications[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UnitAccessValidationError{
-						field:  fmt.Sprintf("Qualifications[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UnitAccessValidationError{
-					field:  fmt.Sprintf("Qualifications[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if len(errors) > 0 {
-		return UnitAccessMultiError(errors)
+		return AccessMultiError(errors)
 	}
 
 	return nil
 }
 
-// UnitAccessMultiError is an error wrapping multiple validation errors
-// returned by UnitAccess.ValidateAll() if the designated constraints aren't met.
-type UnitAccessMultiError []error
+// AccessMultiError is an error wrapping multiple validation errors returned by
+// Access.ValidateAll() if the designated constraints aren't met.
+type AccessMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UnitAccessMultiError) Error() string {
+func (m AccessMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -168,11 +122,11 @@ func (m UnitAccessMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UnitAccessMultiError) AllErrors() []error { return m }
+func (m AccessMultiError) AllErrors() []error { return m }
 
-// UnitAccessValidationError is the validation error returned by
-// UnitAccess.Validate if the designated constraints aren't met.
-type UnitAccessValidationError struct {
+// AccessValidationError is the validation error returned by Access.Validate if
+// the designated constraints aren't met.
+type AccessValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -180,22 +134,22 @@ type UnitAccessValidationError struct {
 }
 
 // Field function returns field value.
-func (e UnitAccessValidationError) Field() string { return e.field }
+func (e AccessValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UnitAccessValidationError) Reason() string { return e.reason }
+func (e AccessValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UnitAccessValidationError) Cause() error { return e.cause }
+func (e AccessValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UnitAccessValidationError) Key() bool { return e.key }
+func (e AccessValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UnitAccessValidationError) ErrorName() string { return "UnitAccessValidationError" }
+func (e AccessValidationError) ErrorName() string { return "AccessValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UnitAccessValidationError) Error() string {
+func (e AccessValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -207,14 +161,14 @@ func (e UnitAccessValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUnitAccess.%s: %s%s",
+		"invalid %sAccess.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UnitAccessValidationError{}
+var _ error = AccessValidationError{}
 
 var _ interface {
 	Field() string
@@ -222,24 +176,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UnitAccessValidationError{}
+} = AccessValidationError{}
 
-// Validate checks the field values on UnitJobAccess with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on JobAccess with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UnitJobAccess) Validate() error {
+func (m *JobAccess) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UnitJobAccess with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UnitJobAccessMultiError, or
-// nil if none found.
-func (m *UnitJobAccess) ValidateAll() error {
+// ValidateAll checks the field values on JobAccess with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JobAccessMultiError, or nil
+// if none found.
+func (m *JobAccess) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UnitJobAccess) validate(all bool) error {
+func (m *JobAccess) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -251,7 +205,7 @@ func (m *UnitJobAccess) validate(all bool) error {
 	// no validation rules for TargetId
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
-		err := UnitJobAccessValidationError{
+		err := JobAccessValidationError{
 			field:  "Job",
 			reason: "value length must be at most 20 runes",
 		}
@@ -262,7 +216,7 @@ func (m *UnitJobAccess) validate(all bool) error {
 	}
 
 	if m.GetMinimumGrade() < 0 {
-		err := UnitJobAccessValidationError{
+		err := JobAccessValidationError{
 			field:  "MinimumGrade",
 			reason: "value must be greater than or equal to 0",
 		}
@@ -272,8 +226,8 @@ func (m *UnitJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := UnitAccessLevel_name[int32(m.GetAccess())]; !ok {
-		err := UnitJobAccessValidationError{
+	if _, ok := AccessLevel_name[int32(m.GetAccess())]; !ok {
+		err := JobAccessValidationError{
 			field:  "Access",
 			reason: "value must be one of the defined enum values",
 		}
@@ -289,7 +243,7 @@ func (m *UnitJobAccess) validate(all bool) error {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UnitJobAccessValidationError{
+					errors = append(errors, JobAccessValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -297,7 +251,7 @@ func (m *UnitJobAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, UnitJobAccessValidationError{
+					errors = append(errors, JobAccessValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -306,7 +260,7 @@ func (m *UnitJobAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return UnitJobAccessValidationError{
+				return JobAccessValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -319,7 +273,7 @@ func (m *UnitJobAccess) validate(all bool) error {
 	if m.JobLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
-			err := UnitJobAccessValidationError{
+			err := JobAccessValidationError{
 				field:  "JobLabel",
 				reason: "value length must be at most 50 runes",
 			}
@@ -334,7 +288,7 @@ func (m *UnitJobAccess) validate(all bool) error {
 	if m.JobGradeLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
-			err := UnitJobAccessValidationError{
+			err := JobAccessValidationError{
 				field:  "JobGradeLabel",
 				reason: "value length must be at most 50 runes",
 			}
@@ -347,19 +301,18 @@ func (m *UnitJobAccess) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UnitJobAccessMultiError(errors)
+		return JobAccessMultiError(errors)
 	}
 
 	return nil
 }
 
-// UnitJobAccessMultiError is an error wrapping multiple validation errors
-// returned by UnitJobAccess.ValidateAll() if the designated constraints
-// aren't met.
-type UnitJobAccessMultiError []error
+// JobAccessMultiError is an error wrapping multiple validation errors returned
+// by JobAccess.ValidateAll() if the designated constraints aren't met.
+type JobAccessMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UnitJobAccessMultiError) Error() string {
+func (m JobAccessMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -368,11 +321,11 @@ func (m UnitJobAccessMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UnitJobAccessMultiError) AllErrors() []error { return m }
+func (m JobAccessMultiError) AllErrors() []error { return m }
 
-// UnitJobAccessValidationError is the validation error returned by
-// UnitJobAccess.Validate if the designated constraints aren't met.
-type UnitJobAccessValidationError struct {
+// JobAccessValidationError is the validation error returned by
+// JobAccess.Validate if the designated constraints aren't met.
+type JobAccessValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -380,22 +333,22 @@ type UnitJobAccessValidationError struct {
 }
 
 // Field function returns field value.
-func (e UnitJobAccessValidationError) Field() string { return e.field }
+func (e JobAccessValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UnitJobAccessValidationError) Reason() string { return e.reason }
+func (e JobAccessValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UnitJobAccessValidationError) Cause() error { return e.cause }
+func (e JobAccessValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UnitJobAccessValidationError) Key() bool { return e.key }
+func (e JobAccessValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UnitJobAccessValidationError) ErrorName() string { return "UnitJobAccessValidationError" }
+func (e JobAccessValidationError) ErrorName() string { return "JobAccessValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UnitJobAccessValidationError) Error() string {
+func (e JobAccessValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -407,14 +360,14 @@ func (e UnitJobAccessValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUnitJobAccess.%s: %s%s",
+		"invalid %sJobAccess.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UnitJobAccessValidationError{}
+var _ error = JobAccessValidationError{}
 
 var _ interface {
 	Field() string
@@ -422,24 +375,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UnitJobAccessValidationError{}
+} = JobAccessValidationError{}
 
-// Validate checks the field values on UnitUserAccess with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on UserAccess with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UnitUserAccess) Validate() error {
+func (m *UserAccess) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UnitUserAccess with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UnitUserAccessMultiError,
-// or nil if none found.
-func (m *UnitUserAccess) ValidateAll() error {
+// ValidateAll checks the field values on UserAccess with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserAccessMultiError, or
+// nil if none found.
+func (m *UserAccess) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UnitUserAccess) validate(all bool) error {
+func (m *UserAccess) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -447,19 +400,18 @@ func (m *UnitUserAccess) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return UnitUserAccessMultiError(errors)
+		return UserAccessMultiError(errors)
 	}
 
 	return nil
 }
 
-// UnitUserAccessMultiError is an error wrapping multiple validation errors
-// returned by UnitUserAccess.ValidateAll() if the designated constraints
-// aren't met.
-type UnitUserAccessMultiError []error
+// UserAccessMultiError is an error wrapping multiple validation errors
+// returned by UserAccess.ValidateAll() if the designated constraints aren't met.
+type UserAccessMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UnitUserAccessMultiError) Error() string {
+func (m UserAccessMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -468,11 +420,11 @@ func (m UnitUserAccessMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UnitUserAccessMultiError) AllErrors() []error { return m }
+func (m UserAccessMultiError) AllErrors() []error { return m }
 
-// UnitUserAccessValidationError is the validation error returned by
-// UnitUserAccess.Validate if the designated constraints aren't met.
-type UnitUserAccessValidationError struct {
+// UserAccessValidationError is the validation error returned by
+// UserAccess.Validate if the designated constraints aren't met.
+type UserAccessValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -480,22 +432,22 @@ type UnitUserAccessValidationError struct {
 }
 
 // Field function returns field value.
-func (e UnitUserAccessValidationError) Field() string { return e.field }
+func (e UserAccessValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UnitUserAccessValidationError) Reason() string { return e.reason }
+func (e UserAccessValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UnitUserAccessValidationError) Cause() error { return e.cause }
+func (e UserAccessValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UnitUserAccessValidationError) Key() bool { return e.key }
+func (e UserAccessValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UnitUserAccessValidationError) ErrorName() string { return "UnitUserAccessValidationError" }
+func (e UserAccessValidationError) ErrorName() string { return "UserAccessValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UnitUserAccessValidationError) Error() string {
+func (e UserAccessValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -507,14 +459,14 @@ func (e UnitUserAccessValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUnitUserAccess.%s: %s%s",
+		"invalid %sUserAccess.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UnitUserAccessValidationError{}
+var _ error = UserAccessValidationError{}
 
 var _ interface {
 	Field() string
@@ -522,127 +474,44 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UnitUserAccessValidationError{}
+} = UserAccessValidationError{}
 
-// Validate checks the field values on UnitQualificationAccess with the rules
+// Validate checks the field values on QualificationAccess with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UnitQualificationAccess) Validate() error {
+func (m *QualificationAccess) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UnitQualificationAccess with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on QualificationAccess with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UnitQualificationAccessMultiError, or nil if none found.
-func (m *UnitQualificationAccess) ValidateAll() error {
+// QualificationAccessMultiError, or nil if none found.
+func (m *QualificationAccess) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UnitQualificationAccess) validate(all bool) error {
+func (m *QualificationAccess) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Id
-
-	// no validation rules for TargetId
-
-	// no validation rules for QualificationId
-
-	if _, ok := UnitAccessLevel_name[int32(m.GetAccess())]; !ok {
-		err := UnitQualificationAccessValidationError{
-			field:  "Access",
-			reason: "value must be one of the defined enum values",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.CreatedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetCreatedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UnitQualificationAccessValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UnitQualificationAccessValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UnitQualificationAccessValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Qualification != nil {
-
-		if all {
-			switch v := interface{}(m.GetQualification()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UnitQualificationAccessValidationError{
-						field:  "Qualification",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UnitQualificationAccessValidationError{
-						field:  "Qualification",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UnitQualificationAccessValidationError{
-					field:  "Qualification",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if len(errors) > 0 {
-		return UnitQualificationAccessMultiError(errors)
+		return QualificationAccessMultiError(errors)
 	}
 
 	return nil
 }
 
-// UnitQualificationAccessMultiError is an error wrapping multiple validation
-// errors returned by UnitQualificationAccess.ValidateAll() if the designated
+// QualificationAccessMultiError is an error wrapping multiple validation
+// errors returned by QualificationAccess.ValidateAll() if the designated
 // constraints aren't met.
-type UnitQualificationAccessMultiError []error
+type QualificationAccessMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UnitQualificationAccessMultiError) Error() string {
+func (m QualificationAccessMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -651,11 +520,11 @@ func (m UnitQualificationAccessMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UnitQualificationAccessMultiError) AllErrors() []error { return m }
+func (m QualificationAccessMultiError) AllErrors() []error { return m }
 
-// UnitQualificationAccessValidationError is the validation error returned by
-// UnitQualificationAccess.Validate if the designated constraints aren't met.
-type UnitQualificationAccessValidationError struct {
+// QualificationAccessValidationError is the validation error returned by
+// QualificationAccess.Validate if the designated constraints aren't met.
+type QualificationAccessValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -663,24 +532,24 @@ type UnitQualificationAccessValidationError struct {
 }
 
 // Field function returns field value.
-func (e UnitQualificationAccessValidationError) Field() string { return e.field }
+func (e QualificationAccessValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UnitQualificationAccessValidationError) Reason() string { return e.reason }
+func (e QualificationAccessValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UnitQualificationAccessValidationError) Cause() error { return e.cause }
+func (e QualificationAccessValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UnitQualificationAccessValidationError) Key() bool { return e.key }
+func (e QualificationAccessValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UnitQualificationAccessValidationError) ErrorName() string {
-	return "UnitQualificationAccessValidationError"
+func (e QualificationAccessValidationError) ErrorName() string {
+	return "QualificationAccessValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UnitQualificationAccessValidationError) Error() string {
+func (e QualificationAccessValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -692,14 +561,14 @@ func (e UnitQualificationAccessValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUnitQualificationAccess.%s: %s%s",
+		"invalid %sQualificationAccess.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UnitQualificationAccessValidationError{}
+var _ error = QualificationAccessValidationError{}
 
 var _ interface {
 	Field() string
@@ -707,4 +576,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UnitQualificationAccessValidationError{}
+} = QualificationAccessValidationError{}

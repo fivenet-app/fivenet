@@ -8,7 +8,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -54,6 +53,7 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 			tCentrumSettings.FallbackMode,
 			tCentrumSettings.PredefinedStatus,
 			tCentrumSettings.Timings,
+			tCentrumSettings.Access,
 		).
 		FROM(tCentrumSettings)
 
@@ -75,13 +75,6 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 
 		if err := s.State.UpdateSettings(ctx, settings.Job, settings); err != nil {
 			return err
-		}
-
-		// Ensure job broker(s) are created or removed based on settings
-		if settings.Enabled {
-			s.brokers.GetOrCreateJobBroker(settings.Job)
-		} else {
-			s.brokers.RemoveJobBroker(settings.Job)
 		}
 	}
 
@@ -146,14 +139,23 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 		perJob[user.Job] = append(perJob[user.Job], user)
 	}
 
-	if job != "" {
-		if err := s.UpdateDisponents(ctx, job, perJob[job]); err != nil {
-			return fmt.Errorf("failed to update disponents for specific job. %w", err)
+	found := []string{}
+	for job, disponents := range perJob {
+		found = append(found, job)
+		if err := s.UpdateDisponents(ctx, job, disponents); err != nil {
+			return fmt.Errorf("failed to update disponents for all jobs. %w", err)
 		}
-	} else {
-		for job, disponents := range perJob {
-			if err := s.UpdateDisponents(ctx, job, disponents); err != nil {
-				return fmt.Errorf("failed to update disponents for all jobs. %w", err)
+	}
+
+	if job == "" {
+		jobs := s.GetDisponentsJobs(ctx)
+		for _, job := range jobs {
+			if slices.Contains(found, job) {
+				continue
+			}
+
+			if err := s.UpdateDisponents(ctx, job, nil); err != nil {
+				return err
 			}
 		}
 	}
@@ -183,7 +185,9 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 			tUnits.Attributes,
 			tUnits.HomePostal,
 			tUnitUser.UnitID,
+			tUnitUser.UnitJob,
 			tUnitUser.UserID,
+			tUnitUser.UserJob,
 		).
 		FROM(
 			tUnits.
@@ -211,7 +215,7 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		}
 		units[i].Access = access
 
-		status, err := s.GetLastUnitStatus(ctx, s.db, units[i].Job, units[i].Id)
+		status, err := s.GetLastUnitStatus(ctx, s.db, units[i].Id)
 		if err != nil {
 			return err
 		}
@@ -226,7 +230,7 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		}
 
 		for _, user := range units[i].Users {
-			if err := s.SetUnitForUser(ctx, user.User.Job, user.UserId, units[i].Id); err != nil {
+			if err := s.SetUnitForUser(ctx, user.User.Job, user.UserId, units[i].Job, units[i].Id); err != nil {
 				s.logger.Error("failed to set user's unit id", zap.Error(err))
 			}
 		}
@@ -235,10 +239,14 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *Manager) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64, error) {
+func (s *Manager) LoadUnitAssignmentForUserID(ctx context.Context, userId int32) (*centrum.UnitAssignment, error) {
+	tUnitUser := tUnitUser.AS("unit_assignment")
 	stmt := tUnitUser.
 		SELECT(
-			tUnitUser.UnitID.AS("unit_id"),
+			tUnitUser.UnitID,
+			tUnitUser.UnitJob,
+			tUnitUser.UserID,
+			tUnitUser.UserJob,
 		).
 		FROM(tUnitUser).
 		WHERE(
@@ -246,18 +254,16 @@ func (s *Manager) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64
 		).
 		LIMIT(1)
 
-	var dest struct {
-		UnitID uint64
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	dest := &centrum.UnitAssignment{}
+	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return 0, err
+			return nil, err
 		}
 
-		return 0, nil
+		return nil, nil
 	}
 
-	return dest.UnitID, nil
+	return dest, nil
 }
 
 func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpression) error {
@@ -299,11 +305,14 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 			tDispatchStatus.ID,
 			tDispatchStatus.CreatedAt,
 			tDispatchStatus.DispatchID,
+			tDispatchStatus.DispatchJob,
 			tDispatchStatus.UnitID,
+			tDispatchStatus.UnitJob,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tDispatchStatus.UserJob,
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
@@ -376,7 +385,6 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		// Ensure dispatch has a status
 		if dsps[i].Status == nil {
 			dsps[i].Status, err = s.AddDispatchStatus(ctx, s.db, dsps[i].Job, &centrum.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
 				DispatchId: dsps[i].Id,
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
 				Postal:     dsps[i].Postal,
@@ -400,7 +408,9 @@ func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispa
 	stmt := tDispatch.
 		SELECT(
 			tDispatchUnit.DispatchID,
+			tDispatchUnit.DispatchJob,
 			tDispatchUnit.UnitID,
+			tDispatchUnit.UnitJob,
 			tDispatchUnit.CreatedAt,
 			tDispatchUnit.ExpiresAt,
 		).

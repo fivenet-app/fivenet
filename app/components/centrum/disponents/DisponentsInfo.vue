@@ -17,12 +17,12 @@ const { $grpc } = useNuxtApp();
 const modal = useModal();
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, disponents, isDisponent } = storeToRefs(centrumStore);
+const { getCurrentMode, getOwnDisponents, disponents, isDisponent } = storeToRefs(centrumStore);
 
 async function takeControl(signon: boolean): Promise<void> {
     try {
         const call = $grpc.centrum.centrum.takeControl({
-            signon,
+            signon: signon,
         });
         await call;
     } catch (e) {
@@ -30,6 +30,8 @@ async function takeControl(signon: boolean): Promise<void> {
         throw e;
     }
 }
+
+const ownDisponents = computed(() => getOwnDisponents.value);
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
@@ -46,23 +48,31 @@ if (!props.hideJoin) {
 
 <template>
     <div class="flex w-full items-center justify-items-center gap-2">
-        <UTooltip :text="usersToLabel(disponents)">
-            <UButton
-                :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
-                :color="
-                    getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'gray' : disponents.length === 0 ? 'amber' : 'success'
-                "
-                truncate
-                @click="modal.open(DisponentsModal, {})"
-            >
-                <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                    {{ $t('common.disponent', disponents.length) }}
-                </template>
-                <template v-else>
-                    {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
-                </template>
-            </UButton>
-        </UTooltip>
+        <UButtonGroup>
+            <UTooltip :text="usersToLabel(ownDisponents)">
+                <UButton
+                    :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
+                    :color="
+                        getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
+                            ? 'gray'
+                            : ownDisponents.length === 0
+                              ? 'amber'
+                              : 'success'
+                    "
+                    truncate
+                    @click="modal.open(DisponentsModal, {})"
+                >
+                    <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
+                        {{ $t('common.disponent', ownDisponents.length) }}
+                    </template>
+                    <template v-else>
+                        {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
+                    </template>
+                </UButton>
+            </UTooltip>
+
+            <UButton v-if="disponents.length > 1" icon="i-mdi-multicast" @click="modal.open(DisponentsModal, {})" />
+        </UButtonGroup>
 
         <template v-if="!hideJoin">
             <UTooltip :text="`${$t('common.join')}/ ${$t('common.leave')}`" :shortcuts="['C', 'Q']">

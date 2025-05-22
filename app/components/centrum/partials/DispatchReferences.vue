@@ -31,6 +31,7 @@ const selectedDispatch = ref<number | undefined>();
                         selectedDispatch = reference.targetDispatchId;
                         modal.open(DispatchDetailsByIDSlideover, {
                             dispatchId: reference.targetDispatchId,
+                            dispatchJob: reference.targetDispatchJob,
                             onClose: () => (selectedDispatch = undefined),
                         });
                     "

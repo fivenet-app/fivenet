@@ -3,7 +3,6 @@ package centrum
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"sync"
 
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
@@ -17,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbrokers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -72,8 +70,7 @@ type Server struct {
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.UserAwareEnricher
 
-	brokers *centrumbrokers.Brokers
-	state   *centrummanager.Manager
+	state *centrummanager.Manager
 }
 
 type Params struct {
@@ -93,7 +90,6 @@ type Params struct {
 	Postals   postals.Postals
 	Manager   *centrummanager.Manager
 	Enricher  *mstlystcdata.UserAwareEnricher
-	Brokers   *centrumbrokers.Brokers
 }
 
 func NewServer(p Params) (*Server, error) {
@@ -115,17 +111,8 @@ func NewServer(p Params) (*Server, error) {
 		appCfg:   p.AppConfig,
 		enricher: p.Enricher,
 
-		brokers: p.Brokers,
-		state:   p.Manager,
+		state: p.Manager,
 	}
-
-	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
-			return fmt.Errorf("failed to subscribe to events: %w", err)
-		}
-
-		return nil
-	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()

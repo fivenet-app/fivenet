@@ -17,10 +17,12 @@ type fivenetCentrumDispatchesAsgmtsTable struct {
 	mysql.Table
 
 	// Columns
-	DispatchID mysql.ColumnInteger
-	UnitID     mysql.ColumnInteger
-	CreatedAt  mysql.ColumnTimestamp
-	ExpiresAt  mysql.ColumnTimestamp
+	DispatchID  mysql.ColumnInteger
+	DispatchJob mysql.ColumnString
+	UnitID      mysql.ColumnInteger
+	UnitJob     mysql.ColumnString
+	CreatedAt   mysql.ColumnTimestamp
+	ExpiresAt   mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -62,23 +64,27 @@ func newFivenetCentrumDispatchesAsgmtsTable(schemaName, tableName, alias string)
 
 func newFivenetCentrumDispatchesAsgmtsTableImpl(schemaName, tableName, alias string) fivenetCentrumDispatchesAsgmtsTable {
 	var (
-		DispatchIDColumn = mysql.IntegerColumn("dispatch_id")
-		UnitIDColumn     = mysql.IntegerColumn("unit_id")
-		CreatedAtColumn  = mysql.TimestampColumn("created_at")
-		ExpiresAtColumn  = mysql.TimestampColumn("expires_at")
-		allColumns       = mysql.ColumnList{DispatchIDColumn, UnitIDColumn, CreatedAtColumn, ExpiresAtColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, ExpiresAtColumn}
-		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
+		DispatchIDColumn  = mysql.IntegerColumn("dispatch_id")
+		DispatchJobColumn = mysql.StringColumn("dispatch_job")
+		UnitIDColumn      = mysql.IntegerColumn("unit_id")
+		UnitJobColumn     = mysql.StringColumn("unit_job")
+		CreatedAtColumn   = mysql.TimestampColumn("created_at")
+		ExpiresAtColumn   = mysql.TimestampColumn("expires_at")
+		allColumns        = mysql.ColumnList{DispatchIDColumn, DispatchJobColumn, UnitIDColumn, UnitJobColumn, CreatedAtColumn, ExpiresAtColumn}
+		mutableColumns    = mysql.ColumnList{DispatchJobColumn, UnitJobColumn, CreatedAtColumn, ExpiresAtColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumDispatchesAsgmtsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		DispatchID: DispatchIDColumn,
-		UnitID:     UnitIDColumn,
-		CreatedAt:  CreatedAtColumn,
-		ExpiresAt:  ExpiresAtColumn,
+		DispatchID:  DispatchIDColumn,
+		DispatchJob: DispatchJobColumn,
+		UnitID:      UnitIDColumn,
+		UnitJob:     UnitJobColumn,
+		CreatedAt:   CreatedAtColumn,
+		ExpiresAt:   ExpiresAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Colleague } from "../jobs/colleagues";
-import { UnitAccess } from "./access";
+import { UnitAccess } from "./units_access";
 import { UnitAttributes } from "./attributes";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -34,6 +34,10 @@ export interface Unit {
      * @generated from protobuf field: string job = 4;
      */
     job: string;
+    /**
+     * @generated from protobuf field: optional string job_label = 15;
+     */
+    jobLabel?: string;
     /**
      * @sanitize
      *
@@ -88,11 +92,15 @@ export interface UnitAssignments {
      */
     unitId: number;
     /**
-     * @generated from protobuf field: string job = 2;
+     * @generated from protobuf field: string unit_job = 2;
      */
-    job: string;
+    unitJob: string;
     /**
-     * @generated from protobuf field: repeated resources.centrum.UnitAssignment users = 3;
+     * @generated from protobuf field: optional string job_label = 3;
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: repeated resources.centrum.UnitAssignment users = 4;
      */
     users: UnitAssignment[];
 }
@@ -105,11 +113,19 @@ export interface UnitAssignment {
      */
     unitId: number; // @gotags: sql:"primary_key" alias:"unit_id"
     /**
-     * @generated from protobuf field: int32 user_id = 2;
+     * @generated from protobuf field: string unit_job = 2;
+     */
+    unitJob: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 3;
      */
     userId: number; // @gotags: sql:"primary_key" alias:"user_id"
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague user = 3;
+     * @generated from protobuf field: string user_job = 4;
+     */
+    userJob: string;
+    /**
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 5;
      */
     user?: Colleague;
 }
@@ -130,53 +146,65 @@ export interface UnitStatus {
      */
     unitId: number;
     /**
-     * @generated from protobuf field: optional resources.centrum.Unit unit = 4;
+     * @generated from protobuf field: string unit_job = 4;
+     */
+    unitJob: string;
+    /**
+     * @generated from protobuf field: optional resources.centrum.Unit unit = 5;
      */
     unit?: Unit;
     /**
-     * @generated from protobuf field: resources.centrum.StatusUnit status = 5;
+     * @generated from protobuf field: resources.centrum.StatusUnit status = 6;
      */
     status: StatusUnit;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string reason = 6;
+     * @generated from protobuf field: optional string reason = 7;
      */
     reason?: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string code = 7;
+     * @generated from protobuf field: optional string code = 8;
      */
     code?: string;
     /**
-     * @generated from protobuf field: optional int32 user_id = 8;
+     * @generated from protobuf field: optional int32 user_id = 9;
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague user = 9;
+     * @generated from protobuf field: optional string user_job = 10;
+     */
+    userJob?: string;
+    /**
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 11;
      */
     user?: Colleague;
     /**
-     * @generated from protobuf field: optional double x = 10;
+     * @generated from protobuf field: optional double x = 12;
      */
     x?: number;
     /**
-     * @generated from protobuf field: optional double y = 11;
+     * @generated from protobuf field: optional double y = 13;
      */
     y?: number;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string postal = 12;
+     * @generated from protobuf field: optional string postal = 14;
      */
     postal?: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 13;
+     * @generated from protobuf field: optional int32 creator_id = 15;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague creator = 14;
+     * @generated from protobuf field: optional string creator_job = 16;
+     */
+    creatorJob?: string;
+    /**
+     * @generated from protobuf field: optional resources.jobs.Colleague creator = 17;
      */
     creator?: Colleague;
 }
@@ -225,6 +253,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 15, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24" } } } },
             { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
             { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
@@ -264,6 +293,9 @@ class Unit$Type extends MessageType<Unit> {
                     break;
                 case /* string job */ 4:
                     message.job = reader.string();
+                    break;
+                case /* optional string job_label */ 15:
+                    message.jobLabel = reader.string();
                     break;
                 case /* string name */ 5:
                     message.name = reader.string();
@@ -343,6 +375,9 @@ class Unit$Type extends MessageType<Unit> {
         /* resources.centrum.UnitAccess access = 14; */
         if (message.access)
             UnitAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* optional string job_label = 15; */
+        if (message.jobLabel !== undefined)
+            writer.tag(15, WireType.LengthDelimited).string(message.jobLabel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -358,14 +393,15 @@ class UnitAssignments$Type extends MessageType<UnitAssignments> {
     constructor() {
         super("resources.centrum.UnitAssignments", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 3, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment }
+            { no: 2, name: "unit_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 4, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment }
         ]);
     }
     create(value?: PartialMessage<UnitAssignments>): UnitAssignments {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.unitId = 0;
-        message.job = "";
+        message.unitJob = "";
         message.users = [];
         if (value !== undefined)
             reflectionMergePartial<UnitAssignments>(this, message, value);
@@ -379,10 +415,13 @@ class UnitAssignments$Type extends MessageType<UnitAssignments> {
                 case /* uint64 unit_id */ 1:
                     message.unitId = reader.uint64().toNumber();
                     break;
-                case /* string job */ 2:
-                    message.job = reader.string();
+                case /* string unit_job */ 2:
+                    message.unitJob = reader.string();
                     break;
-                case /* repeated resources.centrum.UnitAssignment users */ 3:
+                case /* optional string job_label */ 3:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* repeated resources.centrum.UnitAssignment users */ 4:
                     message.users.push(UnitAssignment.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -400,12 +439,15 @@ class UnitAssignments$Type extends MessageType<UnitAssignments> {
         /* uint64 unit_id = 1; */
         if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
-        /* string job = 2; */
-        if (message.job !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.job);
-        /* repeated resources.centrum.UnitAssignment users = 3; */
+        /* string unit_job = 2; */
+        if (message.unitJob !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.unitJob);
+        /* optional string job_label = 3; */
+        if (message.jobLabel !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.jobLabel);
+        /* repeated resources.centrum.UnitAssignment users = 4; */
         for (let i = 0; i < message.users.length; i++)
-            UnitAssignment.internalBinaryWrite(message.users[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            UnitAssignment.internalBinaryWrite(message.users[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -421,14 +463,18 @@ class UnitAssignment$Type extends MessageType<UnitAssignment> {
     constructor() {
         super("resources.centrum.UnitAssignment", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
-            { no: 3, name: "user", kind: "message", T: () => Colleague }
+            { no: 2, name: "unit_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
+            { no: 4, name: "user_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "user", kind: "message", T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<UnitAssignment>): UnitAssignment {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.unitId = 0;
+        message.unitJob = "";
         message.userId = 0;
+        message.userJob = "";
         if (value !== undefined)
             reflectionMergePartial<UnitAssignment>(this, message, value);
         return message;
@@ -441,10 +487,16 @@ class UnitAssignment$Type extends MessageType<UnitAssignment> {
                 case /* uint64 unit_id */ 1:
                     message.unitId = reader.uint64().toNumber();
                     break;
-                case /* int32 user_id */ 2:
+                case /* string unit_job */ 2:
+                    message.unitJob = reader.string();
+                    break;
+                case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.jobs.Colleague user */ 3:
+                case /* string user_job */ 4:
+                    message.userJob = reader.string();
+                    break;
+                case /* optional resources.jobs.Colleague user */ 5:
                     message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
                 default:
@@ -462,12 +514,18 @@ class UnitAssignment$Type extends MessageType<UnitAssignment> {
         /* uint64 unit_id = 1; */
         if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
-        /* int32 user_id = 2; */
+        /* string unit_job = 2; */
+        if (message.unitJob !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.unitJob);
+        /* int32 user_id = 3; */
         if (message.userId !== 0)
-            writer.tag(2, WireType.Varint).int32(message.userId);
-        /* optional resources.jobs.Colleague user = 3; */
+            writer.tag(3, WireType.Varint).int32(message.userId);
+        /* string user_job = 4; */
+        if (message.userJob !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.userJob);
+        /* optional resources.jobs.Colleague user = 5; */
         if (message.user)
-            Colleague.internalBinaryWrite(message.user, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.user, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -485,23 +543,27 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "unit", kind: "message", T: () => Unit },
-            { no: 5, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 7, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 8, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 9, name: "user", kind: "message", T: () => Colleague },
-            { no: 10, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 11, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
-            { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 14, name: "creator", kind: "message", T: () => Colleague }
+            { no: 4, name: "unit_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "unit", kind: "message", T: () => Unit },
+            { no: 6, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 8, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 9, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 10, name: "user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 11, name: "user", kind: "message", T: () => Colleague },
+            { no: 12, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 13, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 14, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 15, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 16, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 17, name: "creator", kind: "message", T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<UnitStatus>): UnitStatus {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.unitId = 0;
+        message.unitJob = "";
         message.status = 0;
         if (value !== undefined)
             reflectionMergePartial<UnitStatus>(this, message, value);
@@ -521,37 +583,46 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
                 case /* uint64 unit_id */ 3:
                     message.unitId = reader.uint64().toNumber();
                     break;
-                case /* optional resources.centrum.Unit unit */ 4:
+                case /* string unit_job */ 4:
+                    message.unitJob = reader.string();
+                    break;
+                case /* optional resources.centrum.Unit unit */ 5:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
                     break;
-                case /* resources.centrum.StatusUnit status */ 5:
+                case /* resources.centrum.StatusUnit status */ 6:
                     message.status = reader.int32();
                     break;
-                case /* optional string reason */ 6:
+                case /* optional string reason */ 7:
                     message.reason = reader.string();
                     break;
-                case /* optional string code */ 7:
+                case /* optional string code */ 8:
                     message.code = reader.string();
                     break;
-                case /* optional int32 user_id */ 8:
+                case /* optional int32 user_id */ 9:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.jobs.Colleague user */ 9:
+                case /* optional string user_job */ 10:
+                    message.userJob = reader.string();
+                    break;
+                case /* optional resources.jobs.Colleague user */ 11:
                     message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional double x */ 10:
+                case /* optional double x */ 12:
                     message.x = reader.double();
                     break;
-                case /* optional double y */ 11:
+                case /* optional double y */ 13:
                     message.y = reader.double();
                     break;
-                case /* optional string postal */ 12:
+                case /* optional string postal */ 14:
                     message.postal = reader.string();
                     break;
-                case /* optional int32 creator_id */ 13:
+                case /* optional int32 creator_id */ 15:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.jobs.Colleague creator */ 14:
+                case /* optional string creator_job */ 16:
+                    message.creatorJob = reader.string();
+                    break;
+                case /* optional resources.jobs.Colleague creator */ 17:
                     message.creator = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 default:
@@ -575,39 +646,48 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
         /* uint64 unit_id = 3; */
         if (message.unitId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.unitId);
-        /* optional resources.centrum.Unit unit = 4; */
+        /* string unit_job = 4; */
+        if (message.unitJob !== "")
+            writer.tag(4, WireType.LengthDelimited).string(message.unitJob);
+        /* optional resources.centrum.Unit unit = 5; */
         if (message.unit)
-            Unit.internalBinaryWrite(message.unit, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.StatusUnit status = 5; */
+            Unit.internalBinaryWrite(message.unit, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.StatusUnit status = 6; */
         if (message.status !== 0)
-            writer.tag(5, WireType.Varint).int32(message.status);
-        /* optional string reason = 6; */
+            writer.tag(6, WireType.Varint).int32(message.status);
+        /* optional string reason = 7; */
         if (message.reason !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.reason);
-        /* optional string code = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.reason);
+        /* optional string code = 8; */
         if (message.code !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.code);
-        /* optional int32 user_id = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.code);
+        /* optional int32 user_id = 9; */
         if (message.userId !== undefined)
-            writer.tag(8, WireType.Varint).int32(message.userId);
-        /* optional resources.jobs.Colleague user = 9; */
+            writer.tag(9, WireType.Varint).int32(message.userId);
+        /* optional string user_job = 10; */
+        if (message.userJob !== undefined)
+            writer.tag(10, WireType.LengthDelimited).string(message.userJob);
+        /* optional resources.jobs.Colleague user = 11; */
         if (message.user)
-            Colleague.internalBinaryWrite(message.user, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional double x = 10; */
+            Colleague.internalBinaryWrite(message.user, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* optional double x = 12; */
         if (message.x !== undefined)
-            writer.tag(10, WireType.Bit64).double(message.x);
-        /* optional double y = 11; */
+            writer.tag(12, WireType.Bit64).double(message.x);
+        /* optional double y = 13; */
         if (message.y !== undefined)
-            writer.tag(11, WireType.Bit64).double(message.y);
-        /* optional string postal = 12; */
+            writer.tag(13, WireType.Bit64).double(message.y);
+        /* optional string postal = 14; */
         if (message.postal !== undefined)
-            writer.tag(12, WireType.LengthDelimited).string(message.postal);
-        /* optional int32 creator_id = 13; */
+            writer.tag(14, WireType.LengthDelimited).string(message.postal);
+        /* optional int32 creator_id = 15; */
         if (message.creatorId !== undefined)
-            writer.tag(13, WireType.Varint).int32(message.creatorId);
-        /* optional resources.jobs.Colleague creator = 14; */
+            writer.tag(15, WireType.Varint).int32(message.creatorId);
+        /* optional string creator_job = 16; */
+        if (message.creatorJob !== undefined)
+            writer.tag(16, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional resources.jobs.Colleague creator = 17; */
         if (message.creator)
-            Colleague.internalBinaryWrite(message.creator, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.creator, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

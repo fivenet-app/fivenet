@@ -3,7 +3,7 @@
 
 package centrum
 
-func (m *UnitAccess) Sanitize() error {
+func (m *Access) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -20,22 +20,10 @@ func (m *UnitAccess) Sanitize() error {
 
 	}
 
-	// Field: Qualifications
-	for idx, item := range m.Qualifications {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 
-func (m *UnitJobAccess) Sanitize() error {
+func (m *JobAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -52,33 +40,15 @@ func (m *UnitJobAccess) Sanitize() error {
 	return nil
 }
 
-func (m *UnitQualificationAccess) Sanitize() error {
+func (m *QualificationAccess) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Qualification
-	if m.Qualification != nil {
-		if v, ok := any(m.GetQualification()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil
 }
 
-func (m *UnitUserAccess) Sanitize() error {
+func (m *UserAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}

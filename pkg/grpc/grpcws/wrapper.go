@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/coder/websocket"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
@@ -27,6 +28,8 @@ const (
 	grpcWebContentType     = "application/grpc-web"
 	grpcWebTextContentType = "application/grpc-web-text"
 )
+
+const ConnectionIDHeader = "connection-id"
 
 type WrappedGrpcServer struct {
 	handler             http.Handler
@@ -167,6 +170,12 @@ func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(resp http.Response
 			headers[name] = values
 		}
 	}
+	id, err := utils.GenerateRandomNumberString(12)
+	if err != nil {
+		c.Close(websocket.StatusInternalError, "failed to generate connection id")
+		return
+	}
+	headers[ConnectionIDHeader] = []string{id}
 	req.Header = headers
 
 	ctx := req.Context() // Use the request context

@@ -12,15 +12,18 @@ import (
 )
 
 type FivenetCentrumDispatchesStatus struct {
-	ID         uint64     `sql:"primary_key" json:"id"`
-	CreatedAt  *time.Time `json:"created_at"`
-	DispatchID uint64     `json:"dispatch_id"`
-	UnitID     *uint64    `json:"unit_id"`
-	Status     int16      `json:"status"`
-	Reason     *string    `json:"reason"`
-	Code       *string    `json:"code"`
-	X          *float64   `json:"x"`
-	Y          *float64   `json:"y"`
-	Postal     *string    `json:"postal"`
-	UserID     *int32     `json:"user_id"`
+	ID          uint64     `sql:"primary_key" json:"id"`
+	CreatedAt   *time.Time `json:"created_at"`
+	DispatchID  uint64     `json:"dispatch_id"`
+	DispatchJob string     `json:"dispatch_job"`
+	UnitID      *uint64    `json:"unit_id"`
+	UnitJob     *string    `json:"unit_job"`
+	Status      int16      `json:"status"`
+	Reason      *string    `json:"reason"`
+	Code        *string    `json:"code"`
+	X           *float64   `json:"x"`
+	Y           *float64   `json:"y"`
+	Postal      *string    `json:"postal"`
+	UserID      *int32     `json:"user_id"`
+	UserJob     *string    `json:"user_job"`
 }

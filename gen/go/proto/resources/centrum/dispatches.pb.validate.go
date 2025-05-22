@@ -187,6 +187,21 @@ func (m *Dispatch) validate(all bool) error {
 
 	}
 
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := DispatchValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.Status != nil {
 
 		if all {
@@ -465,9 +480,9 @@ func (m *DispatchAssignments) validate(all bool) error {
 
 	// no validation rules for DispatchId
 
-	if utf8.RuneCountInString(m.GetJob()) > 20 {
+	if utf8.RuneCountInString(m.GetDispatchJob()) > 20 {
 		err := DispatchAssignmentsValidationError{
-			field:  "Job",
+			field:  "DispatchJob",
 			reason: "value length must be at most 20 runes",
 		}
 		if !all {
@@ -506,6 +521,21 @@ func (m *DispatchAssignments) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := DispatchAssignmentsValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
@@ -614,7 +644,29 @@ func (m *DispatchAssignment) validate(all bool) error {
 
 	// no validation rules for DispatchId
 
+	if utf8.RuneCountInString(m.GetDispatchJob()) > 20 {
+		err := DispatchAssignmentValidationError{
+			field:  "DispatchJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for UnitId
+
+	if utf8.RuneCountInString(m.GetUnitJob()) > 20 {
+		err := DispatchAssignmentValidationError{
+			field:  "UnitJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.Unit != nil {
 
@@ -821,6 +873,17 @@ func (m *DispatchStatus) validate(all bool) error {
 
 	// no validation rules for DispatchId
 
+	if utf8.RuneCountInString(m.GetDispatchJob()) > 20 {
+		err := DispatchStatusValidationError{
+			field:  "DispatchJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if _, ok := StatusDispatch_name[int32(m.GetStatus())]; !ok {
 		err := DispatchStatusValidationError{
 			field:  "Status",
@@ -867,6 +930,21 @@ func (m *DispatchStatus) validate(all bool) error {
 
 	if m.UnitId != nil {
 		// no validation rules for UnitId
+	}
+
+	if m.UnitJob != nil {
+
+		if utf8.RuneCountInString(m.GetUnitJob()) > 20 {
+			err := DispatchStatusValidationError{
+				field:  "UnitJob",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Unit != nil {
@@ -938,6 +1016,21 @@ func (m *DispatchStatus) validate(all bool) error {
 			err := DispatchStatusValidationError{
 				field:  "UserId",
 				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.UserJob != nil {
+
+		if utf8.RuneCountInString(m.GetUserJob()) > 20 {
+			err := DispatchStatusValidationError{
+				field:  "UserJob",
+				reason: "value length must be at most 20 runes",
 			}
 			if !all {
 				return err
@@ -1240,6 +1333,17 @@ func (m *DispatchReference) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for TargetDispatchId
+
+	if utf8.RuneCountInString(m.GetTargetDispatchJob()) > 20 {
+		err := DispatchReferenceValidationError{
+			field:  "TargetDispatchJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if _, ok := DispatchReferenceType_name[int32(m.GetReferenceType())]; !ok {
 		err := DispatchReferenceValidationError{

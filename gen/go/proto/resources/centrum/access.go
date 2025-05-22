@@ -1,71 +1,59 @@
 package centrum
 
-func (x *UnitAccess) IsEmpty() bool {
-	return len(x.Jobs) == 0 && len(x.Qualifications) == 0
+func (x *Access) IsEmpty() bool {
+	return len(x.Jobs) == 0
 }
 
-func (x *UnitAccess) ClearQualificationResults() {
-	for _, quali := range x.Qualifications {
-		if quali.Qualification != nil && quali.Qualification.Result != nil {
-			quali.Qualification.Result = nil
-		}
-	}
-}
-
-func (x *UnitJobAccess) SetJobLabel(label string) {
+func (x *JobAccess) SetJobLabel(label string) {
 	x.JobLabel = &label
 }
 
-func (x *UnitJobAccess) GetJobGrade() int32 {
+func (x *JobAccess) GetJobGrade() int32 {
 	return x.MinimumGrade
 }
 
-func (x *UnitJobAccess) SetJobGrade(grade int32) {
+func (x *JobAccess) SetJobGrade(grade int32) {
 	x.MinimumGrade = grade
 }
 
-func (x *UnitJobAccess) SetJobGradeLabel(jobLabel string) {
+func (x *JobAccess) SetJobGradeLabel(jobLabel string) {
 	x.JobGradeLabel = &jobLabel
 }
 
 // pkg/access compatibility
 
-func (x *UnitJobAccess) SetJob(job string) {
+func (x *JobAccess) SetJob(job string) {
 	x.Job = job
 }
 
-func (x *UnitJobAccess) SetMinimumGrade(grade int32) {
+func (x *JobAccess) SetMinimumGrade(grade int32) {
 	x.MinimumGrade = grade
 }
 
-func (x *UnitJobAccess) SetAccess(access UnitAccessLevel) {
+func (x *JobAccess) SetAccess(access AccessLevel) {
 	x.Access = access
 }
 
-func (x *UnitUserAccess) GetId() uint64 {
+func (x *UserAccess) GetId() uint64 {
 	return 0
 }
 
-func (x *UnitUserAccess) GetTargetId() uint64 {
+func (x *UserAccess) GetTargetId() uint64 {
 	return 0
 }
 
-func (x *UnitUserAccess) GetUserId() int32 {
+func (x *UserAccess) GetUserId() int32 {
 	return 0
 }
 
-func (x *UnitUserAccess) GetAccess() UnitAccessLevel {
-	return UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN
+func (x *UserAccess) GetAccess() AccessLevel {
+	return AccessLevel_ACCESS_LEVEL_BLOCKED
 }
 
-func (x *UnitUserAccess) SetUserId(id int32) {}
+func (x *UserAccess) SetUserId(id int32) {}
 
-func (x *UnitUserAccess) SetAccess(access UnitAccessLevel) {}
+func (x *UserAccess) SetAccess(access AccessLevel) {}
 
-func (x *UnitQualificationAccess) SetQualificationId(id uint64) {
-	x.QualificationId = id
-}
+func (x *QualificationAccess) SetQualificationId(id uint64) {}
 
-func (x *UnitQualificationAccess) SetAccess(access UnitAccessLevel) {
-	x.Access = access
-}
+func (x *QualificationAccess) SetAccess(access AccessLevel) {}

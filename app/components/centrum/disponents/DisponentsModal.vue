@@ -7,7 +7,7 @@ import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 const { isOpen } = useModal();
 
 const centrumStore = useCentrumStore();
-const { disponents, getCurrentMode } = storeToRefs(centrumStore);
+const { disponents, anyDisponentsActive, getCurrentMode } = storeToRefs(centrumStore);
 </script>
 
 <template>
@@ -27,23 +27,25 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
             </template>
 
             <DataNoDataBlock
-                v-if="disponents && disponents.length === 0"
+                v-if="!disponents || !anyDisponentsActive"
                 class="mt-5"
                 icon="i-mdi-monitor"
                 :type="$t('common.disponents', 2)"
             />
-            <UPageGrid v-else>
-                <UPageCard
-                    v-for="disponent in disponents"
-                    :key="disponent.userId"
-                    :title="`${disponent.firstname} ${disponent.lastname}`"
-                    :ui="{
-                        title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
-                    }"
-                >
-                    <PhoneNumberBlock :number="disponent.phoneNumber" />
-                </UPageCard>
-            </UPageGrid>
+            <template v-else>
+                <UPageGrid v-for="dispos in disponents" :key="dispos.job" class="gap-4 p-4" :cols="2">
+                    <UPageCard
+                        v-for="disponent in dispos.disponents"
+                        :key="disponent.userId"
+                        :title="`${disponent.firstname} ${disponent.lastname}`"
+                        :ui="{
+                            title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
+                        }"
+                    >
+                        <PhoneNumberBlock :number="disponent.phoneNumber" />
+                    </UPageCard>
+                </UPageGrid>
+            </template>
 
             <template #footer>
                 <UButton class="flex-1" color="black" block @click="isOpen = false">

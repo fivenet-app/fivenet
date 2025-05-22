@@ -9,6 +9,7 @@
 // source: resources/centrum/disponents.proto
 // source: resources/centrum/settings.proto
 // source: resources/centrum/units.proto
+// source: resources/centrum/units_access.proto
 // source: resources/centrum/user_unit.proto
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto

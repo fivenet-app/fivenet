@@ -8,9 +8,9 @@ import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 
 const props = defineProps<{
     unit: Unit;
@@ -53,6 +53,17 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 
             <div>
                 <dl class="divide-neutral/10 divide-y">
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.job') }}
+                        </dt>
+                        <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
+                            <p class="max-h-14 overflow-y-scroll break-words">
+                                {{ unit.jobLabel ?? $t('common.na') }}
+                            </p>
+                        </dd>
+                    </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.description') }}

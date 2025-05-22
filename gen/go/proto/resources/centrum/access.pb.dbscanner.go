@@ -10,8 +10,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-// Scan implements driver.Valuer for protobuf UnitAccess.
-func (x *UnitAccess) Scan(value any) error {
+// Scan implements driver.Valuer for protobuf Access.
+func (x *Access) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
@@ -21,8 +21,8 @@ func (x *UnitAccess) Scan(value any) error {
 	return nil
 }
 
-// Value marshals the UnitAccess value into driver.Valuer.
-func (x *UnitAccess) Value() (driver.Value, error) {
+// Value marshals the Access value into driver.Valuer.
+func (x *Access) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}

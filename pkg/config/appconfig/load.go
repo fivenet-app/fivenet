@@ -8,11 +8,11 @@ import (
 	"sync/atomic"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -45,8 +45,9 @@ type Config struct {
 
 	logger *zap.Logger
 	db     *sql.DB
-	js     *events.JSWrapper
 	tracer trace.Tracer
+	nc     *nats.Conn
+	ncSub  *nats.Subscription
 
 	jsCons jetstream.ConsumeContext
 
@@ -61,7 +62,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	JS     *events.JSWrapper
+	NC     *nats.Conn
 	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
 }
@@ -71,7 +72,7 @@ func New(p Params) (IConfig, error) {
 		logger: p.Logger,
 		db:     p.DB,
 		tracer: p.TP.Tracer("appconfig"),
-		js:     p.JS,
+		nc:     p.NC,
 
 		cfg: atomic.Pointer[Cfg]{},
 
@@ -86,7 +87,7 @@ func New(p Params) (IConfig, error) {
 			return err
 		}
 
-		return cfg.registerSubscriptions(ctxStartup, ctxCancel)
+		return cfg.registerSubscriptions(ctxCancel)
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
@@ -115,7 +116,7 @@ func (c *Config) Update(ctx context.Context, val *Cfg) error {
 	c.Set(val)
 
 	// Send update message to inform components
-	if _, err := c.js.Publish(ctx, fmt.Sprintf("%s.%s", BaseSubject, UpdateSubject), nil); err != nil {
+	if err := c.nc.Publish(fmt.Sprintf("%s.%s", BaseSubject, UpdateSubject), nil); err != nil {
 		return err
 	}
 

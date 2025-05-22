@@ -19,6 +19,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const props = defineProps<{
     dispatchId: number;
+    dispatchJob: string;
     dispatch?: Dispatch;
 }>();
 
@@ -40,7 +41,7 @@ const notifications = useNotificatorStore();
 
 const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
 
-async function selfAssign(id: number): Promise<void> {
+async function selfAssign(id: number, job: string): Promise<void> {
     if (ownUnitId.value === undefined) {
         notifications.add({
             title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
@@ -53,7 +54,8 @@ async function selfAssign(id: number): Promise<void> {
 
     try {
         const call = $grpc.centrum.centrum.takeDispatch({
-            dispatchIds: [id],
+            job: job,
+            dispatchId: id,
             resp: TakeDispatchResp.ACCEPTED,
         });
         await call;
@@ -127,12 +129,24 @@ watch(dispatch, () => {
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
+                                {{ $t('common.job') }}
+                            </dt>
+                            <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
+                                <p class="max-h-14 overflow-y-scroll break-words">
+                                    {{ dispatch.jobLabel ?? $t('common.na') }}
+                                </p>
+                            </dd>
+                        </div>
+
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.created_at') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <GenericTime :value="dispatch.createdAt" />
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.sent_by') }}
@@ -147,6 +161,7 @@ watch(dispatch, () => {
                                 </span>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.location') }}
@@ -169,6 +184,7 @@ watch(dispatch, () => {
                                 </div>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.description') }}
@@ -179,6 +195,7 @@ watch(dispatch, () => {
                                 </p>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.attributes', 2) }}
@@ -187,6 +204,7 @@ watch(dispatch, () => {
                                 <DispatchAttributes :attributes="dispatch.attributes" />
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.reference', 2) }}
@@ -195,6 +213,7 @@ watch(dispatch, () => {
                                 <DispatchReferences :references="dispatch.references" />
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.unit', 2) }}
@@ -242,7 +261,12 @@ watch(dispatch, () => {
                                         v-if="canDo('TakeControl')"
                                         icon="i-mdi-account-multiple-plus"
                                         truncate
-                                        @click="modal.open(DispatchAssignModal, { dispatchId: dispatchId })"
+                                        @click="
+                                            modal.open(DispatchAssignModal, {
+                                                dispatchId: dispatchId,
+                                                dispatchJob: dispatch.job,
+                                            })
+                                        "
                                     >
                                         {{ $t('common.assign') }}
                                     </UButton>
@@ -250,7 +274,7 @@ watch(dispatch, () => {
                                         v-if="canDo('TakeDispatch')"
                                         icon="i-mdi-plus"
                                         truncate
-                                        @click="selfAssign(dispatch.id)"
+                                        @click="selfAssign(dispatch.id, dispatch.job)"
                                     >
                                         {{ $t('common.self_assign') }}
                                     </UButton>
@@ -270,6 +294,7 @@ watch(dispatch, () => {
                                 <GenericTime :value="dispatch.status?.createdAt" />
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.location') }}
@@ -299,6 +324,7 @@ watch(dispatch, () => {
                                 </div>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.status') }}
@@ -307,7 +333,12 @@ watch(dispatch, () => {
                                 <UButton
                                     class="rounded px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
-                                    @click="modal.open(DispatchStatusUpdateModal, { dispatchId: dispatch.id })"
+                                    @click="
+                                        modal.open(DispatchStatusUpdateModal, {
+                                            dispatchId: dispatch.id,
+                                            dispatchJob: dispatch.job,
+                                        })
+                                    "
                                 >
                                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
                                     <span v-if="dispatch.status?.code">
@@ -316,6 +347,7 @@ watch(dispatch, () => {
                                 </UButton>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.code') }}
@@ -324,6 +356,7 @@ watch(dispatch, () => {
                                 {{ dispatch.status?.code ?? $t('common.na') }}
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.reason') }}

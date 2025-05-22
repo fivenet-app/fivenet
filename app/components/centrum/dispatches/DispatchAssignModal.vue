@@ -4,11 +4,13 @@ import type { GroupedUnits } from '~/components/centrum/helpers';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
+import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
     dispatchId: number;
+    dispatchJob: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -21,7 +23,7 @@ const dispatch = computed(() => dispatches.value.get(props.dispatchId));
 const { isOpen } = useModal();
 
 const schema = z.object({
-    units: z.custom<number>().array().max(10),
+    units: z.custom<Unit>().array().max(10),
 });
 
 type Schema = z.output<typeof schema>;
@@ -36,22 +38,33 @@ async function assignDispatch(): Promise<void> {
     }
 
     try {
-        const toAdd: number[] = [];
-        const toRemove: number[] = [];
+        const toAdd: DispatchAssignment[] = [];
+        const toRemove: DispatchAssignment[] = [];
         state.units.forEach((u) => {
-            toAdd.push(u);
+            toAdd.push({
+                unitId: u.id,
+                unitJob: u.job,
+                dispatchId: props.dispatchId,
+                dispatchJob: props.dispatchJob,
+            } as DispatchAssignment);
         });
         dispatch.value?.units?.forEach((u) => {
-            const idx = state.units.findIndex((su) => su === u.unitId);
+            const idx = state.units.findIndex((su) => su.id === u.unitId);
             if (idx === -1) {
-                toRemove.push(u.unitId);
+                toRemove.push({
+                    unitId: u.unitId,
+                    unitJob: u.unitJob,
+                    dispatchId: props.dispatchId,
+                    dispatchJob: props.dispatchJob,
+                } as DispatchAssignment);
             }
         });
 
         const call = $grpc.centrum.centrum.assignDispatch({
             dispatchId: props.dispatchId,
-            toAdd,
-            toRemove,
+            job: props.dispatchJob,
+            toAdd: toAdd,
+            toRemove: toRemove,
         });
         await call;
 
@@ -65,9 +78,9 @@ async function assignDispatch(): Promise<void> {
 }
 
 function selectUnit(item: Unit): void {
-    const idx = state.units.findIndex((u) => u === item.id);
+    const idx = state.units.findIndex((u) => u.id === item.id);
     if (idx === -1) {
-        state.units.push(item.id);
+        state.units.push(item);
     } else {
         state.units.splice(idx, 1);
     }
@@ -108,7 +121,7 @@ const grouped = computedAsync(async () => {
 });
 
 function updateDispatchUnits(): void {
-    state.units = [...(dispatch.value?.units?.map((du) => du.unitId) ?? [])];
+    state.units = (dispatch.value?.units ?? []).filter((u) => u.unit !== undefined).map((u) => u.unit!);
 }
 
 watch(dispatch, () => updateDispatchUnits);
@@ -164,7 +177,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 :disabled="unit.users.length === 0"
                                 @click="selectUnit(unit)"
                             >
-                                <UIcon v-if="state.units.includes(unit.id)" class="size-5" name="i-mdi-check" />
+                                <UIcon v-if="state.units.find((u) => u.id === unit.id)" class="size-5" name="i-mdi-check" />
                                 <UIcon v-else-if="unit.users.length > 0" class="size-5" name="i-mdi-checkbox-blank-outline" />
                                 <UIcon v-else class="size-5" name="i-mdi-cancel" />
 

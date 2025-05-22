@@ -28,7 +28,6 @@ export const useAuthStore = defineStore(
         const permissions = ref<string[]>([]);
         const jobProps = ref<JobProps | null>({
             job: '',
-            theme: 'defaultTheme',
             livemapMarkerColor: '',
             radioFrequency: undefined,
             quickButtons: {
@@ -79,7 +78,6 @@ export const useAuthStore = defineStore(
                 } else {
                     jobProps.value.job = jp.job;
                     jobProps.value.jobLabel = jp.jobLabel;
-                    jobProps.value.theme = jp.theme;
                     jobProps.value.livemapMarkerColor = jp.livemapMarkerColor;
                     jobProps.value.radioFrequency = jp.radioFrequency;
                     jobProps.value.quickButtons = jp.quickButtons;
