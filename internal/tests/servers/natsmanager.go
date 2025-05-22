@@ -57,18 +57,20 @@ func (m *natsServer) GetURL() string {
 	return m.server.ClientURL()
 }
 
-func (m *natsServer) GetClient() (*nats.Conn, error) {
-	return nats.Connect(m.GetURL())
-}
-
-func (m *natsServer) GetJS() jetstream.JetStream {
-	cli, err := m.GetClient()
+func (m *natsServer) GetConn() *nats.Conn {
+	conn, err := nats.Connect(m.GetURL())
 	if err != nil {
 		m.t.Fatalf("failed to get NATS client. %v", err)
 		return nil
 	}
 
-	js, err := jetstream.New(cli)
+	return conn
+}
+
+func (m *natsServer) GetJS() jetstream.JetStream {
+	conn := m.GetConn()
+
+	js, err := jetstream.New(conn)
 	if err != nil {
 		m.t.Fatalf("failed to create JetStream client. %v", err)
 		return nil
@@ -87,9 +89,12 @@ func (m *natsServer) Stop() {
 }
 
 func (m *natsServer) FxProvide() fx.Option {
-	return fx.Provide(func() *events.JSWrapper {
-		return &events.JSWrapper{
-			JetStream: m.GetJS(),
+	return fx.Provide(func() events.Result {
+		return events.Result{
+			NC: m.GetConn(),
+			JS: &events.JSWrapper{
+				JetStream: m.GetJS(),
+			},
 		}
 	})
 }
