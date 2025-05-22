@@ -4,7 +4,7 @@ import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/composables/notifications';
 import { useNotificatorStore } from '~/stores/notificator';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Disponents } from '~~/gen/ts/resources/centrum/disponents';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
@@ -152,6 +152,7 @@ export const useCentrumStore = defineStore(
                 units.value.set(unit.id, unit);
             } else {
                 existing.job = unit.job;
+                existing.jobLabel = unit.jobLabel;
                 existing.createdAt = unit.createdAt;
                 existing.updatedAt = unit.updatedAt;
                 existing.name = unit.name;
@@ -197,6 +198,7 @@ export const useCentrumStore = defineStore(
                 u.status.createdAt = status.createdAt;
                 u.status.unitId = status.unitId;
                 u.status.unitJob = status.unitJob;
+                u.status.unitJobLabel = status.unitJobLabel;
                 u.status.status = status.status;
                 u.status.reason = status.reason;
                 u.status.code = status.code;
@@ -245,6 +247,7 @@ export const useCentrumStore = defineStore(
                 existing.createdAt = dispatchObj.createdAt;
                 existing.updatedAt = dispatchObj.updatedAt;
                 existing.job = dispatchObj.job;
+                existing.jobLabel = dispatchObj.jobLabel;
                 existing.message = dispatchObj.message;
                 existing.description = dispatchObj.description;
                 existing.attributes = dispatchObj.attributes;
@@ -281,6 +284,7 @@ export const useCentrumStore = defineStore(
                 disp.status.createdAt = status.createdAt;
                 disp.status.dispatchId = status.dispatchId;
                 disp.status.dispatchJob = status.dispatchJob;
+                disp.status.dispatchJobLabel = status.dispatchJobLabel;
                 disp.status.unitId = status.unitId;
                 disp.status.unitJob = status.unitJob;
                 disp.status.unit = status.unit;
@@ -807,6 +811,30 @@ export const useCentrumStore = defineStore(
             return [];
         };
 
+        const selfAssign = async (id: number, job: string): Promise<void> => {
+            if (ownUnitId.value === undefined) {
+                useNotificatorStore().add({
+                    title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
+                    description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
+                    type: NotificationType.ERROR,
+                });
+
+                return;
+            }
+
+            try {
+                const call = $grpc.centrum.centrum.takeDispatch({
+                    job: job,
+                    dispatchId: id,
+                    resp: TakeDispatchResp.ACCEPTED,
+                });
+                await call;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        };
+
         return {
             // State
             error,
@@ -860,6 +888,7 @@ export const useCentrumStore = defineStore(
             cleanup,
             removeDispatchAssignments,
             getNotificationActions,
+            selfAssign,
         };
     },
     {

@@ -17,9 +17,12 @@ const props = defineProps<{
     statusSelected?: StatusUnit;
 }>();
 
-const { can } = useAuth();
+const { activeChar } = useAuth();
 
 const { isOpen } = useSlideover();
+
+const centrumStore = useCentrumStore();
+const { canDo } = centrumStore;
 
 const { goto } = useLivemapStore();
 
@@ -53,7 +56,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 
             <div>
                 <dl class="divide-neutral/10 divide-y">
-                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                    <div v-if="activeChar?.job !== unit.job" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.job') }}
                         </dt>
@@ -210,7 +213,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 
                             <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
                                 <UButton
-                                    v-if="can('CentrumService.TakeControl').value"
+                                    v-if="canDo('TakeControl')"
                                     icon="i-mdi-pencil"
                                     truncate
                                     @click="

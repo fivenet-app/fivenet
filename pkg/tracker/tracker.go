@@ -90,7 +90,7 @@ func New(p Params) (ITracker, error) {
 					return xsync.NewMap[int32, *livemap.UserMarker](), false
 				})
 				// Maybe we can be smarter about updating the user marker here, but
-				// without mutexes it will be problematic (data races and Co.)
+				// without mutexes it will be problematic (data races and co.)
 				// Is `proto.Clone` the solution to this?
 				jobUsers.Store(um.UserId, proto.Clone(um).(*livemap.UserMarker))
 

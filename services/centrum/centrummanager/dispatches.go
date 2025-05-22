@@ -79,6 +79,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, dispatchJob string, 
 		return nil, err
 	}
 	in.Id = uint64(newStatus.Id)
+	s.enricher.EnrichJobName(in)
 
 	if err := s.State.UpdateDispatchStatus(ctx, dispatchJob, in.DispatchId, in); err != nil {
 		return nil, err
@@ -96,7 +97,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, dispatchJob string, 
 	return in, nil
 }
 
-func (s *Manager) UpdateDispatchAssignments(ctx context.Context, userJob *string, userId *int32, dspJob string, dspId uint64, toAdd []*centrum.DispatchAssignment, toRemove []*centrum.DispatchAssignment, expiresAt time.Time) error {
+func (s *Manager) UpdateDispatchAssignments(ctx context.Context, userJob *string, userId *int32, dspJob string, dspId uint64, toAdd []*centrum.DispatchAssignment, toRemove []*centrum.DispatchAssignment, expiresAt time.Time, allowedJobs []string) error {
 	s.logger.Debug("updating dispatch assignments", zap.Stringp("job", userJob), zap.Uint64("dispatch_id", dspId), zap.Any("toAdd", toAdd), zap.Any("toRemove", toRemove))
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
@@ -156,7 +157,6 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, userJob *string
 			return err
 		}
 		for i := range toAdd {
-
 			// Skip already added units
 			if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
 				return in.UnitId == toAdd[i].UnitId
@@ -174,8 +174,17 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, userJob *string
 				continue
 			}
 
-			// Only add unit to dispatch if not already assigned/in list
-			units = append(units, unit)
+			if allowedJobs == nil {
+				units = append(units, unit)
+			} else {
+				// Check if unit's job is in allowed jobs list and only add unit to dispatch if not already assigned/in list
+				if slices.ContainsFunc(allowedJobs, func(in string) bool {
+					return in == unit.Job
+				}) {
+					units = append(units, unit)
+				}
+			}
+
 		}
 
 		if len(units) > 0 {
@@ -414,6 +423,8 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		}
 	}
 
+	s.enricher.EnrichJobName(dsp)
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -557,6 +568,11 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 	}
 
 	if publish {
+		s.enricher.EnrichJobName(dsp)
+		if dsp.Status != nil {
+			s.enricher.EnrichJobName(dsp.Status)
+		}
+
 		data, err := proto.Marshal(dsp)
 		if err != nil {
 			return nil, err
@@ -676,8 +692,8 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, dispatchJob 
 		ORDER_BY(tDispatchStatus.ID.DESC()).
 		LIMIT(1)
 
-	var dest centrum.DispatchStatus
-	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
+	dest := &centrum.DispatchStatus{}
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		} else {
@@ -693,8 +709,9 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, dispatchJob 
 
 		dest.Unit = unit
 	}
+	s.enricher.EnrichJobName(dest)
 
-	return &dest, nil
+	return dest, nil
 }
 
 func (s *Manager) TakeDispatch(ctx context.Context, userJob string, userId int32, unitJob string, unitId uint64, resp centrum.TakeDispatchResp, dispatchJob string, dispatchId uint64) error {

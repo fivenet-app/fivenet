@@ -9,6 +9,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import { useLivemapStore } from '~/stores/livemap';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import DispatchAssignModal from '../dispatches/DispatchAssignModal.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -24,7 +25,11 @@ const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
 
+const modal = useModal();
+
 const { goto } = useLivemapStore();
+
+const { selfAssign, canDo } = useCentrumStore();
 
 const iconAnchor: PointExpression = [props.size / 2, props.size * 1.65];
 const popupAnchor: PointExpression = [0, -(props.size * 1.7)];
@@ -87,27 +92,53 @@ const zIndexOffset = computed(() => {
                         </span>
                     </UButton>
 
-                    <UTooltip :text="$t('common.detail', 2)">
-                        <UButton variant="link" icon="i-mdi-car-emergency" :padded="false" @click="selected(dispatch.id)">
-                            <span class="truncate">
-                                {{ $t('common.detail', 2) }}
-                            </span>
-                        </UButton>
-                    </UTooltip>
-                </div>
+                    <UButton variant="link" icon="i-mdi-car-emergency" :padded="false" @click="selected(dispatch.id)">
+                        <span class="truncate">
+                            {{ $t('common.detail', 2) }}
+                        </span>
+                    </UButton>
 
-                <p class="inline-flex items-center gap-1">
-                    <span class="font-semibold">{{ $t('common.dispatch') }}:</span>
                     <UButton
-                        class="font-bold"
-                        :label="`DSP-${dispatch.id}`"
+                        v-if="canDo('TakeControl')"
+                        class="truncate"
+                        icon="i-mdi-account-multiple-plus"
                         variant="link"
                         :padded="false"
-                        @click="selected(dispatch.id)"
-                    />
+                        truncate
+                        @click="
+                            modal.open(DispatchAssignModal, {
+                                dispatchId: dispatch.id,
+                                dispatchJob: dispatch.job,
+                            })
+                        "
+                    >
+                        {{ $t('common.assign') }}
+                    </UButton>
 
-                    <span v-if="dispatch.jobLabel">{{ dispatch.jobLabel }}</span>
-                </p>
+                    <UButton
+                        v-if="canDo('TakeDispatch')"
+                        icon="i-mdi-plus"
+                        variant="link"
+                        :padded="false"
+                        @click="selfAssign(dispatch.id, dispatch.job)"
+                    >
+                        {{ $t('common.self_assign') }}
+                    </UButton>
+                </div>
+
+                <div>
+                    <p class="flex flex-row items-center gap-1">
+                        <span class="font-semibold">{{ $t('common.dispatch') }}:</span>
+                        <UButton
+                            class="font-bold"
+                            :label="`DSP-${dispatch.id}`"
+                            variant="link"
+                            :padded="false"
+                            @click="selected(dispatch.id)"
+                        />
+                    </p>
+                    <p v-if="dispatch.jobLabel">({{ dispatch.jobLabel }})</p>
+                </div>
 
                 <ul role="list">
                     <li>

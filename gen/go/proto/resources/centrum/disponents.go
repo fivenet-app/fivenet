@@ -9,10 +9,12 @@ func (x *Disponents) SetJobLabel(jobLabel string) {
 func (x *Disponents) Merge(in *Disponents) *Disponents {
 	x.Job = in.Job
 
-	if in.JobLabel == nil {
-		in.JobLabel = x.JobLabel
-	} else if x.JobLabel != nil {
-		*in.JobLabel = *x.JobLabel
+	if in.JobLabel != nil {
+		if x.JobLabel == nil {
+			x.JobLabel = in.JobLabel
+		} else {
+			*x.JobLabel = *in.JobLabel
+		}
 	}
 
 	if len(in.Disponents) == 0 {

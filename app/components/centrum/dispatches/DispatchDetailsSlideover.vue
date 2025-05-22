@@ -12,10 +12,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
     dispatchId: number;
@@ -25,7 +23,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const { can } = useAuth();
+const { activeChar, can } = useAuth();
 
 const modal = useModal();
 
@@ -34,36 +32,10 @@ const { isOpen } = useSlideover();
 const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
-const { dispatches, ownUnitId, timeCorrection } = storeToRefs(centrumStore);
-const { canDo } = centrumStore;
-
-const notifications = useNotificatorStore();
+const { dispatches, timeCorrection } = storeToRefs(centrumStore);
+const { canDo, selfAssign } = centrumStore;
 
 const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
-
-async function selfAssign(id: number, job: string): Promise<void> {
-    if (ownUnitId.value === undefined) {
-        notifications.add({
-            title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
-            description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
-            type: NotificationType.ERROR,
-        });
-
-        return;
-    }
-
-    try {
-        const call = $grpc.centrum.centrum.takeDispatch({
-            job: job,
-            dispatchId: id,
-            resp: TakeDispatchResp.ACCEPTED,
-        });
-        await call;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
 
 async function deleteDispatch(id: number): Promise<void> {
     try {
@@ -127,7 +99,7 @@ watch(dispatch, () => {
             <div class="divide-y divide-gray-100 dark:divide-gray-800">
                 <div>
                     <dl class="divide-neutral/10 divide-y">
-                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <div v-if="activeChar?.job !== dispatch.job" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.job') }}
                             </dt>

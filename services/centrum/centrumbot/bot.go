@@ -92,7 +92,7 @@ func (b *Bot) Run() {
 			}
 
 			if err := b.state.UpdateDispatchAssignments(b.ctx, &b.job, nil, dsp.Job, dsp.Id, []*centrum.DispatchAssignment{{UnitId: unit.Id, UnitJob: unit.Job}}, nil,
-				b.state.DispatchAssignmentExpirationTime()); err != nil {
+				b.state.DispatchAssignmentExpirationTime(), nil); err != nil {
 				b.logger.Error("failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id), zap.Error(err))
 				break
 			}

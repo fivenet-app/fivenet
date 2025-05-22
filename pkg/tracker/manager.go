@@ -71,17 +71,17 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		userStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, p.Logger, p.JS, "tracker",
+		usersStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, p.Logger, p.JS, "tracker",
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
 		if err != nil {
 			return err
 		}
 
-		if err := userStore.Start(ctxCancel, false); err != nil {
+		if err := usersStore.Start(ctxCancel, false); err != nil {
 			return err
 		}
-		m.userStore = userStore
+		m.userStore = usersStore
 
 		if err := registerStreams(ctxStartup, m.js); err != nil {
 			return err
@@ -207,9 +207,9 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
 				),
 		).
-		WHERE(jet.AND(
+		WHERE(
 			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
-		))
+		)
 
 	var dest []*livemap.UserMarker
 	if err := stmt.QueryContext(ctx, m.db, &dest); err != nil {

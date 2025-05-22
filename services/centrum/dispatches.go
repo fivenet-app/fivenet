@@ -310,6 +310,11 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 		}
 	}
 
+	s.enricher.EnrichJobName(resp.Dispatch)
+	if resp.Dispatch.Status != nil {
+		s.enricher.EnrichJobName(resp.Dispatch.Status)
+	}
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
 	return resp, nil
@@ -514,14 +519,19 @@ func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispat
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	// TODO ToAdd units should be checked to see if the jobs match with the user's access
+	// Check if units are part of the jobs
+	jobs, err := s.state.GetJobList(ctx, userInfo.Job, userInfo.JobGrade)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	jobs = append(jobs, userInfo.Job)
 
 	expiresAt := time.Time{}
 	if req.Forced == nil || !*req.Forced {
 		expiresAt = s.state.DispatchAssignmentExpirationTime()
 	}
 
-	if err := s.state.UpdateDispatchAssignments(ctx, &userInfo.Job, &userInfo.UserId, dsp.Job, dsp.Id, req.ToAdd, req.ToRemove, expiresAt); err != nil {
+	if err := s.state.UpdateDispatchAssignments(ctx, &userInfo.Job, &userInfo.UserId, dsp.Job, dsp.Id, req.ToAdd, req.ToRemove, expiresAt, jobs); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 

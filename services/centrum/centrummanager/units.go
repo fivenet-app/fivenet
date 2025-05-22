@@ -156,6 +156,11 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, userJob *string, us
 
 	usersToAdd := []*jobs.Colleague{}
 	if len(toAdd) > 0 {
+		users, err := s.retrieveColleagueById(ctx, toAdd...)
+		if err != nil {
+			return err
+		}
+
 		for i := range toAdd {
 			um, ok := s.tracker.GetUserById(toAdd[i])
 			if !ok || um.Hidden {
@@ -172,11 +177,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, userJob *string, us
 				return in.UserId == toAdd[i]
 			}) {
 				continue
-			}
-
-			users, err := s.retrieveColleagueById(ctx, toAdd...)
-			if err != nil {
-				return err
 			}
 
 			if allowedJobs == nil {

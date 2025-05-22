@@ -103,10 +103,12 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		}
 	}
 
-	if in.JobLabel == nil {
-		in.JobLabel = x.JobLabel
-	} else if x.JobLabel != nil {
-		*in.JobLabel = *x.JobLabel
+	if in.JobLabel != nil {
+		if x.JobLabel == nil {
+			x.JobLabel = in.JobLabel
+		} else {
+			*x.JobLabel = *in.JobLabel
+		}
 	}
 
 	return x

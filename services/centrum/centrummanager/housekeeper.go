@@ -261,7 +261,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 	for job, dsps := range assignments {
 		s.logger.Debug("handling dispatch assignment expiration", zap.String("job", job), zap.Int("expired_assignments", len(dsps.List)))
 		for dispatchId, units := range dsps.List {
-			if err := s.UpdateDispatchAssignments(ctx, &job, nil, dsps.Assignment.DispatchJob, dsps.Assignment.DispatchId, nil, units, time.Time{}); err != nil {
+			if err := s.UpdateDispatchAssignments(ctx, &job, nil, dsps.Assignment.DispatchJob, dsps.Assignment.DispatchId, nil, units, time.Time{}, nil); err != nil {
 				return fmt.Errorf("failed to update dispatch %d assignments. %w", dispatchId, err)
 			}
 		}
@@ -617,7 +617,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 							UnitJob: ua.UnitJob,
 						})
 					}
-					if err := s.UpdateDispatchAssignments(ctx, &job, nil, closeByDsp.Job, closeByDsp.Id, nil, toRemove, time.Time{}); err != nil {
+					if err := s.UpdateDispatchAssignments(ctx, &job, nil, closeByDsp.Job, closeByDsp.Id, nil, toRemove, time.Time{}, nil); err != nil {
 						s.logger.Error("failed to remove assigned units from duplicate dispatch", zap.Error(err))
 						return
 					}
@@ -706,7 +706,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 				s.logger.Debug("removing empty unit from dispatch",
 					zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Uint64("dispatch_id", dsp.Id))
 
-				if err := s.UpdateDispatchAssignments(ctx, &job, nil, dsp.Job, dsp.Id, nil, []*centrum.DispatchAssignment{{UnitId: unit.Id, UnitJob: unit.Job}}, time.Time{}); err != nil {
+				if err := s.UpdateDispatchAssignments(ctx, &job, nil, dsp.Job, dsp.Id, nil, []*centrum.DispatchAssignment{{UnitId: unit.Id, UnitJob: unit.Job}}, time.Time{}, nil); err != nil {
 					s.logger.Error("failed to remove empty unit from dispatch",
 						zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Uint64("dispatch_id", dsp.Id), zap.Error(err))
 					continue
