@@ -176,7 +176,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnit
 		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
-	if _, err := s.state.UpdateUnitStatus(ctx, req.Job, unit.Id, &centrum.UnitStatus{
+	if _, err := s.state.UpdateUnitStatus(ctx, unit.Job, unit.Id, &centrum.UnitStatus{
 		UnitId:     unit.Id,
 		UnitJob:    unit.Job,
 		Unit:       unit,

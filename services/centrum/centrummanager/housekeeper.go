@@ -3,6 +3,7 @@ package centrummanager
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"slices"
 	"sync"
@@ -15,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/paulmach/orb"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -214,15 +216,16 @@ type dispatchassignmentExpiration struct {
 func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) error {
 	stmt := tDispatchUnit.
 		SELECT(
-			tDispatchUnit.DispatchID.AS("dispatch_id"),
-			tDispatchUnit.DispatchJob.AS("dispatch_job"),
-			tDispatchUnit.UnitID.AS("unit_id"),
-			tDispatchUnit.UnitJob.AS("unit_job"),
+			tDispatchUnit.DispatchID,
+			tDispatchUnit.DispatchJob,
+			tDispatchUnit.UnitID,
+			tDispatchUnit.UnitJob,
 		).
 		FROM(
 			tDispatchUnit.
 				INNER_JOIN(tUnits,
-					tUnits.ID.EQ(tDispatchUnit.UnitID),
+					tUnits.ID.EQ(tDispatchUnit.UnitID).
+						AND(tUnits.DeletedAt.IS_NULL()),
 				),
 		).
 		WHERE(jet.AND(
@@ -232,7 +235,9 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 
 	var dest []*centrum.DispatchAssignment
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	assignments := map[string]dispatchassignmentExpiration{}
@@ -318,7 +323,9 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		Status     centrum.StatusDispatch
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	s.logger.Debug("canceling expired dispatches", zap.Int("dispatch_count", len(dest)))
@@ -399,7 +406,9 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 		Job        string
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	errs := multierr.Combine()
@@ -743,7 +752,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 
 			s.logger.Debug("setting unit status to unavailable it is empty or static attribute (wrong status)",
 				zap.String("job", job), zap.Uint64("unit_id", unit.Id), zap.Int32p("user_id", userId))
-			if _, err := s.UpdateUnitStatus(ctx, job, unit.Id, &centrum.UnitStatus{
+			if _, err := s.UpdateUnitStatus(ctx, unit.Job, unit.Id, &centrum.UnitStatus{
 				UnitId:  unit.Id,
 				UnitJob: unit.Job,
 				Status:  centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,

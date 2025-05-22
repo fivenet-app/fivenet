@@ -217,8 +217,8 @@ type Dispatch struct {
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Job       string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel  *string                `protobuf:"bytes,18,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	Status    *DispatchStatus        `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	JobLabel  *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	Status    *DispatchStatus        `protobuf:"bytes,6,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	// @sanitize
 	Message string `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
 	// @sanitize
@@ -547,26 +547,27 @@ func (x *DispatchAssignment) GetExpiresAt() *timestamp.Timestamp {
 }
 
 type DispatchStatus struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Id          uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
-	CreatedAt   *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	DispatchId  uint64                 `protobuf:"varint,3,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
-	DispatchJob string                 `protobuf:"bytes,4,opt,name=dispatch_job,json=dispatchJob,proto3" json:"dispatch_job,omitempty"`
-	UnitId      *uint64                `protobuf:"varint,5,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
-	UnitJob     *string                `protobuf:"bytes,6,opt,name=unit_job,json=unitJob,proto3,oneof" json:"unit_job,omitempty"`
-	Unit        *Unit                  `protobuf:"bytes,7,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
-	Status      StatusDispatch         `protobuf:"varint,8,opt,name=status,proto3,enum=resources.centrum.StatusDispatch" json:"status,omitempty"`
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
+	CreatedAt        *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	DispatchId       uint64                 `protobuf:"varint,3,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
+	DispatchJob      string                 `protobuf:"bytes,4,opt,name=dispatch_job,json=dispatchJob,proto3" json:"dispatch_job,omitempty"`
+	DispatchJobLabel *string                `protobuf:"bytes,5,opt,name=dispatch_job_label,json=dispatchJobLabel,proto3,oneof" json:"dispatch_job_label,omitempty"`
+	UnitId           *uint64                `protobuf:"varint,6,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
+	UnitJob          *string                `protobuf:"bytes,7,opt,name=unit_job,json=unitJob,proto3,oneof" json:"unit_job,omitempty"`
+	Unit             *Unit                  `protobuf:"bytes,8,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
+	Status           StatusDispatch         `protobuf:"varint,9,opt,name=status,proto3,enum=resources.centrum.StatusDispatch" json:"status,omitempty"`
 	// @sanitize
-	Reason *string `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Reason *string `protobuf:"bytes,10,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 	// @sanitize
-	Code    *string         `protobuf:"bytes,10,opt,name=code,proto3,oneof" json:"code,omitempty"`
-	UserId  *int32          `protobuf:"varint,11,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	UserJob *string         `protobuf:"bytes,12,opt,name=user_job,json=userJob,proto3,oneof" json:"user_job,omitempty"`
-	User    *jobs.Colleague `protobuf:"bytes,13,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	X       *float64        `protobuf:"fixed64,14,opt,name=x,proto3,oneof" json:"x,omitempty"`
-	Y       *float64        `protobuf:"fixed64,15,opt,name=y,proto3,oneof" json:"y,omitempty"`
+	Code    *string         `protobuf:"bytes,11,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	UserId  *int32          `protobuf:"varint,12,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	UserJob *string         `protobuf:"bytes,13,opt,name=user_job,json=userJob,proto3,oneof" json:"user_job,omitempty"`
+	User    *jobs.Colleague `protobuf:"bytes,14,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	X       *float64        `protobuf:"fixed64,15,opt,name=x,proto3,oneof" json:"x,omitempty"`
+	Y       *float64        `protobuf:"fixed64,16,opt,name=y,proto3,oneof" json:"y,omitempty"`
 	// @sanitize
-	Postal        *string `protobuf:"bytes,16,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	Postal        *string `protobuf:"bytes,17,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -625,6 +626,13 @@ func (x *DispatchStatus) GetDispatchId() uint64 {
 func (x *DispatchStatus) GetDispatchJob() string {
 	if x != nil {
 		return x.DispatchJob
+	}
+	return ""
+}
+
+func (x *DispatchStatus) GetDispatchJobLabel() string {
+	if x != nil && x.DispatchJobLabel != nil {
+		return *x.DispatchJobLabel
 	}
 	return ""
 }
@@ -830,8 +838,8 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12)\n" +
-	"\tjob_label\x18\x12 \x01(\tB\a\xfaB\x04r\x02\x182H\x02R\bjobLabel\x88\x01\x01\x12>\n" +
-	"\x06status\x18\x05 \x01(\v2!.resources.centrum.DispatchStatusH\x03R\x06status\x88\x01\x01\x12\"\n" +
+	"\tjob_label\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x182H\x02R\bjobLabel\x88\x01\x01\x12>\n" +
+	"\x06status\x18\x06 \x01(\v2!.resources.centrum.DispatchStatusH\x03R\x06status\x88\x01\x01\x12\"\n" +
 	"\amessage\x18\a \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\amessage\x12/\n" +
 	"\vdescription\x18\b \x01(\tB\b\xfaB\x05r\x03\x18\x80\bH\x04R\vdescription\x88\x01\x01\x12J\n" +
 	"\n" +
@@ -882,29 +890,31 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"expires_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01B\a\n" +
 	"\x05_unitB\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_expires_at\"\x86\x06\n" +
+	"\v_expires_at\"\xd9\x06\n" +
 	"\x0eDispatchStatus\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x1f\n" +
 	"\vdispatch_id\x18\x03 \x01(\x04R\n" +
 	"dispatchId\x12*\n" +
-	"\fdispatch_job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\vdispatchJob\x12\x1c\n" +
-	"\aunit_id\x18\x05 \x01(\x04H\x01R\x06unitId\x88\x01\x01\x12'\n" +
-	"\bunit_job\x18\x06 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x02R\aunitJob\x88\x01\x01\x120\n" +
-	"\x04unit\x18\a \x01(\v2\x17.resources.centrum.UnitH\x03R\x04unit\x88\x01\x01\x12C\n" +
-	"\x06status\x18\b \x01(\x0e2!.resources.centrum.StatusDispatchB\b\xfaB\x05\x82\x01\x02\x10\x01R\x06status\x12%\n" +
-	"\x06reason\x18\t \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x04R\x06reason\x88\x01\x01\x12 \n" +
-	"\x04code\x18\n" +
-	" \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x05R\x04code\x88\x01\x01\x12%\n" +
-	"\auser_id\x18\v \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x06R\x06userId\x88\x01\x01\x12'\n" +
-	"\buser_job\x18\f \x01(\tB\a\xfaB\x04r\x02\x18\x14H\aR\auserJob\x88\x01\x01\x122\n" +
-	"\x04user\x18\r \x01(\v2\x19.resources.jobs.ColleagueH\bR\x04user\x88\x01\x01\x12\x11\n" +
-	"\x01x\x18\x0e \x01(\x01H\tR\x01x\x88\x01\x01\x12\x11\n" +
-	"\x01y\x18\x0f \x01(\x01H\n" +
-	"R\x01y\x88\x01\x01\x12$\n" +
-	"\x06postal\x18\x10 \x01(\tB\a\xfaB\x04r\x02\x180H\vR\x06postal\x88\x01\x01B\r\n" +
-	"\v_created_atB\n" +
+	"\fdispatch_job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\vdispatchJob\x12:\n" +
+	"\x12dispatch_job_label\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x182H\x01R\x10dispatchJobLabel\x88\x01\x01\x12\x1c\n" +
+	"\aunit_id\x18\x06 \x01(\x04H\x02R\x06unitId\x88\x01\x01\x12'\n" +
+	"\bunit_job\x18\a \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x03R\aunitJob\x88\x01\x01\x120\n" +
+	"\x04unit\x18\b \x01(\v2\x17.resources.centrum.UnitH\x04R\x04unit\x88\x01\x01\x12C\n" +
+	"\x06status\x18\t \x01(\x0e2!.resources.centrum.StatusDispatchB\b\xfaB\x05\x82\x01\x02\x10\x01R\x06status\x12%\n" +
+	"\x06reason\x18\n" +
+	" \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x05R\x06reason\x88\x01\x01\x12 \n" +
+	"\x04code\x18\v \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x06R\x04code\x88\x01\x01\x12%\n" +
+	"\auser_id\x18\f \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\aR\x06userId\x88\x01\x01\x12'\n" +
+	"\buser_job\x18\r \x01(\tB\a\xfaB\x04r\x02\x18\x14H\bR\auserJob\x88\x01\x01\x122\n" +
+	"\x04user\x18\x0e \x01(\v2\x19.resources.jobs.ColleagueH\tR\x04user\x88\x01\x01\x12\x11\n" +
+	"\x01x\x18\x0f \x01(\x01H\n" +
+	"R\x01x\x88\x01\x01\x12\x11\n" +
+	"\x01y\x18\x10 \x01(\x01H\vR\x01y\x88\x01\x01\x12$\n" +
+	"\x06postal\x18\x11 \x01(\tB\a\xfaB\x04r\x02\x180H\fR\x06postal\x88\x01\x01B\r\n" +
+	"\v_created_atB\x15\n" +
+	"\x13_dispatch_job_labelB\n" +
 	"\n" +
 	"\b_unit_idB\v\n" +
 	"\t_unit_jobB\a\n" +

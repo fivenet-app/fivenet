@@ -37,8 +37,11 @@ func (s *State) GetDisponentsJobs(ctx context.Context) []string {
 }
 
 func (s *State) UpdateDisponents(ctx context.Context, job string, disponents []*jobs.Colleague) error {
-	return s.disponents.Put(ctx, job, &centrum.Disponents{
+	d := &centrum.Disponents{
 		Job:        job,
 		Disponents: disponents,
-	})
+	}
+	s.enricher.EnrichJobName(d)
+
+	return s.disponents.Put(ctx, job, d)
 }

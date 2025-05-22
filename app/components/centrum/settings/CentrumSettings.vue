@@ -303,7 +303,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         >
                                             <template #label>
                                                 <span class="truncate">{{
-                                                    $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
+                                                    $t(`enums.centrum.CentrumMode.${CentrumMode[state.fallbackMode ?? 0]}`)
                                                 }}</span>
                                             </template>
 

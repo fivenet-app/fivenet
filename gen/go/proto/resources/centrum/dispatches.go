@@ -13,6 +13,10 @@ func DispatchPointMatchFn(dspId uint64) func(p orb.Pointer) bool {
 	}
 }
 
+func (x *Dispatch) SetJobLabel(label string) {
+	x.JobLabel = &label
+}
+
 func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 	if x.Id != in.Id {
 		return x
@@ -99,6 +103,12 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		}
 	}
 
+	if in.JobLabel == nil {
+		in.JobLabel = x.JobLabel
+	} else if x.JobLabel != nil {
+		*in.JobLabel = *x.JobLabel
+	}
+
 	return x
 }
 
@@ -112,6 +122,14 @@ func (x *DispatchStatus) Point() orb.Point {
 	}
 
 	return orb.Point{*x.X, *x.Y}
+}
+
+func (x *DispatchStatus) GetJob() string {
+	return x.DispatchJob
+}
+
+func (x *DispatchStatus) SetJobLabel(label string) {
+	x.DispatchJobLabel = &label
 }
 
 func (x *DispatchReferences) Has(dspId uint64) bool {

@@ -65,6 +65,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, unitJob string, unitId u
 			in.Postal = um.Postal
 		}
 	}
+
 	if in.CreatorId != nil {
 		// If the creator of the status is the same as the user, no need to query the db
 		if in.UserId != nil && *in.CreatorId == *in.UserId {
@@ -83,6 +84,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, unitJob string, unitId u
 		return nil, err
 	}
 	in.Id = uint64(status.Id)
+	s.enricher.EnrichJobName(in)
 
 	if err := s.State.UpdateUnitStatus(ctx, unitJob, in.UnitId, in); err != nil {
 		return nil, err
@@ -360,7 +362,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, userJob *string, us
 	return nil
 }
 
-func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit) (*centrum.Unit, error) {
+func (s *Manager) CreateUnit(ctx context.Context, unitJob string, unit *centrum.Unit) (*centrum.Unit, error) {
 	if unit.Access == nil {
 		unit.Access = &centrum.UnitAccess{}
 	}
@@ -386,7 +388,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 			tUnits.HomePostal,
 		).
 		VALUES(
-			job,
+			unitJob,
 			unit.Name,
 			unit.Initials,
 			unit.Color,
@@ -407,7 +409,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 	unit.Id = uint64(lastId)
 
 	// A new unit doesn't have a status, so we make sure to add one
-	if unit.Status, err = s.AddUnitStatus(ctx, tx, job, &centrum.UnitStatus{
+	if unit.Status, err = s.AddUnitStatus(ctx, tx, unitJob, &centrum.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    unit.Id,
 		UnitJob:   unit.Job,
@@ -435,7 +437,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, err
 	}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job), data); err != nil {
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, unitJob), data); err != nil {
 		return nil, err
 	}
 
@@ -567,6 +569,7 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, unitJob string, 
 	if newStatus != nil && newStatus.CreatedAt == nil {
 		newStatus.CreatedAt = timestamp.Now()
 	}
+	s.enricher.EnrichJobName(newStatus)
 
 	if publish {
 		data, err := proto.Marshal(status)
@@ -704,8 +707,8 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, unitId uint6
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		LIMIT(1)
 
-	var dest centrum.UnitStatus
-	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
+	dest := &centrum.UnitStatus{}
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		} else {
@@ -713,7 +716,9 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, unitId uint6
 		}
 	}
 
-	return &dest, nil
+	s.enricher.EnrichJobName(dest)
+
+	return dest, nil
 }
 
 func (s *Manager) DeleteUnit(ctx context.Context, unitJob string, unitId uint64) error {

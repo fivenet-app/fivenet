@@ -928,6 +928,21 @@ func (m *DispatchStatus) validate(all bool) error {
 
 	}
 
+	if m.DispatchJobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetDispatchJobLabel()) > 50 {
+			err := DispatchStatusValidationError{
+				field:  "DispatchJobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.UnitId != nil {
 		// no validation rules for UnitId
 	}

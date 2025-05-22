@@ -9,5 +9,6 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 
 message Disponents {
   string job = 1 [(validate.rules).string.max_len = 20];
-  repeated resources.jobs.Colleague disponents = 2;
+  optional string job_label = 2 [(validate.rules).string.max_len = 50];
+  repeated resources.jobs.Colleague disponents = 3;
 }

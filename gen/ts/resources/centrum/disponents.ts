@@ -20,7 +20,11 @@ export interface Disponents {
      */
     job: string;
     /**
-     * @generated from protobuf field: repeated resources.jobs.Colleague disponents = 2;
+     * @generated from protobuf field: optional string job_label = 2;
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.Colleague disponents = 3;
      */
     disponents: Colleague[];
 }
@@ -29,7 +33,8 @@ class Disponents$Type extends MessageType<Disponents> {
     constructor() {
         super("resources.centrum.Disponents", [
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 2, name: "disponents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague }
+            { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 3, name: "disponents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<Disponents>): Disponents {
@@ -48,7 +53,10 @@ class Disponents$Type extends MessageType<Disponents> {
                 case /* string job */ 1:
                     message.job = reader.string();
                     break;
-                case /* repeated resources.jobs.Colleague disponents */ 2:
+                case /* optional string job_label */ 2:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* repeated resources.jobs.Colleague disponents */ 3:
                     message.disponents.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -66,9 +74,12 @@ class Disponents$Type extends MessageType<Disponents> {
         /* string job = 1; */
         if (message.job !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.job);
-        /* repeated resources.jobs.Colleague disponents = 2; */
+        /* optional string job_label = 2; */
+        if (message.jobLabel !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
+        /* repeated resources.jobs.Colleague disponents = 3; */
         for (let i = 0; i < message.disponents.length; i++)
-            Colleague.internalBinaryWrite(message.disponents[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.disponents[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

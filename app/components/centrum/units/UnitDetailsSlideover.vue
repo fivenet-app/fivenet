@@ -169,6 +169,21 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.access') }}
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <AccessBadges
+                                :access-level="UnitAccessLevel"
+                                :jobs="unit.access?.jobs"
+                                :qualifications="unit.access?.qualifications"
+                                i18n-key="enums.centrum"
+                                i18n-access-level-key="UnitAccessLevel"
+                            />
+                        </dd>
+                    </div>
+
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
                             {{ $t('common.members') }}
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -210,23 +225,10 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                         </dd>
                     </div>
 
-                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
-                            {{ $t('common.access') }}
-                        </dt>
-                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <AccessBadges
-                                :access-level="UnitAccessLevel"
-                                :jobs="unit.access?.jobs"
-                                :qualifications="unit.access?.qualifications"
-                                i18n-key="enums.centrum"
-                                i18n-access-level-key="UnitAccessLevel"
-                            />
-                        </dd>
+                    <div v-if="isOpen">
+                        <UnitFeed :unit-id="unit.id" />
                     </div>
                 </dl>
-
-                <UnitFeed v-if="isOpen" :unit-id="unit.id" />
             </div>
 
             <template #footer>

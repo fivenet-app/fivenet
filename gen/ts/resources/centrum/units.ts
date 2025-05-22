@@ -35,35 +35,35 @@ export interface Unit {
      */
     job: string;
     /**
-     * @generated from protobuf field: optional string job_label = 15;
+     * @generated from protobuf field: optional string job_label = 5;
      */
     jobLabel?: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string name = 5;
+     * @generated from protobuf field: string name = 6;
      */
     name: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string initials = 6;
+     * @generated from protobuf field: string initials = 7;
      */
     initials: string;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string color = 7;
+     * @generated from protobuf field: string color = 8;
      */
     color: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string description = 8;
+     * @generated from protobuf field: optional string description = 9;
      */
     description?: string;
     /**
-     * @generated from protobuf field: optional resources.centrum.UnitStatus status = 9;
+     * @generated from protobuf field: optional resources.centrum.UnitStatus status = 10;
      */
     status?: UnitStatus;
     /**
@@ -150,61 +150,65 @@ export interface UnitStatus {
      */
     unitJob: string;
     /**
-     * @generated from protobuf field: optional resources.centrum.Unit unit = 5;
+     * @generated from protobuf field: optional string unit_job_label = 5;
+     */
+    unitJobLabel?: string;
+    /**
+     * @generated from protobuf field: optional resources.centrum.Unit unit = 6;
      */
     unit?: Unit;
     /**
-     * @generated from protobuf field: resources.centrum.StatusUnit status = 6;
+     * @generated from protobuf field: resources.centrum.StatusUnit status = 7;
      */
     status: StatusUnit;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string reason = 7;
+     * @generated from protobuf field: optional string reason = 8;
      */
     reason?: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string code = 8;
+     * @generated from protobuf field: optional string code = 9;
      */
     code?: string;
     /**
-     * @generated from protobuf field: optional int32 user_id = 9;
+     * @generated from protobuf field: optional int32 user_id = 10;
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional string user_job = 10;
+     * @generated from protobuf field: optional string user_job = 11;
      */
     userJob?: string;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague user = 11;
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 12;
      */
     user?: Colleague;
     /**
-     * @generated from protobuf field: optional double x = 12;
+     * @generated from protobuf field: optional double x = 13;
      */
     x?: number;
     /**
-     * @generated from protobuf field: optional double y = 13;
+     * @generated from protobuf field: optional double y = 14;
      */
     y?: number;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string postal = 14;
+     * @generated from protobuf field: optional string postal = 15;
      */
     postal?: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 15;
+     * @generated from protobuf field: optional int32 creator_id = 16;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional string creator_job = 16;
+     * @generated from protobuf field: optional string creator_job = 17;
      */
     creatorJob?: string;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague creator = 17;
+     * @generated from protobuf field: optional resources.jobs.Colleague creator = 18;
      */
     creator?: Colleague;
 }
@@ -253,12 +257,12 @@ class Unit$Type extends MessageType<Unit> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 15, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24" } } } },
-            { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
-            { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
-            { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 9, name: "status", kind: "message", T: () => UnitStatus },
+            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24" } } } },
+            { no: 7, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
+            { no: 8, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 9, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 10, name: "status", kind: "message", T: () => UnitStatus },
             { no: 11, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment },
             { no: 12, name: "attributes", kind: "message", T: () => UnitAttributes },
             { no: 13, name: "home_postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
@@ -294,22 +298,22 @@ class Unit$Type extends MessageType<Unit> {
                 case /* string job */ 4:
                     message.job = reader.string();
                     break;
-                case /* optional string job_label */ 15:
+                case /* optional string job_label */ 5:
                     message.jobLabel = reader.string();
                     break;
-                case /* string name */ 5:
+                case /* string name */ 6:
                     message.name = reader.string();
                     break;
-                case /* string initials */ 6:
+                case /* string initials */ 7:
                     message.initials = reader.string();
                     break;
-                case /* string color */ 7:
+                case /* string color */ 8:
                     message.color = reader.string();
                     break;
-                case /* optional string description */ 8:
+                case /* optional string description */ 9:
                     message.description = reader.string();
                     break;
-                case /* optional resources.centrum.UnitStatus status */ 9:
+                case /* optional resources.centrum.UnitStatus status */ 10:
                     message.status = UnitStatus.internalBinaryRead(reader, reader.uint32(), options, message.status);
                     break;
                 case /* repeated resources.centrum.UnitAssignment users */ 11:
@@ -348,21 +352,24 @@ class Unit$Type extends MessageType<Unit> {
         /* string job = 4; */
         if (message.job !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* string name = 5; */
+        /* optional string job_label = 5; */
+        if (message.jobLabel !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
+        /* string name = 6; */
         if (message.name !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.name);
-        /* string initials = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.name);
+        /* string initials = 7; */
         if (message.initials !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.initials);
-        /* string color = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.initials);
+        /* string color = 8; */
         if (message.color !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.color);
-        /* optional string description = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.color);
+        /* optional string description = 9; */
         if (message.description !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.description);
-        /* optional resources.centrum.UnitStatus status = 9; */
+            writer.tag(9, WireType.LengthDelimited).string(message.description);
+        /* optional resources.centrum.UnitStatus status = 10; */
         if (message.status)
-            UnitStatus.internalBinaryWrite(message.status, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+            UnitStatus.internalBinaryWrite(message.status, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         /* repeated resources.centrum.UnitAssignment users = 11; */
         for (let i = 0; i < message.users.length; i++)
             UnitAssignment.internalBinaryWrite(message.users[i], writer.tag(11, WireType.LengthDelimited).fork(), options).join();
@@ -375,9 +382,6 @@ class Unit$Type extends MessageType<Unit> {
         /* resources.centrum.UnitAccess access = 14; */
         if (message.access)
             UnitAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* optional string job_label = 15; */
-        if (message.jobLabel !== undefined)
-            writer.tag(15, WireType.LengthDelimited).string(message.jobLabel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -544,19 +548,20 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "unit_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "unit", kind: "message", T: () => Unit },
-            { no: 6, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 8, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 9, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 10, name: "user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 11, name: "user", kind: "message", T: () => Colleague },
-            { no: 12, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 13, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 14, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
-            { no: 15, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 16, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 17, name: "creator", kind: "message", T: () => Colleague }
+            { no: 5, name: "unit_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "unit", kind: "message", T: () => Unit },
+            { no: 7, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 8, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 9, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 10, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 11, name: "user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 12, name: "user", kind: "message", T: () => Colleague },
+            { no: 13, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 14, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 15, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 16, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 17, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 18, name: "creator", kind: "message", T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<UnitStatus>): UnitStatus {
@@ -586,43 +591,46 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
                 case /* string unit_job */ 4:
                     message.unitJob = reader.string();
                     break;
-                case /* optional resources.centrum.Unit unit */ 5:
+                case /* optional string unit_job_label */ 5:
+                    message.unitJobLabel = reader.string();
+                    break;
+                case /* optional resources.centrum.Unit unit */ 6:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
                     break;
-                case /* resources.centrum.StatusUnit status */ 6:
+                case /* resources.centrum.StatusUnit status */ 7:
                     message.status = reader.int32();
                     break;
-                case /* optional string reason */ 7:
+                case /* optional string reason */ 8:
                     message.reason = reader.string();
                     break;
-                case /* optional string code */ 8:
+                case /* optional string code */ 9:
                     message.code = reader.string();
                     break;
-                case /* optional int32 user_id */ 9:
+                case /* optional int32 user_id */ 10:
                     message.userId = reader.int32();
                     break;
-                case /* optional string user_job */ 10:
+                case /* optional string user_job */ 11:
                     message.userJob = reader.string();
                     break;
-                case /* optional resources.jobs.Colleague user */ 11:
+                case /* optional resources.jobs.Colleague user */ 12:
                     message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional double x */ 12:
+                case /* optional double x */ 13:
                     message.x = reader.double();
                     break;
-                case /* optional double y */ 13:
+                case /* optional double y */ 14:
                     message.y = reader.double();
                     break;
-                case /* optional string postal */ 14:
+                case /* optional string postal */ 15:
                     message.postal = reader.string();
                     break;
-                case /* optional int32 creator_id */ 15:
+                case /* optional int32 creator_id */ 16:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional string creator_job */ 16:
+                case /* optional string creator_job */ 17:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional resources.jobs.Colleague creator */ 17:
+                case /* optional resources.jobs.Colleague creator */ 18:
                     message.creator = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 default:
@@ -649,45 +657,48 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
         /* string unit_job = 4; */
         if (message.unitJob !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.unitJob);
-        /* optional resources.centrum.Unit unit = 5; */
+        /* optional string unit_job_label = 5; */
+        if (message.unitJobLabel !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.unitJobLabel);
+        /* optional resources.centrum.Unit unit = 6; */
         if (message.unit)
-            Unit.internalBinaryWrite(message.unit, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.StatusUnit status = 6; */
+            Unit.internalBinaryWrite(message.unit, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.StatusUnit status = 7; */
         if (message.status !== 0)
-            writer.tag(6, WireType.Varint).int32(message.status);
-        /* optional string reason = 7; */
+            writer.tag(7, WireType.Varint).int32(message.status);
+        /* optional string reason = 8; */
         if (message.reason !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.reason);
-        /* optional string code = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.reason);
+        /* optional string code = 9; */
         if (message.code !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.code);
-        /* optional int32 user_id = 9; */
+            writer.tag(9, WireType.LengthDelimited).string(message.code);
+        /* optional int32 user_id = 10; */
         if (message.userId !== undefined)
-            writer.tag(9, WireType.Varint).int32(message.userId);
-        /* optional string user_job = 10; */
+            writer.tag(10, WireType.Varint).int32(message.userId);
+        /* optional string user_job = 11; */
         if (message.userJob !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.userJob);
-        /* optional resources.jobs.Colleague user = 11; */
+            writer.tag(11, WireType.LengthDelimited).string(message.userJob);
+        /* optional resources.jobs.Colleague user = 12; */
         if (message.user)
-            Colleague.internalBinaryWrite(message.user, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional double x = 12; */
+            Colleague.internalBinaryWrite(message.user, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional double x = 13; */
         if (message.x !== undefined)
-            writer.tag(12, WireType.Bit64).double(message.x);
-        /* optional double y = 13; */
+            writer.tag(13, WireType.Bit64).double(message.x);
+        /* optional double y = 14; */
         if (message.y !== undefined)
-            writer.tag(13, WireType.Bit64).double(message.y);
-        /* optional string postal = 14; */
+            writer.tag(14, WireType.Bit64).double(message.y);
+        /* optional string postal = 15; */
         if (message.postal !== undefined)
-            writer.tag(14, WireType.LengthDelimited).string(message.postal);
-        /* optional int32 creator_id = 15; */
+            writer.tag(15, WireType.LengthDelimited).string(message.postal);
+        /* optional int32 creator_id = 16; */
         if (message.creatorId !== undefined)
-            writer.tag(15, WireType.Varint).int32(message.creatorId);
-        /* optional string creator_job = 16; */
+            writer.tag(16, WireType.Varint).int32(message.creatorId);
+        /* optional string creator_job = 17; */
         if (message.creatorJob !== undefined)
-            writer.tag(16, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional resources.jobs.Colleague creator = 17; */
+            writer.tag(17, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional resources.jobs.Colleague creator = 18; */
         if (message.creator)
-            Colleague.internalBinaryWrite(message.creator, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.creator, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -1333,6 +1333,7 @@
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `dispatch_id` | [uint64](#uint64) |  |  |
 | `dispatch_job` | [string](#string) |  |  |
+| `dispatch_job_label` | [string](#string) | optional |  |
 | `unit_id` | [uint64](#uint64) | optional |  |
 | `unit_job` | [string](#string) | optional |  |
 | `unit` | [Unit](#resources-centrum-Unit) | optional |  |
@@ -1428,6 +1429,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
 | `disponents` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
 
 
@@ -1613,6 +1615,7 @@
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `unit_id` | [uint64](#uint64) |  |  |
 | `unit_job` | [string](#string) |  |  |
+| `unit_job_label` | [string](#string) | optional |  |
 | `unit` | [Unit](#resources-centrum-Unit) | optional |  |
 | `status` | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
 | `reason` | [string](#string) | optional | @sanitize |

@@ -36,11 +36,11 @@ export interface Dispatch {
      */
     job: string;
     /**
-     * @generated from protobuf field: optional string job_label = 18;
+     * @generated from protobuf field: optional string job_label = 5;
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: optional resources.centrum.DispatchStatus status = 5;
+     * @generated from protobuf field: optional resources.centrum.DispatchStatus status = 6;
      */
     status?: DispatchStatus;
     /**
@@ -169,57 +169,61 @@ export interface DispatchStatus {
      */
     dispatchJob: string;
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 5;
+     * @generated from protobuf field: optional string dispatch_job_label = 5;
+     */
+    dispatchJobLabel?: string;
+    /**
+     * @generated from protobuf field: optional uint64 unit_id = 6;
      */
     unitId?: number;
     /**
-     * @generated from protobuf field: optional string unit_job = 6;
+     * @generated from protobuf field: optional string unit_job = 7;
      */
     unitJob?: string;
     /**
-     * @generated from protobuf field: optional resources.centrum.Unit unit = 7;
+     * @generated from protobuf field: optional resources.centrum.Unit unit = 8;
      */
     unit?: Unit;
     /**
-     * @generated from protobuf field: resources.centrum.StatusDispatch status = 8;
+     * @generated from protobuf field: resources.centrum.StatusDispatch status = 9;
      */
     status: StatusDispatch;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string reason = 9;
+     * @generated from protobuf field: optional string reason = 10;
      */
     reason?: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string code = 10;
+     * @generated from protobuf field: optional string code = 11;
      */
     code?: string;
     /**
-     * @generated from protobuf field: optional int32 user_id = 11;
+     * @generated from protobuf field: optional int32 user_id = 12;
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional string user_job = 12;
+     * @generated from protobuf field: optional string user_job = 13;
      */
     userJob?: string;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague user = 13;
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 14;
      */
     user?: Colleague;
     /**
-     * @generated from protobuf field: optional double x = 14;
+     * @generated from protobuf field: optional double x = 15;
      */
     x?: number;
     /**
-     * @generated from protobuf field: optional double y = 15;
+     * @generated from protobuf field: optional double y = 16;
      */
     y?: number;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string postal = 16;
+     * @generated from protobuf field: optional string postal = 17;
      */
     postal?: string;
 }
@@ -362,8 +366,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 18, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
+            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "status", kind: "message", T: () => DispatchStatus },
             { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 9, name: "attributes", kind: "message", T: () => DispatchAttributes },
@@ -407,10 +411,10 @@ class Dispatch$Type extends MessageType<Dispatch> {
                 case /* string job */ 4:
                     message.job = reader.string();
                     break;
-                case /* optional string job_label */ 18:
+                case /* optional string job_label */ 5:
                     message.jobLabel = reader.string();
                     break;
-                case /* optional resources.centrum.DispatchStatus status */ 5:
+                case /* optional resources.centrum.DispatchStatus status */ 6:
                     message.status = DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, message.status);
                     break;
                 case /* string message */ 7:
@@ -470,9 +474,12 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* string job = 4; */
         if (message.job !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* optional resources.centrum.DispatchStatus status = 5; */
+        /* optional string job_label = 5; */
+        if (message.jobLabel !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
+        /* optional resources.centrum.DispatchStatus status = 6; */
         if (message.status)
-            DispatchStatus.internalBinaryWrite(message.status, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+            DispatchStatus.internalBinaryWrite(message.status, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* string message = 7; */
         if (message.message !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.message);
@@ -506,9 +513,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* optional resources.centrum.DispatchReferences references = 17; */
         if (message.references)
             DispatchReferences.internalBinaryWrite(message.references, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
-        /* optional string job_label = 18; */
-        if (message.jobLabel !== undefined)
-            writer.tag(18, WireType.LengthDelimited).string(message.jobLabel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -689,18 +693,19 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "dispatch_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 6, name: "unit_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 7, name: "unit", kind: "message", T: () => Unit },
-            { no: 8, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 10, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 11, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 12, name: "user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 13, name: "user", kind: "message", T: () => Colleague },
-            { no: 14, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 15, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 16, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
+            { no: 5, name: "dispatch_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 7, name: "unit_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 8, name: "unit", kind: "message", T: () => Unit },
+            { no: 9, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 10, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 11, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 12, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 13, name: "user_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 14, name: "user", kind: "message", T: () => Colleague },
+            { no: 15, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 16, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 17, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
         ]);
     }
     create(value?: PartialMessage<DispatchStatus>): DispatchStatus {
@@ -730,40 +735,43 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
                 case /* string dispatch_job */ 4:
                     message.dispatchJob = reader.string();
                     break;
-                case /* optional uint64 unit_id */ 5:
+                case /* optional string dispatch_job_label */ 5:
+                    message.dispatchJobLabel = reader.string();
+                    break;
+                case /* optional uint64 unit_id */ 6:
                     message.unitId = reader.uint64().toNumber();
                     break;
-                case /* optional string unit_job */ 6:
+                case /* optional string unit_job */ 7:
                     message.unitJob = reader.string();
                     break;
-                case /* optional resources.centrum.Unit unit */ 7:
+                case /* optional resources.centrum.Unit unit */ 8:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
                     break;
-                case /* resources.centrum.StatusDispatch status */ 8:
+                case /* resources.centrum.StatusDispatch status */ 9:
                     message.status = reader.int32();
                     break;
-                case /* optional string reason */ 9:
+                case /* optional string reason */ 10:
                     message.reason = reader.string();
                     break;
-                case /* optional string code */ 10:
+                case /* optional string code */ 11:
                     message.code = reader.string();
                     break;
-                case /* optional int32 user_id */ 11:
+                case /* optional int32 user_id */ 12:
                     message.userId = reader.int32();
                     break;
-                case /* optional string user_job */ 12:
+                case /* optional string user_job */ 13:
                     message.userJob = reader.string();
                     break;
-                case /* optional resources.jobs.Colleague user */ 13:
+                case /* optional resources.jobs.Colleague user */ 14:
                     message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional double x */ 14:
+                case /* optional double x */ 15:
                     message.x = reader.double();
                     break;
-                case /* optional double y */ 15:
+                case /* optional double y */ 16:
                     message.y = reader.double();
                     break;
-                case /* optional string postal */ 16:
+                case /* optional string postal */ 17:
                     message.postal = reader.string();
                     break;
                 default:
@@ -790,42 +798,45 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
         /* string dispatch_job = 4; */
         if (message.dispatchJob !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.dispatchJob);
-        /* optional uint64 unit_id = 5; */
+        /* optional string dispatch_job_label = 5; */
+        if (message.dispatchJobLabel !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.dispatchJobLabel);
+        /* optional uint64 unit_id = 6; */
         if (message.unitId !== undefined)
-            writer.tag(5, WireType.Varint).uint64(message.unitId);
-        /* optional string unit_job = 6; */
+            writer.tag(6, WireType.Varint).uint64(message.unitId);
+        /* optional string unit_job = 7; */
         if (message.unitJob !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.unitJob);
-        /* optional resources.centrum.Unit unit = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.unitJob);
+        /* optional resources.centrum.Unit unit = 8; */
         if (message.unit)
-            Unit.internalBinaryWrite(message.unit, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.StatusDispatch status = 8; */
+            Unit.internalBinaryWrite(message.unit, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.StatusDispatch status = 9; */
         if (message.status !== 0)
-            writer.tag(8, WireType.Varint).int32(message.status);
-        /* optional string reason = 9; */
+            writer.tag(9, WireType.Varint).int32(message.status);
+        /* optional string reason = 10; */
         if (message.reason !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.reason);
-        /* optional string code = 10; */
+            writer.tag(10, WireType.LengthDelimited).string(message.reason);
+        /* optional string code = 11; */
         if (message.code !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.code);
-        /* optional int32 user_id = 11; */
+            writer.tag(11, WireType.LengthDelimited).string(message.code);
+        /* optional int32 user_id = 12; */
         if (message.userId !== undefined)
-            writer.tag(11, WireType.Varint).int32(message.userId);
-        /* optional string user_job = 12; */
+            writer.tag(12, WireType.Varint).int32(message.userId);
+        /* optional string user_job = 13; */
         if (message.userJob !== undefined)
-            writer.tag(12, WireType.LengthDelimited).string(message.userJob);
-        /* optional resources.jobs.Colleague user = 13; */
+            writer.tag(13, WireType.LengthDelimited).string(message.userJob);
+        /* optional resources.jobs.Colleague user = 14; */
         if (message.user)
-            Colleague.internalBinaryWrite(message.user, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        /* optional double x = 14; */
+            Colleague.internalBinaryWrite(message.user, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* optional double x = 15; */
         if (message.x !== undefined)
-            writer.tag(14, WireType.Bit64).double(message.x);
-        /* optional double y = 15; */
+            writer.tag(15, WireType.Bit64).double(message.x);
+        /* optional double y = 16; */
         if (message.y !== undefined)
-            writer.tag(15, WireType.Bit64).double(message.y);
-        /* optional string postal = 16; */
+            writer.tag(16, WireType.Bit64).double(message.y);
+        /* optional string postal = 17; */
         if (message.postal !== undefined)
-            writer.tag(16, WireType.LengthDelimited).string(message.postal);
+            writer.tag(17, WireType.LengthDelimited).string(message.postal);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

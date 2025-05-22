@@ -15,25 +15,25 @@ message Unit {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
-  optional string job_label = 15 [(validate.rules).string.max_len = 50];
+  optional string job_label = 5 [(validate.rules).string.max_len = 50];
   // @sanitize
-  string name = 5 [(validate.rules).string = {
+  string name = 6 [(validate.rules).string = {
     min_len: 3,
     max_len: 24
   }];
   // @sanitize
-  string initials = 6 [(validate.rules).string = {
+  string initials = 7 [(validate.rules).string = {
     min_len: 2,
     max_len: 4
   }];
   // @sanitize: method=StripTags
-  string color = 7 [(validate.rules).string = {
+  string color = 8 [(validate.rules).string = {
     len: 7,
     pattern: "^#[A-Fa-f0-9]{6}$",
   }];
   // @sanitize
-  optional string description = 8 [(validate.rules).string.max_len = 255];
-  optional UnitStatus status = 9;
+  optional string description = 9 [(validate.rules).string.max_len = 255];
+  optional UnitStatus status = 10;
   repeated UnitAssignment users = 11;
   optional UnitAttributes attributes = 12;
   optional string home_postal = 13 [(validate.rules).string.max_len = 48];
@@ -71,20 +71,21 @@ message UnitStatus {
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 unit_id = 3;
   string unit_job = 4 [(validate.rules).string.max_len = 20];
-  optional resources.centrum.Unit unit = 5;
-  StatusUnit status = 6 [(validate.rules).enum.defined_only = true];
+  optional string unit_job_label = 5 [(validate.rules).string.max_len = 50];
+  optional resources.centrum.Unit unit = 6;
+  StatusUnit status = 7 [(validate.rules).enum.defined_only = true];
   // @sanitize
-  optional string reason = 7 [(validate.rules).string.max_len = 255];
+  optional string reason = 8 [(validate.rules).string.max_len = 255];
   // @sanitize
-  optional string code = 8 [(validate.rules).string.max_len = 20];
-  optional int32 user_id = 9 [(validate.rules).int32.gt = 0];
-  optional string user_job = 10 [(validate.rules).string.max_len = 20];
-  optional resources.jobs.Colleague user = 11;
-  optional double x = 12;
-  optional double y = 13;
+  optional string code = 9 [(validate.rules).string.max_len = 20];
+  optional int32 user_id = 10 [(validate.rules).int32.gt = 0];
+  optional string user_job = 11 [(validate.rules).string.max_len = 20];
+  optional resources.jobs.Colleague user = 12;
+  optional double x = 13;
+  optional double y = 14;
   // @sanitize
-  optional string postal = 14 [(validate.rules).string.max_len = 48];
-  optional int32 creator_id = 15 [(validate.rules).int32.gt = 0];
-  optional string creator_job = 16 [(validate.rules).string.max_len = 20];
-  optional resources.jobs.Colleague creator = 17;
+  optional string postal = 15 [(validate.rules).string.max_len = 48];
+  optional int32 creator_id = 16 [(validate.rules).int32.gt = 0];
+  optional string creator_job = 17 [(validate.rules).string.max_len = 20];
+  optional resources.jobs.Colleague creator = 18;
 }

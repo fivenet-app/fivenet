@@ -365,10 +365,12 @@ watch(dispatch, () => {
                                 {{ dispatch.status?.reason ?? $t('common.na') }}
                             </dd>
                         </div>
+
+                        <div v-if="isOpen">
+                            <DispatchFeed :dispatch-id="dispatch.id" />
+                        </div>
                     </dl>
                 </div>
-
-                <DispatchFeed v-if="isOpen" :dispatch-id="dispatch.id" />
             </div>
 
             <template #footer>

@@ -26,7 +26,8 @@ const (
 type Disponents struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Job           string                 `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
-	Disponents    []*jobs.Colleague      `protobuf:"bytes,2,rep,name=disponents,proto3" json:"disponents,omitempty"`
+	JobLabel      *string                `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	Disponents    []*jobs.Colleague      `protobuf:"bytes,3,rep,name=disponents,proto3" json:"disponents,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -68,6 +69,13 @@ func (x *Disponents) GetJob() string {
 	return ""
 }
 
+func (x *Disponents) GetJobLabel() string {
+	if x != nil && x.JobLabel != nil {
+		return *x.JobLabel
+	}
+	return ""
+}
+
 func (x *Disponents) GetDisponents() []*jobs.Colleague {
 	if x != nil {
 		return x.Disponents
@@ -79,13 +87,16 @@ var File_resources_centrum_disponents_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_disponents_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/centrum/disponents.proto\x12\x11resources.centrum\x1a\x1fresources/jobs/colleagues.proto\x1a\x17validate/validate.proto\"b\n" +
+	"\"resources/centrum/disponents.proto\x12\x11resources.centrum\x1a\x1fresources/jobs/colleagues.proto\x1a\x17validate/validate.proto\"\x9b\x01\n" +
 	"\n" +
 	"Disponents\x12\x19\n" +
-	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x129\n" +
+	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12)\n" +
+	"\tjob_label\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x129\n" +
 	"\n" +
-	"disponents\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueR\n" +
-	"disponentsBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"disponents\x18\x03 \x03(\v2\x19.resources.jobs.ColleagueR\n" +
+	"disponentsB\f\n" +
+	"\n" +
+	"_job_labelBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_disponents_proto_rawDescOnce sync.Once
@@ -118,6 +129,7 @@ func file_resources_centrum_disponents_proto_init() {
 	if File_resources_centrum_disponents_proto != nil {
 		return
 	}
+	file_resources_centrum_disponents_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

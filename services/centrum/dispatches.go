@@ -446,7 +446,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 		}
 	}
 
-	if _, err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp.Id, &centrum.DispatchStatus{
+	if _, err := s.state.UpdateDispatchStatus(ctx, dsp.Job, dsp.Id, &centrum.DispatchStatus{
 		CreatedAt:   timestamp.Now(),
 		DispatchId:  dsp.Id,
 		DispatchJob: dsp.Job,
@@ -464,7 +464,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 	if req.Status == centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
 		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
 		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE {
-		if unit, err := s.state.GetUnit(ctx, userInfo.Job, ua.UnitId); err == nil {
+		if unit, err := s.state.GetUnit(ctx, ua.UnitJob, ua.UnitId); err == nil {
 			// Set unit to busy when unit accepts a dispatch
 			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
 				if _, err := s.state.UpdateUnitStatus(ctx, ua.UnitJob, ua.UnitId, &centrum.UnitStatus{
@@ -514,9 +514,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispat
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	if dsp.Job != userInfo.Job {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-	}
+	// TODO ToAdd units should be checked to see if the jobs match with the user's access
 
 	expiresAt := time.Time{}
 	if req.Forced == nil || !*req.Forced {

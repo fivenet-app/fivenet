@@ -844,6 +844,21 @@ func (m *UnitStatus) validate(all bool) error {
 
 	}
 
+	if m.UnitJobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetUnitJobLabel()) > 50 {
+			err := UnitStatusValidationError{
+				field:  "UnitJobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.Unit != nil {
 
 		if all {

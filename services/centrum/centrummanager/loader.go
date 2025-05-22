@@ -230,7 +230,7 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		}
 
 		for _, user := range units[i].Users {
-			if err := s.SetUnitForUser(ctx, user.User.Job, user.UserId, units[i].Job, units[i].Id); err != nil {
+			if err := s.SetUnitForUser(ctx, user.UserJob, user.UserId, units[i].Job, units[i].Id); err != nil {
 				s.logger.Error("failed to set user's unit id", zap.Error(err))
 			}
 		}
@@ -385,16 +385,19 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		// Ensure dispatch has a status
 		if dsps[i].Status == nil {
 			dsps[i].Status, err = s.AddDispatchStatus(ctx, s.db, dsps[i].Job, &centrum.DispatchStatus{
-				DispatchId: dsps[i].Id,
-				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
-				Postal:     dsps[i].Postal,
-				X:          &dsps[i].X,
-				Y:          &dsps[i].Y,
+				DispatchId:  dsps[i].Id,
+				DispatchJob: dsps[i].Job,
+				Status:      centrum.StatusDispatch_STATUS_DISPATCH_NEW,
+				Postal:      dsps[i].Postal,
+				X:           &dsps[i].X,
+				Y:           &dsps[i].Y,
 			}, false)
 			if err != nil {
 				return err
 			}
 		}
+		s.enricher.EnrichJobName(dsps[i])
+		s.enricher.EnrichJobName(dsps[i].Status)
 
 		if _, err := s.UpdateDispatch(ctx, dsps[i].Job, dsps[i].CreatorId, dsps[i], true); err != nil {
 			return err

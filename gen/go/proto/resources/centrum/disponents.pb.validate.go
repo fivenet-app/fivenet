@@ -102,6 +102,21 @@ func (m *Disponents) validate(all bool) error {
 
 	}
 
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := DisponentsValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return DisponentsMultiError(errors)
 	}

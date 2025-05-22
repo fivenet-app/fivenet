@@ -5,6 +5,10 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func (x *Unit) SetJobLabel(label string) {
+	x.JobLabel = &label
+}
+
 func (x *Unit) Merge(in *Unit) *Unit {
 	if x.Id != in.Id {
 		return x
@@ -73,6 +77,12 @@ func (x *Unit) Merge(in *Unit) *Unit {
 		x.Access = in.Access
 	}
 
+	if in.JobLabel == nil {
+		in.JobLabel = x.JobLabel
+	} else if x.JobLabel != nil {
+		*in.JobLabel = *x.JobLabel
+	}
+
 	return x
 }
 
@@ -82,4 +92,12 @@ func (x *UnitStatus) Point() orb.Point {
 	}
 
 	return orb.Point{*x.X, *x.Y}
+}
+
+func (x *UnitStatus) GetJob() string {
+	return x.UnitJob
+}
+
+func (x *UnitStatus) SetJobLabel(label string) {
+	x.UnitJobLabel = &label
 }

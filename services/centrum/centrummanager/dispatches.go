@@ -74,47 +74,11 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, dispatchJob string, 
 		}
 	}
 
-	tDispatchStatus := table.FivenetCentrumDispatchesStatus
-	stmt := tDispatchStatus.
-		INSERT(
-			tDispatchStatus.DispatchID,
-			tDispatchStatus.DispatchJob,
-			tDispatchStatus.UnitID,
-			tDispatchStatus.UnitJob,
-			tDispatchStatus.Status,
-			tDispatchStatus.Reason,
-			tDispatchStatus.Code,
-			tDispatchStatus.UserID,
-			tDispatchStatus.UserJob,
-			tDispatchStatus.X,
-			tDispatchStatus.Y,
-			tDispatchStatus.Postal,
-		).
-		VALUES(
-			in.DispatchId,
-			in.DispatchJob,
-			in.UnitId,
-			in.UnitJob,
-			in.Status,
-			in.Reason,
-			in.Code,
-			in.UserId,
-			in.UserJob,
-			in.X,
-			in.Y,
-			in.Postal,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
+	newStatus, err := s.AddDispatchStatus(ctx, s.db, dispatchJob, in, false)
 	if err != nil {
 		return nil, err
 	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-	in.Id = uint64(lastId)
+	in.Id = uint64(newStatus.Id)
 
 	if err := s.State.UpdateDispatchStatus(ctx, dispatchJob, in.DispatchId, in); err != nil {
 		return nil, err
@@ -656,6 +620,7 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, dispatchJob 
 	if newStatus != nil && newStatus.CreatedAt == nil {
 		newStatus.CreatedAt = timestamp.Now()
 	}
+	s.enricher.EnrichJobName(newStatus)
 
 	if publish {
 		data, err := proto.Marshal(newStatus)
@@ -800,7 +765,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, userJob string, userId int32
 		}
 	}
 
-	key := centrumstate.JobIdKey(userJob, dispatchId)
+	key := centrumstate.JobIdKey(dispatchJob, dispatchId)
 	if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		// If dispatch is nil or completed, disallow to accept the dispatch
 		if dsp == nil || (dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status)) {
@@ -841,7 +806,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, userJob string, userId int32
 			if accepted {
 				// Set unit to busy when unit accepts a dispatch
 				if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
-					if _, err := s.UpdateUnitStatus(ctx, userJob, unit.Id, &centrum.UnitStatus{
+					if _, err := s.UpdateUnitStatus(ctx, unit.Job, unit.Id, &centrum.UnitStatus{
 						UnitId:     unit.Id,
 						UnitJob:    unit.Job,
 						Status:     centrum.StatusUnit_STATUS_UNIT_BUSY,
@@ -867,13 +832,13 @@ func (s *Manager) TakeDispatch(ctx context.Context, userJob string, userId int32
 			})
 		}
 
-		if dsp.Status, err = s.AddDispatchStatus(ctx, s.db, userJob, &centrum.DispatchStatus{
+		if dsp.Status, err = s.AddDispatchStatus(ctx, s.db, dispatchJob, &centrum.DispatchStatus{
 			CreatedAt:   timestamp.Now(),
 			DispatchId:  dispatchId,
 			DispatchJob: dispatchJob,
 			Status:      status,
-			UnitId:      &unitId,
-			UnitJob:     &unitJob,
+			UnitId:      &unit.Id,
+			UnitJob:     &unit.Job,
 			UserId:      &userId,
 			UserJob:     &userJob,
 			X:           x,

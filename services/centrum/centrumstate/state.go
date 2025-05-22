@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
@@ -23,9 +24,10 @@ var StateModule = fx.Module("centrum_state",
 	))
 
 type State struct {
-	js *events.JSWrapper
-
 	logger *zap.Logger
+	js     *events.JSWrapper
+
+	enricher *mstlystcdata.Enricher
 
 	settings   *store.Store[centrum.Settings, *centrum.Settings]
 	disponents *store.Store[centrum.Disponents, *centrum.Disponents]
@@ -45,6 +47,8 @@ type Params struct {
 
 	Logger *zap.Logger
 	JS     *events.JSWrapper
+
+	Enricher *mstlystcdata.Enricher
 }
 
 func New(p Params) (*State, error) {
@@ -53,9 +57,11 @@ func New(p Params) (*State, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &State{
+		logger: logger,
+
 		js: p.JS,
 
-		logger: logger,
+		enricher: p.Enricher,
 
 		dispatchLocationsMutex: &sync.RWMutex{},
 		dispatchLocations:      map[string]*coords.Coords[*centrum.Dispatch]{},
