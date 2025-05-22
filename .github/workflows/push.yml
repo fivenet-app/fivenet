@@ -120,6 +120,7 @@ jobs:
     if: ${{ github.event_name != 'pull_request' && !inputs.skipImageBuild }}
     needs:
       - container-build
+      - node-tests
       - binary-build
     uses: ./.github/workflows/build_image.yml
     secrets: inherit
