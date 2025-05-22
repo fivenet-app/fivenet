@@ -402,14 +402,14 @@ const { game } = useAppConfig();
                                 <UToggle
                                     v-if="!attrValues.validValues.jobGradeList.fineGrained"
                                     :name="job.name"
-                                    :model-value="!!attrValues.validValues?.jobGradeList.jobs[job.name]"
+                                    :model-value="attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined"
                                     :disabled="disabled"
                                     @update:model-value="toggleJobGradeValue(job, $event)"
                                 />
                                 <UToggle
                                     v-else
                                     :name="job.name"
-                                    :model-value="!!attrValues.validValues?.jobGradeList.grades[job.name]"
+                                    :model-value="attrValues.validValues?.jobGradeList.grades[job.name] !== undefined"
                                     :disabled="disabled"
                                     @update:model-value="toggleJobGradeValue(job, $event)"
                                 />

@@ -325,7 +325,7 @@ const { game } = useAppConfig();
                         >
                             <UToggle
                                 :name="job.name"
-                                :model-value="!!attrValues.validValues?.jobGradeList.jobs[job.name]"
+                                :model-value="attrValues.validValues?.jobGradeList.jobs[job.name] !== undefined"
                                 :disabled="disabled"
                                 @update:model-value="toggleJobGradeValue(job, $event)"
                             />
