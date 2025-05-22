@@ -12,11 +12,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
-	"github.com/nats-io/nats.go/jetstream"
+	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -94,8 +93,8 @@ type Perms struct {
 
 	tracer trace.Tracer
 
-	js     *events.JSWrapper
-	jsCons jetstream.ConsumeContext
+	nc    *nats.Conn
+	ncSub *nats.Subscription
 
 	cleanupRolesForMissingJobs bool
 	startJobGrade              int32
@@ -135,7 +134,7 @@ type Params struct {
 	Logger    *zap.Logger
 	DB        *sql.DB
 	TP        *tracesdk.TracerProvider
-	JS        *events.JSWrapper
+	NC        *nats.Conn
 	Cfg       *config.Config
 	AppConfig appconfig.IConfig
 }
@@ -156,7 +155,7 @@ func New(p Params) (Permissions, error) {
 
 		tracer: p.TP.Tracer("perms"),
 
-		js: p.JS,
+		nc: p.NC,
 
 		cleanupRolesForMissingJobs: p.Cfg.Game.CleanupRolesForMissingJobs,
 		startJobGrade:              p.Cfg.Game.StartJobGrade,
@@ -185,9 +184,9 @@ func New(p Params) (Permissions, error) {
 
 		ps.wg.Wait()
 
-		if ps.jsCons != nil {
-			ps.jsCons.Stop()
-			ps.jsCons = nil
+		if ps.ncSub != nil {
+			ps.ncSub.Unsubscribe()
+			ps.ncSub = nil
 		}
 
 		return nil
@@ -235,7 +234,7 @@ func (p *Perms) init(ctxCancel context.Context, ctxStartup context.Context, para
 	}
 	p.logger.Debug("permissions loaded")
 
-	if err := p.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
+	if err := p.registerSubscriptions(ctxCancel); err != nil {
 		return fmt.Errorf("failed to register events subscriptions. %w", err)
 	}
 	p.logger.Debug("registered events subscription")
@@ -256,34 +255,4 @@ func (p *Perms) init(ctxCancel context.Context, ctxStartup context.Context, para
 	}()
 
 	return nil
-}
-
-func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues) {
-	job, ok := p.lookupJobForRoleID(roleId)
-	if !ok {
-		p.logger.Error("unable to lookup job for role id", zap.Uint64("role_id", roleId))
-		return
-	}
-
-	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, func() (*xsync.Map[uint64, *cacheRoleAttr], bool) {
-		return xsync.NewMap[uint64, *cacheRoleAttr](), false
-	})
-
-	attrRoleMap.Store(attrId, &cacheRoleAttr{
-		Job:          job,
-		AttrID:       attrId,
-		PermissionID: permId,
-		Key:          key,
-		Type:         aType,
-		Value:        value,
-	})
-}
-
-func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
-	attrMap, ok := p.attrsRoleMap.Load(roleId)
-	if !ok {
-		return
-	}
-
-	attrMap.Delete(attrId)
 }

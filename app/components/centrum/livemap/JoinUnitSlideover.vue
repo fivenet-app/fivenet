@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useCentrumStore } from '~/stores/centrum';
-import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import { checkUnitAccess } from '../helpers';
 
 const emit = defineEmits<{

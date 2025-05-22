@@ -233,8 +233,6 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *pbdocstore.CreateDo
 		accepted := false
 		if err := s.updateDocumentReq(ctx, tx, request.Id, &documents.DocRequest{
 			Id:          request.Id,
-			CreatedAt:   timestamp.Now(),
-			UpdatedAt:   nil,
 			DocumentId:  doc.Id,
 			CreatorId:   &userInfo.UserId,
 			CreatorJob:  userInfo.Job,

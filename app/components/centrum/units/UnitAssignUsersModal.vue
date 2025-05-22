@@ -27,7 +27,7 @@ const state = reactive<Schema>({
     users: props.unit.users.filter((u) => u !== undefined).map((u) => u.user!),
 });
 
-async function assignUnit(): Promise<void> {
+async function assignUnit(unitId: number): Promise<void> {
     try {
         const toAdd: number[] = [];
         const toRemove: number[] = [];
@@ -42,9 +42,9 @@ async function assignUnit(): Promise<void> {
         });
 
         const call = $grpc.centrum.centrum.assignUnit({
-            unitId: props.unit.id,
-            toAdd,
-            toRemove,
+            unitId: unitId,
+            toAdd: toAdd,
+            toRemove: toRemove,
         });
         await call;
 
@@ -60,7 +60,7 @@ watch(props, () => (state.users = props.unit.users.filter((u) => u !== undefined
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
-    await assignUnit().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await assignUnit(props.unit.id).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
@@ -109,9 +109,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         :searchable-placeholder="$t('common.search_field')"
                                         :search-attributes="['firstname', 'lastname']"
                                         block
-                                        :placeholder="$t('common.owner')"
+                                        :placeholder="$t('common.search')"
                                         trailing
                                         by="userId"
+                                        :disabled="!canSubmit"
                                     >
                                         <template #option="{ option: user }">
                                             {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
@@ -121,7 +122,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
 
-                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>
                             </UFormGroup>

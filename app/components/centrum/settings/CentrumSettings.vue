@@ -132,7 +132,11 @@ const items = [
         label: `${t('common.predefined', 2)} ${t('common.status', 2)}`,
         icon: 'i-mdi-selection',
     },
-    { slot: 'timings', label: t('common.timings'), icon: 'i-mdi-access-time' },
+    {
+        slot: 'timings',
+        label: t('common.timings'),
+        icon: 'i-mdi-access-time',
+    },
 ];
 
 const route = useRoute();
@@ -165,7 +169,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm
+        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
+        :schema="schema"
+        :state="state"
+        @submit="onSubmitThrottle"
+    >
         <UDashboardNavbar :title="$t('components.centrum.settings.title')">
             <template #right>
                 <PartialsBackButton fallback-to="/centrum" />
@@ -192,238 +201,250 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <DataNoDataBlock v-else-if="!settings" icon="i-mdi-tune" :type="$t('common.settings')" />
 
         <template v-else>
-            <UTabs v-model="selectedTab" class="w-full" :items="items" :ui="{ list: { rounded: '' } }">
-                <template #settings>
-                    <UDashboardPanelContent>
-                        <UDashboardSection
-                            :title="$t('components.centrum.settings.title')"
-                            :description="$t('components.centrum.settings.description')"
-                        >
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="enabled"
-                                :label="$t('common.enabled')"
-                                :ui="{ container: '' }"
+            <UDashboardPanelContent class="p-0 sm:pb-0">
+                <UTabs
+                    v-model="selectedTab"
+                    class="flex flex-1 flex-col"
+                    :items="items"
+                    :ui="{
+                        wrapper: 'space-y-0 overflow-y-hidden',
+                        container: 'flex flex-1 flex-col overflow-y-hidden',
+                        base: 'flex flex-1 flex-col overflow-y-hidden',
+                        list: { rounded: '' },
+                    }"
+                >
+                    <template #settings>
+                        <UDashboardPanelContent>
+                            <UDashboardSection
+                                :title="$t('components.centrum.settings.title')"
+                                :description="$t('components.centrum.settings.description')"
                             >
-                                <UToggle
-                                    v-model="state.enabled"
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
                                     name="enabled"
-                                    :disabled="!canSubmit"
-                                    :placeholder="$t('common.enabled')"
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="mode"
-                                :label="$t('common.mode')"
-                                :ui="{ container: '' }"
-                            >
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.mode"
-                                        :options="modes"
-                                        value-attribute="mode"
-                                        :searchable-placeholder="$t('common.search_field')"
+                                    :label="$t('common.enabled')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle
+                                        v-model="state.enabled"
+                                        name="enabled"
                                         :disabled="!canSubmit"
-                                    >
-                                        <template #label>
-                                            <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
-                                            }}</span>
-                                        </template>
+                                        :placeholder="$t('common.enabled')"
+                                    />
+                                </UFormGroup>
 
-                                        <template #option="{ option }">
-                                            <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
-                                            }}</span>
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="mode"
+                                    :label="$t('common.mode')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.mode"
+                                            :options="modes"
+                                            value-attribute="mode"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                            :disabled="!canSubmit"
+                                        >
+                                            <template #label>
+                                                <span class="truncate">{{
+                                                    $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
+                                                }}</span>
+                                            </template>
 
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="fallbackMode"
-                                :label="$t('common.fallback_mode')"
-                                :ui="{ container: '' }"
+                                            <template #option="{ option }">
+                                                <span class="truncate">{{
+                                                    $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                                }}</span>
+                                            </template>
+                                        </USelectMenu>
+                                    </ClientOnly>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="fallbackMode"
+                                    :label="$t('common.fallback_mode')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.fallbackMode"
+                                            :options="modes"
+                                            value-attribute="mode"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                            :disabled="!canSubmit"
+                                        >
+                                            <template #label>
+                                                <span class="truncate">{{
+                                                    $t(`enums.centrum.CentrumMode.${CentrumMode[state.fallbackMode ?? 0]}`)
+                                                }}</span>
+                                            </template>
+
+                                            <template #option="{ option }">
+                                                <span class="truncate">{{
+                                                    $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                                }}</span>
+                                            </template>
+                                        </USelectMenu>
+                                    </ClientOnly>
+                                </UFormGroup>
+                            </UDashboardSection>
+                        </UDashboardPanelContent>
+                    </template>
+
+                    <template #predefined>
+                        <UDashboardPanelContent>
+                            <UDashboardSection
+                                :title="$t('components.centrum.settings.predefined.title')"
+                                :description="$t('components.centrum.settings.predefined.description')"
                             >
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.fallbackMode"
-                                        :options="modes"
-                                        value-attribute="mode"
-                                        :searchable-placeholder="$t('common.search_field')"
+                                <!-- Predefined Unit Status Reason -->
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="unitStatus"
+                                    :label="`${$t('common.unit')} ${$t('common.status')}`"
+                                    :ui="{ container: '' }"
+                                >
+                                    <div class="flex flex-col gap-1">
+                                        <div
+                                            v-for="(_, idx) in state.predefinedStatus.unitStatus"
+                                            :key="idx"
+                                            class="flex items-center gap-1"
+                                        >
+                                            <UFormGroup class="flex-1" :name="`unitStatus.${idx}`" :ui="{ container: '' }">
+                                                <UInput
+                                                    v-model="state.predefinedStatus.unitStatus[idx]"
+                                                    class="w-full flex-1"
+                                                    type="text"
+                                                    :placeholder="$t('common.reason')"
+                                                    :disabled="!canSubmit"
+                                                />
+                                            </UFormGroup>
+
+                                            <UTooltip :text="$t('common.delete')">
+                                                <UButton
+                                                    :ui="{ rounded: 'rounded-full' }"
+                                                    icon="i-mdi-close"
+                                                    :disabled="!canSubmit"
+                                                    @click="state.predefinedStatus.unitStatus.splice(idx, 1)"
+                                                />
+                                            </UTooltip>
+                                        </div>
+                                    </div>
+
+                                    <UTooltip :text="$t('common.add')">
+                                        <UButton
+                                            :class="state.predefinedStatus.unitStatus.length ? 'mt-2' : ''"
+                                            :ui="{ rounded: 'rounded-full' }"
+                                            icon="i-mdi-plus"
+                                            :disabled="!canSubmit || state.predefinedStatus.unitStatus.length >= 8"
+                                            @click="state.predefinedStatus.unitStatus.push('')"
+                                        />
+                                    </UTooltip>
+                                </UFormGroup>
+
+                                <!-- Predefined Dispatch Status Reason -->
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="dispatchStatus"
+                                    :label="`${$t('common.dispatches')} ${$t('common.status')}`"
+                                    :ui="{ container: '' }"
+                                >
+                                    <div class="flex flex-col gap-1">
+                                        <div
+                                            v-for="(_, idx) in state.predefinedStatus.dispatchStatus"
+                                            :key="idx"
+                                            class="flex items-center gap-1"
+                                        >
+                                            <UFormGroup class="flex-1" :name="`dispatchStatus.${idx}`" :ui="{ container: '' }">
+                                                <UInput
+                                                    v-model="state.predefinedStatus.dispatchStatus[idx]"
+                                                    class="w-full flex-1"
+                                                    type="text"
+                                                    :placeholder="$t('common.reason')"
+                                                    :disabled="!canSubmit"
+                                                />
+                                            </UFormGroup>
+
+                                            <UTooltip :text="$t('common.delete')">
+                                                <UButton
+                                                    :ui="{ rounded: 'rounded-full' }"
+                                                    icon="i-mdi-close"
+                                                    :disabled="!canSubmit"
+                                                    @click="state.predefinedStatus.dispatchStatus.splice(idx, 1)"
+                                                />
+                                            </UTooltip>
+                                        </div>
+                                    </div>
+
+                                    <UTooltip :text="$t('common.add')">
+                                        <UButton
+                                            :class="state.predefinedStatus.dispatchStatus.length ? 'mt-2' : ''"
+                                            :ui="{ rounded: 'rounded-full' }"
+                                            icon="i-mdi-plus"
+                                            :disabled="!canSubmit || state.predefinedStatus.dispatchStatus.length >= 8"
+                                            @click="state.predefinedStatus.dispatchStatus.push('')"
+                                        />
+                                    </UTooltip>
+                                </UFormGroup>
+                            </UDashboardSection>
+                        </UDashboardPanelContent>
+                    </template>
+
+                    <template #timings>
+                        <UDashboardPanelContent>
+                            <UDashboardSection
+                                :title="$t('components.centrum.settings.timings.title')"
+                                :description="$t('components.centrum.settings.timings.description')"
+                            >
+                                <!-- Timings -->
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="timings.dispatchMaxWait"
+                                    :label="$t('components.centrum.settings.timings.dispatch_max_wait')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="state.timings.dispatchMaxWait"
+                                        type="number"
+                                        :min="30"
+                                        :placeholder="$t('common.time_ago.second', 2)"
+                                        trailing-icon="i-mdi-access-time"
                                         :disabled="!canSubmit"
-                                    >
-                                        <template #label>
-                                            <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
-                                            }}</span>
-                                        </template>
-
-                                        <template #option="{ option }">
-                                            <span class="truncate">{{
-                                                $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
-                                            }}</span>
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
-                        </UDashboardSection>
-                    </UDashboardPanelContent>
-                </template>
-
-                <template #predefined>
-                    <UDashboardPanelContent>
-                        <UDashboardSection
-                            :title="$t('components.centrum.settings.predefined.title')"
-                            :description="$t('components.centrum.settings.predefined.description')"
-                        >
-                            <!-- Predefined Unit Status Reason -->
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="unitStatus"
-                                :label="`${$t('common.unit')} ${$t('common.status')}`"
-                                :ui="{ container: '' }"
-                            >
-                                <div class="flex flex-col gap-1">
-                                    <div
-                                        v-for="(_, idx) in state.predefinedStatus.unitStatus"
-                                        :key="idx"
-                                        class="flex items-center gap-1"
-                                    >
-                                        <UFormGroup class="flex-1" :name="`unitStatus.${idx}`" :ui="{ container: '' }">
-                                            <UInput
-                                                v-model="state.predefinedStatus.unitStatus[idx]"
-                                                class="w-full flex-1"
-                                                type="text"
-                                                :placeholder="$t('common.reason')"
-                                                :disabled="!canSubmit"
-                                            />
-                                        </UFormGroup>
-
-                                        <UTooltip :text="$t('common.delete')">
-                                            <UButton
-                                                :ui="{ rounded: 'rounded-full' }"
-                                                icon="i-mdi-close"
-                                                :disabled="!canSubmit"
-                                                @click="state.predefinedStatus.unitStatus.splice(idx, 1)"
-                                            />
-                                        </UTooltip>
-                                    </div>
-                                </div>
-
-                                <UTooltip :text="$t('common.add')">
-                                    <UButton
-                                        :class="state.predefinedStatus.unitStatus.length ? 'mt-2' : ''"
-                                        :ui="{ rounded: 'rounded-full' }"
-                                        icon="i-mdi-plus"
-                                        :disabled="!canSubmit || state.predefinedStatus.unitStatus.length >= 8"
-                                        @click="state.predefinedStatus.unitStatus.push('')"
                                     />
-                                </UTooltip>
-                            </UFormGroup>
+                                </UFormGroup>
 
-                            <!-- Predefined Dispatch Status Reason -->
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="dispatchStatus"
-                                :label="`${$t('common.dispatches')} ${$t('common.status')}`"
-                                :ui="{ container: '' }"
-                            >
-                                <div class="flex flex-col gap-1">
-                                    <div
-                                        v-for="(_, idx) in state.predefinedStatus.dispatchStatus"
-                                        :key="idx"
-                                        class="flex items-center gap-1"
-                                    >
-                                        <UFormGroup class="flex-1" :name="`dispatchStatus.${idx}`" :ui="{ container: '' }">
-                                            <UInput
-                                                v-model="state.predefinedStatus.dispatchStatus[idx]"
-                                                class="w-full flex-1"
-                                                type="text"
-                                                :placeholder="$t('common.reason')"
-                                                :disabled="!canSubmit"
-                                            />
-                                        </UFormGroup>
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="timings.requireUnit"
+                                    :label="$t('components.centrum.settings.timings.require_unit')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle v-model="state.timings.requireUnit" :disabled="!canSubmit" />
+                                </UFormGroup>
 
-                                        <UTooltip :text="$t('common.delete')">
-                                            <UButton
-                                                :ui="{ rounded: 'rounded-full' }"
-                                                icon="i-mdi-close"
-                                                :disabled="!canSubmit"
-                                                @click="state.predefinedStatus.dispatchStatus.splice(idx, 1)"
-                                            />
-                                        </UTooltip>
-                                    </div>
-                                </div>
-
-                                <UTooltip :text="$t('common.add')">
-                                    <UButton
-                                        :class="state.predefinedStatus.dispatchStatus.length ? 'mt-2' : ''"
-                                        :ui="{ rounded: 'rounded-full' }"
-                                        icon="i-mdi-plus"
-                                        :disabled="!canSubmit || state.predefinedStatus.dispatchStatus.length >= 8"
-                                        @click="state.predefinedStatus.dispatchStatus.push('')"
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="timings.requireUnitReminderSeconds"
+                                    :label="$t('components.centrum.settings.timings.require_unit_reminder_seconds')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="state.timings.requireUnitReminderSeconds"
+                                        type="number"
+                                        :min="60"
+                                        :placeholder="$t('common.time_ago.second', 2)"
+                                        trailing-icon="i-mdi-access-time"
+                                        :disabled="!canSubmit"
                                     />
-                                </UTooltip>
-                            </UFormGroup>
-                        </UDashboardSection>
-                    </UDashboardPanelContent>
-                </template>
-
-                <template #timings>
-                    <UDashboardPanelContent>
-                        <UDashboardSection
-                            :title="$t('components.centrum.settings.timings.title')"
-                            :description="$t('components.centrum.settings.timings.description')"
-                        >
-                            <!-- Timings -->
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="timings.dispatchMaxWait"
-                                :label="$t('components.centrum.settings.timings.dispatch_max_wait')"
-                                :ui="{ container: '' }"
-                            >
-                                <UInput
-                                    v-model="state.timings.dispatchMaxWait"
-                                    type="number"
-                                    :min="30"
-                                    :placeholder="$t('common.time_ago.second', 2)"
-                                    trailing-icon="i-mdi-access-time"
-                                    :disabled="!canSubmit"
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="timings.requireUnit"
-                                :label="$t('components.centrum.settings.timings.require_unit')"
-                                :ui="{ container: '' }"
-                            >
-                                <UToggle v-model="state.timings.requireUnit" :disabled="!canSubmit" />
-                            </UFormGroup>
-
-                            <UFormGroup
-                                class="grid grid-cols-2 items-center gap-2"
-                                name="timings.requireUnitReminderSeconds"
-                                :label="$t('components.centrum.settings.timings.require_unit_reminder_seconds')"
-                                :ui="{ container: '' }"
-                            >
-                                <UInput
-                                    v-model="state.timings.requireUnitReminderSeconds"
-                                    type="number"
-                                    :min="60"
-                                    :placeholder="$t('common.time_ago.second', 2)"
-                                    trailing-icon="i-mdi-access-time"
-                                    :disabled="!canSubmit"
-                                />
-                            </UFormGroup>
-                        </UDashboardSection>
-                    </UDashboardPanelContent>
-                </template>
-            </UTabs>
+                                </UFormGroup>
+                            </UDashboardSection>
+                        </UDashboardPanelContent>
+                    </template>
+                </UTabs>
+            </UDashboardPanelContent>
         </template>
     </UForm>
 </template>

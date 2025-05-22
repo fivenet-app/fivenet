@@ -145,10 +145,7 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*centrum.Unit, bool) {
 	delay := 0 * time.Second
 	unitCount := len(units)
 	if unitCount > MinUnitCountForDelay {
-		delay = time.Duration(unitCount*PerUnitDelaySeconds) * time.Second
-		if delay >= MaxDelayCap {
-			delay = MaxDelayCap
-		}
+		delay = min(time.Duration(unitCount*PerUnitDelaySeconds)*time.Second, MaxDelayCap)
 	}
 
 	b.lastAssignedUnits[selectedUnit.Id] = time.Now().Add(DelayBetweenDispatchAssignment).Add(delay)

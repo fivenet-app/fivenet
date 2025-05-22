@@ -8,19 +8,18 @@ import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 
 const props = defineProps<{
     unit: Unit;
     statusSelected?: StatusUnit;
 }>();
 
-const { can } = useAuth();
-
 const { isOpen } = useSlideover();
 
+const { canDo } = useCentrumStore();
 const { goto } = useLivemapStore();
 
 const modal = useModal();
@@ -158,6 +157,21 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.access') }}
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <AccessBadges
+                                :access-level="UnitAccessLevel"
+                                :jobs="unit.access?.jobs"
+                                :qualifications="unit.access?.qualifications"
+                                i18n-key="enums.centrum"
+                                i18n-access-level-key="UnitAccessLevel"
+                            />
+                        </dd>
+                    </div>
+
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
                             {{ $t('common.members') }}
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
@@ -184,7 +198,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 
                             <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
                                 <UButton
-                                    v-if="can('CentrumService.TakeControl').value"
+                                    v-if="canDo('TakeControl')"
                                     icon="i-mdi-pencil"
                                     truncate
                                     @click="
@@ -199,23 +213,10 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                         </dd>
                     </div>
 
-                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                        <dt class="text-sm font-medium leading-6">
-                            {{ $t('common.access') }}
-                        </dt>
-                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <AccessBadges
-                                :access-level="UnitAccessLevel"
-                                :jobs="unit.access?.jobs"
-                                :qualifications="unit.access?.qualifications"
-                                i18n-key="enums.centrum"
-                                i18n-access-level-key="UnitAccessLevel"
-                            />
-                        </dd>
+                    <div v-if="isOpen">
+                        <UnitFeed :unit-id="unit.id" />
                     </div>
                 </dl>
-
-                <UnitFeed v-if="isOpen" :unit-id="unit.id" />
             </div>
 
             <template #footer>

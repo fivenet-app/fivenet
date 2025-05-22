@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Colleague } from "../jobs/colleagues";
-import { UnitAccess } from "./access";
+import { UnitAccess } from "./units_access";
 import { UnitAttributes } from "./attributes";
 import { Timestamp } from "../timestamp/timestamp";
 /**

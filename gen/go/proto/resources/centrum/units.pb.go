@@ -507,7 +507,7 @@ var File_resources_centrum_units_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a\x1eresources/centrum/access.proto\x1a\"resources/centrum/attributes.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xde\x05\n" +
+	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xde\x05\n" +
 	"\x04Unit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
@@ -637,8 +637,8 @@ func file_resources_centrum_units_proto_init() {
 	if File_resources_centrum_units_proto != nil {
 		return
 	}
-	file_resources_centrum_access_proto_init()
 	file_resources_centrum_attributes_proto_init()
+	file_resources_centrum_units_access_proto_init()
 	file_resources_centrum_units_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_centrum_units_proto_msgTypes[2].OneofWrappers = []any{}
 	file_resources_centrum_units_proto_msgTypes[3].OneofWrappers = []any{}

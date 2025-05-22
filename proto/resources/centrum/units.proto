@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.centrum;
 
-import "resources/centrum/access.proto";
 import "resources/centrum/attributes.proto";
+import "resources/centrum/units_access.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";

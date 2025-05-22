@@ -10,7 +10,7 @@ const { doNotDisturb } = storeToRefs(notifications);
         <UToggle
             v-model="doNotDisturb"
             size="lg"
-            color="error"
+            color="red"
             on-icon="i-mdi-do-not-disturb-on"
             off-icon="i-mdi-do-not-disturb-off-outline"
         />

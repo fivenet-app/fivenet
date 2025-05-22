@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.30.2
-// source: resources/centrum/access.proto
+// source: resources/centrum/units_access.proto
 
 package centrum
 
@@ -57,11 +57,11 @@ func (x UnitAccessLevel) String() string {
 }
 
 func (UnitAccessLevel) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_centrum_access_proto_enumTypes[0].Descriptor()
+	return file_resources_centrum_units_access_proto_enumTypes[0].Descriptor()
 }
 
 func (UnitAccessLevel) Type() protoreflect.EnumType {
-	return &file_resources_centrum_access_proto_enumTypes[0]
+	return &file_resources_centrum_units_access_proto_enumTypes[0]
 }
 
 func (x UnitAccessLevel) Number() protoreflect.EnumNumber {
@@ -70,7 +70,7 @@ func (x UnitAccessLevel) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use UnitAccessLevel.Descriptor instead.
 func (UnitAccessLevel) EnumDescriptor() ([]byte, []int) {
-	return file_resources_centrum_access_proto_rawDescGZIP(), []int{0}
+	return file_resources_centrum_units_access_proto_rawDescGZIP(), []int{0}
 }
 
 // @dbscanner: json
@@ -84,7 +84,7 @@ type UnitAccess struct {
 
 func (x *UnitAccess) Reset() {
 	*x = UnitAccess{}
-	mi := &file_resources_centrum_access_proto_msgTypes[0]
+	mi := &file_resources_centrum_units_access_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -96,7 +96,7 @@ func (x *UnitAccess) String() string {
 func (*UnitAccess) ProtoMessage() {}
 
 func (x *UnitAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_access_proto_msgTypes[0]
+	mi := &file_resources_centrum_units_access_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -109,7 +109,7 @@ func (x *UnitAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnitAccess.ProtoReflect.Descriptor instead.
 func (*UnitAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_access_proto_rawDescGZIP(), []int{0}
+	return file_resources_centrum_units_access_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *UnitAccess) GetJobs() []*UnitJobAccess {
@@ -142,7 +142,7 @@ type UnitJobAccess struct {
 
 func (x *UnitJobAccess) Reset() {
 	*x = UnitJobAccess{}
-	mi := &file_resources_centrum_access_proto_msgTypes[1]
+	mi := &file_resources_centrum_units_access_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -154,7 +154,7 @@ func (x *UnitJobAccess) String() string {
 func (*UnitJobAccess) ProtoMessage() {}
 
 func (x *UnitJobAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_access_proto_msgTypes[1]
+	mi := &file_resources_centrum_units_access_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -167,7 +167,7 @@ func (x *UnitJobAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnitJobAccess.ProtoReflect.Descriptor instead.
 func (*UnitJobAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_access_proto_rawDescGZIP(), []int{1}
+	return file_resources_centrum_units_access_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *UnitJobAccess) GetId() uint64 {
@@ -234,7 +234,7 @@ type UnitUserAccess struct {
 
 func (x *UnitUserAccess) Reset() {
 	*x = UnitUserAccess{}
-	mi := &file_resources_centrum_access_proto_msgTypes[2]
+	mi := &file_resources_centrum_units_access_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -246,7 +246,7 @@ func (x *UnitUserAccess) String() string {
 func (*UnitUserAccess) ProtoMessage() {}
 
 func (x *UnitUserAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_access_proto_msgTypes[2]
+	mi := &file_resources_centrum_units_access_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -259,7 +259,7 @@ func (x *UnitUserAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnitUserAccess.ProtoReflect.Descriptor instead.
 func (*UnitUserAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_access_proto_rawDescGZIP(), []int{2}
+	return file_resources_centrum_units_access_proto_rawDescGZIP(), []int{2}
 }
 
 type UnitQualificationAccess struct {
@@ -276,7 +276,7 @@ type UnitQualificationAccess struct {
 
 func (x *UnitQualificationAccess) Reset() {
 	*x = UnitQualificationAccess{}
-	mi := &file_resources_centrum_access_proto_msgTypes[3]
+	mi := &file_resources_centrum_units_access_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -288,7 +288,7 @@ func (x *UnitQualificationAccess) String() string {
 func (*UnitQualificationAccess) ProtoMessage() {}
 
 func (x *UnitQualificationAccess) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_access_proto_msgTypes[3]
+	mi := &file_resources_centrum_units_access_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -301,7 +301,7 @@ func (x *UnitQualificationAccess) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UnitQualificationAccess.ProtoReflect.Descriptor instead.
 func (*UnitQualificationAccess) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_access_proto_rawDescGZIP(), []int{3}
+	return file_resources_centrum_units_access_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *UnitQualificationAccess) GetId() uint64 {
@@ -346,11 +346,11 @@ func (x *UnitQualificationAccess) GetAccess() UnitAccessLevel {
 	return UnitAccessLevel_UNIT_ACCESS_LEVEL_UNSPECIFIED
 }
 
-var File_resources_centrum_access_proto protoreflect.FileDescriptor
+var File_resources_centrum_units_access_proto protoreflect.FileDescriptor
 
-const file_resources_centrum_access_proto_rawDesc = "" +
+const file_resources_centrum_units_access_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/centrum/access.proto\x12\x11resources.centrum\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xaa\x01\n" +
+	"$resources/centrum/units_access.proto\x12\x11resources.centrum\x1a-resources/qualifications/qualifications.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xaa\x01\n" +
 	"\n" +
 	"UnitAccess\x12>\n" +
 	"\x04jobs\x18\x01 \x03(\v2 .resources.centrum.UnitJobAccessB\b\xfaB\x05\x92\x01\x02\x10\x14R\x04jobs\x12\\\n" +
@@ -386,20 +386,20 @@ const file_resources_centrum_access_proto_rawDesc = "" +
 	"\x16UNIT_ACCESS_LEVEL_JOIN\x10\x02BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
-	file_resources_centrum_access_proto_rawDescOnce sync.Once
-	file_resources_centrum_access_proto_rawDescData []byte
+	file_resources_centrum_units_access_proto_rawDescOnce sync.Once
+	file_resources_centrum_units_access_proto_rawDescData []byte
 )
 
-func file_resources_centrum_access_proto_rawDescGZIP() []byte {
-	file_resources_centrum_access_proto_rawDescOnce.Do(func() {
-		file_resources_centrum_access_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_centrum_access_proto_rawDesc), len(file_resources_centrum_access_proto_rawDesc)))
+func file_resources_centrum_units_access_proto_rawDescGZIP() []byte {
+	file_resources_centrum_units_access_proto_rawDescOnce.Do(func() {
+		file_resources_centrum_units_access_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_centrum_units_access_proto_rawDesc), len(file_resources_centrum_units_access_proto_rawDesc)))
 	})
-	return file_resources_centrum_access_proto_rawDescData
+	return file_resources_centrum_units_access_proto_rawDescData
 }
 
-var file_resources_centrum_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_centrum_access_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_resources_centrum_access_proto_goTypes = []any{
+var file_resources_centrum_units_access_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_resources_centrum_units_access_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_resources_centrum_units_access_proto_goTypes = []any{
 	(UnitAccessLevel)(0),                      // 0: resources.centrum.UnitAccessLevel
 	(*UnitAccess)(nil),                        // 1: resources.centrum.UnitAccess
 	(*UnitJobAccess)(nil),                     // 2: resources.centrum.UnitJobAccess
@@ -408,7 +408,7 @@ var file_resources_centrum_access_proto_goTypes = []any{
 	(*timestamp.Timestamp)(nil),               // 5: resources.timestamp.Timestamp
 	(*qualifications.QualificationShort)(nil), // 6: resources.qualifications.QualificationShort
 }
-var file_resources_centrum_access_proto_depIdxs = []int32{
+var file_resources_centrum_units_access_proto_depIdxs = []int32{
 	2, // 0: resources.centrum.UnitAccess.jobs:type_name -> resources.centrum.UnitJobAccess
 	4, // 1: resources.centrum.UnitAccess.qualifications:type_name -> resources.centrum.UnitQualificationAccess
 	5, // 2: resources.centrum.UnitJobAccess.created_at:type_name -> resources.timestamp.Timestamp
@@ -423,29 +423,29 @@ var file_resources_centrum_access_proto_depIdxs = []int32{
 	0, // [0:7] is the sub-list for field type_name
 }
 
-func init() { file_resources_centrum_access_proto_init() }
-func file_resources_centrum_access_proto_init() {
-	if File_resources_centrum_access_proto != nil {
+func init() { file_resources_centrum_units_access_proto_init() }
+func file_resources_centrum_units_access_proto_init() {
+	if File_resources_centrum_units_access_proto != nil {
 		return
 	}
-	file_resources_centrum_access_proto_msgTypes[1].OneofWrappers = []any{}
-	file_resources_centrum_access_proto_msgTypes[3].OneofWrappers = []any{}
+	file_resources_centrum_units_access_proto_msgTypes[1].OneofWrappers = []any{}
+	file_resources_centrum_units_access_proto_msgTypes[3].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_access_proto_rawDesc), len(file_resources_centrum_access_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_units_access_proto_rawDesc), len(file_resources_centrum_units_access_proto_rawDesc)),
 			NumEnums:      1,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_resources_centrum_access_proto_goTypes,
-		DependencyIndexes: file_resources_centrum_access_proto_depIdxs,
-		EnumInfos:         file_resources_centrum_access_proto_enumTypes,
-		MessageInfos:      file_resources_centrum_access_proto_msgTypes,
+		GoTypes:           file_resources_centrum_units_access_proto_goTypes,
+		DependencyIndexes: file_resources_centrum_units_access_proto_depIdxs,
+		EnumInfos:         file_resources_centrum_units_access_proto_enumTypes,
+		MessageInfos:      file_resources_centrum_units_access_proto_msgTypes,
 	}.Build()
-	File_resources_centrum_access_proto = out.File
-	file_resources_centrum_access_proto_goTypes = nil
-	file_resources_centrum_access_proto_depIdxs = nil
+	File_resources_centrum_units_access_proto = out.File
+	file_resources_centrum_units_access_proto_goTypes = nil
+	file_resources_centrum_units_access_proto_depIdxs = nil
 }

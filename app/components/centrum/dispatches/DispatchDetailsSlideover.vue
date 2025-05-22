@@ -12,10 +12,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
     dispatchId: number;
@@ -33,35 +31,10 @@ const { isOpen } = useSlideover();
 const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
-const { dispatches, ownUnitId, timeCorrection } = storeToRefs(centrumStore);
-const { canDo } = centrumStore;
-
-const notifications = useNotificatorStore();
+const { dispatches, timeCorrection } = storeToRefs(centrumStore);
+const { canDo, selfAssign } = centrumStore;
 
 const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
-
-async function selfAssign(id: number): Promise<void> {
-    if (ownUnitId.value === undefined) {
-        notifications.add({
-            title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
-            description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
-            type: NotificationType.ERROR,
-        });
-
-        return;
-    }
-
-    try {
-        const call = $grpc.centrum.centrum.takeDispatch({
-            dispatchIds: [id],
-            resp: TakeDispatchResp.ACCEPTED,
-        });
-        await call;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
 
 async function deleteDispatch(id: number): Promise<void> {
     try {
@@ -133,6 +106,7 @@ watch(dispatch, () => {
                                 <GenericTime :value="dispatch.createdAt" />
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.sent_by') }}
@@ -147,6 +121,7 @@ watch(dispatch, () => {
                                 </span>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.location') }}
@@ -169,6 +144,7 @@ watch(dispatch, () => {
                                 </div>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.description') }}
@@ -179,6 +155,7 @@ watch(dispatch, () => {
                                 </p>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.attributes', 2) }}
@@ -187,6 +164,7 @@ watch(dispatch, () => {
                                 <DispatchAttributes :attributes="dispatch.attributes" />
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.reference', 2) }}
@@ -195,6 +173,7 @@ watch(dispatch, () => {
                                 <DispatchReferences :references="dispatch.references" />
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.unit', 2) }}
@@ -270,6 +249,7 @@ watch(dispatch, () => {
                                 <GenericTime :value="dispatch.status?.createdAt" />
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.location') }}
@@ -299,6 +279,7 @@ watch(dispatch, () => {
                                 </div>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.status') }}
@@ -316,6 +297,7 @@ watch(dispatch, () => {
                                 </UButton>
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.code') }}
@@ -324,6 +306,7 @@ watch(dispatch, () => {
                                 {{ dispatch.status?.code ?? $t('common.na') }}
                             </dd>
                         </div>
+
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.reason') }}
@@ -335,7 +318,9 @@ watch(dispatch, () => {
                     </dl>
                 </div>
 
-                <DispatchFeed v-if="isOpen" :dispatch-id="dispatch.id" />
+                <div v-if="isOpen">
+                    <DispatchFeed :dispatch-id="dispatch.id" />
+                </div>
             </div>
 
             <template #footer>

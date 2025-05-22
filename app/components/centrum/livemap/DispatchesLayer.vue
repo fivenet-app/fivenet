@@ -5,7 +5,7 @@ import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useSettingsStore } from '~/stores/settings';
 
-defineProps<{
+const props = defineProps<{
     showAllDispatches?: boolean;
 }>();
 
@@ -38,21 +38,28 @@ watch(settings, () => {
         return;
     }
 
-    addOrUpdateLivemapCategory({
-        key: 'dispatches',
-        label: t('common.dispatch', 2),
-    });
     addOrUpdateLivemapLayer({
         key: 'dispatches_own',
         category: 'dispatches',
         label: t('common.your_dispatches'),
         perm: 'CentrumService.Stream',
+        disabled: true,
     });
     addOrUpdateLivemapLayer({
         key: 'dispatches_all',
         category: 'dispatches',
         label: t('common.all_dispatches'),
         perm: 'CentrumService.Stream',
+        disabled: props.showAllDispatches,
+        visible: props.showAllDispatches ? true : undefined,
+    });
+});
+
+onBeforeMount(async () => {
+    addOrUpdateLivemapCategory({
+        key: 'dispatches',
+        label: t('common.dispatch', 2),
+        order: 0,
     });
 });
 </script>

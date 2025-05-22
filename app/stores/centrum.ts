@@ -4,7 +4,7 @@ import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/composables/notifications';
 import { useNotificatorStore } from '~/stores/notificator';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import type { Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
@@ -170,12 +170,12 @@ export const useCentrumStore = defineStore(
             if (!u.status) {
                 u.status = status;
             } else {
-                // user added / removed
+                // User added / removed
                 if (status.status === StatusUnit.USER_ADDED || status.status === StatusUnit.USER_REMOVED) {
                     return;
                 }
 
-                // normal status update
+                // Normal status update
                 u.status.id = status.id;
                 u.status.createdAt = status.createdAt;
                 u.status.unitId = status.unitId;
@@ -455,7 +455,7 @@ export const useCentrumStore = defineStore(
 
                             dispatches.value.forEach((d) => handleDispatchAssignment(d));
                         } else {
-                            // user was removed from that unit
+                            // User was removed from that unit
                             if (ownUnitId.value === resp.change.unitUpdated.id) {
                                 notifications.add({
                                     title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
@@ -487,7 +487,7 @@ export const useCentrumStore = defineStore(
                         }
 
                         if (resp.change.unitStatus.status === StatusUnit.USER_ADDED) {
-                            // user is in unit
+                            // User is in unit
                             if (ownUnitId.value === resp.change.unitStatus.unitId) {
                                 continue;
                             }
@@ -547,7 +547,7 @@ export const useCentrumStore = defineStore(
                             sosSound.play();
                         }
 
-                        // If from user
+                        // If update is from the user
                         if (ownUnitId.value === ds.unitId) {
                             if (ds.status === StatusDispatch.UNIT_ACCEPTED) {
                                 removePendingDispatch(ds.dispatchId);
@@ -677,8 +677,8 @@ export const useCentrumStore = defineStore(
                     return can('CentrumService.TakeControl').value;
                 case 'UpdateDispatchStatus':
                     return (
-                        can('CentrumService.TakeDispatch').value &&
                         dispatchParam !== undefined &&
+                        can('CentrumService.TakeDispatch').value &&
                         checkIfUnitAssignedToDispatch(dispatchParam, ownUnitId.value)
                     );
                 case 'UpdateUnitStatus':
@@ -775,6 +775,29 @@ export const useCentrumStore = defineStore(
             return [];
         };
 
+        const selfAssign = async (id: number): Promise<void> => {
+            if (ownUnitId.value === undefined) {
+                useNotificatorStore().add({
+                    title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
+                    description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
+                    type: NotificationType.ERROR,
+                });
+
+                return;
+            }
+
+            try {
+                const call = $grpc.centrum.centrum.takeDispatch({
+                    dispatchIds: [id],
+                    resp: TakeDispatchResp.ACCEPTED,
+                });
+                await call;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        };
+
         return {
             // State
             error,
@@ -825,6 +848,7 @@ export const useCentrumStore = defineStore(
             cleanup,
             removeDispatchAssignments,
             getNotificationActions,
+            selfAssign,
         };
     },
     {

@@ -37,7 +37,7 @@ const state = reactive<Schema>({
 async function updateDispatchStatus(dispatchId: number, values: Schema): Promise<void> {
     try {
         const call = $grpc.centrum.centrum.updateDispatchStatus({
-            dispatchId,
+            dispatchId: dispatchId,
             status: values.status,
             code: values.code,
             reason: values.reason,

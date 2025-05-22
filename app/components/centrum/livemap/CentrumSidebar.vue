@@ -350,8 +350,8 @@ function openTakeDispatches(): void {
 defineShortcuts({
     'm-d': () => getOwnUnit.value && openTakeDispatches(),
     'm-h': () => getOwnUnit.value?.homePostal && setWaypointPLZ(getOwnUnit.value.homePostal),
-    'c-u': () => getOwnUnit.value && updateUtStatus(getOwnUnit.value.id),
-    'c-d': () => getOwnUnit.value && updateDspStatus(),
+    'c-u': () => getOwnUnit.value && onSubmitUnitStatusThrottle(getOwnUnit.value.id),
+    'c-d': () => getOwnUnit.value && onSubmitDispatchStatusThrottle(),
 });
 </script>
 
@@ -524,7 +524,7 @@ defineShortcuts({
                                                                         color="primary"
                                                                         size="xs"
                                                                         block
-                                                                        @click="updateUtStatus(getOwnUnit.id)"
+                                                                        @click="onSubmitUnitStatusThrottle(getOwnUnit.id)"
                                                                     >
                                                                         {{ $t('components.centrum.update_unit_status.title') }}
                                                                     </UButton>

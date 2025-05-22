@@ -16,6 +16,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
 	"github.com/puzpuzpuz/xsync/v4"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -869,6 +870,12 @@ func (p *Perms) UpdateJobAttributes(ctx context.Context, job string, attrId uint
 		}
 	}
 
+	jobMaxValuesMap, _ := p.attrsJobMaxValuesMap.LoadOrCompute(job, func() (*xsync.Map[uint64, *permissions.AttributeValues], bool) {
+		return xsync.NewMap[uint64, *permissions.AttributeValues](), false
+	})
+
+	jobMaxValuesMap.Store(attrId, maxValues)
+
 	if err := p.publishMessage(ctx, JobAttrUpdateSubject, JobAttrUpdateEvent{
 		Job: job,
 	}); err != nil {
@@ -894,4 +901,34 @@ func (p *Perms) ClearJobAttributes(ctx context.Context, job string) error {
 	}
 
 	return nil
+}
+
+func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues) {
+	job, ok := p.lookupJobForRoleID(roleId)
+	if !ok {
+		p.logger.Error("unable to lookup job for role id", zap.Uint64("role_id", roleId))
+		return
+	}
+
+	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, func() (*xsync.Map[uint64, *cacheRoleAttr], bool) {
+		return xsync.NewMap[uint64, *cacheRoleAttr](), false
+	})
+
+	attrRoleMap.Store(attrId, &cacheRoleAttr{
+		Job:          job,
+		AttrID:       attrId,
+		PermissionID: permId,
+		Key:          key,
+		Type:         aType,
+		Value:        value,
+	})
+}
+
+func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
+	attrMap, ok := p.attrsRoleMap.Load(roleId)
+	if !ok {
+		return
+	}
+
+	attrMap.Delete(attrId)
 }

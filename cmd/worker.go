@@ -42,7 +42,7 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 		fxOpts = append(fxOpts, fx.Invoke(func(*housekeeper.Housekeeper) {}))
 	}
 
-	// Only run cron agent in worker
+	// Always run cron agent in worker
 	fxOpts = append(fxOpts, fx.Invoke(func(*croner.Executor) {}))
 
 	app := fx.New(fxOpts...)

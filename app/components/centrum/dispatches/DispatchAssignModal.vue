@@ -50,8 +50,8 @@ async function assignDispatch(): Promise<void> {
 
         const call = $grpc.centrum.centrum.assignDispatch({
             dispatchId: props.dispatchId,
-            toAdd,
-            toRemove,
+            toAdd: toAdd,
+            toRemove: toRemove,
         });
         await call;
 
