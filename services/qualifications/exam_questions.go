@@ -53,7 +53,7 @@ func (s *Server) getExamQuestions(ctx context.Context, tx qrm.DB, qualificationI
 func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64) (int32, error) {
 	stmt := tExamQuestions.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tExamQuestions.ID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tExamQuestions.ID)).AS("data_count.total"),
 		).
 		FROM(tExamQuestions).
 		WHERE(
@@ -65,7 +65,7 @@ func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64)
 		return 0, err
 	}
 
-	return int32(count.TotalCount), nil
+	return int32(count.Total), nil
 }
 
 func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qualificationId uint64, questions *qualifications.ExamQuestions) error {

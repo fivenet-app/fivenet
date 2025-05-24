@@ -17,7 +17,7 @@ useHead({
 definePageMeta({
     title: 'pages.mailer.manage.title',
     requiresAuth: true,
-    permission: 'MailerService.ListEmails',
+    permission: 'mailer.MailerService.ListEmails',
 });
 
 const modal = useModal();
@@ -75,7 +75,9 @@ watch(selectedEmail, async () => {
 });
 
 const canCreate = computed(
-    () => can('MailerService.CreateOrUpdateEmail').value && attr('MailerService.CreateOrUpdateEmail', 'Fields', 'Job').value,
+    () =>
+        can('mailer.MailerService.CreateOrUpdateEmail').value &&
+        attr('mailer.MailerService.CreateOrUpdateEmail', 'Fields', 'Job').value,
 );
 
 const loading = ref(false);
@@ -111,7 +113,11 @@ const creating = ref(false);
                             <p class="text-bas">{{ $t('components.mailer.manage.subtitle') }}</p>
                         </div>
 
-                        <EmailCreateForm v-if="can('MailerService.CreateOrUpdateEmail').value" personal-email hide-label />
+                        <EmailCreateForm
+                            v-if="can('mailer.MailerService.CreateOrUpdateEmail').value"
+                            personal-email
+                            hide-label
+                        />
                     </div>
                 </div>
             </UDashboardPanelContent>

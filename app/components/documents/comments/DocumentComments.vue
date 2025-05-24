@@ -9,7 +9,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { GetCommentsResponse } from '~~/gen/ts/services/documents/documents';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 
 const props = withDefaults(
@@ -48,7 +48,7 @@ const {
 
 async function getComments(): Promise<GetCommentsResponse> {
     try {
-        const call = $grpc.docstore.docStore.getComments({
+        const call = $grpc.documents.documents.getComments({
             pagination: {
                 offset: offset.value,
                 pageSize: 5,
@@ -93,7 +93,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.docstore.docStore.postComment({ comment });
+        const call = $grpc.documents.documents.postComment({ comment });
         const { response } = await call;
 
         notifications.add({

@@ -3,7 +3,7 @@
 // @ts-nocheck
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { JobsConductService } from "./conduct";
+import { ConductService } from "./conduct";
 import type { DeleteConductEntryResponse } from "./conduct";
 import type { DeleteConductEntryRequest } from "./conduct";
 import type { UpdateConductEntryResponse } from "./conduct";
@@ -16,9 +16,9 @@ import type { ListConductEntriesRequest } from "./conduct";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
- * @generated from protobuf service services.jobs.JobsConductService
+ * @generated from protobuf service services.jobs.ConductService
  */
-export interface IJobsConductServiceClient {
+export interface IConductServiceClient {
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "All"}
      *
@@ -45,12 +45,12 @@ export interface IJobsConductServiceClient {
     deleteConductEntry(input: DeleteConductEntryRequest, options?: RpcOptions): UnaryCall<DeleteConductEntryRequest, DeleteConductEntryResponse>;
 }
 /**
- * @generated from protobuf service services.jobs.JobsConductService
+ * @generated from protobuf service services.jobs.ConductService
  */
-export class JobsConductServiceClient implements IJobsConductServiceClient, ServiceInfo {
-    typeName = JobsConductService.typeName;
-    methods = JobsConductService.methods;
-    options = JobsConductService.options;
+export class ConductServiceClient implements IConductServiceClient, ServiceInfo {
+    typeName = ConductService.typeName;
+    methods = ConductService.methods;
+    options = ConductService.options;
     constructor(private readonly _transport: RpcTransport) {
     }
     /**

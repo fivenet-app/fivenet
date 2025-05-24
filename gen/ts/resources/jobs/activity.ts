@@ -14,9 +14,9 @@ import { Label } from "./labels";
 import { Colleague } from "./colleagues";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @generated from protobuf message resources.jobs.JobsUserActivity
+ * @generated from protobuf message resources.jobs.ColleagueActivity
  */
-export interface JobsUserActivity {
+export interface ColleagueActivity {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -46,9 +46,9 @@ export interface JobsUserActivity {
      */
     targetUser?: Colleague; // @gotags: alias:"target_user"
     /**
-     * @generated from protobuf field: resources.jobs.JobsUserActivityType activity_type = 9;
+     * @generated from protobuf field: resources.jobs.ColleagueActivityType activity_type = 9;
      */
-    activityType: JobsUserActivityType;
+    activityType: ColleagueActivityType;
     /**
      * @sanitize
      *
@@ -56,51 +56,51 @@ export interface JobsUserActivity {
      */
     reason: string;
     /**
-     * @generated from protobuf field: resources.jobs.JobsUserActivityData data = 11;
+     * @generated from protobuf field: resources.jobs.ColleagueActivityData data = 11;
      */
-    data?: JobsUserActivityData;
+    data?: ColleagueActivityData;
 }
 /**
  * @dbscanner: json
  *
- * @generated from protobuf message resources.jobs.JobsUserActivityData
+ * @generated from protobuf message resources.jobs.ColleagueActivityData
  */
-export interface JobsUserActivityData {
+export interface ColleagueActivityData {
     /**
      * @generated from protobuf oneof: data
      */
     data: {
         oneofKind: "absenceDate";
         /**
-         * @generated from protobuf field: resources.jobs.ColleagueAbsenceDate absence_date = 1;
+         * @generated from protobuf field: resources.jobs.AbsenceDateChange absence_date = 1;
          */
-        absenceDate: ColleagueAbsenceDate;
+        absenceDate: AbsenceDateChange;
     } | {
         oneofKind: "gradeChange";
         /**
-         * @generated from protobuf field: resources.jobs.ColleagueGradeChange grade_change = 2;
+         * @generated from protobuf field: resources.jobs.GradeChange grade_change = 2;
          */
-        gradeChange: ColleagueGradeChange;
+        gradeChange: GradeChange;
     } | {
         oneofKind: "labelsChange";
         /**
-         * @generated from protobuf field: resources.jobs.ColleagueLabelsChange labels_change = 3;
+         * @generated from protobuf field: resources.jobs.LabelsChange labels_change = 3;
          */
-        labelsChange: ColleagueLabelsChange;
+        labelsChange: LabelsChange;
     } | {
         oneofKind: "nameChange";
         /**
-         * @generated from protobuf field: resources.jobs.ColleagueNameChange name_change = 4;
+         * @generated from protobuf field: resources.jobs.NameChange name_change = 4;
          */
-        nameChange: ColleagueNameChange;
+        nameChange: NameChange;
     } | {
         oneofKind: undefined;
     };
 }
 /**
- * @generated from protobuf message resources.jobs.ColleagueAbsenceDate
+ * @generated from protobuf message resources.jobs.AbsenceDateChange
  */
-export interface ColleagueAbsenceDate {
+export interface AbsenceDateChange {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp absence_begin = 1;
      */
@@ -111,9 +111,9 @@ export interface ColleagueAbsenceDate {
     absenceEnd?: Timestamp;
 }
 /**
- * @generated from protobuf message resources.jobs.ColleagueGradeChange
+ * @generated from protobuf message resources.jobs.GradeChange
  */
-export interface ColleagueGradeChange {
+export interface GradeChange {
     /**
      * @generated from protobuf field: int32 grade = 1;
      */
@@ -124,9 +124,9 @@ export interface ColleagueGradeChange {
     gradeLabel: string;
 }
 /**
- * @generated from protobuf message resources.jobs.ColleagueLabelsChange
+ * @generated from protobuf message resources.jobs.LabelsChange
  */
-export interface ColleagueLabelsChange {
+export interface LabelsChange {
     /**
      * @generated from protobuf field: repeated resources.jobs.Label added = 1;
      */
@@ -137,9 +137,9 @@ export interface ColleagueLabelsChange {
     removed: Label[];
 }
 /**
- * @generated from protobuf message resources.jobs.ColleagueNameChange
+ * @generated from protobuf message resources.jobs.NameChange
  */
-export interface ColleagueNameChange {
+export interface NameChange {
     /**
      * @generated from protobuf field: optional string prefix = 1;
      */
@@ -150,50 +150,50 @@ export interface ColleagueNameChange {
     suffix?: string;
 }
 /**
- * @generated from protobuf enum resources.jobs.JobsUserActivityType
+ * @generated from protobuf enum resources.jobs.ColleagueActivityType
  */
-export enum JobsUserActivityType {
+export enum ColleagueActivityType {
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_HIRED = 1;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_HIRED = 1;
      */
     HIRED = 1,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_FIRED = 2;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_FIRED = 2;
      */
     FIRED = 2,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_PROMOTED = 3;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_PROMOTED = 3;
      */
     PROMOTED = 3,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_DEMOTED = 4;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_DEMOTED = 4;
      */
     DEMOTED = 4,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 5;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE = 5;
      */
     ABSENCE_DATE = 5,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_NOTE = 6;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_NOTE = 6;
      */
     NOTE = 6,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_LABELS = 7;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_LABELS = 7;
      */
     LABELS = 7,
     /**
-     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_NAME = 8;
+     * @generated from protobuf enum value: COLLEAGUE_ACTIVITY_TYPE_NAME = 8;
      */
     NAME = 8
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
+class ColleagueActivity$Type extends MessageType<ColleagueActivity> {
     constructor() {
-        super("resources.jobs.JobsUserActivity", [
+        super("resources.jobs.ColleagueActivity", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
@@ -201,12 +201,12 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
             { no: 6, name: "source_user", kind: "message", T: () => Colleague },
             { no: 7, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "target_user", kind: "message", T: () => Colleague },
-            { no: 9, name: "activity_type", kind: "enum", T: () => ["resources.jobs.JobsUserActivityType", JobsUserActivityType, "JOBS_USER_ACTIVITY_TYPE_"] },
+            { no: 9, name: "activity_type", kind: "enum", T: () => ["resources.jobs.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"] },
             { no: 10, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 11, name: "data", kind: "message", T: () => JobsUserActivityData }
+            { no: 11, name: "data", kind: "message", T: () => ColleagueActivityData }
         ]);
     }
-    create(value?: PartialMessage<JobsUserActivity>): JobsUserActivity {
+    create(value?: PartialMessage<ColleagueActivity>): ColleagueActivity {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.job = "";
@@ -214,10 +214,10 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
         message.activityType = 0;
         message.reason = "";
         if (value !== undefined)
-            reflectionMergePartial<JobsUserActivity>(this, message, value);
+            reflectionMergePartial<ColleagueActivity>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsUserActivity): JobsUserActivity {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueActivity): ColleagueActivity {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -243,14 +243,14 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
                 case /* resources.jobs.Colleague target_user */ 8:
                     message.targetUser = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
                     break;
-                case /* resources.jobs.JobsUserActivityType activity_type */ 9:
+                case /* resources.jobs.ColleagueActivityType activity_type */ 9:
                     message.activityType = reader.int32();
                     break;
                 case /* string reason */ 10:
                     message.reason = reader.string();
                     break;
-                case /* resources.jobs.JobsUserActivityData data */ 11:
-                    message.data = JobsUserActivityData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                case /* resources.jobs.ColleagueActivityData data */ 11:
+                    message.data = ColleagueActivityData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -263,7 +263,7 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
         }
         return message;
     }
-    internalBinaryWrite(message: JobsUserActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ColleagueActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -285,15 +285,15 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
         /* resources.jobs.Colleague target_user = 8; */
         if (message.targetUser)
             Colleague.internalBinaryWrite(message.targetUser, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.JobsUserActivityType activity_type = 9; */
+        /* resources.jobs.ColleagueActivityType activity_type = 9; */
         if (message.activityType !== 0)
             writer.tag(9, WireType.Varint).int32(message.activityType);
         /* string reason = 10; */
         if (message.reason !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.reason);
-        /* resources.jobs.JobsUserActivityData data = 11; */
+        /* resources.jobs.ColleagueActivityData data = 11; */
         if (message.data)
-            JobsUserActivityData.internalBinaryWrite(message.data, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            ColleagueActivityData.internalBinaryWrite(message.data, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -301,53 +301,53 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.JobsUserActivity
+ * @generated MessageType for protobuf message resources.jobs.ColleagueActivity
  */
-export const JobsUserActivity = new JobsUserActivity$Type();
+export const ColleagueActivity = new ColleagueActivity$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
+class ColleagueActivityData$Type extends MessageType<ColleagueActivityData> {
     constructor() {
-        super("resources.jobs.JobsUserActivityData", [
-            { no: 1, name: "absence_date", kind: "message", oneof: "data", T: () => ColleagueAbsenceDate },
-            { no: 2, name: "grade_change", kind: "message", oneof: "data", T: () => ColleagueGradeChange },
-            { no: 3, name: "labels_change", kind: "message", oneof: "data", T: () => ColleagueLabelsChange },
-            { no: 4, name: "name_change", kind: "message", oneof: "data", T: () => ColleagueNameChange }
+        super("resources.jobs.ColleagueActivityData", [
+            { no: 1, name: "absence_date", kind: "message", oneof: "data", T: () => AbsenceDateChange },
+            { no: 2, name: "grade_change", kind: "message", oneof: "data", T: () => GradeChange },
+            { no: 3, name: "labels_change", kind: "message", oneof: "data", T: () => LabelsChange },
+            { no: 4, name: "name_change", kind: "message", oneof: "data", T: () => NameChange }
         ]);
     }
-    create(value?: PartialMessage<JobsUserActivityData>): JobsUserActivityData {
+    create(value?: PartialMessage<ColleagueActivityData>): ColleagueActivityData {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.data = { oneofKind: undefined };
         if (value !== undefined)
-            reflectionMergePartial<JobsUserActivityData>(this, message, value);
+            reflectionMergePartial<ColleagueActivityData>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsUserActivityData): JobsUserActivityData {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueActivityData): ColleagueActivityData {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.ColleagueAbsenceDate absence_date */ 1:
+                case /* resources.jobs.AbsenceDateChange absence_date */ 1:
                     message.data = {
                         oneofKind: "absenceDate",
-                        absenceDate: ColleagueAbsenceDate.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).absenceDate)
+                        absenceDate: AbsenceDateChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).absenceDate)
                     };
                     break;
-                case /* resources.jobs.ColleagueGradeChange grade_change */ 2:
+                case /* resources.jobs.GradeChange grade_change */ 2:
                     message.data = {
                         oneofKind: "gradeChange",
-                        gradeChange: ColleagueGradeChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).gradeChange)
+                        gradeChange: GradeChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).gradeChange)
                     };
                     break;
-                case /* resources.jobs.ColleagueLabelsChange labels_change */ 3:
+                case /* resources.jobs.LabelsChange labels_change */ 3:
                     message.data = {
                         oneofKind: "labelsChange",
-                        labelsChange: ColleagueLabelsChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).labelsChange)
+                        labelsChange: LabelsChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).labelsChange)
                     };
                     break;
-                case /* resources.jobs.ColleagueNameChange name_change */ 4:
+                case /* resources.jobs.NameChange name_change */ 4:
                     message.data = {
                         oneofKind: "nameChange",
-                        nameChange: ColleagueNameChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).nameChange)
+                        nameChange: NameChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).nameChange)
                     };
                     break;
                 default:
@@ -361,19 +361,19 @@ class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
         }
         return message;
     }
-    internalBinaryWrite(message: JobsUserActivityData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.ColleagueAbsenceDate absence_date = 1; */
+    internalBinaryWrite(message: ColleagueActivityData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.AbsenceDateChange absence_date = 1; */
         if (message.data.oneofKind === "absenceDate")
-            ColleagueAbsenceDate.internalBinaryWrite(message.data.absenceDate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.ColleagueGradeChange grade_change = 2; */
+            AbsenceDateChange.internalBinaryWrite(message.data.absenceDate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.GradeChange grade_change = 2; */
         if (message.data.oneofKind === "gradeChange")
-            ColleagueGradeChange.internalBinaryWrite(message.data.gradeChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.ColleagueLabelsChange labels_change = 3; */
+            GradeChange.internalBinaryWrite(message.data.gradeChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.LabelsChange labels_change = 3; */
         if (message.data.oneofKind === "labelsChange")
-            ColleagueLabelsChange.internalBinaryWrite(message.data.labelsChange, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.ColleagueNameChange name_change = 4; */
+            LabelsChange.internalBinaryWrite(message.data.labelsChange, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.NameChange name_change = 4; */
         if (message.data.oneofKind === "nameChange")
-            ColleagueNameChange.internalBinaryWrite(message.data.nameChange, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            NameChange.internalBinaryWrite(message.data.nameChange, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -381,24 +381,24 @@ class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.JobsUserActivityData
+ * @generated MessageType for protobuf message resources.jobs.ColleagueActivityData
  */
-export const JobsUserActivityData = new JobsUserActivityData$Type();
+export const ColleagueActivityData = new ColleagueActivityData$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ColleagueAbsenceDate$Type extends MessageType<ColleagueAbsenceDate> {
+class AbsenceDateChange$Type extends MessageType<AbsenceDateChange> {
     constructor() {
-        super("resources.jobs.ColleagueAbsenceDate", [
+        super("resources.jobs.AbsenceDateChange", [
             { no: 1, name: "absence_begin", kind: "message", T: () => Timestamp },
             { no: 2, name: "absence_end", kind: "message", T: () => Timestamp }
         ]);
     }
-    create(value?: PartialMessage<ColleagueAbsenceDate>): ColleagueAbsenceDate {
+    create(value?: PartialMessage<AbsenceDateChange>): AbsenceDateChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<ColleagueAbsenceDate>(this, message, value);
+            reflectionMergePartial<AbsenceDateChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueAbsenceDate): ColleagueAbsenceDate {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AbsenceDateChange): AbsenceDateChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -420,7 +420,7 @@ class ColleagueAbsenceDate$Type extends MessageType<ColleagueAbsenceDate> {
         }
         return message;
     }
-    internalBinaryWrite(message: ColleagueAbsenceDate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: AbsenceDateChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.timestamp.Timestamp absence_begin = 1; */
         if (message.absenceBegin)
             Timestamp.internalBinaryWrite(message.absenceBegin, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -434,26 +434,26 @@ class ColleagueAbsenceDate$Type extends MessageType<ColleagueAbsenceDate> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.ColleagueAbsenceDate
+ * @generated MessageType for protobuf message resources.jobs.AbsenceDateChange
  */
-export const ColleagueAbsenceDate = new ColleagueAbsenceDate$Type();
+export const AbsenceDateChange = new AbsenceDateChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ColleagueGradeChange$Type extends MessageType<ColleagueGradeChange> {
+class GradeChange$Type extends MessageType<GradeChange> {
     constructor() {
-        super("resources.jobs.ColleagueGradeChange", [
+        super("resources.jobs.GradeChange", [
             { no: 1, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "grade_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<ColleagueGradeChange>): ColleagueGradeChange {
+    create(value?: PartialMessage<GradeChange>): GradeChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.grade = 0;
         message.gradeLabel = "";
         if (value !== undefined)
-            reflectionMergePartial<ColleagueGradeChange>(this, message, value);
+            reflectionMergePartial<GradeChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueGradeChange): ColleagueGradeChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GradeChange): GradeChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -475,7 +475,7 @@ class ColleagueGradeChange$Type extends MessageType<ColleagueGradeChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: ColleagueGradeChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: GradeChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 grade = 1; */
         if (message.grade !== 0)
             writer.tag(1, WireType.Varint).int32(message.grade);
@@ -489,26 +489,26 @@ class ColleagueGradeChange$Type extends MessageType<ColleagueGradeChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.ColleagueGradeChange
+ * @generated MessageType for protobuf message resources.jobs.GradeChange
  */
-export const ColleagueGradeChange = new ColleagueGradeChange$Type();
+export const GradeChange = new GradeChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ColleagueLabelsChange$Type extends MessageType<ColleagueLabelsChange> {
+class LabelsChange$Type extends MessageType<LabelsChange> {
     constructor() {
-        super("resources.jobs.ColleagueLabelsChange", [
+        super("resources.jobs.LabelsChange", [
             { no: 1, name: "added", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
             { no: 2, name: "removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
         ]);
     }
-    create(value?: PartialMessage<ColleagueLabelsChange>): ColleagueLabelsChange {
+    create(value?: PartialMessage<LabelsChange>): LabelsChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = [];
         message.removed = [];
         if (value !== undefined)
-            reflectionMergePartial<ColleagueLabelsChange>(this, message, value);
+            reflectionMergePartial<LabelsChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueLabelsChange): ColleagueLabelsChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LabelsChange): LabelsChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -530,7 +530,7 @@ class ColleagueLabelsChange$Type extends MessageType<ColleagueLabelsChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: ColleagueLabelsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: LabelsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated resources.jobs.Label added = 1; */
         for (let i = 0; i < message.added.length; i++)
             Label.internalBinaryWrite(message.added[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -544,24 +544,24 @@ class ColleagueLabelsChange$Type extends MessageType<ColleagueLabelsChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.ColleagueLabelsChange
+ * @generated MessageType for protobuf message resources.jobs.LabelsChange
  */
-export const ColleagueLabelsChange = new ColleagueLabelsChange$Type();
+export const LabelsChange = new LabelsChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ColleagueNameChange$Type extends MessageType<ColleagueNameChange> {
+class NameChange$Type extends MessageType<NameChange> {
     constructor() {
-        super("resources.jobs.ColleagueNameChange", [
+        super("resources.jobs.NameChange", [
             { no: 1, name: "prefix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<ColleagueNameChange>): ColleagueNameChange {
+    create(value?: PartialMessage<NameChange>): NameChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<ColleagueNameChange>(this, message, value);
+            reflectionMergePartial<NameChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueNameChange): ColleagueNameChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: NameChange): NameChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -583,7 +583,7 @@ class ColleagueNameChange$Type extends MessageType<ColleagueNameChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: ColleagueNameChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: NameChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional string prefix = 1; */
         if (message.prefix !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.prefix);
@@ -597,6 +597,6 @@ class ColleagueNameChange$Type extends MessageType<ColleagueNameChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.ColleagueNameChange
+ * @generated MessageType for protobuf message resources.jobs.NameChange
  */
-export const ColleagueNameChange = new ColleagueNameChange$Type();
+export const NameChange = new NameChange$Type();

@@ -28,7 +28,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 	}
 
 	// Allow superusers access to any docs
-	if userInfo.SuperUser {
+	if userInfo.Superuser {
 		for i := range calendarIds {
 			dest = append(dest, &calendarAccessEntry{
 				ID: calendarIds[i],
@@ -37,7 +37,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 		return dest, nil
 	}
 
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	ids := make([]jet.Expression, len(calendarIds))
 	for i := range calendarIds {

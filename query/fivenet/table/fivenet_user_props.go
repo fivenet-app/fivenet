@@ -28,6 +28,7 @@ type fivenetUserPropsTable struct {
 	BloodType                        mysql.ColumnString
 	Avatar                           mysql.ColumnString
 	MugShot                          mysql.ColumnString
+	Attributes                       mysql.ColumnString
 	Email                            mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
@@ -81,9 +82,10 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		BloodTypeColumn                        = mysql.StringColumn("blood_type")
 		AvatarColumn                           = mysql.StringColumn("avatar")
 		MugShotColumn                          = mysql.StringColumn("mug_shot")
+		AttributesColumn                       = mysql.StringColumn("attributes")
 		EmailColumn                            = mysql.StringColumn("email")
-		allColumns                             = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
-		mutableColumns                         = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
+		allColumns                             = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, AttributesColumn, EmailColumn}
+		mutableColumns                         = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, AttributesColumn, EmailColumn}
 		defaultColumns                         = mysql.ColumnList{WantedColumn, TrafficInfractionPointsColumn, OpenFinesColumn}
 	)
 
@@ -102,6 +104,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		BloodType:                        BloodTypeColumn,
 		Avatar:                           AvatarColumn,
 		MugShot:                          MugShotColumn,
+		Attributes:                       AttributesColumn,
 		Email:                            EmailColumn,
 
 		AllColumns:     allColumns,

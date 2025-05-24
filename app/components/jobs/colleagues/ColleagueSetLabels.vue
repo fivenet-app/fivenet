@@ -2,10 +2,10 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useNotificatorStore } from '~/stores/notificator';
-import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
+import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Labels } from '~~/gen/ts/resources/jobs/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetColleagueLabelsResponse, SetJobsUserPropsResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueLabelsResponse, SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const props = defineProps<{
     modelValue?: Labels;
@@ -58,8 +58,8 @@ const state = reactive<Schema>({
     labels: labels.value?.list.map((l) => ({ ...l, selected: true })) ?? [],
 });
 
-async function setUserJobProp(userId: number, values: Schema): Promise<SetJobsUserPropsResponse> {
-    const jobsUserProps: JobsUserProps = {
+async function setUserJobProp(userId: number, values: Schema): Promise<SetColleaguePropsResponse> {
+    const jobsUserProps: ColleagueProps = {
         userId: userId,
         job: '',
         labels: {
@@ -68,7 +68,7 @@ async function setUserJobProp(userId: number, values: Schema): Promise<SetJobsUs
     };
 
     try {
-        const call = $grpc.jobs.jobs.setJobsUserProps({
+        const call = $grpc.jobs.jobs.setColleagueProps({
             props: jobsUserProps,
             reason: values.reason,
         });

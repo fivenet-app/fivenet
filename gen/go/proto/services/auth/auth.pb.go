@@ -9,6 +9,7 @@ package auth
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -737,7 +738,7 @@ type ChooseCharacterResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Expires       *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
 	Permissions   []string               `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	JobProps      *users.JobProps        `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
+	JobProps      *jobs.JobProps         `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
 	Char          *users.User            `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"` // @gotags: alias:"user"
 	Username      string                 `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -788,7 +789,7 @@ func (x *ChooseCharacterResponse) GetPermissions() []string {
 	return nil
 }
 
-func (x *ChooseCharacterResponse) GetJobProps() *users.JobProps {
+func (x *ChooseCharacterResponse) GetJobProps() *jobs.JobProps {
 	if x != nil {
 		return x.JobProps
 	}
@@ -977,7 +978,7 @@ func (x *DeleteOAuth2ConnectionResponse) GetSuccess() bool {
 	return false
 }
 
-type SetSuperUserModeRequest struct {
+type SetSuperuserModeRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Superuser     bool                   `protobuf:"varint,1,opt,name=superuser,proto3" json:"superuser,omitempty"`
 	Job           *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
@@ -985,20 +986,20 @@ type SetSuperUserModeRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetSuperUserModeRequest) Reset() {
-	*x = SetSuperUserModeRequest{}
+func (x *SetSuperuserModeRequest) Reset() {
+	*x = SetSuperuserModeRequest{}
 	mi := &file_services_auth_auth_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetSuperUserModeRequest) String() string {
+func (x *SetSuperuserModeRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetSuperUserModeRequest) ProtoMessage() {}
+func (*SetSuperuserModeRequest) ProtoMessage() {}
 
-func (x *SetSuperUserModeRequest) ProtoReflect() protoreflect.Message {
+func (x *SetSuperuserModeRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_auth_auth_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1010,49 +1011,49 @@ func (x *SetSuperUserModeRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetSuperUserModeRequest.ProtoReflect.Descriptor instead.
-func (*SetSuperUserModeRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetSuperuserModeRequest.ProtoReflect.Descriptor instead.
+func (*SetSuperuserModeRequest) Descriptor() ([]byte, []int) {
 	return file_services_auth_auth_proto_rawDescGZIP(), []int{20}
 }
 
-func (x *SetSuperUserModeRequest) GetSuperuser() bool {
+func (x *SetSuperuserModeRequest) GetSuperuser() bool {
 	if x != nil {
 		return x.Superuser
 	}
 	return false
 }
 
-func (x *SetSuperUserModeRequest) GetJob() string {
+func (x *SetSuperuserModeRequest) GetJob() string {
 	if x != nil && x.Job != nil {
 		return *x.Job
 	}
 	return ""
 }
 
-type SetSuperUserModeResponse struct {
+type SetSuperuserModeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Expires       *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
 	Permissions   []string               `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	JobProps      *users.JobProps        `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
+	JobProps      *jobs.JobProps         `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
 	Char          *users.User            `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"` // @gotags: alias:"user"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetSuperUserModeResponse) Reset() {
-	*x = SetSuperUserModeResponse{}
+func (x *SetSuperuserModeResponse) Reset() {
+	*x = SetSuperuserModeResponse{}
 	mi := &file_services_auth_auth_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetSuperUserModeResponse) String() string {
+func (x *SetSuperuserModeResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetSuperUserModeResponse) ProtoMessage() {}
+func (*SetSuperuserModeResponse) ProtoMessage() {}
 
-func (x *SetSuperUserModeResponse) ProtoReflect() protoreflect.Message {
+func (x *SetSuperuserModeResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_auth_auth_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1064,33 +1065,33 @@ func (x *SetSuperUserModeResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetSuperUserModeResponse.ProtoReflect.Descriptor instead.
-func (*SetSuperUserModeResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use SetSuperuserModeResponse.ProtoReflect.Descriptor instead.
+func (*SetSuperuserModeResponse) Descriptor() ([]byte, []int) {
 	return file_services_auth_auth_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *SetSuperUserModeResponse) GetExpires() *timestamp.Timestamp {
+func (x *SetSuperuserModeResponse) GetExpires() *timestamp.Timestamp {
 	if x != nil {
 		return x.Expires
 	}
 	return nil
 }
 
-func (x *SetSuperUserModeResponse) GetPermissions() []string {
+func (x *SetSuperuserModeResponse) GetPermissions() []string {
 	if x != nil {
 		return x.Permissions
 	}
 	return nil
 }
 
-func (x *SetSuperUserModeResponse) GetJobProps() *users.JobProps {
+func (x *SetSuperuserModeResponse) GetJobProps() *jobs.JobProps {
 	if x != nil {
 		return x.JobProps
 	}
 	return nil
 }
 
-func (x *SetSuperUserModeResponse) GetChar() *users.User {
+func (x *SetSuperuserModeResponse) GetChar() *users.User {
 	if x != nil {
 		return x.Char
 	}
@@ -1101,7 +1102,7 @@ var File_services_auth_auth_proto protoreflect.FileDescriptor
 
 const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/auth/auth.proto\x12\rservices.auth\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1fresources/users/job_props.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xb7\x01\n" +
+	"\x18services/auth/auth.proto\x12\rservices.auth\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1eresources/jobs/job_props.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xb7\x01\n" +
 	"\x14CreateAccountRequest\x121\n" +
 	"\treg_token\x18\x01 \x01(\tB\x14\xfaB\x11r\x0f2\n" +
 	"^[0-9]{6}$\x98\x01\x06R\bregToken\x12E\n" +
@@ -1142,11 +1143,11 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x15GetCharactersResponse\x123\n" +
 	"\x05chars\x18\x01 \x03(\v2\x1d.resources.accounts.CharacterR\x05chars\":\n" +
 	"\x16ChooseCharacterRequest\x12 \n" +
-	"\achar_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06charId\"\xf4\x01\n" +
+	"\achar_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06charId\"\xf3\x01\n" +
 	"\x17ChooseCharacterResponse\x128\n" +
 	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12 \n" +
-	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x126\n" +
-	"\tjob_props\x18\x03 \x01(\v2\x19.resources.users.JobPropsR\bjobProps\x12)\n" +
+	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x125\n" +
+	"\tjob_props\x18\x03 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\x12)\n" +
 	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserR\x04char\x12\x1a\n" +
 	"\busername\x18\x05 \x01(\tR\busername\"\x0f\n" +
 	"\rLogoutRequest\"*\n" +
@@ -1156,14 +1157,14 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\bprovider\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x182R\bprovider\":\n" +
 	"\x1eDeleteOAuth2ConnectionResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"_\n" +
-	"\x17SetSuperUserModeRequest\x12\x1c\n" +
+	"\x17SetSuperuserModeRequest\x12\x1c\n" +
 	"\tsuperuser\x18\x01 \x01(\bR\tsuperuser\x12\x1e\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01B\x06\n" +
-	"\x04_job\"\xec\x01\n" +
-	"\x18SetSuperUserModeResponse\x128\n" +
+	"\x04_job\"\xeb\x01\n" +
+	"\x18SetSuperuserModeResponse\x128\n" +
 	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12 \n" +
-	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12;\n" +
-	"\tjob_props\x18\x03 \x01(\v2\x19.resources.users.JobPropsH\x00R\bjobProps\x88\x01\x01\x12)\n" +
+	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12:\n" +
+	"\tjob_props\x18\x03 \x01(\v2\x18.resources.jobs.JobPropsH\x00R\bjobProps\x88\x01\x01\x12)\n" +
 	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserR\x04charB\f\n" +
 	"\n" +
 	"_job_props2\x8a\b\n" +
@@ -1178,7 +1179,7 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x0fChooseCharacter\x12%.services.auth.ChooseCharacterRequest\x1a&.services.auth.ChooseCharacterResponse\x12]\n" +
 	"\x0eGetAccountInfo\x12$.services.auth.GetAccountInfoRequest\x1a%.services.auth.GetAccountInfoResponse\x12u\n" +
 	"\x16DeleteOAuth2Connection\x12,.services.auth.DeleteOAuth2ConnectionRequest\x1a-.services.auth.DeleteOAuth2ConnectionResponse\x12c\n" +
-	"\x10SetSuperUserMode\x12&.services.auth.SetSuperUserModeRequest\x1a'.services.auth.SetSuperUserModeResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"
+	"\x10SetSuperuserMode\x12&.services.auth.SetSuperuserModeRequest\x1a'.services.auth.SetSuperuserModeResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;authb\x06proto3"
 
 var (
 	file_services_auth_auth_proto_rawDescOnce sync.Once
@@ -1214,14 +1215,14 @@ var file_services_auth_auth_proto_goTypes = []any{
 	(*LogoutResponse)(nil),                 // 17: services.auth.LogoutResponse
 	(*DeleteOAuth2ConnectionRequest)(nil),  // 18: services.auth.DeleteOAuth2ConnectionRequest
 	(*DeleteOAuth2ConnectionResponse)(nil), // 19: services.auth.DeleteOAuth2ConnectionResponse
-	(*SetSuperUserModeRequest)(nil),        // 20: services.auth.SetSuperUserModeRequest
-	(*SetSuperUserModeResponse)(nil),       // 21: services.auth.SetSuperUserModeResponse
+	(*SetSuperuserModeRequest)(nil),        // 20: services.auth.SetSuperuserModeRequest
+	(*SetSuperuserModeResponse)(nil),       // 21: services.auth.SetSuperuserModeResponse
 	(*timestamp.Timestamp)(nil),            // 22: resources.timestamp.Timestamp
 	(*accounts.Account)(nil),               // 23: resources.accounts.Account
 	(*accounts.OAuth2Provider)(nil),        // 24: resources.accounts.OAuth2Provider
 	(*accounts.OAuth2Account)(nil),         // 25: resources.accounts.OAuth2Account
 	(*accounts.Character)(nil),             // 26: resources.accounts.Character
-	(*users.JobProps)(nil),                 // 27: resources.users.JobProps
+	(*jobs.JobProps)(nil),                  // 27: resources.jobs.JobProps
 	(*users.User)(nil),                     // 28: resources.users.User
 }
 var file_services_auth_auth_proto_depIdxs = []int32{
@@ -1233,11 +1234,11 @@ var file_services_auth_auth_proto_depIdxs = []int32{
 	25, // 5: services.auth.GetAccountInfoResponse.oauth2_connections:type_name -> resources.accounts.OAuth2Account
 	26, // 6: services.auth.GetCharactersResponse.chars:type_name -> resources.accounts.Character
 	22, // 7: services.auth.ChooseCharacterResponse.expires:type_name -> resources.timestamp.Timestamp
-	27, // 8: services.auth.ChooseCharacterResponse.job_props:type_name -> resources.users.JobProps
+	27, // 8: services.auth.ChooseCharacterResponse.job_props:type_name -> resources.jobs.JobProps
 	28, // 9: services.auth.ChooseCharacterResponse.char:type_name -> resources.users.User
-	22, // 10: services.auth.SetSuperUserModeResponse.expires:type_name -> resources.timestamp.Timestamp
-	27, // 11: services.auth.SetSuperUserModeResponse.job_props:type_name -> resources.users.JobProps
-	28, // 12: services.auth.SetSuperUserModeResponse.char:type_name -> resources.users.User
+	22, // 10: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
+	27, // 11: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.JobProps
+	28, // 12: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
 	2,  // 13: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
 	16, // 14: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
 	0,  // 15: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
@@ -1248,7 +1249,7 @@ var file_services_auth_auth_proto_depIdxs = []int32{
 	14, // 20: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
 	10, // 21: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
 	18, // 22: services.auth.AuthService.DeleteOAuth2Connection:input_type -> services.auth.DeleteOAuth2ConnectionRequest
-	20, // 23: services.auth.AuthService.SetSuperUserMode:input_type -> services.auth.SetSuperUserModeRequest
+	20, // 23: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
 	3,  // 24: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
 	17, // 25: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
 	1,  // 26: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
@@ -1259,7 +1260,7 @@ var file_services_auth_auth_proto_depIdxs = []int32{
 	15, // 31: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
 	11, // 32: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
 	19, // 33: services.auth.AuthService.DeleteOAuth2Connection:output_type -> services.auth.DeleteOAuth2ConnectionResponse
-	21, // 34: services.auth.AuthService.SetSuperUserMode:output_type -> services.auth.SetSuperUserModeResponse
+	21, // 34: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
 	24, // [24:35] is the sub-list for method output_type
 	13, // [13:24] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name

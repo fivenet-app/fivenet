@@ -5,7 +5,7 @@ import (
 )
 
 // Attributes provides methods for you to manage array data more easily.
-type Attributes []*model.FivenetAttrs
+type Attributes []*model.FivenetRbacAttrs
 
 // Len returns the number of elements of the array.
 // @return int64

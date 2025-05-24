@@ -28,7 +28,7 @@ const { data: templates, pending: loading, refresh, error } = useLazyAsyncData(`
 
 async function listTemplates(): Promise<TemplateShort[]> {
     try {
-        const call = $grpc.docstore.docStore.listTemplates({});
+        const call = $grpc.documents.documents.listTemplates({});
         const { response } = await call;
 
         return response.templates;

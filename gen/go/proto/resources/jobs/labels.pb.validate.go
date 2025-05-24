@@ -252,6 +252,39 @@ func (m *Label) validate(all bool) error {
 
 	}
 
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, LabelValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, LabelValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return LabelValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return LabelMultiError(errors)
 	}

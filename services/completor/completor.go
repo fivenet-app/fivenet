@@ -19,14 +19,14 @@ import (
 )
 
 var (
-	tDCategory        = table.FivenetDocumentsCategories.AS("category")
-	tJobCitizenLabels = table.FivenetJobCitizenLabels.AS("citizen_label")
+	tDCategory         = table.FivenetDocumentsCategories.AS("category")
+	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("citizen_label")
 )
 
 func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.CompleteCitizensRequest) (*pbcompletor.CompleteCitizensRespoonse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUsers := tables.Users().AS("usershort")
+	tUsers := tables.User().AS("user_short")
 
 	condition := s.customDB.Conditions.User.GetFilter(tUsers.Alias())
 
@@ -211,28 +211,28 @@ func (s *Server) CompleteCitizenLabels(ctx context.Context, req *pbcompletor.Com
 		jobsExp[i] = jet.String(jobs.Strings[i])
 	}
 
-	condition := tJobCitizenLabels.Job.IN(jobsExp...)
+	condition := tCitizensLabelsJob.Job.IN(jobsExp...)
 
 	if req.Search != "" {
 		req.Search = "%" + req.Search + "%"
-		condition = condition.AND(tJobCitizenLabels.Name.LIKE(jet.String(req.Search)))
+		condition = condition.AND(tCitizensLabelsJob.Name.LIKE(jet.String(req.Search)))
 	}
 
-	stmt := tJobCitizenLabels.
+	stmt := tCitizensLabelsJob.
 		SELECT(
-			tJobCitizenLabels.ID,
-			tJobCitizenLabels.Name,
-			tJobCitizenLabels.Color,
+			tCitizensLabelsJob.ID,
+			tCitizensLabelsJob.Name,
+			tCitizensLabelsJob.Color,
 		).
-		FROM(tJobCitizenLabels).
+		FROM(tCitizensLabelsJob).
 		WHERE(condition).
 		ORDER_BY(
-			tJobCitizenLabels.SortKey.ASC(),
+			tCitizensLabelsJob.SortKey.ASC(),
 		).
 		LIMIT(10)
 
 	resp := &pbcompletor.CompleteCitizenLabelsResponse{
-		Labels: []*users.CitizenLabel{},
+		Labels: []*users.Label{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

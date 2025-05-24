@@ -90,11 +90,11 @@ const showRadioFrequency = ref(false);
                     </div>
 
                     <JobSelfService
-                        v-if="can('JobsService.ListColleagues').value && activeChar !== null"
+                        v-if="can('jobs.JobsService.ListColleagues').value && activeChar !== null"
                         :user-id="activeChar.userId"
                     />
 
-                    <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock').value" />
+                    <TimeclockOverviewBlock v-if="can('jobs.TimeclockService.ListTimeclock').value" />
                 </div>
             </div>
         </template>

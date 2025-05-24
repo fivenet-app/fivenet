@@ -5,14 +5,13 @@ import (
 	"errors"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	calendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -189,12 +188,12 @@ func (s *Server) GetCalendarEntry(ctx context.Context, req *pbcalendar.GetCalend
 func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *pbcalendar.CreateOrUpdateCalendarEntryRequest) (*pbcalendar.CreateOrUpdateCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateCalendarEntry",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -263,7 +262,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *pbcalenda
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	} else {
 		stmt := tCalendarEntry.
 			INSERT(
@@ -305,7 +304,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *pbcalenda
 
 		req.Entry.Id = uint64(lastId)
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	}
 
 	newUsers := []int32{}
@@ -340,12 +339,12 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *pbcalenda
 func (s *Server) DeleteCalendarEntry(ctx context.Context, req *pbcalendar.DeleteCalendarEntryRequest) (*pbcalendar.DeleteCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "DeleteCalendarEntry",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -366,7 +365,7 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *pbcalendar.Delete
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if entry.DeletedAt != nil && userInfo.SuperUser {
+	if entry.DeletedAt != nil && userInfo.Superuser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -386,13 +385,13 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *pbcalendar.Delete
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbcalendar.DeleteCalendarEntryResponse{}, nil
 }
 
 func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression) (*calendar.CalendarEntry, error) {
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	stmt := tCalendarEntry.
 		SELECT(

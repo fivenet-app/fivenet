@@ -572,7 +572,10 @@ export const useCentrumStore = defineStore(
                 if (rpcError.code !== 'CANCELLED' && rpcError.code !== 'ABORTED') {
                     logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
 
-                    if (rpcError.code === 'INVALID_ARGUMENT' && rpcError.message.includes('CentrumService.ErrDisabled')) {
+                    if (
+                        rpcError.code === 'INVALID_ARGUMENT' &&
+                        rpcError.message.includes('centrum.CentrumService.ErrDisabled')
+                    ) {
                         // Create empty settings object with enabled set to false
                         settings.value = {
                             enabled: false,
@@ -670,19 +673,21 @@ export const useCentrumStore = defineStore(
 
             switch (action) {
                 case 'TakeControl':
-                    return can('CentrumService.TakeControl').value;
+                    return can('centrum.CentrumService.TakeControl').value;
                 case 'TakeDispatch':
-                    return can('CentrumService.TakeDispatch').value && getCurrentMode.value !== CentrumMode.CENTRAL_COMMAND;
+                    return (
+                        can('centrum.CentrumService.TakeDispatch').value && getCurrentMode.value !== CentrumMode.CENTRAL_COMMAND
+                    );
                 case 'AssignDispatch':
-                    return can('CentrumService.TakeControl').value;
+                    return can('centrum.CentrumService.TakeControl').value;
                 case 'UpdateDispatchStatus':
                     return (
                         dispatchParam !== undefined &&
-                        can('CentrumService.TakeDispatch').value &&
+                        can('centrum.CentrumService.TakeDispatch').value &&
                         checkIfUnitAssignedToDispatch(dispatchParam, ownUnitId.value)
                     );
                 case 'UpdateUnitStatus':
-                    return can('CentrumService.TakeDispatch').value;
+                    return can('centrum.CentrumService.TakeDispatch').value;
                 default:
                     return false;
             }

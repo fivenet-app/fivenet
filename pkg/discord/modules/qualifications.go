@@ -66,10 +66,10 @@ func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []discord.
 
 	stmt := tQualifications.
 		SELECT(
-			tQualifications.ID.AS("qualificationsentry.id"),
-			tQualifications.Abbreviation.AS("qualificationsentry.abbreviation"),
-			tQualifications.Title.AS("qualificationsentry.title"),
-			tQualifications.DiscordSettings.AS("qualificationsentry.discord_settings"),
+			tQualifications.ID.AS("qualifications_entry.id"),
+			tQualifications.Abbreviation.AS("qualifications_entry.abbreviation"),
+			tQualifications.Title.AS("qualifications_entry.title"),
+			tQualifications.DiscordSettings.AS("qualifications_entry.discord_settings"),
 		).
 		FROM(tQualifications).
 		WHERE(jet.AND(
@@ -169,15 +169,15 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 		jobs = append(jobs, jet.String(job))
 	}
 
-	tUsers := tables.Users().AS("users")
+	tUsers := tables.User().AS("users")
 
 	users := types.Users{}
 	for qualificationId, role := range qualificationRoles {
-		stmt := tOauth2Accs.
+		stmt := tAccsOauth2.
 			SELECT(
-				tOauth2Accs.AccountID.AS("qualificationusermapping.account_id"),
-				tOauth2Accs.ExternalID.AS("qualificationusermapping.external_id"),
-				tUsers.Job.AS("qualificationusermapping.job"),
+				tAccsOauth2.AccountID.AS("qualification_user_mapping.account_id"),
+				tAccsOauth2.ExternalID.AS("qualification_user_mapping.external_id"),
+				tUsers.Job.AS("qualification_user_mapping.job"),
 			).
 			FROM(
 				tQualificationsResults.
@@ -191,8 +191,8 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 					INNER_JOIN(tAccs,
 						tAccs.License.LIKE(jet.RawString("SUBSTRING_INDEX(`users`.`identifier`, ':', -1)")),
 					).
-					INNER_JOIN(tOauth2Accs,
-						tOauth2Accs.AccountID.EQ(tAccs.ID),
+					INNER_JOIN(tAccsOauth2,
+						tAccsOauth2.AccountID.EQ(tAccs.ID),
 					),
 			).
 			WHERE(jet.AND(
@@ -200,7 +200,7 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 				tQualificationsResults.DeletedAt.IS_NULL(),
 				tQualificationsResults.Status.EQ(jet.Int16(int16(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
 				tQualifications.Job.IN(jobs...),
-				tOauth2Accs.Provider.EQ(jet.String("discord")),
+				tAccsOauth2.Provider.EQ(jet.String("discord")),
 			))
 
 		var dest []*qualificationUserMapping

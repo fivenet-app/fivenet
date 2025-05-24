@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useCompletorStore } from '~/stores/completor';
-import type { ManageCitizenLabelsResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
+import type { ManageLabelsResponse } from '~~/gen/ts/services/citizens/citizens';
 
 const { $grpc } = useNuxtApp();
 
@@ -30,11 +30,11 @@ const state = reactive<Schema>({
     labels: [],
 });
 
-const { data: labels } = useLazyAsyncData('citizenstore-labels', () => completorStore.completeCitizenLabels(''));
+const { data: labels } = useLazyAsyncData('citizens-labels', () => completorStore.completeCitizenLabels(''));
 
-async function manageCitizenLabels(values: Schema): Promise<ManageCitizenLabelsResponse> {
+async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
     try {
-        const { response } = await $grpc.citizenstore.citizenStore.manageCitizenLabels({
+        const { response } = await $grpc.citizens.citizens.manageLabels({
             labels: values.labels ?? [],
         });
 
@@ -52,7 +52,7 @@ async function manageCitizenLabels(values: Schema): Promise<ManageCitizenLabelsR
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await manageCitizenLabels(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await manageLabels(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 watch(labels, () => (state.labels = labels.value ?? []));
@@ -73,7 +73,7 @@ watch(labels, () => (state.labels = labels.value ?? []));
                 </template>
 
                 <UFormGroup
-                    v-if="state && can('CitizenStoreService.ManageCitizenLabels').value"
+                    v-if="state && can('citizens.CitizensService.ManageLabels').value"
                     class="grid items-center gap-2"
                     name="citizenAttributes.list"
                     :ui="{ container: '' }"

@@ -5,13 +5,12 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -35,7 +34,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThrea
 
 	countStmt := tMessages.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tMessages.ID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tMessages.ID)).AS("data_count.total"),
 		).
 		FROM(tMessages).
 		WHERE(jet.AND(
@@ -50,12 +49,12 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *pbmailer.ListThrea
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, MessagesDefaultPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, MessagesDefaultPageSize)
 	resp := &pbmailer.ListThreadMessagesResponse{
 		Pagination: pag,
 		Messages:   []*mailer.Message{},
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -146,12 +145,12 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Mess
 func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageRequest) (*pbmailer.PostMessageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "PostMessage",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -165,7 +164,7 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 	}
 
 	// Prevent disabled emails from sending messages
-	if !userInfo.SuperUser && senderEmail.Deactivated {
+	if !userInfo.Superuser && senderEmail.Deactivated {
 		return nil, errorsmailer.ErrEmailDisabled
 	}
 
@@ -247,7 +246,7 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 		},
 	}, emailIds...)
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbmailer.PostMessageResponse{
 		Message: message,
@@ -296,16 +295,16 @@ func (s *Server) DeleteMessage(ctx context.Context, req *pbmailer.DeleteMessageR
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "DeleteMessage",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
@@ -315,7 +314,7 @@ func (s *Server) DeleteMessage(ctx context.Context, req *pbmailer.DeleteMessageR
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if message != nil && message.DeletedAt != nil && userInfo.SuperUser {
+	if message != nil && message.DeletedAt != nil && userInfo.Superuser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -354,7 +353,7 @@ func (s *Server) DeleteMessage(ctx context.Context, req *pbmailer.DeleteMessageR
 		}, emailIds...)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbmailer.DeleteMessageResponse{}, nil
 }
@@ -362,12 +361,12 @@ func (s *Server) DeleteMessage(ctx context.Context, req *pbmailer.DeleteMessageR
 func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsRequest) (*pbmailer.SearchThreadsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "SearchThreads",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -425,7 +424,7 @@ func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsR
 
 	countStmt := tMessages.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tMessages.ID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tMessages.ID)).AS("data_count.total"),
 		).
 		FROM(tMessages).
 		WHERE(condition)
@@ -437,11 +436,11 @@ func (s *Server) SearchThreads(ctx context.Context, req *pbmailer.SearchThreadsR
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 15)
 	resp := &pbmailer.SearchThreadsResponse{
 		Pagination: pag,
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 

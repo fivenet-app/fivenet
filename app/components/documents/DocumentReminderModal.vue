@@ -6,7 +6,7 @@ import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.cli
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { SetDocumentReminderResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { SetDocumentReminderResponse } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
     documentId: number;
@@ -41,7 +41,7 @@ watch(reminderTime, () => (state.reminderTime = reminderTime.value ? toDate(remi
 
 async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderResponse> {
     try {
-        const call = $grpc.docstore.docStore.setDocumentReminder({
+        const call = $grpc.documents.documents.setDocumentReminder({
             documentId: props.documentId,
             reminderTime: values.reminderTime ? toTimestamp(values.reminderTime) : undefined,
             message: values.message,

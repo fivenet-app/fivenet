@@ -155,22 +155,22 @@ var _ interface {
 	ErrorName() string
 } = LicenseValidationError{}
 
-// Validate checks the field values on UserLicenses with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *UserLicenses) Validate() error {
+// Validate checks the field values on CitizensLicenses with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CitizensLicenses) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserLicenses with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UserLicensesMultiError, or
-// nil if none found.
-func (m *UserLicenses) ValidateAll() error {
+// ValidateAll checks the field values on CitizensLicenses with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CitizensLicensesMultiError, or nil if none found.
+func (m *CitizensLicenses) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserLicenses) validate(all bool) error {
+func (m *CitizensLicenses) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -178,7 +178,7 @@ func (m *UserLicenses) validate(all bool) error {
 	var errors []error
 
 	if m.GetUserId() <= 0 {
-		err := UserLicensesValidationError{
+		err := CitizensLicensesValidationError{
 			field:  "UserId",
 			reason: "value must be greater than 0",
 		}
@@ -195,7 +195,7 @@ func (m *UserLicenses) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserLicensesValidationError{
+					errors = append(errors, CitizensLicensesValidationError{
 						field:  fmt.Sprintf("Licenses[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -203,7 +203,7 @@ func (m *UserLicenses) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, UserLicensesValidationError{
+					errors = append(errors, CitizensLicensesValidationError{
 						field:  fmt.Sprintf("Licenses[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -212,7 +212,7 @@ func (m *UserLicenses) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return UserLicensesValidationError{
+				return CitizensLicensesValidationError{
 					field:  fmt.Sprintf("Licenses[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -223,18 +223,19 @@ func (m *UserLicenses) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UserLicensesMultiError(errors)
+		return CitizensLicensesMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserLicensesMultiError is an error wrapping multiple validation errors
-// returned by UserLicenses.ValidateAll() if the designated constraints aren't met.
-type UserLicensesMultiError []error
+// CitizensLicensesMultiError is an error wrapping multiple validation errors
+// returned by CitizensLicenses.ValidateAll() if the designated constraints
+// aren't met.
+type CitizensLicensesMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserLicensesMultiError) Error() string {
+func (m CitizensLicensesMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -243,11 +244,11 @@ func (m UserLicensesMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserLicensesMultiError) AllErrors() []error { return m }
+func (m CitizensLicensesMultiError) AllErrors() []error { return m }
 
-// UserLicensesValidationError is the validation error returned by
-// UserLicenses.Validate if the designated constraints aren't met.
-type UserLicensesValidationError struct {
+// CitizensLicensesValidationError is the validation error returned by
+// CitizensLicenses.Validate if the designated constraints aren't met.
+type CitizensLicensesValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -255,22 +256,22 @@ type UserLicensesValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserLicensesValidationError) Field() string { return e.field }
+func (e CitizensLicensesValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserLicensesValidationError) Reason() string { return e.reason }
+func (e CitizensLicensesValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserLicensesValidationError) Cause() error { return e.cause }
+func (e CitizensLicensesValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserLicensesValidationError) Key() bool { return e.key }
+func (e CitizensLicensesValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserLicensesValidationError) ErrorName() string { return "UserLicensesValidationError" }
+func (e CitizensLicensesValidationError) ErrorName() string { return "CitizensLicensesValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserLicensesValidationError) Error() string {
+func (e CitizensLicensesValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -282,14 +283,14 @@ func (e UserLicensesValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserLicenses.%s: %s%s",
+		"invalid %sCitizensLicenses.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserLicensesValidationError{}
+var _ error = CitizensLicensesValidationError{}
 
 var _ interface {
 	Field() string
@@ -297,4 +298,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserLicensesValidationError{}
+} = CitizensLicensesValidationError{}

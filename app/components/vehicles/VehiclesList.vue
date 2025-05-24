@@ -9,7 +9,7 @@ import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
-import type { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
+import type { ListVehiclesResponse } from '~~/gen/ts/services/vehicles/vehicles';
 
 const { $grpc } = useNuxtApp();
 
@@ -66,7 +66,7 @@ const {
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
-        const call = $grpc.dmv.dMV.listVehicles({
+        const call = $grpc.vehicles.vehicles.listVehicles({
             pagination: {
                 offset: offset.value,
             },
@@ -255,7 +255,7 @@ defineShortcuts({
                 </UTooltip>
 
                 <UTooltip
-                    v-if="!hideCitizenLink && vehicle.owner?.userId && can('CitizenStoreService.ListCitizens').value"
+                    v-if="!hideCitizenLink && vehicle.owner?.userId && can('citizens.CitizensService.ListCitizens').value"
                     :text="$t('common.show')"
                 >
                     <UButton

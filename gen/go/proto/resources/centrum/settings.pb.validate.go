@@ -253,10 +253,10 @@ func (m *PredefinedStatus) validate(all bool) error {
 
 	var errors []error
 
-	if len(m.GetUnitStatus()) > 5 {
+	if len(m.GetUnitStatus()) > 20 {
 		err := PredefinedStatusValidationError{
 			field:  "UnitStatus",
-			reason: "value must contain no more than 5 item(s)",
+			reason: "value must contain no more than 20 item(s)",
 		}
 		if !all {
 			return err
@@ -280,10 +280,10 @@ func (m *PredefinedStatus) validate(all bool) error {
 
 	}
 
-	if len(m.GetDispatchStatus()) > 5 {
+	if len(m.GetDispatchStatus()) > 20 {
 		err := PredefinedStatusValidationError{
 			field:  "DispatchStatus",
-			reason: "value must contain no more than 5 item(s)",
+			reason: "value must contain no more than 20 item(s)",
 		}
 		if !all {
 			return err

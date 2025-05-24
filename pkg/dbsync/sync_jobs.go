@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -35,7 +35,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 	sQuery := s.cfg.Tables.Jobs
 	query := prepareStringQuery(sQuery, s.state, 0, limit)
 
-	jobs := []*users.Job{}
+	jobs := []*jobs.Job{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &jobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -75,12 +75,12 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 	return nil
 }
 
-func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*users.JobGrade, error) {
+func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*jobs.JobGrade, error) {
 	sQuery := s.cfg.Tables.JobGrades
 	query := prepareStringQuery(sQuery, nil, 0, 200)
 	query = strings.ReplaceAll(query, "$jobName", "?")
 
-	grades := []*users.JobGrade{}
+	grades := []*jobs.JobGrade{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{
 		job,
 	}, &grades); err != nil {

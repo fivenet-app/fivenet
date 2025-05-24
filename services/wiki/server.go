@@ -30,9 +30,9 @@ func init() {
 
 		DependantTables: []*housekeeper.Table{
 			{
-				Table:      table.FivenetWikiPageActivity,
-				ForeignKey: table.FivenetWikiPageActivity.PageID,
-				IDColumn:   table.FivenetWikiPageActivity.ID,
+				Table:      table.FivenetWikiPagesActivity,
+				ForeignKey: table.FivenetWikiPagesActivity.PageID,
+				IDColumn:   table.FivenetWikiPagesActivity.ID,
 			},
 		},
 	},
@@ -41,7 +41,7 @@ func init() {
 
 var (
 	tPage      = table.FivenetWikiPages.AS("page")
-	tPageShort = table.FivenetWikiPages.AS("pageshort")
+	tPageShort = table.FivenetWikiPages.AS("page_short")
 	tPAccess   = table.FivenetWikiPagesAccess.AS("access")
 	tJobProps  = table.FivenetJobProps
 )
@@ -122,14 +122,14 @@ func NewServer(p Params) *Server {
 					},
 					UserId: table.FivenetWikiPagesAccess.UserID,
 				},
-				table.FivenetWikiPagesAccess.AS("page_user_access"),
+				table.FivenetWikiPagesAccess.AS("page_citizen_access"),
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetWikiPagesAccess.AS("page_user_access").ID,
-						TargetID: table.FivenetWikiPagesAccess.AS("page_user_access").TargetID,
-						Access:   table.FivenetWikiPagesAccess.AS("page_user_access").Access,
+						ID:       table.FivenetWikiPagesAccess.AS("page_citizen_access").ID,
+						TargetID: table.FivenetWikiPagesAccess.AS("page_citizen_access").TargetID,
+						Access:   table.FivenetWikiPagesAccess.AS("page_citizen_access").Access,
 					},
-					UserId: table.FivenetWikiPagesAccess.AS("page_user_access").UserID,
+					UserId: table.FivenetWikiPagesAccess.AS("page_citizen_access").UserID,
 				},
 			),
 			nil,

@@ -14,7 +14,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.colleagues.single.title',
     requiresAuth: true,
-    permission: 'JobsService.GetColleague',
+    permission: 'jobs.JobsService.GetColleague',
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-info'>;
         // Check if the id is made up of digits
@@ -75,8 +75,8 @@ const { attr, can } = useAuth();
                         <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
                             <ColleagueSetName
                                 v-if="
-                                    can('JobsService.SetJobsUserProps').value &&
-                                    attr('JobsService.SetJobsUserProps', 'Types', 'Name').value
+                                    can('jobs.JobsService.SetColleagueProps').value &&
+                                    attr('jobs.JobsService.SetColleagueProps', 'Types', 'Name').value
                                 "
                                 v-model:name-prefix="colleague.props!.namePrefix"
                                 v-model:name-suffix="colleague.props!.nameSuffix"
@@ -92,7 +92,7 @@ const { attr, can } = useAuth();
 
                     <!-- Labels -->
                     <div
-                        v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value"
+                        v-if="attr('jobs.JobsService.GetColleague', 'Types', 'Labels').value"
                         class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                     >
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
@@ -101,8 +101,8 @@ const { attr, can } = useAuth();
                         <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
                             <ColleagueSetLabels
                                 v-if="
-                                    can('JobsService.SetJobsUserProps').value &&
-                                    attr('JobsService.SetJobsUserProps', 'Types', 'Labels').value
+                                    can('jobs.JobsService.SetColleagueProps').value &&
+                                    attr('jobs.JobsService.SetColleagueProps', 'Types', 'Labels').value
                                 "
                                 v-model="colleague.props!.labels"
                                 :user-id="colleague.userId"
@@ -135,7 +135,7 @@ const { attr, can } = useAuth();
 
                     <!-- Note -->
                     <div
-                        v-if="attr('JobsService.GetColleague', 'Types', 'Note').value"
+                        v-if="attr('jobs.JobsService.GetColleague', 'Types', 'Note').value"
                         class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                     >
                         <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">

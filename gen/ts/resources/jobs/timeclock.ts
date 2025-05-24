@@ -117,19 +117,19 @@ export enum TimeclockMode {
     TIMELINE = 4
 }
 /**
- * @generated from protobuf enum resources.jobs.TimeclockUserMode
+ * @generated from protobuf enum resources.jobs.TimeclockViewMode
  */
-export enum TimeclockUserMode {
+export enum TimeclockViewMode {
     /**
-     * @generated from protobuf enum value: TIMECLOCK_USER_MODE_UNSPECIFIED = 0;
+     * @generated from protobuf enum value: TIMECLOCK_VIEW_MODE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: TIMECLOCK_USER_MODE_SELF = 1;
+     * @generated from protobuf enum value: TIMECLOCK_VIEW_MODE_SELF = 1;
      */
     SELF = 1,
     /**
-     * @generated from protobuf enum value: TIMECLOCK_USER_MODE_ALL = 2;
+     * @generated from protobuf enum value: TIMECLOCK_VIEW_MODE_ALL = 2;
      */
     ALL = 2
 }

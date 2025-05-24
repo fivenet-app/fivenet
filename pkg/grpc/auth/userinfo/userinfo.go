@@ -12,7 +12,7 @@ type UserInfo struct {
 
 	Group      string
 	CanBeSuper bool
-	SuperUser  bool
+	Superuser  bool
 
 	OverrideJob      *string
 	OverrideJobGrade *int32
@@ -54,7 +54,7 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u.CanBeSuper != in.CanBeSuper {
 		return false
 	}
-	if u.SuperUser != in.SuperUser {
+	if u.Superuser != in.Superuser {
 		return false
 	}
 
@@ -81,7 +81,7 @@ func (u *UserInfo) Clone() UserInfo {
 		LastChar:   u.LastChar,
 		Group:      u.Group,
 		CanBeSuper: u.CanBeSuper,
-		SuperUser:  u.SuperUser,
+		Superuser:  u.Superuser,
 
 		UserId:   u.UserId,
 		Job:      u.Job,

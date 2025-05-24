@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package services.settings;
+
+import "resources/settings/config.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
+
+message GetAppConfigRequest {}
+
+message GetAppConfigResponse {
+  resources.settings.AppConfig config = 1;
+}
+
+message UpdateAppConfigRequest {
+  resources.settings.AppConfig config = 1 [(validate.rules).message.required = true];
+}
+
+message UpdateAppConfigResponse {
+  resources.settings.AppConfig config = 1;
+}
+
+service ConfigService {
+  // @perm: Name=Superuser
+  rpc GetAppConfig(GetAppConfigRequest) returns (GetAppConfigResponse);
+  // @perm: Name=Superuser
+  rpc UpdateAppConfig(UpdateAppConfigRequest) returns (UpdateAppConfigResponse);
+}

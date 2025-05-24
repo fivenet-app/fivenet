@@ -63,7 +63,7 @@ watchDebounced(queryCitizens, async () => await refresh(), {
 
 async function listCitizens(): Promise<User[]> {
     try {
-        const call = $grpc.citizenstore.citizenStore.listCitizens({
+        const call = $grpc.citizens.citizens.listCitizens({
             pagination: {
                 offset: 0,
                 pageSize: 8,
@@ -188,7 +188,7 @@ const columnsNew = [
                                 </template>
 
                                 <template #relation-data="{ row }">
-                                    {{ $t(`enums.docstore.DocRelation.${DocRelation[row.relation]}`) }}
+                                    {{ $t(`enums.documents.DocRelation.${DocRelation[row.relation]}`) }}
                                 </template>
 
                                 <template #actions-data="{ row }">

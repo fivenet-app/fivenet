@@ -62,7 +62,7 @@ func (p *ListSvcMethodsModule) Execute(targets map[string]pgs.File, pkgs map[str
 
 		for _, f := range fs {
 			for _, s := range f.Services() {
-				sName := string(s.Name())
+				sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
 
 				p.Debugf("Service: %s", sName)
 

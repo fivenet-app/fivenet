@@ -9,7 +9,7 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
@@ -20,9 +20,9 @@ import (
 )
 
 var (
-	tOauth2Accs    = table.FivenetOauth2Accounts
-	tAccs          = table.FivenetAccounts
-	tJobsUserProps = table.FivenetJobsUserProps
+	tAccsOauth2     = table.FivenetAccountsOauth2
+	tAccs           = table.FivenetAccounts
+	tColleagueProps = table.FivenetJobColleagueProps
 )
 
 var Modules = map[string]NewModuleFunc{}
@@ -57,10 +57,10 @@ type BaseModule struct {
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.Enricher
 
-	settings atomic.Pointer[users.DiscordSyncSettings]
+	settings atomic.Pointer[jobs.DiscordSyncSettings]
 }
 
-func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord *state.State, guild discord.Guild, job string, cfg *config.Discord, appCfg appconfig.IConfig, enricher *mstlystcdata.Enricher, settings *users.DiscordSyncSettings) *BaseModule {
+func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord *state.State, guild discord.Guild, job string, cfg *config.Discord, appCfg appconfig.IConfig, enricher *mstlystcdata.Enricher, settings *jobs.DiscordSyncSettings) *BaseModule {
 	bm := &BaseModule{
 		ctx:      ctx,
 		logger:   logger,
@@ -72,7 +72,7 @@ func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord 
 		appCfg:   appCfg,
 		enricher: enricher,
 
-		settings: atomic.Pointer[users.DiscordSyncSettings]{},
+		settings: atomic.Pointer[jobs.DiscordSyncSettings]{},
 	}
 	bm.settings.Store(settings)
 
@@ -90,6 +90,6 @@ func (m *BaseModule) checkIfJobIgnored(job string) bool {
 	return false
 }
 
-func (m *BaseModule) SetSettings(settings *users.DiscordSyncSettings) {
+func (m *BaseModule) SetSettings(settings *jobs.DiscordSyncSettings) {
 	m.settings.Store(settings)
 }

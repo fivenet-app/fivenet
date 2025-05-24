@@ -37,7 +37,7 @@ type Colleague struct {
 	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
 	Avatar        *filestore.File        `protobuf:"bytes,17,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
-	Props         *JobsUserProps         `protobuf:"bytes,18,opt,name=props,proto3" json:"props,omitempty" alias:"jobs_user_props"` // @gotags: alias:"jobs_user_props"
+	Props         *ColleagueProps        `protobuf:"bytes,18,opt,name=props,proto3" json:"props,omitempty" alias:"jobs_user_props"` // @gotags: alias:"jobs_user_props"
 	// @sanitize: method=StripTags
 	Email         *string `protobuf:"bytes,19,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -151,7 +151,7 @@ func (x *Colleague) GetAvatar() *filestore.File {
 	return nil
 }
 
-func (x *Colleague) GetProps() *JobsUserProps {
+func (x *Colleague) GetProps() *ColleagueProps {
 	if x != nil {
 		return x.Props
 	}
@@ -165,35 +165,36 @@ func (x *Colleague) GetEmail() string {
 	return ""
 }
 
-type JobsUserProps struct {
+type ColleagueProps struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
 	UserId       int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Job          string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
-	AbsenceBegin *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=absence_begin,json=absenceBegin,proto3,oneof" json:"absence_begin,omitempty"`
-	AbsenceEnd   *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=absence_end,json=absenceEnd,proto3,oneof" json:"absence_end,omitempty"`
+	DeletedAt    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	AbsenceBegin *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=absence_begin,json=absenceBegin,proto3,oneof" json:"absence_begin,omitempty"`
+	AbsenceEnd   *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=absence_end,json=absenceEnd,proto3,oneof" json:"absence_end,omitempty"`
 	// @sanitize: method=StripTags
-	Note          *string `protobuf:"bytes,5,opt,name=note,proto3,oneof" json:"note,omitempty"`
-	Labels        *Labels `protobuf:"bytes,6,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
-	NamePrefix    *string `protobuf:"bytes,7,opt,name=name_prefix,json=namePrefix,proto3,oneof" json:"name_prefix,omitempty"`
-	NameSuffix    *string `protobuf:"bytes,8,opt,name=name_suffix,json=nameSuffix,proto3,oneof" json:"name_suffix,omitempty"`
+	Note          *string `protobuf:"bytes,6,opt,name=note,proto3,oneof" json:"note,omitempty"`
+	Labels        *Labels `protobuf:"bytes,7,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
+	NamePrefix    *string `protobuf:"bytes,8,opt,name=name_prefix,json=namePrefix,proto3,oneof" json:"name_prefix,omitempty"`
+	NameSuffix    *string `protobuf:"bytes,9,opt,name=name_suffix,json=nameSuffix,proto3,oneof" json:"name_suffix,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *JobsUserProps) Reset() {
-	*x = JobsUserProps{}
+func (x *ColleagueProps) Reset() {
+	*x = ColleagueProps{}
 	mi := &file_resources_jobs_colleagues_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *JobsUserProps) String() string {
+func (x *ColleagueProps) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*JobsUserProps) ProtoMessage() {}
+func (*ColleagueProps) ProtoMessage() {}
 
-func (x *JobsUserProps) ProtoReflect() protoreflect.Message {
+func (x *ColleagueProps) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_jobs_colleagues_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -205,61 +206,68 @@ func (x *JobsUserProps) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobsUserProps.ProtoReflect.Descriptor instead.
-func (*JobsUserProps) Descriptor() ([]byte, []int) {
+// Deprecated: Use ColleagueProps.ProtoReflect.Descriptor instead.
+func (*ColleagueProps) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_colleagues_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *JobsUserProps) GetUserId() int32 {
+func (x *ColleagueProps) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *JobsUserProps) GetJob() string {
+func (x *ColleagueProps) GetJob() string {
 	if x != nil {
 		return x.Job
 	}
 	return ""
 }
 
-func (x *JobsUserProps) GetAbsenceBegin() *timestamp.Timestamp {
+func (x *ColleagueProps) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
+}
+
+func (x *ColleagueProps) GetAbsenceBegin() *timestamp.Timestamp {
 	if x != nil {
 		return x.AbsenceBegin
 	}
 	return nil
 }
 
-func (x *JobsUserProps) GetAbsenceEnd() *timestamp.Timestamp {
+func (x *ColleagueProps) GetAbsenceEnd() *timestamp.Timestamp {
 	if x != nil {
 		return x.AbsenceEnd
 	}
 	return nil
 }
 
-func (x *JobsUserProps) GetNote() string {
+func (x *ColleagueProps) GetNote() string {
 	if x != nil && x.Note != nil {
 		return *x.Note
 	}
 	return ""
 }
 
-func (x *JobsUserProps) GetLabels() *Labels {
+func (x *ColleagueProps) GetLabels() *Labels {
 	if x != nil {
 		return x.Labels
 	}
 	return nil
 }
 
-func (x *JobsUserProps) GetNamePrefix() string {
+func (x *ColleagueProps) GetNamePrefix() string {
 	if x != nil && x.NamePrefix != nil {
 		return *x.NamePrefix
 	}
 	return ""
 }
 
-func (x *JobsUserProps) GetNameSuffix() string {
+func (x *ColleagueProps) GetNameSuffix() string {
 	if x != nil && x.NameSuffix != nil {
 		return *x.NameSuffix
 	}
@@ -270,7 +278,7 @@ var File_resources_jobs_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a\x1eresources/filestore/file.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x9d\x05\n" +
+	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a\x1eresources/filestore/file.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x9e\x05\n" +
 	"\tColleague\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12,\n" +
 	"\n" +
@@ -285,8 +293,8 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\vdateofbirth\x18\t \x01(\tB\b\xfaB\x05r\x03\x98\x01\n" +
 	"R\vdateofbirth\x12/\n" +
 	"\fphone_number\x18\f \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x126\n" +
-	"\x06avatar\x18\x11 \x01(\v2\x19.resources.filestore.FileH\x04R\x06avatar\x88\x01\x01\x123\n" +
-	"\x05props\x18\x12 \x01(\v2\x1d.resources.jobs.JobsUserPropsR\x05props\x12$\n" +
+	"\x06avatar\x18\x11 \x01(\v2\x19.resources.filestore.FileH\x04R\x06avatar\x88\x01\x01\x124\n" +
+	"\x05props\x18\x12 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\x12$\n" +
 	"\x05email\x18\x13 \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PH\x05R\x05email\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
@@ -294,19 +302,22 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\x10_job_grade_labelB\x0f\n" +
 	"\r_phone_numberB\t\n" +
 	"\a_avatarB\b\n" +
-	"\x06_email\"\xde\x03\n" +
-	"\rJobsUserProps\x12 \n" +
+	"\x06_email\"\xb2\x04\n" +
+	"\x0eColleagueProps\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12\x19\n" +
-	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12H\n" +
-	"\rabsence_begin\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\fabsenceBegin\x88\x01\x01\x12D\n" +
-	"\vabsence_end\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12H\n" +
+	"\rabsence_begin\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\fabsenceBegin\x88\x01\x01\x12D\n" +
+	"\vabsence_end\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\n" +
 	"absenceEnd\x88\x01\x01\x12\x17\n" +
-	"\x04note\x18\x05 \x01(\tH\x02R\x04note\x88\x01\x01\x123\n" +
-	"\x06labels\x18\x06 \x01(\v2\x16.resources.jobs.LabelsH\x03R\x06labels\x88\x01\x01\x12-\n" +
-	"\vname_prefix\x18\a \x01(\tB\a\xfaB\x04r\x02\x18\fH\x04R\n" +
+	"\x04note\x18\x06 \x01(\tH\x03R\x04note\x88\x01\x01\x123\n" +
+	"\x06labels\x18\a \x01(\v2\x16.resources.jobs.LabelsH\x04R\x06labels\x88\x01\x01\x12-\n" +
+	"\vname_prefix\x18\b \x01(\tB\a\xfaB\x04r\x02\x18\fH\x05R\n" +
 	"namePrefix\x88\x01\x01\x12-\n" +
-	"\vname_suffix\x18\b \x01(\tB\a\xfaB\x04r\x02\x18\fH\x05R\n" +
-	"nameSuffix\x88\x01\x01B\x10\n" +
+	"\vname_suffix\x18\t \x01(\tB\a\xfaB\x04r\x02\x18\fH\x06R\n" +
+	"nameSuffix\x88\x01\x01B\r\n" +
+	"\v_deleted_atB\x10\n" +
 	"\x0e_absence_beginB\x0e\n" +
 	"\f_absence_endB\a\n" +
 	"\x05_noteB\t\n" +
@@ -329,22 +340,23 @@ func file_resources_jobs_colleagues_proto_rawDescGZIP() []byte {
 var file_resources_jobs_colleagues_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_jobs_colleagues_proto_goTypes = []any{
 	(*Colleague)(nil),           // 0: resources.jobs.Colleague
-	(*JobsUserProps)(nil),       // 1: resources.jobs.JobsUserProps
+	(*ColleagueProps)(nil),      // 1: resources.jobs.ColleagueProps
 	(*filestore.File)(nil),      // 2: resources.filestore.File
 	(*timestamp.Timestamp)(nil), // 3: resources.timestamp.Timestamp
 	(*Labels)(nil),              // 4: resources.jobs.Labels
 }
 var file_resources_jobs_colleagues_proto_depIdxs = []int32{
 	2, // 0: resources.jobs.Colleague.avatar:type_name -> resources.filestore.File
-	1, // 1: resources.jobs.Colleague.props:type_name -> resources.jobs.JobsUserProps
-	3, // 2: resources.jobs.JobsUserProps.absence_begin:type_name -> resources.timestamp.Timestamp
-	3, // 3: resources.jobs.JobsUserProps.absence_end:type_name -> resources.timestamp.Timestamp
-	4, // 4: resources.jobs.JobsUserProps.labels:type_name -> resources.jobs.Labels
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	1, // 1: resources.jobs.Colleague.props:type_name -> resources.jobs.ColleagueProps
+	3, // 2: resources.jobs.ColleagueProps.deleted_at:type_name -> resources.timestamp.Timestamp
+	3, // 3: resources.jobs.ColleagueProps.absence_begin:type_name -> resources.timestamp.Timestamp
+	3, // 4: resources.jobs.ColleagueProps.absence_end:type_name -> resources.timestamp.Timestamp
+	4, // 5: resources.jobs.ColleagueProps.labels:type_name -> resources.jobs.Labels
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_resources_jobs_colleagues_proto_init() }

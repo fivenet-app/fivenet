@@ -78,52 +78,52 @@ func (TimeclockMode) EnumDescriptor() ([]byte, []int) {
 	return file_resources_jobs_timeclock_proto_rawDescGZIP(), []int{0}
 }
 
-type TimeclockUserMode int32
+type TimeclockViewMode int32
 
 const (
-	TimeclockUserMode_TIMECLOCK_USER_MODE_UNSPECIFIED TimeclockUserMode = 0
-	TimeclockUserMode_TIMECLOCK_USER_MODE_SELF        TimeclockUserMode = 1
-	TimeclockUserMode_TIMECLOCK_USER_MODE_ALL         TimeclockUserMode = 2
+	TimeclockViewMode_TIMECLOCK_VIEW_MODE_UNSPECIFIED TimeclockViewMode = 0
+	TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF        TimeclockViewMode = 1
+	TimeclockViewMode_TIMECLOCK_VIEW_MODE_ALL         TimeclockViewMode = 2
 )
 
-// Enum value maps for TimeclockUserMode.
+// Enum value maps for TimeclockViewMode.
 var (
-	TimeclockUserMode_name = map[int32]string{
-		0: "TIMECLOCK_USER_MODE_UNSPECIFIED",
-		1: "TIMECLOCK_USER_MODE_SELF",
-		2: "TIMECLOCK_USER_MODE_ALL",
+	TimeclockViewMode_name = map[int32]string{
+		0: "TIMECLOCK_VIEW_MODE_UNSPECIFIED",
+		1: "TIMECLOCK_VIEW_MODE_SELF",
+		2: "TIMECLOCK_VIEW_MODE_ALL",
 	}
-	TimeclockUserMode_value = map[string]int32{
-		"TIMECLOCK_USER_MODE_UNSPECIFIED": 0,
-		"TIMECLOCK_USER_MODE_SELF":        1,
-		"TIMECLOCK_USER_MODE_ALL":         2,
+	TimeclockViewMode_value = map[string]int32{
+		"TIMECLOCK_VIEW_MODE_UNSPECIFIED": 0,
+		"TIMECLOCK_VIEW_MODE_SELF":        1,
+		"TIMECLOCK_VIEW_MODE_ALL":         2,
 	}
 )
 
-func (x TimeclockUserMode) Enum() *TimeclockUserMode {
-	p := new(TimeclockUserMode)
+func (x TimeclockViewMode) Enum() *TimeclockViewMode {
+	p := new(TimeclockViewMode)
 	*p = x
 	return p
 }
 
-func (x TimeclockUserMode) String() string {
+func (x TimeclockViewMode) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (TimeclockUserMode) Descriptor() protoreflect.EnumDescriptor {
+func (TimeclockViewMode) Descriptor() protoreflect.EnumDescriptor {
 	return file_resources_jobs_timeclock_proto_enumTypes[1].Descriptor()
 }
 
-func (TimeclockUserMode) Type() protoreflect.EnumType {
+func (TimeclockViewMode) Type() protoreflect.EnumType {
 	return &file_resources_jobs_timeclock_proto_enumTypes[1]
 }
 
-func (x TimeclockUserMode) Number() protoreflect.EnumNumber {
+func (x TimeclockViewMode) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use TimeclockUserMode.Descriptor instead.
-func (TimeclockUserMode) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use TimeclockViewMode.Descriptor instead.
+func (TimeclockViewMode) EnumDescriptor() ([]byte, []int) {
 	return file_resources_jobs_timeclock_proto_rawDescGZIP(), []int{1}
 }
 
@@ -398,10 +398,10 @@ const file_resources_jobs_timeclock_proto_rawDesc = "" +
 	"\x15TIMECLOCK_MODE_WEEKLY\x10\x02\x12\x18\n" +
 	"\x14TIMECLOCK_MODE_RANGE\x10\x03\x12\x1b\n" +
 	"\x17TIMECLOCK_MODE_TIMELINE\x10\x04*s\n" +
-	"\x11TimeclockUserMode\x12#\n" +
-	"\x1fTIMECLOCK_USER_MODE_UNSPECIFIED\x10\x00\x12\x1c\n" +
-	"\x18TIMECLOCK_USER_MODE_SELF\x10\x01\x12\x1b\n" +
-	"\x17TIMECLOCK_USER_MODE_ALL\x10\x02BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x11TimeclockViewMode\x12#\n" +
+	"\x1fTIMECLOCK_VIEW_MODE_UNSPECIFIED\x10\x00\x12\x1c\n" +
+	"\x18TIMECLOCK_VIEW_MODE_SELF\x10\x01\x12\x1b\n" +
+	"\x17TIMECLOCK_VIEW_MODE_ALL\x10\x02BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_timeclock_proto_rawDescOnce sync.Once
@@ -419,7 +419,7 @@ var file_resources_jobs_timeclock_proto_enumTypes = make([]protoimpl.EnumInfo, 2
 var file_resources_jobs_timeclock_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_jobs_timeclock_proto_goTypes = []any{
 	(TimeclockMode)(0),           // 0: resources.jobs.TimeclockMode
-	(TimeclockUserMode)(0),       // 1: resources.jobs.TimeclockUserMode
+	(TimeclockViewMode)(0),       // 1: resources.jobs.TimeclockViewMode
 	(*TimeclockEntry)(nil),       // 2: resources.jobs.TimeclockEntry
 	(*TimeclockStats)(nil),       // 3: resources.jobs.TimeclockStats
 	(*TimeclockWeeklyStats)(nil), // 4: resources.jobs.TimeclockWeeklyStats

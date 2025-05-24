@@ -26,7 +26,7 @@ export interface OAuth2Account {
     /**
      * @generated from protobuf field: string provider_name = 3;
      */
-    providerName: string;
+    providerName: string; // @gotags: sql:"primary_key" alias:"provider_name"
     /**
      * @generated from protobuf field: resources.accounts.OAuth2Provider provider = 4;
      */

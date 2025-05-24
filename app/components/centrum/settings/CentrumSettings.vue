@@ -22,7 +22,7 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData('rector-centrum-settings', () => getCentrumSettings());
+} = useLazyAsyncData('settings-centrum-settings', () => getCentrumSettings());
 
 async function getCentrumSettings(): Promise<Settings> {
     try {
@@ -48,8 +48,8 @@ const schema = z.object({
     mode: z.nativeEnum(CentrumMode),
     fallbackMode: z.nativeEnum(CentrumMode),
     predefinedStatus: z.object({
-        unitStatus: z.string().array().max(10),
-        dispatchStatus: z.string().array().max(10),
+        unitStatus: z.string().array().max(20),
+        dispatchStatus: z.string().array().max(20),
     }),
     timings: z.object({
         dispatchMaxWait: z.coerce.number().min(30).max(6000),

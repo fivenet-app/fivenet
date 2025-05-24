@@ -7,8 +7,8 @@ import (
 	"slices"
 	"sync"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
@@ -156,7 +156,7 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 }
 
 func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category, name Name, order int32) (uint64, error) {
-	perm, err := p.loadPermissionFromDatabaseByGuard(ctx, BuildGuard(category, name))
+	perm, err := p.loadPermissionFromDatabaseByCategoryName(ctx, category, name)
 	if err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, fmt.Errorf("failed to load permission from database by guard. %w", err)
@@ -252,24 +252,24 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	}
 
 	tJobs := tables.Jobs().AS("job")
-	tJobGrades := tables.JobGrades().AS("jobgrade")
+	tJobsGrades := tables.JobsGrades().AS("job_grade")
 
 	stmt := tJobs.
 		SELECT(
 			tJobs.Name,
 			tJobs.Label,
-			tJobGrades.JobName.AS("jobname"),
-			tJobGrades.Grade,
-			tJobGrades.Label,
+			tJobsGrades.JobName.AS("job_name"),
+			tJobsGrades.Grade,
+			tJobsGrades.Label,
 		).
 		FROM(
 			tJobs.
-				INNER_JOIN(tJobGrades,
-					tJobGrades.JobName.EQ(tJobs.Name),
+				INNER_JOIN(tJobsGrades,
+					tJobsGrades.JobName.EQ(tJobs.Name),
 				),
 		)
 
-	var dest []*users.Job
+	var dest []*jobs.Job
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query jobs and job grades. %w", err)
@@ -282,7 +282,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	}
 
 	// Remove default role from the list of roles
-	existingRoles = slices.DeleteFunc(existingRoles, func(role *model.FivenetRoles) bool {
+	existingRoles = slices.DeleteFunc(existingRoles, func(role *model.FivenetRbacRoles) bool {
 		return role.Job == DefaultRoleJob && role.Grade == p.startJobGrade
 	})
 
@@ -297,7 +297,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 				continue
 			}
 
-			index := slices.IndexFunc(existingRoles, func(r *model.FivenetRoles) bool {
+			index := slices.IndexFunc(existingRoles, func(r *model.FivenetRbacRoles) bool {
 				return role.ID == r.ID
 			})
 			if index > -1 {

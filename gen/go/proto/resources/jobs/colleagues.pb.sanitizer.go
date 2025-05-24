@@ -39,7 +39,7 @@ func (m *Colleague) Sanitize() error {
 	return nil
 }
 
-func (m *JobsUserProps) Sanitize() error {
+func (m *ColleagueProps) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -56,6 +56,15 @@ func (m *JobsUserProps) Sanitize() error {
 	// Field: AbsenceEnd
 	if m.AbsenceEnd != nil {
 		if v, ok := any(m.GetAbsenceEnd()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

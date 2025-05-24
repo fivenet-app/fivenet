@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.colleagues.single.conduct',
     requiresAuth: true,
-    permission: 'JobsConductService.ListConductEntries',
+    permission: 'jobs.ConductService.ListConductEntries',
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-conduct'>;
         // Check if the id is made up of digits

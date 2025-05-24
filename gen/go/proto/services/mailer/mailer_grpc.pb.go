@@ -70,7 +70,7 @@ type MailerServiceClient interface {
 	GetThread(ctx context.Context, in *GetThreadRequest, opts ...grpc.CallOption) (*GetThreadResponse, error)
 	// @perm: Name=ListEmails
 	CreateThread(ctx context.Context, in *CreateThreadRequest, opts ...grpc.CallOption) (*CreateThreadResponse, error)
-	// @perm: Name=SuperUser
+	// @perm: Name=Superuser
 	DeleteThread(ctx context.Context, in *DeleteThreadRequest, opts ...grpc.CallOption) (*DeleteThreadResponse, error)
 	// @perm: Name=ListEmails
 	GetThreadState(ctx context.Context, in *GetThreadStateRequest, opts ...grpc.CallOption) (*GetThreadStateResponse, error)
@@ -82,7 +82,7 @@ type MailerServiceClient interface {
 	ListThreadMessages(ctx context.Context, in *ListThreadMessagesRequest, opts ...grpc.CallOption) (*ListThreadMessagesResponse, error)
 	// @perm: Name=ListEmails
 	PostMessage(ctx context.Context, in *PostMessageRequest, opts ...grpc.CallOption) (*PostMessageResponse, error)
-	// @perm: Name=SuperUser
+	// @perm: Name=Superuser
 	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
 	// @perm: Name=ListEmails
 	GetEmailSettings(ctx context.Context, in *GetEmailSettingsRequest, opts ...grpc.CallOption) (*GetEmailSettingsResponse, error)
@@ -336,7 +336,7 @@ type MailerServiceServer interface {
 	GetThread(context.Context, *GetThreadRequest) (*GetThreadResponse, error)
 	// @perm: Name=ListEmails
 	CreateThread(context.Context, *CreateThreadRequest) (*CreateThreadResponse, error)
-	// @perm: Name=SuperUser
+	// @perm: Name=Superuser
 	DeleteThread(context.Context, *DeleteThreadRequest) (*DeleteThreadResponse, error)
 	// @perm: Name=ListEmails
 	GetThreadState(context.Context, *GetThreadStateRequest) (*GetThreadStateResponse, error)
@@ -348,7 +348,7 @@ type MailerServiceServer interface {
 	ListThreadMessages(context.Context, *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error)
 	// @perm: Name=ListEmails
 	PostMessage(context.Context, *PostMessageRequest) (*PostMessageResponse, error)
-	// @perm: Name=SuperUser
+	// @perm: Name=Superuser
 	DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error)
 	// @perm: Name=ListEmails
 	GetEmailSettings(context.Context, *GetEmailSettingsRequest) (*GetEmailSettingsResponse, error)

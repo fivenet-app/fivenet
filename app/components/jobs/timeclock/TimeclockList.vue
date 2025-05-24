@@ -10,7 +10,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
-import { TimeclockMode, TimeclockUserMode } from '~~/gen/ts/resources/jobs/timeclock';
+import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ColleagueName from '../colleagues/ColleagueName.vue';
@@ -42,12 +42,12 @@ const { attr, can } = useAuth();
 
 const completorStore = useCompletorStore();
 
-const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All');
+const canAccessAll = attr('jobs.TimeclockService.ListTimeclock', 'Access', 'All');
 
 const dateLowerLimit = new Date(2022, 1, 1);
 
 const schema = z.object({
-    userMode: z.nativeEnum(TimeclockUserMode),
+    userMode: z.nativeEnum(TimeclockViewMode),
     mode: z.nativeEnum(TimeclockMode),
     users: z.custom<Colleague>().array().max(10),
     date: z.object({
@@ -63,8 +63,8 @@ const route = useRoute();
 
 const query = reactive<Schema>({
     userMode:
-        TimeclockUserMode[(route.query?.mode as string | undefined)?.toUpperCase() as keyof typeof TimeclockUserMode] ??
-        TimeclockUserMode.SELF,
+        TimeclockViewMode[(route.query?.mode as string | undefined)?.toUpperCase() as keyof typeof TimeclockViewMode] ??
+        TimeclockViewMode.SELF,
     mode:
         TimeclockMode[(route.query?.view as string | undefined)?.toUpperCase() as keyof typeof TimeclockMode] ??
         (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.RANGE),
@@ -81,7 +81,7 @@ function setFromProps(): void {
         return;
     }
 
-    query.userMode = TimeclockUserMode.ALL;
+    query.userMode = TimeclockViewMode.ALL;
     query.users = [
         {
             userId: props.userId,
@@ -136,7 +136,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             date: {
                 start: {
                     timestamp: googleProtobufTimestamp.Timestamp.fromDate(
-                        query.userMode === TimeclockUserMode.ALL && query.mode === TimeclockMode.DAILY
+                        query.userMode === TimeclockViewMode.ALL && query.mode === TimeclockMode.DAILY
                             ? query.date.end
                             : query.date.start,
                     ),
@@ -149,7 +149,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             perDay: query.perDay,
         };
 
-        const call = $grpc.jobs.jobsTimeclock.listTimeclock(req);
+        const call = $grpc.jobs.timeclock.listTimeclock(req);
         const { response } = await call;
 
         return response;
@@ -193,16 +193,16 @@ const columns = computed(() => [
         label: t('common.date'),
         sortable: true,
         class:
-            query.userMode === TimeclockUserMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay) ? '' : 'hidden',
+            query.userMode === TimeclockViewMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay) ? '' : 'hidden',
         rowClass:
-            query.userMode === TimeclockUserMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay) ? '' : 'hidden',
+            query.userMode === TimeclockViewMode.SELF || (query.mode !== TimeclockMode.DAILY && query.perDay) ? '' : 'hidden',
     },
     {
         key: 'name',
         label: t('common.name'),
         sortable: canAccessAll.value && props.userId === undefined,
-        class: props.userId === undefined && query.userMode === TimeclockUserMode.ALL ? '' : 'hidden',
-        rowClass: props.userId === undefined && query.userMode === TimeclockUserMode.ALL ? '' : 'hidden',
+        class: props.userId === undefined && query.userMode === TimeclockViewMode.ALL ? '' : 'hidden',
+        rowClass: props.userId === undefined && query.userMode === TimeclockViewMode.ALL ? '' : 'hidden',
     },
     {
         key: 'rank',
@@ -210,14 +210,14 @@ const columns = computed(() => [
         sortable: true,
         class:
             canAccessAll.value &&
-            query.userMode === TimeclockUserMode.ALL &&
+            query.userMode === TimeclockViewMode.ALL &&
             (query.users === undefined || query.users?.length === 0) &&
             props.userId === undefined
                 ? ''
                 : 'hidden',
         rowClass:
             canAccessAll.value &&
-            query.userMode === TimeclockUserMode.ALL &&
+            query.userMode === TimeclockViewMode.ALL &&
             (query.users === undefined || query.users?.length === 0) &&
             props.userId === undefined
                 ? ''
@@ -235,7 +235,7 @@ const router = useRouter();
 watch(query, () =>
     router.replace({
         query: {
-            mode: TimeclockUserMode[query.userMode].toLowerCase(),
+            mode: TimeclockViewMode[query.userMode].toLowerCase(),
             view: TimeclockMode[query.mode].toLowerCase(),
         },
         hash: '#',
@@ -244,13 +244,13 @@ watch(query, () =>
 
 const items = computed(() =>
     [
-        { slot: 'self', label: t('common.own'), icon: 'i-mdi-selfie', userMode: TimeclockUserMode.SELF },
+        { slot: 'self', label: t('common.own'), icon: 'i-mdi-selfie', userMode: TimeclockViewMode.SELF },
         canAccessAll.value
             ? {
                   slot: 'colleagues',
                   label: t('components.jobs.timeclock.colleagues'),
                   icon: 'i-mdi-account-group',
-                  userMode: TimeclockUserMode.ALL,
+                  userMode: TimeclockViewMode.ALL,
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -267,10 +267,10 @@ const selectedUserMode = computed({
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
-        query.userMode = items.value[value]?.userMode ?? TimeclockUserMode.SELF;
+        query.userMode = items.value[value]?.userMode ?? TimeclockViewMode.SELF;
 
         // Select range mode when user self mode is selected
-        if (query.userMode === TimeclockUserMode.SELF && query.mode < TimeclockMode.RANGE) {
+        if (query.userMode === TimeclockViewMode.SELF && query.mode < TimeclockMode.RANGE) {
             query.mode = TimeclockMode.RANGE;
         }
     },
@@ -332,7 +332,7 @@ const { game } = useAppConfig();
 
     <UDashboardToolbar>
         <UForm class="flex w-full flex-col gap-2" :schema="schema" :state="query" @submit="refresh()">
-            <template v-if="query.userMode === TimeclockUserMode.SELF">
+            <template v-if="query.userMode === TimeclockViewMode.SELF">
                 <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
                     <UTabs
                         v-model="selectedSelfMode"
@@ -371,7 +371,7 @@ const { game } = useAppConfig();
                 </div>
             </template>
 
-            <template v-if="query.userMode === TimeclockUserMode.ALL">
+            <template v-if="query.userMode === TimeclockViewMode.ALL">
                 <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
                     <UTabs
                         v-model="selectedMode"
@@ -381,7 +381,7 @@ const { game } = useAppConfig();
 
                     <div class="flex items-center">
                         <UButton
-                            v-if="can('JobsTimeclockService.ListInactiveEmployees').value && userId === undefined"
+                            v-if="can('jobs.TimeclockService.ListInactiveEmployees').value && userId === undefined"
                             :to="{ name: 'jobs-timeclock-inactive' }"
                             color="black"
                             trailing-icon="i-mdi-arrow-right"
@@ -550,7 +550,7 @@ const { game } = useAppConfig();
         <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :error="error" :retry="refresh" />
     </div>
 
-    <UCard v-else-if="query.userMode === TimeclockUserMode.SELF && !query.perDay">
+    <UCard v-else-if="query.userMode === TimeclockViewMode.SELF && !query.perDay">
         <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
             {{
                 totalTimeSum === 0
@@ -626,7 +626,7 @@ const { game } = useAppConfig();
     </UTable>
 
     <template v-else>
-        <div v-if="query.userMode !== TimeclockUserMode.SELF && query.users.length === 0" class="flex-1">
+        <div v-if="query.userMode !== TimeclockViewMode.SELF && query.users.length === 0" class="flex-1">
             <DataNoDataBlock :description="$t('components.jobs.timeclock.timeline.select_users')" />
         </div>
 

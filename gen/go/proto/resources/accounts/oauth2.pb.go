@@ -27,7 +27,7 @@ type OAuth2Account struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AccountId     uint64                 `protobuf:"varint,1,opt,name=account_id,json=accountId,proto3" json:"account_id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	ProviderName  string                 `protobuf:"bytes,3,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty"`
+	ProviderName  string                 `protobuf:"bytes,3,opt,name=provider_name,json=providerName,proto3" json:"provider_name,omitempty" sql:"primary_key" alias:"provider_name"` // @gotags: sql:"primary_key" alias:"provider_name"
 	Provider      *OAuth2Provider        `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
 	ExternalId    string                 `protobuf:"bytes,5,opt,name=external_id,json=externalId,proto3" json:"external_id,omitempty"`
 	Username      string                 `protobuf:"bytes,6,opt,name=username,proto3" json:"username,omitempty"`

@@ -26,7 +26,7 @@ const notifications = useNotificatorStore();
 
 const { isOpen } = useModal();
 
-const canEdit = can('DocStoreService.CreateOrUpdateCategory');
+const canEdit = can('documents.DocumentsService.CreateOrUpdateCategory');
 
 const schema = z.object({
     name: z.string().min(3).max(128),
@@ -45,7 +45,7 @@ const state = reactive<Schema>({
 
 async function createOrUpdateCategory(values: Schema): Promise<void> {
     try {
-        await $grpc.docstore.docStore.createOrUpdateCategory({
+        await $grpc.documents.documents.createOrUpdateCategory({
             category: {
                 id: props.category?.id ?? 0,
                 name: values.name,
@@ -83,7 +83,7 @@ async function deleteCategory(): Promise<void> {
     }
 
     try {
-        await $grpc.docstore.docStore.deleteCategory({
+        await $grpc.documents.documents.deleteCategory({
             id: props.category.id!,
         });
 
@@ -205,7 +205,7 @@ watch(props, () => setFromProps());
                         </UButton>
 
                         <UButton
-                            v-if="category !== undefined && canEdit && can('DocStoreService.DeleteCategory').value"
+                            v-if="category !== undefined && canEdit && can('documents.DocumentsService.DeleteCategory').value"
                             class="flex-1"
                             block
                             :color="!category.deletedAt ? 'error' : 'success'"

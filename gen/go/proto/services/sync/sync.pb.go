@@ -138,9 +138,9 @@ type AddActivityRequest struct {
 	//	*AddActivityRequest_Dispatch
 	//	*AddActivityRequest_UserActivity
 	//	*AddActivityRequest_UserProps
-	//	*AddActivityRequest_JobsUserActivity
-	//	*AddActivityRequest_JobsUserProps
-	//	*AddActivityRequest_JobsTimeclock
+	//	*AddActivityRequest_JobColleagueActivity
+	//	*AddActivityRequest_ColleagueProps
+	//	*AddActivityRequest_JobTimeclock
 	//	*AddActivityRequest_UserUpdate
 	Activity      isAddActivityRequest_Activity `protobuf_oneof:"activity"`
 	unknownFields protoimpl.UnknownFields
@@ -220,28 +220,28 @@ func (x *AddActivityRequest) GetUserProps() *sync.UserProps {
 	return nil
 }
 
-func (x *AddActivityRequest) GetJobsUserActivity() *jobs.JobsUserActivity {
+func (x *AddActivityRequest) GetJobColleagueActivity() *jobs.ColleagueActivity {
 	if x != nil {
-		if x, ok := x.Activity.(*AddActivityRequest_JobsUserActivity); ok {
-			return x.JobsUserActivity
+		if x, ok := x.Activity.(*AddActivityRequest_JobColleagueActivity); ok {
+			return x.JobColleagueActivity
 		}
 	}
 	return nil
 }
 
-func (x *AddActivityRequest) GetJobsUserProps() *sync.JobsUserProps {
+func (x *AddActivityRequest) GetColleagueProps() *sync.ColleagueProps {
 	if x != nil {
-		if x, ok := x.Activity.(*AddActivityRequest_JobsUserProps); ok {
-			return x.JobsUserProps
+		if x, ok := x.Activity.(*AddActivityRequest_ColleagueProps); ok {
+			return x.ColleagueProps
 		}
 	}
 	return nil
 }
 
-func (x *AddActivityRequest) GetJobsTimeclock() *sync.TimeclockUpdate {
+func (x *AddActivityRequest) GetJobTimeclock() *sync.TimeclockUpdate {
 	if x != nil {
-		if x, ok := x.Activity.(*AddActivityRequest_JobsTimeclock); ok {
-			return x.JobsTimeclock
+		if x, ok := x.Activity.(*AddActivityRequest_JobTimeclock); ok {
+			return x.JobTimeclock
 		}
 	}
 	return nil
@@ -278,19 +278,19 @@ type AddActivityRequest_UserProps struct {
 	UserProps *sync.UserProps `protobuf:"bytes,4,opt,name=user_props,json=userProps,proto3,oneof"`
 }
 
-type AddActivityRequest_JobsUserActivity struct {
+type AddActivityRequest_JobColleagueActivity struct {
 	// Jobs user activity
-	JobsUserActivity *jobs.JobsUserActivity `protobuf:"bytes,5,opt,name=jobs_user_activity,json=jobsUserActivity,proto3,oneof"`
+	JobColleagueActivity *jobs.ColleagueActivity `protobuf:"bytes,5,opt,name=job_colleague_activity,json=jobColleagueActivity,proto3,oneof"`
 }
 
-type AddActivityRequest_JobsUserProps struct {
+type AddActivityRequest_ColleagueProps struct {
 	// Setting props will cause activity to be created automtically
-	JobsUserProps *sync.JobsUserProps `protobuf:"bytes,6,opt,name=jobs_user_props,json=jobsUserProps,proto3,oneof"`
+	ColleagueProps *sync.ColleagueProps `protobuf:"bytes,6,opt,name=colleague_props,json=colleagueProps,proto3,oneof"`
 }
 
-type AddActivityRequest_JobsTimeclock struct {
+type AddActivityRequest_JobTimeclock struct {
 	// Timeclock user entry
-	JobsTimeclock *sync.TimeclockUpdate `protobuf:"bytes,7,opt,name=jobs_timeclock,json=jobsTimeclock,proto3,oneof"`
+	JobTimeclock *sync.TimeclockUpdate `protobuf:"bytes,7,opt,name=job_timeclock,json=jobTimeclock,proto3,oneof"`
 }
 
 type AddActivityRequest_UserUpdate struct {
@@ -306,11 +306,11 @@ func (*AddActivityRequest_UserActivity) isAddActivityRequest_Activity() {}
 
 func (*AddActivityRequest_UserProps) isAddActivityRequest_Activity() {}
 
-func (*AddActivityRequest_JobsUserActivity) isAddActivityRequest_Activity() {}
+func (*AddActivityRequest_JobColleagueActivity) isAddActivityRequest_Activity() {}
 
-func (*AddActivityRequest_JobsUserProps) isAddActivityRequest_Activity() {}
+func (*AddActivityRequest_ColleagueProps) isAddActivityRequest_Activity() {}
 
-func (*AddActivityRequest_JobsTimeclock) isAddActivityRequest_Activity() {}
+func (*AddActivityRequest_JobTimeclock) isAddActivityRequest_Activity() {}
 
 func (*AddActivityRequest_UserUpdate) isAddActivityRequest_Activity() {}
 
@@ -948,17 +948,17 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\x04jobs\x18\x01 \x01(\v2\x1a.resources.sync.DataStatusR\x04jobs\x126\n" +
 	"\blicenses\x18\x02 \x01(\v2\x1a.resources.sync.DataStatusR\blicenses\x120\n" +
 	"\x05users\x18\x03 \x01(\v2\x1a.resources.sync.DataStatusR\x05users\x126\n" +
-	"\bvehicles\x18\x04 \x01(\v2\x1a.resources.sync.DataStatusR\bvehicles\"\xc9\x04\n" +
+	"\bvehicles\x18\x04 \x01(\v2\x1a.resources.sync.DataStatusR\bvehicles\"\xd2\x04\n" +
 	"\x12AddActivityRequest\x12A\n" +
 	"\vuser_oauth2\x18\x01 \x01(\v2\x1e.resources.sync.UserOAuth2ConnH\x00R\n" +
 	"userOauth2\x129\n" +
 	"\bdispatch\x18\x02 \x01(\v2\x1b.resources.centrum.DispatchH\x00R\bdispatch\x12D\n" +
 	"\ruser_activity\x18\x03 \x01(\v2\x1d.resources.users.UserActivityH\x00R\fuserActivity\x12:\n" +
 	"\n" +
-	"user_props\x18\x04 \x01(\v2\x19.resources.sync.UserPropsH\x00R\tuserProps\x12P\n" +
-	"\x12jobs_user_activity\x18\x05 \x01(\v2 .resources.jobs.JobsUserActivityH\x00R\x10jobsUserActivity\x12G\n" +
-	"\x0fjobs_user_props\x18\x06 \x01(\v2\x1d.resources.sync.JobsUserPropsH\x00R\rjobsUserProps\x12H\n" +
-	"\x0ejobs_timeclock\x18\a \x01(\v2\x1f.resources.sync.TimeclockUpdateH\x00R\rjobsTimeclock\x12=\n" +
+	"user_props\x18\x04 \x01(\v2\x19.resources.sync.UserPropsH\x00R\tuserProps\x12Y\n" +
+	"\x16job_colleague_activity\x18\x05 \x01(\v2!.resources.jobs.ColleagueActivityH\x00R\x14jobColleagueActivity\x12I\n" +
+	"\x0fcolleague_props\x18\x06 \x01(\v2\x1e.resources.sync.ColleaguePropsH\x00R\x0ecolleagueProps\x12F\n" +
+	"\rjob_timeclock\x18\a \x01(\v2\x1f.resources.sync.TimeclockUpdateH\x00R\fjobTimeclock\x12=\n" +
 	"\vuser_update\x18\b \x01(\v2\x1a.resources.sync.UserUpdateH\x00R\n" +
 	"userUpdateB\x0f\n" +
 	"\bactivity\x12\x03\xf8B\x01\"\x15\n" +
@@ -1049,8 +1049,8 @@ var file_services_sync_sync_proto_goTypes = []any{
 	(*centrum.Dispatch)(nil),        // 16: resources.centrum.Dispatch
 	(*users.UserActivity)(nil),      // 17: resources.users.UserActivity
 	(*sync.UserProps)(nil),          // 18: resources.sync.UserProps
-	(*jobs.JobsUserActivity)(nil),   // 19: resources.jobs.JobsUserActivity
-	(*sync.JobsUserProps)(nil),      // 20: resources.sync.JobsUserProps
+	(*jobs.ColleagueActivity)(nil),  // 19: resources.jobs.ColleagueActivity
+	(*sync.ColleagueProps)(nil),     // 20: resources.sync.ColleagueProps
 	(*sync.TimeclockUpdate)(nil),    // 21: resources.sync.TimeclockUpdate
 	(*sync.UserUpdate)(nil),         // 22: resources.sync.UserUpdate
 	(*sync.DataJobs)(nil),           // 23: resources.sync.DataJobs
@@ -1070,9 +1070,9 @@ var file_services_sync_sync_proto_depIdxs = []int32{
 	16, // 5: services.sync.AddActivityRequest.dispatch:type_name -> resources.centrum.Dispatch
 	17, // 6: services.sync.AddActivityRequest.user_activity:type_name -> resources.users.UserActivity
 	18, // 7: services.sync.AddActivityRequest.user_props:type_name -> resources.sync.UserProps
-	19, // 8: services.sync.AddActivityRequest.jobs_user_activity:type_name -> resources.jobs.JobsUserActivity
-	20, // 9: services.sync.AddActivityRequest.jobs_user_props:type_name -> resources.sync.JobsUserProps
-	21, // 10: services.sync.AddActivityRequest.jobs_timeclock:type_name -> resources.sync.TimeclockUpdate
+	19, // 8: services.sync.AddActivityRequest.job_colleague_activity:type_name -> resources.jobs.ColleagueActivity
+	20, // 9: services.sync.AddActivityRequest.colleague_props:type_name -> resources.sync.ColleagueProps
+	21, // 10: services.sync.AddActivityRequest.job_timeclock:type_name -> resources.sync.TimeclockUpdate
 	22, // 11: services.sync.AddActivityRequest.user_update:type_name -> resources.sync.UserUpdate
 	23, // 12: services.sync.SendDataRequest.jobs:type_name -> resources.sync.DataJobs
 	24, // 13: services.sync.SendDataRequest.licenses:type_name -> resources.sync.DataLicenses
@@ -1112,9 +1112,9 @@ func file_services_sync_sync_proto_init() {
 		(*AddActivityRequest_Dispatch)(nil),
 		(*AddActivityRequest_UserActivity)(nil),
 		(*AddActivityRequest_UserProps)(nil),
-		(*AddActivityRequest_JobsUserActivity)(nil),
-		(*AddActivityRequest_JobsUserProps)(nil),
-		(*AddActivityRequest_JobsTimeclock)(nil),
+		(*AddActivityRequest_JobColleagueActivity)(nil),
+		(*AddActivityRequest_ColleagueProps)(nil),
+		(*AddActivityRequest_JobTimeclock)(nil),
 		(*AddActivityRequest_UserUpdate)(nil),
 	}
 	file_services_sync_sync_proto_msgTypes[4].OneofWrappers = []any{}

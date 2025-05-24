@@ -4,11 +4,10 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -25,7 +24,7 @@ func (s *Server) GetMOTD(ctx context.Context, req *pbjobs.GetMOTDRequest) (*pbjo
 
 	stmt := tJobProps.
 		SELECT(
-			tJobProps.Motd.AS("getmotdresponse.motd"),
+			tJobProps.Motd.AS("get_motd_response.motd"),
 		).
 		FROM(tJobProps).
 		WHERE(
@@ -46,12 +45,12 @@ func (s *Server) GetMOTD(ctx context.Context, req *pbjobs.GetMOTDRequest) (*pbjo
 func (s *Server) SetMOTD(ctx context.Context, req *pbjobs.SetMOTDRequest) (*pbjobs.SetMOTDResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.JobsService_ServiceDesc.ServiceName,
 		Method:  "SetMOTD",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 

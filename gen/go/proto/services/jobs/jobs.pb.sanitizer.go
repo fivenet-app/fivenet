@@ -245,7 +245,7 @@ func (m *ListColleaguesResponse) Sanitize() error {
 	return nil
 }
 
-func (m *ManageColleagueLabelsRequest) Sanitize() error {
+func (m *ManageLabelsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -265,7 +265,7 @@ func (m *ManageColleagueLabelsRequest) Sanitize() error {
 	return nil
 }
 
-func (m *ManageColleagueLabelsResponse) Sanitize() error {
+func (m *ManageLabelsResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -285,7 +285,7 @@ func (m *ManageColleagueLabelsResponse) Sanitize() error {
 	return nil
 }
 
-func (m *SetJobsUserPropsRequest) Sanitize() error {
+func (m *SetColleaguePropsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -305,7 +305,7 @@ func (m *SetJobsUserPropsRequest) Sanitize() error {
 	return nil
 }
 
-func (m *SetJobsUserPropsResponse) Sanitize() error {
+func (m *SetColleaguePropsResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

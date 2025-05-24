@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.id.title',
     requiresAuth: true,
-    permission: 'DocStoreService.ListDocuments',
+    permission: 'documents.DocumentsService.ListDocuments',
     validate: async (route) => {
         route = route as TypedRouteFromName<'documents-id'>;
         // Check if the id is made up of digits

@@ -92,12 +92,12 @@ const columns = [
         <template #right>
             <PartialsBackButton fallback-to="/centrum" />
 
-            <UButton v-if="can('CentrumService.Stream').value" icon="i-mdi-settings" to="/centrum/settings">
+            <UButton v-if="can('centrum.CentrumService.Stream').value" icon="i-mdi-settings" to="/centrum/settings">
                 {{ $t('common.setting', 2) }}
             </UButton>
 
             <UButton
-                v-if="can('CentrumService.CreateOrUpdateUnit').value"
+                v-if="can('centrum.CentrumService.CreateOrUpdateUnit').value"
                 trailing-icon="i-mdi-plus"
                 color="gray"
                 @click="
@@ -140,7 +140,7 @@ const columns = [
 
         <template #actions-data="{ row: unit }">
             <div :key="unit.id" class="flex items-center">
-                <UTooltip v-if="can('CentrumService.CreateOrUpdateUnit').value" :text="$t('common.update')">
+                <UTooltip v-if="can('centrum.CentrumService.CreateOrUpdateUnit').value" :text="$t('common.update')">
                     <UButton
                         variant="link"
                         icon="i-mdi-pencil"
@@ -153,7 +153,7 @@ const columns = [
                     />
                 </UTooltip>
 
-                <UTooltip v-if="can('CentrumService.DeleteUnit').value" :text="$t('common.delete')">
+                <UTooltip v-if="can('centrum.CentrumService.DeleteUnit').value" :text="$t('common.delete')">
                     <UButton
                         variant="link"
                         icon="i-mdi-delete"

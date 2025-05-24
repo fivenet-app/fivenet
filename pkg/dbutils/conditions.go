@@ -16,7 +16,7 @@ type UserConditions struct {
 func (c *UserConditions) GetFilter(alias string) jet.BoolExpression {
 	condition := jet.Bool(true)
 
-	tUser := tables.Users().AS(alias)
+	tUser := tables.User().AS(alias)
 	if c.FilterEmptyName {
 		condition = condition.AND(jet.AND(
 			tUser.Firstname.NOT_EQ(jet.String("")),

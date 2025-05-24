@@ -102,7 +102,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
             };
         }
 
-        const call = $grpc.livemapper.livemapper.createOrUpdateMarker({
+        const call = $grpc.livemap.livemap.createOrUpdateMarker({
             marker,
         });
         const { response } = await call;

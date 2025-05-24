@@ -52,7 +52,7 @@ const {
 });
 
 async function getDocument(id: number): Promise<Document> {
-    const call = $grpc.docstore.docStore.getDocument({
+    const call = $grpc.documents.documents.getDocument({
         documentId: id,
         infoOnly: true,
     });
@@ -125,7 +125,7 @@ watchOnce(opened, async () => {
                         variant="link"
                     />
 
-                    <UTooltip v-if="can('DocStoreService.ListDocuments').value" :text="$t('common.open')">
+                    <UTooltip v-if="can('documents.DocumentsService.ListDocuments').value" :text="$t('common.open')">
                         <UButton
                             variant="link"
                             icon="i-mdi-eye"

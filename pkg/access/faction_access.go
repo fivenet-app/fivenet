@@ -7,7 +7,7 @@ import (
 )
 
 func CheckIfHasAccess(levels *permissions.StringList, userInfo *userinfo.UserInfo, creatorJob string, creator *users.UserShort) bool {
-	if userInfo.SuperUser {
+	if userInfo.Superuser {
 		return true
 	}
 

@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = jobs.TimeclockUserMode(0)
+	_ = jobs.TimeclockViewMode(0)
 )
 
 // Validate checks the field values on ListTimeclockRequest with the rules

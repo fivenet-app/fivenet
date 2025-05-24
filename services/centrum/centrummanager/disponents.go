@@ -5,7 +5,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
@@ -19,26 +18,14 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 			return errorscentrum.ErrNotOnDuty
 		}
 
-		tUsers := tables.Users()
-
-		stmt := tCentrumUsers.
+		stmt := tCentrumDisponents.
 			INSERT(
-				tCentrumUsers.Job,
-				tCentrumUsers.UserID,
-				tCentrumUsers.Identifier,
+				tCentrumDisponents.Job,
+				tCentrumDisponents.UserID,
 			).
 			VALUES(
 				job,
 				userId,
-				tUsers.
-					SELECT(
-						tUsers.Identifier.AS("identifier"),
-					).
-					FROM(tUsers).
-					WHERE(
-						tUsers.ID.EQ(jet.Int32(userId)),
-					).
-					LIMIT(1),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -47,11 +34,11 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 			}
 		}
 	} else {
-		stmt := tCentrumUsers.
+		stmt := tCentrumDisponents.
 			DELETE().
 			WHERE(jet.AND(
-				tCentrumUsers.Job.EQ(jet.String(job)),
-				tCentrumUsers.UserID.EQ(jet.Int32(userId)),
+				tCentrumDisponents.Job.EQ(jet.String(job)),
+				tCentrumDisponents.UserID.EQ(jet.Int32(userId)),
 			)).
 			LIMIT(1)
 

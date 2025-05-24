@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"slices"
 
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
@@ -120,42 +121,42 @@ func (s *Server) handleJobsData(ctx context.Context, data *pbsync.SendDataReques
 	return rowsAffected, nil
 }
 
-func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, error) {
+func (s *Server) handleJobGrades(ctx context.Context, job *jobs.Job) (int64, error) {
 	if len(job.Grades) == 0 {
 		return 0, nil
 	}
 
 	rowsAffectedCount := int64(0)
 
-	tJobGrades := tables.JobGrades().AS("jobgrade")
+	tJobsGrades := tables.JobsGrades().AS("job_grade")
 
-	selectStmt := tJobGrades.
+	selectStmt := tJobsGrades.
 		SELECT(
-			tJobGrades.JobName.AS("job_grade.job_name"),
-			tJobGrades.Grade,
-			tJobGrades.Label,
+			tJobsGrades.JobName.AS("job_grade.job_name"),
+			tJobsGrades.Grade,
+			tJobsGrades.Label,
 		).
-		FROM(tJobGrades).
+		FROM(tJobsGrades).
 		ORDER_BY(
-			tJobGrades.Grade.ASC(),
+			tJobsGrades.Grade.ASC(),
 		).
-		WHERE(tJobGrades.JobName.EQ(jet.String(job.Name)))
+		WHERE(tJobsGrades.JobName.EQ(jet.String(job.Name)))
 
-	currentGrades := []*users.JobGrade{}
+	currentGrades := []*jobs.JobGrade{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return 0, fmt.Errorf("failed to query current job grades for job %s. %w", job.Name, err)
 		}
 	}
 
-	toCreate, toUpdate, toDelete := []*users.JobGrade{}, []*users.JobGrade{}, []*users.JobGrade{}
+	toCreate, toUpdate, toDelete := []*jobs.JobGrade{}, []*jobs.JobGrade{}, []*jobs.JobGrade{}
 	if len(currentGrades) == 0 {
 		toCreate = job.Grades
 	} else {
 		// Update cache
 		foundTracker := []int{}
 		for _, cg := range currentGrades {
-			var found *users.JobGrade
+			var found *jobs.JobGrade
 			var foundIdx int
 
 			for i, ug := range job.Grades {
@@ -194,19 +195,19 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 		}
 	}
 
-	tJobGrades = tables.JobGrades()
+	tJobsGrades = tables.JobsGrades()
 
 	if len(toCreate) > 0 {
-		stmt := tJobGrades.
+		stmt := tJobsGrades.
 			INSERT(
-				tJobGrades.JobName,
-				tJobGrades.Grade,
-				tJobGrades.Label,
+				tJobsGrades.JobName,
+				tJobsGrades.Grade,
+				tJobsGrades.Label,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tJobGrades.JobName.SET(jet.StringExp(jet.Raw("VALUES(`job_name`)"))),
-				tJobGrades.Grade.SET(jet.IntExp(jet.Raw("VALUES(`grade`)"))),
-				tJobGrades.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
+				tJobsGrades.JobName.SET(jet.StringExp(jet.Raw("VALUES(`job_name`)"))),
+				tJobsGrades.Grade.SET(jet.IntExp(jet.Raw("VALUES(`grade`)"))),
+				tJobsGrades.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
 			)
 
 		for _, grade := range toCreate {
@@ -231,11 +232,11 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 
 	if len(toUpdate) > 0 {
 		for _, grade := range toUpdate {
-			stmt := tJobGrades.
+			stmt := tJobsGrades.
 				UPDATE(
-					tJobGrades.JobName,
-					tJobGrades.Grade,
-					tJobGrades.Label,
+					tJobsGrades.JobName,
+					tJobsGrades.Grade,
+					tJobsGrades.Label,
 				).
 				SET(
 					grade.JobName,
@@ -243,8 +244,8 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 					grade.Label,
 				).
 				WHERE(jet.AND(
-					tJobGrades.JobName.EQ(jet.String(job.Name)),
-					tJobGrades.Grade.EQ(jet.Int32(grade.Grade)),
+					tJobsGrades.JobName.EQ(jet.String(job.Name)),
+					tJobsGrades.Grade.EQ(jet.Int32(grade.Grade)),
 				))
 
 			res, err := stmt.ExecContext(ctx, s.db)
@@ -262,11 +263,11 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 
 	if len(toDelete) > 0 {
 		for _, grade := range toDelete {
-			stmt := tJobGrades.
+			stmt := tJobsGrades.
 				DELETE().
 				WHERE(jet.AND(
-					tJobGrades.JobName.EQ(jet.String(job.Name)),
-					tJobGrades.Grade.EQ(jet.Int32(grade.Grade)),
+					tJobsGrades.JobName.EQ(jet.String(job.Name)),
+					tJobsGrades.Grade.EQ(jet.Int32(grade.Grade)),
 				)).
 				LIMIT(1)
 
@@ -322,7 +323,7 @@ func (s *Server) handleLicensesData(ctx context.Context, data *pbsync.SendDataRe
 }
 
 func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataRequest_Users) (int64, error) {
-	tUsers := tables.Users()
+	tUsers := tables.User()
 
 	defaultUserGroup := defaultUserGroupFallback
 
@@ -428,7 +429,7 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 
 			rowsAffected += rows
 
-			if err := s.handleUserLicenses(ctx, *user.Identifier, user.Licenses); err != nil {
+			if err := s.handleCitizensLicenses(ctx, *user.Identifier, user.Licenses); err != nil {
 				return 0, fmt.Errorf("failed to handle user licenses for user %s. %w", *user.Identifier, err)
 			}
 		}
@@ -485,14 +486,14 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 	return rowsAffected, nil
 }
 
-func (s *Server) handleUserLicenses(ctx context.Context, identifier string, licenses []*users.License) error {
-	tUserLicenses := tables.UserLicenses()
+func (s *Server) handleCitizensLicenses(ctx context.Context, identifier string, licenses []*users.License) error {
+	tCitizensLicenses := tables.UserLicenses()
 
 	if len(licenses) == 0 {
 		// User has no licenses? Delete all user licenses from the database.
-		stmt := tUserLicenses.
+		stmt := tCitizensLicenses.
 			DELETE().
-			WHERE(tUserLicenses.Owner.EQ(jet.String(identifier))).
+			WHERE(tCitizensLicenses.Owner.EQ(jet.String(identifier))).
 			LIMIT(25)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -502,12 +503,12 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 		return nil
 	}
 
-	selectStmt := tUserLicenses.
+	selectStmt := tCitizensLicenses.
 		SELECT(
-			tUserLicenses.Type,
+			tCitizensLicenses.Type,
 		).
-		FROM(tUserLicenses).
-		WHERE(tUserLicenses.Owner.EQ(jet.String(identifier)))
+		FROM(tCitizensLicenses).
+		WHERE(tCitizensLicenses.Owner.EQ(jet.String(identifier)))
 
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentLicenses); err != nil {
@@ -524,13 +525,13 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 	toAdd, toRemove := utils.SlicesDifference(currentLicenses, licensesList)
 
 	if len(toAdd) > 0 {
-		stmt := tUserLicenses.
+		stmt := tCitizensLicenses.
 			INSERT(
-				tUserLicenses.Owner,
-				tUserLicenses.Type,
+				tCitizensLicenses.Owner,
+				tCitizensLicenses.Type,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tUserLicenses.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
+				tCitizensLicenses.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
 			)
 
 		for _, t := range toAdd {
@@ -552,11 +553,11 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 			types = append(types, jet.String(t))
 		}
 
-		stmt := tUserLicenses.
+		stmt := tCitizensLicenses.
 			DELETE().
 			WHERE(jet.AND(
-				tUserLicenses.Owner.EQ(jet.String(identifier)),
-				tUserLicenses.Type.IN(types...),
+				tCitizensLicenses.Owner.EQ(jet.String(identifier)),
+				tCitizensLicenses.Type.IN(types...),
 			)).
 			LIMIT(25)
 
@@ -653,7 +654,7 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 }
 
 func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataRequest_UserLocations) (int64, error) {
-	tLocations := table.FivenetUserLocations
+	tLocations := table.FivenetCentrumUserLocations
 
 	// Handle clear all
 	if data.UserLocations.ClearAll != nil && *data.UserLocations.ClearAll {
@@ -756,7 +757,7 @@ func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) 
 			userIds = append(userIds, jet.Int32(identifier))
 		}
 
-		tUsers := tables.Users()
+		tUsers := tables.User()
 
 		delStmt := tUsers.
 			DELETE().

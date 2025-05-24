@@ -47,7 +47,7 @@ message DeleteConductEntryRequest {
 
 message DeleteConductEntryResponse {}
 
-service JobsConductService {
+service ConductService {
   // @perm: Attrs=Access/StringList:[]string{"Own", "All"}
   rpc ListConductEntries(ListConductEntriesRequest) returns (ListConductEntriesResponse);
   // @perm

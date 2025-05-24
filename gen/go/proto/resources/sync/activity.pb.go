@@ -146,28 +146,28 @@ func (x *UserProps) GetProps() *users.UserProps {
 	return nil
 }
 
-type JobsUserProps struct {
+type ColleagueProps struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Reason        *string                `protobuf:"bytes,1,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Props         *jobs.JobsUserProps    `protobuf:"bytes,2,opt,name=props,proto3" json:"props,omitempty"`
+	Props         *jobs.ColleagueProps   `protobuf:"bytes,2,opt,name=props,proto3" json:"props,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *JobsUserProps) Reset() {
-	*x = JobsUserProps{}
+func (x *ColleagueProps) Reset() {
+	*x = ColleagueProps{}
 	mi := &file_resources_sync_activity_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *JobsUserProps) String() string {
+func (x *ColleagueProps) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*JobsUserProps) ProtoMessage() {}
+func (*ColleagueProps) ProtoMessage() {}
 
-func (x *JobsUserProps) ProtoReflect() protoreflect.Message {
+func (x *ColleagueProps) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_sync_activity_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -179,19 +179,19 @@ func (x *JobsUserProps) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobsUserProps.ProtoReflect.Descriptor instead.
-func (*JobsUserProps) Descriptor() ([]byte, []int) {
+// Deprecated: Use ColleagueProps.ProtoReflect.Descriptor instead.
+func (*ColleagueProps) Descriptor() ([]byte, []int) {
 	return file_resources_sync_activity_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *JobsUserProps) GetReason() string {
+func (x *ColleagueProps) GetReason() string {
 	if x != nil && x.Reason != nil {
 		return *x.Reason
 	}
 	return ""
 }
 
-func (x *JobsUserProps) GetProps() *jobs.JobsUserProps {
+func (x *ColleagueProps) GetProps() *jobs.ColleagueProps {
 	if x != nil {
 		return x.Props
 	}
@@ -359,10 +359,10 @@ const file_resources_sync_activity_proto_rawDesc = "" +
 	"\tUserProps\x12%\n" +
 	"\x06reason\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12:\n" +
 	"\x05props\x18\x02 \x01(\v2\x1a.resources.users.UserPropsB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x05propsB\t\n" +
-	"\a_reason\"\x80\x01\n" +
-	"\rJobsUserProps\x12%\n" +
-	"\x06reason\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12=\n" +
-	"\x05props\x18\x02 \x01(\v2\x1d.resources.jobs.JobsUserPropsB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x05propsB\t\n" +
+	"\a_reason\"\x82\x01\n" +
+	"\x0eColleagueProps\x12%\n" +
+	"\x06reason\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x00R\x06reason\x88\x01\x01\x12>\n" +
+	"\x05props\x18\x02 \x01(\v2\x1e.resources.jobs.ColleaguePropsB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x05propsB\t\n" +
 	"\a_reason\"\x81\x02\n" +
 	"\n" +
 	"UserUpdate\x12\x17\n" +
@@ -398,17 +398,17 @@ func file_resources_sync_activity_proto_rawDescGZIP() []byte {
 
 var file_resources_sync_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_sync_activity_proto_goTypes = []any{
-	(*UserOAuth2Conn)(nil),     // 0: resources.sync.UserOAuth2Conn
-	(*UserProps)(nil),          // 1: resources.sync.UserProps
-	(*JobsUserProps)(nil),      // 2: resources.sync.JobsUserProps
-	(*UserUpdate)(nil),         // 3: resources.sync.UserUpdate
-	(*TimeclockUpdate)(nil),    // 4: resources.sync.TimeclockUpdate
-	(*users.UserProps)(nil),    // 5: resources.users.UserProps
-	(*jobs.JobsUserProps)(nil), // 6: resources.jobs.JobsUserProps
+	(*UserOAuth2Conn)(nil),      // 0: resources.sync.UserOAuth2Conn
+	(*UserProps)(nil),           // 1: resources.sync.UserProps
+	(*ColleagueProps)(nil),      // 2: resources.sync.ColleagueProps
+	(*UserUpdate)(nil),          // 3: resources.sync.UserUpdate
+	(*TimeclockUpdate)(nil),     // 4: resources.sync.TimeclockUpdate
+	(*users.UserProps)(nil),     // 5: resources.users.UserProps
+	(*jobs.ColleagueProps)(nil), // 6: resources.jobs.ColleagueProps
 }
 var file_resources_sync_activity_proto_depIdxs = []int32{
 	5, // 0: resources.sync.UserProps.props:type_name -> resources.users.UserProps
-	6, // 1: resources.sync.JobsUserProps.props:type_name -> resources.jobs.JobsUserProps
+	6, // 1: resources.sync.ColleagueProps.props:type_name -> resources.jobs.ColleagueProps
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

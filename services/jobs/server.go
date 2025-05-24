@@ -6,18 +6,66 @@ import (
 
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
 
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetJobColleagueProps,
+		JobColumn:       table.FivenetJobColleagueProps.Job,
+		IDColumn:        table.FivenetJobColleagueProps.UserID,
+		DeletedAtColumn: table.FivenetJobColleagueProps.DeletedAt,
+
+		MinDays: 60,
+
+		DependantTables: []*housekeeper.Table{
+			{
+				Table:      table.FivenetJobColleagueActivity,
+				JobColumn:  table.FivenetJobColleagueActivity.Job,
+				IDColumn:   table.FivenetJobColleagueActivity.ID,
+				ForeignKey: table.FivenetJobColleagueActivity.TargetUserID,
+			},
+		},
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetJobLabels,
+		JobColumn:       table.FivenetJobLabels.Job,
+		IDColumn:        table.FivenetJobLabels.ID,
+		DeletedAtColumn: table.FivenetJobLabels.DeletedAt,
+
+		MinDays: 60,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetJobConduct,
+		JobColumn:       table.FivenetJobConduct.Job,
+		IDColumn:        table.FivenetJobConduct.ID,
+		DeletedAtColumn: table.FivenetJobConduct.DeletedAt,
+
+		MinDays: 60,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:      table.FivenetJobTimeclock,
+		DateColumn: table.FivenetJobTimeclock.Date,
+		JobColumn:  table.FivenetJobTimeclock.Job,
+
+		MinDays: 365, // One year retention
+	})
+}
+
 type Server struct {
-	pbjobs.JobsConductServiceServer
+	pbjobs.ConductServiceServer
 	pbjobs.JobsServiceServer
-	pbjobs.JobsTimeclockServiceServer
+	pbjobs.TimeclockServiceServer
 
 	logger *zap.Logger
 	wg     sync.WaitGroup
@@ -60,9 +108,9 @@ func NewServer(p Params) *Server {
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
-	pbjobs.RegisterJobsConductServiceServer(srv, s)
+	pbjobs.RegisterConductServiceServer(srv, s)
 	pbjobs.RegisterJobsServiceServer(srv, s)
-	pbjobs.RegisterJobsTimeclockServiceServer(srv, s)
+	pbjobs.RegisterTimeclockServiceServer(srv, s)
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

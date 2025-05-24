@@ -39,13 +39,13 @@ type Permissions interface {
 
 	// Roles management
 	GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error)
-	GetRole(ctx context.Context, id uint64) (*model.FivenetRoles, error)
-	GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
+	GetRole(ctx context.Context, id uint64) (*model.FivenetRbacRoles, error)
+	GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error)
 	GetJobRoles(ctx context.Context, job string) (collections.Roles, error)
 	GetJobRolesUpTo(ctx context.Context, job string, grade int32) (collections.Roles, error)
-	GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
+	GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error)
 	CountRolesForJob(ctx context.Context, prefix string) (int64, error)
-	CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
+	CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error)
 	DeleteRole(ctx context.Context, id uint64) error
 	GetRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
 	GetEffectiveRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)

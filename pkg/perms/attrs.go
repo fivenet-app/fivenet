@@ -27,9 +27,9 @@ var ErrAttrInvalid = errors.New("invalid attributes")
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
-	tAttrs     = table.FivenetAttrs
-	tRoleAttrs = table.FivenetRoleAttrs
-	tJobAttrs  = table.FivenetJobAttrs
+	tAttrs     = table.FivenetRbacAttrs
+	tRoleAttrs = table.FivenetRbacRolesAttrs
+	tJobAttrs  = table.FivenetRbacJobAttrs
 )
 
 func (p *Perms) GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error) {
@@ -76,7 +76,7 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 		)).
 		LIMIT(1)
 
-	var dest []*model.FivenetAttrs
+	var dest []*model.FivenetRbacAttrs
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, err
 	}
@@ -103,7 +103,7 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 	return attrs, nil
 }
 
-func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key Key) (*model.FivenetAttrs, error) {
+func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key Key) (*model.FivenetRbacAttrs, error) {
 	stmt := tAttrs.
 		SELECT(
 			tAttrs.ID,
@@ -120,7 +120,7 @@ func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key
 		)).
 		LIMIT(1)
 
-	var dest model.FivenetAttrs
+	var dest model.FivenetRbacAttrs
 
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to query attribute from database. %w", err)
@@ -302,7 +302,7 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 	}
 
 	cached := p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, permId, key)
-	if userInfo.SuperUser {
+	if userInfo.Superuser {
 		attr, ok := p.lookupAttributeByPermID(permId, key)
 		if !ok {
 			return nil, nil

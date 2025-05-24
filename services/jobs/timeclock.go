@@ -14,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
@@ -26,39 +25,29 @@ import (
 
 const TimeclockMaxDays = (365 / 2) * 24 * time.Hour // Half a year
 
-var tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
-
-func init() {
-	housekeeper.AddTable(&housekeeper.Table{
-		Table:      table.FivenetJobsTimeclock,
-		DateColumn: table.FivenetJobsTimeclock.Date,
-		JobColumn:  table.FivenetJobsTimeclock.Job,
-
-		MinDays: 365, // One year retention
-	})
-}
+var tTimeClock = table.FivenetJobTimeclock.AS("timeclock_entry")
 
 func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockRequest) (*pbjobs.ListTimeclockResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.jobs.timeclock.user_ids", utils.SliceInt32ToInt(req.UserIds)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := tables.Users().AS("colleague")
+	tUser := tables.User().AS("colleague")
 
 	condition := tUser.Job.EQ(jet.String(userInfo.Job))
 	statsCondition := tTimeClock.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsjobs.TimeclockServicePerm, permsjobs.TimeclockServiceListTimeclockPerm, permsjobs.TimeclockServiceListTimeclockAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	if !fields.Contains("All") {
-		req.UserMode = jobs.TimeclockUserMode_TIMECLOCK_USER_MODE_SELF
+		req.UserMode = jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF
 	}
 
-	if req.UserMode <= jobs.TimeclockUserMode_TIMECLOCK_USER_MODE_SELF {
+	if req.UserMode <= jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_SELF {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	} else {
@@ -124,10 +113,10 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 	}
 
 	var countStmt jet.SelectStatement
-	if req.UserMode == jobs.TimeclockUserMode_TIMECLOCK_USER_MODE_ALL {
+	if req.UserMode == jobs.TimeclockViewMode_TIMECLOCK_VIEW_MODE_ALL {
 		if req.PerDay {
 			countStmt = tTimeClock.
-				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("datacount.totalcount")).
+				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
 				FROM(
 					tTimeClock.
 						INNER_JOIN(tUser,
@@ -137,7 +126,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				WHERE(condition)
 		} else {
 			countStmt = tTimeClock.
-				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("datacount.totalcount")).
+				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
 				FROM(
 					tTimeClock.
 						INNER_JOIN(tUser,
@@ -148,7 +137,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 	} else {
 		countStmt = tTimeClock.
-			SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("datacount.totalcount")).
+			SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
 			FROM(
 				tTimeClock.
 					INNER_JOIN(tUser,
@@ -165,7 +154,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 30)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 30)
 	resp := &pbjobs.ListTimeclockResponse{
 		Pagination: pag,
 	}
@@ -180,7 +169,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -249,12 +238,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tUser.Dateofbirth,
 				tUser.PhoneNumber,
 				tUserProps.Avatar.AS("colleague.avatar"),
-				tJobsUserProps.UserID,
-				tJobsUserProps.Job,
-				tJobsUserProps.AbsenceBegin,
-				tJobsUserProps.AbsenceEnd,
-				tJobsUserProps.NamePrefix,
-				tJobsUserProps.NameSuffix,
+				tColleagueProps.UserID,
+				tColleagueProps.Job,
+				tColleagueProps.AbsenceBegin,
+				tColleagueProps.AbsenceEnd,
+				tColleagueProps.NamePrefix,
+				tColleagueProps.NameSuffix,
 			).
 			FROM(
 				tTimeClock.
@@ -264,8 +253,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					LEFT_JOIN(tUserProps,
 						tUserProps.UserID.EQ(tUser.ID),
 					).
-					LEFT_JOIN(tJobsUserProps,
-						tJobsUserProps.UserID.EQ(tUser.ID).
+					LEFT_JOIN(tColleagueProps,
+						tColleagueProps.UserID.EQ(tUser.ID).
 							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 					),
 			).
@@ -315,12 +304,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tUser.Dateofbirth,
 				tUser.PhoneNumber,
 				tUserProps.Avatar.AS("colleague.avatar"),
-				tJobsUserProps.UserID,
-				tJobsUserProps.Job,
-				tJobsUserProps.AbsenceBegin,
-				tJobsUserProps.AbsenceEnd,
-				tJobsUserProps.NamePrefix,
-				tJobsUserProps.NameSuffix,
+				tColleagueProps.UserID,
+				tColleagueProps.Job,
+				tColleagueProps.AbsenceBegin,
+				tColleagueProps.AbsenceEnd,
+				tColleagueProps.NamePrefix,
+				tColleagueProps.NameSuffix,
 			).
 			FROM(
 				tTimeClock.
@@ -330,8 +319,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					LEFT_JOIN(tUserProps,
 						tUserProps.UserID.EQ(tUser.ID),
 					).
-					LEFT_JOIN(tJobsUserProps,
-						tJobsUserProps.UserID.EQ(tUser.ID).
+					LEFT_JOIN(tColleagueProps,
+						tColleagueProps.UserID.EQ(tUser.ID).
 							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 					),
 			).
@@ -380,12 +369,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tUser.Dateofbirth,
 				tUser.PhoneNumber,
 				tUserProps.Avatar.AS("colleague.avatar"),
-				tJobsUserProps.UserID,
-				tJobsUserProps.Job,
-				tJobsUserProps.AbsenceBegin,
-				tJobsUserProps.AbsenceEnd,
-				tJobsUserProps.NamePrefix,
-				tJobsUserProps.NameSuffix,
+				tColleagueProps.UserID,
+				tColleagueProps.Job,
+				tColleagueProps.AbsenceBegin,
+				tColleagueProps.AbsenceEnd,
+				tColleagueProps.NamePrefix,
+				tColleagueProps.NameSuffix,
 			).
 			FROM(
 				tTimeClock.
@@ -395,8 +384,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					LEFT_JOIN(tUserProps,
 						tUserProps.UserID.EQ(tUser.ID),
 					).
-					LEFT_JOIN(tJobsUserProps,
-						tJobsUserProps.UserID.EQ(tUser.ID).
+					LEFT_JOIN(tColleagueProps,
+						tColleagueProps.UserID.EQ(tUser.ID).
 							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 					),
 			).
@@ -443,12 +432,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tUser.Dateofbirth,
 				tUser.PhoneNumber,
 				tUserProps.Avatar.AS("colleague.avatar"),
-				tJobsUserProps.UserID,
-				tJobsUserProps.Job,
-				tJobsUserProps.AbsenceBegin,
-				tJobsUserProps.AbsenceEnd,
-				tJobsUserProps.NamePrefix,
-				tJobsUserProps.NameSuffix,
+				tColleagueProps.UserID,
+				tColleagueProps.Job,
+				tColleagueProps.AbsenceBegin,
+				tColleagueProps.AbsenceEnd,
+				tColleagueProps.NamePrefix,
+				tColleagueProps.NameSuffix,
 			).
 			FROM(
 				tTimeClock.
@@ -458,8 +447,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					LEFT_JOIN(tUserProps,
 						tUserProps.UserID.EQ(tUser.ID),
 					).
-					LEFT_JOIN(tJobsUserProps,
-						tJobsUserProps.UserID.EQ(tUser.ID).
+					LEFT_JOIN(tColleagueProps,
+						tColleagueProps.UserID.EQ(tUser.ID).
 							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 					),
 			).
@@ -494,7 +483,7 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *pbjobs.GetTimeclock
 	userId := userInfo.UserId
 	if req.UserId != nil && *req.UserId > 0 && *req.UserId != userInfo.UserId {
 		// Field Permission Check
-		fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)
+		fields, err := s.ps.AttrStringList(userInfo, permsjobs.TimeclockServicePerm, permsjobs.TimeclockServiceListTimeclockPerm, permsjobs.TimeclockServiceListTimeclockAccessPermField)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -525,20 +514,20 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *pbjobs.GetTimeclock
 func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInactiveEmployeesRequest) (*pbjobs.ListInactiveEmployeesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := tables.Users().AS("colleague")
+	tUser := tables.User().AS("colleague")
 
 	condition := jet.AND(
 		tTimeClock.Job.EQ(jet.String(userInfo.Job)),
 		tUser.Job.EQ(jet.String(userInfo.Job)),
 		jet.OR(
 			jet.AND(
-				tJobsUserProps.AbsenceBegin.IS_NULL(),
-				tJobsUserProps.AbsenceEnd.IS_NULL(),
+				tColleagueProps.AbsenceBegin.IS_NULL(),
+				tColleagueProps.AbsenceEnd.IS_NULL(),
 			),
-			tJobsUserProps.AbsenceBegin.LT_EQ(
+			tColleagueProps.AbsenceBegin.LT_EQ(
 				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
 			),
-			tJobsUserProps.AbsenceEnd.LT_EQ(
+			tColleagueProps.AbsenceEnd.LT_EQ(
 				jet.DateExp(jet.CURRENT_DATE().SUB(jet.INTERVAL(req.Days, jet.DAY))),
 			),
 		),
@@ -558,7 +547,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 
 	countStmt := tTimeClock.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tTimeClock.UserID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tTimeClock.UserID)).AS("data_count.total"),
 		).
 		FROM(
 			tTimeClock.
@@ -568,8 +557,8 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tTimeClock.UserID),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tTimeClock.UserID).
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tTimeClock.UserID).
 						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 				),
 		).
@@ -582,12 +571,12 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 16)
 	resp := &pbjobs.ListInactiveEmployeesResponse{
 		Pagination: pag,
 		Colleagues: []*jobs.Colleague{},
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -626,12 +615,12 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("colleague.avatar"),
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.AbsenceBegin,
+			tColleagueProps.AbsenceEnd,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 		).
 		FROM(
 			tTimeClock.
@@ -641,8 +630,8 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tTimeClock.UserID),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tTimeClock.UserID).
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tTimeClock.UserID).
 						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 				),
 		).

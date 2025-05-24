@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
@@ -170,8 +170,8 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any
 func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	m.logger.Debug("refreshing user tracker cache")
 
-	tLocs := tLocs.AS("usermarker")
-	tUsers := tables.Users().AS("user")
+	tLocs := tLocs.AS("user_marker")
+	tUsers := tables.User().AS("user")
 
 	stmt := tLocs.
 		SELECT(
@@ -180,19 +180,19 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tLocs.X,
 			tLocs.Y,
 			tLocs.UpdatedAt,
-			tLocs.Hidden.AS("usermarker.hidden"),
-			tUsers.ID.AS("usermarker.userid"),
+			tLocs.Hidden.AS("user_marker.hidden"),
+			tUsers.ID.AS("user_marker.userid"),
 			tUsers.ID,
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.PhoneNumber,
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
-			tJobProps.LivemapMarkerColor.AS("usermarker.color"),
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
+			tJobProps.LivemapMarkerColor.AS("user_marker.color"),
 		).
 		FROM(
 			tLocs.
@@ -202,9 +202,9 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tUsers.Job),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(jet.AND(
@@ -234,7 +234,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		m.enricher.EnrichJobInfo(dest[i].User)
 
 		if dest[i].Color == nil {
-			defaultColor := users.DefaultLivemapMarkerColor
+			defaultColor := jobs.DefaultLivemapMarkerColor
 			dest[i].Color = &defaultColor
 		}
 

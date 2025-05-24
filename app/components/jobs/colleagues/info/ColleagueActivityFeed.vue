@@ -7,7 +7,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
-import { JobsUserActivityType } from '~~/gen/ts/resources/jobs/activity';
+import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/activity';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleagueName from '../ColleagueName.vue';
@@ -33,18 +33,18 @@ const usersLoading = ref(false);
 
 const typesAttrs = (
     isSuperuser.value
-        ? listEnumValues(JobsUserActivityType)
+        ? listEnumValues(ColleagueActivityType)
               .filter((t) => t.number !== 0)
               .map((t) => t.name)
-        : attrList('JobsService.ListColleagueActivity', 'Types').value
+        : attrList('jobs.JobsService.ListColleagueActivity', 'Types').value
 ).map((t) => t.toUpperCase());
-const activityTypes = Object.keys(JobsUserActivityType)
+const activityTypes = Object.keys(ColleagueActivityType)
     .filter((aType) => typesAttrs.includes(aType))
-    .map((aType) => JobsUserActivityType[aType as keyof typeof JobsUserActivityType]);
+    .map((aType) => ColleagueActivityType[aType as keyof typeof ColleagueActivityType]);
 
 const schema = z.object({
     colleagues: z.custom<Colleague>().array().max(10),
-    types: z.nativeEnum(JobsUserActivityType).array().max(typesAttrs.length),
+    types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.length),
 });
 
 type Schema = z.output<typeof schema>;
@@ -79,7 +79,7 @@ const {
 
 async function listColleagueActivity(
     userIds: number[],
-    activityTypes: JobsUserActivityType[],
+    activityTypes: ColleagueActivityType[],
 ): Promise<ListColleagueActivityResponse> {
     try {
         const call = $grpc.jobs.jobs.listColleagueActivity({
@@ -101,7 +101,7 @@ async function listColleagueActivity(
 
 watch(offset, async () => refresh());
 
-const accessAttrs = attrList('JobsService.GetColleague', 'Access');
+const accessAttrs = attrList('jobs.JobsService.GetColleague', 'Access');
 const colleagueSearchAttrs = ['own', 'lower_rank', 'same_rank', 'any'];
 
 watch(props, async () => refresh());
@@ -180,7 +180,7 @@ watchDebounced(query, async () => refresh(), {
                         </template>
 
                         <template #option="{ option }">
-                            {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[option.aType]}`) }}
+                            {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[option.aType]}`) }}
                         </template>
 
                         <template #option-empty="{ query: search }">

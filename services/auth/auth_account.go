@@ -49,12 +49,12 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *pbauth.GetAccountInfoR
 		}
 	}
 
-	oAuth2Accounts := table.FivenetOauth2Accounts.AS("oauth2account")
+	oAuth2Accounts := table.FivenetAccountsOauth2.AS("oauth2_account")
 	stmt := oAuth2Accounts.
 		SELECT(
 			oAuth2Accounts.AccountID,
 			oAuth2Accounts.CreatedAt,
-			oAuth2Accounts.Provider.AS("oauth2account.providername"),
+			oAuth2Accounts.Provider.AS("oauth2_account.providername"),
 			oAuth2Accounts.ExternalID,
 			oAuth2Accounts.Username,
 			oAuth2Accounts.Avatar,

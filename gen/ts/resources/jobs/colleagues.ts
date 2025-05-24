@@ -62,9 +62,9 @@ export interface Colleague {
      */
     avatar?: File;
     /**
-     * @generated from protobuf field: resources.jobs.JobsUserProps props = 18;
+     * @generated from protobuf field: resources.jobs.ColleagueProps props = 18;
      */
-    props?: JobsUserProps; // @gotags: alias:"jobs_user_props"
+    props?: ColleagueProps; // @gotags: alias:"jobs_user_props"
     /**
      * @sanitize: method=StripTags
      *
@@ -73,9 +73,9 @@ export interface Colleague {
     email?: string;
 }
 /**
- * @generated from protobuf message resources.jobs.JobsUserProps
+ * @generated from protobuf message resources.jobs.ColleagueProps
  */
-export interface JobsUserProps {
+export interface ColleagueProps {
     /**
      * @generated from protobuf field: int32 user_id = 1;
      */
@@ -85,29 +85,33 @@ export interface JobsUserProps {
      */
     job: string;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_begin = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_begin = 4;
      */
     absenceBegin?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_end = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_end = 5;
      */
     absenceEnd?: Timestamp;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string note = 5;
+     * @generated from protobuf field: optional string note = 6;
      */
     note?: string;
     /**
-     * @generated from protobuf field: optional resources.jobs.Labels labels = 6;
+     * @generated from protobuf field: optional resources.jobs.Labels labels = 7;
      */
     labels?: Labels;
     /**
-     * @generated from protobuf field: optional string name_prefix = 7;
+     * @generated from protobuf field: optional string name_prefix = 8;
      */
     namePrefix?: string;
     /**
-     * @generated from protobuf field: optional string name_suffix = 8;
+     * @generated from protobuf field: optional string name_suffix = 9;
      */
     nameSuffix?: string;
 }
@@ -126,7 +130,7 @@ class Colleague$Type extends MessageType<Colleague> {
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "10" } } } },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 17, name: "avatar", kind: "message", T: () => File },
-            { no: 18, name: "props", kind: "message", T: () => JobsUserProps },
+            { no: 18, name: "props", kind: "message", T: () => ColleagueProps },
             { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } }
         ]);
     }
@@ -180,8 +184,8 @@ class Colleague$Type extends MessageType<Colleague> {
                 case /* optional resources.filestore.File avatar */ 17:
                     message.avatar = File.internalBinaryRead(reader, reader.uint32(), options, message.avatar);
                     break;
-                case /* resources.jobs.JobsUserProps props */ 18:
-                    message.props = JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                case /* resources.jobs.ColleagueProps props */ 18:
+                    message.props = ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 case /* optional string email */ 19:
                     message.email = reader.string();
@@ -231,9 +235,9 @@ class Colleague$Type extends MessageType<Colleague> {
         /* optional resources.filestore.File avatar = 17; */
         if (message.avatar)
             File.internalBinaryWrite(message.avatar, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.JobsUserProps props = 18; */
+        /* resources.jobs.ColleagueProps props = 18; */
         if (message.props)
-            JobsUserProps.internalBinaryWrite(message.props, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+            ColleagueProps.internalBinaryWrite(message.props, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
         /* optional string email = 19; */
         if (message.email !== undefined)
             writer.tag(19, WireType.LengthDelimited).string(message.email);
@@ -248,28 +252,29 @@ class Colleague$Type extends MessageType<Colleague> {
  */
 export const Colleague = new Colleague$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class JobsUserProps$Type extends MessageType<JobsUserProps> {
+class ColleagueProps$Type extends MessageType<ColleagueProps> {
     constructor() {
-        super("resources.jobs.JobsUserProps", [
+        super("resources.jobs.ColleagueProps", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 3, name: "absence_begin", kind: "message", T: () => Timestamp },
-            { no: 4, name: "absence_end", kind: "message", T: () => Timestamp },
-            { no: 5, name: "note", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "labels", kind: "message", T: () => Labels },
-            { no: 7, name: "name_prefix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } },
-            { no: 8, name: "name_suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } }
+            { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "absence_begin", kind: "message", T: () => Timestamp },
+            { no: 5, name: "absence_end", kind: "message", T: () => Timestamp },
+            { no: 6, name: "note", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "labels", kind: "message", T: () => Labels },
+            { no: 8, name: "name_prefix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } },
+            { no: 9, name: "name_suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } }
         ]);
     }
-    create(value?: PartialMessage<JobsUserProps>): JobsUserProps {
+    create(value?: PartialMessage<ColleagueProps>): ColleagueProps {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
         message.job = "";
         if (value !== undefined)
-            reflectionMergePartial<JobsUserProps>(this, message, value);
+            reflectionMergePartial<ColleagueProps>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsUserProps): JobsUserProps {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueProps): ColleagueProps {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -280,22 +285,25 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
                 case /* string job */ 2:
                     message.job = reader.string();
                     break;
-                case /* optional resources.timestamp.Timestamp absence_begin */ 3:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 3:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp absence_begin */ 4:
                     message.absenceBegin = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceBegin);
                     break;
-                case /* optional resources.timestamp.Timestamp absence_end */ 4:
+                case /* optional resources.timestamp.Timestamp absence_end */ 5:
                     message.absenceEnd = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceEnd);
                     break;
-                case /* optional string note */ 5:
+                case /* optional string note */ 6:
                     message.note = reader.string();
                     break;
-                case /* optional resources.jobs.Labels labels */ 6:
+                case /* optional resources.jobs.Labels labels */ 7:
                     message.labels = Labels.internalBinaryRead(reader, reader.uint32(), options, message.labels);
                     break;
-                case /* optional string name_prefix */ 7:
+                case /* optional string name_prefix */ 8:
                     message.namePrefix = reader.string();
                     break;
-                case /* optional string name_suffix */ 8:
+                case /* optional string name_suffix */ 9:
                     message.nameSuffix = reader.string();
                     break;
                 default:
@@ -309,31 +317,34 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
         }
         return message;
     }
-    internalBinaryWrite(message: JobsUserProps, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ColleagueProps, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
         /* string job = 2; */
         if (message.job !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.job);
-        /* optional resources.timestamp.Timestamp absence_begin = 3; */
+        /* optional resources.timestamp.Timestamp deleted_at = 3; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp absence_begin = 4; */
         if (message.absenceBegin)
-            Timestamp.internalBinaryWrite(message.absenceBegin, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp absence_end = 4; */
+            Timestamp.internalBinaryWrite(message.absenceBegin, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp absence_end = 5; */
         if (message.absenceEnd)
-            Timestamp.internalBinaryWrite(message.absenceEnd, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional string note = 5; */
+            Timestamp.internalBinaryWrite(message.absenceEnd, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional string note = 6; */
         if (message.note !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.note);
-        /* optional resources.jobs.Labels labels = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.note);
+        /* optional resources.jobs.Labels labels = 7; */
         if (message.labels)
-            Labels.internalBinaryWrite(message.labels, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* optional string name_prefix = 7; */
+            Labels.internalBinaryWrite(message.labels, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* optional string name_prefix = 8; */
         if (message.namePrefix !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.namePrefix);
-        /* optional string name_suffix = 8; */
+            writer.tag(8, WireType.LengthDelimited).string(message.namePrefix);
+        /* optional string name_suffix = 9; */
         if (message.nameSuffix !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.nameSuffix);
+            writer.tag(9, WireType.LengthDelimited).string(message.nameSuffix);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -341,6 +352,6 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.JobsUserProps
+ * @generated MessageType for protobuf message resources.jobs.ColleagueProps
  */
-export const JobsUserProps = new JobsUserProps$Type();
+export const ColleagueProps = new ColleagueProps$Type();

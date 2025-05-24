@@ -13,18 +13,18 @@ import { MessageType } from "@protobuf-ts/runtime";
 /**
  * @dbscanner: json
  *
- * @generated from protobuf message resources.users.CitizenLabels
+ * @generated from protobuf message resources.users.Labels
  */
-export interface CitizenLabels {
+export interface Labels {
     /**
-     * @generated from protobuf field: repeated resources.users.CitizenLabel list = 1;
+     * @generated from protobuf field: repeated resources.users.Label list = 1;
      */
-    list: CitizenLabel[];
+    list: Label[];
 }
 /**
- * @generated from protobuf message resources.users.CitizenLabel
+ * @generated from protobuf message resources.users.Label
  */
-export interface CitizenLabel {
+export interface Label {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -45,26 +45,26 @@ export interface CitizenLabel {
     color: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class CitizenLabels$Type extends MessageType<CitizenLabels> {
+class Labels$Type extends MessageType<Labels> {
     constructor() {
-        super("resources.users.CitizenLabels", [
-            { no: 1, name: "list", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CitizenLabel, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
+        super("resources.users.Labels", [
+            { no: 1, name: "list", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);
     }
-    create(value?: PartialMessage<CitizenLabels>): CitizenLabels {
+    create(value?: PartialMessage<Labels>): Labels {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.list = [];
         if (value !== undefined)
-            reflectionMergePartial<CitizenLabels>(this, message, value);
+            reflectionMergePartial<Labels>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenLabels): CitizenLabels {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Labels): Labels {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.CitizenLabel list */ 1:
-                    message.list.push(CitizenLabel.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.users.Label list */ 1:
+                    message.list.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -77,10 +77,10 @@ class CitizenLabels$Type extends MessageType<CitizenLabels> {
         }
         return message;
     }
-    internalBinaryWrite(message: CitizenLabels, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.CitizenLabel list = 1; */
+    internalBinaryWrite(message: Labels, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.users.Label list = 1; */
         for (let i = 0; i < message.list.length; i++)
-            CitizenLabel.internalBinaryWrite(message.list[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Label.internalBinaryWrite(message.list[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -88,29 +88,29 @@ class CitizenLabels$Type extends MessageType<CitizenLabels> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.CitizenLabels
+ * @generated MessageType for protobuf message resources.users.Labels
  */
-export const CitizenLabels = new CitizenLabels$Type();
+export const Labels = new Labels$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CitizenLabel$Type extends MessageType<CitizenLabel> {
+class Label$Type extends MessageType<Label> {
     constructor() {
-        super("resources.users.CitizenLabel", [
+        super("resources.users.Label", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 4, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
         ]);
     }
-    create(value?: PartialMessage<CitizenLabel>): CitizenLabel {
+    create(value?: PartialMessage<Label>): Label {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.name = "";
         message.color = "";
         if (value !== undefined)
-            reflectionMergePartial<CitizenLabel>(this, message, value);
+            reflectionMergePartial<Label>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenLabel): CitizenLabel {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Label): Label {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -138,7 +138,7 @@ class CitizenLabel$Type extends MessageType<CitizenLabel> {
         }
         return message;
     }
-    internalBinaryWrite(message: CitizenLabel, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: Label, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -158,6 +158,6 @@ class CitizenLabel$Type extends MessageType<CitizenLabel> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.CitizenLabel
+ * @generated MessageType for protobuf message resources.users.Label
  */
-export const CitizenLabel = new CitizenLabel$Type();
+export const Label = new Label$Type();

@@ -10,8 +10,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { BannerMessage } from "../rector/banner";
-import { JobProps } from "../users/job_props";
+import { BannerMessage } from "../settings/banner";
+import { JobProps } from "../jobs/job_props";
 import { Notification } from "./notifications";
 // User Events
 
@@ -58,7 +58,7 @@ export interface JobEvent {
     data: {
         oneofKind: "jobProps";
         /**
-         * @generated from protobuf field: resources.users.JobProps job_props = 1;
+         * @generated from protobuf field: resources.jobs.JobProps job_props = 1;
          */
         jobProps: JobProps;
     } | {
@@ -114,7 +114,7 @@ export interface SystemEvent {
  */
 export interface BannerMessageWrapper {
     /**
-     * @generated from protobuf field: optional resources.rector.BannerMessage banner_message = 1;
+     * @generated from protobuf field: optional resources.settings.BannerMessage banner_message = 1;
      */
     bannerMessage?: BannerMessage;
 }
@@ -207,7 +207,7 @@ class JobEvent$Type extends MessageType<JobEvent> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.users.JobProps job_props */ 1:
+                case /* resources.jobs.JobProps job_props */ 1:
                     message.data = {
                         oneofKind: "jobProps",
                         jobProps: JobProps.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobProps)
@@ -225,7 +225,7 @@ class JobEvent$Type extends MessageType<JobEvent> {
         return message;
     }
     internalBinaryWrite(message: JobEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.users.JobProps job_props = 1; */
+        /* resources.jobs.JobProps job_props = 1; */
         if (message.data.oneofKind === "jobProps")
             JobProps.internalBinaryWrite(message.data.jobProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -366,7 +366,7 @@ class BannerMessageWrapper$Type extends MessageType<BannerMessageWrapper> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional resources.rector.BannerMessage banner_message */ 1:
+                case /* optional resources.settings.BannerMessage banner_message */ 1:
                     message.bannerMessage = BannerMessage.internalBinaryRead(reader, reader.uint32(), options, message.bannerMessage);
                     break;
                 default:
@@ -381,7 +381,7 @@ class BannerMessageWrapper$Type extends MessageType<BannerMessageWrapper> {
         return message;
     }
     internalBinaryWrite(message: BannerMessageWrapper, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional resources.rector.BannerMessage banner_message = 1; */
+        /* optional resources.settings.BannerMessage banner_message = 1; */
         if (message.bannerMessage)
             BannerMessage.internalBinaryWrite(message.bannerMessage, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;

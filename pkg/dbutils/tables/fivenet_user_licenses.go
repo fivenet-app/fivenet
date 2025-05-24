@@ -13,7 +13,7 @@ import (
 
 var FivenetUserLicenses = newFivenetUserLicensesTable("", "fivenet_user_licenses", "")
 
-type fivenetUserLicensesTable struct {
+type fivenetCitizensLicensesTable struct {
 	mysql.Table
 
 	// Columns
@@ -25,9 +25,9 @@ type fivenetUserLicensesTable struct {
 }
 
 type FivenetUserLicensesTable struct {
-	fivenetUserLicensesTable
+	fivenetCitizensLicensesTable
 
-	NEW fivenetUserLicensesTable
+	NEW fivenetCitizensLicensesTable
 }
 
 // AS creates new FivenetUserLicensesTable with assigned alias
@@ -52,12 +52,12 @@ func (a FivenetUserLicensesTable) WithSuffix(suffix string) *FivenetUserLicenses
 
 func newFivenetUserLicensesTable(schemaName, tableName, alias string) *FivenetUserLicensesTable {
 	return &FivenetUserLicensesTable{
-		fivenetUserLicensesTable: newFivenetUserLicensesTableImpl(schemaName, tableName, alias),
+		fivenetCitizensLicensesTable: newFivenetUserLicensesTableImpl(schemaName, tableName, alias),
 		NEW:                      newFivenetUserLicensesTableImpl("", "new", ""),
 	}
 }
 
-func newFivenetUserLicensesTableImpl(schemaName, tableName, alias string) fivenetUserLicensesTable {
+func newFivenetUserLicensesTableImpl(schemaName, tableName, alias string) fivenetCitizensLicensesTable {
 	var (
 		TypeColumn     = mysql.StringColumn("type")
 		OwnerColumn    = mysql.StringColumn("owner")
@@ -65,7 +65,7 @@ func newFivenetUserLicensesTableImpl(schemaName, tableName, alias string) fivene
 		mutableColumns = mysql.ColumnList{}
 	)
 
-	return fivenetUserLicensesTable{
+	return fivenetCitizensLicensesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns

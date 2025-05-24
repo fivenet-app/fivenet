@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"sync/atomic"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -20,9 +20,9 @@ import (
 	"go.uber.org/zap"
 )
 
-type Cfg = rector.AppConfig
+type Cfg = settings.AppConfig
 
-var tConfig = table.FivenetConfig.AS("appconfig")
+var tConfig = table.FivenetConfig.AS("app_config")
 
 type IConfig interface {
 	Get() *Cfg
@@ -34,7 +34,7 @@ type IConfig interface {
 	Unsubscribe(ch chan *Cfg)
 }
 
-var Module = fx.Module("appconfig",
+var Module = fx.Module("app_config",
 	fx.Provide(
 		New,
 	),
@@ -170,7 +170,7 @@ func (c *Config) updateConfigInDB(ctx context.Context, cfg *Cfg) error {
 func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	stmt := tConfig.
 		SELECT(
-			tConfig.AppConfig.AS("appconfig"),
+			tConfig.AppConfig.AS("app_config"),
 		).
 		FROM(tConfig).
 		LIMIT(1)

@@ -297,22 +297,22 @@ var _ interface {
 	ErrorName() string
 } = UserPropsValidationError{}
 
-// Validate checks the field values on JobsUserProps with the rules defined in
+// Validate checks the field values on ColleagueProps with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *JobsUserProps) Validate() error {
+func (m *ColleagueProps) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on JobsUserProps with the rules defined
+// ValidateAll checks the field values on ColleagueProps with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in JobsUserPropsMultiError, or
-// nil if none found.
-func (m *JobsUserProps) ValidateAll() error {
+// result is a list of violation errors wrapped in ColleaguePropsMultiError,
+// or nil if none found.
+func (m *ColleagueProps) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *JobsUserProps) validate(all bool) error {
+func (m *ColleagueProps) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -320,7 +320,7 @@ func (m *JobsUserProps) validate(all bool) error {
 	var errors []error
 
 	if m.GetProps() == nil {
-		err := JobsUserPropsValidationError{
+		err := ColleaguePropsValidationError{
 			field:  "Props",
 			reason: "value is required",
 		}
@@ -334,7 +334,7 @@ func (m *JobsUserProps) validate(all bool) error {
 		switch v := interface{}(m.GetProps()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, JobsUserPropsValidationError{
+				errors = append(errors, ColleaguePropsValidationError{
 					field:  "Props",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -342,7 +342,7 @@ func (m *JobsUserProps) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, JobsUserPropsValidationError{
+				errors = append(errors, ColleaguePropsValidationError{
 					field:  "Props",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -351,7 +351,7 @@ func (m *JobsUserProps) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetProps()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return JobsUserPropsValidationError{
+			return ColleaguePropsValidationError{
 				field:  "Props",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -362,7 +362,7 @@ func (m *JobsUserProps) validate(all bool) error {
 	if m.Reason != nil {
 
 		if utf8.RuneCountInString(m.GetReason()) > 255 {
-			err := JobsUserPropsValidationError{
+			err := ColleaguePropsValidationError{
 				field:  "Reason",
 				reason: "value length must be at most 255 runes",
 			}
@@ -375,19 +375,19 @@ func (m *JobsUserProps) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return JobsUserPropsMultiError(errors)
+		return ColleaguePropsMultiError(errors)
 	}
 
 	return nil
 }
 
-// JobsUserPropsMultiError is an error wrapping multiple validation errors
-// returned by JobsUserProps.ValidateAll() if the designated constraints
+// ColleaguePropsMultiError is an error wrapping multiple validation errors
+// returned by ColleagueProps.ValidateAll() if the designated constraints
 // aren't met.
-type JobsUserPropsMultiError []error
+type ColleaguePropsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m JobsUserPropsMultiError) Error() string {
+func (m ColleaguePropsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -396,11 +396,11 @@ func (m JobsUserPropsMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m JobsUserPropsMultiError) AllErrors() []error { return m }
+func (m ColleaguePropsMultiError) AllErrors() []error { return m }
 
-// JobsUserPropsValidationError is the validation error returned by
-// JobsUserProps.Validate if the designated constraints aren't met.
-type JobsUserPropsValidationError struct {
+// ColleaguePropsValidationError is the validation error returned by
+// ColleagueProps.Validate if the designated constraints aren't met.
+type ColleaguePropsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -408,22 +408,22 @@ type JobsUserPropsValidationError struct {
 }
 
 // Field function returns field value.
-func (e JobsUserPropsValidationError) Field() string { return e.field }
+func (e ColleaguePropsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e JobsUserPropsValidationError) Reason() string { return e.reason }
+func (e ColleaguePropsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e JobsUserPropsValidationError) Cause() error { return e.cause }
+func (e ColleaguePropsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e JobsUserPropsValidationError) Key() bool { return e.key }
+func (e ColleaguePropsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e JobsUserPropsValidationError) ErrorName() string { return "JobsUserPropsValidationError" }
+func (e ColleaguePropsValidationError) ErrorName() string { return "ColleaguePropsValidationError" }
 
 // Error satisfies the builtin error interface
-func (e JobsUserPropsValidationError) Error() string {
+func (e ColleaguePropsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -435,14 +435,14 @@ func (e JobsUserPropsValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sJobsUserProps.%s: %s%s",
+		"invalid %sColleagueProps.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = JobsUserPropsValidationError{}
+var _ error = ColleaguePropsValidationError{}
 
 var _ interface {
 	Field() string
@@ -450,7 +450,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = JobsUserPropsValidationError{}
+} = ColleaguePropsValidationError{}
 
 // Validate checks the field values on UserUpdate with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

@@ -16,7 +16,7 @@ message ListTimeclockRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  resources.jobs.TimeclockUserMode user_mode = 3;
+  resources.jobs.TimeclockViewMode user_mode = 3;
   resources.jobs.TimeclockMode mode = 4;
   optional resources.common.database.DateRange date = 5;
   bool per_day = 6;
@@ -76,7 +76,7 @@ message ListInactiveEmployeesResponse {
   repeated resources.jobs.Colleague colleagues = 2;
 }
 
-service JobsTimeclockService {
+service TimeclockService {
   // @perm: Attrs=Access/StringList:[]string{"All"}
   rpc ListTimeclock(ListTimeclockRequest) returns (ListTimeclockResponse);
   // @perm: Name=ListTimeclock

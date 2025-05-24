@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.conduct.title',
     requiresAuth: true,
-    permission: 'JobsConductService.ListConductEntries',
+    permission: 'jobs.ConductService.ListConductEntries',
 });
 </script>
 

@@ -4,10 +4,10 @@ import "sync"
 
 var (
 	jobs      = FivenetJobs
-	jobGrades = FivenetJobGrades
+	jobGrades = FivenetJobsGrades
 	licenses  = FivenetLicenses
 
-	users         = FivenetUsers
+	user          = FivenetUser
 	userLicenses  = FivenetUserLicenses
 	ownedVehicles = FivenetOwnedVehicles
 )
@@ -25,10 +25,10 @@ func setESXTableNames() {
 	ESXCompatEnabled = true
 
 	jobs = newFivenetJobsTable("", "jobs", "")
-	jobGrades = newFivenetJobGradesTable("", "job_grades", "")
+	jobGrades = newFivenetJobsGradesTable("", "job_grades", "")
 	licenses = newFivenetLicensesTable("", "licenses", "")
 
-	users = newFivenetUsersTable("", "users", "")
+	user = newFivenetUserTable("", "users", "")
 	userLicenses = newFivenetUserLicensesTable("", "user_licenses", "")
 	ownedVehicles = newFivenetOwnedVehiclesTable("", "owned_vehicles", "")
 }
@@ -37,7 +37,7 @@ func Jobs() *FivenetJobsTable {
 	return jobs
 }
 
-func JobGrades() *FivenetJobGradesTable {
+func JobsGrades() *FivenetJobsGradesTable {
 	return jobGrades
 }
 
@@ -45,8 +45,8 @@ func Licenses() *FivenetLicensesTable {
 	return licenses
 }
 
-func Users() *FivenetUsersTable {
-	return users
+func User() *FivenetUserTable {
+	return user
 }
 
 func UserLicenses() *FivenetUserLicensesTable {

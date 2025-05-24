@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/modules"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
@@ -51,7 +51,7 @@ type Guild struct {
 	base    *modules.BaseModule
 	modules []modules.Module
 
-	settings *atomic.Pointer[users.DiscordSyncSettings]
+	settings *atomic.Pointer[jobs.DiscordSyncSettings]
 	events   *broker.Broker[any]
 }
 
@@ -77,7 +77,7 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSy
 		guild:   guild,
 		modules: []modules.Module{},
 
-		settings: &atomic.Pointer[users.DiscordSyncSettings]{},
+		settings: &atomic.Pointer[jobs.DiscordSyncSettings]{},
 		events:   events,
 	}
 
@@ -169,7 +169,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	}
 	g.base.SetSettings(settings)
 	if planDiff == nil {
-		planDiff = &users.DiscordSyncChanges{}
+		planDiff = &jobs.DiscordSyncChanges{}
 	}
 
 	if _, err := g.bot.dc.MembersAfter(g.guild.ID, 0, 0); err != nil {
@@ -226,7 +226,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 	if err := yamlEncoder.Encode(plan); err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("failed to encode plan to yaml for diff. %w", err))
 	}
-	planDiff.Add(&users.DiscordSyncChange{
+	planDiff.Add(&jobs.DiscordSyncChange{
 		Time: timestamp.Now(),
 		Plan: b.String(),
 	})
@@ -336,7 +336,7 @@ func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Dura
 	return nil
 }
 
-func (g *Guild) getSyncSettings(ctx context.Context) (*users.DiscordSyncSettings, *users.DiscordSyncChanges, error) {
+func (g *Guild) getSyncSettings(ctx context.Context) (*jobs.DiscordSyncSettings, *jobs.DiscordSyncChanges, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.DiscordSyncSettings,
@@ -348,7 +348,7 @@ func (g *Guild) getSyncSettings(ctx context.Context) (*users.DiscordSyncSettings
 		).
 		LIMIT(1)
 
-	var dest users.JobProps
+	var dest jobs.JobProps
 	if err := stmt.QueryContext(ctx, g.bot.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil, err
@@ -363,7 +363,7 @@ func (g *Guild) getSyncSettings(ctx context.Context) (*users.DiscordSyncSettings
 	return dest.DiscordSyncSettings, dest.DiscordSyncChanges, nil
 }
 
-func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *users.DiscordSyncChanges) error {
+func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *jobs.DiscordSyncChanges) error {
 	t := time.Now()
 
 	tJobProps := table.FivenetJobProps

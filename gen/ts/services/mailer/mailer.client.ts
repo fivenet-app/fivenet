@@ -126,7 +126,7 @@ export interface IMailerServiceClient {
      */
     createThread(input: CreateThreadRequest, options?: RpcOptions): UnaryCall<CreateThreadRequest, CreateThreadResponse>;
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=Superuser
      *
      * @generated from protobuf rpc: DeleteThread(services.mailer.DeleteThreadRequest) returns (services.mailer.DeleteThreadResponse);
      */
@@ -162,7 +162,7 @@ export interface IMailerServiceClient {
      */
     postMessage(input: PostMessageRequest, options?: RpcOptions): UnaryCall<PostMessageRequest, PostMessageResponse>;
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=Superuser
      *
      * @generated from protobuf rpc: DeleteMessage(services.mailer.DeleteMessageRequest) returns (services.mailer.DeleteMessageResponse);
      */
@@ -298,7 +298,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<CreateThreadRequest, CreateThreadResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=Superuser
      *
      * @generated from protobuf rpc: DeleteThread(services.mailer.DeleteThreadRequest) returns (services.mailer.DeleteThreadResponse);
      */
@@ -352,7 +352,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<PostMessageRequest, PostMessageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SuperUser
+     * @perm: Name=Superuser
      *
      * @generated from protobuf rpc: DeleteMessage(services.mailer.DeleteMessageRequest) returns (services.mailer.DeleteMessageResponse);
      */

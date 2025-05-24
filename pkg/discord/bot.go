@@ -36,7 +36,7 @@ import (
 
 const botWorkerCount = 3
 
-var tJobProps = table.FivenetJobProps.AS("jobprops")
+var tJobProps = table.FivenetJobProps.AS("job_props")
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord_bot")

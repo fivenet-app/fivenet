@@ -10,15 +10,15 @@ import (
 )
 
 var PermsRemap = map[string]string{
-	// Service: WikiService
-	"WikiService/GetPage":    "WikiService/ListPages",
-	"WikiService/UpdatePage": "WikiService/ListPages",
+	// Service: wiki.WikiService
+	"wiki.WikiService/GetPage":    "wiki.WikiService/ListPages",
+	"wiki.WikiService/UpdatePage": "wiki.WikiService/ListPages",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: WikiService
+		// Service: wiki.WikiService
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceCreatePagePerm,

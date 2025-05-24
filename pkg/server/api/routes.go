@@ -41,9 +41,10 @@ func New(p Params) *Routes {
 
 	for i, p := range p.Config.OAuth2.Providers {
 		providers[i] = &ProviderConfig{
-			Name:  p.Name,
-			Label: p.Label,
-			Icon:  p.Icon,
+			Name:     p.Name,
+			Label:    p.Label,
+			Icon:     p.Icon,
+			Homepage: &p.Homepage,
 		}
 	}
 

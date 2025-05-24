@@ -13,7 +13,8 @@ const modal = useModal();
 <template>
     <div
         v-if="
-            can('DocStoreService.CreateDocumentReq').value && attr('DocStoreService.CreateDocumentReq', 'Types', 'Access').value
+            can('documents.DocumentsService.CreateDocumentReq').value &&
+            attr('documents.DocumentsService.CreateDocumentReq', 'Types', 'Access').value
         "
         class="mx-auto max-w-md rounded-md"
     >

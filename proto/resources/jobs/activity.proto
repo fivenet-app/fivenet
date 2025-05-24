@@ -9,19 +9,19 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
 
-enum JobsUserActivityType {
-  JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
-  JOBS_USER_ACTIVITY_TYPE_HIRED = 1;
-  JOBS_USER_ACTIVITY_TYPE_FIRED = 2;
-  JOBS_USER_ACTIVITY_TYPE_PROMOTED = 3;
-  JOBS_USER_ACTIVITY_TYPE_DEMOTED = 4;
-  JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 5;
-  JOBS_USER_ACTIVITY_TYPE_NOTE = 6;
-  JOBS_USER_ACTIVITY_TYPE_LABELS = 7;
-  JOBS_USER_ACTIVITY_TYPE_NAME = 8;
+enum ColleagueActivityType {
+  COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED = 0;
+  COLLEAGUE_ACTIVITY_TYPE_HIRED = 1;
+  COLLEAGUE_ACTIVITY_TYPE_FIRED = 2;
+  COLLEAGUE_ACTIVITY_TYPE_PROMOTED = 3;
+  COLLEAGUE_ACTIVITY_TYPE_DEMOTED = 4;
+  COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE = 5;
+  COLLEAGUE_ACTIVITY_TYPE_NOTE = 6;
+  COLLEAGUE_ACTIVITY_TYPE_LABELS = 7;
+  COLLEAGUE_ACTIVITY_TYPE_NAME = 8;
 }
 
-message JobsUserActivity {
+message ColleagueActivity {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   string job = 4 [(validate.rules).string.max_len = 20];
@@ -29,40 +29,40 @@ message JobsUserActivity {
   optional Colleague source_user = 6; // @gotags: alias:"source_user"
   int32 target_user_id = 7 [(validate.rules).int32.gt = 0];
   Colleague target_user = 8; // @gotags: alias:"target_user"
-  JobsUserActivityType activity_type = 9;
+  ColleagueActivityType activity_type = 9;
   // @sanitize
   string reason = 10 [(validate.rules).string.max_len = 255];
-  JobsUserActivityData data = 11;
+  ColleagueActivityData data = 11;
 }
 
 // @dbscanner: json
-message JobsUserActivityData {
+message ColleagueActivityData {
   oneof data {
     option (validate.required) = true;
 
-    ColleagueAbsenceDate absence_date = 1;
-    ColleagueGradeChange grade_change = 2;
-    ColleagueLabelsChange labels_change = 3;
-    ColleagueNameChange name_change = 4;
+    AbsenceDateChange absence_date = 1;
+    GradeChange grade_change = 2;
+    LabelsChange labels_change = 3;
+    NameChange name_change = 4;
   }
 }
 
-message ColleagueAbsenceDate {
+message AbsenceDateChange {
   resources.timestamp.Timestamp absence_begin = 1;
   resources.timestamp.Timestamp absence_end = 2;
 }
 
-message ColleagueGradeChange {
+message GradeChange {
   int32 grade = 1;
   string grade_label = 2;
 }
 
-message ColleagueLabelsChange {
+message LabelsChange {
   repeated Label added = 1;
   repeated Label removed = 2;
 }
 
-message ColleagueNameChange {
+message NameChange {
   optional string prefix = 1;
   optional string suffix = 2;
 }

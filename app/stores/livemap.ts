@@ -1,8 +1,8 @@
 import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import type { Coordinate } from '~/composables/livemap';
+import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
-import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import { useSettingsStore } from './settings';
 
@@ -74,7 +74,7 @@ export const useLivemapStore = defineStore(
             cleanupMarkerMarkers();
 
             try {
-                const call = $grpc.livemapper.livemapper.stream({}, { abort: abort.value.signal });
+                const call = $grpc.livemap.livemap.stream({}, { abort: abort.value.signal });
 
                 for await (const resp of call.responses) {
                     error.value = undefined;

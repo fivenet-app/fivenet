@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -50,7 +49,7 @@ func (s *Server) ListThreads(ctx context.Context, req *pbmailer.ListThreadsReque
 	}
 
 	wheres := []jet.BoolExpression{jet.Bool(true)}
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		wheres = []jet.BoolExpression{
 			jet.AND(
 				tThreads.DeletedAt.IS_NULL(),
@@ -71,7 +70,7 @@ func (s *Server) ListThreads(ctx context.Context, req *pbmailer.ListThreadsReque
 
 	countStmt := tThreads.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tThreads.ID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tThreads.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tThreads.
@@ -94,11 +93,11 @@ func (s *Server) ListThreads(ctx context.Context, req *pbmailer.ListThreadsReque
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ThreadsDefaultPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, ThreadsDefaultPageSize)
 	resp := &pbmailer.ListThreadsResponse{
 		Pagination: pag,
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -241,12 +240,12 @@ func (s *Server) CreateThread(ctx context.Context, req *pbmailer.CreateThreadReq
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "CreateThread",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -264,7 +263,7 @@ func (s *Server) CreateThread(ctx context.Context, req *pbmailer.CreateThreadReq
 	}
 
 	// Prevent disabled emails from creating threads
-	if !userInfo.SuperUser && senderEmail.Deactivated {
+	if !userInfo.Superuser && senderEmail.Deactivated {
 		return nil, errorsmailer.ErrEmailDisabled
 	}
 
@@ -338,7 +337,7 @@ func (s *Server) CreateThread(ctx context.Context, req *pbmailer.CreateThreadReq
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	thread, err := s.getThread(ctx, req.Thread.Id, req.Thread.CreatorEmailId, userInfo, true)
 	if err != nil {
@@ -402,16 +401,16 @@ func (s *Server) DeleteThread(ctx context.Context, req *pbmailer.DeleteThreadReq
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "DeleteThread",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
@@ -421,7 +420,7 @@ func (s *Server) DeleteThread(ctx context.Context, req *pbmailer.DeleteThreadReq
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if thread != nil && thread.DeletedAt != nil && userInfo.SuperUser {
+	if thread != nil && thread.DeletedAt != nil && userInfo.Superuser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -457,7 +456,7 @@ func (s *Server) DeleteThread(ctx context.Context, req *pbmailer.DeleteThreadReq
 		}, emailIds...)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbmailer.DeleteThreadResponse{}, nil
 }

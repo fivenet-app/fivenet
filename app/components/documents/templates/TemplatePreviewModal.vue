@@ -33,7 +33,7 @@ async function getTemplate(): Promise<Template> {
         data.activeChar = activeChar.value!;
         logger.debug('Documents: Editor - Clipboard Template Data', data);
 
-        const call = $grpc.docstore.docStore.getTemplate({
+        const call = $grpc.documents.documents.getTemplate({
             templateId: props.templateId,
             data,
             render: true,

@@ -3,15 +3,7 @@
 
 package users
 
-func (m *License) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UserLicenses) Sanitize() error {
+func (m *CitizensLicenses) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -26,6 +18,14 @@ func (m *UserLicenses) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *License) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

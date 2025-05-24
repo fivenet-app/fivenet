@@ -226,7 +226,7 @@ const accordionItems = computed(() =>
                     </template>
 
                     <UButton
-                        v-if="can('QualificationsService.UpdateQualification').value && canDo.edit"
+                        v-if="can('qualifications.QualificationsService.UpdateQualification').value && canDo.edit"
                         :to="{
                             name: 'qualifications-id-edit',
                             params: { id: qualification.id },
@@ -237,7 +237,7 @@ const accordionItems = computed(() =>
                     </UButton>
 
                     <UButton
-                        v-if="can('QualificationsService.DeleteQualification').value && canDo.delete"
+                        v-if="can('qualifications.QualificationsService.DeleteQualification').value && canDo.delete"
                         :color="!qualification.deletedAt ? 'error' : 'success'"
                         :icon="!qualification.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
                         :label="!qualification.deletedAt ? $t('common.delete') : $t('common.restore')"

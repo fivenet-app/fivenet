@@ -44,7 +44,7 @@ func (p *Perms) loadData(ctx context.Context) error {
 }
 
 func (p *Perms) loadPermissions(ctx context.Context) error {
-	tPerms := tPerms.AS("cachePerm")
+	tPerms := tPerms.AS("cache_perm")
 	stmt := tPerms.
 		SELECT(
 			tPerms.ID,

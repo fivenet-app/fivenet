@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	AdsServicePerm      perms.Category = "AdsService"
-	DomainServicePerm   perms.Category = "DomainService"
-	InternetServicePerm perms.Category = "InternetService"
+	AdsServicePerm      perms.Category = "internet.AdsService"
+	DomainServicePerm   perms.Category = "internet.DomainService"
+	InternetServicePerm perms.Category = "internet.InternetService"
 )

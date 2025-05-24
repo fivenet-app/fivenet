@@ -19,11 +19,11 @@ import (
 )
 
 var (
-	tAccounts        = table.FivenetAccounts
-	tDocuments       = table.FivenetDocuments
-	tDispatches      = table.FivenetCentrumDispatches
-	tCitizenActivity = table.FivenetUserActivity
-	tJobsTimeclock   = table.FivenetJobsTimeclock
+	tAccounts         = table.FivenetAccounts
+	tDocuments        = table.FivenetDocuments
+	tDispatches       = table.FivenetCentrumDispatches
+	tCitizenActivity  = table.FivenetUserActivity
+	tJobUserTimeclock = table.FivenetJobTimeclock
 )
 
 type worker struct {
@@ -93,13 +93,13 @@ func (s *worker) calculateStats(ctx context.Context) {
 func (s *worker) loadStats(ctx context.Context) error {
 	data := Stats{}
 
-	tUsers := tables.Users()
+	tUsers := tables.User()
 	queries := map[string]jet.Statement{
 		"users_registered":   tAccounts.SELECT(jet.COUNT(tAccounts.ID).AS("value")).WHERE(tAccounts.Enabled.IS_TRUE()),
 		"documents_created":  tDocuments.SELECT(jet.COUNT(tDocuments.ID).AS("value")).WHERE(tDocuments.DeletedAt.IS_NULL()),
 		"dispatches_created": tDispatches.SELECT(jet.MAX(tDispatches.ID).AS("value")),
 		"citizen_activity":   tCitizenActivity.SELECT(jet.COUNT(tCitizenActivity.ID).AS("value")),
-		"timeclock_tracked":  tJobsTimeclock.SELECT(jet.CAST(jet.SUM(tJobsTimeclock.SpentTime)).AS_SIGNED().AS("value")),
+		"timeclock_tracked":  tJobUserTimeclock.SELECT(jet.CAST(jet.SUM(tJobUserTimeclock.SpentTime)).AS_SIGNED().AS("value")),
 		"citizens_total":     tUsers.SELECT(jet.COUNT(tUsers.ID).AS("value")),
 	}
 

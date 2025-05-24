@@ -17,7 +17,7 @@ const { markersMarkers } = storeToRefs(livemapStore);
 
 async function deleteMarker(id: number): Promise<void> {
     try {
-        const call = $grpc.livemapper.livemapper.deleteMarker({
+        const call = $grpc.livemap.livemap.deleteMarker({
             id,
         });
         await call;
@@ -98,7 +98,7 @@ const columns = [
 
                         <UTooltip :text="$t('common.delete')">
                             <UButton
-                                v-if="can('LivemapperService.DeleteMarker').value"
+                                v-if="can('livemap.LivemapService.DeleteMarker').value"
                                 variant="link"
                                 icon="i-mdi-delete"
                                 color="error"

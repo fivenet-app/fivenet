@@ -46,7 +46,7 @@ func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protou
 }
 
 func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
-	tQualiResults := tQualiResults.AS("qualificationresult")
+	tQualiResults := tQualiResults.AS("qualification_result")
 
 	var stmt jet.SelectStatement
 

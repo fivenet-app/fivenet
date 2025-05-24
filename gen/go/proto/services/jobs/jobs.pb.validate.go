@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = jobs.JobsUserActivityType(0)
+	_ = jobs.ColleagueActivityType(0)
 )
 
 // Validate checks the field values on ListColleaguesRequest with the rules
@@ -1269,22 +1269,22 @@ var _ interface {
 	ErrorName() string
 } = ListColleagueActivityResponseValidationError{}
 
-// Validate checks the field values on SetJobsUserPropsRequest with the rules
+// Validate checks the field values on SetColleaguePropsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SetJobsUserPropsRequest) Validate() error {
+func (m *SetColleaguePropsRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on SetJobsUserPropsRequest with the
+// ValidateAll checks the field values on SetColleaguePropsRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// SetJobsUserPropsRequestMultiError, or nil if none found.
-func (m *SetJobsUserPropsRequest) ValidateAll() error {
+// SetColleaguePropsRequestMultiError, or nil if none found.
+func (m *SetColleaguePropsRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *SetJobsUserPropsRequest) validate(all bool) error {
+func (m *SetColleaguePropsRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1295,7 +1295,7 @@ func (m *SetJobsUserPropsRequest) validate(all bool) error {
 		switch v := interface{}(m.GetProps()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SetJobsUserPropsRequestValidationError{
+				errors = append(errors, SetColleaguePropsRequestValidationError{
 					field:  "Props",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1303,7 +1303,7 @@ func (m *SetJobsUserPropsRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, SetJobsUserPropsRequestValidationError{
+				errors = append(errors, SetColleaguePropsRequestValidationError{
 					field:  "Props",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1312,7 +1312,7 @@ func (m *SetJobsUserPropsRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetProps()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return SetJobsUserPropsRequestValidationError{
+			return SetColleaguePropsRequestValidationError{
 				field:  "Props",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1323,7 +1323,7 @@ func (m *SetJobsUserPropsRequest) validate(all bool) error {
 	if m.GetReason() != "" {
 
 		if l := utf8.RuneCountInString(m.GetReason()); l < 3 || l > 255 {
-			err := SetJobsUserPropsRequestValidationError{
+			err := SetColleaguePropsRequestValidationError{
 				field:  "Reason",
 				reason: "value length must be between 3 and 255 runes, inclusive",
 			}
@@ -1336,19 +1336,19 @@ func (m *SetJobsUserPropsRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return SetJobsUserPropsRequestMultiError(errors)
+		return SetColleaguePropsRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// SetJobsUserPropsRequestMultiError is an error wrapping multiple validation
-// errors returned by SetJobsUserPropsRequest.ValidateAll() if the designated
+// SetColleaguePropsRequestMultiError is an error wrapping multiple validation
+// errors returned by SetColleaguePropsRequest.ValidateAll() if the designated
 // constraints aren't met.
-type SetJobsUserPropsRequestMultiError []error
+type SetColleaguePropsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m SetJobsUserPropsRequestMultiError) Error() string {
+func (m SetColleaguePropsRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1357,11 +1357,11 @@ func (m SetJobsUserPropsRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m SetJobsUserPropsRequestMultiError) AllErrors() []error { return m }
+func (m SetColleaguePropsRequestMultiError) AllErrors() []error { return m }
 
-// SetJobsUserPropsRequestValidationError is the validation error returned by
-// SetJobsUserPropsRequest.Validate if the designated constraints aren't met.
-type SetJobsUserPropsRequestValidationError struct {
+// SetColleaguePropsRequestValidationError is the validation error returned by
+// SetColleaguePropsRequest.Validate if the designated constraints aren't met.
+type SetColleaguePropsRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1369,24 +1369,24 @@ type SetJobsUserPropsRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e SetJobsUserPropsRequestValidationError) Field() string { return e.field }
+func (e SetColleaguePropsRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e SetJobsUserPropsRequestValidationError) Reason() string { return e.reason }
+func (e SetColleaguePropsRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e SetJobsUserPropsRequestValidationError) Cause() error { return e.cause }
+func (e SetColleaguePropsRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e SetJobsUserPropsRequestValidationError) Key() bool { return e.key }
+func (e SetColleaguePropsRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e SetJobsUserPropsRequestValidationError) ErrorName() string {
-	return "SetJobsUserPropsRequestValidationError"
+func (e SetColleaguePropsRequestValidationError) ErrorName() string {
+	return "SetColleaguePropsRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e SetJobsUserPropsRequestValidationError) Error() string {
+func (e SetColleaguePropsRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1398,14 +1398,14 @@ func (e SetJobsUserPropsRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sSetJobsUserPropsRequest.%s: %s%s",
+		"invalid %sSetColleaguePropsRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = SetJobsUserPropsRequestValidationError{}
+var _ error = SetColleaguePropsRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1413,24 +1413,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = SetJobsUserPropsRequestValidationError{}
+} = SetColleaguePropsRequestValidationError{}
 
-// Validate checks the field values on SetJobsUserPropsResponse with the rules
+// Validate checks the field values on SetColleaguePropsResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SetJobsUserPropsResponse) Validate() error {
+func (m *SetColleaguePropsResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on SetJobsUserPropsResponse with the
+// ValidateAll checks the field values on SetColleaguePropsResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// SetJobsUserPropsResponseMultiError, or nil if none found.
-func (m *SetJobsUserPropsResponse) ValidateAll() error {
+// SetColleaguePropsResponseMultiError, or nil if none found.
+func (m *SetColleaguePropsResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *SetJobsUserPropsResponse) validate(all bool) error {
+func (m *SetColleaguePropsResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1441,7 +1441,7 @@ func (m *SetJobsUserPropsResponse) validate(all bool) error {
 		switch v := interface{}(m.GetProps()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SetJobsUserPropsResponseValidationError{
+				errors = append(errors, SetColleaguePropsResponseValidationError{
 					field:  "Props",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1449,7 +1449,7 @@ func (m *SetJobsUserPropsResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, SetJobsUserPropsResponseValidationError{
+				errors = append(errors, SetColleaguePropsResponseValidationError{
 					field:  "Props",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1458,7 +1458,7 @@ func (m *SetJobsUserPropsResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetProps()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return SetJobsUserPropsResponseValidationError{
+			return SetColleaguePropsResponseValidationError{
 				field:  "Props",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1467,19 +1467,19 @@ func (m *SetJobsUserPropsResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return SetJobsUserPropsResponseMultiError(errors)
+		return SetColleaguePropsResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// SetJobsUserPropsResponseMultiError is an error wrapping multiple validation
-// errors returned by SetJobsUserPropsResponse.ValidateAll() if the designated
-// constraints aren't met.
-type SetJobsUserPropsResponseMultiError []error
+// SetColleaguePropsResponseMultiError is an error wrapping multiple validation
+// errors returned by SetColleaguePropsResponse.ValidateAll() if the
+// designated constraints aren't met.
+type SetColleaguePropsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m SetJobsUserPropsResponseMultiError) Error() string {
+func (m SetColleaguePropsResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1488,11 +1488,11 @@ func (m SetJobsUserPropsResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m SetJobsUserPropsResponseMultiError) AllErrors() []error { return m }
+func (m SetColleaguePropsResponseMultiError) AllErrors() []error { return m }
 
-// SetJobsUserPropsResponseValidationError is the validation error returned by
-// SetJobsUserPropsResponse.Validate if the designated constraints aren't met.
-type SetJobsUserPropsResponseValidationError struct {
+// SetColleaguePropsResponseValidationError is the validation error returned by
+// SetColleaguePropsResponse.Validate if the designated constraints aren't met.
+type SetColleaguePropsResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1500,24 +1500,24 @@ type SetJobsUserPropsResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e SetJobsUserPropsResponseValidationError) Field() string { return e.field }
+func (e SetColleaguePropsResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e SetJobsUserPropsResponseValidationError) Reason() string { return e.reason }
+func (e SetColleaguePropsResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e SetJobsUserPropsResponseValidationError) Cause() error { return e.cause }
+func (e SetColleaguePropsResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e SetJobsUserPropsResponseValidationError) Key() bool { return e.key }
+func (e SetColleaguePropsResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e SetJobsUserPropsResponseValidationError) ErrorName() string {
-	return "SetJobsUserPropsResponseValidationError"
+func (e SetColleaguePropsResponseValidationError) ErrorName() string {
+	return "SetColleaguePropsResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e SetJobsUserPropsResponseValidationError) Error() string {
+func (e SetColleaguePropsResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1529,14 +1529,14 @@ func (e SetJobsUserPropsResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sSetJobsUserPropsResponse.%s: %s%s",
+		"invalid %sSetColleaguePropsResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = SetJobsUserPropsResponseValidationError{}
+var _ error = SetColleaguePropsResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1544,7 +1544,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = SetJobsUserPropsResponseValidationError{}
+} = SetColleaguePropsResponseValidationError{}
 
 // Validate checks the field values on GetColleagueLabelsRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1799,22 +1799,22 @@ var _ interface {
 	ErrorName() string
 } = GetColleagueLabelsResponseValidationError{}
 
-// Validate checks the field values on ManageColleagueLabelsRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ManageLabelsRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ManageColleagueLabelsRequest) Validate() error {
+func (m *ManageLabelsRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ManageColleagueLabelsRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on ManageLabelsRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ManageColleagueLabelsRequestMultiError, or nil if none found.
-func (m *ManageColleagueLabelsRequest) ValidateAll() error {
+// ManageLabelsRequestMultiError, or nil if none found.
+func (m *ManageLabelsRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ManageColleagueLabelsRequest) validate(all bool) error {
+func (m *ManageLabelsRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1828,7 +1828,7 @@ func (m *ManageColleagueLabelsRequest) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ManageColleagueLabelsRequestValidationError{
+					errors = append(errors, ManageLabelsRequestValidationError{
 						field:  fmt.Sprintf("Labels[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1836,7 +1836,7 @@ func (m *ManageColleagueLabelsRequest) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ManageColleagueLabelsRequestValidationError{
+					errors = append(errors, ManageLabelsRequestValidationError{
 						field:  fmt.Sprintf("Labels[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1845,7 +1845,7 @@ func (m *ManageColleagueLabelsRequest) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ManageColleagueLabelsRequestValidationError{
+				return ManageLabelsRequestValidationError{
 					field:  fmt.Sprintf("Labels[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1856,19 +1856,19 @@ func (m *ManageColleagueLabelsRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ManageColleagueLabelsRequestMultiError(errors)
+		return ManageLabelsRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// ManageColleagueLabelsRequestMultiError is an error wrapping multiple
-// validation errors returned by ManageColleagueLabelsRequest.ValidateAll() if
-// the designated constraints aren't met.
-type ManageColleagueLabelsRequestMultiError []error
+// ManageLabelsRequestMultiError is an error wrapping multiple validation
+// errors returned by ManageLabelsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ManageLabelsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ManageColleagueLabelsRequestMultiError) Error() string {
+func (m ManageLabelsRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1877,12 +1877,11 @@ func (m ManageColleagueLabelsRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ManageColleagueLabelsRequestMultiError) AllErrors() []error { return m }
+func (m ManageLabelsRequestMultiError) AllErrors() []error { return m }
 
-// ManageColleagueLabelsRequestValidationError is the validation error returned
-// by ManageColleagueLabelsRequest.Validate if the designated constraints
-// aren't met.
-type ManageColleagueLabelsRequestValidationError struct {
+// ManageLabelsRequestValidationError is the validation error returned by
+// ManageLabelsRequest.Validate if the designated constraints aren't met.
+type ManageLabelsRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1890,24 +1889,24 @@ type ManageColleagueLabelsRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ManageColleagueLabelsRequestValidationError) Field() string { return e.field }
+func (e ManageLabelsRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ManageColleagueLabelsRequestValidationError) Reason() string { return e.reason }
+func (e ManageLabelsRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ManageColleagueLabelsRequestValidationError) Cause() error { return e.cause }
+func (e ManageLabelsRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ManageColleagueLabelsRequestValidationError) Key() bool { return e.key }
+func (e ManageLabelsRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ManageColleagueLabelsRequestValidationError) ErrorName() string {
-	return "ManageColleagueLabelsRequestValidationError"
+func (e ManageLabelsRequestValidationError) ErrorName() string {
+	return "ManageLabelsRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ManageColleagueLabelsRequestValidationError) Error() string {
+func (e ManageLabelsRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1919,14 +1918,14 @@ func (e ManageColleagueLabelsRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sManageColleagueLabelsRequest.%s: %s%s",
+		"invalid %sManageLabelsRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ManageColleagueLabelsRequestValidationError{}
+var _ error = ManageLabelsRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1934,24 +1933,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ManageColleagueLabelsRequestValidationError{}
+} = ManageLabelsRequestValidationError{}
 
-// Validate checks the field values on ManageColleagueLabelsResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ManageLabelsResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ManageColleagueLabelsResponse) Validate() error {
+func (m *ManageLabelsResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ManageColleagueLabelsResponse with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// ManageColleagueLabelsResponseMultiError, or nil if none found.
-func (m *ManageColleagueLabelsResponse) ValidateAll() error {
+// ValidateAll checks the field values on ManageLabelsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ManageLabelsResponseMultiError, or nil if none found.
+func (m *ManageLabelsResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ManageColleagueLabelsResponse) validate(all bool) error {
+func (m *ManageLabelsResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1965,7 +1964,7 @@ func (m *ManageColleagueLabelsResponse) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ManageColleagueLabelsResponseValidationError{
+					errors = append(errors, ManageLabelsResponseValidationError{
 						field:  fmt.Sprintf("Labels[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1973,7 +1972,7 @@ func (m *ManageColleagueLabelsResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ManageColleagueLabelsResponseValidationError{
+					errors = append(errors, ManageLabelsResponseValidationError{
 						field:  fmt.Sprintf("Labels[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1982,7 +1981,7 @@ func (m *ManageColleagueLabelsResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ManageColleagueLabelsResponseValidationError{
+				return ManageLabelsResponseValidationError{
 					field:  fmt.Sprintf("Labels[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1993,19 +1992,19 @@ func (m *ManageColleagueLabelsResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ManageColleagueLabelsResponseMultiError(errors)
+		return ManageLabelsResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// ManageColleagueLabelsResponseMultiError is an error wrapping multiple
-// validation errors returned by ManageColleagueLabelsResponse.ValidateAll()
-// if the designated constraints aren't met.
-type ManageColleagueLabelsResponseMultiError []error
+// ManageLabelsResponseMultiError is an error wrapping multiple validation
+// errors returned by ManageLabelsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ManageLabelsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ManageColleagueLabelsResponseMultiError) Error() string {
+func (m ManageLabelsResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2014,12 +2013,11 @@ func (m ManageColleagueLabelsResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ManageColleagueLabelsResponseMultiError) AllErrors() []error { return m }
+func (m ManageLabelsResponseMultiError) AllErrors() []error { return m }
 
-// ManageColleagueLabelsResponseValidationError is the validation error
-// returned by ManageColleagueLabelsResponse.Validate if the designated
-// constraints aren't met.
-type ManageColleagueLabelsResponseValidationError struct {
+// ManageLabelsResponseValidationError is the validation error returned by
+// ManageLabelsResponse.Validate if the designated constraints aren't met.
+type ManageLabelsResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2027,24 +2025,24 @@ type ManageColleagueLabelsResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e ManageColleagueLabelsResponseValidationError) Field() string { return e.field }
+func (e ManageLabelsResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ManageColleagueLabelsResponseValidationError) Reason() string { return e.reason }
+func (e ManageLabelsResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ManageColleagueLabelsResponseValidationError) Cause() error { return e.cause }
+func (e ManageLabelsResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ManageColleagueLabelsResponseValidationError) Key() bool { return e.key }
+func (e ManageLabelsResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ManageColleagueLabelsResponseValidationError) ErrorName() string {
-	return "ManageColleagueLabelsResponseValidationError"
+func (e ManageLabelsResponseValidationError) ErrorName() string {
+	return "ManageLabelsResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ManageColleagueLabelsResponseValidationError) Error() string {
+func (e ManageLabelsResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2056,14 +2054,14 @@ func (e ManageColleagueLabelsResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sManageColleagueLabelsResponse.%s: %s%s",
+		"invalid %sManageLabelsResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ManageColleagueLabelsResponseValidationError{}
+var _ error = ManageLabelsResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -2071,7 +2069,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ManageColleagueLabelsResponseValidationError{}
+} = ManageLabelsResponseValidationError{}
 
 // Validate checks the field values on GetColleagueLabelsStatsRequest with the
 // rules defined in the proto definition for this message. If any rules are

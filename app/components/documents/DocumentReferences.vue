@@ -32,7 +32,7 @@ const {
 
 async function getDocumentReferences(): Promise<DocumentReference[]> {
     try {
-        const call = $grpc.docstore.docStore.getDocumentReferences({
+        const call = $grpc.documents.documents.getDocumentReferences({
             documentId: props.documentId,
         });
         const { response } = await call;
@@ -111,7 +111,7 @@ const columns = computed(() =>
                                             >
                                         </span>
                                         <span class="font-medium">
-                                            {{ $t(`enums.docstore.DocReference.${DocReference[reference.reference]}`) }}
+                                            {{ $t(`enums.documents.DocReference.${DocReference[reference.reference]}`) }}
                                         </span>
                                         <span v-if="showSource" class="truncate">
                                             {{ reference.sourceDocument?.title
@@ -166,7 +166,7 @@ const columns = computed(() =>
                                 </template>
                                 <template #reference-data="{ row: reference }">
                                     <UBadge :color="docReferenceToBadge(reference.reference)">
-                                        {{ $t(`enums.docstore.DocReference.${DocReference[reference.reference]}`) }}
+                                        {{ $t(`enums.documents.DocReference.${DocReference[reference.reference]}`) }}
                                     </UBadge>
                                 </template>
                                 <template v-if="showSource" #sourceDocument-data="{ row: reference }">

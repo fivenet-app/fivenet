@@ -23,9 +23,9 @@ const (
 )
 
 var (
-	tRoles     = table.FivenetRoles
-	tRolePerms = table.FivenetRolePermissions
-	tJobPerms  = table.FivenetJobPermissions
+	tRoles     = table.FivenetRbacRoles
+	tRolePerms = table.FivenetRbacRolesPermissions
+	tJobPerms  = table.FivenetRbacJobPermissions
 )
 
 type AddPerm struct {
@@ -116,7 +116,7 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 	return dest, nil
 }
 
-func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
+func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -131,7 +131,7 @@ func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) 
 		)).
 		LIMIT(1)
 
-	var dest model.FivenetRoles
+	var dest model.FivenetRbacRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get closest job role for job %s and grade %d. %w", job, grade, err)
@@ -144,7 +144,7 @@ func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) 
 func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error) {
 	stmt := tRoles.
 		SELECT(
-			jet.COUNT(tRoles.ID).AS("datacount.totalcount"),
+			jet.COUNT(tRoles.ID).AS("data_count.total"),
 		).
 		FROM(tRoles).
 		WHERE(
@@ -158,10 +158,10 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 		}
 	}
 
-	return dest.TotalCount, nil
+	return dest.Total, nil
 }
 
-func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRoles, error) {
+func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRbacRoles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -174,7 +174,7 @@ func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRoles, er
 			tRoles.ID.EQ(jet.Uint64(id)),
 		)
 
-	var dest model.FivenetRoles
+	var dest model.FivenetRbacRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to get role with ID %d. %w", id, err)
 	}
@@ -182,7 +182,7 @@ func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRoles, er
 	return &dest, nil
 }
 
-func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
+func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error) {
 	stmt := tRoles.
 		INSERT(
 			tRoles.Job,
@@ -198,7 +198,7 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 		return nil, fmt.Errorf("failed to create role for job %s and grade %d. %w", job, grade, err)
 	}
 
-	var role *model.FivenetRoles
+	var role *model.FivenetRbacRoles
 	if res != nil {
 		lastId, err := res.LastInsertId()
 		if err != nil {
@@ -280,7 +280,7 @@ func (p *Perms) deleteRole(id uint64, job string, grade int32) {
 	p.roleIDToJobMap.Delete(id)
 }
 
-func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
+func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -295,7 +295,7 @@ func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int3
 		)).
 		LIMIT(1)
 
-	var dest model.FivenetRoles
+	var dest model.FivenetRbacRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil

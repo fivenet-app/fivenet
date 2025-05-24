@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
+import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { QualificationExamMode, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
 

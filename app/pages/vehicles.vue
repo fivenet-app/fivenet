@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.vehicles.title',
     requiresAuth: true,
-    permission: 'DMVService.ListVehicles',
+    permission: 'vehicles.VehiclesService.ListVehicles',
 });
 </script>
 

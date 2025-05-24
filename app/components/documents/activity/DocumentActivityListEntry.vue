@@ -38,14 +38,14 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex items-center gap-2 text-sm font-medium">
                         <span class="font-bold text-gray-900 dark:text-white">
-                            {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
+                            {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                         </span>
                         <span v-if="entry.data">
                             <span v-if="entry.data?.data.oneofKind === 'accessRequested'">
                                 ({{ $t('common.access') }}:
                                 {{
                                     $t(
-                                        `enums.docstore.AccessLevel.${AccessLevel[entry.data?.data.accessRequested.level ?? 0]}`,
+                                        `enums.documents.AccessLevel.${AccessLevel[entry.data?.data.accessRequested.level ?? 0]}`,
                                     )
                                 }})
                             </span>
@@ -86,7 +86,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                         <div class="flex items-center justify-between">
                             <h3 class="inline-flex items-center text-sm font-medium">
                                 <span class="font-bold text-gray-900 dark:text-white">
-                                    {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
+                                    {{ $t(`enums.documents.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <UIcon

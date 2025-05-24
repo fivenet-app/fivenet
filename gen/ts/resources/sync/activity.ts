@@ -10,7 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobsUserProps as JobsUserProps$ } from "../jobs/colleagues";
+import { ColleagueProps as ColleagueProps$ } from "../jobs/colleagues";
 import { UserProps as UserProps$ } from "../users/props";
 /**
  * Connect an identifier/license to the provider with the specified external id
@@ -50,17 +50,17 @@ export interface UserProps {
     props?: UserProps$;
 }
 /**
- * @generated from protobuf message resources.sync.JobsUserProps
+ * @generated from protobuf message resources.sync.ColleagueProps
  */
-export interface JobsUserProps {
+export interface ColleagueProps {
     /**
      * @generated from protobuf field: optional string reason = 1;
      */
     reason?: string;
     /**
-     * @generated from protobuf field: resources.jobs.JobsUserProps props = 2;
+     * @generated from protobuf field: resources.jobs.ColleagueProps props = 2;
      */
-    props?: JobsUserProps$;
+    props?: ColleagueProps$;
 }
 /**
  * @generated from protobuf message resources.sync.UserUpdate
@@ -235,20 +235,20 @@ class UserProps$Type extends MessageType<UserProps> {
  */
 export const UserProps = new UserProps$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class JobsUserProps$Type extends MessageType<JobsUserProps> {
+class ColleagueProps$Type extends MessageType<ColleagueProps> {
     constructor() {
-        super("resources.sync.JobsUserProps", [
+        super("resources.sync.ColleagueProps", [
             { no: 1, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 2, name: "props", kind: "message", T: () => JobsUserProps$, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "props", kind: "message", T: () => ColleagueProps$, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
-    create(value?: PartialMessage<JobsUserProps>): JobsUserProps {
+    create(value?: PartialMessage<ColleagueProps>): ColleagueProps {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<JobsUserProps>(this, message, value);
+            reflectionMergePartial<ColleagueProps>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsUserProps): JobsUserProps {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueProps): ColleagueProps {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -256,8 +256,8 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
                 case /* optional string reason */ 1:
                     message.reason = reader.string();
                     break;
-                case /* resources.jobs.JobsUserProps props */ 2:
-                    message.props = JobsUserProps$.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                case /* resources.jobs.ColleagueProps props */ 2:
+                    message.props = ColleagueProps$.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -270,13 +270,13 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
         }
         return message;
     }
-    internalBinaryWrite(message: JobsUserProps, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ColleagueProps, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional string reason = 1; */
         if (message.reason !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.reason);
-        /* resources.jobs.JobsUserProps props = 2; */
+        /* resources.jobs.ColleagueProps props = 2; */
         if (message.props)
-            JobsUserProps$.internalBinaryWrite(message.props, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            ColleagueProps$.internalBinaryWrite(message.props, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -284,9 +284,9 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.sync.JobsUserProps
+ * @generated MessageType for protobuf message resources.sync.ColleagueProps
  */
-export const JobsUserProps = new JobsUserProps$Type();
+export const ColleagueProps = new ColleagueProps$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UserUpdate$Type extends MessageType<UserUpdate> {
     constructor() {

@@ -47,7 +47,7 @@ const links = computed(() =>
                 text: t('common.mail'),
                 shortcuts: ['G', 'E'],
             },
-            permission: 'MailerService.ListEmails' as Perms,
+            permission: 'mailer.MailerService.ListEmails' as Perms,
         },
         {
             label: t('common.citizen'),
@@ -57,7 +57,7 @@ const links = computed(() =>
                 text: t('common.citizen'),
                 shortcuts: ['G', 'C'],
             },
-            permission: 'CitizenStoreService.ListCitizens' as Perms,
+            permission: 'citizens.CitizensService.ListCitizens' as Perms,
         },
         {
             label: t('common.vehicle', 2),
@@ -67,7 +67,7 @@ const links = computed(() =>
                 text: t('common.vehicle', 2),
                 shortcuts: ['G', 'V'],
             },
-            permission: 'DMVService.ListVehicles' as Perms,
+            permission: 'vehicles.VehiclesService.ListVehicles' as Perms,
         },
         {
             label: t('common.document', 2),
@@ -77,7 +77,7 @@ const links = computed(() =>
                 text: t('common.document', 2),
                 shortcuts: ['G', 'D'],
             },
-            permission: 'DocStoreService.ListDocuments' as Perms,
+            permission: 'documents.DocumentsService.ListDocuments' as Perms,
         },
         {
             label: t('common.job'),
@@ -96,25 +96,25 @@ const links = computed(() =>
                 {
                     label: t('common.colleague', 2),
                     to: '/jobs/colleagues',
-                    permission: 'JobsService.ListColleagues' as Perms,
+                    permission: 'jobs.JobsService.ListColleagues' as Perms,
                 },
                 {
                     label: t('common.activity'),
                     to: '/jobs/activity',
-                    permission: 'JobsService.ListColleagueActivity' as Perms,
+                    permission: 'jobs.JobsService.ListColleagueActivity' as Perms,
                 },
                 {
                     label: t('common.timeclock'),
                     to: '/jobs/timeclock',
-                    permission: 'JobsTimeclockService.ListTimeclock' as Perms,
+                    permission: 'jobs.TimeclockService.ListTimeclock' as Perms,
                 },
                 {
                     label: t('common.conduct_register', 2),
                     to: '/jobs/conduct',
-                    permission: 'JobsConductService.ListConductEntries' as Perms,
+                    permission: 'jobs.ConductService.ListConductEntries' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
-            permission: 'JobsService.ListColleagues' as Perms,
+            permission: 'jobs.JobsService.ListColleagues' as Perms,
         },
         {
             label: t('common.calendar'),
@@ -133,7 +133,7 @@ const links = computed(() =>
                 text: t('common.qualification', 2),
                 shortcuts: ['G', 'Q'],
             },
-            permission: 'QualificationsService.ListQualifications' as Perms,
+            permission: 'qualifications.QualificationsService.ListQualifications' as Perms,
         },
         {
             label: t('common.livemap'),
@@ -143,7 +143,7 @@ const links = computed(() =>
                 text: t('common.livemap'),
                 shortcuts: ['G', 'M'],
             },
-            permission: 'LivemapperService.Stream' as Perms,
+            permission: 'livemap.LivemapService.Stream' as Perms,
         },
         {
             label: t('common.dispatch_center'),
@@ -153,7 +153,7 @@ const links = computed(() =>
                 text: t('common.dispatch_center'),
                 shortcuts: ['G', 'W'],
             },
-            permission: 'CentrumService.TakeControl' as Perms,
+            permission: 'centrum.CentrumService.TakeControl' as Perms,
         },
         {
             label: t('common.wiki'),
@@ -163,7 +163,7 @@ const links = computed(() =>
                 text: t('common.wiki'),
                 shortcuts: ['G', 'L'],
             },
-            permission: 'WikiService.ListPages' as Perms,
+            permission: 'wiki.WikiService.ListPages' as Perms,
         },
         {
             label: t('common.internet'),
@@ -178,12 +178,12 @@ const links = computed(() =>
         {
             label: t('common.control_panel'),
             icon: 'i-mdi-cog-outline',
-            to: '/rector',
+            to: '/settings',
             tooltip: {
                 text: t('common.control_panel'),
                 shortcuts: ['G', 'P'],
             },
-            permission: 'RectorService.GetJobProps' as Perms,
+            permission: 'settings.SettingsService.GetJobProps' as Perms,
         },
     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );
@@ -316,7 +316,7 @@ const groups = computed(() => [
             switch (searchType) {
                 case '#': {
                     try {
-                        const call = $grpc.docstore.docStore.listDocuments({
+                        const call = $grpc.documents.documents.listDocuments({
                             pagination: {
                                 offset: 0,
                                 pageSize: 10,
@@ -343,7 +343,7 @@ const groups = computed(() => [
                 case '@':
                 default: {
                     try {
-                        const call = $grpc.citizenstore.citizenStore.listCitizens({
+                        const call = $grpc.citizens.citizens.listCitizens({
                             pagination: {
                                 offset: 0,
                                 pageSize: 10,
@@ -371,7 +371,11 @@ const groups = computed(() => [
 const clipboardLink = computed(() =>
     [
         activeChar.value &&
-        can(['DocStoreService.CreateDocument', 'CitizenStoreService.GetUser', 'DMVService.ListVehicles']).value
+        can([
+            'documents.DocumentsService.CreateDocument',
+            'citizens.CitizensService.GetUser',
+            'vehicles.VehiclesService.ListVehicles',
+        ]).value
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',

@@ -47,7 +47,7 @@ const mapOptions = {
     markerZoomAnimation: true,
 } as MapOptions;
 
-if (can('CentrumService.CreateDispatch').value) {
+if (can('centrum.CentrumService.CreateDispatch').value) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.create_dispatch.title'),
         callback: (e: ContextMenuItemClickEvent) => {
@@ -61,7 +61,7 @@ if (can('CentrumService.CreateDispatch').value) {
         },
     });
 }
-if (can('LivemapperService.CreateOrUpdateMarker').value) {
+if (can('livemap.LivemapService.CreateOrUpdateMarker').value) {
     mapOptions.contextmenuItems.push({
         text: t('components.livemap.create_marker.title'),
         callback: (e: ContextMenuItemClickEvent) => {
@@ -110,7 +110,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
                     <SettingsButton />
                 </LControl>
 
-                <template v-if="can('LivemapperService.Stream').value">
+                <template v-if="can('livemap.LivemapService.Stream').value">
                     <MapUsersLayer
                         :show-unit-names="showUnitNames"
                         :show-unit-status="showUnitStatus"

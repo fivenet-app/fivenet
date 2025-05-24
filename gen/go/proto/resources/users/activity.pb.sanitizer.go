@@ -7,6 +7,114 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+func (m *CitizenDocumentRelation) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *FineChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *JailChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *JobChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *LabelsChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Added
+	for idx, item := range m.Added {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Removed
+	for idx, item := range m.Removed {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *LicenseChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Licenses
+	for idx, item := range m.Licenses {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *MugshotChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *NameChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *TrafficInfractionPointsChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *UserActivity) Sanitize() error {
 	if m == nil {
 		return nil
@@ -149,115 +257,7 @@ func (m *UserActivityData) Sanitize() error {
 	return nil
 }
 
-func (m *UserDocumentRelation) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UserFineChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UserJailChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UserJobChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UserLabelsChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Added
-	for idx, item := range m.Added {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Removed
-	for idx, item := range m.Removed {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *UserLicenseChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Licenses
-	for idx, item := range m.Licenses {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *UserMugshotChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UserNameChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UserTrafficInfractionPointsChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *UserWantedChange) Sanitize() error {
+func (m *WantedChange) Sanitize() error {
 	if m == nil {
 		return nil
 	}

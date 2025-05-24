@@ -14,19 +14,19 @@ import (
 	pbauth "github.com/fivenet-app/fivenet/v2025/services/auth"
 	pbcalendar "github.com/fivenet-app/fivenet/v2025/services/calendar"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/services/centrum"
-	pbcitizenstore "github.com/fivenet-app/fivenet/v2025/services/citizenstore"
+	pbcitizens "github.com/fivenet-app/fivenet/v2025/services/citizens"
 	pbcompletor "github.com/fivenet-app/fivenet/v2025/services/completor"
-	pbdmv "github.com/fivenet-app/fivenet/v2025/services/dmv"
-	pbdocstore "github.com/fivenet-app/fivenet/v2025/services/docstore"
+	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
 	pbinternet "github.com/fivenet-app/fivenet/v2025/services/internet"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
-	pblivemapper "github.com/fivenet-app/fivenet/v2025/services/livemapper"
+	pblivemap "github.com/fivenet-app/fivenet/v2025/services/livemap"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
 	pbnotificator "github.com/fivenet-app/fivenet/v2025/services/notificator"
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications"
-	pbrector "github.com/fivenet-app/fivenet/v2025/services/rector"
+	pbsettings "github.com/fivenet-app/fivenet/v2025/services/settings"
 	pbstats "github.com/fivenet-app/fivenet/v2025/services/stats"
 	pbsync "github.com/fivenet-app/fivenet/v2025/services/sync"
+	pbvehicles "github.com/fivenet-app/fivenet/v2025/services/vehicles"
 	pbwiki "github.com/fivenet-app/fivenet/v2025/services/wiki"
 
 	// Modules
@@ -148,7 +148,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 
 			// GRPC Service Helpers, Housekeepers and Co.
 			pbjobs.NewHousekeeper,
-			pbdocstore.NewWorkflow,
+			pbdocuments.NewWorkflow,
 
 			// HTTP Services
 			server.AsService(api.New),
@@ -163,16 +163,16 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			grpc.AsService(pbauth.NewServer),
 			grpc.AsService(pbcalendar.NewServer),
 			grpc.AsService(pbcentrum.NewServer),
-			grpc.AsService(pbcitizenstore.NewServer),
+			grpc.AsService(pbcitizens.NewServer),
 			grpc.AsService(pbcompletor.NewServer),
-			grpc.AsService(pbdmv.NewServer),
-			grpc.AsService(pbdocstore.NewServer),
+			grpc.AsService(pbvehicles.NewServer),
+			grpc.AsService(pbdocuments.NewServer),
 			grpc.AsService(pbjobs.NewServer),
-			grpc.AsService(pblivemapper.NewServer),
+			grpc.AsService(pblivemap.NewServer),
 			grpc.AsService(pbmailer.NewServer),
 			grpc.AsService(pbnotificator.NewServer),
 			grpc.AsService(pbqualifications.NewServer),
-			grpc.AsService(pbrector.NewServer),
+			grpc.AsService(pbsettings.NewServer),
 			grpc.AsService(pbstats.NewServer),
 			grpc.AsService(pbwiki.NewServer),
 			grpc.AsService(pbinternet.NewServer),

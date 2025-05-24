@@ -55,7 +55,7 @@ const calendar = computed(() => data.value?.calendar);
                         <UTooltip
                             v-if="
                                 calendar &&
-                                can('CalendarService.CreateCalendar').value &&
+                                can('calendar.CalendarService.CreateCalendar').value &&
                                 checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)
                             "
                             :text="$t('common.edit')"

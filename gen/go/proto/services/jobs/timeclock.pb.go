@@ -30,7 +30,7 @@ type ListTimeclockRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	UserMode      jobs.TimeclockUserMode `protobuf:"varint,3,opt,name=user_mode,json=userMode,proto3,enum=resources.jobs.TimeclockUserMode" json:"user_mode,omitempty"`
+	UserMode      jobs.TimeclockViewMode `protobuf:"varint,3,opt,name=user_mode,json=userMode,proto3,enum=resources.jobs.TimeclockViewMode" json:"user_mode,omitempty"`
 	Mode          jobs.TimeclockMode     `protobuf:"varint,4,opt,name=mode,proto3,enum=resources.jobs.TimeclockMode" json:"mode,omitempty"`
 	Date          *database.DateRange    `protobuf:"bytes,5,opt,name=date,proto3,oneof" json:"date,omitempty"`
 	PerDay        bool                   `protobuf:"varint,6,opt,name=per_day,json=perDay,proto3" json:"per_day,omitempty"`
@@ -83,11 +83,11 @@ func (x *ListTimeclockRequest) GetSort() *database.Sort {
 	return nil
 }
 
-func (x *ListTimeclockRequest) GetUserMode() jobs.TimeclockUserMode {
+func (x *ListTimeclockRequest) GetUserMode() jobs.TimeclockViewMode {
 	if x != nil {
 		return x.UserMode
 	}
-	return jobs.TimeclockUserMode(0)
+	return jobs.TimeclockViewMode(0)
 }
 
 func (x *ListTimeclockRequest) GetMode() jobs.TimeclockMode {
@@ -639,7 +639,7 @@ const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12>\n" +
-	"\tuser_mode\x18\x03 \x01(\x0e2!.resources.jobs.TimeclockUserModeR\buserMode\x121\n" +
+	"\tuser_mode\x18\x03 \x01(\x0e2!.resources.jobs.TimeclockViewModeR\buserMode\x121\n" +
 	"\x04mode\x18\x04 \x01(\x0e2\x1d.resources.jobs.TimeclockModeR\x04mode\x12=\n" +
 	"\x04date\x18\x05 \x01(\v2$.resources.common.database.DateRangeH\x01R\x04date\x88\x01\x01\x12\x17\n" +
 	"\aper_day\x18\x06 \x01(\bR\x06perDay\x12#\n" +
@@ -688,8 +688,8 @@ const file_services_jobs_timeclock_proto_rawDesc = "" +
 	"pagination\x129\n" +
 	"\n" +
 	"colleagues\x18\x02 \x03(\v2\x19.resources.jobs.ColleagueR\n" +
-	"colleagues2\xce\x02\n" +
-	"\x14JobsTimeclockService\x12Z\n" +
+	"colleagues2\xca\x02\n" +
+	"\x10TimeclockService\x12Z\n" +
 	"\rListTimeclock\x12#.services.jobs.ListTimeclockRequest\x1a$.services.jobs.ListTimeclockResponse\x12f\n" +
 	"\x11GetTimeclockStats\x12'.services.jobs.GetTimeclockStatsRequest\x1a(.services.jobs.GetTimeclockStatsResponse\x12r\n" +
 	"\x15ListInactiveEmployees\x12+.services.jobs.ListInactiveEmployeesRequest\x1a,.services.jobs.ListInactiveEmployeesResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobsb\x06proto3"
@@ -719,7 +719,7 @@ var file_services_jobs_timeclock_proto_goTypes = []any{
 	(*ListInactiveEmployeesResponse)(nil), // 8: services.jobs.ListInactiveEmployeesResponse
 	(*database.PaginationRequest)(nil),    // 9: resources.common.database.PaginationRequest
 	(*database.Sort)(nil),                 // 10: resources.common.database.Sort
-	(jobs.TimeclockUserMode)(0),           // 11: resources.jobs.TimeclockUserMode
+	(jobs.TimeclockViewMode)(0),           // 11: resources.jobs.TimeclockViewMode
 	(jobs.TimeclockMode)(0),               // 12: resources.jobs.TimeclockMode
 	(*database.DateRange)(nil),            // 13: resources.common.database.DateRange
 	(*database.PaginationResponse)(nil),   // 14: resources.common.database.PaginationResponse
@@ -732,7 +732,7 @@ var file_services_jobs_timeclock_proto_goTypes = []any{
 var file_services_jobs_timeclock_proto_depIdxs = []int32{
 	9,  // 0: services.jobs.ListTimeclockRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	10, // 1: services.jobs.ListTimeclockRequest.sort:type_name -> resources.common.database.Sort
-	11, // 2: services.jobs.ListTimeclockRequest.user_mode:type_name -> resources.jobs.TimeclockUserMode
+	11, // 2: services.jobs.ListTimeclockRequest.user_mode:type_name -> resources.jobs.TimeclockViewMode
 	12, // 3: services.jobs.ListTimeclockRequest.mode:type_name -> resources.jobs.TimeclockMode
 	13, // 4: services.jobs.ListTimeclockRequest.date:type_name -> resources.common.database.DateRange
 	14, // 5: services.jobs.ListTimeclockResponse.pagination:type_name -> resources.common.database.PaginationResponse
@@ -753,12 +753,12 @@ var file_services_jobs_timeclock_proto_depIdxs = []int32{
 	10, // 20: services.jobs.ListInactiveEmployeesRequest.sort:type_name -> resources.common.database.Sort
 	14, // 21: services.jobs.ListInactiveEmployeesResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	19, // 22: services.jobs.ListInactiveEmployeesResponse.colleagues:type_name -> resources.jobs.Colleague
-	0,  // 23: services.jobs.JobsTimeclockService.ListTimeclock:input_type -> services.jobs.ListTimeclockRequest
-	5,  // 24: services.jobs.JobsTimeclockService.GetTimeclockStats:input_type -> services.jobs.GetTimeclockStatsRequest
-	7,  // 25: services.jobs.JobsTimeclockService.ListInactiveEmployees:input_type -> services.jobs.ListInactiveEmployeesRequest
-	1,  // 26: services.jobs.JobsTimeclockService.ListTimeclock:output_type -> services.jobs.ListTimeclockResponse
-	6,  // 27: services.jobs.JobsTimeclockService.GetTimeclockStats:output_type -> services.jobs.GetTimeclockStatsResponse
-	8,  // 28: services.jobs.JobsTimeclockService.ListInactiveEmployees:output_type -> services.jobs.ListInactiveEmployeesResponse
+	0,  // 23: services.jobs.TimeclockService.ListTimeclock:input_type -> services.jobs.ListTimeclockRequest
+	5,  // 24: services.jobs.TimeclockService.GetTimeclockStats:input_type -> services.jobs.GetTimeclockStatsRequest
+	7,  // 25: services.jobs.TimeclockService.ListInactiveEmployees:input_type -> services.jobs.ListInactiveEmployeesRequest
+	1,  // 26: services.jobs.TimeclockService.ListTimeclock:output_type -> services.jobs.ListTimeclockResponse
+	6,  // 27: services.jobs.TimeclockService.GetTimeclockStats:output_type -> services.jobs.GetTimeclockStatsResponse
+	8,  // 28: services.jobs.TimeclockService.ListInactiveEmployees:output_type -> services.jobs.ListInactiveEmployeesResponse
 	26, // [26:29] is the sub-list for method output_type
 	23, // [23:26] is the sub-list for method input_type
 	23, // [23:23] is the sub-list for extension type_name

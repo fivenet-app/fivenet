@@ -10,10 +10,10 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { CitizenLabels } from "./labels";
+import { Labels } from "./labels";
 import { File } from "../filestore/file";
-import { JobGrade } from "./jobs";
-import { Job } from "./jobs";
+import { JobGrade } from "../jobs/jobs";
+import { Job } from "../jobs/jobs";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.users.UserProps
@@ -36,7 +36,7 @@ export interface UserProps {
      */
     jobName?: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: optional resources.users.Job job = 5;
+     * @generated from protobuf field: optional resources.jobs.Job job = 5;
      */
     job?: Job;
     /**
@@ -44,7 +44,7 @@ export interface UserProps {
      */
     jobGradeNumber?: number; // @gotags: alias:"job_grade"
     /**
-     * @generated from protobuf field: optional resources.users.JobGrade job_grade = 7;
+     * @generated from protobuf field: optional resources.jobs.JobGrade job_grade = 7;
      */
     jobGrade?: JobGrade;
     /**
@@ -68,9 +68,9 @@ export interface UserProps {
      */
     mugShot?: File;
     /**
-     * @generated from protobuf field: optional resources.users.CitizenLabels labels = 12;
+     * @generated from protobuf field: optional resources.users.Labels labels = 12;
      */
-    labels?: CitizenLabels;
+    labels?: Labels;
     /**
      * @sanitize: method=StripTags
      *
@@ -94,7 +94,7 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 9, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 10, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "mug_shot", kind: "message", T: () => File },
-            { no: 12, name: "labels", kind: "message", T: () => CitizenLabels },
+            { no: 12, name: "labels", kind: "message", T: () => Labels },
             { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } }
         ]);
     }
@@ -122,13 +122,13 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional string job_name */ 4:
                     message.jobName = reader.string();
                     break;
-                case /* optional resources.users.Job job */ 5:
+                case /* optional resources.jobs.Job job */ 5:
                     message.job = Job.internalBinaryRead(reader, reader.uint32(), options, message.job);
                     break;
                 case /* optional int32 job_grade_number */ 6:
                     message.jobGradeNumber = reader.int32();
                     break;
-                case /* optional resources.users.JobGrade job_grade */ 7:
+                case /* optional resources.jobs.JobGrade job_grade */ 7:
                     message.jobGrade = JobGrade.internalBinaryRead(reader, reader.uint32(), options, message.jobGrade);
                     break;
                 case /* optional uint32 traffic_infraction_points */ 8:
@@ -146,8 +146,8 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional resources.filestore.File mug_shot */ 11:
                     message.mugShot = File.internalBinaryRead(reader, reader.uint32(), options, message.mugShot);
                     break;
-                case /* optional resources.users.CitizenLabels labels */ 12:
-                    message.labels = CitizenLabels.internalBinaryRead(reader, reader.uint32(), options, message.labels);
+                case /* optional resources.users.Labels labels */ 12:
+                    message.labels = Labels.internalBinaryRead(reader, reader.uint32(), options, message.labels);
                     break;
                 case /* optional string email */ 19:
                     message.email = reader.string();
@@ -176,13 +176,13 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional string job_name = 4; */
         if (message.jobName !== undefined)
             writer.tag(4, WireType.LengthDelimited).string(message.jobName);
-        /* optional resources.users.Job job = 5; */
+        /* optional resources.jobs.Job job = 5; */
         if (message.job)
             Job.internalBinaryWrite(message.job, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* optional int32 job_grade_number = 6; */
         if (message.jobGradeNumber !== undefined)
             writer.tag(6, WireType.Varint).int32(message.jobGradeNumber);
-        /* optional resources.users.JobGrade job_grade = 7; */
+        /* optional resources.jobs.JobGrade job_grade = 7; */
         if (message.jobGrade)
             JobGrade.internalBinaryWrite(message.jobGrade, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* optional uint32 traffic_infraction_points = 8; */
@@ -197,9 +197,9 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional resources.filestore.File mug_shot = 11; */
         if (message.mugShot)
             File.internalBinaryWrite(message.mugShot, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.users.CitizenLabels labels = 12; */
+        /* optional resources.users.Labels labels = 12; */
         if (message.labels)
-            CitizenLabels.internalBinaryWrite(message.labels, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+            Labels.internalBinaryWrite(message.labels, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.timestamp.Timestamp traffic_infraction_points_updated_at = 13; */
         if (message.trafficInfractionPointsUpdatedAt)
             Timestamp.internalBinaryWrite(message.trafficInfractionPointsUpdatedAt, writer.tag(13, WireType.LengthDelimited).fork(), options).join();

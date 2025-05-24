@@ -83,18 +83,18 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 		dest = &UserInfo{}
 	}
 
-	tUsers := tables.Users().AS("userinfo")
+	tUsers := tables.User().AS("user_info")
 
 	stmt := tUsers.
 		SELECT(
-			tFivenetAccounts.ID.AS("userinfo.account_id"),
-			tFivenetAccounts.Enabled.AS("userinfo.enabled"),
-			tFivenetAccounts.License.AS("userinfo.license"),
-			tFivenetAccounts.OverrideJob.AS("userinfo.override_job"),
-			tFivenetAccounts.OverrideJobGrade.AS("userinfo.override_job_grade"),
-			tFivenetAccounts.Superuser.AS("userinfo.superuser"),
-			tFivenetAccounts.LastChar.AS("userinfo.last_char"),
-			tUsers.ID.AS("userinfo.userid"),
+			tFivenetAccounts.ID.AS("user_info.account_id"),
+			tFivenetAccounts.Enabled.AS("user_info.enabled"),
+			tFivenetAccounts.License.AS("user_info.license"),
+			tFivenetAccounts.OverrideJob.AS("user_info.override_job"),
+			tFivenetAccounts.OverrideJobGrade.AS("user_info.override_job_grade"),
+			tFivenetAccounts.Superuser.AS("user_info.superuser"),
+			tFivenetAccounts.LastChar.AS("user_info.last_char"),
+			tUsers.ID.AS("user_info.userid"),
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Group,
@@ -134,11 +134,11 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 }
 
 func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error) {
-	tUsers := tables.Users().AS("userinfo")
+	tUsers := tables.User().AS("user_info")
 
 	stmt := tUsers.
 		SELECT(
-			tUsers.ID.AS("userinfo.userid"),
+			tUsers.ID.AS("user_info.userid"),
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Group,

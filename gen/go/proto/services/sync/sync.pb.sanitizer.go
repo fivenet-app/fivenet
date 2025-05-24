@@ -8,9 +8,17 @@ func (m *AddActivityRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Dispatch
+	// Field: ColleagueProps
 	switch v := m.Activity.(type) {
 
+	case *AddActivityRequest_ColleagueProps:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Dispatch
 	case *AddActivityRequest_Dispatch:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
@@ -18,24 +26,16 @@ func (m *AddActivityRequest) Sanitize() error {
 			}
 		}
 
-		// Field: JobsTimeclock
-	case *AddActivityRequest_JobsTimeclock:
+		// Field: JobColleagueActivity
+	case *AddActivityRequest_JobColleagueActivity:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
 
-		// Field: JobsUserActivity
-	case *AddActivityRequest_JobsUserActivity:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: JobsUserProps
-	case *AddActivityRequest_JobsUserProps:
+		// Field: JobTimeclock
+	case *AddActivityRequest_JobTimeclock:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

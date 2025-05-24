@@ -36,25 +36,25 @@ const items: TabItem[] = [
         slot: 'profile',
         label: t('common.profile'),
         icon: 'i-mdi-account',
-        permission: 'CitizenStoreService.ListCitizens' as Perms,
+        permission: 'citizens.CitizensService.ListCitizens' as Perms,
     },
     {
         slot: 'vehicles',
         label: t('common.vehicle', 2),
         icon: 'i-mdi-car',
-        permission: 'DMVService.ListVehicles' as Perms,
+        permission: 'vehicles.VehiclesService.ListVehicles' as Perms,
     },
     {
         slot: 'documents',
         label: t('common.document', 2),
         icon: 'i-mdi-file-document-multiple',
-        permission: 'DocStoreService.ListUserDocuments' as Perms,
+        permission: 'documents.DocumentsService.ListUserDocuments' as Perms,
     },
     {
         slot: 'activity',
         label: t('common.activity'),
         icon: 'i-mdi-pulse',
-        permission: 'CitizenStoreService.ListUserActivity' as Perms,
+        permission: 'citizens.CitizensService.ListUserActivity' as Perms,
     },
 ].flatMap((item) => (can(item.permission).value ? [item] : []));
 
@@ -67,7 +67,7 @@ const {
 
 async function getUser(userId: number): Promise<User> {
     try {
-        const call = $grpc.citizenstore.citizenStore.getUser({ userId });
+        const call = $grpc.citizens.citizens.getUser({ userId });
         const { response } = await call;
 
         if (response.user?.props === undefined) {
@@ -263,8 +263,8 @@ const isOpen = ref(false);
 
                         <UDashboardSection
                             v-if="
-                                can('CitizenStoreService.GetUser').value &&
-                                attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Labels').value
+                                can('citizens.CitizensService.GetUser').value &&
+                                attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.Labels').value
                             "
                             :ui="{
                                 wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',

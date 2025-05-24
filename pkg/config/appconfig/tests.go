@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync/atomic"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"go.uber.org/fx"
 )
@@ -29,7 +29,7 @@ type TestParams struct {
 
 func NewTest(p TestParams) (IConfig, error) {
 	cfg := &TestConfig{
-		cfg:    atomic.Pointer[rector.AppConfig]{},
+		cfg:    atomic.Pointer[settings.AppConfig]{},
 		broker: broker.New[*Cfg](),
 	}
 

@@ -8,8 +8,8 @@ package notifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	rector "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
-	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -170,7 +170,7 @@ func (x *JobEvent) GetData() isJobEvent_Data {
 	return nil
 }
 
-func (x *JobEvent) GetJobProps() *users.JobProps {
+func (x *JobEvent) GetJobProps() *jobs.JobProps {
 	if x != nil {
 		if x, ok := x.Data.(*JobEvent_JobProps); ok {
 			return x.JobProps
@@ -184,7 +184,7 @@ type isJobEvent_Data interface {
 }
 
 type JobEvent_JobProps struct {
-	JobProps *users.JobProps `protobuf:"bytes,1,opt,name=job_props,json=jobProps,proto3,oneof"`
+	JobProps *jobs.JobProps `protobuf:"bytes,1,opt,name=job_props,json=jobProps,proto3,oneof"`
 }
 
 func (*JobEvent_JobProps) isJobEvent_Data() {}
@@ -338,8 +338,8 @@ func (*SystemEvent_Ping) isSystemEvent_Data() {}
 func (*SystemEvent_BannerMessage) isSystemEvent_Data() {}
 
 type BannerMessageWrapper struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	BannerMessage *rector.BannerMessage  `protobuf:"bytes,1,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"banner_message,omitempty"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	BannerMessage *settings.BannerMessage `protobuf:"bytes,1,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"banner_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -374,7 +374,7 @@ func (*BannerMessageWrapper) Descriptor() ([]byte, []int) {
 	return file_resources_notifications_events_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *BannerMessageWrapper) GetBannerMessage() *rector.BannerMessage {
+func (x *BannerMessageWrapper) GetBannerMessage() *settings.BannerMessage {
 	if x != nil {
 		return x.BannerMessage
 	}
@@ -385,14 +385,14 @@ var File_resources_notifications_events_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_events_proto_rawDesc = "" +
 	"\n" +
-	"$resources/notifications/events.proto\x12\x17resources.notifications\x1a+resources/notifications/notifications.proto\x1a\x1dresources/rector/banner.proto\x1a\x1fresources/users/job_props.proto\x1a\x17validate/validate.proto\"\xc8\x01\n" +
+	"$resources/notifications/events.proto\x12\x17resources.notifications\x1a+resources/notifications/notifications.proto\x1a\x1fresources/settings/banner.proto\x1a\x1eresources/jobs/job_props.proto\x1a\x17validate/validate.proto\"\xc8\x01\n" +
 	"\tUserEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
 	"\fnotification\x18\x02 \x01(\v2%.resources.notifications.NotificationH\x00R\fnotification\x12:\n" +
 	"\x18notifications_read_count\x18\x03 \x01(\x05H\x00R\x16notificationsReadCountB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"Q\n" +
-	"\bJobEvent\x128\n" +
-	"\tjob_props\x18\x01 \x01(\v2\x19.resources.users.JobPropsH\x00R\bjobPropsB\v\n" +
+	"\x04data\x12\x03\xf8B\x01\"P\n" +
+	"\bJobEvent\x127\n" +
+	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsH\x00R\bjobPropsB\v\n" +
 	"\x04data\x12\x03\xf8B\x01\"C\n" +
 	"\rJobGradeEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshTokenB\v\n" +
@@ -400,9 +400,9 @@ const file_resources_notifications_events_proto_rawDesc = "" +
 	"\vSystemEvent\x12\x14\n" +
 	"\x04ping\x18\x01 \x01(\bH\x00R\x04ping\x12V\n" +
 	"\x0ebanner_message\x18\x02 \x01(\v2-.resources.notifications.BannerMessageWrapperH\x00R\rbannerMessageB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"v\n" +
-	"\x14BannerMessageWrapper\x12K\n" +
-	"\x0ebanner_message\x18\x01 \x01(\v2\x1f.resources.rector.BannerMessageH\x00R\rbannerMessage\x88\x01\x01B\x11\n" +
+	"\x04data\x12\x03\xf8B\x01\"x\n" +
+	"\x14BannerMessageWrapper\x12M\n" +
+	"\x0ebanner_message\x18\x01 \x01(\v2!.resources.settings.BannerMessageH\x00R\rbannerMessage\x88\x01\x01B\x11\n" +
 	"\x0f_banner_messageBYZWgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
 var (
@@ -419,20 +419,20 @@ func file_resources_notifications_events_proto_rawDescGZIP() []byte {
 
 var file_resources_notifications_events_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_notifications_events_proto_goTypes = []any{
-	(*UserEvent)(nil),            // 0: resources.notifications.UserEvent
-	(*JobEvent)(nil),             // 1: resources.notifications.JobEvent
-	(*JobGradeEvent)(nil),        // 2: resources.notifications.JobGradeEvent
-	(*SystemEvent)(nil),          // 3: resources.notifications.SystemEvent
-	(*BannerMessageWrapper)(nil), // 4: resources.notifications.BannerMessageWrapper
-	(*Notification)(nil),         // 5: resources.notifications.Notification
-	(*users.JobProps)(nil),       // 6: resources.users.JobProps
-	(*rector.BannerMessage)(nil), // 7: resources.rector.BannerMessage
+	(*UserEvent)(nil),              // 0: resources.notifications.UserEvent
+	(*JobEvent)(nil),               // 1: resources.notifications.JobEvent
+	(*JobGradeEvent)(nil),          // 2: resources.notifications.JobGradeEvent
+	(*SystemEvent)(nil),            // 3: resources.notifications.SystemEvent
+	(*BannerMessageWrapper)(nil),   // 4: resources.notifications.BannerMessageWrapper
+	(*Notification)(nil),           // 5: resources.notifications.Notification
+	(*jobs.JobProps)(nil),          // 6: resources.jobs.JobProps
+	(*settings.BannerMessage)(nil), // 7: resources.settings.BannerMessage
 }
 var file_resources_notifications_events_proto_depIdxs = []int32{
 	5, // 0: resources.notifications.UserEvent.notification:type_name -> resources.notifications.Notification
-	6, // 1: resources.notifications.JobEvent.job_props:type_name -> resources.users.JobProps
+	6, // 1: resources.notifications.JobEvent.job_props:type_name -> resources.jobs.JobProps
 	4, // 2: resources.notifications.SystemEvent.banner_message:type_name -> resources.notifications.BannerMessageWrapper
-	7, // 3: resources.notifications.BannerMessageWrapper.banner_message:type_name -> resources.rector.BannerMessage
+	7, // 3: resources.notifications.BannerMessageWrapper.banner_message:type_name -> resources.settings.BannerMessage
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

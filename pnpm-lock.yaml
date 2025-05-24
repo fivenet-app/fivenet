@@ -34,7 +34,7 @@ importers:
         version: 1.10.0(db0@0.3.2)(ioredis@5.6.1)(magicast@0.3.5)
       '@nuxt/ui-pro':
         specifier: 1.8.0
-        version: 1.8.0(jwt-decode@4.0.0)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))(zod@3.25.17)
+        version: 1.8.0(jwt-decode@4.0.0)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)
       '@nuxtjs/robots':
         specifier: 5.2.10
         version: 5.2.10(magicast@0.3.5)(vue@3.5.14(typescript@5.8.3))
@@ -105,11 +105,11 @@ importers:
         specifier: 2.12.0
         version: 2.12.0(@tiptap/core@2.12.0(@tiptap/pm@2.12.0))
       '@unovis/ts':
-        specifier: 1.5.1
-        version: 1.5.1
+        specifier: 1.5.2
+        version: 1.5.2
       '@unovis/vue':
-        specifier: 1.5.1
-        version: 1.5.1(@unovis/ts@1.5.1)(vue@3.5.14(typescript@5.8.3))
+        specifier: 1.5.2
+        version: 1.5.2(@unovis/ts@1.5.2)(vue@3.5.14(typescript@5.8.3))
       '@vue-leaflet/vue-leaflet':
         specifier: 0.10.1
         version: 0.10.1(@types/leaflet@1.9.18)(leaflet@1.9.4)(typescript@5.8.3)
@@ -159,8 +159,8 @@ importers:
         specifier: 1.6.6
         version: 1.6.6
       splitpanes:
-        specifier: 4.0.3
-        version: 4.0.3(vue@3.5.14(typescript@5.8.3))
+        specifier: 4.0.4
+        version: 4.0.4(vue@3.5.14(typescript@5.8.3))
       tiptap-extension-auto-joiner:
         specifier: 0.1.3
         version: 0.1.3
@@ -195,8 +195,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@13.2.0(vue@3.5.14(typescript@5.8.3)))(gradient-parser@1.1.1)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1(vue@3.5.14(typescript@5.8.3)))(vue@3.5.14(typescript@5.8.3))
       zod:
-        specifier: 3.25.17
-        version: 3.25.17
+        specifier: 3.25.28
+        version: 3.25.28
     devDependencies:
       '@csmith/release-it-calver-plugin':
         specifier: 2023.12.0
@@ -298,7 +298,7 @@ importers:
         specifier: 3.5.3
         version: 3.5.3
       prettier-plugin-organize-attributes:
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0(prettier@3.5.3)
       prettier-plugin-organize-imports:
         specifier: 4.1.0
@@ -2557,13 +2557,13 @@ packages:
   '@unovis/graphlibrary@2.2.0-2':
     resolution: {integrity: sha512-HeEzpd/vDyWiIJt0rnh+2ICXUIuF2N0+Z9OJJiKg0DB+eFUcD+bk+9QPhYHwkFwfxdjDA9fHi1DZ/O/bbV58Nw==}
 
-  '@unovis/ts@1.5.1':
-    resolution: {integrity: sha512-cNCVZUz3RagftEOw+HDvbbGTkmtpDNSv1Mw7C4wBBeRKQGzztI5TVL18IWFbKo/0VD6zP/jv+GKwJXZTGl6w0w==}
+  '@unovis/ts@1.5.2':
+    resolution: {integrity: sha512-gpg81cr1z/Q9N45wFUkYCGN8o3GbW9U1qx2iQr+xTgyPFoKR9y9+b/savitxzaMGulHAF7cKlm0Nz/pBbQsFoA==}
 
-  '@unovis/vue@1.5.1':
-    resolution: {integrity: sha512-JHpytN/usD4YzxVpSWTaqFMX667KjIYtjV/JK+iTAujn4a3xstAaySbZpP55qoANf9qEKUvM1EuRWs+qjqQGPQ==}
+  '@unovis/vue@1.5.2':
+    resolution: {integrity: sha512-NvMJu6dkF5zj7ovop+XTvD/yFBVJMUxQH4AFnYY3BzokvYyxluPnCjQpkResND5I/5ZKpC/LO051oLC9TPo6Jw==}
     peerDependencies:
-      '@unovis/ts': 1.5.1
+      '@unovis/ts': 1.5.2
       vue: ^3
 
   '@unrs/resolver-binding-darwin-arm64@1.7.2':
@@ -4074,8 +4074,8 @@ packages:
   electron-to-chromium@1.5.155:
     resolution: {integrity: sha512-ps5KcGGmwL8VaeJlvlDlu4fORQpv3+GIcF5I3f9tUKUlJ/wsysh6HU8P5L1XWRYeXfA0oJd4PyM8ds8zTFf6Ng==}
 
-  elkjs@0.8.2:
-    resolution: {integrity: sha512-L6uRgvZTH+4OF5NE/MBbzQx/WYpru1xCBE9respNj6qznEewGUIfhzmm7horWWxbNO2M0WckQypGctR8lH79xQ==}
+  elkjs@0.10.0:
+    resolution: {integrity: sha512-v/3r+3Bl2NMrWmVoRTMBtHtWvRISTix/s9EfnsfEWApNrsmNjqgqJOispCGg46BPwIFdkag3N/HYSxJczvCm6w==}
 
   emoji-blast@0.10.2:
     resolution: {integrity: sha512-3VrqajirPj8QeQxQeMHUfD+03H64XTEVPGRjxP5rjDCVEC5NGF3FgutMpU5scIOhcuzG23Qvs32k0Pnj+hRzGA==}
@@ -7137,8 +7137,8 @@ packages:
     resolution: {integrity: sha512-1POYv7uv2gXoyGFpBCmpDVSNV74IfsWlDW216UPjbWufNf+bSU6GdbDsxdcxtfwb4xlI3yxzOTKClUosxARYrQ==}
     engines: {node: '>=0.10.0'}
 
-  splitpanes@4.0.3:
-    resolution: {integrity: sha512-S/f1CoH2JroOib7kzQtTQNtQCa7VzNQ2qKOO5HNj/5EVVcNkfz1eX/sH+X3XKdBdDLihEKDekVGwrLADd2oirA==}
+  splitpanes@4.0.4:
+    resolution: {integrity: sha512-RbysugZhjbCw5fgplvk3hOXr41stahQDtZhHVkhnnJI6H4wlGDhM2kIpbehy7v92duy9GnMa8zIhHigIV1TWtg==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -8180,8 +8180,8 @@ packages:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
 
-  zod@3.25.17:
-    resolution: {integrity: sha512-8hQzQ/kMOIFbwOgPrm9Sf9rtFHpFUMy4HvN0yEB0spw14aYi0uT5xG5CE2DB9cd51GWNsz+DNO7se1kztHMKnw==}
+  zod@3.25.28:
+    resolution: {integrity: sha512-/nt/67WYKnr5by3YS7LroZJbtcCBurDKKPBPWWzaxvVCGuG/NOsiKkrjoOhI8mJ+SQUXEbUzeB3S+6XDUEEj7Q==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -9163,7 +9163,7 @@ snapshots:
       unixify: 1.0.0
       urlpattern-polyfill: 8.0.2
       yargs: 17.7.2
-      zod: 3.25.17
+      zod: 3.25.28
     transitivePeerDependencies:
       - encoding
       - rollup
@@ -9563,10 +9563,10 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/ui-pro@1.8.0(jwt-decode@4.0.0)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))(zod@3.25.17)':
+  '@nuxt/ui-pro@1.8.0(jwt-decode@4.0.0)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)':
     dependencies:
       '@iconify-json/vscode-icons': 1.2.21
-      '@nuxt/ui': 2.22.0(jwt-decode@4.0.0)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))(zod@3.25.17)
+      '@nuxt/ui': 2.22.0(jwt-decode@4.0.0)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)
       '@vueuse/core': 13.2.0(vue@3.5.14(typescript@5.8.3))
       defu: 6.1.4
       git-url-parse: 16.1.0
@@ -9598,7 +9598,7 @@ snapshots:
       - yup
       - zod
 
-  '@nuxt/ui@2.22.0(jwt-decode@4.0.0)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))(zod@3.25.17)':
+  '@nuxt/ui@2.22.0(jwt-decode@4.0.0)(magicast@0.3.5)(vite@6.3.5(@types/node@22.15.21)(jiti@2.4.2)(sass@1.89.0)(terser@5.39.2)(yaml@2.8.0))(vue@3.5.14(typescript@5.8.3))(zod@3.25.28)':
     dependencies:
       '@headlessui/tailwindcss': 0.2.2(tailwindcss@3.4.17)
       '@headlessui/vue': 1.7.23(vue@3.5.14(typescript@5.8.3))
@@ -9624,7 +9624,7 @@ snapshots:
       tailwind-merge: 2.6.0
       tailwindcss: 3.4.17
     optionalDependencies:
-      zod: 3.25.17
+      zod: 3.25.28
     transitivePeerDependencies:
       - async-validator
       - axios
@@ -11010,7 +11010,7 @@ snapshots:
     dependencies:
       lodash-es: 4.17.21
 
-  '@unovis/ts@1.5.1':
+  '@unovis/ts@1.5.2':
     dependencies:
       '@emotion/css': 11.13.5
       '@juggle/resize-observer': 3.4.0
@@ -11033,7 +11033,7 @@ snapshots:
       d3-geo-projection: 4.0.0
       d3-interpolate-path: 2.3.0
       d3-sankey: 0.12.3
-      elkjs: 0.8.2
+      elkjs: 0.10.0
       geojson: 0.5.0
       leaflet: 1.7.1
       maplibre-gl: 2.4.0
@@ -11047,9 +11047,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@unovis/vue@1.5.1(@unovis/ts@1.5.1)(vue@3.5.14(typescript@5.8.3))':
+  '@unovis/vue@1.5.2(@unovis/ts@1.5.2)(vue@3.5.14(typescript@5.8.3))':
     dependencies:
-      '@unovis/ts': 1.5.1
+      '@unovis/ts': 1.5.2
       vue: 3.5.14(typescript@5.8.3)
 
   '@unrs/resolver-binding-darwin-arm64@1.7.2':
@@ -12617,7 +12617,7 @@ snapshots:
 
   electron-to-chromium@1.5.155: {}
 
-  elkjs@0.8.2: {}
+  elkjs@0.10.0: {}
 
   emoji-blast@0.10.2: {}
 
@@ -14908,7 +14908,7 @@ snapshots:
       dedupe: 4.0.3
       defu: 6.1.4
       vue-tsc: 2.2.10(typescript@5.8.3)
-      zod: 3.25.17
+      zod: 3.25.28
     transitivePeerDependencies:
       - magicast
       - typescript
@@ -16463,7 +16463,7 @@ snapshots:
 
   speakingurl@14.0.1: {}
 
-  splitpanes@4.0.3(vue@3.5.14(typescript@5.8.3)):
+  splitpanes@4.0.4(vue@3.5.14(typescript@5.8.3)):
     dependencies:
       vue: 3.5.14(typescript@5.8.3)
 
@@ -17546,6 +17546,6 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod@3.25.17: {}
+  zod@3.25.28: {}
 
   zwitch@2.0.4: {}

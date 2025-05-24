@@ -2665,22 +2665,22 @@ var _ interface {
 	ErrorName() string
 } = DeleteOAuth2ConnectionResponseValidationError{}
 
-// Validate checks the field values on SetSuperUserModeRequest with the rules
+// Validate checks the field values on SetSuperuserModeRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SetSuperUserModeRequest) Validate() error {
+func (m *SetSuperuserModeRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on SetSuperUserModeRequest with the
+// ValidateAll checks the field values on SetSuperuserModeRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// SetSuperUserModeRequestMultiError, or nil if none found.
-func (m *SetSuperUserModeRequest) ValidateAll() error {
+// SetSuperuserModeRequestMultiError, or nil if none found.
+func (m *SetSuperuserModeRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *SetSuperUserModeRequest) validate(all bool) error {
+func (m *SetSuperuserModeRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -2692,7 +2692,7 @@ func (m *SetSuperUserModeRequest) validate(all bool) error {
 	if m.Job != nil {
 
 		if utf8.RuneCountInString(m.GetJob()) > 20 {
-			err := SetSuperUserModeRequestValidationError{
+			err := SetSuperuserModeRequestValidationError{
 				field:  "Job",
 				reason: "value length must be at most 20 runes",
 			}
@@ -2705,19 +2705,19 @@ func (m *SetSuperUserModeRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return SetSuperUserModeRequestMultiError(errors)
+		return SetSuperuserModeRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// SetSuperUserModeRequestMultiError is an error wrapping multiple validation
-// errors returned by SetSuperUserModeRequest.ValidateAll() if the designated
+// SetSuperuserModeRequestMultiError is an error wrapping multiple validation
+// errors returned by SetSuperuserModeRequest.ValidateAll() if the designated
 // constraints aren't met.
-type SetSuperUserModeRequestMultiError []error
+type SetSuperuserModeRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m SetSuperUserModeRequestMultiError) Error() string {
+func (m SetSuperuserModeRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2726,11 +2726,11 @@ func (m SetSuperUserModeRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m SetSuperUserModeRequestMultiError) AllErrors() []error { return m }
+func (m SetSuperuserModeRequestMultiError) AllErrors() []error { return m }
 
-// SetSuperUserModeRequestValidationError is the validation error returned by
-// SetSuperUserModeRequest.Validate if the designated constraints aren't met.
-type SetSuperUserModeRequestValidationError struct {
+// SetSuperuserModeRequestValidationError is the validation error returned by
+// SetSuperuserModeRequest.Validate if the designated constraints aren't met.
+type SetSuperuserModeRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2738,24 +2738,24 @@ type SetSuperUserModeRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e SetSuperUserModeRequestValidationError) Field() string { return e.field }
+func (e SetSuperuserModeRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e SetSuperUserModeRequestValidationError) Reason() string { return e.reason }
+func (e SetSuperuserModeRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e SetSuperUserModeRequestValidationError) Cause() error { return e.cause }
+func (e SetSuperuserModeRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e SetSuperUserModeRequestValidationError) Key() bool { return e.key }
+func (e SetSuperuserModeRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e SetSuperUserModeRequestValidationError) ErrorName() string {
-	return "SetSuperUserModeRequestValidationError"
+func (e SetSuperuserModeRequestValidationError) ErrorName() string {
+	return "SetSuperuserModeRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e SetSuperUserModeRequestValidationError) Error() string {
+func (e SetSuperuserModeRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2767,14 +2767,14 @@ func (e SetSuperUserModeRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sSetSuperUserModeRequest.%s: %s%s",
+		"invalid %sSetSuperuserModeRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = SetSuperUserModeRequestValidationError{}
+var _ error = SetSuperuserModeRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -2782,24 +2782,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = SetSuperUserModeRequestValidationError{}
+} = SetSuperuserModeRequestValidationError{}
 
-// Validate checks the field values on SetSuperUserModeResponse with the rules
+// Validate checks the field values on SetSuperuserModeResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SetSuperUserModeResponse) Validate() error {
+func (m *SetSuperuserModeResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on SetSuperUserModeResponse with the
+// ValidateAll checks the field values on SetSuperuserModeResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// SetSuperUserModeResponseMultiError, or nil if none found.
-func (m *SetSuperUserModeResponse) ValidateAll() error {
+// SetSuperuserModeResponseMultiError, or nil if none found.
+func (m *SetSuperuserModeResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *SetSuperUserModeResponse) validate(all bool) error {
+func (m *SetSuperuserModeResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -2810,7 +2810,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 		switch v := interface{}(m.GetExpires()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SetSuperUserModeResponseValidationError{
+				errors = append(errors, SetSuperuserModeResponseValidationError{
 					field:  "Expires",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -2818,7 +2818,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, SetSuperUserModeResponseValidationError{
+				errors = append(errors, SetSuperuserModeResponseValidationError{
 					field:  "Expires",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -2827,7 +2827,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetExpires()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return SetSuperUserModeResponseValidationError{
+			return SetSuperuserModeResponseValidationError{
 				field:  "Expires",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -2839,7 +2839,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 		switch v := interface{}(m.GetChar()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SetSuperUserModeResponseValidationError{
+				errors = append(errors, SetSuperuserModeResponseValidationError{
 					field:  "Char",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -2847,7 +2847,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, SetSuperUserModeResponseValidationError{
+				errors = append(errors, SetSuperuserModeResponseValidationError{
 					field:  "Char",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -2856,7 +2856,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetChar()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return SetSuperUserModeResponseValidationError{
+			return SetSuperuserModeResponseValidationError{
 				field:  "Char",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -2870,7 +2870,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 			switch v := interface{}(m.GetJobProps()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SetSuperUserModeResponseValidationError{
+					errors = append(errors, SetSuperuserModeResponseValidationError{
 						field:  "JobProps",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -2878,7 +2878,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, SetSuperUserModeResponseValidationError{
+					errors = append(errors, SetSuperuserModeResponseValidationError{
 						field:  "JobProps",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -2887,7 +2887,7 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetJobProps()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return SetSuperUserModeResponseValidationError{
+				return SetSuperuserModeResponseValidationError{
 					field:  "JobProps",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -2898,19 +2898,19 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return SetSuperUserModeResponseMultiError(errors)
+		return SetSuperuserModeResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// SetSuperUserModeResponseMultiError is an error wrapping multiple validation
-// errors returned by SetSuperUserModeResponse.ValidateAll() if the designated
+// SetSuperuserModeResponseMultiError is an error wrapping multiple validation
+// errors returned by SetSuperuserModeResponse.ValidateAll() if the designated
 // constraints aren't met.
-type SetSuperUserModeResponseMultiError []error
+type SetSuperuserModeResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m SetSuperUserModeResponseMultiError) Error() string {
+func (m SetSuperuserModeResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -2919,11 +2919,11 @@ func (m SetSuperUserModeResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m SetSuperUserModeResponseMultiError) AllErrors() []error { return m }
+func (m SetSuperuserModeResponseMultiError) AllErrors() []error { return m }
 
-// SetSuperUserModeResponseValidationError is the validation error returned by
-// SetSuperUserModeResponse.Validate if the designated constraints aren't met.
-type SetSuperUserModeResponseValidationError struct {
+// SetSuperuserModeResponseValidationError is the validation error returned by
+// SetSuperuserModeResponse.Validate if the designated constraints aren't met.
+type SetSuperuserModeResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -2931,24 +2931,24 @@ type SetSuperUserModeResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e SetSuperUserModeResponseValidationError) Field() string { return e.field }
+func (e SetSuperuserModeResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e SetSuperUserModeResponseValidationError) Reason() string { return e.reason }
+func (e SetSuperuserModeResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e SetSuperUserModeResponseValidationError) Cause() error { return e.cause }
+func (e SetSuperuserModeResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e SetSuperUserModeResponseValidationError) Key() bool { return e.key }
+func (e SetSuperuserModeResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e SetSuperUserModeResponseValidationError) ErrorName() string {
-	return "SetSuperUserModeResponseValidationError"
+func (e SetSuperuserModeResponseValidationError) ErrorName() string {
+	return "SetSuperuserModeResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e SetSuperUserModeResponseValidationError) Error() string {
+func (e SetSuperuserModeResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2960,14 +2960,14 @@ func (e SetSuperUserModeResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sSetSuperUserModeResponse.%s: %s%s",
+		"invalid %sSetSuperuserModeResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = SetSuperUserModeResponseValidationError{}
+var _ error = SetSuperuserModeResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -2975,4 +2975,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = SetSuperUserModeResponseValidationError{}
+} = SetSuperuserModeResponseValidationError{}

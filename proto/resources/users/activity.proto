@@ -29,20 +29,20 @@ enum UserActivityType {
 }
 
 message UserActivity {
-  uint64 id = 1; // @gotags: alias:"fivenet_user_activity.id"
-  UserActivityType type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"fivenet_user_activity.type"
-  resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
+  uint64 id = 1; // @gotags: alias:"user_activity.id"
+  UserActivityType type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"user_activity.type"
+  resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"user_activity.created_at"
   optional int32 source_user_id = 4; // @gotags: alias:"source_user_id"
   optional UserShort source_user = 5; // @gotags: alias:"source_user"
   int32 target_user_id = 6; // @gotags: alias:"target_user_id"
   UserShort target_user = 7; // @gotags: alias:"target_user"
   // @sanitize
-  string key = 8 [(validate.rules).string.max_len = 64]; // @gotags: alias:"fivenet_user_activity.key"
+  string key = 8 [(validate.rules).string.max_len = 64]; // @gotags: alias:"user_activity.key"
   // @sanitize
-  string reason = 9 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.reason"
-  optional UserActivityData data = 10; // @gotags: alias:"fivenet_user_activity.data"
-  string old_value = 11 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.old_value"
-  string new_value = 12 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.new_value"
+  string reason = 9 [(validate.rules).string.max_len = 255]; // @gotags: alias:"user_activity.reason"
+  optional UserActivityData data = 10; // @gotags: alias:"user_activity.data"
+  string old_value = 11 [(validate.rules).string.max_len = 255]; // @gotags: alias:"user_activity.old_value"
+  string new_value = 12 [(validate.rules).string.max_len = 255]; // @gotags: alias:"user_activity.new_value"
 }
 
 // @dbscanner: json
@@ -50,73 +50,73 @@ message UserActivityData {
   oneof data {
     option (validate.required) = true;
 
-    UserNameChange name_change = 1;
-    UserLicenseChange licenses_change = 2;
+    NameChange name_change = 1;
+    LicenseChange licenses_change = 2;
 
     // User Props
-    UserWantedChange wanted_change = 3;
-    UserTrafficInfractionPointsChange traffic_infraction_points_change = 4;
-    UserMugshotChange mugshot_change = 5;
-    UserLabelsChange labels_change = 6;
-    UserJobChange job_change = 7;
+    WantedChange wanted_change = 3;
+    TrafficInfractionPointsChange traffic_infraction_points_change = 4;
+    MugshotChange mugshot_change = 5;
+    LabelsChange labels_change = 6;
+    JobChange job_change = 7;
 
     // Docstore related
-    UserDocumentRelation document_relation = 8;
+    CitizenDocumentRelation document_relation = 8;
 
     // "Plugin" activities
-    UserJailChange jail_change = 9;
-    UserFineChange fine_change = 10;
+    JailChange jail_change = 9;
+    FineChange fine_change = 10;
   }
 }
 
-message UserNameChange {
+message NameChange {
   string old = 1;
   string new = 2;
 }
 
-message UserLicenseChange {
+message LicenseChange {
   bool added = 1;
   repeated License licenses = 2;
 }
 
-message UserWantedChange {
+message WantedChange {
   bool wanted = 1;
 }
 
-message UserTrafficInfractionPointsChange {
+message TrafficInfractionPointsChange {
   uint32 old = 1;
   uint32 new = 2;
 }
 
-message UserMugshotChange {
+message MugshotChange {
   optional string new = 1;
 }
 
-message UserLabelsChange {
-  repeated CitizenLabel added = 1;
-  repeated CitizenLabel removed = 2;
+message LabelsChange {
+  repeated Label added = 1;
+  repeated Label removed = 2;
 }
 
-message UserJobChange {
+message JobChange {
   optional string job = 1;
   optional string job_label = 2;
   optional int32 grade = 3;
   optional string grade_label = 4;
 }
 
-message UserDocumentRelation {
+message CitizenDocumentRelation {
   bool added = 1;
   uint64 document_id = 2;
   int32 relation = 3; // resources.documents.DocRelation enum
 }
 
-message UserJailChange {
+message JailChange {
   int32 seconds = 1;
   bool admin = 2;
   optional string location = 3;
 }
 
-message UserFineChange {
+message FineChange {
   bool removed = 1;
   int64 amount = 2;
 }

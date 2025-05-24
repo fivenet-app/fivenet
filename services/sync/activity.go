@@ -42,19 +42,19 @@ func (s *Server) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest
 			return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 		}
 
-	case *pbsync.AddActivityRequest_JobsUserActivity:
-		if err := jobs.CreateJobsUserActivities(ctx, s.db, d.JobsUserActivity); err != nil {
+	case *pbsync.AddActivityRequest_JobColleagueActivity:
+		if err := jobs.CreateJobColleagueActivity(ctx, s.db, d.JobColleagueActivity); err != nil {
 			return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 
-	case *pbsync.AddActivityRequest_JobsUserProps:
-		if err := s.handleJobsUserProps(ctx, d); err != nil {
-			return nil, fmt.Errorf("failed to handle JobsUserProps activity. %w", err)
+	case *pbsync.AddActivityRequest_ColleagueProps:
+		if err := s.handleColleagueProps(ctx, d); err != nil {
+			return nil, fmt.Errorf("failed to handle ColleagueProps activity. %w", err)
 		}
 
-	case *pbsync.AddActivityRequest_JobsTimeclock:
+	case *pbsync.AddActivityRequest_JobTimeclock:
 		if err := s.handleTimeclockEntry(ctx, d); err != nil {
-			return nil, fmt.Errorf("failed to handle JobsTimeclock activity. %w", err)
+			return nil, fmt.Errorf("failed to handle JobTimeclock activity. %w", err)
 		}
 
 	case *pbsync.AddActivityRequest_UserUpdate:
@@ -108,7 +108,7 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 		return nil
 	}
 
-	tOAuth2Accs := table.FivenetOauth2Accounts
+	tOAuth2Accs := table.FivenetAccountsOauth2
 
 	insertStmt := tOAuth2Accs.
 		INSERT(
@@ -173,7 +173,7 @@ func (s *Server) handleUserProps(ctx context.Context, data *pbsync.AddActivityRe
 	return nil
 }
 
-func (s *Server) handleJobsUserProps(ctx context.Context, data *pbsync.AddActivityRequest_JobsUserProps) error {
+func (s *Server) handleColleagueProps(ctx context.Context, data *pbsync.AddActivityRequest_ColleagueProps) error {
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -182,23 +182,23 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *pbsync.AddActivi
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	props, err := jobs.GetJobsUserProps(ctx, tx, data.JobsUserProps.Props.Job, data.JobsUserProps.Props.UserId, nil)
+	props, err := jobs.GetColleagueProps(ctx, tx, data.ColleagueProps.Props.Job, data.ColleagueProps.Props.UserId, nil)
 	if err != nil {
 		return fmt.Errorf("failed to get jobs user props. %w", err)
 	}
 
 	reason := ""
-	if data.JobsUserProps.Reason != nil {
-		reason = *data.JobsUserProps.Reason
+	if data.ColleagueProps.Reason != nil {
+		reason = *data.ColleagueProps.Reason
 	}
 
-	activities, err := props.HandleChanges(ctx, tx, data.JobsUserProps.Props, data.JobsUserProps.Props.Job, &data.JobsUserProps.Props.UserId, reason)
+	activities, err := props.HandleChanges(ctx, tx, data.ColleagueProps.Props, data.ColleagueProps.Props.Job, &data.ColleagueProps.Props.UserId, reason)
 	if err != nil {
 		return fmt.Errorf("failed to handle jobs user props changes. %w", err)
 	}
 
-	if data.JobsUserProps.Reason != nil && *data.JobsUserProps.Reason != "" {
-		if err := jobs.CreateJobsUserActivities(ctx, tx, activities...); err != nil {
+	if data.ColleagueProps.Reason != nil && *data.ColleagueProps.Reason != "" {
+		if err := jobs.CreateJobColleagueActivity(ctx, tx, activities...); err != nil {
 			return fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 	}
@@ -211,10 +211,10 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *pbsync.AddActivi
 	return nil
 }
 
-func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActivityRequest_JobsTimeclock) error {
-	tTimeClock := table.FivenetJobsTimeclock
+func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActivityRequest_JobTimeclock) error {
+	tTimeClock := table.FivenetJobTimeclock
 
-	if data.JobsTimeclock.Start {
+	if data.JobTimeclock.Start {
 		// Run select query to see if a timeclock entry needs to be created
 		stmt := tTimeClock.
 			SELECT(
@@ -224,8 +224,8 @@ func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActiv
 			).
 			FROM(tTimeClock).
 			WHERE(jet.AND(
-				tTimeClock.Job.EQ(jet.String(data.JobsTimeclock.Job)),
-				tTimeClock.UserID.EQ(jet.Int32(data.JobsTimeclock.UserId)),
+				tTimeClock.Job.EQ(jet.String(data.JobTimeclock.Job)),
+				tTimeClock.UserID.EQ(jet.Int32(data.JobTimeclock.UserId)),
 			)).
 			ORDER_BY(tTimeClock.Date.DESC()).
 			LIMIT(1)
@@ -249,8 +249,8 @@ func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActiv
 				tTimeClock.Date,
 			).
 			VALUES(
-				data.JobsTimeclock.Job,
-				data.JobsTimeclock.UserId,
+				data.JobTimeclock.Job,
+				data.JobTimeclock.UserId,
 				jet.CURRENT_DATE(),
 			)
 
@@ -280,7 +280,7 @@ func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActiv
 }
 
 func (s *Server) handleUserUpdate(ctx context.Context, data *pbsync.AddActivityRequest_UserUpdate) error {
-	tUser := tables.Users()
+	tUser := tables.User()
 
 	selectStmt := tUser.
 		SELECT(

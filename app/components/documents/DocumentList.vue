@@ -15,7 +15,7 @@ import type { OpenClose } from '~/typings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
-import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 
 const { $grpc } = useNuxtApp();
 
@@ -105,7 +105,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     }
 
     try {
-        const call = $grpc.docstore.docStore.listDocuments(req);
+        const call = $grpc.documents.documents.listDocuments(req);
         const { response } = await call;
 
         return response;

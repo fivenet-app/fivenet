@@ -10,8 +10,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-// Scan implements driver.Valuer for protobuf CitizenLabels.
-func (x *CitizenLabels) Scan(value any) error {
+// Scan implements driver.Valuer for protobuf Labels.
+func (x *Labels) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
@@ -21,8 +21,8 @@ func (x *CitizenLabels) Scan(value any) error {
 	return nil
 }
 
-// Value marshals the CitizenLabels value into driver.Valuer.
-func (x *CitizenLabels) Value() (driver.Value, error) {
+// Value marshals the Labels value into driver.Valuer.
+func (x *Labels) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}

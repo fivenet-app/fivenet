@@ -19,9 +19,9 @@ import (
 )
 
 var (
-	tLocs          = table.FivenetUserLocations
-	tJobProps      = table.FivenetJobProps
-	tJobsUserProps = table.FivenetJobsUserProps.AS("jobs_user_props")
+	tLocs           = table.FivenetCentrumUserLocations
+	tJobProps       = table.FivenetJobProps
+	tColleagueProps = table.FivenetJobColleagueProps.AS("jobs_user_props")
 )
 
 type ITracker interface {
@@ -91,7 +91,7 @@ func New(p Params) (ITracker, error) {
 				})
 				// Maybe we can be smarter about updating the user marker here, but
 				// without mutexes it will be problematic (data races and Co.)
-				// Is `proto.Clone` the solution to this?
+				// Is `proto.Clone` really the solution to this?
 				jobUsers.Store(um.UserId, proto.Clone(um).(*livemap.UserMarker))
 
 				return um, nil

@@ -10,7 +10,7 @@ import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPop
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { OpenClose } from '~/typings';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
-import type { ListUserDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { ListUserDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
     userId: number;
@@ -28,7 +28,7 @@ const openclose: OpenClose[] = [
 
 const docRelationsEnum = listEnumValues(DocRelation).filter((r) => r.number !== 0);
 const docRelations = docRelationsEnum.map((r) => ({
-    label: t(`enums.docstore.DocRelation.${r.name}`),
+    label: t(`enums.documents.DocRelation.${r.name}`),
     value: DocRelation[r.name as keyof typeof DocRelation],
 }));
 
@@ -62,7 +62,7 @@ const {
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
-        const call = $grpc.docstore.docStore.listUserDocuments({
+        const call = $grpc.documents.documents.listUserDocuments({
             pagination: {
                 offset: offset.value,
             },
@@ -148,7 +148,7 @@ const columns = [
                                 <span class="inline-flex gap-1" :class="`bg-${docRelationToColor(option.value)}-500`">
                                     <UIcon class="size-4" :name="docRelationToIcon(option.value)" />
                                     <span class="truncate">
-                                        {{ $t(`enums.docstore.DocRelation.${DocRelation[option.value]}`) }}
+                                        {{ $t(`enums.documents.DocRelation.${DocRelation[option.value]}`) }}
                                     </span>
                                 </span>
                             </template>
@@ -190,7 +190,7 @@ const columns = [
                 :color="docRelationToBadge(relation.relation)"
                 :icon="docRelationToIcon(relation.relation)"
             >
-                {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
+                {{ $t(`enums.documents.DocRelation.${DocRelation[relation.relation]}`) }}
             </UBadge>
         </template>
 

@@ -49,7 +49,7 @@ const { start, stop } = useTimeoutFn(
             return;
         }
 
-        if (can('MailerService.ListEmails').value) {
+        if (can('mailer.MailerService.ListEmails').value) {
             await mailerStore.checkEmails();
         }
 

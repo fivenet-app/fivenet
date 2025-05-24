@@ -5,17 +5,16 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -24,7 +23,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tQualiRequests = table.FivenetQualificationsRequests.AS("qualificationrequest")
+var tQualiRequests = table.FivenetQualificationsRequests.AS("qualification_request")
 
 func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifications.ListQualificationRequestsRequest) (*pbqualifications.ListQualificationRequestsResponse, error) {
 	if req.QualificationId != nil {
@@ -36,8 +35,8 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tQuali := tQuali.AS("qualificationshort")
-	tUser := tables.Users().AS("user")
+	tQuali := tQuali.AS("qualification_short")
+	tUser := tables.User().AS("user")
 	tApprover := tUser.AS("approver")
 
 	condition := tQualiRequests.DeletedAt.IS_NULL().
@@ -97,7 +96,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 
 	countStmt := tQualiRequests.
 		SELECT(
-			jet.COUNT(countColumn).AS("datacount.totalcount"),
+			jet.COUNT(countColumn).AS("data_count.total"),
 		).
 		FROM(
 			tQualiRequests.
@@ -122,12 +121,12 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, QualificationsPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
 	resp := &pbqualifications.ListQualificationRequestsResponse{
 		Pagination: pag,
 		Requests:   []*qualifications.QualificationRequest{},
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -236,12 +235,12 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *pbqualifica
 func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pbqualifications.CreateOrUpdateQualificationRequestRequest) (*pbqualifications.CreateOrUpdateQualificationRequestResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateQualificationRequest",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -314,7 +313,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 			}
 		}
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	} else {
 		canRequest, err := s.access.CanUserAccessTarget(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
 		if err != nil {
@@ -372,7 +371,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	}
 
 	request, err := s.getQualificationRequest(ctx, req.Request.QualificationId, userInfo.UserId, userInfo)
@@ -387,7 +386,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 
 func (s *Server) getQualificationRequest(ctx context.Context, qualificationId uint64, userId int32, userInfo *userinfo.UserInfo) (*qualifications.QualificationRequest, error) {
 	tQuali := tQuali.AS("qualificationshort")
-	tUser := tables.Users().AS("user")
+	tUser := tables.User().AS("user")
 	tApprover := tUser.AS("approver")
 
 	stmt := tQualiRequests.
@@ -471,12 +470,12 @@ func (s *Server) getQualificationRequest(ctx context.Context, qualificationId ui
 func (s *Server) DeleteQualificationReq(ctx context.Context, req *pbqualifications.DeleteQualificationReqRequest) (*pbqualifications.DeleteQualificationReqResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "DeleteQualificationReq",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -501,7 +500,7 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *pbqualificatio
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbqualifications.DeleteQualificationReqResponse{}, nil
 }

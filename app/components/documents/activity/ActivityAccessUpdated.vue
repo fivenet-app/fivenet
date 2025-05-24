@@ -15,7 +15,7 @@ defineProps<{
             :access-level="AccessLevel"
             :jobs="data.jobs?.toCreate"
             :users="data.users?.toCreate"
-            i18n-key="enums.docstore"
+            i18n-key="enums.documents"
             color="success"
         />
 
@@ -24,7 +24,7 @@ defineProps<{
             :access-level="AccessLevel"
             :jobs="data.jobs?.toDelete"
             :users="data.users?.toDelete"
-            i18n-key="enums.docstore"
+            i18n-key="enums.documents"
             color="error"
         />
 
@@ -33,7 +33,7 @@ defineProps<{
             :access-level="AccessLevel"
             :jobs="data.jobs?.toUpdate"
             :users="data.users?.toUpdate"
-            i18n-key="enums.docstore"
+            i18n-key="enums.documents"
             color="info"
         />
 

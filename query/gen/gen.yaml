@@ -1,5 +1,5 @@
 # DSN for local test database run via the `docker-compose.dev.yaml`
-dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?charset=utf8mb4&loc=Local"
+dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet_test?charset=utf8mb4&loc=Local"
 excludeTables:
   - "fivenet_zschema_migrations"
   - fivenet_calendar_job_access
@@ -52,6 +52,7 @@ includeTables:
     - phone_number
     - visum
     - playtime
+    - created_at
     - last_seen
   # Phone Msg Converters
   "gksphone_job_message":

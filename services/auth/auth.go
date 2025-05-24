@@ -2,28 +2,22 @@ package auth
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"slices"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config"
-	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsauth "github.com/fivenet-app/fivenet/v2025/services/auth/errors"
@@ -31,108 +25,15 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	grpc "google.golang.org/grpc"
 )
 
 var (
 	tAccounts  = table.FivenetAccounts
 	tUserProps = table.FivenetUserProps.AS("user_props")
-	tJobProps  = table.FivenetJobProps.AS("jobprops")
+	tJobProps  = table.FivenetJobProps.AS("job_props")
 )
-
-type Server struct {
-	pbauth.AuthServiceServer
-
-	logger   *zap.Logger
-	db       *sql.DB
-	auth     *auth.GRPCAuth
-	tm       *auth.TokenMgr
-	ps       perms.Permissions
-	enricher *mstlystcdata.Enricher
-	aud      audit.IAuditer
-	ui       userinfo.UserInfoRetriever
-	appCfg   appconfig.IConfig
-	js       *events.JSWrapper
-
-	domain          string
-	oauth2Providers []*config.OAuth2Provider
-	customDB        config.CustomDB
-	superuserGroups []string
-	superuserUsers  []string
-}
-
-type Params struct {
-	fx.In
-
-	Logger    *zap.Logger
-	DB        *sql.DB
-	Auth      *auth.GRPCAuth
-	TM        *auth.TokenMgr
-	Perms     perms.Permissions
-	Enricher  *mstlystcdata.Enricher
-	Aud       audit.IAuditer
-	UI        userinfo.UserInfoRetriever
-	Config    *config.Config
-	AppConfig appconfig.IConfig
-	JS        *events.JSWrapper
-}
-
-func NewServer(p Params) *Server {
-	return &Server{
-		logger:   p.Logger.Named("grpc.auth"),
-		db:       p.DB,
-		auth:     p.Auth,
-		tm:       p.TM,
-		ps:       p.Perms,
-		enricher: p.Enricher,
-		aud:      p.Aud,
-		ui:       p.UI,
-		appCfg:   p.AppConfig,
-		js:       p.JS,
-
-		domain:          p.Config.HTTP.Sessions.Domain,
-		oauth2Providers: p.Config.OAuth2.Providers,
-		customDB:        p.Config.Database.Custom,
-		superuserGroups: p.Config.Auth.SuperuserGroups,
-		superuserUsers:  p.Config.Auth.SuperuserUsers,
-	}
-}
-
-func (s *Server) RegisterServer(srv *grpc.Server) {
-	pbauth.RegisterAuthServiceServer(srv, s)
-}
-
-// AuthFuncOverride is called instead of the original auth func
-func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
-	// Skip authentication for the anon accessible endpoints
-	if fullMethod == "/services.auth.AuthService/CreateAccount" ||
-		fullMethod == "/services.auth.AuthService/Login" ||
-		fullMethod == "/services.auth.AuthService/ForgotPassword" {
-		return ctx, nil
-	}
-
-	if fullMethod == "/services.auth.AuthService/Logout" {
-		c, _ := s.auth.GRPCAuthFunc(ctx, fullMethod)
-		if c != nil {
-			return c, nil
-		}
-		return ctx, nil
-	}
-
-	if fullMethod == "/services.auth.AuthService/SetSuperUserMode" {
-		return s.auth.GRPCAuthFunc(ctx, fullMethod)
-	}
-
-	return s.auth.GRPCAuthFuncWithoutUserInfo(ctx, fullMethod)
-}
-
-func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
-	// Skip permission check for the auth services
-	return ctx, nil
-}
 
 func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, activeChar *users.User) (string, *auth.CitizenInfoClaims, error) {
 	claims := auth.BuildTokenClaimsFromAccount(account, activeChar)
@@ -163,12 +64,12 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 		).
 		LIMIT(1)
 
-	var acc model.FivenetAccounts
-	if err := stmt.QueryContext(ctx, s.db, &acc); err != nil {
+	acc := &model.FivenetAccounts{}
+	if err := stmt.QueryContext(ctx, s.db, acc); err != nil {
 		return nil, err
 	}
 
-	return &acc, nil
+	return acc, nil
 }
 
 func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.LoginResponse, error) {
@@ -489,9 +390,9 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 	}
 
 	// Load chars from database
-	tUsers := tables.Users().AS("user")
+	tUsers := tables.User().AS("user")
 	tJobs := tables.Jobs()
-	tJobGrades := tables.JobGrades()
+	tJobsGrades := tables.JobsGrades()
 
 	stmt := tUsers.
 		SELECT(
@@ -501,7 +402,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 				tUsers.Job,
 				tJobs.Label.AS("user.job_label"),
 				tUsers.JobGrade,
-				tJobGrades.Label.AS("user.job_grade_label"),
+				tJobsGrades.Label.AS("user.job_grade_label"),
 				tUsers.Firstname,
 				tUsers.Lastname,
 				tUsers.Dateofbirth,
@@ -518,10 +419,10 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 			LEFT_JOIN(tJobs,
 				tJobs.Name.EQ(tUsers.Job),
 			).
-			LEFT_JOIN(tJobGrades,
+			LEFT_JOIN(tJobsGrades,
 				jet.AND(
-					tJobGrades.Grade.EQ(tUsers.JobGrade),
-					tJobGrades.JobName.EQ(tUsers.Job),
+					tJobsGrades.Grade.EQ(tUsers.JobGrade),
+					tJobsGrades.JobName.EQ(tUsers.Job),
 				),
 			).
 			LEFT_JOIN(tUserProps,
@@ -577,10 +478,10 @@ func buildCharSearchIdentifier(license string) string {
 	return "%" + license
 }
 
-func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *users.JobProps, string, error) {
-	tUsers := tables.Users().AS("user")
+func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
+	tUsers := tables.User().AS("user")
 	tJobs := tables.Jobs()
-	tJobGrades := tables.JobGrades()
+	tJobsGrades := tables.JobsGrades()
 
 	stmt := tUsers.
 		SELECT(
@@ -594,7 +495,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			tUserProps.Avatar.AS("user.avatar"),
 			tUsers.Group.AS("group"),
 			tJobs.Label.AS("user.job_label"),
-			tJobGrades.Label.AS("user.job_grade_label"),
+			tJobsGrades.Label.AS("user.job_grade_label"),
 			tJobProps.DeletedAt,
 			tJobProps.LivemapMarkerColor,
 			tJobProps.QuickButtons,
@@ -606,10 +507,10 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 				LEFT_JOIN(tJobs,
 					tJobs.Name.EQ(tUsers.Job),
 				).
-				LEFT_JOIN(tJobGrades,
+				LEFT_JOIN(tJobsGrades,
 					jet.AND(
-						tJobGrades.Grade.EQ(tUsers.JobGrade),
-						tJobGrades.JobName.EQ(tUsers.Job),
+						tJobsGrades.Grade.EQ(tUsers.JobGrade),
+						tJobsGrades.JobName.EQ(tUsers.Job),
 					),
 				).
 				LEFT_JOIN(tJobProps,
@@ -627,7 +528,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	var dest struct {
 		users.User
 		Group    string
-		JobProps *users.JobProps
+		JobProps *jobs.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
@@ -674,10 +575,10 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	isSuperUser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
+	isSuperuser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
 
 	// If char lock is active, make sure that the user is choosing the active char
-	if !isSuperUser &&
+	if !isSuperuser &&
 		s.appCfg.Get().Auth.LastCharLock &&
 		account.LastChar != nil &&
 		*account.LastChar != req.CharId {
@@ -685,7 +586,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 	}
 
 	// Reset override jobs when char is not a superuser but has an override set..
-	if !isSuperUser &&
+	if !isSuperuser &&
 		((account.Superuser != nil && *account.Superuser) ||
 			account.OverrideJob != nil) {
 		account.OverrideJob = nil
@@ -697,7 +598,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 
 		not := false
 		account.Superuser = &not
-	} else if isSuperUser &&
+	} else if isSuperuser &&
 		(account.Superuser != nil && *account.Superuser) && account.OverrideJob != nil && account.OverrideJobGrade != nil {
 		char.Job = *account.OverrideJob
 		char.JobGrade = *account.OverrideJobGrade
@@ -715,21 +616,21 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	ps, err := s.listUserPerms(account, char, isSuperUser)
+	ps, err := s.listUserPerms(account, char, isSuperuser)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(ps) == 0 || (!isSuperUser && !slices.Contains(ps, "authservice-choosecharacter")) {
+	if len(ps) == 0 || (!isSuperuser && !slices.Contains(ps, "authservice-choosecharacter")) {
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	defer s.aud.Log(&model.FivenetAuditLog{
+	defer s.aud.Log(&audit.AuditEntry{
 		Service: pbauth.AuthService_ServiceDesc.ServiceName,
 		Method:  "ChooseCharacter",
-		UserID:  char.UserId,
+		UserId:  char.UserId,
 		UserJob: char.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
+		State:   audit.EventType_EVENT_TYPE_VIEWED,
 	}, char.UserShort())
 
 	if err := s.setTokenCookie(ctx, newToken); err != nil {
@@ -745,7 +646,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 	}, nil
 }
 
-func (s *Server) listUserPerms(account *model.FivenetAccounts, char *users.User, isSuperUser bool) ([]string, error) {
+func (s *Server) listUserPerms(account *model.FivenetAccounts, char *users.User, isSuperuser bool) ([]string, error) {
 	// Load permissions of user
 	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
 		UserId:   char.UserId,
@@ -757,11 +658,11 @@ func (s *Server) listUserPerms(account *model.FivenetAccounts, char *users.User,
 	}
 
 	ps := userPs.GuardNames()
-	if isSuperUser {
+	if isSuperuser {
 		ps = append(ps, auth.PermCanBeSuperKey)
 
 		if account.Superuser != nil && *account.Superuser {
-			ps = append(ps, auth.PermSuperUserKey)
+			ps = append(ps, auth.PermSuperuserKey)
 		}
 	}
 
@@ -774,7 +675,7 @@ func (s *Server) listUserPerms(account *model.FivenetAccounts, char *users.User,
 	return ps, nil
 }
 
-func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserModeRequest) (*pbauth.SetSuperUserModeResponse, error) {
+func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserModeRequest) (*pbauth.SetSuperuserModeResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, auth.ErrInvalidToken
@@ -806,7 +707,7 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 		return nil, errswrap.NewError(fmt.Errorf("failed to get char %d. %w", claims.CharID, err), errorsauth.ErrNoCharFound)
 	}
 
-	var jobProps *users.JobProps
+	var jobProps *jobs.JobProps
 	var ps []string
 
 	// Reset override job when switching off superuser mode
@@ -848,14 +749,14 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 		char.JobGrade = jobGrade
 		s.enricher.EnrichJobInfo(char)
 
-		ps = []string{auth.PermCanBeSuperKey, auth.PermSuperUserKey}
+		ps = []string{auth.PermCanBeSuperKey, auth.PermSuperuserKey}
 	}
 
 	if err := s.ui.SetUserInfo(ctx, claims.AccID, req.Superuser, userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
 		return nil, errswrap.NewError(fmt.Errorf("failed to set user info. %w", err), errorsauth.ErrGenericLogin)
 	}
 
-	userInfo.SuperUser = req.Superuser
+	userInfo.Superuser = req.Superuser
 
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
@@ -872,7 +773,7 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	return &pbauth.SetSuperUserModeResponse{
+	return &pbauth.SetSuperuserModeResponse{
 		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
 		JobProps:    jobProps,
 		Char:        char,
@@ -880,15 +781,15 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 	}, nil
 }
 
-func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Job, int32, *users.JobProps, error) {
+func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job, int32, *jobs.JobProps, error) {
 	tJobs := tables.Jobs().AS("job")
-	tJobGrades := tables.JobGrades()
+	tJobsGrades := tables.JobsGrades()
 
 	stmt := tJobs.
 		SELECT(
 			tJobs.Name,
 			tJobs.Label,
-			tJobGrades.Grade.AS("job_grade"),
+			tJobsGrades.Grade.AS("job_grade"),
 			tJobProps.Job,
 			tJobProps.UpdatedAt,
 			tJobProps.LivemapMarkerColor,
@@ -898,8 +799,8 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Jo
 		).
 		FROM(
 			tJobs.
-				INNER_JOIN(tJobGrades,
-					tJobGrades.JobName.EQ(tJobs.Name),
+				INNER_JOIN(tJobsGrades,
+					tJobsGrades.JobName.EQ(tJobs.Name),
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tJobs.Name)),
@@ -907,13 +808,13 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Jo
 		WHERE(
 			tJobs.Name.EQ(jet.String(jobName)),
 		).
-		ORDER_BY(tJobGrades.Grade.DESC()).
+		ORDER_BY(tJobsGrades.Grade.DESC()).
 		LIMIT(1)
 
 	var dest struct {
-		Job      *users.Job
+		Job      *jobs.Job
 		JobGrade int32 `alias:"job_grade"`
-		JobProps *users.JobProps
+		JobProps *jobs.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, 0, nil, err

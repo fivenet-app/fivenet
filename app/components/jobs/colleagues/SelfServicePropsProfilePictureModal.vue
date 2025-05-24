@@ -7,7 +7,7 @@ import { useAuthStore } from '~/stores/auth';
 import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
+import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizens/citizens';
 
 const { $grpc } = useNuxtApp();
 
@@ -50,7 +50,7 @@ async function setProfilePicture(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.citizenstore.citizenStore.setProfilePicture(req);
+        const call = $grpc.citizens.citizens.setProfilePicture(req);
         const { response } = await call;
 
         if (activeChar.value) {

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package services.settings;
+
+import "resources/common/database/database.proto";
+import "resources/filestore/file.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
+
+message ListFilesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional string path = 2 [(validate.rules).string.max_len = 128];
+}
+
+message ListFilesResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.filestore.FileInfo files = 2;
+}
+
+message UploadFileRequest {
+  string prefix = 1;
+  string name = 2;
+  resources.filestore.File file = 3 [(validate.rules).message.required = true];
+}
+
+message UploadFileResponse {
+  resources.filestore.FileInfo file = 1;
+}
+
+message DeleteFileRequest {
+  string path = 1;
+}
+
+message DeleteFileResponse {}
+
+service FilestoreService {
+  // @perm: Name=Superuser
+  rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
+  // @perm: Name=Superuser
+  rpc UploadFile(UploadFileRequest) returns (UploadFileResponse);
+  // @perm: Name=Superuser
+  rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse);
+}

@@ -58,7 +58,7 @@ func (s *Housekeeper) ConvertPhoneJobMsgToDispatch() error {
 }
 
 func (s *Housekeeper) convertGKSPhoneJobMsgToDispatch() error {
-	tUsers := tables.Users()
+	tUsers := tables.User()
 
 	stmt := tGksPhoneJMsg.
 		SELECT(
@@ -164,7 +164,7 @@ func (s *Housekeeper) closeGKSPhoneJobMsg(ctx context.Context, id int32) error {
 }
 
 func (s *Housekeeper) convertLBPhoneJobMsgToDispatch() error {
-	tUsers := tables.Users()
+	tUsers := tables.User()
 
 	stmt := tPhoneServicesChannels.
 		SELECT(

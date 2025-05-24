@@ -11,10 +11,10 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { CitizenLabel } from "../../resources/users/labels";
+import { Label } from "../../resources/users/labels";
 import { LawBook } from "../../resources/laws/laws";
 import { Category } from "../../resources/documents/category";
-import { Job } from "../../resources/users/jobs";
+import { Job } from "../../resources/jobs/jobs";
 import { UserShort } from "../../resources/users/users";
 /**
  * @generated from protobuf message services.completor.CompleteCitizensRequest
@@ -68,7 +68,7 @@ export interface CompleteJobsRequest {
  */
 export interface CompleteJobsResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.Job jobs = 1;
+     * @generated from protobuf field: repeated resources.jobs.Job jobs = 1;
      */
     jobs: Job[];
 }
@@ -118,9 +118,9 @@ export interface CompleteCitizenLabelsRequest {
  */
 export interface CompleteCitizenLabelsResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.CitizenLabel labels = 1;
+     * @generated from protobuf field: repeated resources.users.Label labels = 1;
      */
-    labels: CitizenLabel[];
+    labels: Label[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class CompleteCitizensRequest$Type extends MessageType<CompleteCitizensRequest> {
@@ -316,7 +316,7 @@ class CompleteJobsResponse$Type extends MessageType<CompleteJobsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.Job jobs */ 1:
+                case /* repeated resources.jobs.Job jobs */ 1:
                     message.jobs.push(Job.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -331,7 +331,7 @@ class CompleteJobsResponse$Type extends MessageType<CompleteJobsResponse> {
         return message;
     }
     internalBinaryWrite(message: CompleteJobsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.Job jobs = 1; */
+        /* repeated resources.jobs.Job jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
             Job.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -574,7 +574,7 @@ export const CompleteCitizenLabelsRequest = new CompleteCitizenLabelsRequest$Typ
 class CompleteCitizenLabelsResponse$Type extends MessageType<CompleteCitizenLabelsResponse> {
     constructor() {
         super("services.completor.CompleteCitizenLabelsResponse", [
-            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CitizenLabel }
+            { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
         ]);
     }
     create(value?: PartialMessage<CompleteCitizenLabelsResponse>): CompleteCitizenLabelsResponse {
@@ -589,8 +589,8 @@ class CompleteCitizenLabelsResponse$Type extends MessageType<CompleteCitizenLabe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.CitizenLabel labels */ 1:
-                    message.labels.push(CitizenLabel.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.users.Label labels */ 1:
+                    message.labels.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -604,9 +604,9 @@ class CompleteCitizenLabelsResponse$Type extends MessageType<CompleteCitizenLabe
         return message;
     }
     internalBinaryWrite(message: CompleteCitizenLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.CitizenLabel labels = 1; */
+        /* repeated resources.users.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
-            CitizenLabel.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

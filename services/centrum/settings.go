@@ -3,11 +3,10 @@ package centrum
 import (
 	"context"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 )
 
@@ -24,12 +23,12 @@ func (s *Server) GetSettings(ctx context.Context, req *pbcentrum.GetSettingsRequ
 func (s *Server) UpdateSettings(ctx context.Context, req *pbcentrum.UpdateSettingsRequest) (*pbcentrum.UpdateSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "UpdateSettings",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -38,7 +37,7 @@ func (s *Server) UpdateSettings(ctx context.Context, req *pbcentrum.UpdateSettin
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbcentrum.UpdateSettingsResponse{
 		Settings: settings,

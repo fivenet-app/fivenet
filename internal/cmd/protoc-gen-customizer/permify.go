@@ -31,16 +31,23 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 	p.ModuleBase.InitContext(c)
 	p.ctx = pgsgo.InitContext(c.Parameters())
 
+	serviceNameFn := func(s string) string {
+		_, after, _ := strings.Cut(s, ".")
+		return after
+	}
+
 	tpl := template.New("permify").Funcs(map[string]any{
-		"package": p.ctx.PackageName,
-		"name":    p.ctx.Name,
+		"package":     p.ctx.PackageName,
+		"name":        p.ctx.Name,
+		"serviceName": serviceNameFn,
 	})
 
 	p.tpl = template.Must(tpl.Parse(permifyTpl))
 
 	constTpl := template.New("permify_const").Funcs(map[string]any{
-		"package": p.ctx.PackageName,
-		"name":    p.ctx.Name,
+		"package":     p.ctx.PackageName,
+		"name":        p.ctx.Name,
+		"serviceName": serviceNameFn,
 	})
 
 	p.constTpl = template.Must(constTpl.Parse(permifyConstTpl))
@@ -95,7 +102,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 
 	for _, f := range fs {
 		for _, s := range f.Services() {
-			sName := string(s.Name())
+			sName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
 
 			data.PermissionServiceKeys = append(data.PermissionServiceKeys, sName)
 			p.Debugf("Service: %s (%s)", sName, data.PermissionServiceKeys)
@@ -131,7 +138,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 				}
 
 				if perm.Name != mName {
-					remapServiceName := string(s.Name())
+					remapServiceName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
 					if _, ok := data.PermissionRemap[remapServiceName]; !ok {
 						data.PermissionRemap[remapServiceName] = map[string]string{}
 					}
@@ -143,7 +150,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 					}
 				}
 
-				if perm.Name == "SuperUser" || perm.Name == "Any" {
+				if perm.Name == "Superuser" || perm.Name == "Any" {
 					continue
 				}
 
@@ -251,7 +258,7 @@ var PermsRemap = map[string]string{
     {{- range $service, $remap := . }}
 	// Service: {{ $service }}
 	{{ range $key, $target := $remap -}}
-	"{{ $service }}/{{ $key }}": "{{- if and (ne $target "SuperUser") (ne $target "Any") }}{{ $service }}/{{ end }}{{ $target }}",
+	"{{ $service }}/{{ $key }}": "{{- if and (ne $target "Superuser") (ne $target "Any") }}{{ $service }}/{{ end }}{{ $target }}",
     {{ end }}
     {{ end }}
 }
@@ -264,12 +271,12 @@ func init() {
 		// Service: {{ $sName }}
 		{{ range $perm := $service -}}
 		{
-			Category: permkeys.{{ $sName }}Perm,
-			Name: permkeys.{{ $sName }}{{ $perm.Name }}Perm,
+			Category: permkeys.{{ serviceName $sName }}Perm,
+			Name: permkeys.{{ serviceName $sName }}{{ $perm.Name }}Perm,
             Attrs: []perms.Attr{
             {{- range $attr := $perm.Attrs }}
                 {
-                    Key: permkeys.{{ $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
+                    Key: permkeys.{{ serviceName $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField,
                     Type: permissions.{{ $attr.Type }}AttributeType,
                     {{ with $attr.Valid -}}ValidValues: {{ $attr.Valid }},{{ end }}
                 },
@@ -297,14 +304,14 @@ import (
 {{ with .PermissionServiceKeys }}
 const (
 {{ range $key, $sName := . -}}
-    {{ $sName }}Perm perms.Category = "{{ $sName }}"
+    {{ serviceName $sName }}Perm perms.Category = "{{ $sName }}"
 {{ end }}
 
 {{ range $sName, $service := $.Permissions -}}
 	    {{- range $perm := $service }}
-	{{ $sName }}{{ $perm.Name }}Perm perms.Name = "{{ $perm.Name }}"
+	{{ serviceName $sName }}{{ $perm.Name }}Perm perms.Name = "{{ $perm.Name }}"
             {{- range $attr := $perm.Attrs }}
-    {{ $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField perms.Key = "{{ $attr.Key }}"
+    {{ serviceName $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField perms.Key = "{{ $attr.Key }}"
             {{- end }}
 		{{- end }}
 	{{- end }}

@@ -45,7 +45,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *pbnotificator.GetNot
 
 	countStmt := tNotifications.
 		SELECT(
-			jet.COUNT(tNotifications.ID).AS("datacount.totalcount"),
+			jet.COUNT(tNotifications.ID).AS("data_count.total"),
 		).
 		FROM(tNotifications).
 		WHERE(condition)
@@ -57,11 +57,11 @@ func (s *Server) GetNotifications(ctx context.Context, req *pbnotificator.GetNot
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.TotalCount)
+	pag, limit := req.Pagination.GetResponse(count.Total)
 	resp := &pbnotificator.GetNotificationsResponse{
 		Pagination: pag,
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 

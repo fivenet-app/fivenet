@@ -6,17 +6,16 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
 	permsmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -43,7 +42,7 @@ func (s *Server) ListEmails(ctx context.Context, req *pbmailer.ListEmailsRequest
 
 	condition := jet.Bool(true)
 
-	if !userInfo.SuperUser || (userInfo.SuperUser && req.All != nil && !*req.All) {
+	if !userInfo.Superuser || (userInfo.Superuser && req.All != nil && !*req.All) {
 		// Include deactivated e-mails
 		condition = condition.AND(jet.AND(
 			tEmails.DeletedAt.IS_NULL(),
@@ -68,7 +67,7 @@ func (s *Server) ListEmails(ctx context.Context, req *pbmailer.ListEmailsRequest
 
 	countStmt := tEmails.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tEmails.ID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tEmails.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tEmails.
@@ -90,11 +89,11 @@ func (s *Server) ListEmails(ctx context.Context, req *pbmailer.ListEmailsRequest
 		}
 	}
 
-	pag, _ := req.Pagination.GetResponseWithPageSize(count.TotalCount, listEmailsPageSize)
+	pag, _ := req.Pagination.GetResponseWithPageSize(count.Total, listEmailsPageSize)
 	resp := &pbmailer.ListEmailsResponse{
 		Pagination: pag,
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -135,7 +134,7 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 		baseCondition = baseCondition.AND(tEmails.Deactivated.IS_FALSE())
 	}
 
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		condition = condition.AND(jet.AND(
 			baseCondition,
 			jet.OR(
@@ -266,12 +265,12 @@ func (s *Server) getEmail(ctx context.Context, emailId uint64, withAccess bool, 
 func (s *Server) GetEmail(ctx context.Context, req *pbmailer.GetEmailRequest) (*pbmailer.GetEmailResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "GetEmail",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -288,7 +287,7 @@ func (s *Server) GetEmail(ctx context.Context, req *pbmailer.GetEmailRequest) (*
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 
 	return &pbmailer.GetEmailResponse{
 		Email: email,
@@ -322,12 +321,12 @@ func (s *Server) getEmailAccess(ctx context.Context, emailId uint64) (*mailer.Ac
 func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *pbmailer.CreateOrUpdateEmailRequest) (*pbmailer.CreateOrUpdateEmailResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateEmail",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -398,7 +397,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *pbmailer.CreateOr
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
-		if !userInfo.SuperUser && email.Deactivated {
+		if !userInfo.Superuser && email.Deactivated {
 			return nil, errorsmailer.ErrEmailDisabled
 		}
 
@@ -430,7 +429,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *pbmailer.CreateOr
 			)
 		}
 
-		if userInfo.SuperUser {
+		if userInfo.Superuser {
 			sets = append(sets,
 				tEmails.Deactivated.SET(jet.Bool(req.Email.Deactivated)),
 			)
@@ -509,7 +508,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *pbmailer.CreateOr
 		resp.Email.Id,
 	)
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return resp, nil
 }
@@ -571,12 +570,12 @@ func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email
 func (s *Server) DeleteEmail(ctx context.Context, req *pbmailer.DeleteEmailRequest) (*pbmailer.DeleteEmailResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "DeleteEmail",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -607,7 +606,7 @@ func (s *Server) DeleteEmail(ctx context.Context, req *pbmailer.DeleteEmailReque
 	)
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if email != nil && email.DeletedAt != nil && userInfo.SuperUser {
+	if email != nil && email.DeletedAt != nil && userInfo.Superuser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -625,7 +624,7 @@ func (s *Server) DeleteEmail(ctx context.Context, req *pbmailer.DeleteEmailReque
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbmailer.DeleteEmailResponse{}, nil
 }
@@ -633,7 +632,7 @@ func (s *Server) DeleteEmail(ctx context.Context, req *pbmailer.DeleteEmailReque
 func (s *Server) GetEmailProposals(ctx context.Context, req *pbmailer.GetEmailProposalsRequest) (*pbmailer.GetEmailProposalsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if req.UserId != nil && userInfo.SuperUser {
+	if req.UserId != nil && userInfo.Superuser {
 		userInfo.UserId = *req.UserId
 	}
 

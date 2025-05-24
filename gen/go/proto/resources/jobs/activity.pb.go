@@ -23,74 +23,74 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type JobsUserActivityType int32
+type ColleagueActivityType int32
 
 const (
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED  JobsUserActivityType = 0
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_HIRED        JobsUserActivityType = 1
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_FIRED        JobsUserActivityType = 2
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_PROMOTED     JobsUserActivityType = 3
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_DEMOTED      JobsUserActivityType = 4
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE JobsUserActivityType = 5
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_NOTE         JobsUserActivityType = 6
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_LABELS       JobsUserActivityType = 7
-	JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_NAME         JobsUserActivityType = 8
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED  ColleagueActivityType = 0
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_HIRED        ColleagueActivityType = 1
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_FIRED        ColleagueActivityType = 2
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_PROMOTED     ColleagueActivityType = 3
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_DEMOTED      ColleagueActivityType = 4
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE ColleagueActivityType = 5
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_NOTE         ColleagueActivityType = 6
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_LABELS       ColleagueActivityType = 7
+	ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_NAME         ColleagueActivityType = 8
 )
 
-// Enum value maps for JobsUserActivityType.
+// Enum value maps for ColleagueActivityType.
 var (
-	JobsUserActivityType_name = map[int32]string{
-		0: "JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED",
-		1: "JOBS_USER_ACTIVITY_TYPE_HIRED",
-		2: "JOBS_USER_ACTIVITY_TYPE_FIRED",
-		3: "JOBS_USER_ACTIVITY_TYPE_PROMOTED",
-		4: "JOBS_USER_ACTIVITY_TYPE_DEMOTED",
-		5: "JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE",
-		6: "JOBS_USER_ACTIVITY_TYPE_NOTE",
-		7: "JOBS_USER_ACTIVITY_TYPE_LABELS",
-		8: "JOBS_USER_ACTIVITY_TYPE_NAME",
+	ColleagueActivityType_name = map[int32]string{
+		0: "COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED",
+		1: "COLLEAGUE_ACTIVITY_TYPE_HIRED",
+		2: "COLLEAGUE_ACTIVITY_TYPE_FIRED",
+		3: "COLLEAGUE_ACTIVITY_TYPE_PROMOTED",
+		4: "COLLEAGUE_ACTIVITY_TYPE_DEMOTED",
+		5: "COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE",
+		6: "COLLEAGUE_ACTIVITY_TYPE_NOTE",
+		7: "COLLEAGUE_ACTIVITY_TYPE_LABELS",
+		8: "COLLEAGUE_ACTIVITY_TYPE_NAME",
 	}
-	JobsUserActivityType_value = map[string]int32{
-		"JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED":  0,
-		"JOBS_USER_ACTIVITY_TYPE_HIRED":        1,
-		"JOBS_USER_ACTIVITY_TYPE_FIRED":        2,
-		"JOBS_USER_ACTIVITY_TYPE_PROMOTED":     3,
-		"JOBS_USER_ACTIVITY_TYPE_DEMOTED":      4,
-		"JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE": 5,
-		"JOBS_USER_ACTIVITY_TYPE_NOTE":         6,
-		"JOBS_USER_ACTIVITY_TYPE_LABELS":       7,
-		"JOBS_USER_ACTIVITY_TYPE_NAME":         8,
+	ColleagueActivityType_value = map[string]int32{
+		"COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED":  0,
+		"COLLEAGUE_ACTIVITY_TYPE_HIRED":        1,
+		"COLLEAGUE_ACTIVITY_TYPE_FIRED":        2,
+		"COLLEAGUE_ACTIVITY_TYPE_PROMOTED":     3,
+		"COLLEAGUE_ACTIVITY_TYPE_DEMOTED":      4,
+		"COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE": 5,
+		"COLLEAGUE_ACTIVITY_TYPE_NOTE":         6,
+		"COLLEAGUE_ACTIVITY_TYPE_LABELS":       7,
+		"COLLEAGUE_ACTIVITY_TYPE_NAME":         8,
 	}
 )
 
-func (x JobsUserActivityType) Enum() *JobsUserActivityType {
-	p := new(JobsUserActivityType)
+func (x ColleagueActivityType) Enum() *ColleagueActivityType {
+	p := new(ColleagueActivityType)
 	*p = x
 	return p
 }
 
-func (x JobsUserActivityType) String() string {
+func (x ColleagueActivityType) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (JobsUserActivityType) Descriptor() protoreflect.EnumDescriptor {
+func (ColleagueActivityType) Descriptor() protoreflect.EnumDescriptor {
 	return file_resources_jobs_activity_proto_enumTypes[0].Descriptor()
 }
 
-func (JobsUserActivityType) Type() protoreflect.EnumType {
+func (ColleagueActivityType) Type() protoreflect.EnumType {
 	return &file_resources_jobs_activity_proto_enumTypes[0]
 }
 
-func (x JobsUserActivityType) Number() protoreflect.EnumNumber {
+func (x ColleagueActivityType) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use JobsUserActivityType.Descriptor instead.
-func (JobsUserActivityType) EnumDescriptor() ([]byte, []int) {
+// Deprecated: Use ColleagueActivityType.Descriptor instead.
+func (ColleagueActivityType) EnumDescriptor() ([]byte, []int) {
 	return file_resources_jobs_activity_proto_rawDescGZIP(), []int{0}
 }
 
-type JobsUserActivity struct {
+type ColleagueActivity struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
 	Id           uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
 	CreatedAt    *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
@@ -99,28 +99,28 @@ type JobsUserActivity struct {
 	SourceUser   *Colleague             `protobuf:"bytes,6,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty" alias:"source_user"` // @gotags: alias:"source_user"
 	TargetUserId int32                  `protobuf:"varint,7,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
 	TargetUser   *Colleague             `protobuf:"bytes,8,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"` // @gotags: alias:"target_user"
-	ActivityType JobsUserActivityType   `protobuf:"varint,9,opt,name=activity_type,json=activityType,proto3,enum=resources.jobs.JobsUserActivityType" json:"activity_type,omitempty"`
+	ActivityType ColleagueActivityType  `protobuf:"varint,9,opt,name=activity_type,json=activityType,proto3,enum=resources.jobs.ColleagueActivityType" json:"activity_type,omitempty"`
 	// @sanitize
-	Reason        string                `protobuf:"bytes,10,opt,name=reason,proto3" json:"reason,omitempty"`
-	Data          *JobsUserActivityData `protobuf:"bytes,11,opt,name=data,proto3" json:"data,omitempty"`
+	Reason        string                 `protobuf:"bytes,10,opt,name=reason,proto3" json:"reason,omitempty"`
+	Data          *ColleagueActivityData `protobuf:"bytes,11,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *JobsUserActivity) Reset() {
-	*x = JobsUserActivity{}
+func (x *ColleagueActivity) Reset() {
+	*x = ColleagueActivity{}
 	mi := &file_resources_jobs_activity_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *JobsUserActivity) String() string {
+func (x *ColleagueActivity) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*JobsUserActivity) ProtoMessage() {}
+func (*ColleagueActivity) ProtoMessage() {}
 
-func (x *JobsUserActivity) ProtoReflect() protoreflect.Message {
+func (x *ColleagueActivity) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_jobs_activity_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -132,75 +132,75 @@ func (x *JobsUserActivity) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobsUserActivity.ProtoReflect.Descriptor instead.
-func (*JobsUserActivity) Descriptor() ([]byte, []int) {
+// Deprecated: Use ColleagueActivity.ProtoReflect.Descriptor instead.
+func (*ColleagueActivity) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_activity_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *JobsUserActivity) GetId() uint64 {
+func (x *ColleagueActivity) GetId() uint64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *JobsUserActivity) GetCreatedAt() *timestamp.Timestamp {
+func (x *ColleagueActivity) GetCreatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *JobsUserActivity) GetJob() string {
+func (x *ColleagueActivity) GetJob() string {
 	if x != nil {
 		return x.Job
 	}
 	return ""
 }
 
-func (x *JobsUserActivity) GetSourceUserId() int32 {
+func (x *ColleagueActivity) GetSourceUserId() int32 {
 	if x != nil && x.SourceUserId != nil {
 		return *x.SourceUserId
 	}
 	return 0
 }
 
-func (x *JobsUserActivity) GetSourceUser() *Colleague {
+func (x *ColleagueActivity) GetSourceUser() *Colleague {
 	if x != nil {
 		return x.SourceUser
 	}
 	return nil
 }
 
-func (x *JobsUserActivity) GetTargetUserId() int32 {
+func (x *ColleagueActivity) GetTargetUserId() int32 {
 	if x != nil {
 		return x.TargetUserId
 	}
 	return 0
 }
 
-func (x *JobsUserActivity) GetTargetUser() *Colleague {
+func (x *ColleagueActivity) GetTargetUser() *Colleague {
 	if x != nil {
 		return x.TargetUser
 	}
 	return nil
 }
 
-func (x *JobsUserActivity) GetActivityType() JobsUserActivityType {
+func (x *ColleagueActivity) GetActivityType() ColleagueActivityType {
 	if x != nil {
 		return x.ActivityType
 	}
-	return JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED
+	return ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED
 }
 
-func (x *JobsUserActivity) GetReason() string {
+func (x *ColleagueActivity) GetReason() string {
 	if x != nil {
 		return x.Reason
 	}
 	return ""
 }
 
-func (x *JobsUserActivity) GetData() *JobsUserActivityData {
+func (x *ColleagueActivity) GetData() *ColleagueActivityData {
 	if x != nil {
 		return x.Data
 	}
@@ -208,33 +208,33 @@ func (x *JobsUserActivity) GetData() *JobsUserActivityData {
 }
 
 // @dbscanner: json
-type JobsUserActivityData struct {
+type ColleagueActivityData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
 	//
-	//	*JobsUserActivityData_AbsenceDate
-	//	*JobsUserActivityData_GradeChange
-	//	*JobsUserActivityData_LabelsChange
-	//	*JobsUserActivityData_NameChange
-	Data          isJobsUserActivityData_Data `protobuf_oneof:"data"`
+	//	*ColleagueActivityData_AbsenceDate
+	//	*ColleagueActivityData_GradeChange
+	//	*ColleagueActivityData_LabelsChange
+	//	*ColleagueActivityData_NameChange
+	Data          isColleagueActivityData_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *JobsUserActivityData) Reset() {
-	*x = JobsUserActivityData{}
+func (x *ColleagueActivityData) Reset() {
+	*x = ColleagueActivityData{}
 	mi := &file_resources_jobs_activity_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *JobsUserActivityData) String() string {
+func (x *ColleagueActivityData) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*JobsUserActivityData) ProtoMessage() {}
+func (*ColleagueActivityData) ProtoMessage() {}
 
-func (x *JobsUserActivityData) ProtoReflect() protoreflect.Message {
+func (x *ColleagueActivityData) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_jobs_activity_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -246,83 +246,83 @@ func (x *JobsUserActivityData) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use JobsUserActivityData.ProtoReflect.Descriptor instead.
-func (*JobsUserActivityData) Descriptor() ([]byte, []int) {
+// Deprecated: Use ColleagueActivityData.ProtoReflect.Descriptor instead.
+func (*ColleagueActivityData) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_activity_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *JobsUserActivityData) GetData() isJobsUserActivityData_Data {
+func (x *ColleagueActivityData) GetData() isColleagueActivityData_Data {
 	if x != nil {
 		return x.Data
 	}
 	return nil
 }
 
-func (x *JobsUserActivityData) GetAbsenceDate() *ColleagueAbsenceDate {
+func (x *ColleagueActivityData) GetAbsenceDate() *AbsenceDateChange {
 	if x != nil {
-		if x, ok := x.Data.(*JobsUserActivityData_AbsenceDate); ok {
+		if x, ok := x.Data.(*ColleagueActivityData_AbsenceDate); ok {
 			return x.AbsenceDate
 		}
 	}
 	return nil
 }
 
-func (x *JobsUserActivityData) GetGradeChange() *ColleagueGradeChange {
+func (x *ColleagueActivityData) GetGradeChange() *GradeChange {
 	if x != nil {
-		if x, ok := x.Data.(*JobsUserActivityData_GradeChange); ok {
+		if x, ok := x.Data.(*ColleagueActivityData_GradeChange); ok {
 			return x.GradeChange
 		}
 	}
 	return nil
 }
 
-func (x *JobsUserActivityData) GetLabelsChange() *ColleagueLabelsChange {
+func (x *ColleagueActivityData) GetLabelsChange() *LabelsChange {
 	if x != nil {
-		if x, ok := x.Data.(*JobsUserActivityData_LabelsChange); ok {
+		if x, ok := x.Data.(*ColleagueActivityData_LabelsChange); ok {
 			return x.LabelsChange
 		}
 	}
 	return nil
 }
 
-func (x *JobsUserActivityData) GetNameChange() *ColleagueNameChange {
+func (x *ColleagueActivityData) GetNameChange() *NameChange {
 	if x != nil {
-		if x, ok := x.Data.(*JobsUserActivityData_NameChange); ok {
+		if x, ok := x.Data.(*ColleagueActivityData_NameChange); ok {
 			return x.NameChange
 		}
 	}
 	return nil
 }
 
-type isJobsUserActivityData_Data interface {
-	isJobsUserActivityData_Data()
+type isColleagueActivityData_Data interface {
+	isColleagueActivityData_Data()
 }
 
-type JobsUserActivityData_AbsenceDate struct {
-	AbsenceDate *ColleagueAbsenceDate `protobuf:"bytes,1,opt,name=absence_date,json=absenceDate,proto3,oneof"`
+type ColleagueActivityData_AbsenceDate struct {
+	AbsenceDate *AbsenceDateChange `protobuf:"bytes,1,opt,name=absence_date,json=absenceDate,proto3,oneof"`
 }
 
-type JobsUserActivityData_GradeChange struct {
-	GradeChange *ColleagueGradeChange `protobuf:"bytes,2,opt,name=grade_change,json=gradeChange,proto3,oneof"`
+type ColleagueActivityData_GradeChange struct {
+	GradeChange *GradeChange `protobuf:"bytes,2,opt,name=grade_change,json=gradeChange,proto3,oneof"`
 }
 
-type JobsUserActivityData_LabelsChange struct {
-	LabelsChange *ColleagueLabelsChange `protobuf:"bytes,3,opt,name=labels_change,json=labelsChange,proto3,oneof"`
+type ColleagueActivityData_LabelsChange struct {
+	LabelsChange *LabelsChange `protobuf:"bytes,3,opt,name=labels_change,json=labelsChange,proto3,oneof"`
 }
 
-type JobsUserActivityData_NameChange struct {
-	NameChange *ColleagueNameChange `protobuf:"bytes,4,opt,name=name_change,json=nameChange,proto3,oneof"`
+type ColleagueActivityData_NameChange struct {
+	NameChange *NameChange `protobuf:"bytes,4,opt,name=name_change,json=nameChange,proto3,oneof"`
 }
 
-func (*JobsUserActivityData_AbsenceDate) isJobsUserActivityData_Data() {}
+func (*ColleagueActivityData_AbsenceDate) isColleagueActivityData_Data() {}
 
-func (*JobsUserActivityData_GradeChange) isJobsUserActivityData_Data() {}
+func (*ColleagueActivityData_GradeChange) isColleagueActivityData_Data() {}
 
-func (*JobsUserActivityData_LabelsChange) isJobsUserActivityData_Data() {}
+func (*ColleagueActivityData_LabelsChange) isColleagueActivityData_Data() {}
 
-func (*JobsUserActivityData_NameChange) isJobsUserActivityData_Data() {}
+func (*ColleagueActivityData_NameChange) isColleagueActivityData_Data() {}
 
-type ColleagueAbsenceDate struct {
+type AbsenceDateChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AbsenceBegin  *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=absence_begin,json=absenceBegin,proto3" json:"absence_begin,omitempty"`
 	AbsenceEnd    *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=absence_end,json=absenceEnd,proto3" json:"absence_end,omitempty"`
@@ -330,20 +330,20 @@ type ColleagueAbsenceDate struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ColleagueAbsenceDate) Reset() {
-	*x = ColleagueAbsenceDate{}
+func (x *AbsenceDateChange) Reset() {
+	*x = AbsenceDateChange{}
 	mi := &file_resources_jobs_activity_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ColleagueAbsenceDate) String() string {
+func (x *AbsenceDateChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ColleagueAbsenceDate) ProtoMessage() {}
+func (*AbsenceDateChange) ProtoMessage() {}
 
-func (x *ColleagueAbsenceDate) ProtoReflect() protoreflect.Message {
+func (x *AbsenceDateChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_jobs_activity_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -355,26 +355,26 @@ func (x *ColleagueAbsenceDate) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ColleagueAbsenceDate.ProtoReflect.Descriptor instead.
-func (*ColleagueAbsenceDate) Descriptor() ([]byte, []int) {
+// Deprecated: Use AbsenceDateChange.ProtoReflect.Descriptor instead.
+func (*AbsenceDateChange) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_activity_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ColleagueAbsenceDate) GetAbsenceBegin() *timestamp.Timestamp {
+func (x *AbsenceDateChange) GetAbsenceBegin() *timestamp.Timestamp {
 	if x != nil {
 		return x.AbsenceBegin
 	}
 	return nil
 }
 
-func (x *ColleagueAbsenceDate) GetAbsenceEnd() *timestamp.Timestamp {
+func (x *AbsenceDateChange) GetAbsenceEnd() *timestamp.Timestamp {
 	if x != nil {
 		return x.AbsenceEnd
 	}
 	return nil
 }
 
-type ColleagueGradeChange struct {
+type GradeChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Grade         int32                  `protobuf:"varint,1,opt,name=grade,proto3" json:"grade,omitempty"`
 	GradeLabel    string                 `protobuf:"bytes,2,opt,name=grade_label,json=gradeLabel,proto3" json:"grade_label,omitempty"`
@@ -382,20 +382,20 @@ type ColleagueGradeChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ColleagueGradeChange) Reset() {
-	*x = ColleagueGradeChange{}
+func (x *GradeChange) Reset() {
+	*x = GradeChange{}
 	mi := &file_resources_jobs_activity_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ColleagueGradeChange) String() string {
+func (x *GradeChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ColleagueGradeChange) ProtoMessage() {}
+func (*GradeChange) ProtoMessage() {}
 
-func (x *ColleagueGradeChange) ProtoReflect() protoreflect.Message {
+func (x *GradeChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_jobs_activity_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -407,26 +407,26 @@ func (x *ColleagueGradeChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ColleagueGradeChange.ProtoReflect.Descriptor instead.
-func (*ColleagueGradeChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use GradeChange.ProtoReflect.Descriptor instead.
+func (*GradeChange) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_activity_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ColleagueGradeChange) GetGrade() int32 {
+func (x *GradeChange) GetGrade() int32 {
 	if x != nil {
 		return x.Grade
 	}
 	return 0
 }
 
-func (x *ColleagueGradeChange) GetGradeLabel() string {
+func (x *GradeChange) GetGradeLabel() string {
 	if x != nil {
 		return x.GradeLabel
 	}
 	return ""
 }
 
-type ColleagueLabelsChange struct {
+type LabelsChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Added         []*Label               `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
 	Removed       []*Label               `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
@@ -434,20 +434,20 @@ type ColleagueLabelsChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ColleagueLabelsChange) Reset() {
-	*x = ColleagueLabelsChange{}
+func (x *LabelsChange) Reset() {
+	*x = LabelsChange{}
 	mi := &file_resources_jobs_activity_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ColleagueLabelsChange) String() string {
+func (x *LabelsChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ColleagueLabelsChange) ProtoMessage() {}
+func (*LabelsChange) ProtoMessage() {}
 
-func (x *ColleagueLabelsChange) ProtoReflect() protoreflect.Message {
+func (x *LabelsChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_jobs_activity_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -459,26 +459,26 @@ func (x *ColleagueLabelsChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ColleagueLabelsChange.ProtoReflect.Descriptor instead.
-func (*ColleagueLabelsChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use LabelsChange.ProtoReflect.Descriptor instead.
+func (*LabelsChange) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_activity_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ColleagueLabelsChange) GetAdded() []*Label {
+func (x *LabelsChange) GetAdded() []*Label {
 	if x != nil {
 		return x.Added
 	}
 	return nil
 }
 
-func (x *ColleagueLabelsChange) GetRemoved() []*Label {
+func (x *LabelsChange) GetRemoved() []*Label {
 	if x != nil {
 		return x.Removed
 	}
 	return nil
 }
 
-type ColleagueNameChange struct {
+type NameChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Prefix        *string                `protobuf:"bytes,1,opt,name=prefix,proto3,oneof" json:"prefix,omitempty"`
 	Suffix        *string                `protobuf:"bytes,2,opt,name=suffix,proto3,oneof" json:"suffix,omitempty"`
@@ -486,20 +486,20 @@ type ColleagueNameChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ColleagueNameChange) Reset() {
-	*x = ColleagueNameChange{}
+func (x *NameChange) Reset() {
+	*x = NameChange{}
 	mi := &file_resources_jobs_activity_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ColleagueNameChange) String() string {
+func (x *NameChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ColleagueNameChange) ProtoMessage() {}
+func (*NameChange) ProtoMessage() {}
 
-func (x *ColleagueNameChange) ProtoReflect() protoreflect.Message {
+func (x *NameChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_jobs_activity_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -511,19 +511,19 @@ func (x *ColleagueNameChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ColleagueNameChange.ProtoReflect.Descriptor instead.
-func (*ColleagueNameChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use NameChange.ProtoReflect.Descriptor instead.
+func (*NameChange) Descriptor() ([]byte, []int) {
 	return file_resources_jobs_activity_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ColleagueNameChange) GetPrefix() string {
+func (x *NameChange) GetPrefix() string {
 	if x != nil && x.Prefix != nil {
 		return *x.Prefix
 	}
 	return ""
 }
 
-func (x *ColleagueNameChange) GetSuffix() string {
+func (x *NameChange) GetSuffix() string {
 	if x != nil && x.Suffix != nil {
 		return *x.Suffix
 	}
@@ -534,8 +534,8 @@ var File_resources_jobs_activity_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_activity_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/jobs/activity.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xba\x04\n" +
-	"\x10JobsUserActivity\x12\x0e\n" +
+	"\x1dresources/jobs/activity.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xbd\x04\n" +
+	"\x11ColleagueActivity\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x19\n" +
@@ -545,47 +545,48 @@ const file_resources_jobs_activity_proto_rawDesc = "" +
 	"sourceUser\x88\x01\x01\x12-\n" +
 	"\x0etarget_user_id\x18\a \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\ftargetUserId\x12:\n" +
 	"\vtarget_user\x18\b \x01(\v2\x19.resources.jobs.ColleagueR\n" +
-	"targetUser\x12I\n" +
-	"\ractivity_type\x18\t \x01(\x0e2$.resources.jobs.JobsUserActivityTypeR\factivityType\x12 \n" +
+	"targetUser\x12J\n" +
+	"\ractivity_type\x18\t \x01(\x0e2%.resources.jobs.ColleagueActivityTypeR\factivityType\x12 \n" +
 	"\x06reason\x18\n" +
-	" \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\x06reason\x128\n" +
-	"\x04data\x18\v \x01(\v2$.resources.jobs.JobsUserActivityDataR\x04dataB\r\n" +
+	" \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\x06reason\x129\n" +
+	"\x04data\x18\v \x01(\v2%.resources.jobs.ColleagueActivityDataR\x04dataB\r\n" +
 	"\v_created_atB\x11\n" +
 	"\x0f_source_user_idB\x0e\n" +
-	"\f_source_user\"\xcf\x02\n" +
-	"\x14JobsUserActivityData\x12I\n" +
-	"\fabsence_date\x18\x01 \x01(\v2$.resources.jobs.ColleagueAbsenceDateH\x00R\vabsenceDate\x12I\n" +
-	"\fgrade_change\x18\x02 \x01(\v2$.resources.jobs.ColleagueGradeChangeH\x00R\vgradeChange\x12L\n" +
-	"\rlabels_change\x18\x03 \x01(\v2%.resources.jobs.ColleagueLabelsChangeH\x00R\flabelsChange\x12F\n" +
-	"\vname_change\x18\x04 \x01(\v2#.resources.jobs.ColleagueNameChangeH\x00R\n" +
+	"\f_source_user\"\xb2\x02\n" +
+	"\x15ColleagueActivityData\x12F\n" +
+	"\fabsence_date\x18\x01 \x01(\v2!.resources.jobs.AbsenceDateChangeH\x00R\vabsenceDate\x12@\n" +
+	"\fgrade_change\x18\x02 \x01(\v2\x1b.resources.jobs.GradeChangeH\x00R\vgradeChange\x12C\n" +
+	"\rlabels_change\x18\x03 \x01(\v2\x1c.resources.jobs.LabelsChangeH\x00R\flabelsChange\x12=\n" +
+	"\vname_change\x18\x04 \x01(\v2\x1a.resources.jobs.NameChangeH\x00R\n" +
 	"nameChangeB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"\x9c\x01\n" +
-	"\x14ColleagueAbsenceDate\x12C\n" +
+	"\x04data\x12\x03\xf8B\x01\"\x99\x01\n" +
+	"\x11AbsenceDateChange\x12C\n" +
 	"\rabsence_begin\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\fabsenceBegin\x12?\n" +
 	"\vabsence_end\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\n" +
-	"absenceEnd\"M\n" +
-	"\x14ColleagueGradeChange\x12\x14\n" +
+	"absenceEnd\"D\n" +
+	"\vGradeChange\x12\x14\n" +
 	"\x05grade\x18\x01 \x01(\x05R\x05grade\x12\x1f\n" +
 	"\vgrade_label\x18\x02 \x01(\tR\n" +
-	"gradeLabel\"u\n" +
-	"\x15ColleagueLabelsChange\x12+\n" +
+	"gradeLabel\"l\n" +
+	"\fLabelsChange\x12+\n" +
 	"\x05added\x18\x01 \x03(\v2\x15.resources.jobs.LabelR\x05added\x12/\n" +
-	"\aremoved\x18\x02 \x03(\v2\x15.resources.jobs.LabelR\aremoved\"e\n" +
-	"\x13ColleagueNameChange\x12\x1b\n" +
+	"\aremoved\x18\x02 \x03(\v2\x15.resources.jobs.LabelR\aremoved\"\\\n" +
+	"\n" +
+	"NameChange\x12\x1b\n" +
 	"\x06prefix\x18\x01 \x01(\tH\x00R\x06prefix\x88\x01\x01\x12\x1b\n" +
 	"\x06suffix\x18\x02 \x01(\tH\x01R\x06suffix\x88\x01\x01B\t\n" +
 	"\a_prefixB\t\n" +
-	"\a_suffix*\xe2\x02\n" +
-	"\x14JobsUserActivityType\x12'\n" +
-	"#JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12!\n" +
-	"\x1dJOBS_USER_ACTIVITY_TYPE_HIRED\x10\x01\x12!\n" +
-	"\x1dJOBS_USER_ACTIVITY_TYPE_FIRED\x10\x02\x12$\n" +
-	" JOBS_USER_ACTIVITY_TYPE_PROMOTED\x10\x03\x12#\n" +
-	"\x1fJOBS_USER_ACTIVITY_TYPE_DEMOTED\x10\x04\x12(\n" +
-	"$JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE\x10\x05\x12 \n" +
-	"\x1cJOBS_USER_ACTIVITY_TYPE_NOTE\x10\x06\x12\"\n" +
-	"\x1eJOBS_USER_ACTIVITY_TYPE_LABELS\x10\a\x12 \n" +
-	"\x1cJOBS_USER_ACTIVITY_TYPE_NAME\x10\bBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\a_suffix*\xe3\x02\n" +
+	"\x15ColleagueActivityType\x12'\n" +
+	"#COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12!\n" +
+	"\x1dCOLLEAGUE_ACTIVITY_TYPE_HIRED\x10\x01\x12!\n" +
+	"\x1dCOLLEAGUE_ACTIVITY_TYPE_FIRED\x10\x02\x12$\n" +
+	" COLLEAGUE_ACTIVITY_TYPE_PROMOTED\x10\x03\x12#\n" +
+	"\x1fCOLLEAGUE_ACTIVITY_TYPE_DEMOTED\x10\x04\x12(\n" +
+	"$COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE\x10\x05\x12 \n" +
+	"\x1cCOLLEAGUE_ACTIVITY_TYPE_NOTE\x10\x06\x12\"\n" +
+	"\x1eCOLLEAGUE_ACTIVITY_TYPE_LABELS\x10\a\x12 \n" +
+	"\x1cCOLLEAGUE_ACTIVITY_TYPE_NAME\x10\bBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_activity_proto_rawDescOnce sync.Once
@@ -602,31 +603,31 @@ func file_resources_jobs_activity_proto_rawDescGZIP() []byte {
 var file_resources_jobs_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_jobs_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_resources_jobs_activity_proto_goTypes = []any{
-	(JobsUserActivityType)(0),     // 0: resources.jobs.JobsUserActivityType
-	(*JobsUserActivity)(nil),      // 1: resources.jobs.JobsUserActivity
-	(*JobsUserActivityData)(nil),  // 2: resources.jobs.JobsUserActivityData
-	(*ColleagueAbsenceDate)(nil),  // 3: resources.jobs.ColleagueAbsenceDate
-	(*ColleagueGradeChange)(nil),  // 4: resources.jobs.ColleagueGradeChange
-	(*ColleagueLabelsChange)(nil), // 5: resources.jobs.ColleagueLabelsChange
-	(*ColleagueNameChange)(nil),   // 6: resources.jobs.ColleagueNameChange
+	(ColleagueActivityType)(0),    // 0: resources.jobs.ColleagueActivityType
+	(*ColleagueActivity)(nil),     // 1: resources.jobs.ColleagueActivity
+	(*ColleagueActivityData)(nil), // 2: resources.jobs.ColleagueActivityData
+	(*AbsenceDateChange)(nil),     // 3: resources.jobs.AbsenceDateChange
+	(*GradeChange)(nil),           // 4: resources.jobs.GradeChange
+	(*LabelsChange)(nil),          // 5: resources.jobs.LabelsChange
+	(*NameChange)(nil),            // 6: resources.jobs.NameChange
 	(*timestamp.Timestamp)(nil),   // 7: resources.timestamp.Timestamp
 	(*Colleague)(nil),             // 8: resources.jobs.Colleague
 	(*Label)(nil),                 // 9: resources.jobs.Label
 }
 var file_resources_jobs_activity_proto_depIdxs = []int32{
-	7,  // 0: resources.jobs.JobsUserActivity.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 1: resources.jobs.JobsUserActivity.source_user:type_name -> resources.jobs.Colleague
-	8,  // 2: resources.jobs.JobsUserActivity.target_user:type_name -> resources.jobs.Colleague
-	0,  // 3: resources.jobs.JobsUserActivity.activity_type:type_name -> resources.jobs.JobsUserActivityType
-	2,  // 4: resources.jobs.JobsUserActivity.data:type_name -> resources.jobs.JobsUserActivityData
-	3,  // 5: resources.jobs.JobsUserActivityData.absence_date:type_name -> resources.jobs.ColleagueAbsenceDate
-	4,  // 6: resources.jobs.JobsUserActivityData.grade_change:type_name -> resources.jobs.ColleagueGradeChange
-	5,  // 7: resources.jobs.JobsUserActivityData.labels_change:type_name -> resources.jobs.ColleagueLabelsChange
-	6,  // 8: resources.jobs.JobsUserActivityData.name_change:type_name -> resources.jobs.ColleagueNameChange
-	7,  // 9: resources.jobs.ColleagueAbsenceDate.absence_begin:type_name -> resources.timestamp.Timestamp
-	7,  // 10: resources.jobs.ColleagueAbsenceDate.absence_end:type_name -> resources.timestamp.Timestamp
-	9,  // 11: resources.jobs.ColleagueLabelsChange.added:type_name -> resources.jobs.Label
-	9,  // 12: resources.jobs.ColleagueLabelsChange.removed:type_name -> resources.jobs.Label
+	7,  // 0: resources.jobs.ColleagueActivity.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 1: resources.jobs.ColleagueActivity.source_user:type_name -> resources.jobs.Colleague
+	8,  // 2: resources.jobs.ColleagueActivity.target_user:type_name -> resources.jobs.Colleague
+	0,  // 3: resources.jobs.ColleagueActivity.activity_type:type_name -> resources.jobs.ColleagueActivityType
+	2,  // 4: resources.jobs.ColleagueActivity.data:type_name -> resources.jobs.ColleagueActivityData
+	3,  // 5: resources.jobs.ColleagueActivityData.absence_date:type_name -> resources.jobs.AbsenceDateChange
+	4,  // 6: resources.jobs.ColleagueActivityData.grade_change:type_name -> resources.jobs.GradeChange
+	5,  // 7: resources.jobs.ColleagueActivityData.labels_change:type_name -> resources.jobs.LabelsChange
+	6,  // 8: resources.jobs.ColleagueActivityData.name_change:type_name -> resources.jobs.NameChange
+	7,  // 9: resources.jobs.AbsenceDateChange.absence_begin:type_name -> resources.timestamp.Timestamp
+	7,  // 10: resources.jobs.AbsenceDateChange.absence_end:type_name -> resources.timestamp.Timestamp
+	9,  // 11: resources.jobs.LabelsChange.added:type_name -> resources.jobs.Label
+	9,  // 12: resources.jobs.LabelsChange.removed:type_name -> resources.jobs.Label
 	13, // [13:13] is the sub-list for method output_type
 	13, // [13:13] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
@@ -643,10 +644,10 @@ func file_resources_jobs_activity_proto_init() {
 	file_resources_jobs_labels_proto_init()
 	file_resources_jobs_activity_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_jobs_activity_proto_msgTypes[1].OneofWrappers = []any{
-		(*JobsUserActivityData_AbsenceDate)(nil),
-		(*JobsUserActivityData_GradeChange)(nil),
-		(*JobsUserActivityData_LabelsChange)(nil),
-		(*JobsUserActivityData_NameChange)(nil),
+		(*ColleagueActivityData_AbsenceDate)(nil),
+		(*ColleagueActivityData_GradeChange)(nil),
+		(*ColleagueActivityData_LabelsChange)(nil),
+		(*ColleagueActivityData_NameChange)(nil),
 	}
 	file_resources_jobs_activity_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}

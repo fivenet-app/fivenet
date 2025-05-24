@@ -7,11 +7,11 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;users";
 
 // @dbscanner: json
-message CitizenLabels {
-  repeated CitizenLabel list = 1 [(validate.rules).repeated.max_items = 10];
+message Labels {
+  repeated Label list = 1 [(validate.rules).repeated.max_items = 10];
 }
 
-message CitizenLabel {
+message Label {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional string job = 2 [(validate.rules).string.max_len = 20];
   string name = 3 [(validate.rules).string.max_len = 48];

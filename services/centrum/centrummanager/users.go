@@ -14,7 +14,7 @@ import (
 )
 
 func (s *Manager) RetrieveUserById(ctx context.Context, u int32) (*users.User, error) {
-	tUsers := tables.Users().AS("user")
+	tUsers := tables.User().AS("user")
 
 	stmt := tUsers.
 		SELECT(
@@ -26,10 +26,10 @@ func (s *Manager) RetrieveUserById(ctx context.Context, u int32) (*users.User, e
 			tUsers.JobGrade,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 			tUserProps.Avatar.AS("user.avatar"),
 		).
 		FROM(
@@ -37,9 +37,9 @@ func (s *Manager) RetrieveUserById(ctx context.Context, u int32) (*users.User, e
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUsers.ID),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(
@@ -82,7 +82,7 @@ func (s *Manager) retrieveColleagueById(ctx context.Context, u ...int32) ([]*job
 		userIds[i] = jet.Int32(u[i])
 	}
 
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
 	stmt := tUsers.
 		SELECT(
@@ -94,10 +94,10 @@ func (s *Manager) retrieveColleagueById(ctx context.Context, u ...int32) ([]*job
 			tUsers.JobGrade,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
@@ -105,9 +105,9 @@ func (s *Manager) retrieveColleagueById(ctx context.Context, u ...int32) ([]*job
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUsers.ID),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(

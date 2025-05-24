@@ -62,7 +62,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	if s.cfg.Tables.UserLicenses.Enabled {
+	if s.cfg.Tables.CitizensLicenses.Enabled {
 		// Retrieve user' licenses
 		errs := multierr.Combine()
 		var err error
@@ -143,7 +143,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 }
 
 func (s *usersSync) retrieveLicenses(ctx context.Context, userId int32, identifier string) ([]*users.License, error) {
-	sQuery := s.cfg.Tables.UserLicenses
+	sQuery := s.cfg.Tables.CitizensLicenses
 	query := prepareStringQuery(sQuery, s.state, 0, 100)
 
 	args := []any{}
@@ -173,7 +173,7 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 		return err
 	}
 
-	if s.cfg.Tables.UserLicenses.Enabled {
+	if s.cfg.Tables.CitizensLicenses.Enabled {
 		// Retrieve user's licenses
 		identifier := ""
 		if user.Identifier != nil {

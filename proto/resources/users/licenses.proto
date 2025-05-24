@@ -14,7 +14,7 @@ message License {
   string label = 2 [(validate.rules).string.max_len = 60];
 }
 
-message UserLicenses {
+message CitizensLicenses {
   int32 user_id = 1 [(validate.rules).int32.gt = 0];
   repeated License licenses = 2;
 }

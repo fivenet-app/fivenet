@@ -7,7 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
-func (m *ColleagueAbsenceDate) Sanitize() error {
+func (m *AbsenceDateChange) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -33,55 +33,7 @@ func (m *ColleagueAbsenceDate) Sanitize() error {
 	return nil
 }
 
-func (m *ColleagueGradeChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *ColleagueLabelsChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Added
-	for idx, item := range m.Added {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Removed
-	for idx, item := range m.Removed {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *ColleagueNameChange) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *JobsUserActivity) Sanitize() error {
+func (m *ColleagueActivity) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -128,7 +80,7 @@ func (m *JobsUserActivity) Sanitize() error {
 	return nil
 }
 
-func (m *JobsUserActivityData) Sanitize() error {
+func (m *ColleagueActivityData) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -136,7 +88,7 @@ func (m *JobsUserActivityData) Sanitize() error {
 	// Field: AbsenceDate
 	switch v := m.Data.(type) {
 
-	case *JobsUserActivityData_AbsenceDate:
+	case *ColleagueActivityData_AbsenceDate:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -144,7 +96,7 @@ func (m *JobsUserActivityData) Sanitize() error {
 		}
 
 		// Field: GradeChange
-	case *JobsUserActivityData_GradeChange:
+	case *ColleagueActivityData_GradeChange:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -152,7 +104,7 @@ func (m *JobsUserActivityData) Sanitize() error {
 		}
 
 		// Field: LabelsChange
-	case *JobsUserActivityData_LabelsChange:
+	case *ColleagueActivityData_LabelsChange:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -160,13 +112,61 @@ func (m *JobsUserActivityData) Sanitize() error {
 		}
 
 		// Field: NameChange
-	case *JobsUserActivityData_NameChange:
+	case *ColleagueActivityData_NameChange:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *GradeChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *LabelsChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Added
+	for idx, item := range m.Added {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Removed
+	for idx, item := range m.Removed {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *NameChange) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

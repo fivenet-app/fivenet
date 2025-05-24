@@ -64,10 +64,10 @@ const { game } = useAppConfig();
 
             <UButton
                 v-if="
-                    can('JobsService.SetJobsUserProps').value &&
+                    can('jobs.JobsService.SetColleagueProps').value &&
                     (colleague.userId === activeChar!.userId ||
-                        attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
-                    checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
+                        attr('jobs.JobsService.SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                    checkIfCanAccessColleague(colleague, 'jobs.JobsService.SetColleagueProps')
                 "
                 icon="i-mdi-island"
                 size="md"

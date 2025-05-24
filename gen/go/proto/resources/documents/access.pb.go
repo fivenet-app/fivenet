@@ -89,7 +89,7 @@ func (AccessLevel) EnumDescriptor() ([]byte, []int) {
 type DocumentAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Jobs          []*DocumentJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`   // @gotags: alias:"job_access"
-	Users         []*DocumentUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"` // @gotags: alias:"user_access"
+	Users         []*DocumentUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"citizen_access"` // @gotags: alias:"citizen_access"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

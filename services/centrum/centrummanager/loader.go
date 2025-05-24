@@ -89,42 +89,42 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 }
 
 func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
-	stmt := tCentrumUsers.
+	stmt := tCentrumDisponents.
 		SELECT(
-			tCentrumUsers.Job,
-			tCentrumUsers.UserID,
+			tCentrumDisponents.Job,
+			tCentrumDisponents.UserID,
 			tUsers.ID,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Job,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
-			tCentrumUsers.
+			tCentrumDisponents.
 				INNER_JOIN(tUsers,
-					tUsers.ID.EQ(tCentrumUsers.UserID),
+					tUsers.ID.EQ(tCentrumDisponents.UserID),
 				).
 				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tCentrumUsers.UserID).
+					tUserProps.UserID.EQ(tCentrumDisponents.UserID).
 						AND(tUsers.Job.EQ(jet.String(job))),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		)
 
 	if job != "" {
 		stmt = stmt.WHERE(
-			tCentrumUsers.Job.EQ(jet.String(job)),
+			tCentrumDisponents.Job.EQ(jet.String(job)),
 		)
 	}
 
@@ -279,7 +279,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		condition = condition.AND(cond)
 	}
 
-	tUsers := tables.Users().AS("user")
+	tUsers := tables.User().AS("user")
 
 	stmt := tDispatch.
 		SELECT(

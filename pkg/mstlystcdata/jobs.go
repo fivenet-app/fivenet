@@ -11,7 +11,7 @@ import (
 	"github.com/blevesearch/bleve/v2"
 	"github.com/blevesearch/bleve/v2/search/query"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
@@ -31,8 +31,8 @@ type Jobs struct {
 
 	tracer trace.Tracer
 
-	store *store.Store[users.Job, *users.Job]
-	store.StoreRO[users.Job, *users.Job]
+	store *store.Store[jobs.Job, *jobs.Job]
+	store.StoreRO[jobs.Job, *jobs.Job]
 
 	updateCallbacks []updateCallbackFn
 }
@@ -68,8 +68,8 @@ func NewJobs(p Params) (JobsResult, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		jobs, err := store.New(ctxStartup, p.Logger, p.JS, "cache",
-			store.WithLocks[users.Job](nil),
-			store.WithKVPrefix[users.Job]("jobs"),
+			store.WithLocks[jobs.Job](nil),
+			store.WithKVPrefix[jobs.Job]("jobs"),
 		)
 		if err != nil {
 			return err
@@ -135,28 +135,28 @@ func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {
 
 func (c *Jobs) loadJobs(ctx context.Context) error {
 	tJobs := tables.Jobs().AS("job")
-	tJobGrades := tables.JobGrades().AS("jobgrade")
+	tJobsGrades := tables.JobsGrades().AS("job_grade")
 
 	stmt := tJobs.
 		SELECT(
 			tJobs.Name,
 			tJobs.Label,
-			tJobGrades.JobName,
-			tJobGrades.Grade,
-			tJobGrades.Label,
+			tJobsGrades.JobName,
+			tJobsGrades.Grade,
+			tJobsGrades.Label,
 		).
 		FROM(
 			tJobs.
-				INNER_JOIN(tJobGrades,
-					tJobGrades.JobName.EQ(tJobs.Name),
+				INNER_JOIN(tJobsGrades,
+					tJobsGrades.JobName.EQ(tJobs.Name),
 				),
 		).
 		ORDER_BY(
 			tJobs.Name.ASC(),
-			tJobGrades.Grade.ASC(),
+			tJobsGrades.Grade.ASC(),
 		)
 
-	var dest []*users.Job
+	var dest []*jobs.Job
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
@@ -187,7 +187,7 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 	}
 
 	// Delete non-existing jobs, based on which are in the database
-	c.Range(ctx, func(key string, value *users.Job) bool {
+	c.Range(ctx, func(key string, value *jobs.Job) bool {
 		if !slices.ContainsFunc(found, func(in string) bool {
 			return in == key
 		}) {
@@ -208,7 +208,7 @@ func (c *Jobs) addUpdateCallback(fn updateCallbackFn) {
 	c.updateCallbacks = append(c.updateCallbacks, fn)
 }
 
-func (c *Jobs) GetHighestJobGrade(job string) *users.JobGrade {
+func (c *Jobs) GetHighestJobGrade(job string) *jobs.JobGrade {
 	j, ok := c.Get(job)
 	if !ok {
 		return nil
@@ -288,7 +288,7 @@ func (c *JobsSearch) loadDataIntoIndex(ctx context.Context) error {
 
 	batch := c.index.NewBatch()
 	// Fill jobs search from cache
-	c.Jobs.Range(ctx, func(key string, value *users.Job) bool {
+	c.Jobs.Range(ctx, func(key string, value *jobs.Job) bool {
 		batch.Delete(key)
 
 		if err := batch.Index(key, value); err != nil {
@@ -305,7 +305,7 @@ func (c *JobsSearch) loadDataIntoIndex(ctx context.Context) error {
 	return errs
 }
 
-func (c *JobsSearch) Search(ctx context.Context, search string, exactMatch bool) ([]*users.Job, error) {
+func (c *JobsSearch) Search(ctx context.Context, search string, exactMatch bool) ([]*jobs.Job, error) {
 	var searchQuery query.Query
 	if search == "" {
 		searchQuery = bleve.NewMatchAllQuery()
@@ -331,7 +331,7 @@ func (c *JobsSearch) Search(ctx context.Context, search string, exactMatch bool)
 		return nil, err
 	}
 
-	jobs := []*users.Job{}
+	jobs := []*jobs.Job{}
 	for _, result := range result.Hits {
 		job, ok := c.Jobs.Get(result.ID)
 		if !ok {

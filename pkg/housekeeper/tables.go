@@ -42,7 +42,7 @@ func AddTable(tbl *Table) {
 }
 
 func ensureMinDays(tbl *Table) {
-	if tbl.MinDays < 30 {
+	if tbl.MinDays <= 0 {
 		tbl.MinDays = 30
 	}
 

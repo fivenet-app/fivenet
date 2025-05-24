@@ -4,16 +4,16 @@ import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { CitizenLabels } from '~~/gen/ts/resources/users/labels';
+import type { Labels } from '~~/gen/ts/resources/users/labels';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
 
 const props = defineProps<{
-    modelValue?: CitizenLabels;
+    modelValue?: Labels;
     userId: number;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', labels: CitizenLabels | undefined): void;
+    (e: 'update:modelValue', labels: Labels | undefined): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -27,7 +27,9 @@ const notifications = useNotificatorStore();
 const completorStore = useCompletorStore();
 
 const canDo = computed(() => ({
-    set: can('CitizenStoreService.SetUserProps').value && attr('CitizenStoreService.SetUserProps', 'Fields', 'Labels').value,
+    set:
+        can('citizens.CitizensService.SetUserProps').value &&
+        attr('citizens.CitizensService.SetUserProps', 'Fields', 'Labels').value,
 }));
 
 const labelsLoading = ref(false);
@@ -62,7 +64,7 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.citizenstore.citizenStore.setUserProps({
+        const call = $grpc.citizens.citizens.setUserProps({
             props: userProps,
             reason: values.reason,
         });
@@ -142,7 +144,7 @@ watch(state, () => {
             </div>
         </template>
 
-        <UFormGroup v-if="canDo.set && can('CompletorService.CompleteCitizenLabels').value" name="labels">
+        <UFormGroup v-if="canDo.set && can('completor.CompletorService.CompleteCitizenLabels').value" name="labels">
             <ClientOnly>
                 <USelectMenu
                     v-model="state.labels"

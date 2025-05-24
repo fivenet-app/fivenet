@@ -8,6 +8,7 @@ package jobs
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -67,13 +68,14 @@ func (x *Labels) GetList() []*Label {
 }
 
 type Label struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	Id    uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
-	Job   *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	Name  string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
+	Job       *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Name      string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
 	// @sanitize: method=StripTags
-	Color         string `protobuf:"bytes,4,opt,name=color,proto3" json:"color,omitempty"`
-	Order         int32  `protobuf:"varint,5,opt,name=order,proto3" json:"order,omitempty"`
+	Color         string `protobuf:"bytes,5,opt,name=color,proto3" json:"color,omitempty"`
+	Order         int32  `protobuf:"varint,6,opt,name=order,proto3" json:"order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -120,6 +122,13 @@ func (x *Label) GetJob() string {
 		return *x.Job
 	}
 	return ""
+}
+
+func (x *Label) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
+	}
+	return nil
 }
 
 func (x *Label) GetName() string {
@@ -199,17 +208,20 @@ var File_resources_jobs_labels_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_labels_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/jobs/labels.proto\x12\x0eresources.jobs\x1a\x17validate/validate.proto\"=\n" +
+	"\x1bresources/jobs/labels.proto\x12\x0eresources.jobs\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"=\n" +
 	"\x06Labels\x123\n" +
 	"\x04list\x18\x01 \x03(\v2\x15.resources.jobs.LabelB\b\xfaB\x05\x92\x01\x02\x10\n" +
-	"R\x04list\"\xa5\x01\n" +
+	"R\x04list\"\xf8\x01\n" +
 	"\x05Label\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1e\n" +
-	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01\x12\x1b\n" +
-	"\x04name\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x180R\x04name\x121\n" +
-	"\x05color\x18\x04 \x01(\tB\x1b\xfaB\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12\x14\n" +
-	"\x05order\x18\x05 \x01(\x05R\x05orderB\x06\n" +
-	"\x04_job\"O\n" +
+	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tdeletedAt\x88\x01\x01\x12\x1b\n" +
+	"\x04name\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x180R\x04name\x121\n" +
+	"\x05color\x18\x05 \x01(\tB\x1b\xfaB\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12\x14\n" +
+	"\x05order\x18\x06 \x01(\x05R\x05orderB\x06\n" +
+	"\x04_jobB\r\n" +
+	"\v_deleted_at\"O\n" +
 	"\n" +
 	"LabelCount\x12+\n" +
 	"\x05label\x18\x01 \x01(\v2\x15.resources.jobs.LabelR\x05label\x12\x14\n" +
@@ -229,18 +241,20 @@ func file_resources_jobs_labels_proto_rawDescGZIP() []byte {
 
 var file_resources_jobs_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_jobs_labels_proto_goTypes = []any{
-	(*Labels)(nil),     // 0: resources.jobs.Labels
-	(*Label)(nil),      // 1: resources.jobs.Label
-	(*LabelCount)(nil), // 2: resources.jobs.LabelCount
+	(*Labels)(nil),              // 0: resources.jobs.Labels
+	(*Label)(nil),               // 1: resources.jobs.Label
+	(*LabelCount)(nil),          // 2: resources.jobs.LabelCount
+	(*timestamp.Timestamp)(nil), // 3: resources.timestamp.Timestamp
 }
 var file_resources_jobs_labels_proto_depIdxs = []int32{
 	1, // 0: resources.jobs.Labels.list:type_name -> resources.jobs.Label
-	1, // 1: resources.jobs.LabelCount.label:type_name -> resources.jobs.Label
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	3, // 1: resources.jobs.Label.deleted_at:type_name -> resources.timestamp.Timestamp
+	1, // 2: resources.jobs.LabelCount.label:type_name -> resources.jobs.Label
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_resources_jobs_labels_proto_init() }

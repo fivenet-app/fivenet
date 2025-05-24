@@ -7,7 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetColleagueLabelsResponse, ManageColleagueLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const { $grpc } = useNuxtApp();
 
@@ -51,9 +51,9 @@ const {
     refresh,
 } = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels());
 
-async function manageColleagueLabels(values: Schema): Promise<ManageColleagueLabelsResponse> {
+async function manageLabels(values: Schema): Promise<ManageLabelsResponse> {
     try {
-        const { response } = await $grpc.jobs.jobs.manageColleagueLabels({
+        const { response } = await $grpc.jobs.jobs.manageLabels({
             labels: values.labels,
         });
 
@@ -77,7 +77,7 @@ async function manageColleagueLabels(values: Schema): Promise<ManageColleagueLab
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await manageColleagueLabels(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await manageLabels(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 watch(labels, () => (state.labels = labels.value?.labels ?? []));

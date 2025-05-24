@@ -10,19 +10,19 @@ import (
 )
 
 var PermsRemap = map[string]string{
-	// Service: AdsService
-	"AdsService/GetAds": "Any",
+	// Service: internet.AdsService
+	"internet.AdsService/GetAds": "Any",
 
-	// Service: DomainService
-	"DomainService/CheckDomainAvailability": "Any",
-	"DomainService/ListDomains":             "Any",
-	"DomainService/ListTLDs":                "Any",
-	"DomainService/RegisterDomain":          "Any",
-	"DomainService/UpdateDomain":            "Any",
+	// Service: internet.DomainService
+	"internet.DomainService/CheckDomainAvailability": "Any",
+	"internet.DomainService/ListDomains":             "Any",
+	"internet.DomainService/ListTLDs":                "Any",
+	"internet.DomainService/RegisterDomain":          "Any",
+	"internet.DomainService/UpdateDomain":            "Any",
 
-	// Service: InternetService
-	"InternetService/GetPage": "Any",
-	"InternetService/Search":  "Any",
+	// Service: internet.InternetService
+	"internet.InternetService/GetPage": "Any",
+	"internet.InternetService/Search":  "Any",
 }
 
 func init() {

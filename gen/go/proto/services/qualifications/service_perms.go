@@ -10,24 +10,24 @@ import (
 )
 
 var PermsRemap = map[string]string{
-	// Service: QualificationsService
-	"QualificationsService/CreateOrUpdateQualificationRequest": "QualificationsService/ListQualifications",
-	"QualificationsService/CreateOrUpdateQualificationResult":  "QualificationsService/ListQualifications",
-	"QualificationsService/DeleteQualificationReq":             "QualificationsService/ListQualifications",
-	"QualificationsService/DeleteQualificationResult":          "QualificationsService/ListQualifications",
-	"QualificationsService/GetExamInfo":                        "QualificationsService/ListQualifications",
-	"QualificationsService/GetQualification":                   "QualificationsService/ListQualifications",
-	"QualificationsService/GetUserExam":                        "QualificationsService/ListQualifications",
-	"QualificationsService/ListQualificationRequests":          "QualificationsService/ListQualifications",
-	"QualificationsService/ListQualificationsResults":          "QualificationsService/ListQualifications",
-	"QualificationsService/SubmitExam":                         "QualificationsService/ListQualifications",
-	"QualificationsService/TakeExam":                           "QualificationsService/ListQualifications",
+	// Service: qualifications.QualificationsService
+	"qualifications.QualificationsService/CreateOrUpdateQualificationRequest": "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/CreateOrUpdateQualificationResult":  "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/DeleteQualificationReq":             "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/DeleteQualificationResult":          "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/GetExamInfo":                        "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/GetQualification":                   "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/GetUserExam":                        "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/ListQualificationRequests":          "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/ListQualificationsResults":          "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/SubmitExam":                         "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/TakeExam":                           "qualifications.QualificationsService/ListQualifications",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: QualificationsService
+		// Service: qualifications.QualificationsService
 		{
 			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceCreateQualificationPerm,

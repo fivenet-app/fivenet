@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package resources.jobs;
+
+import "resources/jobs/job_settings.proto";
+import "resources/filestore/file.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
+
+message JobProps {
+  string job = 1 [(validate.rules).string.max_len = 20];
+  optional string job_label = 2 [(validate.rules).string.max_len = 50];
+  optional resources.timestamp.Timestamp deleted_at = 3;
+  string livemap_marker_color = 4 [(validate.rules).string = {
+    len: 7,
+    pattern: "^#[A-Fa-f0-9]{6}$",
+  }];
+  QuickButtons quick_buttons = 5;
+  optional string radio_frequency = 6 [(validate.rules).string.max_len = 24];
+  optional string discord_guild_id = 7;
+  optional resources.timestamp.Timestamp discord_last_sync = 8;
+  DiscordSyncSettings discord_sync_settings = 9;
+  optional DiscordSyncChanges discord_sync_changes = 10;
+  optional string motd = 11 [(validate.rules).string.max_len = 1024];
+  optional resources.filestore.File logo_url = 12;
+  JobSettings settings = 13;
+}
+
+// @dbscanner: json
+message QuickButtons {
+  bool penalty_calculator = 1;
+  bool body_checkup = 2;
+  bool math_calculator = 3;
+}

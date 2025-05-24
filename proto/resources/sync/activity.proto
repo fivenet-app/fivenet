@@ -22,9 +22,9 @@ message UserProps {
   resources.users.UserProps props = 2 [(validate.rules).message.required = true];
 }
 
-message JobsUserProps {
+message ColleagueProps {
   optional string reason = 1 [(validate.rules).string.max_len = 255];
-  resources.jobs.JobsUserProps props = 2 [(validate.rules).message.required = true];
+  resources.jobs.ColleagueProps props = 2 [(validate.rules).message.required = true];
 }
 
 message UserUpdate {

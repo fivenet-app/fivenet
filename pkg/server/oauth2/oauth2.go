@@ -22,7 +22,7 @@ import (
 
 var (
 	tAccs      = table.FivenetAccounts
-	tOAuthAccs = table.FivenetOauth2Accounts
+	tOAuthAccs = table.FivenetAccountsOauth2
 )
 
 type Params struct {

@@ -14,15 +14,15 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func GetJobsUserProps(ctx context.Context, tx qrm.DB, job string, userId int32, fields []string) (*JobsUserProps, error) {
-	tJobsUserProps := table.FivenetJobsUserProps.AS("jobsuserprops")
+func GetColleagueProps(ctx context.Context, tx qrm.DB, job string, userId int32, fields []string) (*ColleagueProps, error) {
+	tColleagueProps := table.FivenetJobColleagueProps.AS("colleague_props")
 
 	columns := []jet.Projection{
-		tJobsUserProps.Job,
-		tJobsUserProps.AbsenceBegin,
-		tJobsUserProps.AbsenceEnd,
-		tJobsUserProps.NamePrefix,
-		tJobsUserProps.NameSuffix,
+		tColleagueProps.Job,
+		tColleagueProps.AbsenceBegin,
+		tColleagueProps.AbsenceEnd,
+		tColleagueProps.NamePrefix,
+		tColleagueProps.NameSuffix,
 	}
 
 	if fields == nil {
@@ -32,23 +32,23 @@ func GetJobsUserProps(ctx context.Context, tx qrm.DB, job string, userId int32, 
 	for _, field := range fields {
 		switch field {
 		case "Note":
-			columns = append(columns, tJobsUserProps.Note)
+			columns = append(columns, tColleagueProps.Note)
 		}
 	}
 
-	stmt := tJobsUserProps.
+	stmt := tColleagueProps.
 		SELECT(
-			tJobsUserProps.UserID,
+			tColleagueProps.UserID,
 			columns...,
 		).
-		FROM(tJobsUserProps).
+		FROM(tColleagueProps).
 		WHERE(jet.AND(
-			tJobsUserProps.UserID.EQ(jet.Int32(userId)),
-			tJobsUserProps.Job.EQ(jet.String(job)),
+			tColleagueProps.UserID.EQ(jet.Int32(userId)),
+			tColleagueProps.Job.EQ(jet.String(job)),
 		)).
 		LIMIT(1)
 
-	dest := &JobsUserProps{
+	dest := &ColleagueProps{
 		UserId: userId,
 	}
 	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
@@ -67,8 +67,8 @@ func GetJobsUserProps(ctx context.Context, tx qrm.DB, job string, userId int32, 
 }
 
 func GetUserLabels(ctx context.Context, tx qrm.DB, job string, userId int32) (*Labels, error) {
-	tJobLabels := table.FivenetJobsLabels.AS("label")
-	tUserLabels := table.FivenetJobsLabelsUsers
+	tJobLabels := table.FivenetJobLabels.AS("label")
+	tUserLabels := table.FivenetJobColleagueLabels
 
 	stmt := tUserLabels.
 		SELECT(
@@ -86,6 +86,7 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, job string, userId int32) (*L
 		WHERE(jet.AND(
 			tUserLabels.UserID.EQ(jet.Int32(userId)),
 			tJobLabels.Job.EQ(jet.String(job)),
+			tJobLabels.DeletedAt.IS_NULL(),
 		)).
 		ORDER_BY(
 			tJobLabels.Order.ASC(),
@@ -103,7 +104,7 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, job string, userId int32) (*L
 	return list, nil
 }
 
-func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUserProps, job string, sourceUserId *int32, reason string) ([]*JobsUserActivity, error) {
+func (x *ColleagueProps) HandleChanges(ctx context.Context, tx qrm.DB, in *ColleagueProps, job string, sourceUserId *int32, reason string) ([]*ColleagueActivity, error) {
 	absenceBegin := jet.DateExp(jet.NULL)
 	absenceEnd := jet.DateExp(jet.NULL)
 	if in.AbsenceBegin != nil && in.AbsenceEnd != nil {
@@ -123,20 +124,20 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 		in.AbsenceEnd = x.AbsenceEnd
 	}
 
-	tJobsUserProps := table.FivenetJobsUserProps
+	tColleagueProps := table.FivenetJobColleagueProps
 
 	updateSets := []jet.ColumnAssigment{
-		tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
-		tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
+		tColleagueProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
+		tColleagueProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
 	}
 
 	// Generate the update sets
 	if in.Note != nil {
 		// Set empty note to null
 		if *in.Note == "" {
-			updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.StringExp(jet.NULL)))
+			updateSets = append(updateSets, tColleagueProps.Note.SET(jet.StringExp(jet.NULL)))
 		} else {
-			updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.String(*in.Note)))
+			updateSets = append(updateSets, tColleagueProps.Note.SET(jet.String(*in.Note)))
 		}
 	} else {
 		in.Note = x.Note
@@ -149,13 +150,13 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 	if in.NamePrefix != nil || in.NameSuffix != nil {
 		if in.NamePrefix != nil {
 			*in.NamePrefix = strings.TrimSpace(*in.NamePrefix) // Trim spaces
-			updateSets = append(updateSets, tJobsUserProps.NamePrefix.SET(jet.String(*in.NamePrefix)))
+			updateSets = append(updateSets, tColleagueProps.NamePrefix.SET(jet.String(*in.NamePrefix)))
 		} else {
 			in.NamePrefix = x.NamePrefix
 		}
 		if in.NameSuffix != nil {
 			*in.NameSuffix = strings.TrimSpace(*in.NameSuffix) // Trim spaces
-			updateSets = append(updateSets, tJobsUserProps.NameSuffix.SET(jet.String(*in.NameSuffix)))
+			updateSets = append(updateSets, tColleagueProps.NameSuffix.SET(jet.String(*in.NameSuffix)))
 		} else {
 			in.NameSuffix = x.NameSuffix
 		}
@@ -164,15 +165,15 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 		in.NameSuffix = x.NameSuffix
 	}
 
-	stmt := tJobsUserProps.
+	stmt := tColleagueProps.
 		INSERT(
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
-			tJobsUserProps.Note,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.AbsenceBegin,
+			tColleagueProps.AbsenceEnd,
+			tColleagueProps.Note,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 		).
 		VALUES(
 			x.UserId,
@@ -191,7 +192,7 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 		return nil, err
 	}
 
-	activities := []*JobsUserActivity{}
+	activities := []*ColleagueActivity{}
 
 	// Create user activity entries
 	if in.Labels != nil && !proto.Equal(in.Labels, x.Labels) {
@@ -204,15 +205,15 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 			return nil, err
 		}
 
-		activities = append(activities, &JobsUserActivity{
+		activities = append(activities, &ColleagueActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
 			TargetUserId: x.UserId,
-			ActivityType: JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_LABELS,
+			ActivityType: ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_LABELS,
 			Reason:       reason,
-			Data: &JobsUserActivityData{
-				Data: &JobsUserActivityData_LabelsChange{
-					LabelsChange: &ColleagueLabelsChange{
+			Data: &ColleagueActivityData{
+				Data: &ColleagueActivityData_LabelsChange{
+					LabelsChange: &LabelsChange{
 						Added:   added,
 						Removed: removed,
 					},
@@ -225,15 +226,15 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 	if (in.AbsenceBegin == nil && in.AbsenceEnd == nil && x.AbsenceBegin != nil && x.AbsenceEnd != nil) ||
 		(in.AbsenceBegin != nil && (x.AbsenceBegin == nil || in.AbsenceBegin.AsTime().Compare(x.AbsenceBegin.AsTime()) != 0) ||
 			in.AbsenceEnd != nil && (x.AbsenceEnd == nil || in.AbsenceEnd.AsTime().Compare(x.AbsenceEnd.AsTime()) != 0)) {
-		activities = append(activities, &JobsUserActivity{
+		activities = append(activities, &ColleagueActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
 			TargetUserId: x.UserId,
-			ActivityType: JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE,
+			ActivityType: ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE,
 			Reason:       reason,
-			Data: &JobsUserActivityData{
-				Data: &JobsUserActivityData_AbsenceDate{
-					AbsenceDate: &ColleagueAbsenceDate{
+			Data: &ColleagueActivityData{
+				Data: &ColleagueActivityData_AbsenceDate{
+					AbsenceDate: &AbsenceDateChange{
 						AbsenceBegin: in.AbsenceBegin,
 						AbsenceEnd:   in.AbsenceEnd,
 					},
@@ -243,26 +244,26 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 	}
 
 	if in.Note != nil && (x.Note == nil || *in.Note != *x.Note) {
-		activities = append(activities, &JobsUserActivity{
+		activities = append(activities, &ColleagueActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
 			TargetUserId: x.UserId,
-			ActivityType: JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_NOTE,
+			ActivityType: ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_NOTE,
 			Reason:       reason,
 		})
 	}
 
 	if in.NamePrefix != nil && (x.NamePrefix == nil || *in.NamePrefix != *x.NamePrefix) ||
 		in.NameSuffix != nil && (x.NameSuffix == nil || *in.NameSuffix != *x.NameSuffix) {
-		activities = append(activities, &JobsUserActivity{
+		activities = append(activities, &ColleagueActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
 			TargetUserId: x.UserId,
-			ActivityType: JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_NAME,
+			ActivityType: ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_NAME,
 			Reason:       reason,
-			Data: &JobsUserActivityData{
-				Data: &JobsUserActivityData_NameChange{
-					NameChange: &ColleagueNameChange{
+			Data: &ColleagueActivityData{
+				Data: &ColleagueActivityData_NameChange{
+					NameChange: &NameChange{
 						Prefix: in.NamePrefix,
 						Suffix: in.NameSuffix,
 					},
@@ -274,13 +275,13 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 	return activities, nil
 }
 
-func (x *JobsUserProps) updateLabels(ctx context.Context, tx qrm.DB, userId int32, job string, added []*Label, removed []*Label) error {
-	tUserLabels := table.FivenetJobsLabelsUsers
+func (x *ColleagueProps) updateLabels(ctx context.Context, tx qrm.DB, userId int32, job string, added []*Label, removed []*Label) error {
+	tUserLabels := table.FivenetJobColleagueLabels
 
 	if len(added) > 0 {
-		addedLabels := make([]*model.FivenetJobsLabelsUsers, len(added))
+		addedLabels := make([]*model.FivenetJobColleagueLabels, len(added))
 		for i, label := range added {
-			addedLabels[i] = &model.FivenetJobsLabelsUsers{
+			addedLabels[i] = &model.FivenetJobColleagueLabels{
 				UserID:  userId,
 				Job:     job,
 				LabelID: label.Id,

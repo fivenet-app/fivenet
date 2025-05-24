@@ -109,25 +109,25 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 		serverGroups = append(serverGroups, jet.String(sGroup))
 	}
 
-	tUsers := tables.Users().AS("users")
+	tUsers := tables.User().AS("users")
 
-	stmt := tOauth2Accs.
+	stmt := tAccsOauth2.
 		SELECT(
-			tOauth2Accs.ExternalID.AS("groupsyncuser.external_id"),
+			tAccsOauth2.ExternalID.AS("groupsyncuser.external_id"),
 			tUsers.Group.AS("groupsyncuser.group"),
 			tAccs.License.AS("groupsyncuser.license"),
 		).
 		FROM(
-			tOauth2Accs.
+			tAccsOauth2.
 				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tOauth2Accs.AccountID),
+					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
 				INNER_JOIN(tUsers,
 					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), tAccs.License)),
 				),
 		).
 		WHERE(jet.AND(
-			tOauth2Accs.Provider.EQ(jet.String("discord")),
+			tAccsOauth2.Provider.EQ(jet.String("discord")),
 			tUsers.Group.IN(serverGroups...),
 		))
 
@@ -190,7 +190,7 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 }
 
 func (g *GroupSync) checkIfUserIsPartOfJob(ctx context.Context, identifier string, job string) (bool, error) {
-	tUsers := tables.Users()
+	tUsers := tables.User()
 
 	stmt := tUsers.
 		SELECT(

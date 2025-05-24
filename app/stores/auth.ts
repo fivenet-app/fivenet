@@ -4,11 +4,11 @@ import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
+import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
+import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { JobProps } from '~~/gen/ts/resources/users/job_props';
-import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { User } from '~~/gen/ts/resources/users/users';
-import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
+import type { SetSuperuserModeRequest } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
@@ -209,9 +209,9 @@ export const useAuthStore = defineStore(
             }
         };
 
-        const setSuperUserMode = async (superuser: boolean, job?: Job): Promise<void> => {
+        const setSuperuserMode = async (superuser: boolean, job?: Job): Promise<void> => {
             try {
-                const req: SetSuperUserModeRequest = {
+                const req: SetSuperuserModeRequest = {
                     superuser,
                 };
 
@@ -219,7 +219,7 @@ export const useAuthStore = defineStore(
                     req.job = job.name;
                 }
 
-                const call = $grpc.auth.auth.setSuperUserMode(req);
+                const call = $grpc.auth.auth.setSuperuserMode(req);
                 const { response } = await call;
 
                 if (superuser) {
@@ -278,7 +278,7 @@ export const useAuthStore = defineStore(
             doLogin,
             doLogout,
             chooseCharacter,
-            setSuperUserMode,
+            setSuperuserMode,
 
             // Getters
             isSuperuser,

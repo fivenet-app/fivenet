@@ -12,38 +12,38 @@ import (
 )
 
 var PermsRemap = map[string]string{
-	// Service: JobsService
-	"JobsService/GetColleagueLabels":      "JobsService/GetColleague",
-	"JobsService/GetColleagueLabelsStats": "JobsService/GetColleague",
-	"JobsService/GetMOTD":                 "Any",
-	"JobsService/GetSelf":                 "JobsService/ListColleagues",
+	// Service: jobs.JobsService
+	"jobs.JobsService/GetColleagueLabels":      "jobs.JobsService/GetColleague",
+	"jobs.JobsService/GetColleagueLabelsStats": "jobs.JobsService/GetColleague",
+	"jobs.JobsService/GetMOTD":                 "Any",
+	"jobs.JobsService/GetSelf":                 "jobs.JobsService/ListColleagues",
 
-	// Service: JobsTimeclockService
-	"JobsTimeclockService/GetTimeclockStats": "JobsTimeclockService/ListTimeclock",
+	// Service: jobs.TimeclockService
+	"jobs.TimeclockService/GetTimeclockStats": "jobs.TimeclockService/ListTimeclock",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: JobsConductService
+		// Service: jobs.ConductService
 		{
-			Category: permkeys.JobsConductServicePerm,
-			Name:     permkeys.JobsConductServiceCreateConductEntryPerm,
+			Category: permkeys.ConductServicePerm,
+			Name:     permkeys.ConductServiceCreateConductEntryPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},
 		{
-			Category: permkeys.JobsConductServicePerm,
-			Name:     permkeys.JobsConductServiceDeleteConductEntryPerm,
+			Category: permkeys.ConductServicePerm,
+			Name:     permkeys.ConductServiceDeleteConductEntryPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},
 		{
-			Category: permkeys.JobsConductServicePerm,
-			Name:     permkeys.JobsConductServiceListConductEntriesPerm,
+			Category: permkeys.ConductServicePerm,
+			Name:     permkeys.ConductServiceListConductEntriesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.JobsConductServiceListConductEntriesAccessPermField,
+					Key:         permkeys.ConductServiceListConductEntriesAccessPermField,
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"Own", "All"},
 				},
@@ -51,13 +51,13 @@ func init() {
 			Order: 0,
 		},
 		{
-			Category: permkeys.JobsConductServicePerm,
-			Name:     permkeys.JobsConductServiceUpdateConductEntryPerm,
+			Category: permkeys.ConductServicePerm,
+			Name:     permkeys.ConductServiceUpdateConductEntryPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},
 
-		// Service: JobsService
+		// Service: jobs.JobsService
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceGetColleaguePerm,
@@ -95,21 +95,21 @@ func init() {
 		},
 		{
 			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceManageColleagueLabelsPerm,
+			Name:     permkeys.JobsServiceManageLabelsPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},
 		{
 			Category: permkeys.JobsServicePerm,
-			Name:     permkeys.JobsServiceSetJobsUserPropsPerm,
+			Name:     permkeys.JobsServiceSetColleaguePropsPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.JobsServiceSetJobsUserPropsAccessPermField,
+					Key:         permkeys.JobsServiceSetColleaguePropsAccessPermField,
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
 				{
-					Key:         permkeys.JobsServiceSetJobsUserPropsTypesPermField,
+					Key:         permkeys.JobsServiceSetColleaguePropsTypesPermField,
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"AbsenceDate", "Note", "Labels", "Name"},
 				},
@@ -123,19 +123,19 @@ func init() {
 			Order:    0,
 		},
 
-		// Service: JobsTimeclockService
+		// Service: jobs.TimeclockService
 		{
-			Category: permkeys.JobsTimeclockServicePerm,
-			Name:     permkeys.JobsTimeclockServiceListInactiveEmployeesPerm,
+			Category: permkeys.TimeclockServicePerm,
+			Name:     permkeys.TimeclockServiceListInactiveEmployeesPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},
 		{
-			Category: permkeys.JobsTimeclockServicePerm,
-			Name:     permkeys.JobsTimeclockServiceListTimeclockPerm,
+			Category: permkeys.TimeclockServicePerm,
+			Name:     permkeys.TimeclockServiceListTimeclockPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         permkeys.JobsTimeclockServiceListTimeclockAccessPermField,
+					Key:         permkeys.TimeclockServiceListTimeclockAccessPermField,
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"All"},
 				},

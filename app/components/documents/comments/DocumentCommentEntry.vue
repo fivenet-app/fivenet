@@ -50,7 +50,7 @@ const state = reactive<Schema>({
 
 async function editComment(documentId: number, commentId: number, values: Schema): Promise<void> {
     try {
-        const { response } = await $grpc.docstore.docStore.editComment({
+        const { response } = await $grpc.documents.documents.editComment({
             comment: {
                 id: commentId,
                 documentId,
@@ -83,7 +83,7 @@ async function editComment(documentId: number, commentId: number, values: Schema
 
 async function deleteComment(id: number): Promise<void> {
     try {
-        await $grpc.docstore.docStore.deleteComment({
+        await $grpc.documents.documents.deleteComment({
             commentId: id,
         });
 
@@ -147,7 +147,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UButton v-if="canComment" variant="link" icon="i-mdi-pencil" @click="editing = true" />
                         </UTooltip>
 
-                        <UTooltip v-if="can('DocStoreService.DeleteComment').value" :text="$t('common.delete')">
+                        <UTooltip v-if="can('documents.DocumentsService.DeleteComment').value" :text="$t('common.delete')">
                             <UButton
                                 variant="link"
                                 icon="i-mdi-delete"

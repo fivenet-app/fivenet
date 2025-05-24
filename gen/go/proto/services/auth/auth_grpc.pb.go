@@ -29,7 +29,7 @@ const (
 	AuthService_ChooseCharacter_FullMethodName        = "/services.auth.AuthService/ChooseCharacter"
 	AuthService_GetAccountInfo_FullMethodName         = "/services.auth.AuthService/GetAccountInfo"
 	AuthService_DeleteOAuth2Connection_FullMethodName = "/services.auth.AuthService/DeleteOAuth2Connection"
-	AuthService_SetSuperUserMode_FullMethodName       = "/services.auth.AuthService/SetSuperUserMode"
+	AuthService_SetSuperuserMode_FullMethodName       = "/services.auth.AuthService/SetSuperuserMode"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -50,7 +50,7 @@ type AuthServiceClient interface {
 	ChooseCharacter(ctx context.Context, in *ChooseCharacterRequest, opts ...grpc.CallOption) (*ChooseCharacterResponse, error)
 	GetAccountInfo(ctx context.Context, in *GetAccountInfoRequest, opts ...grpc.CallOption) (*GetAccountInfoResponse, error)
 	DeleteOAuth2Connection(ctx context.Context, in *DeleteOAuth2ConnectionRequest, opts ...grpc.CallOption) (*DeleteOAuth2ConnectionResponse, error)
-	SetSuperUserMode(ctx context.Context, in *SetSuperUserModeRequest, opts ...grpc.CallOption) (*SetSuperUserModeResponse, error)
+	SetSuperuserMode(ctx context.Context, in *SetSuperuserModeRequest, opts ...grpc.CallOption) (*SetSuperuserModeResponse, error)
 }
 
 type authServiceClient struct {
@@ -161,10 +161,10 @@ func (c *authServiceClient) DeleteOAuth2Connection(ctx context.Context, in *Dele
 	return out, nil
 }
 
-func (c *authServiceClient) SetSuperUserMode(ctx context.Context, in *SetSuperUserModeRequest, opts ...grpc.CallOption) (*SetSuperUserModeResponse, error) {
+func (c *authServiceClient) SetSuperuserMode(ctx context.Context, in *SetSuperuserModeRequest, opts ...grpc.CallOption) (*SetSuperuserModeResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetSuperUserModeResponse)
-	err := c.cc.Invoke(ctx, AuthService_SetSuperUserMode_FullMethodName, in, out, cOpts...)
+	out := new(SetSuperuserModeResponse)
+	err := c.cc.Invoke(ctx, AuthService_SetSuperuserMode_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +189,7 @@ type AuthServiceServer interface {
 	ChooseCharacter(context.Context, *ChooseCharacterRequest) (*ChooseCharacterResponse, error)
 	GetAccountInfo(context.Context, *GetAccountInfoRequest) (*GetAccountInfoResponse, error)
 	DeleteOAuth2Connection(context.Context, *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error)
-	SetSuperUserMode(context.Context, *SetSuperUserModeRequest) (*SetSuperUserModeResponse, error)
+	SetSuperuserMode(context.Context, *SetSuperuserModeRequest) (*SetSuperuserModeResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -230,8 +230,8 @@ func (UnimplementedAuthServiceServer) GetAccountInfo(context.Context, *GetAccoun
 func (UnimplementedAuthServiceServer) DeleteOAuth2Connection(context.Context, *DeleteOAuth2ConnectionRequest) (*DeleteOAuth2ConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteOAuth2Connection not implemented")
 }
-func (UnimplementedAuthServiceServer) SetSuperUserMode(context.Context, *SetSuperUserModeRequest) (*SetSuperUserModeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetSuperUserMode not implemented")
+func (UnimplementedAuthServiceServer) SetSuperuserMode(context.Context, *SetSuperuserModeRequest) (*SetSuperuserModeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetSuperuserMode not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 func (UnimplementedAuthServiceServer) testEmbeddedByValue()                     {}
@@ -434,20 +434,20 @@ func _AuthService_DeleteOAuth2Connection_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_SetSuperUserMode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetSuperUserModeRequest)
+func _AuthService_SetSuperuserMode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetSuperuserModeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServiceServer).SetSuperUserMode(ctx, in)
+		return srv.(AuthServiceServer).SetSuperuserMode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: AuthService_SetSuperUserMode_FullMethodName,
+		FullMethod: AuthService_SetSuperuserMode_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).SetSuperUserMode(ctx, req.(*SetSuperUserModeRequest))
+		return srv.(AuthServiceServer).SetSuperuserMode(ctx, req.(*SetSuperuserModeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -500,8 +500,8 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_DeleteOAuth2Connection_Handler,
 		},
 		{
-			MethodName: "SetSuperUserMode",
-			Handler:    _AuthService_SetSuperUserMode_Handler,
+			MethodName: "SetSuperuserMode",
+			Handler:    _AuthService_SetSuperuserMode_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -27,10 +27,10 @@ import (
 )
 
 var (
-	tOauth2Accs       = table.FivenetOauth2Accounts
-	tAccs             = table.FivenetAccounts
-	tJobsUserProps    = table.FivenetJobsUserProps
-	tJobsUserActivity = table.FivenetJobsUserActivity
+	tAccsOauth2      = table.FivenetAccountsOauth2
+	tAccs            = table.FivenetAccounts
+	tColleagueProps  = table.FivenetJobColleagueProps
+	tJobUserActivity = table.FivenetJobColleagueActivity
 )
 
 const absentDateFormat = "2006-01-02"
@@ -163,7 +163,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		Job:      job,
 		JobGrade: jobGrade,
 	}
-	if !c.perms.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm) {
+	if !c.perms.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetColleaguePropsPerm) {
 		(*resp.Embeds)[0].Title = localizer("discord.commands.absent.results.no_perms.title", nil)
 		(*resp.Embeds)[0].Description = localizer("discord.commands.absent.results.no_perms.desc",
 			map[string]any{"code": "perm"})
@@ -238,17 +238,17 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 }
 
 func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job string, discordId discord.UserID) (int32, int32, error) {
-	tUsers := tables.Users().AS("user")
+	tUsers := tables.User().AS("user")
 
-	stmt := tOauth2Accs.
+	stmt := tAccsOauth2.
 		SELECT(
 			tUsers.ID.AS("user_id"),
 			tUsers.JobGrade.AS("job_grade"),
 		).
 		FROM(
-			tOauth2Accs.
+			tAccsOauth2.
 				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tOauth2Accs.AccountID),
+					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
 				INNER_JOIN(tUsers,
 					jet.AND(
@@ -257,8 +257,8 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job stri
 					)),
 		).
 		WHERE(jet.AND(
-			tOauth2Accs.Provider.EQ(jet.String("discord")),
-			tOauth2Accs.ExternalID.EQ(jet.String(discordId.String())),
+			tAccsOauth2.Provider.EQ(jet.String("discord")),
+			tAccsOauth2.ExternalID.EQ(jet.String(discordId.String())),
 		)).
 		LIMIT(1)
 
@@ -274,19 +274,19 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job stri
 }
 
 func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, job string, absenceBegin time.Time, absenceEnd time.Time, reason string) (bool, error) {
-	checkStmt := tJobsUserProps.
+	checkStmt := tColleagueProps.
 		SELECT(
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
+			tColleagueProps.AbsenceBegin,
+			tColleagueProps.AbsenceEnd,
 		).
-		FROM(tJobsUserProps).
+		FROM(tColleagueProps).
 		WHERE(jet.AND(
-			tJobsUserProps.UserID.EQ(jet.Int32(charId)),
-			tJobsUserProps.Job.EQ(jet.String(job)),
+			tColleagueProps.UserID.EQ(jet.Int32(charId)),
+			tColleagueProps.Job.EQ(jet.String(job)),
 		)).
 		LIMIT(1)
 
-	props := jobs.JobsUserProps{}
+	props := jobs.ColleagueProps{}
 	if err := checkStmt.QueryContext(ctx, c.db, &props); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return false, err
@@ -311,12 +311,12 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tJobsUserProps.
+	stmt := tColleagueProps.
 		INSERT(
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.AbsenceBegin,
+			tColleagueProps.AbsenceEnd,
 		).
 		VALUES(
 			charId,
@@ -325,32 +325,32 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 			absenceEnd,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
-			tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
+			tColleagueProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
+			tColleagueProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, c.db); err != nil {
 		return false, err
 	}
 
-	activityStmt := tJobsUserActivity.
+	activityStmt := tJobUserActivity.
 		INSERT(
-			tJobsUserActivity.Job,
-			tJobsUserActivity.SourceUserID,
-			tJobsUserActivity.TargetUserID,
-			tJobsUserActivity.ActivityType,
-			tJobsUserActivity.Reason,
-			tJobsUserActivity.Data,
+			tJobUserActivity.Job,
+			tJobUserActivity.SourceUserID,
+			tJobUserActivity.TargetUserID,
+			tJobUserActivity.ActivityType,
+			tJobUserActivity.Reason,
+			tJobUserActivity.Data,
 		).
 		VALUES(
 			job,
 			charId,
 			charId,
-			jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE,
+			jobs.ColleagueActivityType_COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE,
 			reason,
-			&jobs.JobsUserActivityData{
-				Data: &jobs.JobsUserActivityData_AbsenceDate{
-					AbsenceDate: &jobs.ColleagueAbsenceDate{
+			&jobs.ColleagueActivityData{
+				Data: &jobs.ColleagueActivityData_AbsenceDate{
+					AbsenceDate: &jobs.AbsenceDateChange{
 						AbsenceBegin: timestamp.New(absenceBegin),
 						AbsenceEnd:   timestamp.New(absenceEnd),
 					},

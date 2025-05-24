@@ -23,9 +23,9 @@ const (
 	JobsService_GetSelf_FullMethodName                 = "/services.jobs.JobsService/GetSelf"
 	JobsService_GetColleague_FullMethodName            = "/services.jobs.JobsService/GetColleague"
 	JobsService_ListColleagueActivity_FullMethodName   = "/services.jobs.JobsService/ListColleagueActivity"
-	JobsService_SetJobsUserProps_FullMethodName        = "/services.jobs.JobsService/SetJobsUserProps"
+	JobsService_SetColleagueProps_FullMethodName       = "/services.jobs.JobsService/SetColleagueProps"
 	JobsService_GetColleagueLabels_FullMethodName      = "/services.jobs.JobsService/GetColleagueLabels"
-	JobsService_ManageColleagueLabels_FullMethodName   = "/services.jobs.JobsService/ManageColleagueLabels"
+	JobsService_ManageLabels_FullMethodName            = "/services.jobs.JobsService/ManageLabels"
 	JobsService_GetColleagueLabelsStats_FullMethodName = "/services.jobs.JobsService/GetColleagueLabelsStats"
 	JobsService_GetMOTD_FullMethodName                 = "/services.jobs.JobsService/GetMOTD"
 	JobsService_SetMOTD_FullMethodName                 = "/services.jobs.JobsService/SetMOTD"
@@ -44,11 +44,11 @@ type JobsServiceClient interface {
 	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"}
 	ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
-	SetJobsUserProps(ctx context.Context, in *SetJobsUserPropsRequest, opts ...grpc.CallOption) (*SetJobsUserPropsResponse, error)
+	SetColleagueProps(ctx context.Context, in *SetColleaguePropsRequest, opts ...grpc.CallOption) (*SetColleaguePropsResponse, error)
 	// @perm: Name=GetColleague
 	GetColleagueLabels(ctx context.Context, in *GetColleagueLabelsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsResponse, error)
 	// @perm
-	ManageColleagueLabels(ctx context.Context, in *ManageColleagueLabelsRequest, opts ...grpc.CallOption) (*ManageColleagueLabelsResponse, error)
+	ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error)
 	// @perm: Name=GetColleague
 	GetColleagueLabelsStats(ctx context.Context, in *GetColleagueLabelsStatsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsStatsResponse, error)
 	// @perm: Name=Any
@@ -105,10 +105,10 @@ func (c *jobsServiceClient) ListColleagueActivity(ctx context.Context, in *ListC
 	return out, nil
 }
 
-func (c *jobsServiceClient) SetJobsUserProps(ctx context.Context, in *SetJobsUserPropsRequest, opts ...grpc.CallOption) (*SetJobsUserPropsResponse, error) {
+func (c *jobsServiceClient) SetColleagueProps(ctx context.Context, in *SetColleaguePropsRequest, opts ...grpc.CallOption) (*SetColleaguePropsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetJobsUserPropsResponse)
-	err := c.cc.Invoke(ctx, JobsService_SetJobsUserProps_FullMethodName, in, out, cOpts...)
+	out := new(SetColleaguePropsResponse)
+	err := c.cc.Invoke(ctx, JobsService_SetColleagueProps_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,10 +125,10 @@ func (c *jobsServiceClient) GetColleagueLabels(ctx context.Context, in *GetColle
 	return out, nil
 }
 
-func (c *jobsServiceClient) ManageColleagueLabels(ctx context.Context, in *ManageColleagueLabelsRequest, opts ...grpc.CallOption) (*ManageColleagueLabelsResponse, error) {
+func (c *jobsServiceClient) ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ManageColleagueLabelsResponse)
-	err := c.cc.Invoke(ctx, JobsService_ManageColleagueLabels_FullMethodName, in, out, cOpts...)
+	out := new(ManageLabelsResponse)
+	err := c.cc.Invoke(ctx, JobsService_ManageLabels_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -178,11 +178,11 @@ type JobsServiceServer interface {
 	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"}
 	ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
-	SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error)
+	SetColleagueProps(context.Context, *SetColleaguePropsRequest) (*SetColleaguePropsResponse, error)
 	// @perm: Name=GetColleague
 	GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error)
 	// @perm
-	ManageColleagueLabels(context.Context, *ManageColleagueLabelsRequest) (*ManageColleagueLabelsResponse, error)
+	ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error)
 	// @perm: Name=GetColleague
 	GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error)
 	// @perm: Name=Any
@@ -211,14 +211,14 @@ func (UnimplementedJobsServiceServer) GetColleague(context.Context, *GetColleagu
 func (UnimplementedJobsServiceServer) ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListColleagueActivity not implemented")
 }
-func (UnimplementedJobsServiceServer) SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetJobsUserProps not implemented")
+func (UnimplementedJobsServiceServer) SetColleagueProps(context.Context, *SetColleaguePropsRequest) (*SetColleaguePropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetColleagueProps not implemented")
 }
 func (UnimplementedJobsServiceServer) GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetColleagueLabels not implemented")
 }
-func (UnimplementedJobsServiceServer) ManageColleagueLabels(context.Context, *ManageColleagueLabelsRequest) (*ManageColleagueLabelsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ManageColleagueLabels not implemented")
+func (UnimplementedJobsServiceServer) ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ManageLabels not implemented")
 }
 func (UnimplementedJobsServiceServer) GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetColleagueLabelsStats not implemented")
@@ -322,20 +322,20 @@ func _JobsService_ListColleagueActivity_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _JobsService_SetJobsUserProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetJobsUserPropsRequest)
+func _JobsService_SetColleagueProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetColleaguePropsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(JobsServiceServer).SetJobsUserProps(ctx, in)
+		return srv.(JobsServiceServer).SetColleagueProps(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: JobsService_SetJobsUserProps_FullMethodName,
+		FullMethod: JobsService_SetColleagueProps_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).SetJobsUserProps(ctx, req.(*SetJobsUserPropsRequest))
+		return srv.(JobsServiceServer).SetColleagueProps(ctx, req.(*SetColleaguePropsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -358,20 +358,20 @@ func _JobsService_GetColleagueLabels_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _JobsService_ManageColleagueLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ManageColleagueLabelsRequest)
+func _JobsService_ManageLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManageLabelsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(JobsServiceServer).ManageColleagueLabels(ctx, in)
+		return srv.(JobsServiceServer).ManageLabels(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: JobsService_ManageColleagueLabels_FullMethodName,
+		FullMethod: JobsService_ManageLabels_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).ManageColleagueLabels(ctx, req.(*ManageColleagueLabelsRequest))
+		return srv.(JobsServiceServer).ManageLabels(ctx, req.(*ManageLabelsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -454,16 +454,16 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _JobsService_ListColleagueActivity_Handler,
 		},
 		{
-			MethodName: "SetJobsUserProps",
-			Handler:    _JobsService_SetJobsUserProps_Handler,
+			MethodName: "SetColleagueProps",
+			Handler:    _JobsService_SetColleagueProps_Handler,
 		},
 		{
 			MethodName: "GetColleagueLabels",
 			Handler:    _JobsService_GetColleagueLabels_Handler,
 		},
 		{
-			MethodName: "ManageColleagueLabels",
-			Handler:    _JobsService_ManageColleagueLabels_Handler,
+			MethodName: "ManageLabels",
+			Handler:    _JobsService_ManageLabels_Handler,
 		},
 		{
 			MethodName: "GetColleagueLabelsStats",

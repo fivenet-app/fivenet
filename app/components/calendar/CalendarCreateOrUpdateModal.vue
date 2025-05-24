@@ -29,8 +29,8 @@ const notifications = useNotificatorStore();
 const { maxAccessEntries } = useAppConfig();
 
 const canDo = computed(() => ({
-    privateCalendar: attr('CalendarService.CreateCalendar', 'Fields', 'Job').value,
-    publicCalendar: attr('CalendarService.CreateCalendar', 'Fields', 'Public').value,
+    privateCalendar: attr('calendar.CalendarService.CreateCalendar', 'Fields', 'Job').value,
+    publicCalendar: attr('calendar.CalendarService.CreateCalendar', 'Fields', 'Public').value,
 }));
 
 const schema = z.object({

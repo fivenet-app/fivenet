@@ -544,9 +544,9 @@ class DeleteConductEntryResponse$Type extends MessageType<DeleteConductEntryResp
  */
 export const DeleteConductEntryResponse = new DeleteConductEntryResponse$Type();
 /**
- * @generated ServiceType for protobuf service services.jobs.JobsConductService
+ * @generated ServiceType for protobuf service services.jobs.ConductService
  */
-export const JobsConductService = new ServiceType("services.jobs.JobsConductService", [
+export const ConductService = new ServiceType("services.jobs.ConductService", [
     { name: "ListConductEntries", options: {}, I: ListConductEntriesRequest, O: ListConductEntriesResponse },
     { name: "CreateConductEntry", options: {}, I: CreateConductEntryRequest, O: CreateConductEntryResponse },
     { name: "UpdateConductEntry", options: {}, I: UpdateConductEntryRequest, O: UpdateConductEntryResponse },

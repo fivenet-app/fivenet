@@ -21,8 +21,8 @@ const (
 	PermCanBeSuper    = "CanBeSuper"
 	PermCanBeSuperKey = "canbesuper"
 
-	PermSuperUser    = "SuperUser"
-	PermSuperUserKey = "superuser"
+	PermSuperuser    = "Superuser"
+	PermSuperuserKey = "superuser"
 
 	PermAny = "Any"
 )
@@ -80,7 +80,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	)
 
 	if userInfo.LastChar != nil && *userInfo.LastChar != userInfo.UserId && g.appCfg.Get().Auth.LastCharLock {
-		if !userInfo.CanBeSuper && !userInfo.SuperUser {
+		if !userInfo.CanBeSuper && !userInfo.Superuser {
 			return nil, ErrCharLock
 		}
 	}

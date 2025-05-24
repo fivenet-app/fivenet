@@ -6,13 +6,12 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -79,12 +78,12 @@ func (s *Server) getEmailSettings(ctx context.Context, tx qrm.DB, emailId uint64
 func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSettingsRequest) (*pbmailer.SetEmailSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "SetEmailSettings",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -228,7 +227,7 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *pbmailer.SetEmailSet
 		},
 	}, req.Settings.EmailId)
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbmailer.SetEmailSettingsResponse{
 		Settings: settings,

@@ -10,8 +10,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-// Scan implements driver.Valuer for protobuf JobsUserActivityData.
-func (x *JobsUserActivityData) Scan(value any) error {
+// Scan implements driver.Valuer for protobuf ColleagueActivityData.
+func (x *ColleagueActivityData) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
@@ -21,8 +21,8 @@ func (x *JobsUserActivityData) Scan(value any) error {
 	return nil
 }
 
-// Value marshals the JobsUserActivityData value into driver.Valuer.
-func (x *JobsUserActivityData) Value() (driver.Value, error) {
+// Value marshals the ColleagueActivityData value into driver.Valuer.
+func (x *ColleagueActivityData) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}

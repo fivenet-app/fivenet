@@ -40,10 +40,10 @@ const { maxAccessEntries } = useAppConfig();
 
 const canDo = computed(() => ({
     edit: !props.qualificationId
-        ? can('QualificationsService.CreateQualification').value
-        : can('QualificationsService.UpdateQualification').value,
+        ? can('qualifications.QualificationsService.CreateQualification').value
+        : can('qualifications.QualificationsService.UpdateQualification').value,
     access: true,
-    public: attr('QualificationsService.CreateQualification', 'Fields', 'Public').value,
+    public: attr('qualifications.QualificationsService.CreateQualification', 'Fields', 'Public').value,
 }));
 
 const loading = ref(props.qualificationId !== undefined);
@@ -537,12 +537,12 @@ const selectedTab = computed({
                                             name="discordSettings.roleFormat"
                                             :label="
                                                 $t(
-                                                    'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
+                                                    'components.settings.job_props.discord_sync_settings.qualifications_role_format.title',
                                                 )
                                             "
                                             :description="
                                                 $t(
-                                                    'components.rector.job_props.discord_sync_settings.qualifications_role_format.description',
+                                                    'components.settings.job_props.discord_sync_settings.qualifications_role_format.description',
                                                 )
                                             "
                                         >
@@ -552,7 +552,7 @@ const selectedTab = computed({
                                                 type="text"
                                                 :placeholder="
                                                     $t(
-                                                        'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
+                                                        'components.settings.job_props.discord_sync_settings.qualifications_role_format.title',
                                                     )
                                                 "
                                                 :disabled="!canDo.edit"

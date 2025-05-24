@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.accounts;
 
+import "resources/accounts/oauth2.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -9,13 +10,15 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts;accounts";
 
 message Account {
-  uint64 id = 1;
+  uint64 id = 1; // @gotags: sql:"primary_key"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string username = 4 [(validate.rules).string.max_len = 24];
   string license = 5 [(validate.rules).string.max_len = 64];
   bool enabled = 6;
   optional int32 last_char = 7 [(validate.rules).int32.gt = 0];
+
+  repeated OAuth2Account oauth2_accounts = 8 [(validate.rules).repeated.max_items = 10]; // @gotags: alias:"oauth2_account"
 }
 
 message Character {

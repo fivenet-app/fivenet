@@ -22,7 +22,7 @@ const notifications = useNotificatorStore();
 
 async function updateDocumentReq(documentId: number, requestId: number, accepted: boolean): Promise<void> {
     try {
-        const call = $grpc.docstore.docStore.updateDocumentReq({
+        const call = $grpc.documents.documents.updateDocumentReq({
             documentId,
             requestId,
             accepted,
@@ -38,8 +38,8 @@ async function updateDocumentReq(documentId: number, requestId: number, accepted
         }
 
         notifications.add({
-            title: { key: 'notifications.docstore.requests.updated.title' },
-            description: { key: 'notifications.docstore.requests.updated.content' },
+            title: { key: 'notifications.documents.requests.updated.title' },
+            description: { key: 'notifications.documents.requests.updated.content' },
             type: NotificationType.SUCCESS,
         });
     } catch (e) {
@@ -50,14 +50,14 @@ async function updateDocumentReq(documentId: number, requestId: number, accepted
 
 async function deleteDocumentReq(id: number): Promise<void> {
     try {
-        const call = $grpc.docstore.docStore.deleteDocumentReq({
+        const call = $grpc.documents.documents.deleteDocumentReq({
             requestId: id,
         });
         await call;
 
         notifications.add({
-            title: { key: 'notifications.docstore.requests.deleted.title' },
-            description: { key: 'notifications.docstore.requests.deleted.content' },
+            title: { key: 'notifications.documents.requests.deleted.title' },
+            description: { key: 'notifications.documents.requests.deleted.content' },
             type: NotificationType.SUCCESS,
         });
 
@@ -82,7 +82,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
         <div class="flex min-w-0 gap-x-2 px-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-base font-semibold leading-6 text-gray-100" :title="`${$t('common.id')}: ${request.id}`">
-                    {{ $t(`enums.docstore.DocActivityType.${DocActivityType[request.requestType]}`) }}
+                    {{ $t(`enums.documents.DocActivityType.${DocActivityType[request.requestType]}`) }}
                 </p>
                 <p class="mt-1 flex gap-1 text-sm leading-5">
                     <span class="font-semibold">{{ $t('common.reason') }}:</span> <span>{{ request.reason }}</span>

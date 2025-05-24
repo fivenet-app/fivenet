@@ -7,7 +7,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { UserActivityType } from '~~/gen/ts/resources/users/activity';
-import type { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
+import type { ListUserActivityResponse } from '~~/gen/ts/services/citizens/citizens';
 
 const props = defineProps<{
     userId: number;
@@ -62,7 +62,7 @@ const {
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
     try {
-        const call = $grpc.citizenstore.citizenStore.listUserActivity({
+        const call = $grpc.citizens.citizens.listUserActivity({
             pagination: {
                 offset: offset.value,
             },
@@ -88,7 +88,7 @@ watchDebounced(query, async () => refresh(), {
 
 <template>
     <UAlert
-        v-if="userId === activeChar?.userId && !attr('CitizenStoreService.ListUserActivity', 'Fields', 'Own').value"
+        v-if="userId === activeChar?.userId && !attr('citizens.CitizensService.ListUserActivity', 'Fields', 'Own').value"
         variant="subtle"
         color="error"
         icon="i-mdi-denied"

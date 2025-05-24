@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'common.dispatch_center',
     requiresAuth: true,
-    permission: 'CentrumService.TakeControl',
+    permission: 'centrum.CentrumService.TakeControl',
 });
 </script>
 

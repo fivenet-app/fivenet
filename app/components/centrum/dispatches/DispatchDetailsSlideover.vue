@@ -77,7 +77,7 @@ watch(dispatch, () => {
                             {{ dispatch.message }}
                         </p>
 
-                        <UTooltip v-if="can('CentrumService.DeleteDispatch').value" :text="$t('common.delete')">
+                        <UTooltip v-if="can('centrum.CentrumService.DeleteDispatch').value" :text="$t('common.delete')">
                             <UButton
                                 variant="link"
                                 icon="i-mdi-delete"

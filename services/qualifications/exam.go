@@ -5,14 +5,13 @@ import (
 	"errors"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -23,9 +22,9 @@ import (
 )
 
 var (
-	tExamQuestions = table.FivenetQualificationsExamQuestions.AS("examquestion")
-	tExamResponses = table.FivenetQualificationsExamResponses.AS("examresponse")
-	tExamUser      = table.FivenetQualificationsExamUsers.AS("examuser")
+	tExamQuestions = table.FivenetQualificationsExamQuestions.AS("exam_question")
+	tExamResponses = table.FivenetQualificationsExamResponses.AS("exam_response")
+	tExamUser      = table.FivenetQualificationsExamUsers.AS("exam_user")
 )
 
 func (s *Server) GetExamInfo(ctx context.Context, req *pbqualifications.GetExamInfoRequest) (*pbqualifications.GetExamInfoResponse, error) {
@@ -37,7 +36,7 @@ func (s *Server) GetExamInfo(ctx context.Context, req *pbqualifications.GetExamI
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.SuperUser {
+	if !check && !userInfo.Superuser {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -124,12 +123,12 @@ func (s *Server) TakeExam(ctx context.Context, req *pbqualifications.TakeExamReq
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "TakeExam",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -137,7 +136,7 @@ func (s *Server) TakeExam(ctx context.Context, req *pbqualifications.TakeExamReq
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.SuperUser {
+	if !check && !userInfo.Superuser {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -204,7 +203,7 @@ func (s *Server) TakeExam(ctx context.Context, req *pbqualifications.TakeExamReq
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbqualifications.TakeExamResponse{
 		Exam:     exam,
@@ -217,12 +216,12 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "SubmitExam",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -230,7 +229,7 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.SuperUser {
+	if !check && !userInfo.Superuser {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -295,7 +294,7 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbqualifications.SubmitExamResponse{
 		Duration: durationpb.New(duration),
@@ -308,12 +307,12 @@ func (s *Server) GetUserExam(ctx context.Context, req *pbqualifications.GetUserE
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "GetUserExam",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -321,7 +320,7 @@ func (s *Server) GetUserExam(ctx context.Context, req *pbqualifications.GetUserE
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.SuperUser {
+	if !check && !userInfo.Superuser {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 

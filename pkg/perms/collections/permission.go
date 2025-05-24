@@ -5,7 +5,7 @@ import (
 )
 
 // Permissions provides methods for you to manage array data more easily.
-type Permissions []*model.FivenetPermissions
+type Permissions []*model.FivenetRbacPermissions
 
 // Len returns the number of elements of the array.
 // @return int64

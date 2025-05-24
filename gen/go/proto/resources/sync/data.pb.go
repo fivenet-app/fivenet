@@ -8,6 +8,7 @@ package sync
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	livemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	vehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles"
@@ -71,7 +72,7 @@ func (x *DataStatus) GetCount() int64 {
 
 type DataJobs struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Jobs          []*users.Job           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
+	Jobs          []*jobs.Job            `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -106,7 +107,7 @@ func (*DataJobs) Descriptor() ([]byte, []int) {
 	return file_resources_sync_data_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *DataJobs) GetJobs() []*users.Job {
+func (x *DataJobs) GetJobs() []*jobs.Job {
 	if x != nil {
 		return x.Jobs
 	}
@@ -247,7 +248,7 @@ func (x *DataLicenses) GetLicenses() []*users.License {
 
 type DataUserLocations struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Users         []*UserLocation        `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+	Users         []*CitizenLocations    `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
 	ClearAll      *bool                  `protobuf:"varint,2,opt,name=clear_all,json=clearAll,proto3,oneof" json:"clear_all,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -283,7 +284,7 @@ func (*DataUserLocations) Descriptor() ([]byte, []int) {
 	return file_resources_sync_data_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *DataUserLocations) GetUsers() []*UserLocation {
+func (x *DataUserLocations) GetUsers() []*CitizenLocations {
 	if x != nil {
 		return x.Users
 	}
@@ -297,7 +298,7 @@ func (x *DataUserLocations) GetClearAll() bool {
 	return false
 }
 
-type UserLocation struct {
+type CitizenLocations struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Identifier    string                 `protobuf:"bytes,1,opt,name=identifier,proto3" json:"identifier,omitempty"`
 	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
@@ -308,20 +309,20 @@ type UserLocation struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserLocation) Reset() {
-	*x = UserLocation{}
+func (x *CitizenLocations) Reset() {
+	*x = CitizenLocations{}
 	mi := &file_resources_sync_data_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserLocation) String() string {
+func (x *CitizenLocations) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserLocation) ProtoMessage() {}
+func (*CitizenLocations) ProtoMessage() {}
 
-func (x *UserLocation) ProtoReflect() protoreflect.Message {
+func (x *CitizenLocations) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_sync_data_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -333,40 +334,40 @@ func (x *UserLocation) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserLocation.ProtoReflect.Descriptor instead.
-func (*UserLocation) Descriptor() ([]byte, []int) {
+// Deprecated: Use CitizenLocations.ProtoReflect.Descriptor instead.
+func (*CitizenLocations) Descriptor() ([]byte, []int) {
 	return file_resources_sync_data_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UserLocation) GetIdentifier() string {
+func (x *CitizenLocations) GetIdentifier() string {
 	if x != nil {
 		return x.Identifier
 	}
 	return ""
 }
 
-func (x *UserLocation) GetJob() string {
+func (x *CitizenLocations) GetJob() string {
 	if x != nil {
 		return x.Job
 	}
 	return ""
 }
 
-func (x *UserLocation) GetCoords() *livemap.Coords {
+func (x *CitizenLocations) GetCoords() *livemap.Coords {
 	if x != nil {
 		return x.Coords
 	}
 	return nil
 }
 
-func (x *UserLocation) GetHidden() bool {
+func (x *CitizenLocations) GetHidden() bool {
 	if x != nil {
 		return x.Hidden
 	}
 	return false
 }
 
-func (x *UserLocation) GetRemove() bool {
+func (x *CitizenLocations) GetRemove() bool {
 	if x != nil {
 		return x.Remove
 	}
@@ -465,24 +466,24 @@ var File_resources_sync_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/sync/data.proto\x12\x0eresources.sync\x1a\x1fresources/livemap/livemap.proto\x1a\x1aresources/users/jobs.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x17validate/validate.proto\"\"\n" +
+	"\x19resources/sync/data.proto\x12\x0eresources.sync\x1a\x1fresources/livemap/livemap.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x17validate/validate.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x03R\x05count\"?\n" +
-	"\bDataJobs\x123\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x14.resources.users.JobB\t\xfaB\x06\x92\x01\x03\x10\xc8\x01R\x04jobs\"C\n" +
+	"\x05count\x18\x01 \x01(\x03R\x05count\">\n" +
+	"\bDataJobs\x122\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobB\t\xfaB\x06\x92\x01\x03\x10\xc8\x01R\x04jobs\"C\n" +
 	"\tDataUsers\x126\n" +
 	"\x05users\x18\x01 \x03(\v2\x15.resources.users.UserB\t\xfaB\x06\x92\x01\x03\x10\xf4\x03R\x05users\"R\n" +
 	"\fDataVehicles\x12B\n" +
 	"\bvehicles\x18\x01 \x03(\v2\x1b.resources.vehicles.VehicleB\t\xfaB\x06\x92\x01\x03\x10\xe8\aR\bvehicles\"O\n" +
 	"\fDataLicenses\x12?\n" +
-	"\blicenses\x18\x01 \x03(\v2\x18.resources.users.LicenseB\t\xfaB\x06\x92\x01\x03\x10\xc8\x01R\blicenses\"\x82\x01\n" +
-	"\x11DataUserLocations\x12=\n" +
-	"\x05users\x18\x01 \x03(\v2\x1c.resources.sync.UserLocationB\t\xfaB\x06\x92\x01\x03\x10\xd0\x0fR\x05users\x12 \n" +
+	"\blicenses\x18\x01 \x03(\v2\x18.resources.users.LicenseB\t\xfaB\x06\x92\x01\x03\x10\xc8\x01R\blicenses\"\x86\x01\n" +
+	"\x11DataUserLocations\x12A\n" +
+	"\x05users\x18\x01 \x03(\v2 .resources.sync.CitizenLocationsB\t\xfaB\x06\x92\x01\x03\x10\xd0\x0fR\x05users\x12 \n" +
 	"\tclear_all\x18\x02 \x01(\bH\x00R\bclearAll\x88\x01\x01B\f\n" +
 	"\n" +
-	"_clear_all\"\xbf\x01\n" +
-	"\fUserLocation\x12'\n" +
+	"_clear_all\"\xc3\x01\n" +
+	"\x10CitizenLocations\x12'\n" +
 	"\n" +
 	"identifier\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18@R\n" +
 	"identifier\x12\x19\n" +
@@ -515,22 +516,22 @@ var file_resources_sync_data_proto_goTypes = []any{
 	(*DataVehicles)(nil),      // 3: resources.sync.DataVehicles
 	(*DataLicenses)(nil),      // 4: resources.sync.DataLicenses
 	(*DataUserLocations)(nil), // 5: resources.sync.DataUserLocations
-	(*UserLocation)(nil),      // 6: resources.sync.UserLocation
+	(*CitizenLocations)(nil),  // 6: resources.sync.CitizenLocations
 	(*DeleteUsers)(nil),       // 7: resources.sync.DeleteUsers
 	(*DeleteVehicles)(nil),    // 8: resources.sync.DeleteVehicles
-	(*users.Job)(nil),         // 9: resources.users.Job
+	(*jobs.Job)(nil),          // 9: resources.jobs.Job
 	(*users.User)(nil),        // 10: resources.users.User
 	(*vehicles.Vehicle)(nil),  // 11: resources.vehicles.Vehicle
 	(*users.License)(nil),     // 12: resources.users.License
 	(*livemap.Coords)(nil),    // 13: resources.livemap.Coords
 }
 var file_resources_sync_data_proto_depIdxs = []int32{
-	9,  // 0: resources.sync.DataJobs.jobs:type_name -> resources.users.Job
+	9,  // 0: resources.sync.DataJobs.jobs:type_name -> resources.jobs.Job
 	10, // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
 	11, // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
 	12, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.License
-	6,  // 4: resources.sync.DataUserLocations.users:type_name -> resources.sync.UserLocation
-	13, // 5: resources.sync.UserLocation.coords:type_name -> resources.livemap.Coords
+	6,  // 4: resources.sync.DataUserLocations.users:type_name -> resources.sync.CitizenLocations
+	13, // 5: resources.sync.CitizenLocations.coords:type_name -> resources.livemap.Coords
 	6,  // [6:6] is the sub-list for method output_type
 	6,  // [6:6] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name

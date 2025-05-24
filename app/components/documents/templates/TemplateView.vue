@@ -38,7 +38,7 @@ const {
 
 async function getTemplate(): Promise<Template | undefined> {
     try {
-        const call = $grpc.docstore.docStore.getTemplate({
+        const call = $grpc.documents.documents.getTemplate({
             templateId: props.templateId,
             render: false,
         });
@@ -57,7 +57,7 @@ async function getTemplate(): Promise<Template | undefined> {
 
 async function deleteTemplate(id: number): Promise<void> {
     try {
-        await $grpc.docstore.docStore.deleteTemplate({ id });
+        await $grpc.documents.documents.deleteTemplate({ id });
 
         notifications.add({
             title: { key: 'notifications.templates.deleted.title', parameters: {} },
@@ -86,7 +86,7 @@ const contentAccessTypes: AccessType[] = [
 
             <UButtonGroup v-if="template" class="inline-flex">
                 <UButton
-                    v-if="can('DocStoreService.CreateTemplate').value"
+                    v-if="can('documents.DocumentsService.CreateTemplate').value"
                     class="flex-1"
                     block
                     color="white"
@@ -101,7 +101,7 @@ const contentAccessTypes: AccessType[] = [
                 </UButton>
 
                 <UButton
-                    v-if="can('DocStoreService.CreateTemplate').value"
+                    v-if="can('documents.DocumentsService.CreateTemplate').value"
                     class="flex-1"
                     block
                     trailing-icon="i-mdi-pencil"
@@ -111,7 +111,7 @@ const contentAccessTypes: AccessType[] = [
                 </UButton>
 
                 <UButton
-                    v-if="can('DocStoreService.DeleteTemplate').value"
+                    v-if="can('documents.DocumentsService.DeleteTemplate').value"
                     class="flex-1"
                     block
                     trailing-icon="i-mdi-delete"
@@ -180,7 +180,7 @@ const contentAccessTypes: AccessType[] = [
                                     v-model:jobs="template.jobAccess"
                                     :target-id="templateId ?? 0"
                                     :access-roles="
-                                        enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
+                                        enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
                                             (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
                                         )
                                     "
@@ -261,7 +261,7 @@ const contentAccessTypes: AccessType[] = [
                                         <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
                                     </li>
                                     <li v-if="reqs.documents">
-                                        <TemplateRequirementsList name="User" :specs="reqs.documents!" />
+                                        <TemplateRequirementsList name="Document" :specs="reqs.documents!" />
                                     </li>
                                 </ul>
                             </div>
@@ -276,7 +276,7 @@ const contentAccessTypes: AccessType[] = [
                                     v-model:jobs="template.contentAccess.jobs"
                                     :target-id="templateId ?? 0"
                                     :access-types="contentAccessTypes"
-                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
                                     :disabled="true"
                                     :show-required="true"
                                 />

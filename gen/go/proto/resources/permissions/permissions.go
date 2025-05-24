@@ -25,7 +25,7 @@ func (x *Role) SetJobGradeLabel(label string) {
 	x.JobGradeLabel = &label
 }
 
-func ConvertFromRole(p *model.FivenetRoles) *Role {
+func ConvertFromRole(p *model.FivenetRbacRoles) *Role {
 	var createdAt *timestamp.Timestamp
 	if p.CreatedAt != nil {
 		createdAt = timestamp.New(*p.CreatedAt)

@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	QualificationsServicePerm perms.Category = "QualificationsService"
+	QualificationsServicePerm perms.Category = "qualifications.QualificationsService"
 
 	QualificationsServiceCreateQualificationPerm            perms.Name = "CreateQualification"
 	QualificationsServiceCreateQualificationFieldsPermField perms.Key  = "Fields"

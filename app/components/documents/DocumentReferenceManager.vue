@@ -60,7 +60,7 @@ watchDebounced(queryDoc, async () => await refresh(), {
 
 async function listDocuments(): Promise<DocumentShort[]> {
     try {
-        const call = $grpc.docstore.docStore.listDocuments({
+        const call = $grpc.documents.documents.listDocuments({
             pagination: {
                 offset: 0,
                 pageSize: 8,
@@ -200,7 +200,7 @@ const columnsNew = [
                             </template>
 
                             <template #reference-data="{ row }">
-                                {{ $t(`enums.docstore.DocReference.${DocReference[row.reference]}`) }}
+                                {{ $t(`enums.documents.DocReference.${DocReference[row.reference]}`) }}
                             </template>
 
                             <template #actions-data="{ row }">

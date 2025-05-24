@@ -3,7 +3,7 @@
 
 package sync
 
-func (m *JobsUserProps) Sanitize() error {
+func (m *ColleagueProps) Sanitize() error {
 	if m == nil {
 		return nil
 	}

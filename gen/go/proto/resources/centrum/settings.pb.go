@@ -291,9 +291,9 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\atimings\x18\x06 \x01(\v2\x1a.resources.centrum.TimingsR\atimingsB\x14\n" +
 	"\x12_predefined_status\"|\n" +
 	"\x10PredefinedStatus\x12/\n" +
-	"\vunit_status\x18\x01 \x03(\tB\x0e\xfaB\v\x92\x01\b\x10\x05\"\x04r\x02\x18@R\n" +
+	"\vunit_status\x18\x01 \x03(\tB\x0e\xfaB\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\n" +
 	"unitStatus\x127\n" +
-	"\x0fdispatch_status\x18\x02 \x03(\tB\x0e\xfaB\v\x92\x01\b\x10\x05\"\x04r\x02\x18@R\x0edispatchStatus\"\xb3\x01\n" +
+	"\x0fdispatch_status\x18\x02 \x03(\tB\x0e\xfaB\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\x0edispatchStatus\"\xb3\x01\n" +
 	"\aTimings\x126\n" +
 	"\x11dispatch_max_wait\x18\x01 \x01(\x03B\n" +
 	"\xfaB\a\"\x05\x10\xf0. \x1eR\x0fdispatchMaxWait\x12!\n" +

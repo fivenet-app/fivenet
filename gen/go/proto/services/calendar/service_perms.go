@@ -10,27 +10,27 @@ import (
 )
 
 var PermsRemap = map[string]string{
-	// Service: CalendarService
-	"CalendarService/CreateOrUpdateCalendarEntry": "Any",
-	"CalendarService/DeleteCalendar":              "Any",
-	"CalendarService/DeleteCalendarEntry":         "Any",
-	"CalendarService/GetCalendar":                 "Any",
-	"CalendarService/GetCalendarEntry":            "Any",
-	"CalendarService/GetUpcomingEntries":          "Any",
-	"CalendarService/ListCalendarEntries":         "Any",
-	"CalendarService/ListCalendarEntryRSVP":       "Any",
-	"CalendarService/ListCalendars":               "Any",
-	"CalendarService/ListSubscriptions":           "Any",
-	"CalendarService/RSVPCalendarEntry":           "Any",
-	"CalendarService/ShareCalendarEntry":          "Any",
-	"CalendarService/SubscribeToCalendar":         "Any",
-	"CalendarService/UpdateCalendar":              "Any",
+	// Service: calendar.CalendarService
+	"calendar.CalendarService/CreateOrUpdateCalendarEntry": "Any",
+	"calendar.CalendarService/DeleteCalendar":              "Any",
+	"calendar.CalendarService/DeleteCalendarEntry":         "Any",
+	"calendar.CalendarService/GetCalendar":                 "Any",
+	"calendar.CalendarService/GetCalendarEntry":            "Any",
+	"calendar.CalendarService/GetUpcomingEntries":          "Any",
+	"calendar.CalendarService/ListCalendarEntries":         "Any",
+	"calendar.CalendarService/ListCalendarEntryRSVP":       "Any",
+	"calendar.CalendarService/ListCalendars":               "Any",
+	"calendar.CalendarService/ListSubscriptions":           "Any",
+	"calendar.CalendarService/RSVPCalendarEntry":           "Any",
+	"calendar.CalendarService/ShareCalendarEntry":          "Any",
+	"calendar.CalendarService/SubscribeToCalendar":         "Any",
+	"calendar.CalendarService/UpdateCalendar":              "Any",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: CalendarService
+		// Service: calendar.CalendarService
 		{
 			Category: permkeys.CalendarServicePerm,
 			Name:     permkeys.CalendarServiceCreateCalendarPerm,

@@ -11,7 +11,7 @@ import (
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: AuthService
+		// Service: auth.AuthService
 		{
 			Category: permkeys.AuthServicePerm,
 			Name:     permkeys.AuthServiceChooseCharacterPerm,

@@ -99,9 +99,9 @@ type DBSyncSourceTables struct {
 	JobGrades DBSyncTable `yaml:"jobGrades"`
 	Licenses  DBSyncTable `yaml:"licenses"`
 
-	Users        UsersDBSyncTable `yaml:"users"`
-	UserLicenses DBSyncTable      `yaml:"userLicenses"`
-	Vehicles     DBSyncTable      `yaml:"vehicles"`
+	Users            UsersDBSyncTable `yaml:"users"`
+	CitizensLicenses DBSyncTable      `yaml:"userLicenses"`
+	Vehicles         DBSyncTable      `yaml:"vehicles"`
 }
 
 type DBSyncTable struct {

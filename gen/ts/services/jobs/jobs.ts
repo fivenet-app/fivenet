@@ -13,9 +13,9 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { LabelCount } from "../../resources/jobs/labels";
 import { Label } from "../../resources/jobs/labels";
-import { JobsUserProps } from "../../resources/jobs/colleagues";
-import { JobsUserActivity } from "../../resources/jobs/activity";
-import { JobsUserActivityType } from "../../resources/jobs/activity";
+import { ColleagueProps } from "../../resources/jobs/colleagues";
+import { ColleagueActivity } from "../../resources/jobs/activity";
+import { ColleagueActivityType } from "../../resources/jobs/activity";
 import { Colleague } from "../../resources/jobs/colleagues";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
@@ -129,9 +129,9 @@ export interface ListColleagueActivityRequest {
      */
     userIds: number[];
     /**
-     * @generated from protobuf field: repeated resources.jobs.JobsUserActivityType activity_types = 4;
+     * @generated from protobuf field: repeated resources.jobs.ColleagueActivityType activity_types = 4;
      */
-    activityTypes: JobsUserActivityType[];
+    activityTypes: ColleagueActivityType[];
 }
 /**
  * @generated from protobuf message services.jobs.ListColleagueActivityResponse
@@ -142,18 +142,18 @@ export interface ListColleagueActivityResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.jobs.JobsUserActivity activity = 2;
+     * @generated from protobuf field: repeated resources.jobs.ColleagueActivity activity = 2;
      */
-    activity: JobsUserActivity[];
+    activity: ColleagueActivity[];
 }
 /**
- * @generated from protobuf message services.jobs.SetJobsUserPropsRequest
+ * @generated from protobuf message services.jobs.SetColleaguePropsRequest
  */
-export interface SetJobsUserPropsRequest {
+export interface SetColleaguePropsRequest {
     /**
-     * @generated from protobuf field: resources.jobs.JobsUserProps props = 1;
+     * @generated from protobuf field: resources.jobs.ColleagueProps props = 1;
      */
-    props?: JobsUserProps;
+    props?: ColleagueProps;
     /**
      * @sanitize
      *
@@ -162,13 +162,13 @@ export interface SetJobsUserPropsRequest {
     reason: string;
 }
 /**
- * @generated from protobuf message services.jobs.SetJobsUserPropsResponse
+ * @generated from protobuf message services.jobs.SetColleaguePropsResponse
  */
-export interface SetJobsUserPropsResponse {
+export interface SetColleaguePropsResponse {
     /**
-     * @generated from protobuf field: resources.jobs.JobsUserProps props = 1;
+     * @generated from protobuf field: resources.jobs.ColleagueProps props = 1;
      */
-    props?: JobsUserProps;
+    props?: ColleagueProps;
 }
 /**
  * @generated from protobuf message services.jobs.GetColleagueLabelsRequest
@@ -189,18 +189,18 @@ export interface GetColleagueLabelsResponse {
     labels: Label[];
 }
 /**
- * @generated from protobuf message services.jobs.ManageColleagueLabelsRequest
+ * @generated from protobuf message services.jobs.ManageLabelsRequest
  */
-export interface ManageColleagueLabelsRequest {
+export interface ManageLabelsRequest {
     /**
      * @generated from protobuf field: repeated resources.jobs.Label labels = 1;
      */
     labels: Label[];
 }
 /**
- * @generated from protobuf message services.jobs.ManageColleagueLabelsResponse
+ * @generated from protobuf message services.jobs.ManageLabelsResponse
  */
-export interface ManageColleagueLabelsResponse {
+export interface ManageLabelsResponse {
     /**
      * @generated from protobuf field: repeated resources.jobs.Label labels = 1;
      */
@@ -610,7 +610,7 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.JobsUserActivityType", JobsUserActivityType, "JOBS_USER_ACTIVITY_TYPE_"], options: { "validate.rules": { repeated: { maxItems: "10" } } } }
+            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ColleagueActivityType", ColleagueActivityType, "COLLEAGUE_ACTIVITY_TYPE_"], options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
@@ -639,7 +639,7 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                     else
                         message.userIds.push(reader.int32());
                     break;
-                case /* repeated resources.jobs.JobsUserActivityType activity_types */ 4:
+                case /* repeated resources.jobs.ColleagueActivityType activity_types */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.activityTypes.push(reader.int32());
@@ -671,7 +671,7 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* repeated resources.jobs.JobsUserActivityType activity_types = 4; */
+        /* repeated resources.jobs.ColleagueActivityType activity_types = 4; */
         if (message.activityTypes.length) {
             writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.activityTypes.length; i++)
@@ -693,7 +693,7 @@ class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivi
     constructor() {
         super("services.jobs.ListColleagueActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobsUserActivity }
+            { no: 2, name: "activity", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ColleagueActivity }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityResponse>): ListColleagueActivityResponse {
@@ -711,8 +711,8 @@ class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivi
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.jobs.JobsUserActivity activity */ 2:
-                    message.activity.push(JobsUserActivity.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.jobs.ColleagueActivity activity */ 2:
+                    message.activity.push(ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -729,9 +729,9 @@ class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivi
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.JobsUserActivity activity = 2; */
+        /* repeated resources.jobs.ColleagueActivity activity = 2; */
         for (let i = 0; i < message.activity.length; i++)
-            JobsUserActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            ColleagueActivity.internalBinaryWrite(message.activity[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -743,27 +743,27 @@ class ListColleagueActivityResponse$Type extends MessageType<ListColleagueActivi
  */
 export const ListColleagueActivityResponse = new ListColleagueActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SetJobsUserPropsRequest$Type extends MessageType<SetJobsUserPropsRequest> {
+class SetColleaguePropsRequest$Type extends MessageType<SetColleaguePropsRequest> {
     constructor() {
-        super("services.jobs.SetJobsUserPropsRequest", [
-            { no: 1, name: "props", kind: "message", T: () => JobsUserProps },
+        super("services.jobs.SetColleaguePropsRequest", [
+            { no: 1, name: "props", kind: "message", T: () => ColleagueProps },
             { no: 2, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255", ignoreEmpty: true } } } }
         ]);
     }
-    create(value?: PartialMessage<SetJobsUserPropsRequest>): SetJobsUserPropsRequest {
+    create(value?: PartialMessage<SetColleaguePropsRequest>): SetColleaguePropsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.reason = "";
         if (value !== undefined)
-            reflectionMergePartial<SetJobsUserPropsRequest>(this, message, value);
+            reflectionMergePartial<SetColleaguePropsRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetJobsUserPropsRequest): SetJobsUserPropsRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetColleaguePropsRequest): SetColleaguePropsRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.JobsUserProps props */ 1:
-                    message.props = JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                case /* resources.jobs.ColleagueProps props */ 1:
+                    message.props = ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 case /* string reason */ 2:
                     message.reason = reader.string();
@@ -779,10 +779,10 @@ class SetJobsUserPropsRequest$Type extends MessageType<SetJobsUserPropsRequest> 
         }
         return message;
     }
-    internalBinaryWrite(message: SetJobsUserPropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.JobsUserProps props = 1; */
+    internalBinaryWrite(message: SetColleaguePropsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.ColleagueProps props = 1; */
         if (message.props)
-            JobsUserProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            ColleagueProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* string reason = 2; */
         if (message.reason !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.reason);
@@ -793,29 +793,29 @@ class SetJobsUserPropsRequest$Type extends MessageType<SetJobsUserPropsRequest> 
     }
 }
 /**
- * @generated MessageType for protobuf message services.jobs.SetJobsUserPropsRequest
+ * @generated MessageType for protobuf message services.jobs.SetColleaguePropsRequest
  */
-export const SetJobsUserPropsRequest = new SetJobsUserPropsRequest$Type();
+export const SetColleaguePropsRequest = new SetColleaguePropsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SetJobsUserPropsResponse$Type extends MessageType<SetJobsUserPropsResponse> {
+class SetColleaguePropsResponse$Type extends MessageType<SetColleaguePropsResponse> {
     constructor() {
-        super("services.jobs.SetJobsUserPropsResponse", [
-            { no: 1, name: "props", kind: "message", T: () => JobsUserProps }
+        super("services.jobs.SetColleaguePropsResponse", [
+            { no: 1, name: "props", kind: "message", T: () => ColleagueProps }
         ]);
     }
-    create(value?: PartialMessage<SetJobsUserPropsResponse>): SetJobsUserPropsResponse {
+    create(value?: PartialMessage<SetColleaguePropsResponse>): SetColleaguePropsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<SetJobsUserPropsResponse>(this, message, value);
+            reflectionMergePartial<SetColleaguePropsResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetJobsUserPropsResponse): SetJobsUserPropsResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetColleaguePropsResponse): SetColleaguePropsResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.JobsUserProps props */ 1:
-                    message.props = JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
+                case /* resources.jobs.ColleagueProps props */ 1:
+                    message.props = ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -828,10 +828,10 @@ class SetJobsUserPropsResponse$Type extends MessageType<SetJobsUserPropsResponse
         }
         return message;
     }
-    internalBinaryWrite(message: SetJobsUserPropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.JobsUserProps props = 1; */
+    internalBinaryWrite(message: SetColleaguePropsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.ColleagueProps props = 1; */
         if (message.props)
-            JobsUserProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            ColleagueProps.internalBinaryWrite(message.props, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -839,9 +839,9 @@ class SetJobsUserPropsResponse$Type extends MessageType<SetJobsUserPropsResponse
     }
 }
 /**
- * @generated MessageType for protobuf message services.jobs.SetJobsUserPropsResponse
+ * @generated MessageType for protobuf message services.jobs.SetColleaguePropsResponse
  */
-export const SetJobsUserPropsResponse = new SetJobsUserPropsResponse$Type();
+export const SetColleaguePropsResponse = new SetColleaguePropsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetColleagueLabelsRequest$Type extends MessageType<GetColleagueLabelsRequest> {
     constructor() {
@@ -936,20 +936,20 @@ class GetColleagueLabelsResponse$Type extends MessageType<GetColleagueLabelsResp
  */
 export const GetColleagueLabelsResponse = new GetColleagueLabelsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ManageColleagueLabelsRequest$Type extends MessageType<ManageColleagueLabelsRequest> {
+class ManageLabelsRequest$Type extends MessageType<ManageLabelsRequest> {
     constructor() {
-        super("services.jobs.ManageColleagueLabelsRequest", [
+        super("services.jobs.ManageLabelsRequest", [
             { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
         ]);
     }
-    create(value?: PartialMessage<ManageColleagueLabelsRequest>): ManageColleagueLabelsRequest {
+    create(value?: PartialMessage<ManageLabelsRequest>): ManageLabelsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.labels = [];
         if (value !== undefined)
-            reflectionMergePartial<ManageColleagueLabelsRequest>(this, message, value);
+            reflectionMergePartial<ManageLabelsRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageColleagueLabelsRequest): ManageColleagueLabelsRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageLabelsRequest): ManageLabelsRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -968,7 +968,7 @@ class ManageColleagueLabelsRequest$Type extends MessageType<ManageColleagueLabel
         }
         return message;
     }
-    internalBinaryWrite(message: ManageColleagueLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ManageLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated resources.jobs.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -979,24 +979,24 @@ class ManageColleagueLabelsRequest$Type extends MessageType<ManageColleagueLabel
     }
 }
 /**
- * @generated MessageType for protobuf message services.jobs.ManageColleagueLabelsRequest
+ * @generated MessageType for protobuf message services.jobs.ManageLabelsRequest
  */
-export const ManageColleagueLabelsRequest = new ManageColleagueLabelsRequest$Type();
+export const ManageLabelsRequest = new ManageLabelsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ManageColleagueLabelsResponse$Type extends MessageType<ManageColleagueLabelsResponse> {
+class ManageLabelsResponse$Type extends MessageType<ManageLabelsResponse> {
     constructor() {
-        super("services.jobs.ManageColleagueLabelsResponse", [
+        super("services.jobs.ManageLabelsResponse", [
             { no: 1, name: "labels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
         ]);
     }
-    create(value?: PartialMessage<ManageColleagueLabelsResponse>): ManageColleagueLabelsResponse {
+    create(value?: PartialMessage<ManageLabelsResponse>): ManageLabelsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.labels = [];
         if (value !== undefined)
-            reflectionMergePartial<ManageColleagueLabelsResponse>(this, message, value);
+            reflectionMergePartial<ManageLabelsResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageColleagueLabelsResponse): ManageColleagueLabelsResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageLabelsResponse): ManageLabelsResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1015,7 +1015,7 @@ class ManageColleagueLabelsResponse$Type extends MessageType<ManageColleagueLabe
         }
         return message;
     }
-    internalBinaryWrite(message: ManageColleagueLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ManageLabelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated resources.jobs.Label labels = 1; */
         for (let i = 0; i < message.labels.length; i++)
             Label.internalBinaryWrite(message.labels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -1026,9 +1026,9 @@ class ManageColleagueLabelsResponse$Type extends MessageType<ManageColleagueLabe
     }
 }
 /**
- * @generated MessageType for protobuf message services.jobs.ManageColleagueLabelsResponse
+ * @generated MessageType for protobuf message services.jobs.ManageLabelsResponse
  */
-export const ManageColleagueLabelsResponse = new ManageColleagueLabelsResponse$Type();
+export const ManageLabelsResponse = new ManageLabelsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetColleagueLabelsStatsRequest$Type extends MessageType<GetColleagueLabelsStatsRequest> {
     constructor() {
@@ -1318,9 +1318,9 @@ export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "GetSelf", options: {}, I: GetSelfRequest, O: GetSelfResponse },
     { name: "GetColleague", options: {}, I: GetColleagueRequest, O: GetColleagueResponse },
     { name: "ListColleagueActivity", options: {}, I: ListColleagueActivityRequest, O: ListColleagueActivityResponse },
-    { name: "SetJobsUserProps", options: {}, I: SetJobsUserPropsRequest, O: SetJobsUserPropsResponse },
+    { name: "SetColleagueProps", options: {}, I: SetColleaguePropsRequest, O: SetColleaguePropsResponse },
     { name: "GetColleagueLabels", options: {}, I: GetColleagueLabelsRequest, O: GetColleagueLabelsResponse },
-    { name: "ManageColleagueLabels", options: {}, I: ManageColleagueLabelsRequest, O: ManageColleagueLabelsResponse },
+    { name: "ManageLabels", options: {}, I: ManageLabelsRequest, O: ManageLabelsResponse },
     { name: "GetColleagueLabelsStats", options: {}, I: GetColleagueLabelsStatsRequest, O: GetColleagueLabelsStatsResponse },
     { name: "GetMOTD", options: {}, I: GetMOTDRequest, O: GetMOTDResponse },
     { name: "SetMOTD", options: {}, I: SetMOTDRequest, O: SetMOTDResponse }

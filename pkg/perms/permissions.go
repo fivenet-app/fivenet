@@ -13,7 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var tPerms = table.FivenetPermissions
+var tPerms = table.FivenetRbacPermissions
 
 func (p *Perms) CreatePermission(ctx context.Context, category Category, name Name) (uint64, error) {
 	guard := BuildGuard(category, name)
@@ -51,9 +51,7 @@ func (p *Perms) CreatePermission(ctx context.Context, category Category, name Na
 	return uint64(lastId), nil
 }
 
-func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name string) (*model.FivenetPermissions, error) {
-	guard := Guard(name)
-
+func (p *Perms) loadPermissionFromDatabaseByCategoryName(ctx context.Context, category Category, name Name) (*model.FivenetRbacPermissions, error) {
 	stmt := tPerms.
 		SELECT(
 			tPerms.ID,
@@ -63,17 +61,19 @@ func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name stri
 			tPerms.GuardName,
 		).
 		FROM(tPerms).
-		WHERE(
-			tPerms.GuardName.EQ(jet.String(guard)),
-		)
+		WHERE(jet.AND(
+			tPerms.Category.EQ(jet.String(string(category))),
+			tPerms.Name.EQ(jet.String(string(name))),
+		)).
+		LIMIT(1)
 
-	var dest model.FivenetPermissions
+	dest := &model.FivenetRbacPermissions{}
 
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, p.db, dest); err != nil {
 		return nil, fmt.Errorf("failed to query permission by guard. %w", err)
 	}
 
-	return &dest, nil
+	return dest, nil
 }
 
 func (p *Perms) UpdatePermission(ctx context.Context, id uint64, category Category, name Name) error {

@@ -3,8 +3,8 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
 import type { User } from '~~/gen/ts/resources/users/users';
 
@@ -60,7 +60,7 @@ async function setJobProp(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.citizenstore.citizenStore.setUserProps({
+        const call = $grpc.citizens.citizens.setUserProps({
             props: userProps,
             reason: values.reason,
         });

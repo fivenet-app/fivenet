@@ -78,7 +78,7 @@ const tocLinks = computedAsync(async () => props.page?.content?.content && jsonN
 const accordionItems = computed(() =>
     [
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock' },
-        can('WikiService.ListPageActivity').value &&
+        can('wiki.WikiService.ListPageActivity').value &&
         checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW)
             ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
@@ -95,7 +95,7 @@ const accordionItems = computed(() =>
         <template #right>
             <PartialsBackButton fallback-to="/wiki" />
 
-            <UButton v-if="can('WikiService.CreatePage').value" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
+            <UButton v-if="can('wiki.WikiService.CreatePage').value" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
                 {{ $t('common.page') }}
             </UButton>
         </template>
@@ -157,7 +157,7 @@ const accordionItems = computed(() =>
 
                         <UTooltip
                             v-if="
-                                can('WikiService.CreatePage').value &&
+                                can('wiki.WikiService.CreatePage').value &&
                                 checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
                             "
                             :text="$t('common.edit')"
@@ -167,7 +167,7 @@ const accordionItems = computed(() =>
 
                         <UTooltip
                             v-if="
-                                can('WikiService.DeletePage').value &&
+                                can('wiki.WikiService.DeletePage').value &&
                                 checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
                             "
                             :text="!page.meta.deletedAt ? $t('common.delete') : $t('common.restore')"
@@ -249,7 +249,7 @@ const accordionItems = computed(() =>
                         </UContainer>
                     </template>
 
-                    <template v-if="can('WikiService.ListPageActivity').value" #activity>
+                    <template v-if="can('wiki.WikiService.ListPageActivity').value" #activity>
                         <UContainer>
                             <PageActivityList :page-id="page.id" />
                         </UContainer>

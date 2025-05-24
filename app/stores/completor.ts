@@ -1,9 +1,9 @@
 import { defineStore } from 'pinia';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { LawBook } from '~~/gen/ts/resources/laws/laws';
-import type { Job } from '~~/gen/ts/resources/users/jobs';
-import type { CitizenLabel } from '~~/gen/ts/resources/users/labels';
+import type { Label } from '~~/gen/ts/resources/users/labels';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
@@ -47,7 +47,7 @@ export const useCompletorStore = defineStore(
 
         const completeCitizens = async (req: CompleteCitizensRequest): Promise<UserShort[]> => {
             const { can } = useAuth();
-            if (!can('CompletorService.CompleteCitizens').value) {
+            if (!can('completor.CompletorService.CompleteCitizens').value) {
                 return [];
             }
             try {
@@ -81,7 +81,7 @@ export const useCompletorStore = defineStore(
 
         const completeDocumentCategories = async (search: string): Promise<Category[]> => {
             const { can } = useAuth();
-            if (!can('CompletorService.CompleteDocumentCategories').value) {
+            if (!can('completor.CompletorService.CompleteDocumentCategories').value) {
                 return [];
             }
             try {
@@ -105,7 +105,7 @@ export const useCompletorStore = defineStore(
             }
         };
 
-        const completeCitizenLabels = async (search: string): Promise<CitizenLabel[]> => {
+        const completeCitizenLabels = async (search: string): Promise<Label[]> => {
             try {
                 const call = $grpc.completor.completor.completeCitizenLabels({ search });
                 const { response } = await call;

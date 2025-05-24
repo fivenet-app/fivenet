@@ -10,7 +10,7 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 message OAuth2Account {
   uint64 account_id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  string provider_name = 3 [(validate.rules).string.max_len = 255];
+  string provider_name = 3 [(validate.rules).string.max_len = 255]; // @gotags: sql:"primary_key" alias:"provider_name"
   OAuth2Provider provider = 4;
   string external_id = 5 [(validate.rules).string.max_len = 128];
   string username = 6 [(validate.rules).string.max_len = 255];

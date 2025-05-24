@@ -6,15 +6,14 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	permsqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -47,7 +46,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 	}
 
 	countStmt := s.listQualificationsQuery(
-		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("datacount.totalcount")}, userInfo)
+		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("data_count.total")}, userInfo)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -56,12 +55,12 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, QualificationsPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
 	resp := &pbqualifications.ListQualificationsResponse{
 		Pagination:     pag,
 		Qualifications: []*qualifications.Qualification{},
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -114,12 +113,12 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "GetQualification",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -127,7 +126,7 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.SuperUser {
+	if !check && !userInfo.Superuser {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -211,7 +210,7 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 		resp.Qualification.Exam = exam
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 
 	return resp, nil
 }
@@ -219,12 +218,12 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.CreateQualificationRequest) (*pbqualifications.CreateQualificationResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "CreateQualification",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -311,7 +310,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbqualifications.CreateQualificationResponse{
 		QualificationId: uint64(lastId),
@@ -323,12 +322,12 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "UpdateQualification",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -336,7 +335,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.SuperUser {
+	if !check && !userInfo.Superuser {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -444,7 +443,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbqualifications.UpdateQualificationResponse{
 		QualificationId: req.Qualification.Id,
@@ -456,12 +455,12 @@ func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "DeleteQualification",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -469,8 +468,8 @@ func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.SuperUser {
-		if !userInfo.SuperUser {
+	if !check && !userInfo.Superuser {
+		if !userInfo.Superuser {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 	}
@@ -491,7 +490,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if quali.DeletedAt != nil && userInfo.SuperUser {
+	if quali.DeletedAt != nil && userInfo.Superuser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -511,7 +510,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbqualifications.DeleteQualificationResponse{}, nil
 }

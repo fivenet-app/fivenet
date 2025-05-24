@@ -88,7 +88,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
 
     const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
     try {
-        const call = $grpc.jobs.jobsConduct.listConductEntries({
+        const call = $grpc.jobs.conduct.listConductEntries({
             pagination: {
                 offset: offset.value,
             },
@@ -109,7 +109,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
 
 async function deleteConductEntry(id: number): Promise<void> {
     try {
-        const call = $grpc.jobs.jobsConduct.deleteConductEntry({ id });
+        const call = $grpc.jobs.conduct.deleteConductEntry({ id });
         await call;
 
         refresh();
@@ -281,7 +281,7 @@ const columns = [
                     </UFormGroup>
 
                     <UFormGroup
-                        v-if="can('JobsConductService.CreateConductEntry').value"
+                        v-if="can('jobs.ConductService.CreateConductEntry').value"
                         class="flex-initial"
                         :label="$t('common.create')"
                         trailing-icon="i-mdi-plus"
@@ -380,7 +380,7 @@ const columns = [
                     />
                 </UTooltip>
 
-                <UTooltip v-if="can('JobsConductService.UpdateConductEntry').value" :text="$t('common.update')">
+                <UTooltip v-if="can('jobs.ConductService.UpdateConductEntry').value" :text="$t('common.update')">
                     <UButton
                         variant="link"
                         icon="i-mdi-pencil"
@@ -395,7 +395,7 @@ const columns = [
                     />
                 </UTooltip>
 
-                <UTooltip v-if="can('JobsConductService.DeleteConductEntry').value" :text="$t('common.delete')">
+                <UTooltip v-if="can('jobs.ConductService.DeleteConductEntry').value" :text="$t('common.delete')">
                     <UButton
                         variant="link"
                         icon="i-mdi-delete"

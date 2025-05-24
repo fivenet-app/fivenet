@@ -5,16 +5,15 @@ import (
 	"errors"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -26,21 +25,21 @@ import (
 )
 
 var (
-	tUnitStatus    = table.FivenetCentrumUnitsStatus.AS("unitstatus")
-	tUserProps     = table.FivenetUserProps
-	tUnits         = table.FivenetCentrumUnits.AS("unit")
-	tJobsUserProps = table.FivenetJobsUserProps.AS("jobs_user_props")
+	tUnitStatus     = table.FivenetCentrumUnitsStatus.AS("unit_status")
+	tUserProps      = table.FivenetUserProps
+	tUnits          = table.FivenetCentrumUnits.AS("unit")
+	tColleagueProps = table.FivenetJobColleagueProps.AS("jobs_user_props")
 )
 
 func (s *Server) ListUnits(ctx context.Context, req *pbcentrum.ListUnitsRequest) (*pbcentrum.ListUnitsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "ListUnits",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -64,7 +63,7 @@ func (s *Server) ListUnits(ctx context.Context, req *pbcentrum.ListUnitsRequest)
 		}
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 
 	return resp, nil
 }
@@ -72,12 +71,12 @@ func (s *Server) ListUnits(ctx context.Context, req *pbcentrum.ListUnitsRequest)
 func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *pbcentrum.CreateOrUpdateUnitRequest) (*pbcentrum.CreateOrUpdateUnitResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateUnit",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -92,14 +91,14 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *pbcentrum.CreateOr
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
 		unit, err = s.state.UpdateUnit(ctx, userInfo.Job, req.Unit)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	}
 
 	return &pbcentrum.CreateOrUpdateUnitResponse{
@@ -112,12 +111,12 @@ func (s *Server) DeleteUnit(ctx context.Context, req *pbcentrum.DeleteUnitReques
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "DeleteUnit",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -127,7 +126,7 @@ func (s *Server) DeleteUnit(ctx context.Context, req *pbcentrum.DeleteUnitReques
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return resp, nil
 }
@@ -137,12 +136,12 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnit
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "UpdateUnitStatus",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -182,7 +181,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnit
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbcentrum.UpdateUnitStatusResponse{}, nil
 }
@@ -194,12 +193,12 @@ func (s *Server) AssignUnit(ctx context.Context, req *pbcentrum.AssignUnitReques
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "AssignUnit",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -229,7 +228,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *pbcentrum.AssignUnitReques
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbcentrum.AssignUnitResponse{}, nil
 }
@@ -321,7 +320,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 
 	countStmt := tUnitStatus.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tUnitStatus.ID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tUnitStatus.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tUnitStatus.
@@ -341,15 +340,15 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 10)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 10)
 	resp := &pbcentrum.ListUnitActivityResponse{
 		Pagination: pag,
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -372,10 +371,10 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
@@ -387,9 +386,9 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 					tUserProps.UserID.EQ(tUnitStatus.UserID).
 						AND(tUsers.Job.EQ(jet.String(userInfo.Job))),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(

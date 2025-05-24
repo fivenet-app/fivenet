@@ -27,7 +27,7 @@ export default defineAppConfig({
     // File upload related config
     fileUpload: {
         fileSizes: {
-            rector: 5 * 1024 * 1024,
+            fileStore: 5 * 1024 * 1024,
             images: 2 * 1024 * 1024,
         },
         types: {

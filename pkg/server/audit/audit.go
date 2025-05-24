@@ -6,9 +6,9 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jsoniter "github.com/json-iterator/go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -27,10 +27,10 @@ var Module = fx.Module("audit",
 	),
 )
 
-type FilterFn func(in *model.FivenetAuditLog, data any)
+type FilterFn func(in *audit.AuditEntry, data any)
 
 type IAuditer interface {
-	Log(in *model.FivenetAuditLog, data any, callbacks ...FilterFn)
+	Log(in *audit.AuditEntry, data any, callbacks ...FilterFn)
 }
 
 type AuditStorer struct {
@@ -38,7 +38,7 @@ type AuditStorer struct {
 	tracer trace.Tracer
 	db     *sql.DB
 	wg     sync.WaitGroup
-	input  chan *model.FivenetAuditLog
+	input  chan *audit.AuditEntry
 }
 
 type Params struct {
@@ -60,7 +60,7 @@ func New(p Params) IAuditer {
 		tracer: p.TP.Tracer("audit"),
 		db:     p.DB,
 		wg:     sync.WaitGroup{},
-		input:  make(chan *model.FivenetAuditLog),
+		input:  make(chan *audit.AuditEntry),
 	}
 
 	// Register audit log table in housekeeper
@@ -108,7 +108,7 @@ func (a *AuditStorer) worker(ctx context.Context) {
 	}
 }
 
-func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any, callbacks ...FilterFn) {
+func (a *AuditStorer) Log(in *audit.AuditEntry, data any, callbacks ...FilterFn) {
 	if in == nil {
 		return
 	}
@@ -121,7 +121,7 @@ func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any, callbacks ...Filt
 	a.input <- in
 }
 
-func (a *AuditStorer) store(ctx context.Context, in *model.FivenetAuditLog) error {
+func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 	if in == nil {
 		return nil
 	}

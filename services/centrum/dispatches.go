@@ -6,16 +6,15 @@ import (
 	"slices"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -32,12 +31,12 @@ var (
 func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatchesRequest) (*pbcentrum.ListDispatchesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "ListDispatches",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -83,7 +82,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 
 	countStmt := tDispatch.
 		SELECT(
-			jet.COUNT(tDispatch.ID).AS("datacount.totalcount"),
+			jet.COUNT(tDispatch.ID).AS("data_count.total"),
 		).
 		FROM(
 			tDispatch.
@@ -100,15 +99,15 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 16)
 	resp := &pbcentrum.ListDispatchesResponse{
 		Pagination: pag,
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
 	stmt := tDispatch.
 		SELECT(
@@ -191,7 +190,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 		}
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 
 	return resp, nil
 }
@@ -201,12 +200,12 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "GetDispatch",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -223,7 +222,7 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 		Dispatch: &centrum.Dispatch{},
 	}
 
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
 	stmt := tDispatch.
 		SELECT(
@@ -305,7 +304,7 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 		}
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 
 	return resp, nil
 }
@@ -313,12 +312,12 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 func (s *Server) CreateDispatch(ctx context.Context, req *pbcentrum.CreateDispatchRequest) (*pbcentrum.CreateDispatchResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "CreateDispatch",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -331,7 +330,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *pbcentrum.CreateDispat
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbcentrum.CreateDispatchResponse{
 		Dispatch: dsp,
@@ -343,12 +342,12 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *pbcentrum.UpdateDispat
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "UpdateDispatch",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -356,7 +355,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *pbcentrum.UpdateDispat
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbcentrum.UpdateDispatchResponse{}, nil
 }
@@ -366,12 +365,12 @@ func (s *Server) TakeDispatch(ctx context.Context, req *pbcentrum.TakeDispatchRe
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "TakeDispatch",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -384,7 +383,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *pbcentrum.TakeDispatchRe
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbcentrum.TakeDispatchResponse{}, nil
 }
@@ -392,12 +391,12 @@ func (s *Server) TakeDispatch(ctx context.Context, req *pbcentrum.TakeDispatchRe
 func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.UpdateDispatchStatusRequest) (*pbcentrum.UpdateDispatchStatusResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "UpdateDispatchStatus",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -406,7 +405,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	if !s.state.CheckIfUserIsPartOfDispatch(ctx, userInfo, dsp, true) && !userInfo.SuperUser {
+	if !s.state.CheckIfUserIsPartOfDispatch(ctx, userInfo, dsp, true) && !userInfo.Superuser {
 		return nil, errorscentrum.ErrNotPartOfDispatch
 	}
 
@@ -451,7 +450,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 		}
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbcentrum.UpdateDispatchStatusResponse{}, nil
 }
@@ -463,12 +462,12 @@ func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispat
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "AssignDispatch",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -490,7 +489,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispat
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbcentrum.AssignDispatchResponse{}, nil
 }
@@ -500,7 +499,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 
 	countStmt := tDispatchStatus.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tDispatchStatus.ID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tDispatchStatus.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tDispatchStatus.
@@ -520,15 +519,15 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 10)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 10)
 	resp := &pbcentrum.ListDispatchActivityResponse{
 		Pagination: pag,
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
 	stmt := tDispatchStatus.
 		SELECT(
@@ -550,10 +549,10 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
@@ -565,9 +564,9 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 					tUserProps.UserID.EQ(tDispatchStatus.UserID).
 						AND(tUsers.Job.EQ(jet.String(userInfo.Job))),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(
@@ -606,12 +605,12 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 func (s *Server) DeleteDispatch(ctx context.Context, req *pbcentrum.DeleteDispatchRequest) (*pbcentrum.DeleteDispatchResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
 		Method:  "DeleteDispatch",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -619,7 +618,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *pbcentrum.DeleteDispat
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbcentrum.DeleteDispatchResponse{}, nil
 }

@@ -14,12 +14,18 @@ func ConvertFromModelAcc(a *model.FivenetAccounts) *Account {
 	if a.UpdatedAt != nil {
 		updatedAt = timestamp.New(*a.UpdatedAt)
 	}
+	var enabled bool
+	if a.Enabled != nil {
+		enabled = *a.Enabled
+	}
 
 	return &Account{
 		Id:        a.ID,
 		CreatedAt: createdAt,
 		UpdatedAt: updatedAt,
+		Enabled:   enabled,
 		Username:  *a.Username,
 		License:   a.License,
+		LastChar:  a.LastChar,
 	}
 }

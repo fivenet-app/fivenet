@@ -9,24 +9,24 @@ import (
 )
 
 var PermsRemap = map[string]string{
-	// Service: CentrumService
-	"CentrumService/AssignDispatch":       "CentrumService/TakeControl",
-	"CentrumService/AssignUnit":           "CentrumService/TakeControl",
-	"CentrumService/GetDispatch":          "CentrumService/Stream",
-	"CentrumService/GetSettings":          "CentrumService/Stream",
-	"CentrumService/JoinUnit":             "CentrumService/Stream",
-	"CentrumService/ListDispatchActivity": "CentrumService/Stream",
-	"CentrumService/ListDispatches":       "CentrumService/Stream",
-	"CentrumService/ListUnitActivity":     "CentrumService/Stream",
-	"CentrumService/ListUnits":            "CentrumService/Stream",
-	"CentrumService/UpdateDispatchStatus": "CentrumService/TakeDispatch",
-	"CentrumService/UpdateUnitStatus":     "CentrumService/TakeDispatch",
+	// Service: centrum.CentrumService
+	"centrum.CentrumService/AssignDispatch":       "centrum.CentrumService/TakeControl",
+	"centrum.CentrumService/AssignUnit":           "centrum.CentrumService/TakeControl",
+	"centrum.CentrumService/GetDispatch":          "centrum.CentrumService/Stream",
+	"centrum.CentrumService/GetSettings":          "centrum.CentrumService/Stream",
+	"centrum.CentrumService/JoinUnit":             "centrum.CentrumService/Stream",
+	"centrum.CentrumService/ListDispatchActivity": "centrum.CentrumService/Stream",
+	"centrum.CentrumService/ListDispatches":       "centrum.CentrumService/Stream",
+	"centrum.CentrumService/ListUnitActivity":     "centrum.CentrumService/Stream",
+	"centrum.CentrumService/ListUnits":            "centrum.CentrumService/Stream",
+	"centrum.CentrumService/UpdateDispatchStatus": "centrum.CentrumService/TakeDispatch",
+	"centrum.CentrumService/UpdateUnitStatus":     "centrum.CentrumService/TakeDispatch",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: CentrumService
+		// Service: centrum.CentrumService
 		{
 			Category: permkeys.CentrumServicePerm,
 			Name:     permkeys.CentrumServiceCreateDispatchPerm,

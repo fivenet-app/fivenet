@@ -24,9 +24,9 @@ export interface License {
     label: string;
 }
 /**
- * @generated from protobuf message resources.users.UserLicenses
+ * @generated from protobuf message resources.users.CitizensLicenses
  */
-export interface UserLicenses {
+export interface CitizensLicenses {
     /**
      * @generated from protobuf field: int32 user_id = 1;
      */
@@ -92,22 +92,22 @@ class License$Type extends MessageType<License> {
  */
 export const License = new License$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserLicenses$Type extends MessageType<UserLicenses> {
+class CitizensLicenses$Type extends MessageType<CitizensLicenses> {
     constructor() {
-        super("resources.users.UserLicenses", [
+        super("resources.users.CitizensLicenses", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 2, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License }
         ]);
     }
-    create(value?: PartialMessage<UserLicenses>): UserLicenses {
+    create(value?: PartialMessage<CitizensLicenses>): CitizensLicenses {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
         message.licenses = [];
         if (value !== undefined)
-            reflectionMergePartial<UserLicenses>(this, message, value);
+            reflectionMergePartial<CitizensLicenses>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserLicenses): UserLicenses {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizensLicenses): CitizensLicenses {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -129,7 +129,7 @@ class UserLicenses$Type extends MessageType<UserLicenses> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserLicenses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CitizensLicenses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
@@ -143,6 +143,6 @@ class UserLicenses$Type extends MessageType<UserLicenses> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserLicenses
+ * @generated MessageType for protobuf message resources.users.CitizensLicenses
  */
-export const UserLicenses = new UserLicenses$Type();
+export const CitizensLicenses = new CitizensLicenses$Type();

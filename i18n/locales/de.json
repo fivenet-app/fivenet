@@ -45,7 +45,7 @@
                 "title": "Dokumentkategorien"
             }
         },
-        "rector": {
+        "settings": {
             "features": {
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Mitarbeiter-Marker-Farbe).",
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
@@ -174,6 +174,7 @@
             }
         },
         "about": {
+            "title": "Über FiveNet",
             "introduction": {
                 "pre_title": "Mehr Zeit für GTA V Roleplay.",
                 "title": "Ein besserer Arbeitsablauf",
@@ -491,7 +492,7 @@
         "abbreviation": "Abkürzung",
         "approver": "Genehmiger",
         "approved_at": "Genehmigt am",
-        "superuser": "SuperUser",
+        "superuser": "Superuser",
         "restore": "Wiederherstellen",
         "mark": "Markieren",
         "goto": "Gehe zu",
@@ -796,7 +797,7 @@
             "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Karten-Ansicht)",
             "restarting_datastream": "Wiederherstellung des Datenstroms..."
         },
-        "rector": {
+        "settings": {
             "job_props": {
                 "job_properties": "Job Eigenschaften",
                 "your_job_properties": "Deine FiveNet Job Eigenschaften.",
@@ -1087,7 +1088,7 @@
             "documenteditor": {
                 "content": "Sie können in den Konto-Einstellungen einen dunklen Modus für den Editor aktivieren."
             },
-            "rector_roles_list": {
+            "settings_roles_list": {
                 "content": "Die Berechtigungen werden von den unteren auf die oberen Ränge vererbt. Wenn Rang 1 Dokumente einsehen kann, können alle Ränge einschließlich Rang 1 dies ebenfalls tun. Wird Rang 4 die Einsichtnahme in Dokumente verweigert, können die Ränge 4 und höher keine Dokumente einsehen.",
                 "title": "Information über die Berechtigungsvererbung"
             },
@@ -1098,7 +1099,7 @@
                 "content": "FiveNet hat eine Befehlspalette für Power-User! Sie können diese mit folgenden Tastenkombination öffnen:",
                 "keyboard": "STRG+K"
             },
-            "rector_roles_superuser": {
+            "settings_roles_superuser": {
                 "content": "Sollten Sie bestimmte Berechtigungen vermissen oder eine leere Berechtigungsliste haben, kontaktieren Sie einen FiveNet Administrator damit dieser die Berechtigungen für ihre Fraktion einstellt."
             },
             "sociallogin_discord": {
@@ -1277,7 +1278,7 @@
                     "added": "Bürger zugehörig zu",
                     "removed": "Bürger nicht mehr zugehörig zu"
                 },
-                "userprops_job_set": "Setzte den Beruf des Bürgers zu ",
+                "user_props_job_set": "Setzte den Beruf des Bürgers zu ",
                 "plugin_license": {
                     "added": "Lizenz hinzugefügt",
                     "removed": "Lizenz entfernt"
@@ -1292,10 +1293,10 @@
                     "removed": "Strafe entfernt",
                     "created": "Strafe erstellt"
                 },
-                "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person",
-                "userprops_labels_updated": "Labels des Bürgers aktualisiert",
+                "user_props_mug_shot_set": "Setzte das Fahndungsfoto der Person",
+                "user_props_labels_updated": "Labels des Bürgers aktualisiert",
                 "name_change": "Bürgername wurde geändert von {old} zu {new}",
-                "userprops_mug_shot_removed": "Fahndungsfoto des Bürgers entfernt"
+                "user_props_mug_shot_removed": "Fahndungsfoto des Bürgers entfernt"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
@@ -1549,7 +1550,7 @@
                 "content": "Bitte warten Sie einen Moment und versuchen Sie es erneut."
             }
         },
-        "rector": {
+        "settings": {
             "role_created": {
                 "title": "Rolle: Erstellt",
                 "content": "Rolle wurde erstellt."
@@ -1744,7 +1745,7 @@
                 "content": "Postleitzahlen konnten nicht geladen werden"
             }
         },
-        "docstore": {
+        "documents": {
             "requests": {
                 "created": {
                     "title": "Dokumentenanfrage erstellt",
@@ -1800,8 +1801,8 @@
         },
         "superuser_menu": {
             "setsuperusermode": {
-                "title": "SuperUser Modus",
-                "content": "SuperUser Modus gewechselt (current job: {job})."
+                "title": "Superuser Modus",
+                "content": "Superuser Modus gewechselt (current job: {job})."
             }
         },
         "system": {
@@ -1865,7 +1866,7 @@
                 "description": "Berechtigung zur Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
             }
         },
-        "CitizenStoreService": {
+        "CitizensService": {
             "category": "Bürger",
             "ListCitizens": {
                 "key": "Bürger auflisten",
@@ -1918,7 +1919,7 @@
                     "Jobs": "Fraktionen"
                 }
             },
-            "ManageCitizenLabels": {
+            "ManageLabels": {
                 "key": "Verwalten von Bürger-Labels",
                 "description": "Erstellen, aktualisieren und löschen von Bürger-Labels."
             }
@@ -1940,7 +1941,7 @@
                     "Jobs": "Fraktionen"
                 }
             },
-            "CompleteCitizenLabels": {
+            "CompleteLabels": {
                 "key": "Auflisten von Bürger-Labels",
                 "description": "Damit wird der Zugriff auf Bürger-Labels von anderen Berufen kontrolliert.",
                 "attrs_types": {
@@ -1948,14 +1949,14 @@
                 }
             }
         },
-        "DMVService": {
+        "VehiclesService": {
             "category": "Fahrzeuge",
             "ListVehicles": {
                 "key": "Fahrzeuge suchen",
                 "description": "Suchen und Finden von Fahrzeugen von Bürgern."
             }
         },
-        "DocStoreService": {
+        "DocumentsService": {
             "category": "Dokumenten-System",
             "AddDocumentReference": {
                 "key": "Dokument-Referenzen erstellen",
@@ -2101,7 +2102,7 @@
                 "description": "Dokumentenkategorien erstellen/ aktualisieren."
             }
         },
-        "LivemapperService": {
+        "LivemapService": {
             "category": "Karte",
             "Stream": {
                 "key": "Aufrufen",
@@ -2138,7 +2139,7 @@
                 }
             }
         },
-        "RectorService": {
+        "SettingsService": {
             "category": "Einstellungen",
             "GetJobProps": {
                 "key": "Job Eigenschaften ansehen",
@@ -2235,7 +2236,7 @@
                     "Types": "Kollegen-Eigenschaften"
                 }
             },
-            "SetJobsUserProps": {
+            "SetColleagueProps": {
                 "key": "Setzte die Eigenschaften eines Kollegen",
                 "description": "E.g., Abwesenheitsdatum.",
                 "attrs": {
@@ -2270,12 +2271,12 @@
                     "Types": "Aktivitäts-Arten"
                 }
             },
-            "ManageColleagueLabels": {
+            "ManageLabels": {
                 "key": "Labels verwalten",
                 "description": "Verwalten von Labels für Kollegen."
             }
         },
-        "JobsConductService": {
+        "ConductService": {
             "CreateConductEntry": {
                 "key": "Führungsregister: Einträge erstellen",
                 "description": "Erstellen von Führungsregister Einträgen."
@@ -2301,7 +2302,7 @@
             },
             "category": "Beruf Führungsregister"
         },
-        "JobsTimeclockService": {
+        "TimeclockService": {
             "ListTimeclock": {
                 "key": "Stempeluhr Einträge: Anzeigen",
                 "description": "Stempeluhr Einträge anzeigen lassen.",
@@ -2441,7 +2442,7 @@
                 }
             }
         },
-        "RectorLawsService": {
+        "LawsService": {
             "category": "Gesetzesbücher",
             "CreateOrUpdateLawBook": {
                 "key": "Gesetzbuch erstellen und aktualisieren",
@@ -2483,7 +2484,7 @@
                 "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
             }
         },
-        "CitizenStoreService": {
+        "CitizensService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
             "ErrJobGradeNoPermission": "Keine Berechtigung um auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)",
             "ErrReasonRequired": "Ein Grund muss gegeben sein!",
@@ -2498,10 +2499,10 @@
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
         },
-        "DMVService": {
+        "VehiclesService": {
             "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!"
         },
-        "DocStoreService": {
+        "DocumentsService": {
             "ErrFailedQuery": "Fehlen beim Anzeigen/ Erstellen/ Aktualisieren von Dokumenten!",
             "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen um auf das Dokument zuzugreifen!",
             "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/ aktualisieren/ zu löschen!",
@@ -2544,7 +2545,7 @@
             "ErrDocAccessDuplicate": "Dokumenten-Zugriff: Ein Beruf Rang/ Bürger kann nur einen Zugriff haben, und nicht mehrere!",
             "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!"
         },
-        "LivemapperService": {
+        "LivemapService": {
             "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
             "ErrMarkerFailed": "Fehler beim Erstellen/ Aktualisieren/ Löschen der Markierung!"
         },
@@ -2552,7 +2553,7 @@
             "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
             "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
         },
-        "RectorService": {
+        "SettingsService": {
             "ErrFailedQuery": "Fehler beim Zugriff auf die Einstellungen!",
             "ErrInvalidRequest": "Ungültige Rollen Anfrage!",
             "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ ändern/ löschen!",
@@ -2688,7 +2689,7 @@
         }
     },
     "enums": {
-        "docstore": {
+        "documents": {
             "AccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
                 "BLOCKED": "Blockiert",
@@ -2808,7 +2809,7 @@
                 "SUSPENSION": "Suspendierung",
                 "NOTE": "Notiz"
             },
-            "JobsUserActivityType": {
+            "ColleagueActivityType": {
                 "UNSPECIFIED": "Unbestimmt",
                 "ABSENCE_DATE": "Abwesenheitsdatum",
                 "FIRED": "Gefeuert",
@@ -2853,7 +2854,7 @@
                 "REQUEST_NEEDED": "Anfrage benötigt"
             }
         },
-        "rector": {
+        "settings": {
             "UserInfoSyncUnemployedMode": {
                 "GIVE_ROLE": "Rolle vergeben",
                 "KICK": "Kick",

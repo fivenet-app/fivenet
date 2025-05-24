@@ -5,28 +5,28 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
 	"go.uber.org/zap"
 )
 
-func (b *Bot) setBotPresence(cfg *rector.DiscordBotPresence) error {
+func (b *Bot) setBotPresence(cfg *settings.DiscordBotPresence) error {
 	var activity *discord.Activity
-	if cfg.Type == rector.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_GAME {
+	if cfg.Type == settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_GAME {
 		activity = &discord.Activity{
 			Type: discord.GameActivity,
 			Name: *cfg.Status,
 		}
-	} else if cfg.Type == rector.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_LISTENING {
+	} else if cfg.Type == settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_LISTENING {
 		activity = &discord.Activity{
 			Type: discord.ListeningActivity,
 			Name: *cfg.Status,
 		}
-	} else if cfg.Type == rector.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_STREAMING {
+	} else if cfg.Type == settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_STREAMING {
 		activity = &discord.Activity{
 			Type: discord.StreamingActivity,
 			Name: *cfg.Status,
 		}
-	} else if cfg.Type == rector.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_WATCH {
+	} else if cfg.Type == settings.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_WATCH {
 		activity = &discord.Activity{
 			Type:  discord.WatchingActivity,
 			Name:  *cfg.Status,

@@ -11,7 +11,7 @@ useHead({
 definePageMeta({
     title: 'pages.qualifications.title',
     requiresAuth: true,
-    permission: 'QualificationsService.ListQualifications',
+    permission: 'qualifications.QualificationsService.ListQualifications',
 });
 
 const { t } = useI18n();
@@ -58,7 +58,7 @@ const selectedTab = computed({
             <UDashboardNavbar :title="$t('pages.qualifications.title')">
                 <template #right>
                     <UButton
-                        v-if="can('QualificationsService.CreateQualification').value"
+                        v-if="can('qualifications.QualificationsService.CreateQualification').value"
                         :to="{ name: 'qualifications-create' }"
                         trailing-icon="i-mdi-plus"
                         color="gray"

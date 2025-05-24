@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.qualifications.create',
     requiresAuth: true,
-    permission: 'QualificationsService.CreateQualification',
+    permission: 'qualifications.QualificationsService.CreateQualification',
 });
 </script>
 

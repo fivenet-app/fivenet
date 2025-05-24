@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	internet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbinternet "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
 	errorsinternet "github.com/fivenet-app/fivenet/v2025/services/internet/errors"
@@ -41,10 +40,10 @@ func (s *Server) CheckDomainAvailability(ctx context.Context, req *pbinternet.Ch
 func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsRequest) (*pbinternet.ListDomainsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	condition := jet.Bool(true)
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		condition = condition.AND(
 			tDomains.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 		)
@@ -52,7 +51,7 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 
 	countStmt := tDomains.
 		SELECT(
-			jet.COUNT(tDomains.ID).AS("datacount.totalcount"),
+			jet.COUNT(tDomains.ID).AS("data_count.total"),
 		).
 		FROM(tDomains.
 			INNER_JOIN(tTLDs,
@@ -72,13 +71,13 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.TotalCount)
+	pag, limit := req.Pagination.GetResponse(count.Total)
 	resp := &pbinternet.ListDomainsResponse{
 		Pagination: pag,
 		Domains:    []*internet.Domain{},
 	}
 
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -124,12 +123,12 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDomainRequest) (*pbinternet.RegisterDomainResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbinternet.InternetService_ServiceDesc.ServiceName,
 		Method:  "RegisterDomain",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -176,7 +175,7 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 		}
 
 		// If TLD is not found or internal and user is not superuser
-		if tld == nil || (tld.Internal && !userInfo.SuperUser) {
+		if tld == nil || (tld.Internal && !userInfo.Superuser) {
 			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 		}
 
@@ -191,7 +190,7 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 			VALUES(
 				req.TldId,
 				req.Name,
-				userInfo.SuperUser, // Set domain active based on if user is superuser (no approval needed)
+				userInfo.Superuser, // Set domain active based on if user is superuser (no approval needed)
 				userInfo.Job,
 				userInfo.UserId,
 			)
@@ -213,7 +212,7 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbinternet.RegisterDomainResponse{
 		Domain: domain,
@@ -223,12 +222,12 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainRequest) (*pbinternet.UpdateDomainResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbinternet.InternetService_ServiceDesc.ServiceName,
 		Method:  "UpdateDomain",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -238,7 +237,7 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 	}
 
 	// Check if user owns the domain or is superuser
-	if domain == nil || ((domain.CreatorId == nil && !userInfo.SuperUser) || *domain.CreatorId != userInfo.UserId) {
+	if domain == nil || ((domain.CreatorId == nil && !userInfo.Superuser) || *domain.CreatorId != userInfo.UserId) {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
@@ -268,7 +267,7 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbinternet.UpdateDomainResponse{
 		Domain: domain,

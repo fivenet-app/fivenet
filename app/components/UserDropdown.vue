@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { NuxtImg } from '#components';
-import SuperUserJobSelection from '~/components/partials/SuperUserJobSelection.vue';
+import SuperuserJobSelection from '~/components/partials/SuperuserJobSelection.vue';
 import { useAuthStore } from '~/stores/auth';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 
@@ -40,11 +40,11 @@ const items = computed(() => [
             shortcuts: [metaSymbol.value, 'K'],
             click: () => (isDashboardSearchModalOpen.value = true),
         },
-        can(['CanBeSuper', 'SuperUser']).value
+        can(['CanBeSuper', 'Superuser']).value
             ? {
                   label: `${t('common.superuser')}: ${isSuperuser.value ? t('common.enabled') : t('common.disabled')}`,
                   icon: 'i-mdi-square-root',
-                  click: () => authStore.setSuperUserMode(!isSuperuser.value),
+                  click: () => authStore.setSuperuserMode(!isSuperuser.value),
               }
             : undefined,
         isSuperuser.value
@@ -139,7 +139,7 @@ const open = ref(false);
         </template>
 
         <template v-if="isSuperuser" #job>
-            <SuperUserJobSelection />
+            <SuperuserJobSelection />
         </template>
     </UDropdown>
 </template>

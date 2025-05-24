@@ -20,7 +20,7 @@ import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/do
 import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
-import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
+import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
     documentId?: number;
@@ -103,7 +103,7 @@ onMounted(async () => {
         templateId.value = parseInt(route.query.templateId as string);
 
         try {
-            const call = $grpc.docstore.docStore.getTemplate({
+            const call = $grpc.documents.documents.getTemplate({
                 templateId: templateId.value,
                 data,
                 render: true,
@@ -136,7 +136,7 @@ onMounted(async () => {
     } else if (props.documentId) {
         try {
             const req = { documentId: props.documentId };
-            const call = $grpc.docstore.docStore.getDocument(req);
+            const call = $grpc.documents.documents.getDocument(req);
             const { response } = await call;
 
             const document = response.document;
@@ -150,9 +150,9 @@ onMounted(async () => {
                 state.public = document.public;
                 state.access = response.access!;
 
-                const refs = await $grpc.docstore.docStore.getDocumentReferences(req);
+                const refs = await $grpc.documents.documents.getDocumentReferences(req);
                 currentReferences.value = refs.response.references;
-                const rels = await $grpc.docstore.docStore.getDocumentRelations(req);
+                const rels = await $grpc.documents.documents.getDocumentRelations(req);
                 currentRelations.value = rels.response.relations;
             }
         } catch (e) {
@@ -274,7 +274,7 @@ async function createDocument(values: Schema): Promise<void> {
 
     // Try to submit to server
     try {
-        const call = $grpc.docstore.docStore.createDocument(req);
+        const call = $grpc.documents.documents.createDocument(req);
         const { response } = await call;
 
         const promises: Promise<unknown>[] = [];
@@ -282,7 +282,7 @@ async function createDocument(values: Schema): Promise<void> {
             referenceManagerData.value.forEach((ref) => {
                 ref.sourceDocumentId = response.documentId;
 
-                const prom = $grpc.docstore.docStore.addDocumentReference({
+                const prom = $grpc.documents.documents.addDocumentReference({
                     reference: ref,
                 });
                 promises.push(prom.response);
@@ -293,7 +293,7 @@ async function createDocument(values: Schema): Promise<void> {
             relationManagerData.value.forEach((rel) => {
                 rel.documentId = response.documentId;
 
-                const prom = $grpc.docstore.docStore.addDocumentRelation({
+                const prom = $grpc.documents.documents.addDocumentRelation({
                     relation: rel,
                 });
                 promises.push(prom.response);
@@ -335,7 +335,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.docstore.docStore.updateDocument(req);
+        const call = $grpc.documents.documents.updateDocument(req);
         const { response } = await call;
 
         if (canDo.value.references) {
@@ -346,7 +346,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 }
             });
             referencesToRemove.forEach((id) => {
-                $grpc.docstore.docStore.removeDocumentReference({
+                $grpc.documents.documents.removeDocumentReference({
                     id: id,
                 });
             });
@@ -356,7 +356,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 }
                 ref.sourceDocumentId = response.documentId;
 
-                $grpc.docstore.docStore.addDocumentReference({
+                $grpc.documents.documents.addDocumentReference({
                     reference: ref,
                 });
             });
@@ -368,7 +368,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
             });
             relationsToRemove.forEach((id) => {
-                $grpc.docstore.docStore.removeDocumentRelation({ id });
+                $grpc.documents.documents.removeDocumentRelation({ id });
             });
             relationManagerData.value.forEach((rel) => {
                 if (currentRelations.value.find((r) => r.id === rel.id!)) {
@@ -376,7 +376,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 }
                 rel.documentId = response.documentId;
 
-                $grpc.docstore.docStore.addDocumentRelation({
+                $grpc.documents.documents.addDocumentRelation({
                     relation: rel,
                 });
             });
@@ -436,13 +436,13 @@ const canDo = computed(() => ({
     edit:
         props.documentId === undefined
             ? true
-            : checkDocAccess(state.access, docCreator.value, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
+            : checkDocAccess(state.access, docCreator.value, AccessLevel.EDIT, 'documents.DocumentsService.UpdateDocument'),
     access:
         props.documentId === undefined
             ? true
-            : checkDocAccess(state.access, docCreator.value, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
-    references: can('DocStoreService.AddDocumentReference').value,
-    relations: can('DocStoreService.AddDocumentRelation').value,
+            : checkDocAccess(state.access, docCreator.value, AccessLevel.ACCESS, 'documents.DocumentsService.UpdateDocument'),
+    references: can('documents.DocumentsService.AddDocumentReference').value,
+    relations: can('documents.DocumentsService.AddDocumentRelation').value,
 }));
 
 logger.info(
@@ -682,7 +682,7 @@ logger.info(
                             v-model:jobs="state.access.jobs"
                             v-model:users="state.access.users"
                             :target-id="documentId ?? 0"
-                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
                             :disabled="!canEdit || !canDo.access"
                         />
                     </div>

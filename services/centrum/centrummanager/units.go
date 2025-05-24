@@ -570,7 +570,7 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 }
 
 func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.UnitStatus, error) {
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -593,10 +593,10 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
@@ -607,9 +607,9 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUnitStatus.UserID),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(
@@ -631,7 +631,7 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 }
 
 func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, unitId uint64) (*centrum.UnitStatus, error) {
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -654,10 +654,10 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, 
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
@@ -668,9 +668,9 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, 
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUnitStatus.UserID),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(

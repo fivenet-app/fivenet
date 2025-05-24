@@ -4,28 +4,28 @@ import type { RpcTransport } from '@protobuf-ts/runtime-rpc';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
 import { CalendarServiceClient } from '~~/gen/ts/services/calendar/calendar.client';
 import { CentrumServiceClient } from '~~/gen/ts/services/centrum/centrum.client';
-import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citizenstore.client';
+import { CitizensServiceClient } from '~~/gen/ts/services/citizens/citizens.client';
 import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
-import { DMVServiceClient } from '~~/gen/ts/services/dmv/vehicles.client';
-import { DocStoreServiceClient } from '~~/gen/ts/services/docstore/docstore.client';
+import { DocumentsServiceClient } from '~~/gen/ts/services/documents/documents.client';
 import { AdsServiceClient } from '~~/gen/ts/services/internet/ads.client';
 import { DomainServiceClient } from '~~/gen/ts/services/internet/domain.client';
 import { InternetServiceClient } from '~~/gen/ts/services/internet/internet.client';
-import { JobsConductServiceClient } from '~~/gen/ts/services/jobs/conduct.client';
+import { ConductServiceClient } from '~~/gen/ts/services/jobs/conduct.client';
 import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
-import { JobsTimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.client';
-import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
+import { TimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.client';
+import { LivemapServiceClient } from '~~/gen/ts/services/livemap/livemap.client';
 import { MailerServiceClient } from '~~/gen/ts/services/mailer/mailer.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { QualificationsServiceClient } from '~~/gen/ts/services/qualifications/qualifications.client';
-import { RectorAccountsServiceClient } from '~~/gen/ts/services/rector/accounts.client';
-import { RectorConfigServiceClient } from '~~/gen/ts/services/rector/config.client';
-import { RectorCronServiceClient } from '~~/gen/ts/services/rector/cron.client';
-import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestore.client';
-import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
-import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
+import { AccountsServiceClient } from '~~/gen/ts/services/settings/accounts.client';
+import { ConfigServiceClient } from '~~/gen/ts/services/settings/config.client';
+import { CronServiceClient } from '~~/gen/ts/services/settings/cron.client';
+import { FilestoreServiceClient } from '~~/gen/ts/services/settings/filestore.client';
+import { LawsServiceClient } from '~~/gen/ts/services/settings/laws.client';
+import { SettingsServiceClient } from '~~/gen/ts/services/settings/settings.client';
 import { StatsServiceClient } from '~~/gen/ts/services/stats/stats.client';
 import { SyncServiceClient } from '~~/gen/ts/services/sync/sync.client';
+import { VehiclesServiceClient } from '~~/gen/ts/services/vehicles/vehicles.client';
 import { WikiServiceClient } from '~~/gen/ts/services/wiki/wiki.client';
 
 export class GRPCClients {
@@ -39,17 +39,14 @@ export class GRPCClients {
     public centrum: {
         centrum: CentrumServiceClient;
     };
-    public citizenstore: {
-        citizenStore: CitizenStoreServiceClient;
+    public citizens: {
+        citizens: CitizensServiceClient;
     };
     public completor: {
         completor: CompletorServiceClient;
     };
-    public dmv: {
-        dMV: DMVServiceClient;
-    };
-    public docstore: {
-        docStore: DocStoreServiceClient;
+    public documents: {
+        documents: DocumentsServiceClient;
     };
     public internet: {
         ads: AdsServiceClient;
@@ -57,12 +54,12 @@ export class GRPCClients {
         internet: InternetServiceClient;
     };
     public jobs: {
-        jobsConduct: JobsConductServiceClient;
+        conduct: ConductServiceClient;
         jobs: JobsServiceClient;
-        jobsTimeclock: JobsTimeclockServiceClient;
+        timeclock: TimeclockServiceClient;
     };
-    public livemapper: {
-        livemapper: LivemapperServiceClient;
+    public livemap: {
+        livemap: LivemapServiceClient;
     };
     public mailer: {
         mailer: MailerServiceClient;
@@ -73,19 +70,22 @@ export class GRPCClients {
     public qualifications: {
         qualifications: QualificationsServiceClient;
     };
-    public rector: {
-        rectorAccounts: RectorAccountsServiceClient;
-        rectorConfig: RectorConfigServiceClient;
-        rectorCron: RectorCronServiceClient;
-        rectorFilestore: RectorFilestoreServiceClient;
-        rectorLaws: RectorLawsServiceClient;
-        rector: RectorServiceClient;
+    public settings: {
+        accounts: AccountsServiceClient;
+        config: ConfigServiceClient;
+        cron: CronServiceClient;
+        filestore: FilestoreServiceClient;
+        laws: LawsServiceClient;
+        settings: SettingsServiceClient;
     };
     public stats: {
         stats: StatsServiceClient;
     };
     public sync: {
         sync: SyncServiceClient;
+    };
+    public vehicles: {
+        vehicles: VehiclesServiceClient;
     };
     public wiki: {
         wiki: WikiServiceClient;
@@ -101,17 +101,14 @@ export class GRPCClients {
         this.centrum = {
             centrum: new CentrumServiceClient(transport),
         };
-        this.citizenstore = {
-            citizenStore: new CitizenStoreServiceClient(transport),
+        this.citizens = {
+            citizens: new CitizensServiceClient(transport),
         };
         this.completor = {
             completor: new CompletorServiceClient(transport),
         };
-        this.dmv = {
-            dMV: new DMVServiceClient(transport),
-        };
-        this.docstore = {
-            docStore: new DocStoreServiceClient(transport),
+        this.documents = {
+            documents: new DocumentsServiceClient(transport),
         };
         this.internet = {
             ads: new AdsServiceClient(transport),
@@ -119,12 +116,12 @@ export class GRPCClients {
             internet: new InternetServiceClient(transport),
         };
         this.jobs = {
-            jobsConduct: new JobsConductServiceClient(transport),
+            conduct: new ConductServiceClient(transport),
             jobs: new JobsServiceClient(transport),
-            jobsTimeclock: new JobsTimeclockServiceClient(transport),
+            timeclock: new TimeclockServiceClient(transport),
         };
-        this.livemapper = {
-            livemapper: new LivemapperServiceClient(transport),
+        this.livemap = {
+            livemap: new LivemapServiceClient(transport),
         };
         this.mailer = {
             mailer: new MailerServiceClient(transport),
@@ -135,19 +132,22 @@ export class GRPCClients {
         this.qualifications = {
             qualifications: new QualificationsServiceClient(transport),
         };
-        this.rector = {
-            rectorAccounts: new RectorAccountsServiceClient(transport),
-            rectorConfig: new RectorConfigServiceClient(transport),
-            rectorCron: new RectorCronServiceClient(transport),
-            rectorFilestore: new RectorFilestoreServiceClient(transport),
-            rectorLaws: new RectorLawsServiceClient(transport),
-            rector: new RectorServiceClient(transport),
+        this.settings = {
+            accounts: new AccountsServiceClient(transport),
+            config: new ConfigServiceClient(transport),
+            cron: new CronServiceClient(transport),
+            filestore: new FilestoreServiceClient(transport),
+            laws: new LawsServiceClient(transport),
+            settings: new SettingsServiceClient(transport),
         };
         this.stats = {
             stats: new StatsServiceClient(transport),
         };
         this.sync = {
             sync: new SyncServiceClient(transport),
+        };
+        this.vehicles = {
+            vehicles: new VehiclesServiceClient(transport),
         };
         this.wiki = {
             wiki: new WikiServiceClient(transport),

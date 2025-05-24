@@ -25,16 +25,17 @@ const (
 )
 
 type Account struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Username      string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
-	License       string                 `protobuf:"bytes,5,opt,name=license,proto3" json:"license,omitempty"`
-	Enabled       bool                   `protobuf:"varint,6,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	LastChar      *int32                 `protobuf:"varint,7,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	Id             uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key"` // @gotags: sql:"primary_key"
+	CreatedAt      *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt      *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Username       string                 `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
+	License        string                 `protobuf:"bytes,5,opt,name=license,proto3" json:"license,omitempty"`
+	Enabled        bool                   `protobuf:"varint,6,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	LastChar       *int32                 `protobuf:"varint,7,opt,name=last_char,json=lastChar,proto3,oneof" json:"last_char,omitempty"`
+	Oauth2Accounts []*OAuth2Account       `protobuf:"bytes,8,rep,name=oauth2_accounts,json=oauth2Accounts,proto3" json:"oauth2_accounts,omitempty" alias:"oauth2_account"` // @gotags: alias:"oauth2_account"
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Account) Reset() {
@@ -116,6 +117,13 @@ func (x *Account) GetLastChar() int32 {
 	return 0
 }
 
+func (x *Account) GetOauth2Accounts() []*OAuth2Account {
+	if x != nil {
+		return x.Oauth2Accounts
+	}
+	return nil
+}
+
 type Character struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Available     bool                   `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
@@ -180,7 +188,7 @@ var File_resources_accounts_accounts_proto protoreflect.FileDescriptor
 
 const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\n" +
-	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xda\x02\n" +
+	"!resources/accounts/accounts.proto\x12\x12resources.accounts\x1a\x1fresources/accounts/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xb0\x03\n" +
 	"\aAccount\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
@@ -190,7 +198,9 @@ const file_resources_accounts_accounts_proto_rawDesc = "" +
 	"\busername\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x18R\busername\x12!\n" +
 	"\alicense\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18@R\alicense\x12\x18\n" +
 	"\aenabled\x18\x06 \x01(\bR\aenabled\x12)\n" +
-	"\tlast_char\x18\a \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x02R\blastChar\x88\x01\x01B\r\n" +
+	"\tlast_char\x18\a \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x02R\blastChar\x88\x01\x01\x12T\n" +
+	"\x0foauth2_accounts\x18\b \x03(\v2!.resources.accounts.OAuth2AccountB\b\xfaB\x05\x92\x01\x02\x10\n" +
+	"R\x0eoauth2AccountsB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\f\n" +
 	"\n" +
@@ -217,17 +227,19 @@ var file_resources_accounts_accounts_proto_goTypes = []any{
 	(*Account)(nil),             // 0: resources.accounts.Account
 	(*Character)(nil),           // 1: resources.accounts.Character
 	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*users.User)(nil),          // 3: resources.users.User
+	(*OAuth2Account)(nil),       // 3: resources.accounts.OAuth2Account
+	(*users.User)(nil),          // 4: resources.users.User
 }
 var file_resources_accounts_accounts_proto_depIdxs = []int32{
 	2, // 0: resources.accounts.Account.created_at:type_name -> resources.timestamp.Timestamp
 	2, // 1: resources.accounts.Account.updated_at:type_name -> resources.timestamp.Timestamp
-	3, // 2: resources.accounts.Character.char:type_name -> resources.users.User
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	3, // 2: resources.accounts.Account.oauth2_accounts:type_name -> resources.accounts.OAuth2Account
+	4, // 3: resources.accounts.Character.char:type_name -> resources.users.User
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_resources_accounts_accounts_proto_init() }
@@ -235,6 +247,7 @@ func file_resources_accounts_accounts_proto_init() {
 	if File_resources_accounts_accounts_proto != nil {
 		return
 	}
+	file_resources_accounts_oauth2_proto_init()
 	file_resources_accounts_accounts_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

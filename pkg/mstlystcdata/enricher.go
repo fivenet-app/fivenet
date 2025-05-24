@@ -5,8 +5,8 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	permscitizenstore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizenstore/perms"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
@@ -67,7 +67,7 @@ func (e *Enricher) EnrichJobName(usr common.IJobName) {
 	}
 }
 
-func (e *Enricher) GetJobByName(job string) *users.Job {
+func (e *Enricher) GetJobByName(job string) *jobs.Job {
 	j, ok := e.jobs.Get(job)
 	if !ok {
 		return nil
@@ -76,7 +76,7 @@ func (e *Enricher) GetJobByName(job string) *users.Job {
 	return j
 }
 
-func (e *Enricher) GetJobGrade(job string, grade int32) (*users.Job, *users.JobGrade) {
+func (e *Enricher) GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGrade) {
 	j := e.GetJobByName(job)
 	if j == nil {
 		return nil, nil
@@ -113,7 +113,7 @@ func (e *UserAwareEnricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs 
 }
 
 func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo) {
-	jobGrades, _ := e.ps.AttrJobGradeList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
+	jobGrades, _ := e.ps.AttrJobGradeList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceGetUserPerm, permscitizens.CitizensServiceGetUserJobsPermField)
 
 	appCfg := e.appCfg.Get()
 	publicJobs := appCfg.JobInfo.PublicJobs
@@ -122,7 +122,7 @@ func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) f
 	return func(usr common.IJobInfo) {
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 		ok := jobGrades.HasJobGrade(usr.GetJob(), usr.GetJobGrade())
-		if !ok && !userInfo.SuperUser {
+		if !ok && !userInfo.Superuser {
 			if !slices.Contains(publicJobs, usr.GetJob()) {
 				usr.SetJob(unemployedJob.Name)
 				usr.SetJobGrade(unemployedJob.Grade)
@@ -130,7 +130,7 @@ func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) f
 				usr.SetJobGrade(0)
 			}
 		} else {
-			if !ok && !userInfo.SuperUser {
+			if !ok && !userInfo.Superuser {
 				usr.SetJobGrade(0)
 			}
 		}

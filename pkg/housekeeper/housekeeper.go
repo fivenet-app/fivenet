@@ -84,16 +84,16 @@ func New(p Params) Result {
 func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "housekeeper.run",
-		Schedule: "* * * * *", // Every 3 minutes
-		Timeout:  durationpb.New(2 * time.Minute),
+		Schedule: "* * * * *", // Every minute
+		Timeout:  durationpb.New(2 * time.Second),
 	}); err != nil {
 		return err
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "housekeeper.job_delete",
-		Schedule: "* * * * *", // Every 3 minutes
-		Timeout:  durationpb.New(2 * time.Minute),
+		Schedule: "* * * * *", // Every minute
+		Timeout:  durationpb.New(45 * time.Second),
 	}); err != nil {
 		return err
 	}
@@ -102,32 +102,6 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 }
 
 func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
-	hand.Add("housekeeper.run", func(ctx context.Context, data *cron.CronjobData) error {
-		ctx, span := h.tracer.Start(ctx, "housekeeper.run")
-		defer span.End()
-
-		dest := &cron.GenericCronData{
-			Attributes: map[string]string{},
-		}
-		if data.Data == nil {
-			data.Data = &anypb.Any{}
-		}
-
-		if err := data.Data.UnmarshalTo(dest); err != nil {
-			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
-		}
-
-		if err := h.runHardDelete(ctx, dest); err != nil {
-			return fmt.Errorf("error during housekeeper (hard delete). %w", err)
-		}
-
-		if err := data.Data.MarshalFrom(dest); err != nil {
-			return fmt.Errorf("failed to marshal updated housekeeper (hard delete) cron data. %w", err)
-		}
-
-		return nil
-	})
-
 	hand.Add("housekeeper.job_delete", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := h.tracer.Start(ctx, "housekeeper.job_delete")
 		defer span.End()
@@ -154,46 +128,31 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		return nil
 	})
 
-	return nil
-}
+	hand.Add("housekeeper.run", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := h.tracer.Start(ctx, "housekeeper.run")
+		defer span.End()
 
-func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronData) error {
-	tablesList := h.getTablesListFn()
-
-	keys := []string{}
-	for key := range tablesList {
-		keys = append(keys, key)
-	}
-	slices.Sort(keys)
-	if len(keys) == 0 {
-		return nil
-	}
-
-	lastTblKey, ok := data.Attributes[lastTableMapIndex]
-	if !ok {
-		// Take first table
-		lastTblKey = keys[0]
-	} else {
-		idx := slices.Index(keys, lastTblKey)
-		if idx == -1 || len(keys) <= idx+1 {
-			h.logger.Debug("last table key not found in keys, starting from the beginning again")
-			lastTblKey = keys[0]
-		} else {
-			lastTblKey = keys[idx+1]
+		dest := &cron.GenericCronData{
+			Attributes: map[string]string{},
 		}
-	}
+		if data.Data == nil {
+			data.Data = &anypb.Any{}
+		}
 
-	tbl, ok := tablesList[lastTblKey]
-	if !ok {
+		if err := data.Data.UnmarshalTo(dest); err != nil {
+			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
+		}
+
+		if err := h.runHardDelete(ctx, dest); err != nil {
+			return fmt.Errorf("error during housekeeper (hard delete). %w", err)
+		}
+
+		if err := data.Data.MarshalFrom(dest); err != nil {
+			return fmt.Errorf("failed to marshal updated housekeeper (hard delete) cron data. %w", err)
+		}
+
 		return nil
-	}
-
-	_, err := h.HardDelete(ctx, tbl)
-	if err != nil {
-		return err
-	}
-
-	data.Attributes[lastTableMapIndex] = lastTblKey
+	})
 
 	return nil
 }
@@ -317,7 +276,7 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 		rowsAffected += r
 	}
 
-	h.logger.Debug("soft delete completed", zap.String("table", table.Table.TableName()), zap.String("job", jobName))
+	h.logger.Debug("soft delete completed", zap.String("table", table.Table.TableName()), zap.String("job", jobName), zap.Int64("rows", rowsAffected))
 	return rowsAffected, nil
 }
 
@@ -429,6 +388,47 @@ func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table,
 	return rowsAffected, nil
 }
 
+func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronData) error {
+	tablesList := h.getTablesListFn()
+
+	keys := []string{}
+	for key := range tablesList {
+		keys = append(keys, key)
+	}
+	slices.Sort(keys)
+	if len(keys) == 0 {
+		return nil
+	}
+
+	lastTblKey, ok := data.Attributes[lastTableMapIndex]
+	if !ok {
+		// Take first table
+		lastTblKey = keys[0]
+	} else {
+		idx := slices.Index(keys, lastTblKey)
+		if idx == -1 || len(keys) <= idx+1 {
+			h.logger.Debug("last table key not found in keys, starting from the beginning again")
+			lastTblKey = keys[0]
+		} else {
+			lastTblKey = keys[idx+1]
+		}
+	}
+
+	tbl, ok := tablesList[lastTblKey]
+	if !ok {
+		return nil
+	}
+
+	_, err := h.HardDelete(ctx, tbl)
+	if err != nil {
+		return err
+	}
+
+	data.Attributes[lastTableMapIndex] = lastTblKey
+
+	return nil
+}
+
 func (h *Housekeeper) HardDelete(ctx context.Context, table *Table) (int64, error) {
 	h.logger.Debug("starting hard delete", zap.String("table", table.Table.TableName()))
 
@@ -450,7 +450,7 @@ func (h *Housekeeper) HardDelete(ctx context.Context, table *Table) (int64, erro
 	}
 	rowsAffected += r
 
-	h.logger.Debug("hard delete completed", zap.String("table", table.Table.TableName()))
+	h.logger.Debug("hard delete completed", zap.String("table", table.Table.TableName()), zap.Int64("rows", rowsAffected))
 	return rowsAffected, nil
 }
 

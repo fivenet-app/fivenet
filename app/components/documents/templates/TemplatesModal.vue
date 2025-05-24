@@ -132,7 +132,7 @@ async function clipboardDialog(): Promise<void> {
 }
 
 onBeforeMount(async () => {
-    if (!can('DocStoreService.CreateDocument').value) {
+    if (!can('documents.DocumentsService.CreateDocument').value) {
         await navigateTo({
             name: 'documents-create',
         });

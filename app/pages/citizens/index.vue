@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.citizens.title',
     requiresAuth: true,
-    permission: 'CitizenStoreService.ListCitizens',
+    permission: 'citizens.CitizensService.ListCitizens',
 });
 
 const { can } = useAuth();
@@ -23,7 +23,7 @@ const modal = useModal();
             <UDashboardNavbar :title="$t('pages.citizens.title')">
                 <template #right>
                     <UButton
-                        v-if="can('CitizenStoreService.ManageCitizenLabels').value"
+                        v-if="can('citizens.CitizensService.ManageLabels').value"
                         :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
                         @click="modal.open(CitizensLabelsModal, {})"

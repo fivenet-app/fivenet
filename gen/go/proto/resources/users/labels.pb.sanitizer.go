@@ -7,7 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
-func (m *CitizenLabel) Sanitize() error {
+func (m *Label) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -18,7 +18,7 @@ func (m *CitizenLabel) Sanitize() error {
 	return nil
 }
 
-func (m *CitizenLabels) Sanitize() error {
+func (m *Labels) Sanitize() error {
 	if m == nil {
 		return nil
 	}

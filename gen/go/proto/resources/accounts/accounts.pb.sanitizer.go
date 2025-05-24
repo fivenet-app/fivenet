@@ -17,6 +17,18 @@ func (m *Account) Sanitize() error {
 		}
 	}
 
+	// Field: Oauth2Accounts
+	for idx, item := range m.Oauth2Accounts {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
 		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {

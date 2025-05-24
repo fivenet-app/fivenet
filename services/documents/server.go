@@ -1,0 +1,234 @@
+package documents
+
+import (
+	"database/sql"
+
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
+	"github.com/fivenet-app/fivenet/v2025/pkg/access"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"go.uber.org/fx"
+	grpc "google.golang.org/grpc"
+)
+
+const housekeeperMinDays = 60
+
+func init() {
+	// Documents
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocuments,
+		IDColumn:        table.FivenetDocuments.ID,
+		DeletedAtColumn: table.FivenetDocuments.DeletedAt,
+
+		MinDays: housekeeperMinDays,
+
+		DependantTables: []*housekeeper.Table{
+			// Activity
+			{
+				Table:      table.FivenetDocumentsActivity,
+				IDColumn:   table.FivenetDocumentsActivity.ID,
+				ForeignKey: table.FivenetDocumentsActivity.DocumentID,
+			},
+
+			// Comments
+			{
+				Table:           table.FivenetDocumentsComments,
+				IDColumn:        table.FivenetDocumentsComments.ID,
+				ForeignKey:      table.FivenetDocumentsComments.DocumentID,
+				DeletedAtColumn: table.FivenetDocumentsComments.DeletedAt,
+
+				MinDays: housekeeperMinDays,
+			},
+
+			// Document References and Relations
+			{
+				Table:           table.FivenetDocumentsReferences,
+				IDColumn:        table.FivenetDocumentsReferences.ID,
+				ForeignKey:      table.FivenetDocumentsReferences.SourceDocumentID,
+				DeletedAtColumn: table.FivenetDocumentsReferences.DeletedAt,
+
+				MinDays: housekeeperMinDays,
+			},
+			{
+				Table:           table.FivenetDocumentsRelations,
+				IDColumn:        table.FivenetDocumentsRelations.ID,
+				ForeignKey:      table.FivenetDocumentsRelations.DocumentID,
+				DeletedAtColumn: table.FivenetDocumentsRelations.DeletedAt,
+
+				MinDays: housekeeperMinDays,
+			},
+		},
+	})
+
+	// Categories
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocumentsCategories,
+		IDColumn:        table.FivenetDocumentsCategories.ID,
+		JobColumn:       table.FivenetDocumentsCategories.Job,
+		DeletedAtColumn: table.FivenetDocumentsCategories.DeletedAt,
+
+		MinDays: housekeeperMinDays,
+	})
+	// Templates
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocumentsTemplates,
+		IDColumn:        table.FivenetDocumentsTemplates.ID,
+		JobColumn:       table.FivenetDocumentsTemplates.CreatorJob,
+		DeletedAtColumn: table.FivenetDocumentsTemplates.DeletedAt,
+
+		MinDays: housekeeperMinDays,
+	})
+}
+
+type Server struct {
+	pbdocuments.DocumentsServiceServer
+
+	db            *sql.DB
+	ps            perms.Permissions
+	jobs          *mstlystcdata.Jobs
+	docCategories *mstlystcdata.DocumentCategories
+	enricher      *mstlystcdata.UserAwareEnricher
+	aud           audit.IAuditer
+	ui            userinfo.UserInfoRetriever
+	notif         notifi.INotifi
+	htmlDiff      *htmldiffer.Differ
+
+	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
+	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
+}
+
+type Params struct {
+	fx.In
+
+	DB            *sql.DB
+	Perms         perms.Permissions
+	Jobs          *mstlystcdata.Jobs
+	DocCategories *mstlystcdata.DocumentCategories
+	Enricher      *mstlystcdata.UserAwareEnricher
+	Aud           audit.IAuditer
+	Ui            userinfo.UserInfoRetriever
+	Notif         notifi.INotifi
+	HTMLDiffer    *htmldiffer.Differ
+}
+
+func NewServer(p Params) *Server {
+	return &Server{
+		db:            p.DB,
+		ps:            p.Perms,
+		jobs:          p.Jobs,
+		docCategories: p.DocCategories,
+		enricher:      p.Enricher,
+		aud:           p.Aud,
+		ui:            p.Ui,
+		notif:         p.Notif,
+		htmlDiff:      p.HTMLDiffer,
+
+		access: newAccess(p.DB),
+
+		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
+			p.DB,
+			table.FivenetDocumentsTemplates,
+			&access.TargetTableColumns{
+				ID:         table.FivenetDocumentsTemplates.ID,
+				DeletedAt:  table.FivenetDocumentsTemplates.DeletedAt,
+				CreatorID:  nil,
+				CreatorJob: table.FivenetDocumentsTemplates.CreatorJob,
+			},
+			access.NewJobs[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.AccessLevel](
+				table.FivenetDocumentsTemplatesAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:       table.FivenetDocumentsTemplatesAccess.ID,
+						TargetID: table.FivenetDocumentsTemplatesAccess.TargetID,
+						Access:   table.FivenetDocumentsTemplatesAccess.Access,
+					},
+					Job:          table.FivenetDocumentsTemplatesAccess.Job,
+					MinimumGrade: table.FivenetDocumentsTemplatesAccess.MinimumGrade,
+				},
+				table.FivenetDocumentsTemplatesAccess.AS("template_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:       table.FivenetDocumentsTemplatesAccess.AS("template_job_access").ID,
+						TargetID: table.FivenetDocumentsTemplatesAccess.AS("template_job_access").TargetID,
+						Access:   table.FivenetDocumentsTemplatesAccess.AS("template_job_access").Access,
+					},
+					Job:          table.FivenetDocumentsTemplatesAccess.AS("template_job_access").Job,
+					MinimumGrade: table.FivenetDocumentsTemplatesAccess.AS("template_job_access").MinimumGrade,
+				},
+			),
+			nil,
+			nil,
+		),
+	}
+}
+
+func newAccess(db *sql.DB) *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel] {
+	return access.NewGrouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
+		db,
+		table.FivenetDocuments,
+		&access.TargetTableColumns{
+			ID:         table.FivenetDocuments.ID,
+			DeletedAt:  table.FivenetDocuments.DeletedAt,
+			CreatorID:  table.FivenetDocuments.CreatorID,
+			CreatorJob: table.FivenetDocuments.CreatorJob,
+		},
+		access.NewJobs[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.AccessLevel](
+			table.FivenetDocumentsAccess,
+			&access.JobAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:       table.FivenetDocumentsAccess.ID,
+					TargetID: table.FivenetDocumentsAccess.TargetID,
+					Access:   table.FivenetDocumentsAccess.Access,
+				},
+				Job:          table.FivenetDocumentsAccess.Job,
+				MinimumGrade: table.FivenetDocumentsAccess.MinimumGrade,
+			},
+			table.FivenetDocumentsAccess.AS("document_job_access"),
+			&access.JobAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:       table.FivenetDocumentsAccess.AS("document_job_access").ID,
+					TargetID: table.FivenetDocumentsAccess.AS("document_job_access").TargetID,
+					Access:   table.FivenetDocumentsAccess.AS("document_job_access").Access,
+				},
+				Job:          table.FivenetDocumentsAccess.AS("document_job_access").Job,
+				MinimumGrade: table.FivenetDocumentsAccess.AS("document_job_access").MinimumGrade,
+			},
+		),
+		access.NewUsers[documents.DocumentUserAccess, *documents.DocumentUserAccess, documents.AccessLevel](
+			table.FivenetDocumentsAccess,
+			&access.UserAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:       table.FivenetDocumentsAccess.ID,
+					TargetID: table.FivenetDocumentsAccess.TargetID,
+					Access:   table.FivenetDocumentsAccess.Access,
+				},
+				UserId: table.FivenetDocumentsAccess.UserID,
+			},
+			table.FivenetDocumentsAccess.AS("document_citizen_access"),
+			&access.UserAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:       table.FivenetDocumentsAccess.AS("document_citizen_access").ID,
+					TargetID: table.FivenetDocumentsAccess.AS("document_citizen_access").TargetID,
+					Access:   table.FivenetDocumentsAccess.AS("document_citizen_access").Access,
+				},
+				UserId: table.FivenetDocumentsAccess.AS("document_citizen_access").UserID,
+			},
+		),
+		nil,
+	)
+}
+
+func (s *Server) RegisterServer(srv *grpc.Server) {
+	pbdocuments.RegisterDocumentsServiceServer(srv, s)
+}
+
+func (s *Server) GetPermsRemap() map[string]string {
+	return pbdocuments.PermsRemap
+}

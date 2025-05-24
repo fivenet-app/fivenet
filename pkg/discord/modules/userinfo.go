@@ -15,8 +15,8 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/utils/httputil"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
@@ -127,10 +127,10 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 			}
 
 			switch settings.UserInfoSyncSettings.UnemployedMode {
-			case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
+			case jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
 				user.Roles.Sum = append(user.Roles.Sum, g.unemployedRole)
 
-			case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
+			case jobs.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
 				kick := true
 				user.Kick = &kick
 				user.KickReason = fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job)
@@ -153,7 +153,7 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 	}, logs, err
 }
 
-func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
+func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 	roles := types.Roles{}
 	settings := g.settings.Load()
 
@@ -231,38 +231,38 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 		jobs = append(jobs, jet.String(job))
 	}
 
-	tUsers := tables.Users().AS("users")
+	tUsers := tables.User().AS("users")
 
-	stmt := tOauth2Accs.
+	stmt := tAccsOauth2.
 		SELECT(
-			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
-			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
+			tAccsOauth2.AccountID.AS("userrolemapping.account_id"),
+			tAccsOauth2.ExternalID.AS("userrolemapping.external_id"),
 			tUsers.ID.AS("userrolemapping.user_id"),
 			tUsers.Job.AS("userrolemapping.job"),
 			tUsers.JobGrade.AS("userrolemapping.job_grade"),
 			tUsers.Firstname.AS("userrolemapping.firstname"),
 			tUsers.Lastname.AS("userrolemapping.lastname"),
 			// Job Props
-			tJobsUserProps.NamePrefix.AS("userrolemapping.name_prefix"),
-			tJobsUserProps.NameSuffix.AS("userrolemapping.name_suffix"),
-			tJobsUserProps.AbsenceBegin.AS("userrolemapping.absence_begin"),
-			tJobsUserProps.AbsenceEnd.AS("userrolemapping.absence_end"),
+			tColleagueProps.NamePrefix.AS("userrolemapping.name_prefix"),
+			tColleagueProps.NameSuffix.AS("userrolemapping.name_suffix"),
+			tColleagueProps.AbsenceBegin.AS("userrolemapping.absence_begin"),
+			tColleagueProps.AbsenceEnd.AS("userrolemapping.absence_end"),
 		).
 		FROM(
-			tOauth2Accs.
+			tAccsOauth2.
 				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tOauth2Accs.AccountID),
+					tAccs.ID.EQ(tAccsOauth2.AccountID),
 				).
 				INNER_JOIN(tUsers,
 					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), tAccs.License)),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID).
-						AND(tJobsUserProps.Job.EQ(jet.String(g.job))),
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tColleagueProps.Job.EQ(jet.String(g.job))),
 				),
 		).
 		WHERE(jet.AND(
-			tOauth2Accs.Provider.EQ(jet.String("discord")),
+			tAccsOauth2.Provider.EQ(jet.String("discord")),
 			tUsers.Job.IN(jobs...),
 		)).
 		ORDER_BY(tUsers.ID.ASC())

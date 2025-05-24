@@ -100,8 +100,8 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Insert user locations
-	assert.NoError(t, insertUserLocation(ctx, db, "char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4", "ambulance", 1.0, 1.0, false))
-	assert.NoError(t, insertUserLocation(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 1.0, 1.0, true))
+	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4", "ambulance", 1.0, 1.0, false))
+	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 1.0, 1.0, true))
 
 	// Wait for users to appear (an event is sent for this)
 	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
@@ -131,7 +131,7 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.Len(t, list, 2)
 
 	// Update user location (no event is sent for updates)
-	assert.NoError(t, insertUserLocation(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 5.0, 5.0, true))
+	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 5.0, 5.0, true))
 
 	// Wait for user2 to be updated
 	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
@@ -175,7 +175,7 @@ func TestRefreshUserLocations(t *testing.T) {
 			return err
 		}
 
-		return retry.RetryableError(fmt.Errorf("user list isn't empty yet. count %d", dest.TotalCount))
+		return retry.RetryableError(fmt.Errorf("user list isn't empty yet. count %d", dest.Total))
 	})
 	require.NoError(t, err)
 
@@ -191,7 +191,7 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.Nil(t, user2)
 }
 
-func insertUserLocation(ctx context.Context, db *sql.DB, identifier string, job string, x float64, y float64, hidden bool) error {
+func insertCitizenLocations(ctx context.Context, db *sql.DB, identifier string, job string, x float64, y float64, hidden bool) error {
 	stmt := tLocs.
 		INSERT(
 			tLocs.Identifier,

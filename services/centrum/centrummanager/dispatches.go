@@ -647,7 +647,7 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 }
 
 func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.DispatchStatus, error) {
-	tUsers := tables.Users().AS("colleague")
+	tUsers := tables.User().AS("colleague")
 
 	stmt := tDispatchStatus.
 		SELECT(

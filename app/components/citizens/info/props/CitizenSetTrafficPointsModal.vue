@@ -45,7 +45,7 @@ async function setTrafficPoints(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.citizenstore.citizenStore.setUserProps({
+        const call = $grpc.citizens.citizens.setUserProps({
             props: userProps,
             reason: values.reason,
         });

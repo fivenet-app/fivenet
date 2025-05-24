@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,
-    permission: ['WikiService.CreatePage'],
+    permission: ['wiki.WikiService.CreatePage'],
 });
 
 const { $grpc } = useNuxtApp();

@@ -8,7 +8,7 @@ import (
 )
 
 func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo *userinfo.UserInfo, access calendar.AccessLevel) jet.SelectStatement {
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	stmt := tCalendarEntry.
 		SELECT(

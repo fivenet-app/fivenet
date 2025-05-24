@@ -29,37 +29,41 @@ export interface ConductEntry {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string job = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string job = 5;
      */
     job: string;
     /**
-     * @generated from protobuf field: resources.jobs.ConductType type = 5;
+     * @generated from protobuf field: resources.jobs.ConductType type = 6;
      */
     type: ConductType;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string message = 6;
+     * @generated from protobuf field: string message = 7;
      */
     message: string;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 7;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 8;
      */
     expiresAt?: Timestamp;
     /**
-     * @generated from protobuf field: int32 target_user_id = 8;
+     * @generated from protobuf field: int32 target_user_id = 9;
      */
     targetUserId: number;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague target_user = 9;
+     * @generated from protobuf field: optional resources.jobs.Colleague target_user = 10;
      */
     targetUser?: Colleague; // @gotags: alias:"target_user"
     /**
-     * @generated from protobuf field: int32 creator_id = 10;
+     * @generated from protobuf field: int32 creator_id = 11;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague creator = 11;
+     * @generated from protobuf field: optional resources.jobs.Colleague creator = 12;
      */
     creator?: Colleague; // @gotags: alias:"creator"
 }
@@ -103,14 +107,15 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
-            { no: 7, name: "expires_at", kind: "message", T: () => Timestamp },
-            { no: 8, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 9, name: "target_user", kind: "message", T: () => Colleague },
-            { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 11, name: "creator", kind: "message", T: () => Colleague }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 6, name: "type", kind: "enum", T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
+            { no: 8, name: "expires_at", kind: "message", T: () => Timestamp },
+            { no: 9, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 10, name: "target_user", kind: "message", T: () => Colleague },
+            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 12, name: "creator", kind: "message", T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<ConductEntry>): ConductEntry {
@@ -139,28 +144,31 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* string job */ 4:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 4:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* string job */ 5:
                     message.job = reader.string();
                     break;
-                case /* resources.jobs.ConductType type */ 5:
+                case /* resources.jobs.ConductType type */ 6:
                     message.type = reader.int32();
                     break;
-                case /* string message */ 6:
+                case /* string message */ 7:
                     message.message = reader.string();
                     break;
-                case /* optional resources.timestamp.Timestamp expires_at */ 7:
+                case /* optional resources.timestamp.Timestamp expires_at */ 8:
                     message.expiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expiresAt);
                     break;
-                case /* int32 target_user_id */ 8:
+                case /* int32 target_user_id */ 9:
                     message.targetUserId = reader.int32();
                     break;
-                case /* optional resources.jobs.Colleague target_user */ 9:
+                case /* optional resources.jobs.Colleague target_user */ 10:
                     message.targetUser = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
                     break;
-                case /* int32 creator_id */ 10:
+                case /* int32 creator_id */ 11:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.jobs.Colleague creator */ 11:
+                case /* optional resources.jobs.Colleague creator */ 12:
                     message.creator = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 default:
@@ -184,30 +192,33 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* string job = 4; */
+        /* optional resources.timestamp.Timestamp deleted_at = 4; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string job = 5; */
         if (message.job !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* resources.jobs.ConductType type = 5; */
+            writer.tag(5, WireType.LengthDelimited).string(message.job);
+        /* resources.jobs.ConductType type = 6; */
         if (message.type !== 0)
-            writer.tag(5, WireType.Varint).int32(message.type);
-        /* string message = 6; */
+            writer.tag(6, WireType.Varint).int32(message.type);
+        /* string message = 7; */
         if (message.message !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.message);
-        /* optional resources.timestamp.Timestamp expires_at = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.message);
+        /* optional resources.timestamp.Timestamp expires_at = 8; */
         if (message.expiresAt)
-            Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* int32 target_user_id = 8; */
+            Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* int32 target_user_id = 9; */
         if (message.targetUserId !== 0)
-            writer.tag(8, WireType.Varint).int32(message.targetUserId);
-        /* optional resources.jobs.Colleague target_user = 9; */
+            writer.tag(9, WireType.Varint).int32(message.targetUserId);
+        /* optional resources.jobs.Colleague target_user = 10; */
         if (message.targetUser)
-            Colleague.internalBinaryWrite(message.targetUser, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* int32 creator_id = 10; */
+            Colleague.internalBinaryWrite(message.targetUser, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* int32 creator_id = 11; */
         if (message.creatorId !== 0)
-            writer.tag(10, WireType.Varint).int32(message.creatorId);
-        /* optional resources.jobs.Colleague creator = 11; */
+            writer.tag(11, WireType.Varint).int32(message.creatorId);
+        /* optional resources.jobs.Colleague creator = 12; */
         if (message.creator)
-            Colleague.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

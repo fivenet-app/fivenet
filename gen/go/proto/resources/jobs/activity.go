@@ -7,21 +7,21 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func CreateJobsUserActivities(ctx context.Context, tx qrm.DB, activities ...*JobsUserActivity) error {
+func CreateJobColleagueActivity(ctx context.Context, tx qrm.DB, activities ...*ColleagueActivity) error {
 	if len(activities) == 0 {
 		return nil
 	}
 
-	tJobsUserActivity := table.FivenetJobsUserActivity
+	tJobColleagueActivity := table.FivenetJobColleagueActivity
 
-	stmt := tJobsUserActivity.
+	stmt := tJobColleagueActivity.
 		INSERT(
-			tJobsUserActivity.Job,
-			tJobsUserActivity.SourceUserID,
-			tJobsUserActivity.TargetUserID,
-			tJobsUserActivity.ActivityType,
-			tJobsUserActivity.Reason,
-			tJobsUserActivity.Data,
+			tJobColleagueActivity.Job,
+			tJobColleagueActivity.SourceUserID,
+			tJobColleagueActivity.TargetUserID,
+			tJobColleagueActivity.ActivityType,
+			tJobColleagueActivity.Reason,
+			tJobColleagueActivity.Data,
 		)
 
 	for _, activity := range activities {

@@ -21,7 +21,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tPActivity = table.FivenetWikiPageActivity
+var tPActivity = table.FivenetWikiPagesActivity
 
 func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActivityRequest) (*pbwiki.ListPageActivityResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.id", int64(req.PageId)))
@@ -36,12 +36,12 @@ func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActiv
 		return nil, errorswiki.ErrPageDenied
 	}
 
-	tPActivity := table.FivenetWikiPageActivity.AS("page_activity")
+	tPActivity := table.FivenetWikiPagesActivity.AS("page_activity")
 	condition := tPActivity.PageID.EQ(jet.Uint64(req.PageId))
 
 	countStmt := tPActivity.
 		SELECT(
-			jet.COUNT(tPActivity.ID).AS("datacount.totalcount"),
+			jet.COUNT(tPActivity.ID).AS("data_count.total"),
 		).
 		FROM(
 			tPActivity,
@@ -57,16 +57,16 @@ func (s *Server) ListPageActivity(ctx context.Context, req *pbwiki.ListPageActiv
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 10)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 10)
 	resp := &pbwiki.ListPageActivityResponse{
 		Pagination: pag,
 		Activity:   []*wiki.PageActivity{},
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	stmt := tPActivity.
 		SELECT(

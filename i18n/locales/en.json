@@ -45,7 +45,7 @@
                 "title": "Document Categories"
             }
         },
-        "rector": {
+        "settings": {
             "features": {
                 "properties": "Set your job properties (e.g., employee marker color).",
                 "jobs": "Setup your factions roles job rank permissions.",
@@ -492,7 +492,7 @@
         "abbreviation": "Abbreviation",
         "approver": "Approver",
         "approved_at": "Approved at",
-        "superuser": "SuperUser",
+        "superuser": "Superuser",
         "restore": "Restore",
         "mark": "Mark",
         "goto": "Go to",
@@ -797,7 +797,7 @@
             "show_all_dispatches": "Show all Dispatches (only affects Map)",
             "restarting_datastream": "Reconnecting data stream..."
         },
-        "rector": {
+        "settings": {
             "job_props": {
                 "job_properties": "Job Properties",
                 "your_job_properties": "Your job's FiveNet properties.",
@@ -1088,7 +1088,7 @@
             "documenteditor": {
                 "content": "You can enable a dark mode for the document editor."
             },
-            "rector_roles_list": {
+            "settings_roles_list": {
                 "content": "Permissions are inherited from low to high grades. If grade 1 can view documents, all grades including grade 1 can do so too. If grade 4 is denied to view documents, grade 4 and higher can not view documents.",
                 "title": "Information about Permission Inheritance"
             },
@@ -1099,7 +1099,7 @@
                 "content": "FiveNet has a command palette for power users, you can open it using:",
                 "keyboard": "CTRL+K"
             },
-            "rector_roles_superuser": {
+            "settings_roles_superuser": {
                 "content": "If you are missing permissions to assign or the list is empty, a FiveNet superuser must configure the available permissions for your faction."
             },
             "sociallogin_discord": {
@@ -1278,7 +1278,7 @@
                     "added": "Related the citizen in a",
                     "removed": "Removed citizen document relation in"
                 },
-                "userprops_job_set": "Set the citizen's job to ",
+                "user_props_job_set": "Set the citizen's job to ",
                 "plugin_license": {
                     "added": "License added",
                     "removed": "License removed"
@@ -1293,10 +1293,10 @@
                     "removed": "Fine removed",
                     "created": "Fine created"
                 },
-                "userprops_mug_shot_set": "Set the citizen's mug shot picture",
-                "userprops_labels_updated": "Updated the citizen's labels",
+                "user_props_mug_shot_set": "Set the citizen's mug shot picture",
+                "user_props_labels_updated": "Updated the citizen's labels",
                 "name_change": "Citizen's name changed from {old} to {new}",
-                "userprops_mug_shot_removed": "Removed citizen's mug shot picture"
+                "user_props_mug_shot_removed": "Removed citizen's mug shot picture"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
@@ -1550,7 +1550,7 @@
                 "content": "Please wait a moment and try again."
             }
         },
-        "rector": {
+        "settings": {
             "role_created": {
                 "title": "Role: Created",
                 "content": "Role has been created."
@@ -1745,7 +1745,7 @@
                 "content": "Postal codes couldn't be loaded"
             }
         },
-        "docstore": {
+        "documents": {
             "requests": {
                 "created": {
                     "title": "Document Request created!",
@@ -1801,8 +1801,8 @@
         },
         "superuser_menu": {
             "setsuperusermode": {
-                "title": "SuperUser Mode",
-                "content": "SuperUser Mode changed (current job: {job})."
+                "title": "Superuser Mode",
+                "content": "Superuser Mode changed (current job: {job})."
             }
         },
         "system": {
@@ -1866,7 +1866,7 @@
                 "description": "Permission to choose character, basically allow or disallow access to FiveNet."
             }
         },
-        "CitizenStoreService": {
+        "CitizensService": {
             "category": "Citizens",
             "ListCitizens": {
                 "key": "List Citizens",
@@ -1919,7 +1919,7 @@
                     "Jobs": "Factions"
                 }
             },
-            "ManageCitizenLabels": {
+            "ManageLabels": {
                 "key": "Manage Citizen Labels",
                 "description": "Create, update and delete citizens labels."
             }
@@ -1941,7 +1941,7 @@
                     "Jobs": "Factions"
                 }
             },
-            "CompleteCitizenLabels": {
+            "CompleteLabels": {
                 "key": "List job's citizen labels",
                 "description": "Complete citizen labels from multiple jobs.",
                 "attrs_types": {
@@ -1949,14 +1949,14 @@
                 }
             }
         },
-        "DMVService": {
+        "VehiclesService": {
             "category": "Vehicles",
             "ListVehicles": {
                 "key": "Search Vehicles",
                 "description": "Search and find citizen's vehicles."
             }
         },
-        "DocStoreService": {
+        "DocumentsService": {
             "category": "Documents",
             "AddDocumentReference": {
                 "key": "Add Document References",
@@ -2102,7 +2102,7 @@
                 "description": "Allows to set own reminders for documents."
             }
         },
-        "LivemapperService": {
+        "LivemapService": {
             "category": "Map",
             "Stream": {
                 "key": "View",
@@ -2139,7 +2139,7 @@
                 }
             }
         },
-        "RectorService": {
+        "SettingsService": {
             "category": "Control Panel",
             "GetJobProps": {
                 "key": "View Job Properties",
@@ -2236,7 +2236,7 @@
                     "Types": "Colleague Properties"
                 }
             },
-            "SetJobsUserProps": {
+            "SetColleagueProps": {
                 "key": "Set a colleague's properties",
                 "description": "E.g., absence date.",
                 "attrs": {
@@ -2271,12 +2271,12 @@
                     "Types": "Types"
                 }
             },
-            "ManageColleagueLabels": {
+            "ManageLabels": {
                 "key": "Manage labels",
                 "description": "Manage labels to be added/removed on colleagues."
             }
         },
-        "JobsConductService": {
+        "ConductService": {
             "CreateConductEntry": {
                 "key": "Create Conduct Register entries",
                 "description": "Create Conduct Register entries."
@@ -2302,7 +2302,7 @@
             },
             "category": "Job Conduct Register"
         },
-        "JobsTimeclockService": {
+        "TimeclockService": {
             "ListTimeclock": {
                 "key": "View Timeclock",
                 "description": "See Timeclock entries.",
@@ -2442,7 +2442,7 @@
                 }
             }
         },
-        "RectorLawsService": {
+        "LawsService": {
             "category": "Law Books",
             "CreateOrUpdateLawBook": {
                 "key": "Create and Update Law Book",
@@ -2484,7 +2484,7 @@
                 "content": "Please select an available character and try again."
             }
         },
-        "CitizenStoreService": {
+        "CitizensService": {
             "ErrFailedQuery": "Failed to list/ get citizens data!",
             "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)",
             "ErrReasonRequired": "A reason must be provided!",
@@ -2499,10 +2499,10 @@
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"
         },
-        "DMVService": {
+        "VehiclesService": {
             "ErrFailedQuery": "Failed to search vehicles data!"
         },
-        "DocStoreService": {
+        "DocumentsService": {
             "ErrFailedQuery": "Failed to get/ create/ update documents!",
             "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
             "ErrTemplateNoPerms": "You don't have permission to view/ update/ delete this template!",
@@ -2545,7 +2545,7 @@
             "ErrDocAccessDuplicate": "Document access: A job rank/citizen can only have one access and not multiple!",
             "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!"
         },
-        "LivemapperService": {
+        "LivemapService": {
             "ErrStreamFailed": "Failed to stream Map data!",
             "ErrMarkerFailed": "Failed to create/ update/ delete marker!"
         },
@@ -2553,7 +2553,7 @@
             "ErrFailedRequest": "Failed to load notifications data!",
             "ErrFailedStream": "Failed to stream notifications!"
         },
-        "RectorService": {
+        "SettingsService": {
             "ErrFailedQuery": "Failed to get/ update control panel data!",
             "ErrInvalidRequest": "Invalid role action requested!",
             "ErrNoPermission": "No permission to create/ change/ delete role!",
@@ -2689,7 +2689,7 @@
         }
     },
     "enums": {
-        "docstore": {
+        "documents": {
             "AccessLevel": {
                 "UNSPECIFIED": "Unspecified",
                 "BLOCKED": "Blocked",
@@ -2809,7 +2809,7 @@
                 "SUSPENSION": "Suspension",
                 "NOTE": "Note"
             },
-            "JobsUserActivityType": {
+            "ColleagueActivityType": {
                 "UNSPECIFIED": "Unspecified",
                 "ABSENCE_DATE": "Absence Date",
                 "FIRED": "Fired",
@@ -2854,7 +2854,7 @@
                 "REQUEST_NEEDED": "Require Request"
             }
         },
-        "rector": {
+        "settings": {
             "UserInfoSyncUnemployedMode": {
                 "GIVE_ROLE": "Give Role",
                 "KICK": "Kick",

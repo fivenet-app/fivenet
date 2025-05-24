@@ -32,7 +32,7 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 
 	perms := make(collections.Permissions, len(ps))
 	for i := range ps {
-		perms[i] = &model.FivenetPermissions{
+		perms[i] = &model.FivenetRbacPermissions{
 			ID:        ps[i].ID,
 			Category:  string(ps[i].Category),
 			Name:      string(ps[i].Name),
@@ -93,7 +93,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 		return result
 	}
 
-	if userInfo.SuperUser {
+	if userInfo.Superuser {
 		result = true
 	} else {
 		result = p.checkIfCan(permId, userInfo)

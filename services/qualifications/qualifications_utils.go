@@ -6,7 +6,7 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	permscitizenstore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizenstore/perms"
+	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -18,14 +18,14 @@ import (
 
 var (
 	tQAccess = table.FivenetQualificationsAccess
-	tQReqs   = table.FivenetQualificationsRequirements.AS("qualificationrequirement")
+	tQReqs   = table.FivenetQualificationsRequirements.AS("qualification_requirement")
 )
 
 func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{}
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		wheres = append(wheres,
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
@@ -96,12 +96,12 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			tQualiResults.CreatorID,
 		}
 
-		if userInfo.SuperUser {
+		if userInfo.Superuser {
 			columns = append(columns, tQuali.DeletedAt)
 		}
 
 		// Field Permission Check
-		fields, _ := s.perms.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		fields, _ := s.perms.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
 
 		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
@@ -111,7 +111,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 	}
 
 	var tables jet.ReadableTable
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		tables = tQuali.
 			LEFT_JOIN(tQAccess,
 				tQAccess.TargetID.EQ(tQuali.ID).
@@ -150,10 +150,10 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 }
 
 func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{jet.Bool(true)}
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		wheres = append(wheres,
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
@@ -234,12 +234,12 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 			columns = append(columns, tQuali.Content)
 		}
 
-		if userInfo.SuperUser {
+		if userInfo.Superuser {
 			columns = append(columns, tQuali.DeletedAt)
 		}
 
 		// Field Permission Check
-		fields, _ := s.perms.AttrStringList(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		fields, _ := s.perms.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
 
 		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
@@ -249,7 +249,7 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 	}
 
 	var tables jet.ReadableTable
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		tables = tQuali.
 			LEFT_JOIN(tQAccess,
 				tQAccess.TargetID.EQ(tQuali.ID).
@@ -300,7 +300,7 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 }
 
 func (s *Server) getQualificationRequirements(ctx context.Context, qualificationId uint64) ([]*qualifications.QualificationRequirement, error) {
-	tQuali := tQuali.AS("targetqualification")
+	tQuali := tQuali.AS("target_qualification")
 
 	stmt := tQReqs.
 		SELECT(
@@ -419,7 +419,7 @@ func (s *Server) getQualificationShort(ctx context.Context, qualificationId uint
 func (s *Server) checkRequirementsMetForQualification(ctx context.Context, qualificationId uint64, userId int32) (bool, error) {
 	stmt := tQReqs.
 		SELECT(
-			tQReqs.TargetQualificationID.AS("qualiid"),
+			tQReqs.TargetQualificationID.AS("qualification_id"),
 			tQualiResults.UserID.AS("userid"),
 		).
 		FROM(tQReqs.
@@ -435,8 +435,8 @@ func (s *Server) checkRequirementsMetForQualification(ctx context.Context, quali
 		)
 
 	var dest []*struct {
-		QualiID uint64
-		UserID  int32
+		QualificationID uint64
+		UserID          int32
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -451,8 +451,8 @@ func (s *Server) checkRequirementsMetForQualification(ctx context.Context, quali
 
 	// Remove all requirements which the user has fullfilled
 	dest = slices.DeleteFunc(dest, func(s *struct {
-		QualiID uint64
-		UserID  int32
+		QualificationID uint64
+		UserID          int32
 	},
 	) bool {
 		return s.UserID > 0

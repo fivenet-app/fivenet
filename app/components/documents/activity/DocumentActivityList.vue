@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { ListDocumentActivityResponse } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
     documentId: number;
@@ -24,7 +24,7 @@ const {
 
 async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
     try {
-        const call = $grpc.docstore.docStore.listDocumentActivity({
+        const call = $grpc.documents.documents.listDocumentActivity({
             pagination: {
                 offset: offset.value,
             },

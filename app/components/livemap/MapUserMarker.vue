@@ -105,7 +105,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                     </UButton>
 
                     <UButton
-                        v-if="can('CitizenStoreService.ListCitizens').value"
+                        v-if="can('citizens.CitizensService.ListCitizens').value"
                         variant="link"
                         icon="i-mdi-account"
                         :padded="false"
@@ -118,10 +118,10 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
 
                     <UButton
                         v-if="
-                            can('JobsService.GetColleague').value &&
+                            can('jobs.JobsService.GetColleague').value &&
                             marker.user &&
                             marker.user?.job === activeChar?.job &&
-                            checkIfCanAccessColleague(marker.user, 'JobsService.GetColleague')
+                            checkIfCanAccessColleague(marker.user, 'jobs.JobsService.GetColleague')
                         "
                         variant="link"
                         icon="i-mdi-briefcase"

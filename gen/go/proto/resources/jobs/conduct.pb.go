@@ -89,15 +89,16 @@ type ConductEntry struct {
 	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Job       string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	Type      ConductType            `protobuf:"varint,5,opt,name=type,proto3,enum=resources.jobs.ConductType" json:"type,omitempty"`
+	DeletedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	Job       string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
+	Type      ConductType            `protobuf:"varint,6,opt,name=type,proto3,enum=resources.jobs.ConductType" json:"type,omitempty"`
 	// @sanitize
-	Message       string               `protobuf:"bytes,6,opt,name=message,proto3" json:"message,omitempty"`
-	ExpiresAt     *timestamp.Timestamp `protobuf:"bytes,7,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
-	TargetUserId  int32                `protobuf:"varint,8,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
-	TargetUser    *Colleague           `protobuf:"bytes,9,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty" alias:"target_user"` // @gotags: alias:"target_user"
-	CreatorId     int32                `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator       *Colleague           `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
+	Message       string               `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
+	ExpiresAt     *timestamp.Timestamp `protobuf:"bytes,8,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	TargetUserId  int32                `protobuf:"varint,9,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty"`
+	TargetUser    *Colleague           `protobuf:"bytes,10,opt,name=target_user,json=targetUser,proto3,oneof" json:"target_user,omitempty" alias:"target_user"` // @gotags: alias:"target_user"
+	CreatorId     int32                `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator       *Colleague           `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -149,6 +150,13 @@ func (x *ConductEntry) GetCreatedAt() *timestamp.Timestamp {
 func (x *ConductEntry) GetUpdatedAt() *timestamp.Timestamp {
 	if x != nil {
 		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *ConductEntry) GetDeletedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.DeletedAt
 	}
 	return nil
 }
@@ -213,28 +221,31 @@ var File_resources_jobs_conduct_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_conduct_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x81\x05\n" +
+	"\x1cresources/jobs/conduct.proto\x12\x0eresources.jobs\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xd4\x05\n" +
 	"\fConductEntry\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x19\n" +
-	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x129\n" +
-	"\x04type\x18\x05 \x01(\x0e2\x1b.resources.jobs.ConductTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\x04type\x12$\n" +
-	"\amessage\x18\x06 \x01(\tB\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12B\n" +
+	"\n" +
+	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x19\n" +
+	"\x03job\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x129\n" +
+	"\x04type\x18\x06 \x01(\x0e2\x1b.resources.jobs.ConductTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\x04type\x12$\n" +
+	"\amessage\x18\a \x01(\tB\n" +
 	"\xfaB\ar\x05\x10\x03\x18\x80\x10R\amessage\x12B\n" +
 	"\n" +
-	"expires_at\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01\x12-\n" +
-	"\x0etarget_user_id\x18\b \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\ftargetUserId\x12?\n" +
-	"\vtarget_user\x18\t \x01(\v2\x19.resources.jobs.ColleagueH\x03R\n" +
+	"expires_at\x18\b \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\texpiresAt\x88\x01\x01\x12-\n" +
+	"\x0etarget_user_id\x18\t \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\ftargetUserId\x12?\n" +
+	"\vtarget_user\x18\n" +
+	" \x01(\v2\x19.resources.jobs.ColleagueH\x04R\n" +
 	"targetUser\x88\x01\x01\x12&\n" +
 	"\n" +
-	"creator_id\x18\n" +
-	" \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\tcreatorId\x128\n" +
-	"\acreator\x18\v \x01(\v2\x19.resources.jobs.ColleagueH\x04R\acreator\x88\x01\x01B\r\n" +
+	"creator_id\x18\v \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\tcreatorId\x128\n" +
+	"\acreator\x18\f \x01(\v2\x19.resources.jobs.ColleagueH\x05R\acreator\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
+	"\v_deleted_atB\r\n" +
 	"\v_expires_atB\x0e\n" +
 	"\f_target_userB\n" +
 	"\n" +
@@ -271,15 +282,16 @@ var file_resources_jobs_conduct_proto_goTypes = []any{
 var file_resources_jobs_conduct_proto_depIdxs = []int32{
 	2, // 0: resources.jobs.ConductEntry.created_at:type_name -> resources.timestamp.Timestamp
 	2, // 1: resources.jobs.ConductEntry.updated_at:type_name -> resources.timestamp.Timestamp
-	0, // 2: resources.jobs.ConductEntry.type:type_name -> resources.jobs.ConductType
-	2, // 3: resources.jobs.ConductEntry.expires_at:type_name -> resources.timestamp.Timestamp
-	3, // 4: resources.jobs.ConductEntry.target_user:type_name -> resources.jobs.Colleague
-	3, // 5: resources.jobs.ConductEntry.creator:type_name -> resources.jobs.Colleague
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	2, // 2: resources.jobs.ConductEntry.deleted_at:type_name -> resources.timestamp.Timestamp
+	0, // 3: resources.jobs.ConductEntry.type:type_name -> resources.jobs.ConductType
+	2, // 4: resources.jobs.ConductEntry.expires_at:type_name -> resources.timestamp.Timestamp
+	3, // 5: resources.jobs.ConductEntry.target_user:type_name -> resources.jobs.Colleague
+	3, // 6: resources.jobs.ConductEntry.creator:type_name -> resources.jobs.Colleague
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_resources_jobs_conduct_proto_init() }

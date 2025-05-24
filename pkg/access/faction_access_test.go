@@ -19,13 +19,13 @@ func TestCheckIfHasAccess(t *testing.T) {
 		expected   bool
 	}{
 		{
-			name:   "SuperUser always has access",
+			name:   "Superuser always has access",
 			levels: []string{},
 			userInfo: &userinfo.UserInfo{
 				UserId:    123,
 				Job:       "Police",
 				JobGrade:  0,
-				SuperUser: true,
+				Superuser: true,
 			},
 			creatorJob: "EMS",
 			expected:   true,

@@ -78,7 +78,7 @@ const notifications = useNotificatorStore();
 const { maxAccessEntries } = useAppConfig();
 
 const canDo = computed(() => ({
-    public: attr('WikiService.CreatePage', 'Fields', 'Public').value,
+    public: attr('wiki.WikiService.CreatePage', 'Fields', 'Public').value,
 }));
 
 const schema = z.object({

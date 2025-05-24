@@ -46,7 +46,7 @@ const {
 
 async function getCitizen(id: number): Promise<User | undefined> {
     try {
-        const call = $grpc.citizenstore.citizenStore.getUser({
+        const call = $grpc.citizens.citizens.getUser({
             userId: id,
             infoOnly: true,
         });
@@ -118,7 +118,7 @@ watchOnce(opened, async () => {
                     />
 
                     <UButton
-                        v-if="can('CitizenStoreService.ListCitizens').value"
+                        v-if="can('citizens.CitizensService.ListCitizens').value"
                         variant="link"
                         icon="i-mdi-account"
                         :to="{ name: 'citizens-id', params: { id: userId ?? user?.userId ?? 0 } }"
@@ -127,7 +127,7 @@ watchOnce(opened, async () => {
                     </UButton>
 
                     <UButton
-                        v-if="can('JobsService.GetColleague').value && user?.job === activeChar?.job"
+                        v-if="can('jobs.JobsService.GetColleague').value && user?.job === activeChar?.job"
                         variant="link"
                         icon="i-mdi-briefcase"
                         :to="{ name: 'jobs-colleagues-id-info', params: { id: userId ?? user?.userId ?? 0 } }"

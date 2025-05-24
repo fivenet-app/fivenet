@@ -1,0 +1,197 @@
+syntax = "proto3";
+
+package services.settings;
+
+import "resources/audit/audit.proto";
+import "resources/common/database/database.proto";
+import "resources/jobs/job_props.proto";
+import "resources/permissions/attributes.proto";
+import "resources/permissions/permissions.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
+
+message GetJobPropsRequest {}
+
+message GetJobPropsResponse {
+  resources.jobs.JobProps job_props = 1;
+}
+
+message SetJobPropsRequest {
+  resources.jobs.JobProps job_props = 1;
+}
+
+message SetJobPropsResponse {
+  resources.jobs.JobProps job_props = 1;
+}
+
+message GetRolesRequest {
+  optional bool lowest_rank = 1;
+}
+
+message GetRolesResponse {
+  repeated resources.permissions.Role roles = 1;
+}
+
+message GetRoleRequest {
+  uint64 id = 1;
+  optional bool filtered = 2;
+}
+
+message GetRoleResponse {
+  resources.permissions.Role role = 1;
+}
+
+message CreateRoleRequest {
+  string job = 1 [(validate.rules).string.max_len = 20];
+  int32 grade = 2 [(validate.rules).int32.gte = 0];
+}
+
+message CreateRoleResponse {
+  resources.permissions.Role role = 1;
+}
+
+message DeleteRoleRequest {
+  uint64 id = 1;
+}
+
+message DeleteRoleResponse {}
+
+message UpdateRolePermsRequest {
+  uint64 id = 1;
+  optional PermsUpdate perms = 2;
+  optional AttrsUpdate attrs = 3;
+}
+
+message PermsUpdate {
+  repeated PermItem to_update = 1;
+  repeated uint64 to_remove = 2;
+}
+
+message PermItem {
+  uint64 id = 1;
+  bool val = 2;
+}
+
+message AttrsUpdate {
+  repeated resources.permissions.RoleAttribute to_update = 1;
+  repeated resources.permissions.RoleAttribute to_remove = 2;
+}
+
+message UpdateRolePermsResponse {}
+
+message GetPermissionsRequest {
+  uint64 role_id = 1;
+  optional bool filtered = 2;
+}
+
+message GetPermissionsResponse {
+  repeated resources.permissions.Permission permissions = 1;
+  repeated resources.permissions.RoleAttribute attributes = 2;
+}
+
+message GetEffectivePermissionsRequest {
+  uint64 role_id = 1;
+}
+
+message GetEffectivePermissionsResponse {
+  resources.permissions.Role role = 1;
+  repeated resources.permissions.Permission permissions = 2;
+  repeated resources.permissions.RoleAttribute attributes = 3;
+}
+
+message ViewAuditLogRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  repeated int32 user_ids = 3;
+  optional resources.timestamp.Timestamp from = 4;
+  optional resources.timestamp.Timestamp to = 5;
+  // @sanitize: method=StripTags
+  repeated string services = 6 [(validate.rules).repeated = {
+    max_items: 10,
+    items: { string: { max_len: 64 } }
+  }];
+  // @sanitize: method=StripTags
+  repeated string methods = 7 [(validate.rules).repeated = {
+    max_items: 10,
+    items: { string: { max_len: 64 } }
+}];
+  optional string search = 8 [(validate.rules).string.max_len = 64];
+}
+
+message ViewAuditLogResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.audit.AuditEntry logs = 2;
+}
+
+message GetAllPermissionsRequest {
+  string job = 1 [(validate.rules).string.max_len = 20];
+}
+
+message GetAllPermissionsResponse {
+  repeated resources.permissions.Permission permissions = 1;
+  repeated resources.permissions.RoleAttribute attributes = 2;
+}
+
+message GetJobLimitsRequest {
+  string job = 1 [(validate.rules).string.max_len = 20];
+}
+
+message GetJobLimitsResponse {
+  string job = 1 [(validate.rules).string.max_len = 20];
+  optional string job_label = 2;
+  repeated resources.permissions.Permission permissions = 3;
+  repeated resources.permissions.RoleAttribute attributes = 4;
+}
+
+message UpdateJobLimitsRequest {
+  string job = 1 [(validate.rules).string.max_len = 20];
+  optional PermsUpdate perms = 2;
+  optional AttrsUpdate attrs = 3;
+}
+
+message UpdateJobLimitsResponse {}
+
+message DeleteFactionRequest {
+  string job = 1 [(validate.rules).string.max_len = 20];
+}
+
+message DeleteFactionResponse {}
+
+service SettingsService {
+  // @perm
+  rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
+  // @perm
+  rpc SetJobProps(SetJobPropsRequest) returns (SetJobPropsResponse);
+
+  // @perm
+  rpc GetRoles(GetRolesRequest) returns (GetRolesResponse);
+  // @perm: Name=GetRoles
+  rpc GetRole(GetRoleRequest) returns (GetRoleResponse);
+  // @perm
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  // @perm
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+
+  // @perm
+  rpc UpdateRolePerms(UpdateRolePermsRequest) returns (UpdateRolePermsResponse);
+
+  // @perm: Name=GetRoles
+  rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
+  // @perm: Name=GetRoles
+  rpc GetEffectivePermissions(GetEffectivePermissionsRequest) returns (GetEffectivePermissionsResponse);
+
+  // @perm
+  rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
+
+  // @perm: Name=Superuser
+  rpc GetAllPermissions(GetAllPermissionsRequest) returns (GetAllPermissionsResponse);
+  // @perm: Name=Superuser
+  rpc GetJobLimits(GetJobLimitsRequest) returns (GetJobLimitsResponse);
+  // @perm: Name=Superuser
+  rpc UpdateJobLimits(UpdateJobLimitsRequest) returns (UpdateJobLimitsResponse);
+  // @perm: Name=Superuser
+  rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse);
+}

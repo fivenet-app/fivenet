@@ -1,4 +1,4 @@
-import { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
+import { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
 
 export function toTitleCase(s: string): string {
@@ -62,7 +62,7 @@ export interface UserLike {
     dateofbirth?: string;
     job: string;
     jobGrade: number;
-    props?: JobsUserProps | UserProps;
+    props?: ColleagueProps | UserProps;
 }
 
 export function usersToLabel(users: UserLike[]): string {
@@ -70,7 +70,7 @@ export function usersToLabel(users: UserLike[]): string {
 }
 
 export function userToLabel(user: UserLike): string {
-    if (JobsUserProps.is(user.props)) {
+    if (ColleagueProps.is(user.props)) {
         return `${user.props?.namePrefix ? user.props?.namePrefix + ' ' : ''}${user?.firstname} ${user?.lastname}${user.props?.nameSuffix ? ' ' + user.props?.nameSuffix : ''} (${user?.dateofbirth})`;
     } else {
         return `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})`;

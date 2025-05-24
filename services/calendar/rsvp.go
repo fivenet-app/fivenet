@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -38,14 +37,14 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	tUser := tables.Users().AS("user_short")
+	tUser := tables.User().AS("user_short")
 
 	condition := tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)).
 		AND(tCalendarRSVP.Response.GT(jet.Int16(int16(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
 
 	countStmt := tCalendarRSVP.
 		SELECT(
-			jet.COUNT(tCalendarRSVP.UserID).AS("datacount.totalcount"),
+			jet.COUNT(tCalendarRSVP.UserID).AS("data_count.total"),
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUser,
@@ -61,12 +60,12 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.TotalCount)
+	pag, limit := req.Pagination.GetResponse(count.Total)
 	resp := &pbcalendar.ListCalendarEntryRSVPResponse{
 		Pagination: pag,
 	}
 
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -119,12 +118,12 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCalendarEntryRequest) (*pbcalendar.RSVPCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "RSVPCalendarEntry",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -183,7 +182,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCale
 		s.enricher.EnrichJobInfoSafe(userInfo, rsvpEntry.User)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbcalendar.RSVPCalendarEntryResponse{
 		Entry: rsvpEntry,
@@ -191,7 +190,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCale
 }
 
 func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userId int32) (*calendar.CalendarEntryRSVP, error) {
-	tUser := tables.Users().AS("user_short")
+	tUser := tables.User().AS("user_short")
 
 	stmt := tCalendarRSVP.
 		SELECT(

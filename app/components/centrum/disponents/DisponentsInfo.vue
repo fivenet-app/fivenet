@@ -46,6 +46,19 @@ if (!props.hideJoin) {
 
 <template>
     <div class="flex w-full items-center justify-items-center gap-2">
+        <template v-if="!hideJoin">
+            <UTooltip :text="`${$t('common.join', 1)}/ ${$t('common.leave', 1)}`" :shortcuts="['C', 'Q']">
+                <UButton
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    :icon="!isDisponent ? 'i-mdi-location-enter' : 'i-mdi-location-exit'"
+                    :color="!isDisponent ? 'primary' : 'amber'"
+                    :label="!isDisponent ? $t('common.join', 1) : $t('common.leave', 1)"
+                    @click="onSubmitThrottle(!isDisponent)"
+                />
+            </UTooltip>
+        </template>
+
         <UTooltip :text="usersToLabel(disponents)">
             <UButton
                 :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
@@ -63,29 +76,5 @@ if (!props.hideJoin) {
                 </template>
             </UButton>
         </UTooltip>
-
-        <template v-if="!hideJoin">
-            <UTooltip :text="`${$t('common.join')}/ ${$t('common.leave')}`" :shortcuts="['C', 'Q']">
-                <UButton
-                    v-if="!isDisponent"
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                    icon="i-mdi-location-enter"
-                    @click="onSubmitThrottle(true)"
-                >
-                    {{ $t('common.join') }}
-                </UButton>
-                <UButton
-                    v-else
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                    color="amber"
-                    icon="i-mdi-location-exit"
-                    @click="onSubmitThrottle(false)"
-                >
-                    {{ $t('common.leave') }}
-                </UButton>
-            </UTooltip>
-        </template>
     </div>
 </template>

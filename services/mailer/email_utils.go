@@ -71,7 +71,7 @@ func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.
 		}
 	} else {
 		// User's private email
-		tUsers := tables.Users().AS("user_short")
+		tUsers := tables.User().AS("user_short")
 
 		stmt := tUsers.
 			SELECT(

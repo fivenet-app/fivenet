@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { SetJobsUserPropsResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const props = defineProps<{
     namePrefix: string | undefined;
@@ -44,9 +44,9 @@ watch(props, () => {
 
 const changed = ref(false);
 
-async function setJobsUserNote(values: Schema): Promise<undefined | SetJobsUserPropsResponse> {
+async function setJobsUserNote(values: Schema): Promise<undefined | SetColleaguePropsResponse> {
     try {
-        const call = $grpc.jobs.jobs.setJobsUserProps({
+        const call = $grpc.jobs.jobs.setColleagueProps({
             reason: values.reason,
             props: {
                 userId: props.userId,

@@ -3,12 +3,11 @@ package qualifications
 import (
 	"context"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -48,12 +47,12 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *pbqualificatio
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "SetQualificationAccess",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -84,7 +83,7 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *pbqualificatio
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbqualifications.SetQualificationAccessResponse{}, nil
 }

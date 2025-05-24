@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	CentrumServicePerm perms.Category = "CentrumService"
+	CentrumServicePerm perms.Category = "centrum.CentrumService"
 
 	CentrumServiceCreateDispatchPerm     perms.Name = "CreateDispatch"
 	CentrumServiceCreateOrUpdateUnitPerm perms.Name = "CreateOrUpdateUnit"

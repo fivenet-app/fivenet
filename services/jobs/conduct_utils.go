@@ -9,7 +9,7 @@ import (
 )
 
 func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductEntry, error) {
-	tUser := tables.Users().AS("target_user")
+	tUser := tables.User().AS("target_user")
 	tCreator := tUser.AS("creator")
 
 	stmt := tConduct.
@@ -17,6 +17,7 @@ func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductE
 			tConduct.ID,
 			tConduct.CreatedAt,
 			tConduct.UpdatedAt,
+			tConduct.DeletedAt,
 			tConduct.Job,
 			tConduct.Type,
 			tConduct.Message,
@@ -46,10 +47,10 @@ func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductE
 		WHERE(tConduct.ID.EQ(jet.Uint64(id))).
 		LIMIT(1)
 
-	var dest jobs.ConductEntry
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	dest := &jobs.ConductEntry{}
+	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		return nil, err
 	}
 
-	return &dest, nil
+	return dest, nil
 }

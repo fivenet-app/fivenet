@@ -4,7 +4,7 @@ package services.completor;
 
 import "resources/documents/category.proto";
 import "resources/laws/laws.proto";
-import "resources/users/jobs.proto";
+import "resources/jobs/jobs.proto";
 import "resources/users/labels.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -29,7 +29,7 @@ message CompleteJobsRequest {
 }
 
 message CompleteJobsResponse {
-  repeated resources.users.Job jobs = 1;
+  repeated resources.jobs.Job jobs = 1;
 }
 
 message CompleteDocumentCategoriesRequest {
@@ -51,7 +51,7 @@ message CompleteCitizenLabelsRequest {
 }
 
 message CompleteCitizenLabelsResponse {
-  repeated resources.users.CitizenLabel labels = 1;
+  repeated resources.users.Label labels = 1;
 }
 
 service CompletorService {

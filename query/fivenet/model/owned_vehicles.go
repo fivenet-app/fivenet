@@ -10,6 +10,6 @@ package model
 type OwnedVehicles struct {
 	Owner *string `json:"owner"`
 	Plate string  `sql:"primary_key" json:"plate"`
-	Model string  `json:"model"`
+	Model *string `json:"model"`
 	Type  string  `json:"type"`
 }

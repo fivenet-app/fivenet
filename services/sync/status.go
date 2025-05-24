@@ -14,7 +14,7 @@ func (s *Server) GetStatus(ctx context.Context, req *pbsync.GetStatusRequest) (*
 	resp := &pbsync.GetStatusResponse{}
 
 	tJobs := tables.Jobs()
-	tUsers := tables.Users()
+	tUsers := tables.User()
 	tVehicles := tables.OwnedVehicles()
 	tLicenses := tables.Licenses()
 
@@ -30,7 +30,7 @@ func (s *Server) GetStatus(ctx context.Context, req *pbsync.GetStatusRequest) (*
 		return nil, err
 	}
 	resp.Jobs = &sync.DataStatus{
-		Count: jobsCount.TotalCount,
+		Count: jobsCount.Total,
 	}
 
 	// Users
@@ -45,7 +45,7 @@ func (s *Server) GetStatus(ctx context.Context, req *pbsync.GetStatusRequest) (*
 		return nil, err
 	}
 	resp.Users = &sync.DataStatus{
-		Count: usersCount.TotalCount,
+		Count: usersCount.Total,
 	}
 
 	// Vehicles
@@ -60,7 +60,7 @@ func (s *Server) GetStatus(ctx context.Context, req *pbsync.GetStatusRequest) (*
 		return nil, err
 	}
 	resp.Vehicles = &sync.DataStatus{
-		Count: vehiclesCount.TotalCount,
+		Count: vehiclesCount.Total,
 	}
 
 	// Licenses
@@ -75,7 +75,7 @@ func (s *Server) GetStatus(ctx context.Context, req *pbsync.GetStatusRequest) (*
 		return nil, err
 	}
 	resp.Licenses = &sync.DataStatus{
-		Count: licensesCount.TotalCount,
+		Count: licensesCount.Total,
 	}
 
 	return resp, nil

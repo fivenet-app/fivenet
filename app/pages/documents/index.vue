@@ -5,7 +5,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
-import type { ListDocumentPinsResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { ListDocumentPinsResponse } from '~~/gen/ts/services/documents/documents';
 
 useHead({
     title: 'pages.documents.title',
@@ -14,7 +14,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.title',
     requiresAuth: true,
-    permission: 'DocStoreService.ListDocuments',
+    permission: 'documents.DocumentsService.ListDocuments',
 });
 
 const { $grpc } = useNuxtApp();
@@ -29,7 +29,7 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 const { data, pending: loading, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListDocumentPinsResponse> {
-    const call = $grpc.docstore.docStore.listDocumentPins({
+    const call = $grpc.documents.documents.listDocumentPins({
         pagination: {
             offset: offset.value,
         },
@@ -49,7 +49,7 @@ const isOpen = ref(false);
                 <template #right>
                     <UButtonGroup class="inline-flex 2xl:hidden">
                         <UButton
-                            v-if="can('CompletorService.CompleteDocumentCategories').value"
+                            v-if="can('completor.CompletorService.CompleteDocumentCategories').value"
                             :to="{ name: 'documents-categories' }"
                             icon="i-mdi-shape"
                             truncate
@@ -60,7 +60,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('DocStoreService.ListTemplates').value"
+                            v-if="can('documents.DocumentsService.ListTemplates').value"
                             :to="{ name: 'documents-templates' }"
                             icon="i-mdi-file-code"
                             truncate
@@ -78,7 +78,7 @@ const isOpen = ref(false);
                     </UButton>
 
                     <UButton
-                        v-if="can('DocStoreService.CreateDocument').value"
+                        v-if="can('documents.DocumentsService.CreateDocument').value"
                         trailing-icon="i-mdi-plus"
                         color="gray"
                         truncate
@@ -110,7 +110,7 @@ const isOpen = ref(false);
                 <template #right>
                     <UButtonGroup class="hidden truncate 2xl:inline-flex">
                         <UButton
-                            v-if="can('CompletorService.CompleteDocumentCategories').value"
+                            v-if="can('completor.CompletorService.CompleteDocumentCategories').value"
                             :to="{ name: 'documents-categories' }"
                             icon="i-mdi-shape"
                             truncate
@@ -121,7 +121,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('DocStoreService.ListTemplates').value"
+                            v-if="can('documents.DocumentsService.ListTemplates').value"
                             :to="{ name: 'documents-templates' }"
                             icon="i-mdi-file-code"
                             truncate

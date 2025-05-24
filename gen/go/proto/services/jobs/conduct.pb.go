@@ -448,8 +448,8 @@ const file_services_jobs_conduct_proto_rawDesc = "" +
 	"\x05entry\x18\x01 \x01(\v2\x1c.resources.jobs.ConductEntryB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x05entry\"+\n" +
 	"\x19DeleteConductEntryRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\"\x1c\n" +
-	"\x1aDeleteConductEntryResponse2\xc0\x03\n" +
-	"\x12JobsConductService\x12i\n" +
+	"\x1aDeleteConductEntryResponse2\xbc\x03\n" +
+	"\x0eConductService\x12i\n" +
 	"\x12ListConductEntries\x12(.services.jobs.ListConductEntriesRequest\x1a).services.jobs.ListConductEntriesResponse\x12i\n" +
 	"\x12CreateConductEntry\x12(.services.jobs.CreateConductEntryRequest\x1a).services.jobs.CreateConductEntryResponse\x12i\n" +
 	"\x12UpdateConductEntry\x12(.services.jobs.UpdateConductEntryRequest\x1a).services.jobs.UpdateConductEntryResponse\x12i\n" +
@@ -493,14 +493,14 @@ var file_services_jobs_conduct_proto_depIdxs = []int32{
 	12, // 6: services.jobs.CreateConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
 	12, // 7: services.jobs.UpdateConductEntryRequest.entry:type_name -> resources.jobs.ConductEntry
 	12, // 8: services.jobs.UpdateConductEntryResponse.entry:type_name -> resources.jobs.ConductEntry
-	0,  // 9: services.jobs.JobsConductService.ListConductEntries:input_type -> services.jobs.ListConductEntriesRequest
-	2,  // 10: services.jobs.JobsConductService.CreateConductEntry:input_type -> services.jobs.CreateConductEntryRequest
-	4,  // 11: services.jobs.JobsConductService.UpdateConductEntry:input_type -> services.jobs.UpdateConductEntryRequest
-	6,  // 12: services.jobs.JobsConductService.DeleteConductEntry:input_type -> services.jobs.DeleteConductEntryRequest
-	1,  // 13: services.jobs.JobsConductService.ListConductEntries:output_type -> services.jobs.ListConductEntriesResponse
-	3,  // 14: services.jobs.JobsConductService.CreateConductEntry:output_type -> services.jobs.CreateConductEntryResponse
-	5,  // 15: services.jobs.JobsConductService.UpdateConductEntry:output_type -> services.jobs.UpdateConductEntryResponse
-	7,  // 16: services.jobs.JobsConductService.DeleteConductEntry:output_type -> services.jobs.DeleteConductEntryResponse
+	0,  // 9: services.jobs.ConductService.ListConductEntries:input_type -> services.jobs.ListConductEntriesRequest
+	2,  // 10: services.jobs.ConductService.CreateConductEntry:input_type -> services.jobs.CreateConductEntryRequest
+	4,  // 11: services.jobs.ConductService.UpdateConductEntry:input_type -> services.jobs.UpdateConductEntryRequest
+	6,  // 12: services.jobs.ConductService.DeleteConductEntry:input_type -> services.jobs.DeleteConductEntryRequest
+	1,  // 13: services.jobs.ConductService.ListConductEntries:output_type -> services.jobs.ListConductEntriesResponse
+	3,  // 14: services.jobs.ConductService.CreateConductEntry:output_type -> services.jobs.CreateConductEntryResponse
+	5,  // 15: services.jobs.ConductService.UpdateConductEntry:output_type -> services.jobs.UpdateConductEntryResponse
+	7,  // 16: services.jobs.ConductService.DeleteConductEntry:output_type -> services.jobs.DeleteConductEntryResponse
 	13, // [13:17] is the sub-list for method output_type
 	9,  // [9:13] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name

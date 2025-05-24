@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"slices"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbcalendar "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
@@ -17,7 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/v2025/services/calendar/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -27,12 +26,12 @@ import (
 func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCalendarEntryRequest) (*pbcalendar.ShareCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbcalendar.CalendarService_ServiceDesc.ServiceName,
 		Method:  "ShareCalendarEntry",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -87,7 +86,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *pbcalendar.ShareCa
 		}
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return resp, nil
 }
@@ -150,8 +149,8 @@ func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint
 	return newUsers, nil
 }
 
-func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32, entry *calendar.CalendarEntry, targetUsers []int32) error {
-	tUsers := tables.Users().AS("user_short")
+func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32, entry *calendar.CalendarEntry, targetCitizens []int32) error {
+	tUsers := tables.User().AS("user_short")
 
 	stmt := tUsers.
 		SELECT(
@@ -172,7 +171,7 @@ func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32,
 		return err
 	}
 
-	for _, newUser := range targetUsers {
+	for _, newUser := range targetCitizens {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 			UserId: newUser,
 			Title: &common.TranslateItem{

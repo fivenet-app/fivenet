@@ -14,15 +14,19 @@ const { startpage, design, streamerMode, audio, calendar } = storeToRefs(setting
 
 const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
     { name: t('common.overview'), path: '/overview' },
-    { name: t('common.mail'), path: '/mail', permission: 'MailerService.ListEmails' },
-    { name: t('pages.citizens.title'), path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
-    { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'DMVService.ListVehicles' },
-    { name: t('pages.documents.title'), path: '/documents', permission: 'DocStoreService.ListDocuments' },
+    { name: t('common.mail'), path: '/mail', permission: 'mailer.MailerService.ListEmails' },
+    { name: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService.ListCitizens' },
+    { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService.ListVehicles' },
+    { name: t('pages.documents.title'), path: '/documents', permission: 'documents.DocumentsService.ListDocuments' },
     { name: t('pages.jobs.overview.title'), path: '/jobs/overview' },
     { name: t('common.calendar'), path: '/calendar' },
-    { name: t('common.qualification', 2), path: '/qualifications', permission: 'QualificationsService.ListQualifications' },
-    { name: t('common.livemap'), path: '/livemap', permission: 'LivemapperService.Stream' },
-    { name: t('common.dispatch_center'), path: '/centrum', permission: 'CentrumService.TakeControl' },
+    {
+        name: t('common.qualification', 2),
+        path: '/qualifications',
+        permission: 'qualifications.QualificationsService.ListQualifications',
+    },
+    { name: t('common.livemap'), path: '/livemap', permission: 'livemap.LivemapService.Stream' },
+    { name: t('common.dispatch_center'), path: '/centrum', permission: 'centrum.CentrumService.TakeControl' },
 ];
 
 const selectedHomepage = ref<(typeof homepages)[0]>();

@@ -9,6 +9,7 @@ package completor
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	laws "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -199,7 +200,7 @@ func (x *CompleteJobsRequest) GetCurrentJob() bool {
 
 type CompleteJobsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Jobs          []*users.Job           `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
+	Jobs          []*jobs.Job            `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -234,7 +235,7 @@ func (*CompleteJobsResponse) Descriptor() ([]byte, []int) {
 	return file_services_completor_completor_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CompleteJobsResponse) GetJobs() []*users.Job {
+func (x *CompleteJobsResponse) GetJobs() []*jobs.Job {
 	if x != nil {
 		return x.Jobs
 	}
@@ -455,7 +456,7 @@ func (x *CompleteCitizenLabelsRequest) GetSearch() string {
 
 type CompleteCitizenLabelsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Labels        []*users.CitizenLabel  `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
+	Labels        []*users.Label         `protobuf:"bytes,1,rep,name=labels,proto3" json:"labels,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -490,7 +491,7 @@ func (*CompleteCitizenLabelsResponse) Descriptor() ([]byte, []int) {
 	return file_services_completor_completor_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *CompleteCitizenLabelsResponse) GetLabels() []*users.CitizenLabel {
+func (x *CompleteCitizenLabelsResponse) GetLabels() []*users.Label {
 	if x != nil {
 		return x.Labels
 	}
@@ -501,7 +502,7 @@ var File_services_completor_completor_proto protoreflect.FileDescriptor
 
 const file_services_completor_completor_proto_rawDesc = "" +
 	"\n" +
-	"\"services/completor/completor.proto\x12\x12services.completor\x1a\"resources/documents/category.proto\x1a\x19resources/laws/laws.proto\x1a\x1aresources/users/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xcd\x01\n" +
+	"\"services/completor/completor.proto\x12\x12services.completor\x1a\"resources/documents/category.proto\x1a\x19resources/laws/laws.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xcd\x01\n" +
 	"\x17CompleteCitizensRequest\x12\x1f\n" +
 	"\x06search\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18@R\x06search\x12$\n" +
 	"\vcurrent_job\x18\x02 \x01(\bH\x00R\n" +
@@ -523,9 +524,9 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"currentJob\x88\x01\x01B\t\n" +
 	"\a_searchB\x0e\n" +
 	"\f_exact_matchB\x0e\n" +
-	"\f_current_job\"@\n" +
-	"\x14CompleteJobsResponse\x12(\n" +
-	"\x04jobs\x18\x01 \x03(\v2\x14.resources.users.JobR\x04jobs\"D\n" +
+	"\f_current_job\"?\n" +
+	"\x14CompleteJobsResponse\x12'\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x13.resources.jobs.JobR\x04jobs\"D\n" +
 	"!CompleteDocumentCategoriesRequest\x12\x1f\n" +
 	"\x06search\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18@R\x06search\"c\n" +
 	"\"CompleteDocumentCategoriesResponse\x12=\n" +
@@ -536,9 +537,9 @@ const file_services_completor_completor_proto_rawDesc = "" +
 	"\x14ListLawBooksResponse\x12-\n" +
 	"\x05books\x18\x01 \x03(\v2\x17.resources.laws.LawBookR\x05books\"?\n" +
 	"\x1cCompleteCitizenLabelsRequest\x12\x1f\n" +
-	"\x06search\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18@R\x06search\"V\n" +
-	"\x1dCompleteCitizenLabelsResponse\x125\n" +
-	"\x06labels\x18\x01 \x03(\v2\x1d.resources.users.CitizenLabelR\x06labels2\xd4\x04\n" +
+	"\x06search\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18@R\x06search\"O\n" +
+	"\x1dCompleteCitizenLabelsResponse\x12.\n" +
+	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xd4\x04\n" +
 	"\x10CompletorService\x12n\n" +
 	"\x10CompleteCitizens\x12+.services.completor.CompleteCitizensRequest\x1a-.services.completor.CompleteCitizensRespoonse\x12a\n" +
 	"\fCompleteJobs\x12'.services.completor.CompleteJobsRequest\x1a(.services.completor.CompleteJobsResponse\x12\x8b\x01\n" +
@@ -571,17 +572,17 @@ var file_services_completor_completor_proto_goTypes = []any{
 	(*CompleteCitizenLabelsRequest)(nil),       // 8: services.completor.CompleteCitizenLabelsRequest
 	(*CompleteCitizenLabelsResponse)(nil),      // 9: services.completor.CompleteCitizenLabelsResponse
 	(*users.UserShort)(nil),                    // 10: resources.users.UserShort
-	(*users.Job)(nil),                          // 11: resources.users.Job
+	(*jobs.Job)(nil),                           // 11: resources.jobs.Job
 	(*documents.Category)(nil),                 // 12: resources.documents.Category
 	(*laws.LawBook)(nil),                       // 13: resources.laws.LawBook
-	(*users.CitizenLabel)(nil),                 // 14: resources.users.CitizenLabel
+	(*users.Label)(nil),                        // 14: resources.users.Label
 }
 var file_services_completor_completor_proto_depIdxs = []int32{
 	10, // 0: services.completor.CompleteCitizensRespoonse.users:type_name -> resources.users.UserShort
-	11, // 1: services.completor.CompleteJobsResponse.jobs:type_name -> resources.users.Job
+	11, // 1: services.completor.CompleteJobsResponse.jobs:type_name -> resources.jobs.Job
 	12, // 2: services.completor.CompleteDocumentCategoriesResponse.categories:type_name -> resources.documents.Category
 	13, // 3: services.completor.ListLawBooksResponse.books:type_name -> resources.laws.LawBook
-	14, // 4: services.completor.CompleteCitizenLabelsResponse.labels:type_name -> resources.users.CitizenLabel
+	14, // 4: services.completor.CompleteCitizenLabelsResponse.labels:type_name -> resources.users.Label
 	0,  // 5: services.completor.CompletorService.CompleteCitizens:input_type -> services.completor.CompleteCitizensRequest
 	2,  // 6: services.completor.CompletorService.CompleteJobs:input_type -> services.completor.CompleteJobsRequest
 	4,  // 7: services.completor.CompletorService.CompleteDocumentCategories:input_type -> services.completor.CompleteDocumentCategoriesRequest

@@ -40,7 +40,7 @@ func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](ta
 }
 
 func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
-	tUsers := tables.Users().AS("usershort")
+	tUsers := tables.User().AS("user_short")
 
 	stmt := a.selectTable.
 		SELECT(

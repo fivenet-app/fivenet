@@ -15,6 +15,15 @@ func (m *Label) Sanitize() error {
 	// Field: Color
 	m.Color = htmlsanitizer.StripTags(m.Color)
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

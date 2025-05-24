@@ -98,20 +98,20 @@ func (UserActivityType) EnumDescriptor() ([]byte, []int) {
 
 type UserActivity struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
-	Id           uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"fivenet_user_activity.id"`                                                 // @gotags: alias:"fivenet_user_activity.id"
-	Type         UserActivityType       `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.UserActivityType" json:"type,omitempty" alias:"fivenet_user_activity.type"`       // @gotags: alias:"fivenet_user_activity.type"
-	CreatedAt    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"fivenet_user_activity.created_at"`                   // @gotags: alias:"fivenet_user_activity.created_at"
+	Id           uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"user_activity.id"`                                                 // @gotags: alias:"user_activity.id"
+	Type         UserActivityType       `protobuf:"varint,2,opt,name=type,proto3,enum=resources.users.UserActivityType" json:"type,omitempty" alias:"user_activity.type"`       // @gotags: alias:"user_activity.type"
+	CreatedAt    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"user_activity.created_at"`                   // @gotags: alias:"user_activity.created_at"
 	SourceUserId *int32                 `protobuf:"varint,4,opt,name=source_user_id,json=sourceUserId,proto3,oneof" json:"source_user_id,omitempty" alias:"source_user_id"` // @gotags: alias:"source_user_id"
 	SourceUser   *UserShort             `protobuf:"bytes,5,opt,name=source_user,json=sourceUser,proto3,oneof" json:"source_user,omitempty" alias:"source_user"`          // @gotags: alias:"source_user"
 	TargetUserId int32                  `protobuf:"varint,6,opt,name=target_user_id,json=targetUserId,proto3" json:"target_user_id,omitempty" alias:"target_user_id"`       // @gotags: alias:"target_user_id"
 	TargetUser   *UserShort             `protobuf:"bytes,7,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"`                // @gotags: alias:"target_user"
 	// @sanitize
-	Key string `protobuf:"bytes,8,opt,name=key,proto3" json:"key,omitempty" alias:"fivenet_user_activity.key"` // @gotags: alias:"fivenet_user_activity.key"
+	Key string `protobuf:"bytes,8,opt,name=key,proto3" json:"key,omitempty" alias:"user_activity.key"` // @gotags: alias:"user_activity.key"
 	// @sanitize
-	Reason        string            `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" alias:"fivenet_user_activity.reason"`                      // @gotags: alias:"fivenet_user_activity.reason"
-	Data          *UserActivityData `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"fivenet_user_activity.data"`                   // @gotags: alias:"fivenet_user_activity.data"
-	OldValue      string            `protobuf:"bytes,11,opt,name=old_value,json=oldValue,proto3" json:"old_value,omitempty" alias:"fivenet_user_activity.old_value"` // @gotags: alias:"fivenet_user_activity.old_value"
-	NewValue      string            `protobuf:"bytes,12,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty" alias:"fivenet_user_activity.new_value"` // @gotags: alias:"fivenet_user_activity.new_value"
+	Reason        string            `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" alias:"user_activity.reason"`                      // @gotags: alias:"user_activity.reason"
+	Data          *UserActivityData `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"user_activity.data"`                   // @gotags: alias:"user_activity.data"
+	OldValue      string            `protobuf:"bytes,11,opt,name=old_value,json=oldValue,proto3" json:"old_value,omitempty" alias:"user_activity.old_value"` // @gotags: alias:"user_activity.old_value"
+	NewValue      string            `protobuf:"bytes,12,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty" alias:"user_activity.new_value"` // @gotags: alias:"user_activity.new_value"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -287,7 +287,7 @@ func (x *UserActivityData) GetData() isUserActivityData_Data {
 	return nil
 }
 
-func (x *UserActivityData) GetNameChange() *UserNameChange {
+func (x *UserActivityData) GetNameChange() *NameChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_NameChange); ok {
 			return x.NameChange
@@ -296,7 +296,7 @@ func (x *UserActivityData) GetNameChange() *UserNameChange {
 	return nil
 }
 
-func (x *UserActivityData) GetLicensesChange() *UserLicenseChange {
+func (x *UserActivityData) GetLicensesChange() *LicenseChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_LicensesChange); ok {
 			return x.LicensesChange
@@ -305,7 +305,7 @@ func (x *UserActivityData) GetLicensesChange() *UserLicenseChange {
 	return nil
 }
 
-func (x *UserActivityData) GetWantedChange() *UserWantedChange {
+func (x *UserActivityData) GetWantedChange() *WantedChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_WantedChange); ok {
 			return x.WantedChange
@@ -314,7 +314,7 @@ func (x *UserActivityData) GetWantedChange() *UserWantedChange {
 	return nil
 }
 
-func (x *UserActivityData) GetTrafficInfractionPointsChange() *UserTrafficInfractionPointsChange {
+func (x *UserActivityData) GetTrafficInfractionPointsChange() *TrafficInfractionPointsChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_TrafficInfractionPointsChange); ok {
 			return x.TrafficInfractionPointsChange
@@ -323,7 +323,7 @@ func (x *UserActivityData) GetTrafficInfractionPointsChange() *UserTrafficInfrac
 	return nil
 }
 
-func (x *UserActivityData) GetMugshotChange() *UserMugshotChange {
+func (x *UserActivityData) GetMugshotChange() *MugshotChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_MugshotChange); ok {
 			return x.MugshotChange
@@ -332,7 +332,7 @@ func (x *UserActivityData) GetMugshotChange() *UserMugshotChange {
 	return nil
 }
 
-func (x *UserActivityData) GetLabelsChange() *UserLabelsChange {
+func (x *UserActivityData) GetLabelsChange() *LabelsChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_LabelsChange); ok {
 			return x.LabelsChange
@@ -341,7 +341,7 @@ func (x *UserActivityData) GetLabelsChange() *UserLabelsChange {
 	return nil
 }
 
-func (x *UserActivityData) GetJobChange() *UserJobChange {
+func (x *UserActivityData) GetJobChange() *JobChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_JobChange); ok {
 			return x.JobChange
@@ -350,7 +350,7 @@ func (x *UserActivityData) GetJobChange() *UserJobChange {
 	return nil
 }
 
-func (x *UserActivityData) GetDocumentRelation() *UserDocumentRelation {
+func (x *UserActivityData) GetDocumentRelation() *CitizenDocumentRelation {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_DocumentRelation); ok {
 			return x.DocumentRelation
@@ -359,7 +359,7 @@ func (x *UserActivityData) GetDocumentRelation() *UserDocumentRelation {
 	return nil
 }
 
-func (x *UserActivityData) GetJailChange() *UserJailChange {
+func (x *UserActivityData) GetJailChange() *JailChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_JailChange); ok {
 			return x.JailChange
@@ -368,7 +368,7 @@ func (x *UserActivityData) GetJailChange() *UserJailChange {
 	return nil
 }
 
-func (x *UserActivityData) GetFineChange() *UserFineChange {
+func (x *UserActivityData) GetFineChange() *FineChange {
 	if x != nil {
 		if x, ok := x.Data.(*UserActivityData_FineChange); ok {
 			return x.FineChange
@@ -382,46 +382,46 @@ type isUserActivityData_Data interface {
 }
 
 type UserActivityData_NameChange struct {
-	NameChange *UserNameChange `protobuf:"bytes,1,opt,name=name_change,json=nameChange,proto3,oneof"`
+	NameChange *NameChange `protobuf:"bytes,1,opt,name=name_change,json=nameChange,proto3,oneof"`
 }
 
 type UserActivityData_LicensesChange struct {
-	LicensesChange *UserLicenseChange `protobuf:"bytes,2,opt,name=licenses_change,json=licensesChange,proto3,oneof"`
+	LicensesChange *LicenseChange `protobuf:"bytes,2,opt,name=licenses_change,json=licensesChange,proto3,oneof"`
 }
 
 type UserActivityData_WantedChange struct {
 	// User Props
-	WantedChange *UserWantedChange `protobuf:"bytes,3,opt,name=wanted_change,json=wantedChange,proto3,oneof"`
+	WantedChange *WantedChange `protobuf:"bytes,3,opt,name=wanted_change,json=wantedChange,proto3,oneof"`
 }
 
 type UserActivityData_TrafficInfractionPointsChange struct {
-	TrafficInfractionPointsChange *UserTrafficInfractionPointsChange `protobuf:"bytes,4,opt,name=traffic_infraction_points_change,json=trafficInfractionPointsChange,proto3,oneof"`
+	TrafficInfractionPointsChange *TrafficInfractionPointsChange `protobuf:"bytes,4,opt,name=traffic_infraction_points_change,json=trafficInfractionPointsChange,proto3,oneof"`
 }
 
 type UserActivityData_MugshotChange struct {
-	MugshotChange *UserMugshotChange `protobuf:"bytes,5,opt,name=mugshot_change,json=mugshotChange,proto3,oneof"`
+	MugshotChange *MugshotChange `protobuf:"bytes,5,opt,name=mugshot_change,json=mugshotChange,proto3,oneof"`
 }
 
 type UserActivityData_LabelsChange struct {
-	LabelsChange *UserLabelsChange `protobuf:"bytes,6,opt,name=labels_change,json=labelsChange,proto3,oneof"`
+	LabelsChange *LabelsChange `protobuf:"bytes,6,opt,name=labels_change,json=labelsChange,proto3,oneof"`
 }
 
 type UserActivityData_JobChange struct {
-	JobChange *UserJobChange `protobuf:"bytes,7,opt,name=job_change,json=jobChange,proto3,oneof"`
+	JobChange *JobChange `protobuf:"bytes,7,opt,name=job_change,json=jobChange,proto3,oneof"`
 }
 
 type UserActivityData_DocumentRelation struct {
 	// Docstore related
-	DocumentRelation *UserDocumentRelation `protobuf:"bytes,8,opt,name=document_relation,json=documentRelation,proto3,oneof"`
+	DocumentRelation *CitizenDocumentRelation `protobuf:"bytes,8,opt,name=document_relation,json=documentRelation,proto3,oneof"`
 }
 
 type UserActivityData_JailChange struct {
 	// "Plugin" activities
-	JailChange *UserJailChange `protobuf:"bytes,9,opt,name=jail_change,json=jailChange,proto3,oneof"`
+	JailChange *JailChange `protobuf:"bytes,9,opt,name=jail_change,json=jailChange,proto3,oneof"`
 }
 
 type UserActivityData_FineChange struct {
-	FineChange *UserFineChange `protobuf:"bytes,10,opt,name=fine_change,json=fineChange,proto3,oneof"`
+	FineChange *FineChange `protobuf:"bytes,10,opt,name=fine_change,json=fineChange,proto3,oneof"`
 }
 
 func (*UserActivityData_NameChange) isUserActivityData_Data() {}
@@ -444,7 +444,7 @@ func (*UserActivityData_JailChange) isUserActivityData_Data() {}
 
 func (*UserActivityData_FineChange) isUserActivityData_Data() {}
 
-type UserNameChange struct {
+type NameChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Old           string                 `protobuf:"bytes,1,opt,name=old,proto3" json:"old,omitempty"`
 	New           string                 `protobuf:"bytes,2,opt,name=new,proto3" json:"new,omitempty"`
@@ -452,20 +452,20 @@ type UserNameChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserNameChange) Reset() {
-	*x = UserNameChange{}
+func (x *NameChange) Reset() {
+	*x = NameChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserNameChange) String() string {
+func (x *NameChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserNameChange) ProtoMessage() {}
+func (*NameChange) ProtoMessage() {}
 
-func (x *UserNameChange) ProtoReflect() protoreflect.Message {
+func (x *NameChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -477,26 +477,26 @@ func (x *UserNameChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserNameChange.ProtoReflect.Descriptor instead.
-func (*UserNameChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use NameChange.ProtoReflect.Descriptor instead.
+func (*NameChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UserNameChange) GetOld() string {
+func (x *NameChange) GetOld() string {
 	if x != nil {
 		return x.Old
 	}
 	return ""
 }
 
-func (x *UserNameChange) GetNew() string {
+func (x *NameChange) GetNew() string {
 	if x != nil {
 		return x.New
 	}
 	return ""
 }
 
-type UserLicenseChange struct {
+type LicenseChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Added         bool                   `protobuf:"varint,1,opt,name=added,proto3" json:"added,omitempty"`
 	Licenses      []*License             `protobuf:"bytes,2,rep,name=licenses,proto3" json:"licenses,omitempty"`
@@ -504,20 +504,20 @@ type UserLicenseChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserLicenseChange) Reset() {
-	*x = UserLicenseChange{}
+func (x *LicenseChange) Reset() {
+	*x = LicenseChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserLicenseChange) String() string {
+func (x *LicenseChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserLicenseChange) ProtoMessage() {}
+func (*LicenseChange) ProtoMessage() {}
 
-func (x *UserLicenseChange) ProtoReflect() protoreflect.Message {
+func (x *LicenseChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -529,46 +529,46 @@ func (x *UserLicenseChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserLicenseChange.ProtoReflect.Descriptor instead.
-func (*UserLicenseChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use LicenseChange.ProtoReflect.Descriptor instead.
+func (*LicenseChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *UserLicenseChange) GetAdded() bool {
+func (x *LicenseChange) GetAdded() bool {
 	if x != nil {
 		return x.Added
 	}
 	return false
 }
 
-func (x *UserLicenseChange) GetLicenses() []*License {
+func (x *LicenseChange) GetLicenses() []*License {
 	if x != nil {
 		return x.Licenses
 	}
 	return nil
 }
 
-type UserWantedChange struct {
+type WantedChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Wanted        bool                   `protobuf:"varint,1,opt,name=wanted,proto3" json:"wanted,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserWantedChange) Reset() {
-	*x = UserWantedChange{}
+func (x *WantedChange) Reset() {
+	*x = WantedChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserWantedChange) String() string {
+func (x *WantedChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserWantedChange) ProtoMessage() {}
+func (*WantedChange) ProtoMessage() {}
 
-func (x *UserWantedChange) ProtoReflect() protoreflect.Message {
+func (x *WantedChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -580,19 +580,19 @@ func (x *UserWantedChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserWantedChange.ProtoReflect.Descriptor instead.
-func (*UserWantedChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use WantedChange.ProtoReflect.Descriptor instead.
+func (*WantedChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *UserWantedChange) GetWanted() bool {
+func (x *WantedChange) GetWanted() bool {
 	if x != nil {
 		return x.Wanted
 	}
 	return false
 }
 
-type UserTrafficInfractionPointsChange struct {
+type TrafficInfractionPointsChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Old           uint32                 `protobuf:"varint,1,opt,name=old,proto3" json:"old,omitempty"`
 	New           uint32                 `protobuf:"varint,2,opt,name=new,proto3" json:"new,omitempty"`
@@ -600,20 +600,20 @@ type UserTrafficInfractionPointsChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserTrafficInfractionPointsChange) Reset() {
-	*x = UserTrafficInfractionPointsChange{}
+func (x *TrafficInfractionPointsChange) Reset() {
+	*x = TrafficInfractionPointsChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserTrafficInfractionPointsChange) String() string {
+func (x *TrafficInfractionPointsChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserTrafficInfractionPointsChange) ProtoMessage() {}
+func (*TrafficInfractionPointsChange) ProtoMessage() {}
 
-func (x *UserTrafficInfractionPointsChange) ProtoReflect() protoreflect.Message {
+func (x *TrafficInfractionPointsChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -625,46 +625,46 @@ func (x *UserTrafficInfractionPointsChange) ProtoReflect() protoreflect.Message 
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserTrafficInfractionPointsChange.ProtoReflect.Descriptor instead.
-func (*UserTrafficInfractionPointsChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use TrafficInfractionPointsChange.ProtoReflect.Descriptor instead.
+func (*TrafficInfractionPointsChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *UserTrafficInfractionPointsChange) GetOld() uint32 {
+func (x *TrafficInfractionPointsChange) GetOld() uint32 {
 	if x != nil {
 		return x.Old
 	}
 	return 0
 }
 
-func (x *UserTrafficInfractionPointsChange) GetNew() uint32 {
+func (x *TrafficInfractionPointsChange) GetNew() uint32 {
 	if x != nil {
 		return x.New
 	}
 	return 0
 }
 
-type UserMugshotChange struct {
+type MugshotChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	New           *string                `protobuf:"bytes,1,opt,name=new,proto3,oneof" json:"new,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserMugshotChange) Reset() {
-	*x = UserMugshotChange{}
+func (x *MugshotChange) Reset() {
+	*x = MugshotChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserMugshotChange) String() string {
+func (x *MugshotChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserMugshotChange) ProtoMessage() {}
+func (*MugshotChange) ProtoMessage() {}
 
-func (x *UserMugshotChange) ProtoReflect() protoreflect.Message {
+func (x *MugshotChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -676,40 +676,40 @@ func (x *UserMugshotChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserMugshotChange.ProtoReflect.Descriptor instead.
-func (*UserMugshotChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use MugshotChange.ProtoReflect.Descriptor instead.
+func (*MugshotChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *UserMugshotChange) GetNew() string {
+func (x *MugshotChange) GetNew() string {
 	if x != nil && x.New != nil {
 		return *x.New
 	}
 	return ""
 }
 
-type UserLabelsChange struct {
+type LabelsChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Added         []*CitizenLabel        `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
-	Removed       []*CitizenLabel        `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
+	Added         []*Label               `protobuf:"bytes,1,rep,name=added,proto3" json:"added,omitempty"`
+	Removed       []*Label               `protobuf:"bytes,2,rep,name=removed,proto3" json:"removed,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserLabelsChange) Reset() {
-	*x = UserLabelsChange{}
+func (x *LabelsChange) Reset() {
+	*x = LabelsChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserLabelsChange) String() string {
+func (x *LabelsChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserLabelsChange) ProtoMessage() {}
+func (*LabelsChange) ProtoMessage() {}
 
-func (x *UserLabelsChange) ProtoReflect() protoreflect.Message {
+func (x *LabelsChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -721,26 +721,26 @@ func (x *UserLabelsChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserLabelsChange.ProtoReflect.Descriptor instead.
-func (*UserLabelsChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use LabelsChange.ProtoReflect.Descriptor instead.
+func (*LabelsChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *UserLabelsChange) GetAdded() []*CitizenLabel {
+func (x *LabelsChange) GetAdded() []*Label {
 	if x != nil {
 		return x.Added
 	}
 	return nil
 }
 
-func (x *UserLabelsChange) GetRemoved() []*CitizenLabel {
+func (x *LabelsChange) GetRemoved() []*Label {
 	if x != nil {
 		return x.Removed
 	}
 	return nil
 }
 
-type UserJobChange struct {
+type JobChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Job           *string                `protobuf:"bytes,1,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,2,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
@@ -750,20 +750,20 @@ type UserJobChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserJobChange) Reset() {
-	*x = UserJobChange{}
+func (x *JobChange) Reset() {
+	*x = JobChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserJobChange) String() string {
+func (x *JobChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserJobChange) ProtoMessage() {}
+func (*JobChange) ProtoMessage() {}
 
-func (x *UserJobChange) ProtoReflect() protoreflect.Message {
+func (x *JobChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -775,40 +775,40 @@ func (x *UserJobChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserJobChange.ProtoReflect.Descriptor instead.
-func (*UserJobChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use JobChange.ProtoReflect.Descriptor instead.
+func (*JobChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *UserJobChange) GetJob() string {
+func (x *JobChange) GetJob() string {
 	if x != nil && x.Job != nil {
 		return *x.Job
 	}
 	return ""
 }
 
-func (x *UserJobChange) GetJobLabel() string {
+func (x *JobChange) GetJobLabel() string {
 	if x != nil && x.JobLabel != nil {
 		return *x.JobLabel
 	}
 	return ""
 }
 
-func (x *UserJobChange) GetGrade() int32 {
+func (x *JobChange) GetGrade() int32 {
 	if x != nil && x.Grade != nil {
 		return *x.Grade
 	}
 	return 0
 }
 
-func (x *UserJobChange) GetGradeLabel() string {
+func (x *JobChange) GetGradeLabel() string {
 	if x != nil && x.GradeLabel != nil {
 		return *x.GradeLabel
 	}
 	return ""
 }
 
-type UserDocumentRelation struct {
+type CitizenDocumentRelation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Added         bool                   `protobuf:"varint,1,opt,name=added,proto3" json:"added,omitempty"`
 	DocumentId    uint64                 `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
@@ -817,20 +817,20 @@ type UserDocumentRelation struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserDocumentRelation) Reset() {
-	*x = UserDocumentRelation{}
+func (x *CitizenDocumentRelation) Reset() {
+	*x = CitizenDocumentRelation{}
 	mi := &file_resources_users_activity_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserDocumentRelation) String() string {
+func (x *CitizenDocumentRelation) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserDocumentRelation) ProtoMessage() {}
+func (*CitizenDocumentRelation) ProtoMessage() {}
 
-func (x *UserDocumentRelation) ProtoReflect() protoreflect.Message {
+func (x *CitizenDocumentRelation) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -842,33 +842,33 @@ func (x *UserDocumentRelation) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserDocumentRelation.ProtoReflect.Descriptor instead.
-func (*UserDocumentRelation) Descriptor() ([]byte, []int) {
+// Deprecated: Use CitizenDocumentRelation.ProtoReflect.Descriptor instead.
+func (*CitizenDocumentRelation) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *UserDocumentRelation) GetAdded() bool {
+func (x *CitizenDocumentRelation) GetAdded() bool {
 	if x != nil {
 		return x.Added
 	}
 	return false
 }
 
-func (x *UserDocumentRelation) GetDocumentId() uint64 {
+func (x *CitizenDocumentRelation) GetDocumentId() uint64 {
 	if x != nil {
 		return x.DocumentId
 	}
 	return 0
 }
 
-func (x *UserDocumentRelation) GetRelation() int32 {
+func (x *CitizenDocumentRelation) GetRelation() int32 {
 	if x != nil {
 		return x.Relation
 	}
 	return 0
 }
 
-type UserJailChange struct {
+type JailChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Seconds       int32                  `protobuf:"varint,1,opt,name=seconds,proto3" json:"seconds,omitempty"`
 	Admin         bool                   `protobuf:"varint,2,opt,name=admin,proto3" json:"admin,omitempty"`
@@ -877,20 +877,20 @@ type UserJailChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserJailChange) Reset() {
-	*x = UserJailChange{}
+func (x *JailChange) Reset() {
+	*x = JailChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserJailChange) String() string {
+func (x *JailChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserJailChange) ProtoMessage() {}
+func (*JailChange) ProtoMessage() {}
 
-func (x *UserJailChange) ProtoReflect() protoreflect.Message {
+func (x *JailChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -902,33 +902,33 @@ func (x *UserJailChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserJailChange.ProtoReflect.Descriptor instead.
-func (*UserJailChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use JailChange.ProtoReflect.Descriptor instead.
+func (*JailChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{10}
 }
 
-func (x *UserJailChange) GetSeconds() int32 {
+func (x *JailChange) GetSeconds() int32 {
 	if x != nil {
 		return x.Seconds
 	}
 	return 0
 }
 
-func (x *UserJailChange) GetAdmin() bool {
+func (x *JailChange) GetAdmin() bool {
 	if x != nil {
 		return x.Admin
 	}
 	return false
 }
 
-func (x *UserJailChange) GetLocation() string {
+func (x *JailChange) GetLocation() string {
 	if x != nil && x.Location != nil {
 		return *x.Location
 	}
 	return ""
 }
 
-type UserFineChange struct {
+type FineChange struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Removed       bool                   `protobuf:"varint,1,opt,name=removed,proto3" json:"removed,omitempty"`
 	Amount        int64                  `protobuf:"varint,2,opt,name=amount,proto3" json:"amount,omitempty"`
@@ -936,20 +936,20 @@ type UserFineChange struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserFineChange) Reset() {
-	*x = UserFineChange{}
+func (x *FineChange) Reset() {
+	*x = FineChange{}
 	mi := &file_resources_users_activity_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserFineChange) String() string {
+func (x *FineChange) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserFineChange) ProtoMessage() {}
+func (*FineChange) ProtoMessage() {}
 
-func (x *UserFineChange) ProtoReflect() protoreflect.Message {
+func (x *FineChange) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_activity_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -961,19 +961,19 @@ func (x *UserFineChange) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserFineChange.ProtoReflect.Descriptor instead.
-func (*UserFineChange) Descriptor() ([]byte, []int) {
+// Deprecated: Use FineChange.ProtoReflect.Descriptor instead.
+func (*FineChange) Descriptor() ([]byte, []int) {
 	return file_resources_users_activity_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *UserFineChange) GetRemoved() bool {
+func (x *FineChange) GetRemoved() bool {
 	if x != nil {
 		return x.Removed
 	}
 	return false
 }
 
-func (x *UserFineChange) GetAmount() int64 {
+func (x *FineChange) GetAmount() int64 {
 	if x != nil {
 		return x.Amount
 	}
@@ -1004,42 +1004,43 @@ const file_resources_users_activity_proto_rawDesc = "" +
 	"\tnew_value\x18\f \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\bnewValueB\x11\n" +
 	"\x0f_source_user_idB\x0e\n" +
 	"\f_source_userB\a\n" +
-	"\x05_data\"\xb1\x06\n" +
-	"\x10UserActivityData\x12B\n" +
-	"\vname_change\x18\x01 \x01(\v2\x1f.resources.users.UserNameChangeH\x00R\n" +
-	"nameChange\x12M\n" +
-	"\x0flicenses_change\x18\x02 \x01(\v2\".resources.users.UserLicenseChangeH\x00R\x0elicensesChange\x12H\n" +
-	"\rwanted_change\x18\x03 \x01(\v2!.resources.users.UserWantedChangeH\x00R\fwantedChange\x12}\n" +
-	" traffic_infraction_points_change\x18\x04 \x01(\v22.resources.users.UserTrafficInfractionPointsChangeH\x00R\x1dtrafficInfractionPointsChange\x12K\n" +
-	"\x0emugshot_change\x18\x05 \x01(\v2\".resources.users.UserMugshotChangeH\x00R\rmugshotChange\x12H\n" +
-	"\rlabels_change\x18\x06 \x01(\v2!.resources.users.UserLabelsChangeH\x00R\flabelsChange\x12?\n" +
+	"\x05_data\"\x90\x06\n" +
+	"\x10UserActivityData\x12>\n" +
+	"\vname_change\x18\x01 \x01(\v2\x1b.resources.users.NameChangeH\x00R\n" +
+	"nameChange\x12I\n" +
+	"\x0flicenses_change\x18\x02 \x01(\v2\x1e.resources.users.LicenseChangeH\x00R\x0elicensesChange\x12D\n" +
+	"\rwanted_change\x18\x03 \x01(\v2\x1d.resources.users.WantedChangeH\x00R\fwantedChange\x12y\n" +
+	" traffic_infraction_points_change\x18\x04 \x01(\v2..resources.users.TrafficInfractionPointsChangeH\x00R\x1dtrafficInfractionPointsChange\x12G\n" +
+	"\x0emugshot_change\x18\x05 \x01(\v2\x1e.resources.users.MugshotChangeH\x00R\rmugshotChange\x12D\n" +
+	"\rlabels_change\x18\x06 \x01(\v2\x1d.resources.users.LabelsChangeH\x00R\flabelsChange\x12;\n" +
 	"\n" +
-	"job_change\x18\a \x01(\v2\x1e.resources.users.UserJobChangeH\x00R\tjobChange\x12T\n" +
-	"\x11document_relation\x18\b \x01(\v2%.resources.users.UserDocumentRelationH\x00R\x10documentRelation\x12B\n" +
-	"\vjail_change\x18\t \x01(\v2\x1f.resources.users.UserJailChangeH\x00R\n" +
-	"jailChange\x12B\n" +
+	"job_change\x18\a \x01(\v2\x1a.resources.users.JobChangeH\x00R\tjobChange\x12W\n" +
+	"\x11document_relation\x18\b \x01(\v2(.resources.users.CitizenDocumentRelationH\x00R\x10documentRelation\x12>\n" +
+	"\vjail_change\x18\t \x01(\v2\x1b.resources.users.JailChangeH\x00R\n" +
+	"jailChange\x12>\n" +
 	"\vfine_change\x18\n" +
-	" \x01(\v2\x1f.resources.users.UserFineChangeH\x00R\n" +
+	" \x01(\v2\x1b.resources.users.FineChangeH\x00R\n" +
 	"fineChangeB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"4\n" +
-	"\x0eUserNameChange\x12\x10\n" +
+	"\x04data\x12\x03\xf8B\x01\"0\n" +
+	"\n" +
+	"NameChange\x12\x10\n" +
 	"\x03old\x18\x01 \x01(\tR\x03old\x12\x10\n" +
-	"\x03new\x18\x02 \x01(\tR\x03new\"_\n" +
-	"\x11UserLicenseChange\x12\x14\n" +
+	"\x03new\x18\x02 \x01(\tR\x03new\"[\n" +
+	"\rLicenseChange\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\bR\x05added\x124\n" +
-	"\blicenses\x18\x02 \x03(\v2\x18.resources.users.LicenseR\blicenses\"*\n" +
-	"\x10UserWantedChange\x12\x16\n" +
-	"\x06wanted\x18\x01 \x01(\bR\x06wanted\"G\n" +
-	"!UserTrafficInfractionPointsChange\x12\x10\n" +
+	"\blicenses\x18\x02 \x03(\v2\x18.resources.users.LicenseR\blicenses\"&\n" +
+	"\fWantedChange\x12\x16\n" +
+	"\x06wanted\x18\x01 \x01(\bR\x06wanted\"C\n" +
+	"\x1dTrafficInfractionPointsChange\x12\x10\n" +
 	"\x03old\x18\x01 \x01(\rR\x03old\x12\x10\n" +
-	"\x03new\x18\x02 \x01(\rR\x03new\"2\n" +
-	"\x11UserMugshotChange\x12\x15\n" +
+	"\x03new\x18\x02 \x01(\rR\x03new\".\n" +
+	"\rMugshotChange\x12\x15\n" +
 	"\x03new\x18\x01 \x01(\tH\x00R\x03new\x88\x01\x01B\x06\n" +
-	"\x04_new\"\x80\x01\n" +
-	"\x10UserLabelsChange\x123\n" +
-	"\x05added\x18\x01 \x03(\v2\x1d.resources.users.CitizenLabelR\x05added\x127\n" +
-	"\aremoved\x18\x02 \x03(\v2\x1d.resources.users.CitizenLabelR\aremoved\"\xb9\x01\n" +
-	"\rUserJobChange\x12\x15\n" +
+	"\x04_new\"n\n" +
+	"\fLabelsChange\x12,\n" +
+	"\x05added\x18\x01 \x03(\v2\x16.resources.users.LabelR\x05added\x120\n" +
+	"\aremoved\x18\x02 \x03(\v2\x16.resources.users.LabelR\aremoved\"\xb5\x01\n" +
+	"\tJobChange\x12\x15\n" +
 	"\x03job\x18\x01 \x01(\tH\x00R\x03job\x88\x01\x01\x12 \n" +
 	"\tjob_label\x18\x02 \x01(\tH\x01R\bjobLabel\x88\x01\x01\x12\x19\n" +
 	"\x05grade\x18\x03 \x01(\x05H\x02R\x05grade\x88\x01\x01\x12$\n" +
@@ -1049,18 +1050,20 @@ const file_resources_users_activity_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\b\n" +
 	"\x06_gradeB\x0e\n" +
-	"\f_grade_label\"i\n" +
-	"\x14UserDocumentRelation\x12\x14\n" +
+	"\f_grade_label\"l\n" +
+	"\x17CitizenDocumentRelation\x12\x14\n" +
 	"\x05added\x18\x01 \x01(\bR\x05added\x12\x1f\n" +
 	"\vdocument_id\x18\x02 \x01(\x04R\n" +
 	"documentId\x12\x1a\n" +
-	"\brelation\x18\x03 \x01(\x05R\brelation\"n\n" +
-	"\x0eUserJailChange\x12\x18\n" +
+	"\brelation\x18\x03 \x01(\x05R\brelation\"j\n" +
+	"\n" +
+	"JailChange\x12\x18\n" +
 	"\aseconds\x18\x01 \x01(\x05R\aseconds\x12\x14\n" +
 	"\x05admin\x18\x02 \x01(\bR\x05admin\x12\x1f\n" +
 	"\blocation\x18\x03 \x01(\tH\x00R\blocation\x88\x01\x01B\v\n" +
-	"\t_location\"B\n" +
-	"\x0eUserFineChange\x12\x18\n" +
+	"\t_location\">\n" +
+	"\n" +
+	"FineChange\x12\x18\n" +
 	"\aremoved\x18\x01 \x01(\bR\aremoved\x12\x16\n" +
 	"\x06amount\x18\x02 \x01(\x03R\x06amount*\x81\x03\n" +
 	"\x10UserActivityType\x12\"\n" +
@@ -1092,23 +1095,23 @@ func file_resources_users_activity_proto_rawDescGZIP() []byte {
 var file_resources_users_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_resources_users_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_resources_users_activity_proto_goTypes = []any{
-	(UserActivityType)(0),                     // 0: resources.users.UserActivityType
-	(*UserActivity)(nil),                      // 1: resources.users.UserActivity
-	(*UserActivityData)(nil),                  // 2: resources.users.UserActivityData
-	(*UserNameChange)(nil),                    // 3: resources.users.UserNameChange
-	(*UserLicenseChange)(nil),                 // 4: resources.users.UserLicenseChange
-	(*UserWantedChange)(nil),                  // 5: resources.users.UserWantedChange
-	(*UserTrafficInfractionPointsChange)(nil), // 6: resources.users.UserTrafficInfractionPointsChange
-	(*UserMugshotChange)(nil),                 // 7: resources.users.UserMugshotChange
-	(*UserLabelsChange)(nil),                  // 8: resources.users.UserLabelsChange
-	(*UserJobChange)(nil),                     // 9: resources.users.UserJobChange
-	(*UserDocumentRelation)(nil),              // 10: resources.users.UserDocumentRelation
-	(*UserJailChange)(nil),                    // 11: resources.users.UserJailChange
-	(*UserFineChange)(nil),                    // 12: resources.users.UserFineChange
-	(*timestamp.Timestamp)(nil),               // 13: resources.timestamp.Timestamp
-	(*UserShort)(nil),                         // 14: resources.users.UserShort
-	(*License)(nil),                           // 15: resources.users.License
-	(*CitizenLabel)(nil),                      // 16: resources.users.CitizenLabel
+	(UserActivityType)(0),                 // 0: resources.users.UserActivityType
+	(*UserActivity)(nil),                  // 1: resources.users.UserActivity
+	(*UserActivityData)(nil),              // 2: resources.users.UserActivityData
+	(*NameChange)(nil),                    // 3: resources.users.NameChange
+	(*LicenseChange)(nil),                 // 4: resources.users.LicenseChange
+	(*WantedChange)(nil),                  // 5: resources.users.WantedChange
+	(*TrafficInfractionPointsChange)(nil), // 6: resources.users.TrafficInfractionPointsChange
+	(*MugshotChange)(nil),                 // 7: resources.users.MugshotChange
+	(*LabelsChange)(nil),                  // 8: resources.users.LabelsChange
+	(*JobChange)(nil),                     // 9: resources.users.JobChange
+	(*CitizenDocumentRelation)(nil),       // 10: resources.users.CitizenDocumentRelation
+	(*JailChange)(nil),                    // 11: resources.users.JailChange
+	(*FineChange)(nil),                    // 12: resources.users.FineChange
+	(*timestamp.Timestamp)(nil),           // 13: resources.timestamp.Timestamp
+	(*UserShort)(nil),                     // 14: resources.users.UserShort
+	(*License)(nil),                       // 15: resources.users.License
+	(*Label)(nil),                         // 16: resources.users.Label
 }
 var file_resources_users_activity_proto_depIdxs = []int32{
 	0,  // 0: resources.users.UserActivity.type:type_name -> resources.users.UserActivityType
@@ -1116,19 +1119,19 @@ var file_resources_users_activity_proto_depIdxs = []int32{
 	14, // 2: resources.users.UserActivity.source_user:type_name -> resources.users.UserShort
 	14, // 3: resources.users.UserActivity.target_user:type_name -> resources.users.UserShort
 	2,  // 4: resources.users.UserActivity.data:type_name -> resources.users.UserActivityData
-	3,  // 5: resources.users.UserActivityData.name_change:type_name -> resources.users.UserNameChange
-	4,  // 6: resources.users.UserActivityData.licenses_change:type_name -> resources.users.UserLicenseChange
-	5,  // 7: resources.users.UserActivityData.wanted_change:type_name -> resources.users.UserWantedChange
-	6,  // 8: resources.users.UserActivityData.traffic_infraction_points_change:type_name -> resources.users.UserTrafficInfractionPointsChange
-	7,  // 9: resources.users.UserActivityData.mugshot_change:type_name -> resources.users.UserMugshotChange
-	8,  // 10: resources.users.UserActivityData.labels_change:type_name -> resources.users.UserLabelsChange
-	9,  // 11: resources.users.UserActivityData.job_change:type_name -> resources.users.UserJobChange
-	10, // 12: resources.users.UserActivityData.document_relation:type_name -> resources.users.UserDocumentRelation
-	11, // 13: resources.users.UserActivityData.jail_change:type_name -> resources.users.UserJailChange
-	12, // 14: resources.users.UserActivityData.fine_change:type_name -> resources.users.UserFineChange
-	15, // 15: resources.users.UserLicenseChange.licenses:type_name -> resources.users.License
-	16, // 16: resources.users.UserLabelsChange.added:type_name -> resources.users.CitizenLabel
-	16, // 17: resources.users.UserLabelsChange.removed:type_name -> resources.users.CitizenLabel
+	3,  // 5: resources.users.UserActivityData.name_change:type_name -> resources.users.NameChange
+	4,  // 6: resources.users.UserActivityData.licenses_change:type_name -> resources.users.LicenseChange
+	5,  // 7: resources.users.UserActivityData.wanted_change:type_name -> resources.users.WantedChange
+	6,  // 8: resources.users.UserActivityData.traffic_infraction_points_change:type_name -> resources.users.TrafficInfractionPointsChange
+	7,  // 9: resources.users.UserActivityData.mugshot_change:type_name -> resources.users.MugshotChange
+	8,  // 10: resources.users.UserActivityData.labels_change:type_name -> resources.users.LabelsChange
+	9,  // 11: resources.users.UserActivityData.job_change:type_name -> resources.users.JobChange
+	10, // 12: resources.users.UserActivityData.document_relation:type_name -> resources.users.CitizenDocumentRelation
+	11, // 13: resources.users.UserActivityData.jail_change:type_name -> resources.users.JailChange
+	12, // 14: resources.users.UserActivityData.fine_change:type_name -> resources.users.FineChange
+	15, // 15: resources.users.LicenseChange.licenses:type_name -> resources.users.License
+	16, // 16: resources.users.LabelsChange.added:type_name -> resources.users.Label
+	16, // 17: resources.users.LabelsChange.removed:type_name -> resources.users.Label
 	18, // [18:18] is the sub-list for method output_type
 	18, // [18:18] is the sub-list for method input_type
 	18, // [18:18] is the sub-list for extension type_name

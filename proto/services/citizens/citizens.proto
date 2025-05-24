@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package services.citizens;
+
+import "resources/common/database/database.proto";
+import "resources/filestore/file.proto";
+import "resources/users/activity.proto";
+import "resources/users/labels.proto";
+import "resources/users/users.proto";
+import "resources/users/props.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizens";
+
+message ListCitizensRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  string search = 3 [(validate.rules).string.max_len = 64];
+  optional bool wanted = 4;
+  optional string phone_number = 5 [(validate.rules).string.max_len = 20];
+  optional uint32 traffic_infraction_points = 6;
+  optional string dateofbirth = 7 [(validate.rules).string.max_len = 10];
+  optional uint64 open_fines = 8;
+}
+
+message ListCitizensResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.users.User users = 2;
+}
+
+message GetUserRequest {
+  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  optional bool info_only = 2;
+}
+
+message GetUserResponse {
+  resources.users.User user = 1;
+}
+
+message ListUserActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  int32 user_id = 3 [(validate.rules).int32.gt = 0];
+  repeated resources.users.UserActivityType types = 4 [(validate.rules).repeated.max_items = 20];
+}
+
+message ListUserActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.users.UserActivity activity = 2;
+}
+
+message SetUserPropsRequest {
+  resources.users.UserProps props = 1 [(validate.rules).message.required = true];
+  // @sanitize
+  string reason = 2 [(validate.rules).string = {
+    ignore_empty: true,
+    min_len: 3,
+    max_len: 255
+  }];
+}
+
+message SetUserPropsResponse {
+  resources.users.UserProps props = 1;
+}
+
+message SetProfilePictureRequest {
+  resources.filestore.File avatar = 1;
+}
+
+message SetProfilePictureResponse {
+  resources.filestore.File avatar = 1;
+}
+
+message ManageLabelsRequest {
+  repeated resources.users.Label labels = 1;
+}
+
+message ManageLabelsResponse {
+  repeated resources.users.Label labels = 1;
+}
+
+service CitizensService {
+  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"}
+  rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
+  // @perm: Attrs=Jobs/JobGradeList
+  rpc GetUser(GetUserRequest) returns (GetUserResponse);
+  // @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
+  rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
+  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"}
+  rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
+
+  // @perm: Name=Any
+  rpc SetProfilePicture(SetProfilePictureRequest) returns (SetProfilePictureResponse);
+
+  // @perm
+  rpc ManageLabels(ManageLabelsRequest) returns (ManageLabelsResponse);
+}

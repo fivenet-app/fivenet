@@ -16,10 +16,10 @@ enum TimeclockMode {
   TIMECLOCK_MODE_TIMELINE = 4;
 }
 
-enum TimeclockUserMode {
-  TIMECLOCK_USER_MODE_UNSPECIFIED = 0;
-  TIMECLOCK_USER_MODE_SELF = 1;
-  TIMECLOCK_USER_MODE_ALL = 2;
+enum TimeclockViewMode {
+  TIMECLOCK_VIEW_MODE_UNSPECIFIED = 0;
+  TIMECLOCK_VIEW_MODE_SELF = 1;
+  TIMECLOCK_VIEW_MODE_ALL = 2;
 }
 
 message TimeclockEntry {

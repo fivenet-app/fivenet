@@ -15,7 +15,7 @@ const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(
 
 async function listCategories(): Promise<Category[]> {
     try {
-        const call = $grpc.docstore.docStore.listCategories({});
+        const call = $grpc.documents.documents.listCategories({});
         const { response } = await call;
 
         return response.categories;
@@ -55,7 +55,7 @@ const modal = useModal();
             <PartialsBackButton fallback-to="/documents" />
 
             <UButton
-                v-if="can('DocStoreService.CreateOrUpdateCategory').value"
+                v-if="can('documents.DocumentsService.CreateOrUpdateCategory').value"
                 color="gray"
                 trailing-icon="i-mdi-plus"
                 @click="

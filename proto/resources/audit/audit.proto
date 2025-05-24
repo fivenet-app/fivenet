@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package resources.audit;
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit;audit";
+
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  EVENT_TYPE_ERRORED = 1;
+  EVENT_TYPE_VIEWED = 2;
+  EVENT_TYPE_CREATED = 3;
+  EVENT_TYPE_UPDATED = 4;
+  EVENT_TYPE_DELETED = 5;
+}
+
+message AuditEntry {
+  uint64 id = 1; // @gotags: alias:"id"
+  resources.timestamp.Timestamp created_at = 2;
+  int32 user_id = 3; // @gotags: alias:"user_id"
+  optional resources.users.UserShort user = 4;
+  string user_job = 5; // @gotags: alias:"user_job"
+  optional int32 target_user_id = 6; // @gotags: alias:"target_user_id"
+  optional resources.users.UserShort target_user = 7;
+  optional string target_user_job = 8; // @gotags: alias:"target_user_job"
+  string service = 9; // @gotags: alias:"service"
+  string method = 10; // @gotags: alias:"method"
+  EventType state = 11 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"state"
+  optional string data = 12; // @gotags: alias:"data"
+}

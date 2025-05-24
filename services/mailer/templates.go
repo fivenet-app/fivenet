@@ -4,13 +4,12 @@ import (
 	"context"
 	"errors"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -102,12 +101,12 @@ func (s *Server) getTemplate(ctx context.Context, id uint64, emailId *uint64) (*
 func (s *Server) GetTemplate(ctx context.Context, req *pbmailer.GetTemplateRequest) (*pbmailer.GetTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "GetTemplate",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -125,7 +124,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *pbmailer.GetTemplateReque
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 
 	return resp, nil
 }
@@ -133,12 +132,12 @@ func (s *Server) GetTemplate(ctx context.Context, req *pbmailer.GetTemplateReque
 func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.CreateOrUpdateTemplateRequest) (*pbmailer.CreateOrUpdateTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateTemplate",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -154,7 +153,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 	if req.Template.Id <= 0 {
 		countStmt := tTemplates.
 			SELECT(
-				jet.COUNT(tTemplates.ID).AS("datacount.totalcount"),
+				jet.COUNT(tTemplates.ID).AS("data_count.total"),
 			).
 			FROM(tTemplates).
 			WHERE(
@@ -169,7 +168,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 		}
 
 		// Max 5 templates per email
-		if count.TotalCount >= 5 {
+		if count.Total >= 5 {
 			return nil, errorsmailer.ErrTemplateLimitReached
 		}
 
@@ -204,7 +203,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 		}
 		req.Template.Id = uint64(lastId)
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
 		template, err := s.getTemplate(ctx, req.Template.Id, &req.Template.EmailId)
 		if err != nil {
@@ -229,7 +228,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	}
 
 	template, err := s.getTemplate(ctx, req.Template.Id, &req.Template.EmailId)
@@ -245,12 +244,12 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *pbmailer.Creat
 func (s *Server) DeleteTemplate(ctx context.Context, req *pbmailer.DeleteTemplateRequest) (*pbmailer.DeleteTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbmailer.MailerService_ServiceDesc.ServiceName,
 		Method:  "DeleteTemplate",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -275,7 +274,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *pbmailer.DeleteTemplat
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbmailer.DeleteTemplateResponse{}, nil
 }

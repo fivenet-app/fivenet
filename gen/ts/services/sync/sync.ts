@@ -20,8 +20,8 @@ import { DataLicenses } from "../../resources/sync/data";
 import { DataJobs } from "../../resources/sync/data";
 import { UserUpdate } from "../../resources/sync/activity";
 import { TimeclockUpdate } from "../../resources/sync/activity";
-import { JobsUserProps } from "../../resources/sync/activity";
-import { JobsUserActivity } from "../../resources/jobs/activity";
+import { ColleagueProps } from "../../resources/sync/activity";
+import { ColleagueActivity } from "../../resources/jobs/activity";
 import { UserProps } from "../../resources/sync/activity";
 import { UserActivity } from "../../resources/users/activity";
 import { Dispatch } from "../../resources/centrum/dispatches";
@@ -89,29 +89,29 @@ export interface AddActivityRequest {
          */
         userProps: UserProps;
     } | {
-        oneofKind: "jobsUserActivity";
+        oneofKind: "jobColleagueActivity";
         /**
          * Jobs user activity
          *
-         * @generated from protobuf field: resources.jobs.JobsUserActivity jobs_user_activity = 5;
+         * @generated from protobuf field: resources.jobs.ColleagueActivity job_colleague_activity = 5;
          */
-        jobsUserActivity: JobsUserActivity;
+        jobColleagueActivity: ColleagueActivity;
     } | {
-        oneofKind: "jobsUserProps";
+        oneofKind: "colleagueProps";
         /**
          * Setting props will cause activity to be created automtically
          *
-         * @generated from protobuf field: resources.sync.JobsUserProps jobs_user_props = 6;
+         * @generated from protobuf field: resources.sync.ColleagueProps colleague_props = 6;
          */
-        jobsUserProps: JobsUserProps;
+        colleagueProps: ColleagueProps;
     } | {
-        oneofKind: "jobsTimeclock";
+        oneofKind: "jobTimeclock";
         /**
          * Timeclock user entry
          *
-         * @generated from protobuf field: resources.sync.TimeclockUpdate jobs_timeclock = 7;
+         * @generated from protobuf field: resources.sync.TimeclockUpdate job_timeclock = 7;
          */
-        jobsTimeclock: TimeclockUpdate;
+        jobTimeclock: TimeclockUpdate;
     } | {
         oneofKind: "userUpdate";
         /**
@@ -390,9 +390,9 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
             { no: 2, name: "dispatch", kind: "message", oneof: "activity", T: () => Dispatch },
             { no: 3, name: "user_activity", kind: "message", oneof: "activity", T: () => UserActivity },
             { no: 4, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
-            { no: 5, name: "jobs_user_activity", kind: "message", oneof: "activity", T: () => JobsUserActivity },
-            { no: 6, name: "jobs_user_props", kind: "message", oneof: "activity", T: () => JobsUserProps },
-            { no: 7, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockUpdate },
+            { no: 5, name: "job_colleague_activity", kind: "message", oneof: "activity", T: () => ColleagueActivity },
+            { no: 6, name: "colleague_props", kind: "message", oneof: "activity", T: () => ColleagueProps },
+            { no: 7, name: "job_timeclock", kind: "message", oneof: "activity", T: () => TimeclockUpdate },
             { no: 8, name: "user_update", kind: "message", oneof: "activity", T: () => UserUpdate }
         ]);
     }
@@ -432,22 +432,22 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         userProps: UserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userProps)
                     };
                     break;
-                case /* resources.jobs.JobsUserActivity jobs_user_activity */ 5:
+                case /* resources.jobs.ColleagueActivity job_colleague_activity */ 5:
                     message.activity = {
-                        oneofKind: "jobsUserActivity",
-                        jobsUserActivity: JobsUserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsUserActivity)
+                        oneofKind: "jobColleagueActivity",
+                        jobColleagueActivity: ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobColleagueActivity)
                     };
                     break;
-                case /* resources.sync.JobsUserProps jobs_user_props */ 6:
+                case /* resources.sync.ColleagueProps colleague_props */ 6:
                     message.activity = {
-                        oneofKind: "jobsUserProps",
-                        jobsUserProps: JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsUserProps)
+                        oneofKind: "colleagueProps",
+                        colleagueProps: ColleagueProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueProps)
                     };
                     break;
-                case /* resources.sync.TimeclockUpdate jobs_timeclock */ 7:
+                case /* resources.sync.TimeclockUpdate job_timeclock */ 7:
                     message.activity = {
-                        oneofKind: "jobsTimeclock",
-                        jobsTimeclock: TimeclockUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsTimeclock)
+                        oneofKind: "jobTimeclock",
+                        jobTimeclock: TimeclockUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobTimeclock)
                     };
                     break;
                 case /* resources.sync.UserUpdate user_update */ 8:
@@ -480,15 +480,15 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         /* resources.sync.UserProps user_props = 4; */
         if (message.activity.oneofKind === "userProps")
             UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.JobsUserActivity jobs_user_activity = 5; */
-        if (message.activity.oneofKind === "jobsUserActivity")
-            JobsUserActivity.internalBinaryWrite(message.activity.jobsUserActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.JobsUserProps jobs_user_props = 6; */
-        if (message.activity.oneofKind === "jobsUserProps")
-            JobsUserProps.internalBinaryWrite(message.activity.jobsUserProps, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.TimeclockUpdate jobs_timeclock = 7; */
-        if (message.activity.oneofKind === "jobsTimeclock")
-            TimeclockUpdate.internalBinaryWrite(message.activity.jobsTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.ColleagueActivity job_colleague_activity = 5; */
+        if (message.activity.oneofKind === "jobColleagueActivity")
+            ColleagueActivity.internalBinaryWrite(message.activity.jobColleagueActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.ColleagueProps colleague_props = 6; */
+        if (message.activity.oneofKind === "colleagueProps")
+            ColleagueProps.internalBinaryWrite(message.activity.colleagueProps, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.TimeclockUpdate job_timeclock = 7; */
+        if (message.activity.oneofKind === "jobTimeclock")
+            TimeclockUpdate.internalBinaryWrite(message.activity.jobTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* resources.sync.UserUpdate user_update = 8; */
         if (message.activity.oneofKind === "userUpdate")
             UserUpdate.internalBinaryWrite(message.activity.userUpdate, writer.tag(8, WireType.LengthDelimited).fork(), options).join();

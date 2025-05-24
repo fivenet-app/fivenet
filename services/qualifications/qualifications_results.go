@@ -6,18 +6,17 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -27,10 +26,10 @@ import (
 )
 
 var (
-	tQualiResults = table.FivenetQualificationsResults.AS("qualificationresult")
+	tQualiResults = table.FivenetQualificationsResults.AS("qualification_result")
 
-	tJobLabels  = table.FivenetJobsLabels
-	tUserLabels = table.FivenetJobsLabelsUsers
+	tJobLabels  = table.FivenetJobLabels
+	tUserLabels = table.FivenetJobColleagueLabels
 )
 
 func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifications.ListQualificationsResultsRequest) (*pbqualifications.ListQualificationsResultsResponse, error) {
@@ -41,12 +40,12 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.user_id", int64(*req.UserId)))
 	}
 
-	tUser := tables.Users().AS("user")
+	tUser := tables.User().AS("user")
 	tCreator := tUser.AS("creator")
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tQuali := tQuali.AS("qualificationshort")
+	tQuali := tQuali.AS("qualification_short")
 
 	condition := tQualiResults.DeletedAt.IS_NULL()
 
@@ -105,7 +104,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 
 	countStmt := tQualiResults.
 		SELECT(
-			jet.COUNT(countColumn).AS("datacount.totalcount"),
+			jet.COUNT(countColumn).AS("data_count.total"),
 		).
 		FROM(
 			tQualiResults.
@@ -130,12 +129,12 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, QualificationsPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, QualificationsPageSize)
 	resp := &pbqualifications.ListQualificationsResultsResponse{
 		Pagination: pag,
 		Results:    []*qualifications.QualificationResult{},
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -243,12 +242,12 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbqualifications.CreateOrUpdateQualificationResultRequest) (*pbqualifications.CreateOrUpdateQualificationResultResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateQualificationResult",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -313,7 +312,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 
 		req.Result.Id = uint64(lastId)
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	} else {
 		result, err := s.getQualificationResult(ctx, quali.Id, req.Result.Id, nil, userInfo, req.Result.UserId)
 		if err != nil {
@@ -346,7 +345,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	}
 
 	if quali.ExamMode > qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED && req.Grading != nil { // Only update the exam grading info when
@@ -430,7 +429,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 }
 
 func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, status []qualifications.ResultStatus, userInfo *userinfo.UserInfo, userId int32) (*qualifications.QualificationResult, error) {
-	tUser := tables.Users().AS("user")
+	tUser := tables.User().AS("user")
 	tCreator := tUser.AS("creator")
 
 	condition := tQualiResults.DeletedAt.IS_NULL()
@@ -520,12 +519,12 @@ func (s *Server) getQualificationResult(ctx context.Context, qualificationId uin
 func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifications.DeleteQualificationResultRequest) (*pbqualifications.DeleteQualificationResultResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbqualifications.QualificationsService_ServiceDesc.ServiceName,
 		Method:  "DeleteQualificationResult",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -592,7 +591,7 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifica
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbqualifications.DeleteQualificationResultResponse{}, nil
 }

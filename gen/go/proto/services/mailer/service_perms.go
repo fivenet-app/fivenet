@@ -10,31 +10,31 @@ import (
 )
 
 var PermsRemap = map[string]string{
-	// Service: MailerService
-	"MailerService/CreateOrUpdateTemplate": "MailerService/ListEmails",
-	"MailerService/CreateThread":           "MailerService/ListEmails",
-	"MailerService/DeleteMessage":          "SuperUser",
-	"MailerService/DeleteTemplate":         "MailerService/ListEmails",
-	"MailerService/DeleteThread":           "SuperUser",
-	"MailerService/GetEmail":               "MailerService/ListEmails",
-	"MailerService/GetEmailProposals":      "MailerService/ListEmails",
-	"MailerService/GetEmailSettings":       "MailerService/ListEmails",
-	"MailerService/GetTemplate":            "MailerService/ListEmails",
-	"MailerService/GetThread":              "MailerService/ListEmails",
-	"MailerService/GetThreadState":         "MailerService/ListEmails",
-	"MailerService/ListTemplates":          "MailerService/ListEmails",
-	"MailerService/ListThreadMessages":     "MailerService/ListEmails",
-	"MailerService/ListThreads":            "MailerService/ListEmails",
-	"MailerService/PostMessage":            "MailerService/ListEmails",
-	"MailerService/SearchThreads":          "MailerService/ListEmails",
-	"MailerService/SetEmailSettings":       "MailerService/ListEmails",
-	"MailerService/SetThreadState":         "MailerService/ListEmails",
+	// Service: mailer.MailerService
+	"mailer.MailerService/CreateOrUpdateTemplate": "mailer.MailerService/ListEmails",
+	"mailer.MailerService/CreateThread":           "mailer.MailerService/ListEmails",
+	"mailer.MailerService/DeleteMessage":          "Superuser",
+	"mailer.MailerService/DeleteTemplate":         "mailer.MailerService/ListEmails",
+	"mailer.MailerService/DeleteThread":           "Superuser",
+	"mailer.MailerService/GetEmail":               "mailer.MailerService/ListEmails",
+	"mailer.MailerService/GetEmailProposals":      "mailer.MailerService/ListEmails",
+	"mailer.MailerService/GetEmailSettings":       "mailer.MailerService/ListEmails",
+	"mailer.MailerService/GetTemplate":            "mailer.MailerService/ListEmails",
+	"mailer.MailerService/GetThread":              "mailer.MailerService/ListEmails",
+	"mailer.MailerService/GetThreadState":         "mailer.MailerService/ListEmails",
+	"mailer.MailerService/ListTemplates":          "mailer.MailerService/ListEmails",
+	"mailer.MailerService/ListThreadMessages":     "mailer.MailerService/ListEmails",
+	"mailer.MailerService/ListThreads":            "mailer.MailerService/ListEmails",
+	"mailer.MailerService/PostMessage":            "mailer.MailerService/ListEmails",
+	"mailer.MailerService/SearchThreads":          "mailer.MailerService/ListEmails",
+	"mailer.MailerService/SetEmailSettings":       "mailer.MailerService/ListEmails",
+	"mailer.MailerService/SetThreadState":         "mailer.MailerService/ListEmails",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: MailerService
+		// Service: mailer.MailerService
 		{
 			Category: permkeys.MailerServicePerm,
 			Name:     permkeys.MailerServiceCreateOrUpdateEmailPerm,

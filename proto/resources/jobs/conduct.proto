@@ -22,13 +22,14 @@ message ConductEntry {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string job = 4 [(validate.rules).string.max_len = 20];
-  ConductType type = 5 [(validate.rules).enum.defined_only = true];
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  string job = 5 [(validate.rules).string.max_len = 20];
+  ConductType type = 6 [(validate.rules).enum.defined_only = true];
   // @sanitize
-  string message = 6 [(validate.rules).string = {min_len: 3, max_len: 2048}];
-  optional resources.timestamp.Timestamp expires_at = 7;
-  int32 target_user_id = 8 [(validate.rules).int32.gt = 0];
-  optional resources.jobs.Colleague target_user = 9; // @gotags: alias:"target_user"
-  int32 creator_id = 10 [(validate.rules).int32.gt = 0];
-  optional resources.jobs.Colleague creator = 11; // @gotags: alias:"creator"
+  string message = 7 [(validate.rules).string = {min_len: 3, max_len: 2048}];
+  optional resources.timestamp.Timestamp expires_at = 8;
+  int32 target_user_id = 9 [(validate.rules).int32.gt = 0];
+  optional resources.jobs.Colleague target_user = 10; // @gotags: alias:"target_user"
+  int32 creator_id = 11 [(validate.rules).int32.gt = 0];
+  optional resources.jobs.Colleague creator = 12; // @gotags: alias:"creator"
 }

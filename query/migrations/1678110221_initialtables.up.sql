@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_users` (
   `visum` int DEFAULT NULL,
   `playtime` int DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `last_seen` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`identifier`),
   UNIQUE KEY `id` (`id`),
   KEY `idx_fivenet_users_job` (`job`),

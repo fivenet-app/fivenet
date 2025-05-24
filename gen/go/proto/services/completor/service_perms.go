@@ -10,15 +10,15 @@ import (
 )
 
 var PermsRemap = map[string]string{
-	// Service: CompletorService
-	"CompletorService/CompleteJobs": "Any",
-	"CompletorService/ListLawBooks": "Any",
+	// Service: completor.CompletorService
+	"completor.CompletorService/CompleteJobs": "Any",
+	"completor.CompletorService/ListLawBooks": "Any",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
-		// Service: CompletorService
+		// Service: completor.CompletorService
 		{
 			Category: permkeys.CompletorServicePerm,
 			Name:     permkeys.CompletorServiceCompleteCitizenLabelsPerm,

@@ -35,22 +35,21 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on CitizenLabels with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on Labels with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *CitizenLabels) Validate() error {
+func (m *Labels) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CitizenLabels with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in CitizenLabelsMultiError, or
-// nil if none found.
-func (m *CitizenLabels) ValidateAll() error {
+// ValidateAll checks the field values on Labels with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in LabelsMultiError, or nil if none found.
+func (m *Labels) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CitizenLabels) validate(all bool) error {
+func (m *Labels) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -58,7 +57,7 @@ func (m *CitizenLabels) validate(all bool) error {
 	var errors []error
 
 	if len(m.GetList()) > 10 {
-		err := CitizenLabelsValidationError{
+		err := LabelsValidationError{
 			field:  "List",
 			reason: "value must contain no more than 10 item(s)",
 		}
@@ -75,7 +74,7 @@ func (m *CitizenLabels) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CitizenLabelsValidationError{
+					errors = append(errors, LabelsValidationError{
 						field:  fmt.Sprintf("List[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -83,7 +82,7 @@ func (m *CitizenLabels) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CitizenLabelsValidationError{
+					errors = append(errors, LabelsValidationError{
 						field:  fmt.Sprintf("List[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -92,7 +91,7 @@ func (m *CitizenLabels) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CitizenLabelsValidationError{
+				return LabelsValidationError{
 					field:  fmt.Sprintf("List[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -103,19 +102,18 @@ func (m *CitizenLabels) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CitizenLabelsMultiError(errors)
+		return LabelsMultiError(errors)
 	}
 
 	return nil
 }
 
-// CitizenLabelsMultiError is an error wrapping multiple validation errors
-// returned by CitizenLabels.ValidateAll() if the designated constraints
-// aren't met.
-type CitizenLabelsMultiError []error
+// LabelsMultiError is an error wrapping multiple validation errors returned by
+// Labels.ValidateAll() if the designated constraints aren't met.
+type LabelsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CitizenLabelsMultiError) Error() string {
+func (m LabelsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -124,11 +122,11 @@ func (m CitizenLabelsMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CitizenLabelsMultiError) AllErrors() []error { return m }
+func (m LabelsMultiError) AllErrors() []error { return m }
 
-// CitizenLabelsValidationError is the validation error returned by
-// CitizenLabels.Validate if the designated constraints aren't met.
-type CitizenLabelsValidationError struct {
+// LabelsValidationError is the validation error returned by Labels.Validate if
+// the designated constraints aren't met.
+type LabelsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -136,22 +134,22 @@ type CitizenLabelsValidationError struct {
 }
 
 // Field function returns field value.
-func (e CitizenLabelsValidationError) Field() string { return e.field }
+func (e LabelsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CitizenLabelsValidationError) Reason() string { return e.reason }
+func (e LabelsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CitizenLabelsValidationError) Cause() error { return e.cause }
+func (e LabelsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CitizenLabelsValidationError) Key() bool { return e.key }
+func (e LabelsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CitizenLabelsValidationError) ErrorName() string { return "CitizenLabelsValidationError" }
+func (e LabelsValidationError) ErrorName() string { return "LabelsValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CitizenLabelsValidationError) Error() string {
+func (e LabelsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -163,14 +161,14 @@ func (e CitizenLabelsValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCitizenLabels.%s: %s%s",
+		"invalid %sLabels.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CitizenLabelsValidationError{}
+var _ error = LabelsValidationError{}
 
 var _ interface {
 	Field() string
@@ -178,24 +176,23 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CitizenLabelsValidationError{}
+} = LabelsValidationError{}
 
-// Validate checks the field values on CitizenLabel with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on Label with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *CitizenLabel) Validate() error {
+func (m *Label) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CitizenLabel with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in CitizenLabelMultiError, or
-// nil if none found.
-func (m *CitizenLabel) ValidateAll() error {
+// ValidateAll checks the field values on Label with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in LabelMultiError, or nil if none found.
+func (m *Label) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CitizenLabel) validate(all bool) error {
+func (m *Label) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -205,7 +202,7 @@ func (m *CitizenLabel) validate(all bool) error {
 	// no validation rules for Id
 
 	if utf8.RuneCountInString(m.GetName()) > 48 {
-		err := CitizenLabelValidationError{
+		err := LabelValidationError{
 			field:  "Name",
 			reason: "value length must be at most 48 runes",
 		}
@@ -216,7 +213,7 @@ func (m *CitizenLabel) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetColor()) != 7 {
-		err := CitizenLabelValidationError{
+		err := LabelValidationError{
 			field:  "Color",
 			reason: "value length must be 7 runes",
 		}
@@ -227,8 +224,8 @@ func (m *CitizenLabel) validate(all bool) error {
 
 	}
 
-	if !_CitizenLabel_Color_Pattern.MatchString(m.GetColor()) {
-		err := CitizenLabelValidationError{
+	if !_Label_Color_Pattern.MatchString(m.GetColor()) {
+		err := LabelValidationError{
 			field:  "Color",
 			reason: "value does not match regex pattern \"^#[A-Fa-f0-9]{6}$\"",
 		}
@@ -241,7 +238,7 @@ func (m *CitizenLabel) validate(all bool) error {
 	if m.Job != nil {
 
 		if utf8.RuneCountInString(m.GetJob()) > 20 {
-			err := CitizenLabelValidationError{
+			err := LabelValidationError{
 				field:  "Job",
 				reason: "value length must be at most 20 runes",
 			}
@@ -254,18 +251,18 @@ func (m *CitizenLabel) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CitizenLabelMultiError(errors)
+		return LabelMultiError(errors)
 	}
 
 	return nil
 }
 
-// CitizenLabelMultiError is an error wrapping multiple validation errors
-// returned by CitizenLabel.ValidateAll() if the designated constraints aren't met.
-type CitizenLabelMultiError []error
+// LabelMultiError is an error wrapping multiple validation errors returned by
+// Label.ValidateAll() if the designated constraints aren't met.
+type LabelMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CitizenLabelMultiError) Error() string {
+func (m LabelMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -274,11 +271,11 @@ func (m CitizenLabelMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CitizenLabelMultiError) AllErrors() []error { return m }
+func (m LabelMultiError) AllErrors() []error { return m }
 
-// CitizenLabelValidationError is the validation error returned by
-// CitizenLabel.Validate if the designated constraints aren't met.
-type CitizenLabelValidationError struct {
+// LabelValidationError is the validation error returned by Label.Validate if
+// the designated constraints aren't met.
+type LabelValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -286,22 +283,22 @@ type CitizenLabelValidationError struct {
 }
 
 // Field function returns field value.
-func (e CitizenLabelValidationError) Field() string { return e.field }
+func (e LabelValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CitizenLabelValidationError) Reason() string { return e.reason }
+func (e LabelValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CitizenLabelValidationError) Cause() error { return e.cause }
+func (e LabelValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CitizenLabelValidationError) Key() bool { return e.key }
+func (e LabelValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CitizenLabelValidationError) ErrorName() string { return "CitizenLabelValidationError" }
+func (e LabelValidationError) ErrorName() string { return "LabelValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CitizenLabelValidationError) Error() string {
+func (e LabelValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -313,14 +310,14 @@ func (e CitizenLabelValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCitizenLabel.%s: %s%s",
+		"invalid %sLabel.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CitizenLabelValidationError{}
+var _ error = LabelValidationError{}
 
 var _ interface {
 	Field() string
@@ -328,6 +325,6 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CitizenLabelValidationError{}
+} = LabelValidationError{}
 
-var _CitizenLabel_Color_Pattern = regexp.MustCompile("^#[A-Fa-f0-9]{6}$")
+var _Label_Color_Pattern = regexp.MustCompile("^#[A-Fa-f0-9]{6}$")

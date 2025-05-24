@@ -8,8 +8,8 @@ import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers'
 import { useClipboardStore } from '~/stores/clipboard';
 import { useNotificatorStore } from '~/stores/notificator';
 import type { File } from '~~/gen/ts/resources/filestore/file';
+import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { User } from '~~/gen/ts/resources/users/users';
 
 const props = withDefaults(
@@ -63,7 +63,7 @@ function copyLinkToClipboard(): void {
 if (props.registerShortcuts) {
     defineShortcuts({
         'c-w': () => {
-            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted').value) {
+            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'Wanted').value) {
                 return;
             }
 
@@ -73,7 +73,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-j': () => {
-            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'Job').value) {
+            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'Job').value) {
                 return;
             }
 
@@ -83,7 +83,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-p': () => {
-            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints').value) {
+            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'TrafficInfractionPoints').value) {
                 return;
             }
 
@@ -93,7 +93,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-m': () => {
-            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot').value) {
+            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'MugShot').value) {
                 return;
             }
 
@@ -103,7 +103,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-d': () => {
-            if (!can('DocStoreService.CreateDocument').value) {
+            if (!can('documents.DocumentsService.CreateDocument').value) {
                 return;
             }
 
@@ -116,7 +116,7 @@ if (props.registerShortcuts) {
 <template>
     <div class="flex w-full flex-col gap-2">
         <UTooltip
-            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted').value"
+            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'Wanted').value"
             :text="
                 user?.props?.wanted
                     ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
@@ -145,7 +145,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job').value"
+            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'Job').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_job')"
             :shortcuts="['C', 'J']"
         >
@@ -164,7 +164,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints').value"
+            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'TrafficInfractionPoints').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
             :shortcuts="['C', 'P']"
         >
@@ -183,7 +183,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot').value"
+            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'MugShot').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_mug_shot')"
             :shortcuts="['C', 'M']"
         >
@@ -202,7 +202,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="can('DocStoreService.CreateDocument').value"
+            v-if="can('documents.DocumentsService.CreateDocument').value"
             :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
             :shortcuts="['C', 'D']"
         >
@@ -214,8 +214,8 @@ if (props.registerShortcuts) {
         <UButton
             v-if="
                 activeChar?.job === user.job &&
-                can('JobsService.GetColleague').value &&
-                checkIfCanAccessColleague(user, 'JobsService.GetColleague')
+                can('jobs.JobsService.GetColleague').value &&
+                checkIfCanAccessColleague(user, 'jobs.JobsService.GetColleague')
             "
             block
             icon="i-mdi-account-circle"

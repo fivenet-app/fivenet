@@ -23,27 +23,27 @@ const (
 )
 
 // @dbscanner: json
-type CitizenLabels struct {
+type Labels struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	List          []*CitizenLabel        `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
+	List          []*Label               `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CitizenLabels) Reset() {
-	*x = CitizenLabels{}
+func (x *Labels) Reset() {
+	*x = Labels{}
 	mi := &file_resources_users_labels_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CitizenLabels) String() string {
+func (x *Labels) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CitizenLabels) ProtoMessage() {}
+func (*Labels) ProtoMessage() {}
 
-func (x *CitizenLabels) ProtoReflect() protoreflect.Message {
+func (x *Labels) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_labels_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -55,19 +55,19 @@ func (x *CitizenLabels) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CitizenLabels.ProtoReflect.Descriptor instead.
-func (*CitizenLabels) Descriptor() ([]byte, []int) {
+// Deprecated: Use Labels.ProtoReflect.Descriptor instead.
+func (*Labels) Descriptor() ([]byte, []int) {
 	return file_resources_users_labels_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CitizenLabels) GetList() []*CitizenLabel {
+func (x *Labels) GetList() []*Label {
 	if x != nil {
 		return x.List
 	}
 	return nil
 }
 
-type CitizenLabel struct {
+type Label struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Id    uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
 	Job   *string                `protobuf:"bytes,2,opt,name=job,proto3,oneof" json:"job,omitempty"`
@@ -78,20 +78,20 @@ type CitizenLabel struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *CitizenLabel) Reset() {
-	*x = CitizenLabel{}
+func (x *Label) Reset() {
+	*x = Label{}
 	mi := &file_resources_users_labels_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *CitizenLabel) String() string {
+func (x *Label) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*CitizenLabel) ProtoMessage() {}
+func (*Label) ProtoMessage() {}
 
-func (x *CitizenLabel) ProtoReflect() protoreflect.Message {
+func (x *Label) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_labels_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -103,33 +103,33 @@ func (x *CitizenLabel) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use CitizenLabel.ProtoReflect.Descriptor instead.
-func (*CitizenLabel) Descriptor() ([]byte, []int) {
+// Deprecated: Use Label.ProtoReflect.Descriptor instead.
+func (*Label) Descriptor() ([]byte, []int) {
 	return file_resources_users_labels_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CitizenLabel) GetId() uint64 {
+func (x *Label) GetId() uint64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *CitizenLabel) GetJob() string {
+func (x *Label) GetJob() string {
 	if x != nil && x.Job != nil {
 		return *x.Job
 	}
 	return ""
 }
 
-func (x *CitizenLabel) GetName() string {
+func (x *Label) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *CitizenLabel) GetColor() string {
+func (x *Label) GetColor() string {
 	if x != nil {
 		return x.Color
 	}
@@ -140,11 +140,11 @@ var File_resources_users_labels_proto protoreflect.FileDescriptor
 
 const file_resources_users_labels_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/users/labels.proto\x12\x0fresources.users\x1a\x17validate/validate.proto\"L\n" +
-	"\rCitizenLabels\x12;\n" +
-	"\x04list\x18\x01 \x03(\v2\x1d.resources.users.CitizenLabelB\b\xfaB\x05\x92\x01\x02\x10\n" +
-	"R\x04list\"\x96\x01\n" +
-	"\fCitizenLabel\x12\x0e\n" +
+	"\x1cresources/users/labels.proto\x12\x0fresources.users\x1a\x17validate/validate.proto\">\n" +
+	"\x06Labels\x124\n" +
+	"\x04list\x18\x01 \x03(\v2\x16.resources.users.LabelB\b\xfaB\x05\x92\x01\x02\x10\n" +
+	"R\x04list\"\x8f\x01\n" +
+	"\x05Label\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1e\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01\x12\x1b\n" +
 	"\x04name\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x180R\x04name\x121\n" +
@@ -165,11 +165,11 @@ func file_resources_users_labels_proto_rawDescGZIP() []byte {
 
 var file_resources_users_labels_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_users_labels_proto_goTypes = []any{
-	(*CitizenLabels)(nil), // 0: resources.users.CitizenLabels
-	(*CitizenLabel)(nil),  // 1: resources.users.CitizenLabel
+	(*Labels)(nil), // 0: resources.users.Labels
+	(*Label)(nil),  // 1: resources.users.Label
 }
 var file_resources_users_labels_proto_depIdxs = []int32{
-	1, // 0: resources.users.CitizenLabels.list:type_name -> resources.users.CitizenLabel
+	1, // 0: resources.users.Labels.list:type_name -> resources.users.Label
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

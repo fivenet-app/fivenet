@@ -124,14 +124,14 @@ func NewServer(p Params) *Server {
 					},
 					UserId: table.FivenetMailerEmailsAccess.UserID,
 				},
-				table.FivenetMailerEmailsAccess.AS("user_access"),
+				table.FivenetMailerEmailsAccess.AS("citizen_access"),
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetMailerEmailsAccess.AS("user_access").ID,
-						TargetID: table.FivenetMailerEmailsAccess.AS("user_access").TargetID,
-						Access:   table.FivenetMailerEmailsAccess.AS("user_access").Access,
+						ID:       table.FivenetMailerEmailsAccess.AS("citizen_access").ID,
+						TargetID: table.FivenetMailerEmailsAccess.AS("citizen_access").TargetID,
+						Access:   table.FivenetMailerEmailsAccess.AS("citizen_access").Access,
 					},
-					UserId: table.FivenetMailerEmailsAccess.AS("user_access").UserID,
+					UserId: table.FivenetMailerEmailsAccess.AS("citizen_access").UserID,
 				},
 			),
 			access.NewQualifications[mailer.QualificationAccess, *mailer.QualificationAccess, mailer.AccessLevel](

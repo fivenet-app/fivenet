@@ -10,7 +10,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.templates.title',
     requiresAuth: true,
-    permission: 'DocStoreService.ListTemplates',
+    permission: 'documents.DocumentsService.ListTemplates',
 });
 
 const { can } = useAuth();
@@ -35,7 +35,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
 
                     <UButtonGroup class="inline-flex">
                         <UButton
-                            v-if="can('DocStoreService.CreateTemplate').value"
+                            v-if="can('documents.DocumentsService.CreateTemplate').value"
                             :to="{ name: 'documents-templates-create' }"
                             color="gray"
                             trailing-icon="i-mdi-plus"

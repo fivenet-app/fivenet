@@ -857,22 +857,22 @@ var _ interface {
 	ErrorName() string
 } = UserActivityDataValidationError{}
 
-// Validate checks the field values on UserNameChange with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on NameChange with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UserNameChange) Validate() error {
+func (m *NameChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserNameChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UserNameChangeMultiError,
-// or nil if none found.
-func (m *UserNameChange) ValidateAll() error {
+// ValidateAll checks the field values on NameChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in NameChangeMultiError, or
+// nil if none found.
+func (m *NameChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserNameChange) validate(all bool) error {
+func (m *NameChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -884,19 +884,18 @@ func (m *UserNameChange) validate(all bool) error {
 	// no validation rules for New
 
 	if len(errors) > 0 {
-		return UserNameChangeMultiError(errors)
+		return NameChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserNameChangeMultiError is an error wrapping multiple validation errors
-// returned by UserNameChange.ValidateAll() if the designated constraints
-// aren't met.
-type UserNameChangeMultiError []error
+// NameChangeMultiError is an error wrapping multiple validation errors
+// returned by NameChange.ValidateAll() if the designated constraints aren't met.
+type NameChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserNameChangeMultiError) Error() string {
+func (m NameChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -905,11 +904,11 @@ func (m UserNameChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserNameChangeMultiError) AllErrors() []error { return m }
+func (m NameChangeMultiError) AllErrors() []error { return m }
 
-// UserNameChangeValidationError is the validation error returned by
-// UserNameChange.Validate if the designated constraints aren't met.
-type UserNameChangeValidationError struct {
+// NameChangeValidationError is the validation error returned by
+// NameChange.Validate if the designated constraints aren't met.
+type NameChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -917,22 +916,22 @@ type UserNameChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserNameChangeValidationError) Field() string { return e.field }
+func (e NameChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserNameChangeValidationError) Reason() string { return e.reason }
+func (e NameChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserNameChangeValidationError) Cause() error { return e.cause }
+func (e NameChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserNameChangeValidationError) Key() bool { return e.key }
+func (e NameChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserNameChangeValidationError) ErrorName() string { return "UserNameChangeValidationError" }
+func (e NameChangeValidationError) ErrorName() string { return "NameChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserNameChangeValidationError) Error() string {
+func (e NameChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -944,14 +943,14 @@ func (e UserNameChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserNameChange.%s: %s%s",
+		"invalid %sNameChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserNameChangeValidationError{}
+var _ error = NameChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -959,24 +958,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserNameChangeValidationError{}
+} = NameChangeValidationError{}
 
-// Validate checks the field values on UserLicenseChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UserLicenseChange) Validate() error {
+// Validate checks the field values on LicenseChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *LicenseChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserLicenseChange with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UserLicenseChangeMultiError, or nil if none found.
-func (m *UserLicenseChange) ValidateAll() error {
+// ValidateAll checks the field values on LicenseChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in LicenseChangeMultiError, or
+// nil if none found.
+func (m *LicenseChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserLicenseChange) validate(all bool) error {
+func (m *LicenseChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -992,7 +991,7 @@ func (m *UserLicenseChange) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserLicenseChangeValidationError{
+					errors = append(errors, LicenseChangeValidationError{
 						field:  fmt.Sprintf("Licenses[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1000,7 +999,7 @@ func (m *UserLicenseChange) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, UserLicenseChangeValidationError{
+					errors = append(errors, LicenseChangeValidationError{
 						field:  fmt.Sprintf("Licenses[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1009,7 +1008,7 @@ func (m *UserLicenseChange) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return UserLicenseChangeValidationError{
+				return LicenseChangeValidationError{
 					field:  fmt.Sprintf("Licenses[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1020,19 +1019,19 @@ func (m *UserLicenseChange) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UserLicenseChangeMultiError(errors)
+		return LicenseChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserLicenseChangeMultiError is an error wrapping multiple validation errors
-// returned by UserLicenseChange.ValidateAll() if the designated constraints
+// LicenseChangeMultiError is an error wrapping multiple validation errors
+// returned by LicenseChange.ValidateAll() if the designated constraints
 // aren't met.
-type UserLicenseChangeMultiError []error
+type LicenseChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserLicenseChangeMultiError) Error() string {
+func (m LicenseChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1041,11 +1040,11 @@ func (m UserLicenseChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserLicenseChangeMultiError) AllErrors() []error { return m }
+func (m LicenseChangeMultiError) AllErrors() []error { return m }
 
-// UserLicenseChangeValidationError is the validation error returned by
-// UserLicenseChange.Validate if the designated constraints aren't met.
-type UserLicenseChangeValidationError struct {
+// LicenseChangeValidationError is the validation error returned by
+// LicenseChange.Validate if the designated constraints aren't met.
+type LicenseChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1053,24 +1052,22 @@ type UserLicenseChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserLicenseChangeValidationError) Field() string { return e.field }
+func (e LicenseChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserLicenseChangeValidationError) Reason() string { return e.reason }
+func (e LicenseChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserLicenseChangeValidationError) Cause() error { return e.cause }
+func (e LicenseChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserLicenseChangeValidationError) Key() bool { return e.key }
+func (e LicenseChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserLicenseChangeValidationError) ErrorName() string {
-	return "UserLicenseChangeValidationError"
-}
+func (e LicenseChangeValidationError) ErrorName() string { return "LicenseChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserLicenseChangeValidationError) Error() string {
+func (e LicenseChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1082,14 +1079,14 @@ func (e UserLicenseChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserLicenseChange.%s: %s%s",
+		"invalid %sLicenseChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserLicenseChangeValidationError{}
+var _ error = LicenseChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -1097,24 +1094,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserLicenseChangeValidationError{}
+} = LicenseChangeValidationError{}
 
-// Validate checks the field values on UserWantedChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UserWantedChange) Validate() error {
+// Validate checks the field values on WantedChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *WantedChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserWantedChange with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UserWantedChangeMultiError, or nil if none found.
-func (m *UserWantedChange) ValidateAll() error {
+// ValidateAll checks the field values on WantedChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in WantedChangeMultiError, or
+// nil if none found.
+func (m *WantedChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserWantedChange) validate(all bool) error {
+func (m *WantedChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1124,19 +1121,18 @@ func (m *UserWantedChange) validate(all bool) error {
 	// no validation rules for Wanted
 
 	if len(errors) > 0 {
-		return UserWantedChangeMultiError(errors)
+		return WantedChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserWantedChangeMultiError is an error wrapping multiple validation errors
-// returned by UserWantedChange.ValidateAll() if the designated constraints
-// aren't met.
-type UserWantedChangeMultiError []error
+// WantedChangeMultiError is an error wrapping multiple validation errors
+// returned by WantedChange.ValidateAll() if the designated constraints aren't met.
+type WantedChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserWantedChangeMultiError) Error() string {
+func (m WantedChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1145,11 +1141,11 @@ func (m UserWantedChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserWantedChangeMultiError) AllErrors() []error { return m }
+func (m WantedChangeMultiError) AllErrors() []error { return m }
 
-// UserWantedChangeValidationError is the validation error returned by
-// UserWantedChange.Validate if the designated constraints aren't met.
-type UserWantedChangeValidationError struct {
+// WantedChangeValidationError is the validation error returned by
+// WantedChange.Validate if the designated constraints aren't met.
+type WantedChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1157,22 +1153,22 @@ type UserWantedChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserWantedChangeValidationError) Field() string { return e.field }
+func (e WantedChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserWantedChangeValidationError) Reason() string { return e.reason }
+func (e WantedChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserWantedChangeValidationError) Cause() error { return e.cause }
+func (e WantedChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserWantedChangeValidationError) Key() bool { return e.key }
+func (e WantedChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserWantedChangeValidationError) ErrorName() string { return "UserWantedChangeValidationError" }
+func (e WantedChangeValidationError) ErrorName() string { return "WantedChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserWantedChangeValidationError) Error() string {
+func (e WantedChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1184,14 +1180,14 @@ func (e UserWantedChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserWantedChange.%s: %s%s",
+		"invalid %sWantedChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserWantedChangeValidationError{}
+var _ error = WantedChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -1199,25 +1195,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserWantedChangeValidationError{}
+} = WantedChangeValidationError{}
 
-// Validate checks the field values on UserTrafficInfractionPointsChange with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the first error encountered is returned, or nil if there are
-// no violations.
-func (m *UserTrafficInfractionPointsChange) Validate() error {
+// Validate checks the field values on TrafficInfractionPointsChange with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TrafficInfractionPointsChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserTrafficInfractionPointsChange
-// with the rules defined in the proto definition for this message. If any
-// rules are violated, the result is a list of violation errors wrapped in
-// UserTrafficInfractionPointsChangeMultiError, or nil if none found.
-func (m *UserTrafficInfractionPointsChange) ValidateAll() error {
+// ValidateAll checks the field values on TrafficInfractionPointsChange with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// TrafficInfractionPointsChangeMultiError, or nil if none found.
+func (m *TrafficInfractionPointsChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserTrafficInfractionPointsChange) validate(all bool) error {
+func (m *TrafficInfractionPointsChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1229,20 +1224,19 @@ func (m *UserTrafficInfractionPointsChange) validate(all bool) error {
 	// no validation rules for New
 
 	if len(errors) > 0 {
-		return UserTrafficInfractionPointsChangeMultiError(errors)
+		return TrafficInfractionPointsChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserTrafficInfractionPointsChangeMultiError is an error wrapping multiple
-// validation errors returned by
-// UserTrafficInfractionPointsChange.ValidateAll() if the designated
-// constraints aren't met.
-type UserTrafficInfractionPointsChangeMultiError []error
+// TrafficInfractionPointsChangeMultiError is an error wrapping multiple
+// validation errors returned by TrafficInfractionPointsChange.ValidateAll()
+// if the designated constraints aren't met.
+type TrafficInfractionPointsChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserTrafficInfractionPointsChangeMultiError) Error() string {
+func (m TrafficInfractionPointsChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1251,12 +1245,12 @@ func (m UserTrafficInfractionPointsChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserTrafficInfractionPointsChangeMultiError) AllErrors() []error { return m }
+func (m TrafficInfractionPointsChangeMultiError) AllErrors() []error { return m }
 
-// UserTrafficInfractionPointsChangeValidationError is the validation error
-// returned by UserTrafficInfractionPointsChange.Validate if the designated
+// TrafficInfractionPointsChangeValidationError is the validation error
+// returned by TrafficInfractionPointsChange.Validate if the designated
 // constraints aren't met.
-type UserTrafficInfractionPointsChangeValidationError struct {
+type TrafficInfractionPointsChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1264,24 +1258,24 @@ type UserTrafficInfractionPointsChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserTrafficInfractionPointsChangeValidationError) Field() string { return e.field }
+func (e TrafficInfractionPointsChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserTrafficInfractionPointsChangeValidationError) Reason() string { return e.reason }
+func (e TrafficInfractionPointsChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserTrafficInfractionPointsChangeValidationError) Cause() error { return e.cause }
+func (e TrafficInfractionPointsChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserTrafficInfractionPointsChangeValidationError) Key() bool { return e.key }
+func (e TrafficInfractionPointsChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserTrafficInfractionPointsChangeValidationError) ErrorName() string {
-	return "UserTrafficInfractionPointsChangeValidationError"
+func (e TrafficInfractionPointsChangeValidationError) ErrorName() string {
+	return "TrafficInfractionPointsChangeValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UserTrafficInfractionPointsChangeValidationError) Error() string {
+func (e TrafficInfractionPointsChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1293,14 +1287,14 @@ func (e UserTrafficInfractionPointsChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserTrafficInfractionPointsChange.%s: %s%s",
+		"invalid %sTrafficInfractionPointsChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserTrafficInfractionPointsChangeValidationError{}
+var _ error = TrafficInfractionPointsChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -1308,24 +1302,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserTrafficInfractionPointsChangeValidationError{}
+} = TrafficInfractionPointsChangeValidationError{}
 
-// Validate checks the field values on UserMugshotChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UserMugshotChange) Validate() error {
+// Validate checks the field values on MugshotChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *MugshotChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserMugshotChange with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UserMugshotChangeMultiError, or nil if none found.
-func (m *UserMugshotChange) ValidateAll() error {
+// ValidateAll checks the field values on MugshotChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in MugshotChangeMultiError, or
+// nil if none found.
+func (m *MugshotChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserMugshotChange) validate(all bool) error {
+func (m *MugshotChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1337,19 +1331,19 @@ func (m *UserMugshotChange) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UserMugshotChangeMultiError(errors)
+		return MugshotChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserMugshotChangeMultiError is an error wrapping multiple validation errors
-// returned by UserMugshotChange.ValidateAll() if the designated constraints
+// MugshotChangeMultiError is an error wrapping multiple validation errors
+// returned by MugshotChange.ValidateAll() if the designated constraints
 // aren't met.
-type UserMugshotChangeMultiError []error
+type MugshotChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserMugshotChangeMultiError) Error() string {
+func (m MugshotChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1358,11 +1352,11 @@ func (m UserMugshotChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserMugshotChangeMultiError) AllErrors() []error { return m }
+func (m MugshotChangeMultiError) AllErrors() []error { return m }
 
-// UserMugshotChangeValidationError is the validation error returned by
-// UserMugshotChange.Validate if the designated constraints aren't met.
-type UserMugshotChangeValidationError struct {
+// MugshotChangeValidationError is the validation error returned by
+// MugshotChange.Validate if the designated constraints aren't met.
+type MugshotChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1370,24 +1364,22 @@ type UserMugshotChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserMugshotChangeValidationError) Field() string { return e.field }
+func (e MugshotChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserMugshotChangeValidationError) Reason() string { return e.reason }
+func (e MugshotChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserMugshotChangeValidationError) Cause() error { return e.cause }
+func (e MugshotChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserMugshotChangeValidationError) Key() bool { return e.key }
+func (e MugshotChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserMugshotChangeValidationError) ErrorName() string {
-	return "UserMugshotChangeValidationError"
-}
+func (e MugshotChangeValidationError) ErrorName() string { return "MugshotChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserMugshotChangeValidationError) Error() string {
+func (e MugshotChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1399,14 +1391,14 @@ func (e UserMugshotChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserMugshotChange.%s: %s%s",
+		"invalid %sMugshotChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserMugshotChangeValidationError{}
+var _ error = MugshotChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -1414,24 +1406,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserMugshotChangeValidationError{}
+} = MugshotChangeValidationError{}
 
-// Validate checks the field values on UserLabelsChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UserLabelsChange) Validate() error {
+// Validate checks the field values on LabelsChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *LabelsChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserLabelsChange with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UserLabelsChangeMultiError, or nil if none found.
-func (m *UserLabelsChange) ValidateAll() error {
+// ValidateAll checks the field values on LabelsChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in LabelsChangeMultiError, or
+// nil if none found.
+func (m *LabelsChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserLabelsChange) validate(all bool) error {
+func (m *LabelsChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1445,7 +1437,7 @@ func (m *UserLabelsChange) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserLabelsChangeValidationError{
+					errors = append(errors, LabelsChangeValidationError{
 						field:  fmt.Sprintf("Added[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1453,7 +1445,7 @@ func (m *UserLabelsChange) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, UserLabelsChangeValidationError{
+					errors = append(errors, LabelsChangeValidationError{
 						field:  fmt.Sprintf("Added[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1462,7 +1454,7 @@ func (m *UserLabelsChange) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return UserLabelsChangeValidationError{
+				return LabelsChangeValidationError{
 					field:  fmt.Sprintf("Added[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1479,7 +1471,7 @@ func (m *UserLabelsChange) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserLabelsChangeValidationError{
+					errors = append(errors, LabelsChangeValidationError{
 						field:  fmt.Sprintf("Removed[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1487,7 +1479,7 @@ func (m *UserLabelsChange) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, UserLabelsChangeValidationError{
+					errors = append(errors, LabelsChangeValidationError{
 						field:  fmt.Sprintf("Removed[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1496,7 +1488,7 @@ func (m *UserLabelsChange) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return UserLabelsChangeValidationError{
+				return LabelsChangeValidationError{
 					field:  fmt.Sprintf("Removed[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1507,19 +1499,18 @@ func (m *UserLabelsChange) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UserLabelsChangeMultiError(errors)
+		return LabelsChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserLabelsChangeMultiError is an error wrapping multiple validation errors
-// returned by UserLabelsChange.ValidateAll() if the designated constraints
-// aren't met.
-type UserLabelsChangeMultiError []error
+// LabelsChangeMultiError is an error wrapping multiple validation errors
+// returned by LabelsChange.ValidateAll() if the designated constraints aren't met.
+type LabelsChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserLabelsChangeMultiError) Error() string {
+func (m LabelsChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1528,11 +1519,11 @@ func (m UserLabelsChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserLabelsChangeMultiError) AllErrors() []error { return m }
+func (m LabelsChangeMultiError) AllErrors() []error { return m }
 
-// UserLabelsChangeValidationError is the validation error returned by
-// UserLabelsChange.Validate if the designated constraints aren't met.
-type UserLabelsChangeValidationError struct {
+// LabelsChangeValidationError is the validation error returned by
+// LabelsChange.Validate if the designated constraints aren't met.
+type LabelsChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1540,22 +1531,22 @@ type UserLabelsChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserLabelsChangeValidationError) Field() string { return e.field }
+func (e LabelsChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserLabelsChangeValidationError) Reason() string { return e.reason }
+func (e LabelsChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserLabelsChangeValidationError) Cause() error { return e.cause }
+func (e LabelsChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserLabelsChangeValidationError) Key() bool { return e.key }
+func (e LabelsChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserLabelsChangeValidationError) ErrorName() string { return "UserLabelsChangeValidationError" }
+func (e LabelsChangeValidationError) ErrorName() string { return "LabelsChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserLabelsChangeValidationError) Error() string {
+func (e LabelsChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1567,14 +1558,14 @@ func (e UserLabelsChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserLabelsChange.%s: %s%s",
+		"invalid %sLabelsChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserLabelsChangeValidationError{}
+var _ error = LabelsChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -1582,24 +1573,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserLabelsChangeValidationError{}
+} = LabelsChangeValidationError{}
 
-// Validate checks the field values on UserJobChange with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on JobChange with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UserJobChange) Validate() error {
+func (m *JobChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserJobChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UserJobChangeMultiError, or
-// nil if none found.
-func (m *UserJobChange) ValidateAll() error {
+// ValidateAll checks the field values on JobChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JobChangeMultiError, or nil
+// if none found.
+func (m *JobChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserJobChange) validate(all bool) error {
+func (m *JobChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1623,19 +1614,18 @@ func (m *UserJobChange) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UserJobChangeMultiError(errors)
+		return JobChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserJobChangeMultiError is an error wrapping multiple validation errors
-// returned by UserJobChange.ValidateAll() if the designated constraints
-// aren't met.
-type UserJobChangeMultiError []error
+// JobChangeMultiError is an error wrapping multiple validation errors returned
+// by JobChange.ValidateAll() if the designated constraints aren't met.
+type JobChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserJobChangeMultiError) Error() string {
+func (m JobChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1644,11 +1634,11 @@ func (m UserJobChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserJobChangeMultiError) AllErrors() []error { return m }
+func (m JobChangeMultiError) AllErrors() []error { return m }
 
-// UserJobChangeValidationError is the validation error returned by
-// UserJobChange.Validate if the designated constraints aren't met.
-type UserJobChangeValidationError struct {
+// JobChangeValidationError is the validation error returned by
+// JobChange.Validate if the designated constraints aren't met.
+type JobChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1656,22 +1646,22 @@ type UserJobChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserJobChangeValidationError) Field() string { return e.field }
+func (e JobChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserJobChangeValidationError) Reason() string { return e.reason }
+func (e JobChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserJobChangeValidationError) Cause() error { return e.cause }
+func (e JobChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserJobChangeValidationError) Key() bool { return e.key }
+func (e JobChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserJobChangeValidationError) ErrorName() string { return "UserJobChangeValidationError" }
+func (e JobChangeValidationError) ErrorName() string { return "JobChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserJobChangeValidationError) Error() string {
+func (e JobChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1683,14 +1673,14 @@ func (e UserJobChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserJobChange.%s: %s%s",
+		"invalid %sJobChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserJobChangeValidationError{}
+var _ error = JobChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -1698,24 +1688,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserJobChangeValidationError{}
+} = JobChangeValidationError{}
 
-// Validate checks the field values on UserDocumentRelation with the rules
+// Validate checks the field values on CitizenDocumentRelation with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UserDocumentRelation) Validate() error {
+func (m *CitizenDocumentRelation) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserDocumentRelation with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CitizenDocumentRelation with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UserDocumentRelationMultiError, or nil if none found.
-func (m *UserDocumentRelation) ValidateAll() error {
+// CitizenDocumentRelationMultiError, or nil if none found.
+func (m *CitizenDocumentRelation) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserDocumentRelation) validate(all bool) error {
+func (m *CitizenDocumentRelation) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1729,19 +1719,19 @@ func (m *UserDocumentRelation) validate(all bool) error {
 	// no validation rules for Relation
 
 	if len(errors) > 0 {
-		return UserDocumentRelationMultiError(errors)
+		return CitizenDocumentRelationMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserDocumentRelationMultiError is an error wrapping multiple validation
-// errors returned by UserDocumentRelation.ValidateAll() if the designated
+// CitizenDocumentRelationMultiError is an error wrapping multiple validation
+// errors returned by CitizenDocumentRelation.ValidateAll() if the designated
 // constraints aren't met.
-type UserDocumentRelationMultiError []error
+type CitizenDocumentRelationMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserDocumentRelationMultiError) Error() string {
+func (m CitizenDocumentRelationMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1750,11 +1740,11 @@ func (m UserDocumentRelationMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserDocumentRelationMultiError) AllErrors() []error { return m }
+func (m CitizenDocumentRelationMultiError) AllErrors() []error { return m }
 
-// UserDocumentRelationValidationError is the validation error returned by
-// UserDocumentRelation.Validate if the designated constraints aren't met.
-type UserDocumentRelationValidationError struct {
+// CitizenDocumentRelationValidationError is the validation error returned by
+// CitizenDocumentRelation.Validate if the designated constraints aren't met.
+type CitizenDocumentRelationValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1762,24 +1752,24 @@ type UserDocumentRelationValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserDocumentRelationValidationError) Field() string { return e.field }
+func (e CitizenDocumentRelationValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserDocumentRelationValidationError) Reason() string { return e.reason }
+func (e CitizenDocumentRelationValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserDocumentRelationValidationError) Cause() error { return e.cause }
+func (e CitizenDocumentRelationValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserDocumentRelationValidationError) Key() bool { return e.key }
+func (e CitizenDocumentRelationValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserDocumentRelationValidationError) ErrorName() string {
-	return "UserDocumentRelationValidationError"
+func (e CitizenDocumentRelationValidationError) ErrorName() string {
+	return "CitizenDocumentRelationValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UserDocumentRelationValidationError) Error() string {
+func (e CitizenDocumentRelationValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1791,14 +1781,14 @@ func (e UserDocumentRelationValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserDocumentRelation.%s: %s%s",
+		"invalid %sCitizenDocumentRelation.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserDocumentRelationValidationError{}
+var _ error = CitizenDocumentRelationValidationError{}
 
 var _ interface {
 	Field() string
@@ -1806,24 +1796,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserDocumentRelationValidationError{}
+} = CitizenDocumentRelationValidationError{}
 
-// Validate checks the field values on UserJailChange with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on JailChange with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UserJailChange) Validate() error {
+func (m *JailChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserJailChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UserJailChangeMultiError,
-// or nil if none found.
-func (m *UserJailChange) ValidateAll() error {
+// ValidateAll checks the field values on JailChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JailChangeMultiError, or
+// nil if none found.
+func (m *JailChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserJailChange) validate(all bool) error {
+func (m *JailChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1839,19 +1829,18 @@ func (m *UserJailChange) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UserJailChangeMultiError(errors)
+		return JailChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserJailChangeMultiError is an error wrapping multiple validation errors
-// returned by UserJailChange.ValidateAll() if the designated constraints
-// aren't met.
-type UserJailChangeMultiError []error
+// JailChangeMultiError is an error wrapping multiple validation errors
+// returned by JailChange.ValidateAll() if the designated constraints aren't met.
+type JailChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserJailChangeMultiError) Error() string {
+func (m JailChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1860,11 +1849,11 @@ func (m UserJailChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserJailChangeMultiError) AllErrors() []error { return m }
+func (m JailChangeMultiError) AllErrors() []error { return m }
 
-// UserJailChangeValidationError is the validation error returned by
-// UserJailChange.Validate if the designated constraints aren't met.
-type UserJailChangeValidationError struct {
+// JailChangeValidationError is the validation error returned by
+// JailChange.Validate if the designated constraints aren't met.
+type JailChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1872,22 +1861,22 @@ type UserJailChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserJailChangeValidationError) Field() string { return e.field }
+func (e JailChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserJailChangeValidationError) Reason() string { return e.reason }
+func (e JailChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserJailChangeValidationError) Cause() error { return e.cause }
+func (e JailChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserJailChangeValidationError) Key() bool { return e.key }
+func (e JailChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserJailChangeValidationError) ErrorName() string { return "UserJailChangeValidationError" }
+func (e JailChangeValidationError) ErrorName() string { return "JailChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserJailChangeValidationError) Error() string {
+func (e JailChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1899,14 +1888,14 @@ func (e UserJailChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserJailChange.%s: %s%s",
+		"invalid %sJailChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserJailChangeValidationError{}
+var _ error = JailChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -1914,24 +1903,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserJailChangeValidationError{}
+} = JailChangeValidationError{}
 
-// Validate checks the field values on UserFineChange with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on FineChange with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UserFineChange) Validate() error {
+func (m *FineChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserFineChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UserFineChangeMultiError,
-// or nil if none found.
-func (m *UserFineChange) ValidateAll() error {
+// ValidateAll checks the field values on FineChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in FineChangeMultiError, or
+// nil if none found.
+func (m *FineChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserFineChange) validate(all bool) error {
+func (m *FineChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1943,19 +1932,18 @@ func (m *UserFineChange) validate(all bool) error {
 	// no validation rules for Amount
 
 	if len(errors) > 0 {
-		return UserFineChangeMultiError(errors)
+		return FineChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserFineChangeMultiError is an error wrapping multiple validation errors
-// returned by UserFineChange.ValidateAll() if the designated constraints
-// aren't met.
-type UserFineChangeMultiError []error
+// FineChangeMultiError is an error wrapping multiple validation errors
+// returned by FineChange.ValidateAll() if the designated constraints aren't met.
+type FineChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserFineChangeMultiError) Error() string {
+func (m FineChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1964,11 +1952,11 @@ func (m UserFineChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserFineChangeMultiError) AllErrors() []error { return m }
+func (m FineChangeMultiError) AllErrors() []error { return m }
 
-// UserFineChangeValidationError is the validation error returned by
-// UserFineChange.Validate if the designated constraints aren't met.
-type UserFineChangeValidationError struct {
+// FineChangeValidationError is the validation error returned by
+// FineChange.Validate if the designated constraints aren't met.
+type FineChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1976,22 +1964,22 @@ type UserFineChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserFineChangeValidationError) Field() string { return e.field }
+func (e FineChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserFineChangeValidationError) Reason() string { return e.reason }
+func (e FineChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserFineChangeValidationError) Cause() error { return e.cause }
+func (e FineChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserFineChangeValidationError) Key() bool { return e.key }
+func (e FineChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserFineChangeValidationError) ErrorName() string { return "UserFineChangeValidationError" }
+func (e FineChangeValidationError) ErrorName() string { return "FineChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserFineChangeValidationError) Error() string {
+func (e FineChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -2003,14 +1991,14 @@ func (e UserFineChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserFineChange.%s: %s%s",
+		"invalid %sFineChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserFineChangeValidationError{}
+var _ error = FineChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -2018,4 +2006,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserFineChangeValidationError{}
+} = FineChangeValidationError{}

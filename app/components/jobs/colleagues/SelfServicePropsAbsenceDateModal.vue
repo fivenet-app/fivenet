@@ -5,13 +5,13 @@ import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useNotificatorStore } from '~/stores/notificator';
-import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
+import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 const props = defineProps<{
     userId: number;
-    userProps?: JobsUserProps;
+    userProps?: ColleagueProps;
 }>();
 
 const emit = defineEmits<{
@@ -56,7 +56,7 @@ const state = reactive<Schema>({
 });
 
 async function setAbsenceDate(values: Schema): Promise<void> {
-    const userProps: JobsUserProps = {
+    const userProps: ColleagueProps = {
         userId: props.userId,
         job: '',
         absenceBegin: values.absenceBegin ? toTimestamp(values.absenceBegin) : {},
@@ -69,7 +69,7 @@ async function setAbsenceDate(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.jobs.jobs.setJobsUserProps({
+        const call = $grpc.jobs.jobs.setColleagueProps({
             props: userProps,
             reason: values.reason,
         });

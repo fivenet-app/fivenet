@@ -4,7 +4,7 @@ package resources.users;
 
 import "resources/filestore/file.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/jobs.proto";
+import "resources/jobs/jobs.proto";
 import "resources/users/labels.proto";
 import "validate/validate.proto";
 
@@ -15,15 +15,15 @@ message UserProps {
   optional resources.timestamp.Timestamp updated_at = 2;
   optional bool wanted = 3;
   optional string job_name = 4; // @gotags: alias:"job"
-  optional resources.users.Job job = 5;
+  optional resources.jobs.Job job = 5;
   optional int32 job_grade_number = 6; // @gotags: alias:"job_grade"
-  optional resources.users.JobGrade job_grade = 7;
+  optional resources.jobs.JobGrade job_grade = 7;
   optional uint32 traffic_infraction_points = 8;
   optional resources.timestamp.Timestamp traffic_infraction_points_updated_at = 13;
   optional int64 open_fines = 9;
   optional string blood_type = 10;
   optional resources.filestore.File mug_shot = 11;
-  optional CitizenLabels labels = 12;
+  optional Labels labels = 12;
   // @sanitize: method=StripTags
   optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
 }

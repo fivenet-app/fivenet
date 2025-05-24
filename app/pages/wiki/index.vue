@@ -12,7 +12,7 @@ useHead({
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,
-    permission: 'WikiService.ListPages',
+    permission: 'wiki.WikiService.ListPages',
 });
 
 const { $grpc } = useNuxtApp();
@@ -72,7 +72,7 @@ watch(pages, async () => {
 
                 <template #right>
                     <UButton
-                        v-if="can('WikiService.CreatePage').value"
+                        v-if="can('wiki.WikiService.CreatePage').value"
                         color="gray"
                         trailing-icon="i-mdi-plus"
                         to="/wiki/create"

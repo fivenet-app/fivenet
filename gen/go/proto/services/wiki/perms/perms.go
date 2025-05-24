@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	WikiServicePerm perms.Category = "WikiService"
+	WikiServicePerm perms.Category = "wiki.WikiService"
 
 	WikiServiceCreatePagePerm            perms.Name = "CreatePage"
 	WikiServiceCreatePageFieldsPermField perms.Key  = "Fields"

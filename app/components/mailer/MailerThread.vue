@@ -443,7 +443,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             trailing-icon="i-mdi-paper-airplane"
                         />
 
-                        <UTooltip v-if="can('DocStoreService.ListDocuments').value" :text="$t('common.attachment', 2)">
+                        <UTooltip
+                            v-if="can('documents.DocumentsService.ListDocuments').value"
+                            :text="$t('common.attachment', 2)"
+                        >
                             <UButton
                                 color="white"
                                 trailing-icon="i-mdi-attach-file"

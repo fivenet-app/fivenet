@@ -34,7 +34,7 @@ const {
 
 async function getDocumentRelations(): Promise<DocumentRelation[]> {
     try {
-        const call = $grpc.docstore.docStore.getDocumentRelations({
+        const call = $grpc.documents.documents.getDocumentRelations({
             documentId: props.documentId,
         });
         const { response } = await call;
@@ -124,7 +124,7 @@ const columns = computed(() =>
                                         </span>
                                     </span>
                                     <span class="font-medium">
-                                        {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
+                                        {{ $t(`enums.documents.DocRelation.${DocRelation[relation.relation]}`) }}
                                     </span>
                                     <span v-if="showSource" class="truncate">
                                         <CitizenInfoPopover :user="relation.sourceUser" />
@@ -177,7 +177,7 @@ const columns = computed(() =>
                                 </template>
                                 <template #relation-data="{ row: relation }">
                                     <UBadge :color="docRelationToBadge(relation.relation)">
-                                        {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
+                                        {{ $t(`enums.documents.DocRelation.${DocRelation[relation.relation]}`) }}
                                     </UBadge>
                                 </template>
                                 <template v-if="showSource" #sourceUser-data="{ row: relation }">

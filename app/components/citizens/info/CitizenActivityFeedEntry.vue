@@ -101,7 +101,7 @@ const props = defineProps<{
                     <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.type') }}:</span>
                         <span>
-                            {{ $t(`enums.docstore.DocRelation.${DocRelation[activity.data.data.documentRelation.relation]}`) }}
+                            {{ $t(`enums.documents.DocRelation.${DocRelation[activity.data.data.documentRelation.relation]}`) }}
                         </span>
                     </p>
 
@@ -163,7 +163,7 @@ const props = defineProps<{
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
-                        {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_job_set') }}
+                        {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_job_set') }}
                         <span class="font-semibold">
                             {{ activity.data.data.jobChange.jobLabel }}
                             <span v-if="activity.data.data.jobChange.grade">
@@ -261,10 +261,10 @@ const props = defineProps<{
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
                         <template v-if="activity.data.data.mugshotChange.new">
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_mug_shot_set') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mug_shot_set') }}
                         </template>
                         <template v-else>
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_mug_shot_removed') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mug_shot_removed') }}
                         </template>
                     </h3>
 
@@ -299,7 +299,7 @@ const props = defineProps<{
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex flex-col gap-1 text-sm font-medium">
                         <span>
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_labels_updated') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_labels_updated') }}
                         </span>
 
                         <div class="inline-flex gap-1">

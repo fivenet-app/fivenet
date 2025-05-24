@@ -40,6 +40,9 @@
   
     - [CentrumMode](#resources-centrum-CentrumMode)
   
+- [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
+    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
+  
 - [resources/centrum/units.proto](#resources_centrum_units-proto)
     - [Unit](#resources-centrum-Unit)
     - [UnitAssignment](#resources-centrum-UnitAssignment)
@@ -47,9 +50,6 @@
     - [UnitStatus](#resources-centrum-UnitStatus)
   
     - [StatusUnit](#resources-centrum-StatusUnit)
-  
-- [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
   
 - [resources/centrum/units_access.proto](#resources_centrum_units_access-proto)
     - [UnitAccess](#resources-centrum-UnitAccess)
@@ -170,18 +170,18 @@
     - [FileInfo](#resources-filestore-FileInfo)
   
 - [resources/jobs/activity.proto](#resources_jobs_activity-proto)
-    - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
-    - [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange)
-    - [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange)
-    - [ColleagueNameChange](#resources-jobs-ColleagueNameChange)
-    - [JobsUserActivity](#resources-jobs-JobsUserActivity)
-    - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
+    - [AbsenceDateChange](#resources-jobs-AbsenceDateChange)
+    - [ColleagueActivity](#resources-jobs-ColleagueActivity)
+    - [ColleagueActivityData](#resources-jobs-ColleagueActivityData)
+    - [GradeChange](#resources-jobs-GradeChange)
+    - [LabelsChange](#resources-jobs-LabelsChange)
+    - [NameChange](#resources-jobs-NameChange)
   
-    - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
+    - [ColleagueActivityType](#resources-jobs-ColleagueActivityType)
   
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
-    - [JobsUserProps](#resources-jobs-JobsUserProps)
+    - [ColleagueProps](#resources-jobs-ColleagueProps)
   
 - [resources/jobs/conduct.proto](#resources_jobs_conduct-proto)
     - [ConductEntry](#resources-jobs-ConductEntry)
@@ -199,7 +199,28 @@
     - [TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats)
   
     - [TimeclockMode](#resources-jobs-TimeclockMode)
-    - [TimeclockUserMode](#resources-jobs-TimeclockUserMode)
+    - [TimeclockViewMode](#resources-jobs-TimeclockViewMode)
+  
+- [resources/jobs/jobs.proto](#resources_jobs_jobs-proto)
+    - [Job](#resources-jobs-Job)
+    - [JobGrade](#resources-jobs-JobGrade)
+  
+- [resources/jobs/job_props.proto](#resources_jobs_job_props-proto)
+    - [JobProps](#resources-jobs-JobProps)
+    - [QuickButtons](#resources-jobs-QuickButtons)
+  
+- [resources/jobs/job_settings.proto](#resources_jobs_job_settings-proto)
+    - [DiscordSyncChange](#resources-jobs-DiscordSyncChange)
+    - [DiscordSyncChanges](#resources-jobs-DiscordSyncChanges)
+    - [DiscordSyncSettings](#resources-jobs-DiscordSyncSettings)
+    - [GroupMapping](#resources-jobs-GroupMapping)
+    - [GroupSyncSettings](#resources-jobs-GroupSyncSettings)
+    - [JobSettings](#resources-jobs-JobSettings)
+    - [JobsAbsenceSettings](#resources-jobs-JobsAbsenceSettings)
+    - [StatusLogSettings](#resources-jobs-StatusLogSettings)
+    - [UserInfoSyncSettings](#resources-jobs-UserInfoSyncSettings)
+  
+    - [UserInfoSyncUnemployedMode](#resources-jobs-UserInfoSyncUnemployedMode)
   
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
@@ -291,84 +312,8 @@
     - [RequestStatus](#resources-qualifications-RequestStatus)
     - [ResultStatus](#resources-qualifications-ResultStatus)
   
-- [resources/rector/audit.proto](#resources_rector_audit-proto)
-    - [AuditEntry](#resources-rector-AuditEntry)
-  
-    - [EventType](#resources-rector-EventType)
-  
-- [resources/rector/banner.proto](#resources_rector_banner-proto)
-    - [BannerMessage](#resources-rector-BannerMessage)
-  
-- [resources/rector/config.proto](#resources_rector_config-proto)
-    - [AppConfig](#resources-rector-AppConfig)
-    - [Auth](#resources-rector-Auth)
-    - [Discord](#resources-rector-Discord)
-    - [DiscordBotPresence](#resources-rector-DiscordBotPresence)
-    - [JobInfo](#resources-rector-JobInfo)
-    - [Links](#resources-rector-Links)
-    - [Perm](#resources-rector-Perm)
-    - [Perms](#resources-rector-Perms)
-    - [System](#resources-rector-System)
-    - [UnemployedJob](#resources-rector-UnemployedJob)
-    - [UserTracker](#resources-rector-UserTracker)
-    - [Website](#resources-rector-Website)
-  
-    - [DiscordBotPresenceType](#resources-rector-DiscordBotPresenceType)
-  
 - [resources/timestamp/timestamp.proto](#resources_timestamp_timestamp-proto)
     - [Timestamp](#resources-timestamp-Timestamp)
-  
-- [resources/users/job_props.proto](#resources_users_job_props-proto)
-    - [JobProps](#resources-users-JobProps)
-    - [QuickButtons](#resources-users-QuickButtons)
-  
-- [resources/users/job_settings.proto](#resources_users_job_settings-proto)
-    - [DiscordSyncChange](#resources-users-DiscordSyncChange)
-    - [DiscordSyncChanges](#resources-users-DiscordSyncChanges)
-    - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
-    - [GroupMapping](#resources-users-GroupMapping)
-    - [GroupSyncSettings](#resources-users-GroupSyncSettings)
-    - [JobSettings](#resources-users-JobSettings)
-    - [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings)
-    - [StatusLogSettings](#resources-users-StatusLogSettings)
-    - [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings)
-  
-    - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
-  
-- [resources/users/jobs.proto](#resources_users_jobs-proto)
-    - [Job](#resources-users-Job)
-    - [JobGrade](#resources-users-JobGrade)
-  
-- [resources/users/labels.proto](#resources_users_labels-proto)
-    - [CitizenLabel](#resources-users-CitizenLabel)
-    - [CitizenLabels](#resources-users-CitizenLabels)
-  
-- [resources/users/licenses.proto](#resources_users_licenses-proto)
-    - [License](#resources-users-License)
-    - [UserLicenses](#resources-users-UserLicenses)
-  
-- [resources/users/props.proto](#resources_users_props-proto)
-    - [UserProps](#resources-users-UserProps)
-  
-- [resources/users/users.proto](#resources_users_users-proto)
-    - [User](#resources-users-User)
-    - [UserShort](#resources-users-UserShort)
-  
-- [resources/users/activity.proto](#resources_users_activity-proto)
-    - [UserActivity](#resources-users-UserActivity)
-    - [UserActivityData](#resources-users-UserActivityData)
-    - [UserDocumentRelation](#resources-users-UserDocumentRelation)
-    - [UserFineChange](#resources-users-UserFineChange)
-    - [UserJailChange](#resources-users-UserJailChange)
-    - [UserJobChange](#resources-users-UserJobChange)
-    - [UserLabelsChange](#resources-users-UserLabelsChange)
-    - [UserLicenseChange](#resources-users-UserLicenseChange)
-    - [UserMugshotChange](#resources-users-UserMugshotChange)
-    - [UserNameChange](#resources-users-UserNameChange)
-    - [UserTrafficInfractionPointsChange](#resources-users-UserTrafficInfractionPointsChange)
-    - [UserWantedChange](#resources-users-UserWantedChange)
-  
-    - [UserActivityType](#resources-users-UserActivityType)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -475,6 +420,7 @@
     - [PageShort](#resources-wiki-PageShort)
   
 - [resources/sync/data.proto](#resources_sync_data-proto)
+    - [CitizenLocations](#resources-sync-CitizenLocations)
     - [DataJobs](#resources-sync-DataJobs)
     - [DataLicenses](#resources-sync-DataLicenses)
     - [DataStatus](#resources-sync-DataStatus)
@@ -483,14 +429,68 @@
     - [DataVehicles](#resources-sync-DataVehicles)
     - [DeleteUsers](#resources-sync-DeleteUsers)
     - [DeleteVehicles](#resources-sync-DeleteVehicles)
-    - [UserLocation](#resources-sync-UserLocation)
   
 - [resources/sync/activity.proto](#resources_sync_activity-proto)
-    - [JobsUserProps](#resources-sync-JobsUserProps)
+    - [ColleagueProps](#resources-sync-ColleagueProps)
     - [TimeclockUpdate](#resources-sync-TimeclockUpdate)
     - [UserOAuth2Conn](#resources-sync-UserOAuth2Conn)
     - [UserProps](#resources-sync-UserProps)
     - [UserUpdate](#resources-sync-UserUpdate)
+  
+- [resources/users/activity.proto](#resources_users_activity-proto)
+    - [CitizenDocumentRelation](#resources-users-CitizenDocumentRelation)
+    - [FineChange](#resources-users-FineChange)
+    - [JailChange](#resources-users-JailChange)
+    - [JobChange](#resources-users-JobChange)
+    - [LabelsChange](#resources-users-LabelsChange)
+    - [LicenseChange](#resources-users-LicenseChange)
+    - [MugshotChange](#resources-users-MugshotChange)
+    - [NameChange](#resources-users-NameChange)
+    - [TrafficInfractionPointsChange](#resources-users-TrafficInfractionPointsChange)
+    - [UserActivity](#resources-users-UserActivity)
+    - [UserActivityData](#resources-users-UserActivityData)
+    - [WantedChange](#resources-users-WantedChange)
+  
+    - [UserActivityType](#resources-users-UserActivityType)
+  
+- [resources/users/labels.proto](#resources_users_labels-proto)
+    - [Label](#resources-users-Label)
+    - [Labels](#resources-users-Labels)
+  
+- [resources/users/licenses.proto](#resources_users_licenses-proto)
+    - [CitizensLicenses](#resources-users-CitizensLicenses)
+    - [License](#resources-users-License)
+  
+- [resources/users/props.proto](#resources_users_props-proto)
+    - [UserProps](#resources-users-UserProps)
+  
+- [resources/users/users.proto](#resources_users_users-proto)
+    - [User](#resources-users-User)
+    - [UserShort](#resources-users-UserShort)
+  
+- [resources/settings/banner.proto](#resources_settings_banner-proto)
+    - [BannerMessage](#resources-settings-BannerMessage)
+  
+- [resources/settings/config.proto](#resources_settings_config-proto)
+    - [AppConfig](#resources-settings-AppConfig)
+    - [Auth](#resources-settings-Auth)
+    - [Discord](#resources-settings-Discord)
+    - [DiscordBotPresence](#resources-settings-DiscordBotPresence)
+    - [JobInfo](#resources-settings-JobInfo)
+    - [Links](#resources-settings-Links)
+    - [Perm](#resources-settings-Perm)
+    - [Perms](#resources-settings-Perms)
+    - [System](#resources-settings-System)
+    - [UnemployedJob](#resources-settings-UnemployedJob)
+    - [UserTracker](#resources-settings-UserTracker)
+    - [Website](#resources-settings-Website)
+  
+    - [DiscordBotPresenceType](#resources-settings-DiscordBotPresenceType)
+  
+- [resources/audit/audit.proto](#resources_audit_audit-proto)
+    - [AuditEntry](#resources-audit-AuditEntry)
+  
+    - [EventType](#resources-audit-EventType)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -513,8 +513,8 @@
     - [LoginResponse](#services-auth-LoginResponse)
     - [LogoutRequest](#services-auth-LogoutRequest)
     - [LogoutResponse](#services-auth-LogoutResponse)
-    - [SetSuperUserModeRequest](#services-auth-SetSuperUserModeRequest)
-    - [SetSuperUserModeResponse](#services-auth-SetSuperUserModeResponse)
+    - [SetSuperuserModeRequest](#services-auth-SetSuperuserModeRequest)
+    - [SetSuperuserModeResponse](#services-auth-SetSuperuserModeResponse)
   
     - [AuthService](#services-auth-AuthService)
   
@@ -563,22 +563,6 @@
   
     - [CentrumService](#services-centrum-CentrumService)
   
-- [services/citizenstore/citizenstore.proto](#services_citizenstore_citizenstore-proto)
-    - [GetUserRequest](#services-citizenstore-GetUserRequest)
-    - [GetUserResponse](#services-citizenstore-GetUserResponse)
-    - [ListCitizensRequest](#services-citizenstore-ListCitizensRequest)
-    - [ListCitizensResponse](#services-citizenstore-ListCitizensResponse)
-    - [ListUserActivityRequest](#services-citizenstore-ListUserActivityRequest)
-    - [ListUserActivityResponse](#services-citizenstore-ListUserActivityResponse)
-    - [ManageCitizenLabelsRequest](#services-citizenstore-ManageCitizenLabelsRequest)
-    - [ManageCitizenLabelsResponse](#services-citizenstore-ManageCitizenLabelsResponse)
-    - [SetProfilePictureRequest](#services-citizenstore-SetProfilePictureRequest)
-    - [SetProfilePictureResponse](#services-citizenstore-SetProfilePictureResponse)
-    - [SetUserPropsRequest](#services-citizenstore-SetUserPropsRequest)
-    - [SetUserPropsResponse](#services-citizenstore-SetUserPropsResponse)
-  
-    - [CitizenStoreService](#services-citizenstore-CitizenStoreService)
-  
 - [services/completor/completor.proto](#services_completor_completor-proto)
     - [CompleteCitizenLabelsRequest](#services-completor-CompleteCitizenLabelsRequest)
     - [CompleteCitizenLabelsResponse](#services-completor-CompleteCitizenLabelsResponse)
@@ -593,88 +577,6 @@
   
     - [CompletorService](#services-completor-CompletorService)
   
-- [services/dmv/vehicles.proto](#services_dmv_vehicles-proto)
-    - [ListVehiclesRequest](#services-dmv-ListVehiclesRequest)
-    - [ListVehiclesResponse](#services-dmv-ListVehiclesResponse)
-  
-    - [DMVService](#services-dmv-DMVService)
-  
-- [services/docstore/docstore.proto](#services_docstore_docstore-proto)
-    - [AddDocumentReferenceRequest](#services-docstore-AddDocumentReferenceRequest)
-    - [AddDocumentReferenceResponse](#services-docstore-AddDocumentReferenceResponse)
-    - [AddDocumentRelationRequest](#services-docstore-AddDocumentRelationRequest)
-    - [AddDocumentRelationResponse](#services-docstore-AddDocumentRelationResponse)
-    - [ChangeDocumentOwnerRequest](#services-docstore-ChangeDocumentOwnerRequest)
-    - [ChangeDocumentOwnerResponse](#services-docstore-ChangeDocumentOwnerResponse)
-    - [CreateDocumentReqRequest](#services-docstore-CreateDocumentReqRequest)
-    - [CreateDocumentReqResponse](#services-docstore-CreateDocumentReqResponse)
-    - [CreateDocumentRequest](#services-docstore-CreateDocumentRequest)
-    - [CreateDocumentResponse](#services-docstore-CreateDocumentResponse)
-    - [CreateOrUpdateCategoryRequest](#services-docstore-CreateOrUpdateCategoryRequest)
-    - [CreateOrUpdateCategoryResponse](#services-docstore-CreateOrUpdateCategoryResponse)
-    - [CreateTemplateRequest](#services-docstore-CreateTemplateRequest)
-    - [CreateTemplateResponse](#services-docstore-CreateTemplateResponse)
-    - [DeleteCategoryRequest](#services-docstore-DeleteCategoryRequest)
-    - [DeleteCategoryResponse](#services-docstore-DeleteCategoryResponse)
-    - [DeleteCommentRequest](#services-docstore-DeleteCommentRequest)
-    - [DeleteCommentResponse](#services-docstore-DeleteCommentResponse)
-    - [DeleteDocumentReqRequest](#services-docstore-DeleteDocumentReqRequest)
-    - [DeleteDocumentReqResponse](#services-docstore-DeleteDocumentReqResponse)
-    - [DeleteDocumentRequest](#services-docstore-DeleteDocumentRequest)
-    - [DeleteDocumentResponse](#services-docstore-DeleteDocumentResponse)
-    - [DeleteTemplateRequest](#services-docstore-DeleteTemplateRequest)
-    - [DeleteTemplateResponse](#services-docstore-DeleteTemplateResponse)
-    - [EditCommentRequest](#services-docstore-EditCommentRequest)
-    - [EditCommentResponse](#services-docstore-EditCommentResponse)
-    - [GetCommentsRequest](#services-docstore-GetCommentsRequest)
-    - [GetCommentsResponse](#services-docstore-GetCommentsResponse)
-    - [GetDocumentAccessRequest](#services-docstore-GetDocumentAccessRequest)
-    - [GetDocumentAccessResponse](#services-docstore-GetDocumentAccessResponse)
-    - [GetDocumentReferencesRequest](#services-docstore-GetDocumentReferencesRequest)
-    - [GetDocumentReferencesResponse](#services-docstore-GetDocumentReferencesResponse)
-    - [GetDocumentRelationsRequest](#services-docstore-GetDocumentRelationsRequest)
-    - [GetDocumentRelationsResponse](#services-docstore-GetDocumentRelationsResponse)
-    - [GetDocumentRequest](#services-docstore-GetDocumentRequest)
-    - [GetDocumentResponse](#services-docstore-GetDocumentResponse)
-    - [GetTemplateRequest](#services-docstore-GetTemplateRequest)
-    - [GetTemplateResponse](#services-docstore-GetTemplateResponse)
-    - [ListCategoriesRequest](#services-docstore-ListCategoriesRequest)
-    - [ListCategoriesResponse](#services-docstore-ListCategoriesResponse)
-    - [ListDocumentActivityRequest](#services-docstore-ListDocumentActivityRequest)
-    - [ListDocumentActivityResponse](#services-docstore-ListDocumentActivityResponse)
-    - [ListDocumentPinsRequest](#services-docstore-ListDocumentPinsRequest)
-    - [ListDocumentPinsResponse](#services-docstore-ListDocumentPinsResponse)
-    - [ListDocumentReqsRequest](#services-docstore-ListDocumentReqsRequest)
-    - [ListDocumentReqsResponse](#services-docstore-ListDocumentReqsResponse)
-    - [ListDocumentsRequest](#services-docstore-ListDocumentsRequest)
-    - [ListDocumentsResponse](#services-docstore-ListDocumentsResponse)
-    - [ListTemplatesRequest](#services-docstore-ListTemplatesRequest)
-    - [ListTemplatesResponse](#services-docstore-ListTemplatesResponse)
-    - [ListUserDocumentsRequest](#services-docstore-ListUserDocumentsRequest)
-    - [ListUserDocumentsResponse](#services-docstore-ListUserDocumentsResponse)
-    - [PostCommentRequest](#services-docstore-PostCommentRequest)
-    - [PostCommentResponse](#services-docstore-PostCommentResponse)
-    - [RemoveDocumentReferenceRequest](#services-docstore-RemoveDocumentReferenceRequest)
-    - [RemoveDocumentReferenceResponse](#services-docstore-RemoveDocumentReferenceResponse)
-    - [RemoveDocumentRelationRequest](#services-docstore-RemoveDocumentRelationRequest)
-    - [RemoveDocumentRelationResponse](#services-docstore-RemoveDocumentRelationResponse)
-    - [SetDocumentAccessRequest](#services-docstore-SetDocumentAccessRequest)
-    - [SetDocumentAccessResponse](#services-docstore-SetDocumentAccessResponse)
-    - [SetDocumentReminderRequest](#services-docstore-SetDocumentReminderRequest)
-    - [SetDocumentReminderResponse](#services-docstore-SetDocumentReminderResponse)
-    - [ToggleDocumentPinRequest](#services-docstore-ToggleDocumentPinRequest)
-    - [ToggleDocumentPinResponse](#services-docstore-ToggleDocumentPinResponse)
-    - [ToggleDocumentRequest](#services-docstore-ToggleDocumentRequest)
-    - [ToggleDocumentResponse](#services-docstore-ToggleDocumentResponse)
-    - [UpdateDocumentReqRequest](#services-docstore-UpdateDocumentReqRequest)
-    - [UpdateDocumentReqResponse](#services-docstore-UpdateDocumentReqResponse)
-    - [UpdateDocumentRequest](#services-docstore-UpdateDocumentRequest)
-    - [UpdateDocumentResponse](#services-docstore-UpdateDocumentResponse)
-    - [UpdateTemplateRequest](#services-docstore-UpdateTemplateRequest)
-    - [UpdateTemplateResponse](#services-docstore-UpdateTemplateResponse)
-  
-    - [DocStoreService](#services-docstore-DocStoreService)
-  
 - [services/jobs/conduct.proto](#services_jobs_conduct-proto)
     - [CreateConductEntryRequest](#services-jobs-CreateConductEntryRequest)
     - [CreateConductEntryResponse](#services-jobs-CreateConductEntryResponse)
@@ -685,7 +587,7 @@
     - [UpdateConductEntryRequest](#services-jobs-UpdateConductEntryRequest)
     - [UpdateConductEntryResponse](#services-jobs-UpdateConductEntryResponse)
   
-    - [JobsConductService](#services-jobs-JobsConductService)
+    - [ConductService](#services-jobs-ConductService)
   
 - [services/jobs/jobs.proto](#services_jobs_jobs-proto)
     - [GetColleagueLabelsRequest](#services-jobs-GetColleagueLabelsRequest)
@@ -702,10 +604,10 @@
     - [ListColleagueActivityResponse](#services-jobs-ListColleagueActivityResponse)
     - [ListColleaguesRequest](#services-jobs-ListColleaguesRequest)
     - [ListColleaguesResponse](#services-jobs-ListColleaguesResponse)
-    - [ManageColleagueLabelsRequest](#services-jobs-ManageColleagueLabelsRequest)
-    - [ManageColleagueLabelsResponse](#services-jobs-ManageColleagueLabelsResponse)
-    - [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest)
-    - [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse)
+    - [ManageLabelsRequest](#services-jobs-ManageLabelsRequest)
+    - [ManageLabelsResponse](#services-jobs-ManageLabelsResponse)
+    - [SetColleaguePropsRequest](#services-jobs-SetColleaguePropsRequest)
+    - [SetColleaguePropsResponse](#services-jobs-SetColleaguePropsResponse)
     - [SetMOTDRequest](#services-jobs-SetMOTDRequest)
     - [SetMOTDResponse](#services-jobs-SetMOTDResponse)
   
@@ -722,20 +624,7 @@
     - [TimeclockRange](#services-jobs-TimeclockRange)
     - [TimeclockWeekly](#services-jobs-TimeclockWeekly)
   
-    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
-  
-- [services/livemapper/livemap.proto](#services_livemapper_livemap-proto)
-    - [CreateOrUpdateMarkerRequest](#services-livemapper-CreateOrUpdateMarkerRequest)
-    - [CreateOrUpdateMarkerResponse](#services-livemapper-CreateOrUpdateMarkerResponse)
-    - [DeleteMarkerRequest](#services-livemapper-DeleteMarkerRequest)
-    - [DeleteMarkerResponse](#services-livemapper-DeleteMarkerResponse)
-    - [JobsList](#services-livemapper-JobsList)
-    - [MarkerMarkersUpdates](#services-livemapper-MarkerMarkersUpdates)
-    - [StreamRequest](#services-livemapper-StreamRequest)
-    - [StreamResponse](#services-livemapper-StreamResponse)
-    - [UserMarkersUpdates](#services-livemapper-UserMarkersUpdates)
-  
-    - [LivemapperService](#services-livemapper-LivemapperService)
+    - [TimeclockService](#services-jobs-TimeclockService)
   
 - [services/notificator/notificator.proto](#services_notificator_notificator-proto)
     - [GetNotificationsRequest](#services-notificator-GetNotificationsRequest)
@@ -784,87 +673,6 @@
     - [UpdateQualificationResponse](#services-qualifications-UpdateQualificationResponse)
   
     - [QualificationsService](#services-qualifications-QualificationsService)
-  
-- [services/rector/config.proto](#services_rector_config-proto)
-    - [GetAppConfigRequest](#services-rector-GetAppConfigRequest)
-    - [GetAppConfigResponse](#services-rector-GetAppConfigResponse)
-    - [UpdateAppConfigRequest](#services-rector-UpdateAppConfigRequest)
-    - [UpdateAppConfigResponse](#services-rector-UpdateAppConfigResponse)
-  
-    - [RectorConfigService](#services-rector-RectorConfigService)
-  
-- [services/rector/cron.proto](#services_rector_cron-proto)
-    - [ListCronjobsRequest](#services-rector-ListCronjobsRequest)
-    - [ListCronjobsResponse](#services-rector-ListCronjobsResponse)
-  
-    - [RectorCronService](#services-rector-RectorCronService)
-  
-- [services/rector/filestore.proto](#services_rector_filestore-proto)
-    - [DeleteFileRequest](#services-rector-DeleteFileRequest)
-    - [DeleteFileResponse](#services-rector-DeleteFileResponse)
-    - [ListFilesRequest](#services-rector-ListFilesRequest)
-    - [ListFilesResponse](#services-rector-ListFilesResponse)
-    - [UploadFileRequest](#services-rector-UploadFileRequest)
-    - [UploadFileResponse](#services-rector-UploadFileResponse)
-  
-    - [RectorFilestoreService](#services-rector-RectorFilestoreService)
-  
-- [services/rector/laws.proto](#services_rector_laws-proto)
-    - [CreateOrUpdateLawBookRequest](#services-rector-CreateOrUpdateLawBookRequest)
-    - [CreateOrUpdateLawBookResponse](#services-rector-CreateOrUpdateLawBookResponse)
-    - [CreateOrUpdateLawRequest](#services-rector-CreateOrUpdateLawRequest)
-    - [CreateOrUpdateLawResponse](#services-rector-CreateOrUpdateLawResponse)
-    - [DeleteLawBookRequest](#services-rector-DeleteLawBookRequest)
-    - [DeleteLawBookResponse](#services-rector-DeleteLawBookResponse)
-    - [DeleteLawRequest](#services-rector-DeleteLawRequest)
-    - [DeleteLawResponse](#services-rector-DeleteLawResponse)
-  
-    - [RectorLawsService](#services-rector-RectorLawsService)
-  
-- [services/rector/accounts.proto](#services_rector_accounts-proto)
-    - [DeleteAccountRequest](#services-rector-DeleteAccountRequest)
-    - [DeleteAccountResponse](#services-rector-DeleteAccountResponse)
-    - [ListAccountsRequest](#services-rector-ListAccountsRequest)
-    - [ListAccountsResponse](#services-rector-ListAccountsResponse)
-    - [UpdateAccountRequest](#services-rector-UpdateAccountRequest)
-    - [UpdateAccountResponse](#services-rector-UpdateAccountResponse)
-  
-    - [RectorAccountsService](#services-rector-RectorAccountsService)
-  
-- [services/rector/rector.proto](#services_rector_rector-proto)
-    - [AttrsUpdate](#services-rector-AttrsUpdate)
-    - [CreateRoleRequest](#services-rector-CreateRoleRequest)
-    - [CreateRoleResponse](#services-rector-CreateRoleResponse)
-    - [DeleteFactionRequest](#services-rector-DeleteFactionRequest)
-    - [DeleteFactionResponse](#services-rector-DeleteFactionResponse)
-    - [DeleteRoleRequest](#services-rector-DeleteRoleRequest)
-    - [DeleteRoleResponse](#services-rector-DeleteRoleResponse)
-    - [GetAllPermissionsRequest](#services-rector-GetAllPermissionsRequest)
-    - [GetAllPermissionsResponse](#services-rector-GetAllPermissionsResponse)
-    - [GetEffectivePermissionsRequest](#services-rector-GetEffectivePermissionsRequest)
-    - [GetEffectivePermissionsResponse](#services-rector-GetEffectivePermissionsResponse)
-    - [GetJobLimitsRequest](#services-rector-GetJobLimitsRequest)
-    - [GetJobLimitsResponse](#services-rector-GetJobLimitsResponse)
-    - [GetJobPropsRequest](#services-rector-GetJobPropsRequest)
-    - [GetJobPropsResponse](#services-rector-GetJobPropsResponse)
-    - [GetPermissionsRequest](#services-rector-GetPermissionsRequest)
-    - [GetPermissionsResponse](#services-rector-GetPermissionsResponse)
-    - [GetRoleRequest](#services-rector-GetRoleRequest)
-    - [GetRoleResponse](#services-rector-GetRoleResponse)
-    - [GetRolesRequest](#services-rector-GetRolesRequest)
-    - [GetRolesResponse](#services-rector-GetRolesResponse)
-    - [PermItem](#services-rector-PermItem)
-    - [PermsUpdate](#services-rector-PermsUpdate)
-    - [SetJobPropsRequest](#services-rector-SetJobPropsRequest)
-    - [SetJobPropsResponse](#services-rector-SetJobPropsResponse)
-    - [UpdateJobLimitsRequest](#services-rector-UpdateJobLimitsRequest)
-    - [UpdateJobLimitsResponse](#services-rector-UpdateJobLimitsResponse)
-    - [UpdateRolePermsRequest](#services-rector-UpdateRolePermsRequest)
-    - [UpdateRolePermsResponse](#services-rector-UpdateRolePermsResponse)
-    - [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest)
-    - [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse)
-  
-    - [RectorService](#services-rector-RectorService)
   
 - [services/calendar/calendar.proto](#services_calendar_calendar-proto)
     - [CreateCalendarRequest](#services-calendar-CreateCalendarRequest)
@@ -1015,6 +823,200 @@
   
     - [SyncService](#services-sync-SyncService)
   
+- [services/documents/documents.proto](#services_documents_documents-proto)
+    - [AddDocumentReferenceRequest](#services-documents-AddDocumentReferenceRequest)
+    - [AddDocumentReferenceResponse](#services-documents-AddDocumentReferenceResponse)
+    - [AddDocumentRelationRequest](#services-documents-AddDocumentRelationRequest)
+    - [AddDocumentRelationResponse](#services-documents-AddDocumentRelationResponse)
+    - [ChangeDocumentOwnerRequest](#services-documents-ChangeDocumentOwnerRequest)
+    - [ChangeDocumentOwnerResponse](#services-documents-ChangeDocumentOwnerResponse)
+    - [CreateDocumentReqRequest](#services-documents-CreateDocumentReqRequest)
+    - [CreateDocumentReqResponse](#services-documents-CreateDocumentReqResponse)
+    - [CreateDocumentRequest](#services-documents-CreateDocumentRequest)
+    - [CreateDocumentResponse](#services-documents-CreateDocumentResponse)
+    - [CreateOrUpdateCategoryRequest](#services-documents-CreateOrUpdateCategoryRequest)
+    - [CreateOrUpdateCategoryResponse](#services-documents-CreateOrUpdateCategoryResponse)
+    - [CreateTemplateRequest](#services-documents-CreateTemplateRequest)
+    - [CreateTemplateResponse](#services-documents-CreateTemplateResponse)
+    - [DeleteCategoryRequest](#services-documents-DeleteCategoryRequest)
+    - [DeleteCategoryResponse](#services-documents-DeleteCategoryResponse)
+    - [DeleteCommentRequest](#services-documents-DeleteCommentRequest)
+    - [DeleteCommentResponse](#services-documents-DeleteCommentResponse)
+    - [DeleteDocumentReqRequest](#services-documents-DeleteDocumentReqRequest)
+    - [DeleteDocumentReqResponse](#services-documents-DeleteDocumentReqResponse)
+    - [DeleteDocumentRequest](#services-documents-DeleteDocumentRequest)
+    - [DeleteDocumentResponse](#services-documents-DeleteDocumentResponse)
+    - [DeleteTemplateRequest](#services-documents-DeleteTemplateRequest)
+    - [DeleteTemplateResponse](#services-documents-DeleteTemplateResponse)
+    - [EditCommentRequest](#services-documents-EditCommentRequest)
+    - [EditCommentResponse](#services-documents-EditCommentResponse)
+    - [GetCommentsRequest](#services-documents-GetCommentsRequest)
+    - [GetCommentsResponse](#services-documents-GetCommentsResponse)
+    - [GetDocumentAccessRequest](#services-documents-GetDocumentAccessRequest)
+    - [GetDocumentAccessResponse](#services-documents-GetDocumentAccessResponse)
+    - [GetDocumentReferencesRequest](#services-documents-GetDocumentReferencesRequest)
+    - [GetDocumentReferencesResponse](#services-documents-GetDocumentReferencesResponse)
+    - [GetDocumentRelationsRequest](#services-documents-GetDocumentRelationsRequest)
+    - [GetDocumentRelationsResponse](#services-documents-GetDocumentRelationsResponse)
+    - [GetDocumentRequest](#services-documents-GetDocumentRequest)
+    - [GetDocumentResponse](#services-documents-GetDocumentResponse)
+    - [GetTemplateRequest](#services-documents-GetTemplateRequest)
+    - [GetTemplateResponse](#services-documents-GetTemplateResponse)
+    - [ListCategoriesRequest](#services-documents-ListCategoriesRequest)
+    - [ListCategoriesResponse](#services-documents-ListCategoriesResponse)
+    - [ListDocumentActivityRequest](#services-documents-ListDocumentActivityRequest)
+    - [ListDocumentActivityResponse](#services-documents-ListDocumentActivityResponse)
+    - [ListDocumentPinsRequest](#services-documents-ListDocumentPinsRequest)
+    - [ListDocumentPinsResponse](#services-documents-ListDocumentPinsResponse)
+    - [ListDocumentReqsRequest](#services-documents-ListDocumentReqsRequest)
+    - [ListDocumentReqsResponse](#services-documents-ListDocumentReqsResponse)
+    - [ListDocumentsRequest](#services-documents-ListDocumentsRequest)
+    - [ListDocumentsResponse](#services-documents-ListDocumentsResponse)
+    - [ListTemplatesRequest](#services-documents-ListTemplatesRequest)
+    - [ListTemplatesResponse](#services-documents-ListTemplatesResponse)
+    - [ListUserDocumentsRequest](#services-documents-ListUserDocumentsRequest)
+    - [ListUserDocumentsResponse](#services-documents-ListUserDocumentsResponse)
+    - [PostCommentRequest](#services-documents-PostCommentRequest)
+    - [PostCommentResponse](#services-documents-PostCommentResponse)
+    - [RemoveDocumentReferenceRequest](#services-documents-RemoveDocumentReferenceRequest)
+    - [RemoveDocumentReferenceResponse](#services-documents-RemoveDocumentReferenceResponse)
+    - [RemoveDocumentRelationRequest](#services-documents-RemoveDocumentRelationRequest)
+    - [RemoveDocumentRelationResponse](#services-documents-RemoveDocumentRelationResponse)
+    - [SetDocumentAccessRequest](#services-documents-SetDocumentAccessRequest)
+    - [SetDocumentAccessResponse](#services-documents-SetDocumentAccessResponse)
+    - [SetDocumentReminderRequest](#services-documents-SetDocumentReminderRequest)
+    - [SetDocumentReminderResponse](#services-documents-SetDocumentReminderResponse)
+    - [ToggleDocumentPinRequest](#services-documents-ToggleDocumentPinRequest)
+    - [ToggleDocumentPinResponse](#services-documents-ToggleDocumentPinResponse)
+    - [ToggleDocumentRequest](#services-documents-ToggleDocumentRequest)
+    - [ToggleDocumentResponse](#services-documents-ToggleDocumentResponse)
+    - [UpdateDocumentReqRequest](#services-documents-UpdateDocumentReqRequest)
+    - [UpdateDocumentReqResponse](#services-documents-UpdateDocumentReqResponse)
+    - [UpdateDocumentRequest](#services-documents-UpdateDocumentRequest)
+    - [UpdateDocumentResponse](#services-documents-UpdateDocumentResponse)
+    - [UpdateTemplateRequest](#services-documents-UpdateTemplateRequest)
+    - [UpdateTemplateResponse](#services-documents-UpdateTemplateResponse)
+  
+    - [DocumentsService](#services-documents-DocumentsService)
+  
+- [services/livemap/livemap.proto](#services_livemap_livemap-proto)
+    - [CreateOrUpdateMarkerRequest](#services-livemap-CreateOrUpdateMarkerRequest)
+    - [CreateOrUpdateMarkerResponse](#services-livemap-CreateOrUpdateMarkerResponse)
+    - [DeleteMarkerRequest](#services-livemap-DeleteMarkerRequest)
+    - [DeleteMarkerResponse](#services-livemap-DeleteMarkerResponse)
+    - [JobsList](#services-livemap-JobsList)
+    - [MarkerMarkersUpdates](#services-livemap-MarkerMarkersUpdates)
+    - [StreamRequest](#services-livemap-StreamRequest)
+    - [StreamResponse](#services-livemap-StreamResponse)
+    - [UserMarkersUpdates](#services-livemap-UserMarkersUpdates)
+  
+    - [LivemapService](#services-livemap-LivemapService)
+  
+- [services/citizens/citizens.proto](#services_citizens_citizens-proto)
+    - [GetUserRequest](#services-citizens-GetUserRequest)
+    - [GetUserResponse](#services-citizens-GetUserResponse)
+    - [ListCitizensRequest](#services-citizens-ListCitizensRequest)
+    - [ListCitizensResponse](#services-citizens-ListCitizensResponse)
+    - [ListUserActivityRequest](#services-citizens-ListUserActivityRequest)
+    - [ListUserActivityResponse](#services-citizens-ListUserActivityResponse)
+    - [ManageLabelsRequest](#services-citizens-ManageLabelsRequest)
+    - [ManageLabelsResponse](#services-citizens-ManageLabelsResponse)
+    - [SetProfilePictureRequest](#services-citizens-SetProfilePictureRequest)
+    - [SetProfilePictureResponse](#services-citizens-SetProfilePictureResponse)
+    - [SetUserPropsRequest](#services-citizens-SetUserPropsRequest)
+    - [SetUserPropsResponse](#services-citizens-SetUserPropsResponse)
+  
+    - [CitizensService](#services-citizens-CitizensService)
+  
+- [services/settings/config.proto](#services_settings_config-proto)
+    - [GetAppConfigRequest](#services-settings-GetAppConfigRequest)
+    - [GetAppConfigResponse](#services-settings-GetAppConfigResponse)
+    - [UpdateAppConfigRequest](#services-settings-UpdateAppConfigRequest)
+    - [UpdateAppConfigResponse](#services-settings-UpdateAppConfigResponse)
+  
+    - [ConfigService](#services-settings-ConfigService)
+  
+- [services/settings/cron.proto](#services_settings_cron-proto)
+    - [ListCronjobsRequest](#services-settings-ListCronjobsRequest)
+    - [ListCronjobsResponse](#services-settings-ListCronjobsResponse)
+  
+    - [CronService](#services-settings-CronService)
+  
+- [services/settings/filestore.proto](#services_settings_filestore-proto)
+    - [DeleteFileRequest](#services-settings-DeleteFileRequest)
+    - [DeleteFileResponse](#services-settings-DeleteFileResponse)
+    - [ListFilesRequest](#services-settings-ListFilesRequest)
+    - [ListFilesResponse](#services-settings-ListFilesResponse)
+    - [UploadFileRequest](#services-settings-UploadFileRequest)
+    - [UploadFileResponse](#services-settings-UploadFileResponse)
+  
+    - [FilestoreService](#services-settings-FilestoreService)
+  
+- [services/settings/laws.proto](#services_settings_laws-proto)
+    - [CreateOrUpdateLawBookRequest](#services-settings-CreateOrUpdateLawBookRequest)
+    - [CreateOrUpdateLawBookResponse](#services-settings-CreateOrUpdateLawBookResponse)
+    - [CreateOrUpdateLawRequest](#services-settings-CreateOrUpdateLawRequest)
+    - [CreateOrUpdateLawResponse](#services-settings-CreateOrUpdateLawResponse)
+    - [DeleteLawBookRequest](#services-settings-DeleteLawBookRequest)
+    - [DeleteLawBookResponse](#services-settings-DeleteLawBookResponse)
+    - [DeleteLawRequest](#services-settings-DeleteLawRequest)
+    - [DeleteLawResponse](#services-settings-DeleteLawResponse)
+  
+    - [LawsService](#services-settings-LawsService)
+  
+- [services/settings/accounts.proto](#services_settings_accounts-proto)
+    - [DeleteAccountRequest](#services-settings-DeleteAccountRequest)
+    - [DeleteAccountResponse](#services-settings-DeleteAccountResponse)
+    - [DisconnectOAuth2ConnectionRequest](#services-settings-DisconnectOAuth2ConnectionRequest)
+    - [DisconnectOAuth2ConnectionResponse](#services-settings-DisconnectOAuth2ConnectionResponse)
+    - [ListAccountsRequest](#services-settings-ListAccountsRequest)
+    - [ListAccountsResponse](#services-settings-ListAccountsResponse)
+    - [UpdateAccountRequest](#services-settings-UpdateAccountRequest)
+    - [UpdateAccountResponse](#services-settings-UpdateAccountResponse)
+  
+    - [AccountsService](#services-settings-AccountsService)
+  
+- [services/settings/settings.proto](#services_settings_settings-proto)
+    - [AttrsUpdate](#services-settings-AttrsUpdate)
+    - [CreateRoleRequest](#services-settings-CreateRoleRequest)
+    - [CreateRoleResponse](#services-settings-CreateRoleResponse)
+    - [DeleteFactionRequest](#services-settings-DeleteFactionRequest)
+    - [DeleteFactionResponse](#services-settings-DeleteFactionResponse)
+    - [DeleteRoleRequest](#services-settings-DeleteRoleRequest)
+    - [DeleteRoleResponse](#services-settings-DeleteRoleResponse)
+    - [GetAllPermissionsRequest](#services-settings-GetAllPermissionsRequest)
+    - [GetAllPermissionsResponse](#services-settings-GetAllPermissionsResponse)
+    - [GetEffectivePermissionsRequest](#services-settings-GetEffectivePermissionsRequest)
+    - [GetEffectivePermissionsResponse](#services-settings-GetEffectivePermissionsResponse)
+    - [GetJobLimitsRequest](#services-settings-GetJobLimitsRequest)
+    - [GetJobLimitsResponse](#services-settings-GetJobLimitsResponse)
+    - [GetJobPropsRequest](#services-settings-GetJobPropsRequest)
+    - [GetJobPropsResponse](#services-settings-GetJobPropsResponse)
+    - [GetPermissionsRequest](#services-settings-GetPermissionsRequest)
+    - [GetPermissionsResponse](#services-settings-GetPermissionsResponse)
+    - [GetRoleRequest](#services-settings-GetRoleRequest)
+    - [GetRoleResponse](#services-settings-GetRoleResponse)
+    - [GetRolesRequest](#services-settings-GetRolesRequest)
+    - [GetRolesResponse](#services-settings-GetRolesResponse)
+    - [PermItem](#services-settings-PermItem)
+    - [PermsUpdate](#services-settings-PermsUpdate)
+    - [SetJobPropsRequest](#services-settings-SetJobPropsRequest)
+    - [SetJobPropsResponse](#services-settings-SetJobPropsResponse)
+    - [UpdateJobLimitsRequest](#services-settings-UpdateJobLimitsRequest)
+    - [UpdateJobLimitsResponse](#services-settings-UpdateJobLimitsResponse)
+    - [UpdateRolePermsRequest](#services-settings-UpdateRolePermsRequest)
+    - [UpdateRolePermsResponse](#services-settings-UpdateRolePermsResponse)
+    - [ViewAuditLogRequest](#services-settings-ViewAuditLogRequest)
+    - [ViewAuditLogResponse](#services-settings-ViewAuditLogResponse)
+  
+    - [SettingsService](#services-settings-SettingsService)
+  
+- [services/vehicles/vehicles.proto](#services_vehicles_vehicles-proto)
+    - [ListVehiclesRequest](#services-vehicles-ListVehiclesRequest)
+    - [ListVehiclesResponse](#services-vehicles-ListVehiclesResponse)
+  
+    - [VehiclesService](#services-vehicles-VehiclesService)
+  
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -1034,13 +1036,14 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `username` | [string](#string) |  |  |
 | `license` | [string](#string) |  |  |
 | `enabled` | [bool](#bool) |  |  |
 | `last_char` | [int32](#int32) | optional |  |
+| `oauth2_accounts` | [OAuth2Account](#resources-accounts-OAuth2Account) | repeated | @gotags: alias:"oauth2_account" |
 
 
 
@@ -1090,7 +1093,7 @@
 | ----- | ---- | ----- | ----------- |
 | `account_id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `provider_name` | [string](#string) |  |  |
+| `provider_name` | [string](#string) |  | @gotags: sql:"primary_key" alias:"provider_name" |
 | `provider` | [OAuth2Provider](#resources-accounts-OAuth2Provider) |  |  |
 | `external_id` | [string](#string) |  |  |
 | `username` | [string](#string) |  |  |
@@ -1510,6 +1513,40 @@
 
 
 
+<a name="resources_centrum_user_unit-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/user_unit.proto
+
+
+
+<a name="resources-centrum-UserUnitMapping"></a>
+
+### UserUnitMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_centrum_units-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1624,40 +1661,6 @@
 | `STATUS_UNIT_ON_BREAK` | 6 |  |
 | `STATUS_UNIT_BUSY` | 7 |  |
 
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_centrum_user_unit-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/user_unit.proto
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
- <!-- end messages -->
 
  <!-- end enums -->
 
@@ -2425,7 +2428,7 @@ Wrapped translated message for the client @dbscanner: json
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `jobs` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:"user_access" |
+| `users` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:"citizen_access" |
 
 
 
@@ -3338,9 +3341,9 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-jobs-ColleagueAbsenceDate"></a>
+<a name="resources-jobs-AbsenceDateChange"></a>
 
-### ColleagueAbsenceDate
+### AbsenceDateChange
 
 
 
@@ -3354,9 +3357,51 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-jobs-ColleagueGradeChange"></a>
+<a name="resources-jobs-ColleagueActivity"></a>
 
-### ColleagueGradeChange
+### ColleagueActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `source_user_id` | [int32](#int32) | optional |  |
+| `source_user` | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:"source_user" |
+| `target_user_id` | [int32](#int32) |  |  |
+| `target_user` | [Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"target_user" |
+| `activity_type` | [ColleagueActivityType](#resources-jobs-ColleagueActivityType) |  |  |
+| `reason` | [string](#string) |  | @sanitize |
+| `data` | [ColleagueActivityData](#resources-jobs-ColleagueActivityData) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueActivityData"></a>
+
+### ColleagueActivityData
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `absence_date` | [AbsenceDateChange](#resources-jobs-AbsenceDateChange) |  |  |
+| `grade_change` | [GradeChange](#resources-jobs-GradeChange) |  |  |
+| `labels_change` | [LabelsChange](#resources-jobs-LabelsChange) |  |  |
+| `name_change` | [NameChange](#resources-jobs-NameChange) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-GradeChange"></a>
+
+### GradeChange
 
 
 
@@ -3370,9 +3415,9 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-jobs-ColleagueLabelsChange"></a>
+<a name="resources-jobs-LabelsChange"></a>
 
-### ColleagueLabelsChange
+### LabelsChange
 
 
 
@@ -3386,9 +3431,9 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-jobs-ColleagueNameChange"></a>
+<a name="resources-jobs-NameChange"></a>
 
-### ColleagueNameChange
+### NameChange
 
 
 
@@ -3401,67 +3446,25 @@ Dummy - DO NOT USE!
 
 
 
-
-<a name="resources-jobs-JobsUserActivity"></a>
-
-### JobsUserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `source_user_id` | [int32](#int32) | optional |  |
-| `source_user` | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:"source_user" |
-| `target_user_id` | [int32](#int32) |  |  |
-| `target_user` | [Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"target_user" |
-| `activity_type` | [JobsUserActivityType](#resources-jobs-JobsUserActivityType) |  |  |
-| `reason` | [string](#string) |  | @sanitize |
-| `data` | [JobsUserActivityData](#resources-jobs-JobsUserActivityData) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-JobsUserActivityData"></a>
-
-### JobsUserActivityData
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `absence_date` | [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate) |  |  |
-| `grade_change` | [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange) |  |  |
-| `labels_change` | [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange) |  |  |
-| `name_change` | [ColleagueNameChange](#resources-jobs-ColleagueNameChange) |  |  |
-
-
-
-
-
  <!-- end messages -->
 
 
-<a name="resources-jobs-JobsUserActivityType"></a>
+<a name="resources-jobs-ColleagueActivityType"></a>
 
-### JobsUserActivityType
+### ColleagueActivityType
 
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| `JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
-| `JOBS_USER_ACTIVITY_TYPE_HIRED` | 1 |  |
-| `JOBS_USER_ACTIVITY_TYPE_FIRED` | 2 |  |
-| `JOBS_USER_ACTIVITY_TYPE_PROMOTED` | 3 |  |
-| `JOBS_USER_ACTIVITY_TYPE_DEMOTED` | 4 |  |
-| `JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE` | 5 |  |
-| `JOBS_USER_ACTIVITY_TYPE_NOTE` | 6 |  |
-| `JOBS_USER_ACTIVITY_TYPE_LABELS` | 7 |  |
-| `JOBS_USER_ACTIVITY_TYPE_NAME` | 8 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_HIRED` | 1 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_FIRED` | 2 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_PROMOTED` | 3 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_DEMOTED` | 4 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_ABSENCE_DATE` | 5 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_NOTE` | 6 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_LABELS` | 7 |  |
+| `COLLEAGUE_ACTIVITY_TYPE_NAME` | 8 |  |
 
 
  <!-- end enums -->
@@ -3498,7 +3501,7 @@ Dummy - DO NOT USE!
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
 | `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| `props` | [JobsUserProps](#resources-jobs-JobsUserProps) |  | @gotags: alias:"jobs_user_props" |
+| `props` | [ColleagueProps](#resources-jobs-ColleagueProps) |  | @gotags: alias:"jobs_user_props" |
 | `email` | [string](#string) | optional | @sanitize: method=StripTags |
 
 
@@ -3506,9 +3509,9 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-jobs-JobsUserProps"></a>
+<a name="resources-jobs-ColleagueProps"></a>
 
-### JobsUserProps
+### ColleagueProps
 
 
 
@@ -3516,6 +3519,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `user_id` | [int32](#int32) |  |  |
 | `job` | [string](#string) |  |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `absence_begin` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `absence_end` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `note` | [string](#string) | optional | @sanitize: method=StripTags |
@@ -3555,6 +3559,7 @@ Dummy - DO NOT USE!
 | `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `job` | [string](#string) |  |  |
 | `type` | [ConductType](#resources-jobs-ConductType) |  |  |
 | `message` | [string](#string) |  | @sanitize |
@@ -3612,6 +3617,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
 | `job` | [string](#string) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `name` | [string](#string) |  |  |
 | `color` | [string](#string) |  | @sanitize: method=StripTags |
 | `order` | [int32](#int32) |  |  |
@@ -3743,16 +3749,309 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-jobs-TimeclockUserMode"></a>
+<a name="resources-jobs-TimeclockViewMode"></a>
 
-### TimeclockUserMode
+### TimeclockViewMode
 
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| `TIMECLOCK_USER_MODE_UNSPECIFIED` | 0 |  |
-| `TIMECLOCK_USER_MODE_SELF` | 1 |  |
-| `TIMECLOCK_USER_MODE_ALL` | 2 |  |
+| `TIMECLOCK_VIEW_MODE_UNSPECIFIED` | 0 |  |
+| `TIMECLOCK_VIEW_MODE_SELF` | 1 |  |
+| `TIMECLOCK_VIEW_MODE_ALL` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_jobs_jobs-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/jobs.proto
+
+
+
+<a name="resources-jobs-Job"></a>
+
+### Job
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  | @gotags: sql:"primary_key" alias:"name" |
+| `label` | [string](#string) |  |  |
+| `grades` | [JobGrade](#resources-jobs-JobGrade) | repeated |  |
+
+
+
+
+
+
+<a name="resources-jobs-JobGrade"></a>
+
+### JobGrade
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_name` | [string](#string) | optional |  |
+| `grade` | [int32](#int32) |  |  |
+| `label` | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_jobs_job_props-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/job_props.proto
+
+
+
+<a name="resources-jobs-JobProps"></a>
+
+### JobProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `livemap_marker_color` | [string](#string) |  |  |
+| `quick_buttons` | [QuickButtons](#resources-jobs-QuickButtons) |  |  |
+| `radio_frequency` | [string](#string) | optional |  |
+| `discord_guild_id` | [string](#string) | optional |  |
+| `discord_last_sync` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `discord_sync_settings` | [DiscordSyncSettings](#resources-jobs-DiscordSyncSettings) |  |  |
+| `discord_sync_changes` | [DiscordSyncChanges](#resources-jobs-DiscordSyncChanges) | optional |  |
+| `motd` | [string](#string) | optional |  |
+| `logo_url` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `settings` | [JobSettings](#resources-jobs-JobSettings) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-QuickButtons"></a>
+
+### QuickButtons
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `penalty_calculator` | [bool](#bool) |  |  |
+| `body_checkup` | [bool](#bool) |  |  |
+| `math_calculator` | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_jobs_job_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/job_settings.proto
+
+
+
+<a name="resources-jobs-DiscordSyncChange"></a>
+
+### DiscordSyncChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `time` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `plan` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-DiscordSyncChanges"></a>
+
+### DiscordSyncChanges
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `changes` | [DiscordSyncChange](#resources-jobs-DiscordSyncChange) | repeated |  |
+
+
+
+
+
+
+<a name="resources-jobs-DiscordSyncSettings"></a>
+
+### DiscordSyncSettings
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dry_run` | [bool](#bool) |  |  |
+| `user_info_sync` | [bool](#bool) |  |  |
+| `user_info_sync_settings` | [UserInfoSyncSettings](#resources-jobs-UserInfoSyncSettings) |  |  |
+| `status_log` | [bool](#bool) |  |  |
+| `status_log_settings` | [StatusLogSettings](#resources-jobs-StatusLogSettings) |  |  |
+| `jobs_absence` | [bool](#bool) |  |  |
+| `jobs_absence_settings` | [JobsAbsenceSettings](#resources-jobs-JobsAbsenceSettings) |  |  |
+| `group_sync_settings` | [GroupSyncSettings](#resources-jobs-GroupSyncSettings) |  |  |
+| `qualifications_role_format` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-GroupMapping"></a>
+
+### GroupMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `from_grade` | [int32](#int32) |  |  |
+| `to_grade` | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-GroupSyncSettings"></a>
+
+### GroupSyncSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `ignored_role_ids` | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-jobs-JobSettings"></a>
+
+### JobSettings
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `absence_past_days` | [int32](#int32) |  |  |
+| `absence_future_days` | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-JobsAbsenceSettings"></a>
+
+### JobsAbsenceSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `absence_role` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-StatusLogSettings"></a>
+
+### StatusLogSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `channel_id` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-UserInfoSyncSettings"></a>
+
+### UserInfoSyncSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `employee_role_enabled` | [bool](#bool) |  |  |
+| `employee_role_format` | [string](#string) |  |  |
+| `grade_role_format` | [string](#string) |  |  |
+| `unemployed_enabled` | [bool](#bool) |  |  |
+| `unemployed_mode` | [UserInfoSyncUnemployedMode](#resources-jobs-UserInfoSyncUnemployedMode) |  |  |
+| `unemployed_role_name` | [string](#string) |  |  |
+| `sync_nicknames` | [bool](#bool) |  |  |
+| `group_mapping` | [GroupMapping](#resources-jobs-GroupMapping) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-jobs-UserInfoSyncUnemployedMode"></a>
+
+### UserInfoSyncUnemployedMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED` | 0 |  |
+| `USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE` | 1 |  |
+| `USER_INFO_SYNC_UNEMPLOYED_MODE_KICK` | 2 |  |
 
 
  <!-- end enums -->
@@ -4020,7 +4319,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `banner_message` | [resources.rector.BannerMessage](#resources-rector-BannerMessage) | optional |  |
+| `banner_message` | [resources.settings.BannerMessage](#resources-settings-BannerMessage) | optional |  |
 
 
 
@@ -4035,7 +4334,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `job_props` | [resources.users.JobProps](#resources-users-JobProps) |  |  |
+| `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
 
 
 
@@ -5105,334 +5404,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_rector_audit-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/rector/audit.proto
-
-
-
-<a name="resources-rector-AuditEntry"></a>
-
-### AuditEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `user_id` | [uint64](#uint64) |  | @gotags: alias:"user_id" |
-| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| `user_job` | [string](#string) |  | @gotags: alias:"user_job" |
-| `target_user_id` | [int32](#int32) | optional | @gotags: alias:"target_user_id" |
-| `target_user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| `target_user_job` | [string](#string) |  | @gotags: alias:"target_user_job" |
-| `service` | [string](#string) |  | @gotags: alias:"service" |
-| `method` | [string](#string) |  | @gotags: alias:"method" |
-| `state` | [EventType](#resources-rector-EventType) |  | @gotags: alias:"state" |
-| `data` | [string](#string) | optional | @gotags: alias:"data" |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-rector-EventType"></a>
-
-### EventType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `EVENT_TYPE_UNSPECIFIED` | 0 |  |
-| `EVENT_TYPE_ERRORED` | 1 |  |
-| `EVENT_TYPE_VIEWED` | 2 |  |
-| `EVENT_TYPE_CREATED` | 3 |  |
-| `EVENT_TYPE_UPDATED` | 4 |  |
-| `EVENT_TYPE_DELETED` | 5 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_rector_banner-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/rector/banner.proto
-
-
-
-<a name="resources-rector-BannerMessage"></a>
-
-### BannerMessage
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [string](#string) |  | @sanitize: method=StripTags |
-| `title` | [string](#string) |  | @sanitize: method |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_rector_config-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/rector/config.proto
-
-
-
-<a name="resources-rector-AppConfig"></a>
-
-### AppConfig
-@dbscanner: json,partial
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) | optional |  |
-| `default_locale` | [string](#string) |  |  |
-| `auth` | [Auth](#resources-rector-Auth) |  |  |
-| `perms` | [Perms](#resources-rector-Perms) |  |  |
-| `website` | [Website](#resources-rector-Website) |  |  |
-| `job_info` | [JobInfo](#resources-rector-JobInfo) |  |  |
-| `user_tracker` | [UserTracker](#resources-rector-UserTracker) |  |  |
-| `discord` | [Discord](#resources-rector-Discord) |  |  |
-| `system` | [System](#resources-rector-System) |  |  |
-
-
-
-
-
-
-<a name="resources-rector-Auth"></a>
-
-### Auth
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signup_enabled` | [bool](#bool) |  |  |
-| `last_char_lock` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="resources-rector-Discord"></a>
-
-### Discord
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `enabled` | [bool](#bool) |  |  |
-| `sync_interval` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| `invite_url` | [string](#string) | optional | @sanitize: method=StripTags |
-| `ignored_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `bot_presence` | [DiscordBotPresence](#resources-rector-DiscordBotPresence) | optional |  |
-
-
-
-
-
-
-<a name="resources-rector-DiscordBotPresence"></a>
-
-### DiscordBotPresence
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `type` | [DiscordBotPresenceType](#resources-rector-DiscordBotPresenceType) |  |  |
-| `status` | [string](#string) | optional | @sanitize: method=StripTags |
-| `url` | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-rector-JobInfo"></a>
-
-### JobInfo
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unemployed_job` | [UnemployedJob](#resources-rector-UnemployedJob) |  |  |
-| `public_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `hidden_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-rector-Links"></a>
-
-### Links
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `privacy_policy` | [string](#string) | optional | @sanitize: method=StripTags |
-| `imprint` | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-rector-Perm"></a>
-
-### Perm
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category` | [string](#string) |  | @sanitize: method=StripTags |
-| `name` | [string](#string) |  | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-rector-Perms"></a>
-
-### Perms
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `default` | [Perm](#resources-rector-Perm) | repeated |  |
-
-
-
-
-
-
-<a name="resources-rector-System"></a>
-
-### System
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `banner_message_enabled` | [bool](#bool) |  |  |
-| `banner_message` | [BannerMessage](#resources-rector-BannerMessage) |  |  |
-
-
-
-
-
-
-<a name="resources-rector-UnemployedJob"></a>
-
-### UnemployedJob
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `grade` | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="resources-rector-UserTracker"></a>
-
-### UserTracker
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `refresh_time` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| `db_refresh_time` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-
-
-
-
-
-
-<a name="resources-rector-Website"></a>
-
-### Website
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `links` | [Links](#resources-rector-Links) |  |  |
-| `stats_page` | [bool](#bool) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-rector-DiscordBotPresenceType"></a>
-
-### DiscordBotPresenceType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED` | 0 |  |
-| `DISCORD_BOT_PRESENCE_TYPE_GAME` | 1 |  |
-| `DISCORD_BOT_PRESENCE_TYPE_LISTENING` | 2 |  |
-| `DISCORD_BOT_PRESENCE_TYPE_STREAMING` | 3 |  |
-| `DISCORD_BOT_PRESENCE_TYPE_WATCH` | 4 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_timestamp_timestamp-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5455,766 +5426,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_job_props-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/job_props.proto
-
-
-
-<a name="resources-users-JobProps"></a>
-
-### JobProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `livemap_marker_color` | [string](#string) |  |  |
-| `quick_buttons` | [QuickButtons](#resources-users-QuickButtons) |  |  |
-| `radio_frequency` | [string](#string) | optional |  |
-| `discord_guild_id` | [string](#string) | optional |  |
-| `discord_last_sync` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `discord_sync_settings` | [DiscordSyncSettings](#resources-users-DiscordSyncSettings) |  |  |
-| `discord_sync_changes` | [DiscordSyncChanges](#resources-users-DiscordSyncChanges) | optional |  |
-| `motd` | [string](#string) | optional |  |
-| `logo_url` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| `settings` | [JobSettings](#resources-users-JobSettings) |  |  |
-
-
-
-
-
-
-<a name="resources-users-QuickButtons"></a>
-
-### QuickButtons
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `penalty_calculator` | [bool](#bool) |  |  |
-| `body_checkup` | [bool](#bool) |  |  |
-| `math_calculator` | [bool](#bool) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_job_settings-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/job_settings.proto
-
-
-
-<a name="resources-users-DiscordSyncChange"></a>
-
-### DiscordSyncChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `time` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `plan` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-DiscordSyncChanges"></a>
-
-### DiscordSyncChanges
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `changes` | [DiscordSyncChange](#resources-users-DiscordSyncChange) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-DiscordSyncSettings"></a>
-
-### DiscordSyncSettings
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `dry_run` | [bool](#bool) |  |  |
-| `user_info_sync` | [bool](#bool) |  |  |
-| `user_info_sync_settings` | [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings) |  |  |
-| `status_log` | [bool](#bool) |  |  |
-| `status_log_settings` | [StatusLogSettings](#resources-users-StatusLogSettings) |  |  |
-| `jobs_absence` | [bool](#bool) |  |  |
-| `jobs_absence_settings` | [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings) |  |  |
-| `group_sync_settings` | [GroupSyncSettings](#resources-users-GroupSyncSettings) |  |  |
-| `qualifications_role_format` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-GroupMapping"></a>
-
-### GroupMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `from_grade` | [int32](#int32) |  |  |
-| `to_grade` | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="resources-users-GroupSyncSettings"></a>
-
-### GroupSyncSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `ignored_role_ids` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-users-JobSettings"></a>
-
-### JobSettings
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `absence_past_days` | [int32](#int32) |  |  |
-| `absence_future_days` | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="resources-users-JobsAbsenceSettings"></a>
-
-### JobsAbsenceSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `absence_role` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-StatusLogSettings"></a>
-
-### StatusLogSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `channel_id` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserInfoSyncSettings"></a>
-
-### UserInfoSyncSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `employee_role_enabled` | [bool](#bool) |  |  |
-| `employee_role_format` | [string](#string) |  |  |
-| `grade_role_format` | [string](#string) |  |  |
-| `unemployed_enabled` | [bool](#bool) |  |  |
-| `unemployed_mode` | [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode) |  |  |
-| `unemployed_role_name` | [string](#string) |  |  |
-| `sync_nicknames` | [bool](#bool) |  |  |
-| `group_mapping` | [GroupMapping](#resources-users-GroupMapping) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-users-UserInfoSyncUnemployedMode"></a>
-
-### UserInfoSyncUnemployedMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED` | 0 |  |
-| `USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE` | 1 |  |
-| `USER_INFO_SYNC_UNEMPLOYED_MODE_KICK` | 2 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_jobs-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/jobs.proto
-
-
-
-<a name="resources-users-Job"></a>
-
-### Job
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  | @gotags: sql:"primary_key" alias:"name" |
-| `label` | [string](#string) |  |  |
-| `grades` | [JobGrade](#resources-users-JobGrade) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-JobGrade"></a>
-
-### JobGrade
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_name` | [string](#string) | optional |  |
-| `grade` | [int32](#int32) |  |  |
-| `label` | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_labels-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/labels.proto
-
-
-
-<a name="resources-users-CitizenLabel"></a>
-
-### CitizenLabel
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `job` | [string](#string) | optional |  |
-| `name` | [string](#string) |  |  |
-| `color` | [string](#string) |  | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-users-CitizenLabels"></a>
-
-### CitizenLabels
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_licenses-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/licenses.proto
-
-
-
-<a name="resources-users-License"></a>
-
-### License
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `type` | [string](#string) |  |  |
-| `label` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserLicenses"></a>
-
-### UserLicenses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `licenses` | [License](#resources-users-License) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_props-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/props.proto
-
-
-
-<a name="resources-users-UserProps"></a>
-
-### UserProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `wanted` | [bool](#bool) | optional |  |
-| `job_name` | [string](#string) | optional | @gotags: alias:"job" |
-| `job` | [Job](#resources-users-Job) | optional |  |
-| `job_grade_number` | [int32](#int32) | optional | @gotags: alias:"job_grade" |
-| `job_grade` | [JobGrade](#resources-users-JobGrade) | optional |  |
-| `traffic_infraction_points` | [uint32](#uint32) | optional |  |
-| `traffic_infraction_points_updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `open_fines` | [int64](#int64) | optional |  |
-| `blood_type` | [string](#string) | optional |  |
-| `mug_shot` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| `labels` | [CitizenLabels](#resources-users-CitizenLabels) | optional |  |
-| `email` | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_users-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/users.proto
-
-
-
-<a name="resources-users-User"></a>
-
-### User
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
-| `identifier` | [string](#string) | optional |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `job_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `firstname` | [string](#string) |  |  |
-| `lastname` | [string](#string) |  |  |
-| `dateofbirth` | [string](#string) |  |  |
-| `sex` | [string](#string) | optional |  |
-| `height` | [string](#string) | optional |  |
-| `phone_number` | [string](#string) | optional |  |
-| `visum` | [int32](#int32) | optional |  |
-| `playtime` | [int32](#int32) | optional |  |
-| `props` | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
-| `licenses` | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| `group` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserShort"></a>
-
-### UserShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
-| `identifier` | [string](#string) | optional |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `job_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `firstname` | [string](#string) |  |  |
-| `lastname` | [string](#string) |  |  |
-| `dateofbirth` | [string](#string) |  |  |
-| `phone_number` | [string](#string) | optional |  |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_activity-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/activity.proto
-
-
-
-<a name="resources-users-UserActivity"></a>
-
-### UserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: alias:"fivenet_user_activity.id" |
-| `type` | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:"fivenet_user_activity.type" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:"fivenet_user_activity.created_at" |
-| `source_user_id` | [int32](#int32) | optional | @gotags: alias:"source_user_id" |
-| `source_user` | [UserShort](#resources-users-UserShort) | optional | @gotags: alias:"source_user" |
-| `target_user_id` | [int32](#int32) |  | @gotags: alias:"target_user_id" |
-| `target_user` | [UserShort](#resources-users-UserShort) |  | @gotags: alias:"target_user" |
-| `key` | [string](#string) |  | @sanitize
-
-@gotags: alias:"fivenet_user_activity.key" |
-| `reason` | [string](#string) |  | @sanitize
-
-@gotags: alias:"fivenet_user_activity.reason" |
-| `data` | [UserActivityData](#resources-users-UserActivityData) | optional | @gotags: alias:"fivenet_user_activity.data" |
-| `old_value` | [string](#string) |  | @gotags: alias:"fivenet_user_activity.old_value" |
-| `new_value` | [string](#string) |  | @gotags: alias:"fivenet_user_activity.new_value" |
-
-
-
-
-
-
-<a name="resources-users-UserActivityData"></a>
-
-### UserActivityData
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name_change` | [UserNameChange](#resources-users-UserNameChange) |  |  |
-| `licenses_change` | [UserLicenseChange](#resources-users-UserLicenseChange) |  |  |
-| `wanted_change` | [UserWantedChange](#resources-users-UserWantedChange) |  | User Props |
-| `traffic_infraction_points_change` | [UserTrafficInfractionPointsChange](#resources-users-UserTrafficInfractionPointsChange) |  |  |
-| `mugshot_change` | [UserMugshotChange](#resources-users-UserMugshotChange) |  |  |
-| `labels_change` | [UserLabelsChange](#resources-users-UserLabelsChange) |  |  |
-| `job_change` | [UserJobChange](#resources-users-UserJobChange) |  |  |
-| `document_relation` | [UserDocumentRelation](#resources-users-UserDocumentRelation) |  | Docstore related |
-| `jail_change` | [UserJailChange](#resources-users-UserJailChange) |  | "Plugin" activities |
-| `fine_change` | [UserFineChange](#resources-users-UserFineChange) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserDocumentRelation"></a>
-
-### UserDocumentRelation
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `added` | [bool](#bool) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
-| `relation` | [int32](#int32) |  | resources.documents.DocRelation enum |
-
-
-
-
-
-
-<a name="resources-users-UserFineChange"></a>
-
-### UserFineChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `removed` | [bool](#bool) |  |  |
-| `amount` | [int64](#int64) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserJailChange"></a>
-
-### UserJailChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `seconds` | [int32](#int32) |  |  |
-| `admin` | [bool](#bool) |  |  |
-| `location` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserJobChange"></a>
-
-### UserJobChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) | optional |  |
-| `job_label` | [string](#string) | optional |  |
-| `grade` | [int32](#int32) | optional |  |
-| `grade_label` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserLabelsChange"></a>
-
-### UserLabelsChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `added` | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
-| `removed` | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-UserLicenseChange"></a>
-
-### UserLicenseChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `added` | [bool](#bool) |  |  |
-| `licenses` | [License](#resources-users-License) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-UserMugshotChange"></a>
-
-### UserMugshotChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `new` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserNameChange"></a>
-
-### UserNameChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `old` | [string](#string) |  |  |
-| `new` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserTrafficInfractionPointsChange"></a>
-
-### UserTrafficInfractionPointsChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `old` | [uint32](#uint32) |  |  |
-| `new` | [uint32](#uint32) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserWantedChange"></a>
-
-### UserWantedChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `wanted` | [bool](#bool) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-users-UserActivityType"></a>
-
-### UserActivityType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `USER_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
-| `USER_ACTIVITY_TYPE_NAME` | 4 |  |
-| `USER_ACTIVITY_TYPE_LICENSES` | 5 |  |
-| `USER_ACTIVITY_TYPE_WANTED` | 6 |  |
-| `USER_ACTIVITY_TYPE_TRAFFIC_INFRACTION_POINTS` | 7 |  |
-| `USER_ACTIVITY_TYPE_MUGSHOT` | 8 |  |
-| `USER_ACTIVITY_TYPE_LABELS` | 9 |  |
-| `USER_ACTIVITY_TYPE_JOB` | 10 |  |
-| `USER_ACTIVITY_TYPE_DOCUMENT` | 11 |  |
-| `USER_ACTIVITY_TYPE_JAIL` | 12 |  |
-| `USER_ACTIVITY_TYPE_FINE` | 13 |  |
-
 
  <!-- end enums -->
 
@@ -6278,7 +5489,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `jobs` | [CalendarJobAccess](#resources-calendar-CalendarJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [CalendarUserAccess](#resources-calendar-CalendarUserAccess) | repeated | @gotags: alias:"user_access" |
+| `users` | [CalendarUserAccess](#resources-calendar-CalendarUserAccess) | repeated | @gotags: alias:"citizen_access" |
 
 
 
@@ -6570,7 +5781,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `jobs` | [PageJobAccess](#resources-internet-PageJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [PageUserAccess](#resources-internet-PageUserAccess) | repeated | @gotags: alias:"user_access" |
+| `users` | [PageUserAccess](#resources-internet-PageUserAccess) | repeated | @gotags: alias:"citizen_access" |
 
 
 
@@ -6926,7 +6137,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `jobs` | [JobAccess](#resources-mailer-JobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [UserAccess](#resources-mailer-UserAccess) | repeated | @gotags: alias:"user_access" |
+| `users` | [UserAccess](#resources-mailer-UserAccess) | repeated | @gotags: alias:"citizen_access" |
 | `qualifications` | [QualificationAccess](#resources-mailer-QualificationAccess) | repeated | @gotags: alias:"qualification_access" |
 
 
@@ -7359,7 +6570,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `jobs` | [PageJobAccess](#resources-wiki-PageJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [PageUserAccess](#resources-wiki-PageUserAccess) | repeated | @gotags: alias:"user_access" |
+| `users` | [PageUserAccess](#resources-wiki-PageUserAccess) | repeated | @gotags: alias:"citizen_access" |
 
 
 
@@ -7680,6 +6891,25 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+<a name="resources-sync-CitizenLocations"></a>
+
+### CitizenLocations
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `identifier` | [string](#string) |  |  |
+| `job` | [string](#string) |  |  |
+| `coords` | [resources.livemap.Coords](#resources-livemap-Coords) |  |  |
+| `hidden` | [bool](#bool) |  |  |
+| `remove` | [bool](#bool) |  |  |
+
+
+
+
+
+
 <a name="resources-sync-DataJobs"></a>
 
 ### DataJobs
@@ -7688,7 +6918,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.users.Job](#resources-users-Job) | repeated |  |
+| `jobs` | [resources.jobs.Job](#resources-jobs-Job) | repeated |  |
 
 
 
@@ -7733,7 +6963,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `users` | [UserLocation](#resources-sync-UserLocation) | repeated |  |
+| `users` | [CitizenLocations](#resources-sync-CitizenLocations) | repeated |  |
 | `clear_all` | [bool](#bool) | optional |  |
 
 
@@ -7800,25 +7030,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-
-<a name="resources-sync-UserLocation"></a>
-
-### UserLocation
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `identifier` | [string](#string) |  |  |
-| `job` | [string](#string) |  |  |
-| `coords` | [resources.livemap.Coords](#resources-livemap-Coords) |  |  |
-| `hidden` | [bool](#bool) |  |  |
-| `remove` | [bool](#bool) |  |  |
-
-
-
-
-
  <!-- end messages -->
 
  <!-- end enums -->
@@ -7836,16 +7047,16 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources-sync-JobsUserProps"></a>
+<a name="resources-sync-ColleagueProps"></a>
 
-### JobsUserProps
+### ColleagueProps
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `reason` | [string](#string) | optional |  |
-| `props` | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) |  |  |
+| `props` | [resources.jobs.ColleagueProps](#resources-jobs-ColleagueProps) |  |  |
 
 
 
@@ -7923,6 +7134,801 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/activity.proto
+
+
+
+<a name="resources-users-CitizenDocumentRelation"></a>
+
+### CitizenDocumentRelation
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [bool](#bool) |  |  |
+| `document_id` | [uint64](#uint64) |  |  |
+| `relation` | [int32](#int32) |  | resources.documents.DocRelation enum |
+
+
+
+
+
+
+<a name="resources-users-FineChange"></a>
+
+### FineChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `removed` | [bool](#bool) |  |  |
+| `amount` | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="resources-users-JailChange"></a>
+
+### JailChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `seconds` | [int32](#int32) |  |  |
+| `admin` | [bool](#bool) |  |  |
+| `location` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-JobChange"></a>
+
+### JobChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) | optional |  |
+| `job_label` | [string](#string) | optional |  |
+| `grade` | [int32](#int32) | optional |  |
+| `grade_label` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-LabelsChange"></a>
+
+### LabelsChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [Label](#resources-users-Label) | repeated |  |
+| `removed` | [Label](#resources-users-Label) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-LicenseChange"></a>
+
+### LicenseChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [bool](#bool) |  |  |
+| `licenses` | [License](#resources-users-License) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-MugshotChange"></a>
+
+### MugshotChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `new` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-NameChange"></a>
+
+### NameChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `old` | [string](#string) |  |  |
+| `new` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-TrafficInfractionPointsChange"></a>
+
+### TrafficInfractionPointsChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `old` | [uint32](#uint32) |  |  |
+| `new` | [uint32](#uint32) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserActivity"></a>
+
+### UserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: alias:"user_activity.id" |
+| `type` | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:"user_activity.type" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:"user_activity.created_at" |
+| `source_user_id` | [int32](#int32) | optional | @gotags: alias:"source_user_id" |
+| `source_user` | [UserShort](#resources-users-UserShort) | optional | @gotags: alias:"source_user" |
+| `target_user_id` | [int32](#int32) |  | @gotags: alias:"target_user_id" |
+| `target_user` | [UserShort](#resources-users-UserShort) |  | @gotags: alias:"target_user" |
+| `key` | [string](#string) |  | @sanitize
+
+@gotags: alias:"user_activity.key" |
+| `reason` | [string](#string) |  | @sanitize
+
+@gotags: alias:"user_activity.reason" |
+| `data` | [UserActivityData](#resources-users-UserActivityData) | optional | @gotags: alias:"user_activity.data" |
+| `old_value` | [string](#string) |  | @gotags: alias:"user_activity.old_value" |
+| `new_value` | [string](#string) |  | @gotags: alias:"user_activity.new_value" |
+
+
+
+
+
+
+<a name="resources-users-UserActivityData"></a>
+
+### UserActivityData
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name_change` | [NameChange](#resources-users-NameChange) |  |  |
+| `licenses_change` | [LicenseChange](#resources-users-LicenseChange) |  |  |
+| `wanted_change` | [WantedChange](#resources-users-WantedChange) |  | User Props |
+| `traffic_infraction_points_change` | [TrafficInfractionPointsChange](#resources-users-TrafficInfractionPointsChange) |  |  |
+| `mugshot_change` | [MugshotChange](#resources-users-MugshotChange) |  |  |
+| `labels_change` | [LabelsChange](#resources-users-LabelsChange) |  |  |
+| `job_change` | [JobChange](#resources-users-JobChange) |  |  |
+| `document_relation` | [CitizenDocumentRelation](#resources-users-CitizenDocumentRelation) |  | Docstore related |
+| `jail_change` | [JailChange](#resources-users-JailChange) |  | "Plugin" activities |
+| `fine_change` | [FineChange](#resources-users-FineChange) |  |  |
+
+
+
+
+
+
+<a name="resources-users-WantedChange"></a>
+
+### WantedChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `wanted` | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-users-UserActivityType"></a>
+
+### UserActivityType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `USER_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
+| `USER_ACTIVITY_TYPE_NAME` | 4 |  |
+| `USER_ACTIVITY_TYPE_LICENSES` | 5 |  |
+| `USER_ACTIVITY_TYPE_WANTED` | 6 |  |
+| `USER_ACTIVITY_TYPE_TRAFFIC_INFRACTION_POINTS` | 7 |  |
+| `USER_ACTIVITY_TYPE_MUGSHOT` | 8 |  |
+| `USER_ACTIVITY_TYPE_LABELS` | 9 |  |
+| `USER_ACTIVITY_TYPE_JOB` | 10 |  |
+| `USER_ACTIVITY_TYPE_DOCUMENT` | 11 |  |
+| `USER_ACTIVITY_TYPE_JAIL` | 12 |  |
+| `USER_ACTIVITY_TYPE_FINE` | 13 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_labels-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/labels.proto
+
+
+
+<a name="resources-users-Label"></a>
+
+### Label
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `job` | [string](#string) | optional |  |
+| `name` | [string](#string) |  |  |
+| `color` | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-users-Labels"></a>
+
+### Labels
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [Label](#resources-users-Label) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_licenses-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/licenses.proto
+
+
+
+<a name="resources-users-CitizensLicenses"></a>
+
+### CitizensLicenses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `licenses` | [License](#resources-users-License) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-License"></a>
+
+### License
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_props-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/props.proto
+
+
+
+<a name="resources-users-UserProps"></a>
+
+### UserProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `wanted` | [bool](#bool) | optional |  |
+| `job_name` | [string](#string) | optional | @gotags: alias:"job" |
+| `job` | [resources.jobs.Job](#resources-jobs-Job) | optional |  |
+| `job_grade_number` | [int32](#int32) | optional | @gotags: alias:"job_grade" |
+| `job_grade` | [resources.jobs.JobGrade](#resources-jobs-JobGrade) | optional |  |
+| `traffic_infraction_points` | [uint32](#uint32) | optional |  |
+| `traffic_infraction_points_updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `open_fines` | [int64](#int64) | optional |  |
+| `blood_type` | [string](#string) | optional |  |
+| `mug_shot` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `labels` | [Labels](#resources-users-Labels) | optional |  |
+| `email` | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_users-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/users.proto
+
+
+
+<a name="resources-users-User"></a>
+
+### User
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
+| `identifier` | [string](#string) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `firstname` | [string](#string) |  |  |
+| `lastname` | [string](#string) |  |  |
+| `dateofbirth` | [string](#string) |  |  |
+| `sex` | [string](#string) | optional |  |
+| `height` | [string](#string) | optional |  |
+| `phone_number` | [string](#string) | optional |  |
+| `visum` | [int32](#int32) | optional |  |
+| `playtime` | [int32](#int32) | optional |  |
+| `props` | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
+| `licenses` | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
+| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `group` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserShort"></a>
+
+### UserShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
+| `identifier` | [string](#string) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `firstname` | [string](#string) |  |  |
+| `lastname` | [string](#string) |  |  |
+| `dateofbirth` | [string](#string) |  |  |
+| `phone_number` | [string](#string) | optional |  |
+| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_settings_banner-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/settings/banner.proto
+
+
+
+<a name="resources-settings-BannerMessage"></a>
+
+### BannerMessage
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [string](#string) |  | @sanitize: method=StripTags |
+| `title` | [string](#string) |  | @sanitize: method |
+| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_settings_config-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/settings/config.proto
+
+
+
+<a name="resources-settings-AppConfig"></a>
+
+### AppConfig
+@dbscanner: json,partial
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) | optional |  |
+| `default_locale` | [string](#string) |  |  |
+| `auth` | [Auth](#resources-settings-Auth) |  |  |
+| `perms` | [Perms](#resources-settings-Perms) |  |  |
+| `website` | [Website](#resources-settings-Website) |  |  |
+| `job_info` | [JobInfo](#resources-settings-JobInfo) |  |  |
+| `user_tracker` | [UserTracker](#resources-settings-UserTracker) |  |  |
+| `discord` | [Discord](#resources-settings-Discord) |  |  |
+| `system` | [System](#resources-settings-System) |  |  |
+
+
+
+
+
+
+<a name="resources-settings-Auth"></a>
+
+### Auth
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signup_enabled` | [bool](#bool) |  |  |
+| `last_char_lock` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-settings-Discord"></a>
+
+### Discord
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `sync_interval` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| `invite_url` | [string](#string) | optional | @sanitize: method=StripTags |
+| `ignored_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `bot_presence` | [DiscordBotPresence](#resources-settings-DiscordBotPresence) | optional |  |
+
+
+
+
+
+
+<a name="resources-settings-DiscordBotPresence"></a>
+
+### DiscordBotPresence
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [DiscordBotPresenceType](#resources-settings-DiscordBotPresenceType) |  |  |
+| `status` | [string](#string) | optional | @sanitize: method=StripTags |
+| `url` | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-settings-JobInfo"></a>
+
+### JobInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unemployed_job` | [UnemployedJob](#resources-settings-UnemployedJob) |  |  |
+| `public_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `hidden_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-settings-Links"></a>
+
+### Links
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `privacy_policy` | [string](#string) | optional | @sanitize: method=StripTags |
+| `imprint` | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-settings-Perm"></a>
+
+### Perm
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [string](#string) |  | @sanitize: method=StripTags |
+| `name` | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-settings-Perms"></a>
+
+### Perms
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `default` | [Perm](#resources-settings-Perm) | repeated |  |
+
+
+
+
+
+
+<a name="resources-settings-System"></a>
+
+### System
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `banner_message_enabled` | [bool](#bool) |  |  |
+| `banner_message` | [BannerMessage](#resources-settings-BannerMessage) |  |  |
+
+
+
+
+
+
+<a name="resources-settings-UnemployedJob"></a>
+
+### UnemployedJob
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `grade` | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-settings-UserTracker"></a>
+
+### UserTracker
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `refresh_time` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| `db_refresh_time` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+
+
+
+
+
+
+<a name="resources-settings-Website"></a>
+
+### Website
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `links` | [Links](#resources-settings-Links) |  |  |
+| `stats_page` | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-settings-DiscordBotPresenceType"></a>
+
+### DiscordBotPresenceType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED` | 0 |  |
+| `DISCORD_BOT_PRESENCE_TYPE_GAME` | 1 |  |
+| `DISCORD_BOT_PRESENCE_TYPE_LISTENING` | 2 |  |
+| `DISCORD_BOT_PRESENCE_TYPE_STREAMING` | 3 |  |
+| `DISCORD_BOT_PRESENCE_TYPE_WATCH` | 4 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_audit_audit-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/audit/audit.proto
+
+
+
+<a name="resources-audit-AuditEntry"></a>
+
+### AuditEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `user_id` | [int32](#int32) |  | @gotags: alias:"user_id" |
+| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| `user_job` | [string](#string) |  | @gotags: alias:"user_job" |
+| `target_user_id` | [int32](#int32) | optional | @gotags: alias:"target_user_id" |
+| `target_user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| `target_user_job` | [string](#string) | optional | @gotags: alias:"target_user_job" |
+| `service` | [string](#string) |  | @gotags: alias:"service" |
+| `method` | [string](#string) |  | @gotags: alias:"method" |
+| `state` | [EventType](#resources-audit-EventType) |  | @gotags: alias:"state" |
+| `data` | [string](#string) | optional | @gotags: alias:"data" |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-audit-EventType"></a>
+
+### EventType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `EVENT_TYPE_UNSPECIFIED` | 0 |  |
+| `EVENT_TYPE_ERRORED` | 1 |  |
+| `EVENT_TYPE_VIEWED` | 2 |  |
+| `EVENT_TYPE_CREATED` | 3 |  |
+| `EVENT_TYPE_UPDATED` | 4 |  |
+| `EVENT_TYPE_DELETED` | 5 |  |
+
 
  <!-- end enums -->
 
@@ -8021,7 +8027,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----- | ---- | ----- | ----------- |
 | `expires` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `permissions` | [string](#string) | repeated |  |
-| `job_props` | [resources.users.JobProps](#resources-users-JobProps) |  |  |
+| `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
 | `char` | [resources.users.User](#resources-users-User) |  | @gotags: alias:"user" |
 | `username` | [string](#string) |  |  |
 
@@ -8228,9 +8234,9 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-<a name="services-auth-SetSuperUserModeRequest"></a>
+<a name="services-auth-SetSuperuserModeRequest"></a>
 
-### SetSuperUserModeRequest
+### SetSuperuserModeRequest
 
 
 
@@ -8244,9 +8250,9 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-<a name="services-auth-SetSuperUserModeResponse"></a>
+<a name="services-auth-SetSuperuserModeResponse"></a>
 
-### SetSuperUserModeResponse
+### SetSuperuserModeResponse
 
 
 
@@ -8254,7 +8260,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----- | ---- | ----- | ----------- |
 | `expires` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `permissions` | [string](#string) | repeated |  |
-| `job_props` | [resources.users.JobProps](#resources-users-JobProps) | optional |  |
+| `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) | optional |  |
 | `char` | [resources.users.User](#resources-users-User) |  | @gotags: alias:"user" |
 
 
@@ -8285,7 +8291,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ChooseCharacter` | [ChooseCharacterRequest](#services-auth-ChooseCharacterRequest) | [ChooseCharacterResponse](#services-auth-ChooseCharacterResponse) | @perm |
 | `GetAccountInfo` | [GetAccountInfoRequest](#services-auth-GetAccountInfoRequest) | [GetAccountInfoResponse](#services-auth-GetAccountInfoResponse) |  |
 | `DeleteOAuth2Connection` | [DeleteOAuth2ConnectionRequest](#services-auth-DeleteOAuth2ConnectionRequest) | [DeleteOAuth2ConnectionResponse](#services-auth-DeleteOAuth2ConnectionResponse) |  |
-| `SetSuperUserMode` | [SetSuperUserModeRequest](#services-auth-SetSuperUserModeRequest) | [SetSuperUserModeResponse](#services-auth-SetSuperUserModeResponse) |  |
+| `SetSuperuserMode` | [SetSuperuserModeRequest](#services-auth-SetSuperuserModeRequest) | [SetSuperuserModeResponse](#services-auth-SetSuperuserModeResponse) |  |
 
  <!-- end services -->
 
@@ -8933,231 +8939,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services_citizenstore_citizenstore-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/citizenstore/citizenstore.proto
-
-
-
-<a name="services-citizenstore-GetUserRequest"></a>
-
-### GetUserRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `info_only` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-citizenstore-GetUserResponse"></a>
-
-### GetUserResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user` | [resources.users.User](#resources-users-User) |  |  |
-
-
-
-
-
-
-<a name="services-citizenstore-ListCitizensRequest"></a>
-
-### ListCitizensRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `search` | [string](#string) |  | Search params |
-| `wanted` | [bool](#bool) | optional |  |
-| `phone_number` | [string](#string) | optional |  |
-| `traffic_infraction_points` | [uint32](#uint32) | optional |  |
-| `dateofbirth` | [string](#string) | optional |  |
-| `open_fines` | [uint64](#uint64) | optional |  |
-
-
-
-
-
-
-<a name="services-citizenstore-ListCitizensResponse"></a>
-
-### ListCitizensResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `users` | [resources.users.User](#resources-users-User) | repeated |  |
-
-
-
-
-
-
-<a name="services-citizenstore-ListUserActivityRequest"></a>
-
-### ListUserActivityRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `user_id` | [int32](#int32) |  | Search params |
-| `types` | [resources.users.UserActivityType](#resources-users-UserActivityType) | repeated |  |
-
-
-
-
-
-
-<a name="services-citizenstore-ListUserActivityResponse"></a>
-
-### ListUserActivityResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `activity` | [resources.users.UserActivity](#resources-users-UserActivity) | repeated |  |
-
-
-
-
-
-
-<a name="services-citizenstore-ManageCitizenLabelsRequest"></a>
-
-### ManageCitizenLabelsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.users.CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
-
-
-
-
-
-
-<a name="services-citizenstore-ManageCitizenLabelsResponse"></a>
-
-### ManageCitizenLabelsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.users.CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
-
-
-
-
-
-
-<a name="services-citizenstore-SetProfilePictureRequest"></a>
-
-### SetProfilePictureRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) |  |  |
-
-
-
-
-
-
-<a name="services-citizenstore-SetProfilePictureResponse"></a>
-
-### SetProfilePictureResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) |  |  |
-
-
-
-
-
-
-<a name="services-citizenstore-SetUserPropsRequest"></a>
-
-### SetUserPropsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `props` | [resources.users.UserProps](#resources-users-UserProps) |  |  |
-| `reason` | [string](#string) |  | @sanitize |
-
-
-
-
-
-
-<a name="services-citizenstore-SetUserPropsResponse"></a>
-
-### SetUserPropsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `props` | [resources.users.UserProps](#resources-users-UserProps) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-citizenstore-CitizenStoreService"></a>
-
-### CitizenStoreService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListCitizens` | [ListCitizensRequest](#services-citizenstore-ListCitizensRequest) | [ListCitizensResponse](#services-citizenstore-ListCitizensResponse) | @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"} |
-| `GetUser` | [GetUserRequest](#services-citizenstore-GetUserRequest) | [GetUserResponse](#services-citizenstore-GetUserResponse) | @perm: Attrs=Jobs/JobGradeList |
-| `ListUserActivity` | [ListUserActivityRequest](#services-citizenstore-ListUserActivityRequest) | [ListUserActivityResponse](#services-citizenstore-ListUserActivityResponse) | @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"} |
-| `SetUserProps` | [SetUserPropsRequest](#services-citizenstore-SetUserPropsRequest) | [SetUserPropsResponse](#services-citizenstore-SetUserPropsResponse) | @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"} |
-| `SetProfilePicture` | [SetProfilePictureRequest](#services-citizenstore-SetProfilePictureRequest) | [SetProfilePictureResponse](#services-citizenstore-SetProfilePictureResponse) | @perm: Name=Any |
-| `ManageCitizenLabels` | [ManageCitizenLabelsRequest](#services-citizenstore-ManageCitizenLabelsRequest) | [ManageCitizenLabelsResponse](#services-citizenstore-ManageCitizenLabelsResponse) | @perm |
-
- <!-- end services -->
-
-
-
 <a name="services_completor_completor-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -9188,7 +8969,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `labels` | [resources.users.CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
+| `labels` | [resources.users.Label](#resources-users-Label) | repeated |  |
 
 
 
@@ -9283,7 +9064,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.users.Job](#resources-users-Job) | repeated |  |
+| `jobs` | [resources.jobs.Job](#resources-jobs-Job) | repeated |  |
 
 
 
@@ -9333,1211 +9114,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `CompleteDocumentCategories` | [CompleteDocumentCategoriesRequest](#services-completor-CompleteDocumentCategoriesRequest) | [CompleteDocumentCategoriesResponse](#services-completor-CompleteDocumentCategoriesResponse) | @perm: Attrs=Jobs/JobList |
 | `ListLawBooks` | [ListLawBooksRequest](#services-completor-ListLawBooksRequest) | [ListLawBooksResponse](#services-completor-ListLawBooksResponse) | @perm: Name=Any |
 | `CompleteCitizenLabels` | [CompleteCitizenLabelsRequest](#services-completor-CompleteCitizenLabelsRequest) | [CompleteCitizenLabelsResponse](#services-completor-CompleteCitizenLabelsResponse) | @perm: Attrs=Jobs/JobList |
-
- <!-- end services -->
-
-
-
-<a name="services_dmv_vehicles-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/dmv/vehicles.proto
-
-
-
-<a name="services-dmv-ListVehiclesRequest"></a>
-
-### ListVehiclesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `license_plate` | [string](#string) | optional | Search params |
-| `model` | [string](#string) | optional |  |
-| `user_id` | [int32](#int32) | optional |  |
-| `job` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="services-dmv-ListVehiclesResponse"></a>
-
-### ListVehiclesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `vehicles` | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-dmv-DMVService"></a>
-
-### DMVService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListVehicles` | [ListVehiclesRequest](#services-dmv-ListVehiclesRequest) | [ListVehiclesResponse](#services-dmv-ListVehiclesResponse) | @perm |
-
- <!-- end services -->
-
-
-
-<a name="services_docstore_docstore-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/docstore/docstore.proto
-
-
-
-<a name="services-docstore-AddDocumentReferenceRequest"></a>
-
-### AddDocumentReferenceRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `reference` | [resources.documents.DocumentReference](#resources-documents-DocumentReference) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-AddDocumentReferenceResponse"></a>
-
-### AddDocumentReferenceResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-AddDocumentRelationRequest"></a>
-
-### AddDocumentRelationRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `relation` | [resources.documents.DocumentRelation](#resources-documents-DocumentRelation) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-AddDocumentRelationResponse"></a>
-
-### AddDocumentRelationResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-ChangeDocumentOwnerRequest"></a>
-
-### ChangeDocumentOwnerRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `new_user_id` | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-docstore-ChangeDocumentOwnerResponse"></a>
-
-### ChangeDocumentOwnerResponse
-
-
-
-
-
-
-
-<a name="services-docstore-CreateDocumentReqRequest"></a>
-
-### CreateDocumentReqRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `request_type` | [resources.documents.DocActivityType](#resources-documents-DocActivityType) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
-| `data` | [resources.documents.DocActivityData](#resources-documents-DocActivityData) | optional |  |
-
-
-
-
-
-
-<a name="services-docstore-CreateDocumentReqResponse"></a>
-
-### CreateDocumentReqResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `request` | [resources.documents.DocRequest](#resources-documents-DocRequest) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-CreateDocumentRequest"></a>
-
-### CreateDocumentRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category_id` | [uint64](#uint64) | optional | @gotags: alias:"category_id" |
-| `title` | [string](#string) |  | @sanitize: method=StripTags
-
-@gotags: alias:"title" |
-| `content` | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
-| `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
-| `data` | [string](#string) | optional | @gotags: alias:"data" |
-| `state` | [string](#string) |  | @sanitize
-
-@gotags: alias:"state" |
-| `closed` | [bool](#bool) |  | @gotags: alias:"closed" |
-| `public` | [bool](#bool) |  | @gotags: alias:"public" |
-| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) | optional |  |
-| `template_id` | [uint64](#uint64) | optional |  |
-
-
-
-
-
-
-<a name="services-docstore-CreateDocumentResponse"></a>
-
-### CreateDocumentResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-
-
-
-
-
-
-<a name="services-docstore-CreateOrUpdateCategoryRequest"></a>
-
-### CreateOrUpdateCategoryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category` | [resources.documents.Category](#resources-documents-Category) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-CreateOrUpdateCategoryResponse"></a>
-
-### CreateOrUpdateCategoryResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `category` | [resources.documents.Category](#resources-documents-Category) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-CreateTemplateRequest"></a>
-
-### CreateTemplateRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.documents.Template](#resources-documents-Template) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-CreateTemplateResponse"></a>
-
-### CreateTemplateResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-DeleteCategoryRequest"></a>
-
-### DeleteCategoryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-DeleteCategoryResponse"></a>
-
-### DeleteCategoryResponse
-
-
-
-
-
-
-
-<a name="services-docstore-DeleteCommentRequest"></a>
-
-### DeleteCommentRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-DeleteCommentResponse"></a>
-
-### DeleteCommentResponse
-
-
-
-
-
-
-
-<a name="services-docstore-DeleteDocumentReqRequest"></a>
-
-### DeleteDocumentReqRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `request_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-DeleteDocumentReqResponse"></a>
-
-### DeleteDocumentReqResponse
-
-
-
-
-
-
-
-<a name="services-docstore-DeleteDocumentRequest"></a>
-
-### DeleteDocumentRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `reason` | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="services-docstore-DeleteDocumentResponse"></a>
-
-### DeleteDocumentResponse
-
-
-
-
-
-
-
-<a name="services-docstore-DeleteTemplateRequest"></a>
-
-### DeleteTemplateRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-DeleteTemplateResponse"></a>
-
-### DeleteTemplateResponse
-
-
-
-
-
-
-
-<a name="services-docstore-EditCommentRequest"></a>
-
-### EditCommentRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment` | [resources.documents.Comment](#resources-documents-Comment) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-EditCommentResponse"></a>
-
-### EditCommentResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment` | [resources.documents.Comment](#resources-documents-Comment) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-GetCommentsRequest"></a>
-
-### GetCommentsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-GetCommentsResponse"></a>
-
-### GetCommentsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `comments` | [resources.documents.Comment](#resources-documents-Comment) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-GetDocumentAccessRequest"></a>
-
-### GetDocumentAccessRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-GetDocumentAccessResponse"></a>
-
-### GetDocumentAccessResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-GetDocumentReferencesRequest"></a>
-
-### GetDocumentReferencesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-GetDocumentReferencesResponse"></a>
-
-### GetDocumentReferencesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `references` | [resources.documents.DocumentReference](#resources-documents-DocumentReference) | repeated | @gotags: alias:"reference" |
-
-
-
-
-
-
-<a name="services-docstore-GetDocumentRelationsRequest"></a>
-
-### GetDocumentRelationsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-GetDocumentRelationsResponse"></a>
-
-### GetDocumentRelationsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `relations` | [resources.documents.DocumentRelation](#resources-documents-DocumentRelation) | repeated | @gotags: alias:"relation" |
-
-
-
-
-
-
-<a name="services-docstore-GetDocumentRequest"></a>
-
-### GetDocumentRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `info_only` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-docstore-GetDocumentResponse"></a>
-
-### GetDocumentResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document` | [resources.documents.Document](#resources-documents-Document) |  |  |
-| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-GetTemplateRequest"></a>
-
-### GetTemplateRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template_id` | [uint64](#uint64) |  |  |
-| `data` | [resources.documents.TemplateData](#resources-documents-TemplateData) | optional |  |
-| `render` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-docstore-GetTemplateResponse"></a>
-
-### GetTemplateResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.documents.Template](#resources-documents-Template) |  |  |
-| `rendered` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-ListCategoriesRequest"></a>
-
-### ListCategoriesRequest
-
-
-
-
-
-
-
-<a name="services-docstore-ListCategoriesResponse"></a>
-
-### ListCategoriesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `categories` | [resources.documents.Category](#resources-documents-Category) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-ListDocumentActivityRequest"></a>
-
-### ListDocumentActivityRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
-| `activity_types` | [resources.documents.DocActivityType](#resources-documents-DocActivityType) | repeated | Search params |
-
-
-
-
-
-
-<a name="services-docstore-ListDocumentActivityResponse"></a>
-
-### ListDocumentActivityResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `activity` | [resources.documents.DocActivity](#resources-documents-DocActivity) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-ListDocumentPinsRequest"></a>
-
-### ListDocumentPinsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-ListDocumentPinsResponse"></a>
-
-### ListDocumentPinsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `documents` | [resources.documents.DocumentShort](#resources-documents-DocumentShort) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-ListDocumentReqsRequest"></a>
-
-### ListDocumentReqsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-ListDocumentReqsResponse"></a>
-
-### ListDocumentReqsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `requests` | [resources.documents.DocRequest](#resources-documents-DocRequest) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-ListDocumentsRequest"></a>
-
-### ListDocumentsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `search` | [string](#string) | optional | Search params |
-| `category_ids` | [uint64](#uint64) | repeated |  |
-| `creator_ids` | [int32](#int32) | repeated |  |
-| `from` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `to` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `closed` | [bool](#bool) | optional |  |
-| `document_ids` | [uint64](#uint64) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-ListDocumentsResponse"></a>
-
-### ListDocumentsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `documents` | [resources.documents.DocumentShort](#resources-documents-DocumentShort) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-ListTemplatesRequest"></a>
-
-### ListTemplatesRequest
-
-
-
-
-
-
-
-<a name="services-docstore-ListTemplatesResponse"></a>
-
-### ListTemplatesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `templates` | [resources.documents.TemplateShort](#resources-documents-TemplateShort) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-ListUserDocumentsRequest"></a>
-
-### ListUserDocumentsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `user_id` | [int32](#int32) |  |  |
-| `relations` | [resources.documents.DocRelation](#resources-documents-DocRelation) | repeated |  |
-| `closed` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-docstore-ListUserDocumentsResponse"></a>
-
-### ListUserDocumentsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `relations` | [resources.documents.DocumentRelation](#resources-documents-DocumentRelation) | repeated |  |
-
-
-
-
-
-
-<a name="services-docstore-PostCommentRequest"></a>
-
-### PostCommentRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment` | [resources.documents.Comment](#resources-documents-Comment) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-PostCommentResponse"></a>
-
-### PostCommentResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `comment` | [resources.documents.Comment](#resources-documents-Comment) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-RemoveDocumentReferenceRequest"></a>
-
-### RemoveDocumentReferenceRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-RemoveDocumentReferenceResponse"></a>
-
-### RemoveDocumentReferenceResponse
-
-
-
-
-
-
-
-<a name="services-docstore-RemoveDocumentRelationRequest"></a>
-
-### RemoveDocumentRelationRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-RemoveDocumentRelationResponse"></a>
-
-### RemoveDocumentRelationResponse
-
-
-
-
-
-
-
-<a name="services-docstore-SetDocumentAccessRequest"></a>
-
-### SetDocumentAccessRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-SetDocumentAccessResponse"></a>
-
-### SetDocumentAccessResponse
-
-
-
-
-
-
-
-<a name="services-docstore-SetDocumentReminderRequest"></a>
-
-### SetDocumentReminderRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `reminder_time` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `message` | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="services-docstore-SetDocumentReminderResponse"></a>
-
-### SetDocumentReminderResponse
-
-
-
-
-
-
-
-<a name="services-docstore-ToggleDocumentPinRequest"></a>
-
-### ToggleDocumentPinRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `state` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-ToggleDocumentPinResponse"></a>
-
-### ToggleDocumentPinResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `state` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-ToggleDocumentRequest"></a>
-
-### ToggleDocumentRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `closed` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-ToggleDocumentResponse"></a>
-
-### ToggleDocumentResponse
-
-
-
-
-
-
-
-<a name="services-docstore-UpdateDocumentReqRequest"></a>
-
-### UpdateDocumentReqRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  |  |
-| `request_id` | [uint64](#uint64) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
-| `data` | [resources.documents.DocActivityData](#resources-documents-DocActivityData) | optional |  |
-| `accepted` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-UpdateDocumentReqResponse"></a>
-
-### UpdateDocumentReqResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `request` | [resources.documents.DocRequest](#resources-documents-DocRequest) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-UpdateDocumentRequest"></a>
-
-### UpdateDocumentRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `category_id` | [uint64](#uint64) | optional | @gotags: alias:"category_id" |
-| `title` | [string](#string) |  | @sanitize: method=StripTags
-
-@gotags: alias:"title" |
-| `content` | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
-| `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
-| `data` | [string](#string) | optional | @gotags: alias:"data" |
-| `state` | [string](#string) |  | @sanitize
-
-@gotags: alias:"state" |
-| `closed` | [bool](#bool) |  | @gotags: alias:"closed" |
-| `public` | [bool](#bool) |  | @gotags: alias:"public" |
-| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) | optional |  |
-
-
-
-
-
-
-<a name="services-docstore-UpdateDocumentResponse"></a>
-
-### UpdateDocumentResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-
-
-
-
-
-
-<a name="services-docstore-UpdateTemplateRequest"></a>
-
-### UpdateTemplateRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.documents.Template](#resources-documents-Template) |  |  |
-
-
-
-
-
-
-<a name="services-docstore-UpdateTemplateResponse"></a>
-
-### UpdateTemplateResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `template` | [resources.documents.Template](#resources-documents-Template) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-docstore-DocStoreService"></a>
-
-### DocStoreService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListTemplates` | [ListTemplatesRequest](#services-docstore-ListTemplatesRequest) | [ListTemplatesResponse](#services-docstore-ListTemplatesResponse) | @perm |
-| `GetTemplate` | [GetTemplateRequest](#services-docstore-GetTemplateRequest) | [GetTemplateResponse](#services-docstore-GetTemplateResponse) | @perm: Name=ListTemplates |
-| `CreateTemplate` | [CreateTemplateRequest](#services-docstore-CreateTemplateRequest) | [CreateTemplateResponse](#services-docstore-CreateTemplateResponse) | @perm |
-| `UpdateTemplate` | [UpdateTemplateRequest](#services-docstore-UpdateTemplateRequest) | [UpdateTemplateResponse](#services-docstore-UpdateTemplateResponse) | @perm: Name=CreateTemplate |
-| `DeleteTemplate` | [DeleteTemplateRequest](#services-docstore-DeleteTemplateRequest) | [DeleteTemplateResponse](#services-docstore-DeleteTemplateResponse) | @perm |
-| `ListDocuments` | [ListDocumentsRequest](#services-docstore-ListDocumentsRequest) | [ListDocumentsResponse](#services-docstore-ListDocumentsResponse) | @perm |
-| `GetDocument` | [GetDocumentRequest](#services-docstore-GetDocumentRequest) | [GetDocumentResponse](#services-docstore-GetDocumentResponse) | @perm: Name=ListDocuments |
-| `CreateDocument` | [CreateDocumentRequest](#services-docstore-CreateDocumentRequest) | [CreateDocumentResponse](#services-docstore-CreateDocumentResponse) | @perm |
-| `UpdateDocument` | [UpdateDocumentRequest](#services-docstore-UpdateDocumentRequest) | [UpdateDocumentResponse](#services-docstore-UpdateDocumentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `DeleteDocument` | [DeleteDocumentRequest](#services-docstore-DeleteDocumentRequest) | [DeleteDocumentResponse](#services-docstore-DeleteDocumentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `ToggleDocument` | [ToggleDocumentRequest](#services-docstore-ToggleDocumentRequest) | [ToggleDocumentResponse](#services-docstore-ToggleDocumentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `ChangeDocumentOwner` | [ChangeDocumentOwnerRequest](#services-docstore-ChangeDocumentOwnerRequest) | [ChangeDocumentOwnerResponse](#services-docstore-ChangeDocumentOwnerResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `GetDocumentReferences` | [GetDocumentReferencesRequest](#services-docstore-GetDocumentReferencesRequest) | [GetDocumentReferencesResponse](#services-docstore-GetDocumentReferencesResponse) | @perm: Name=ListDocuments |
-| `GetDocumentRelations` | [GetDocumentRelationsRequest](#services-docstore-GetDocumentRelationsRequest) | [GetDocumentRelationsResponse](#services-docstore-GetDocumentRelationsResponse) | @perm: Name=ListDocuments |
-| `AddDocumentReference` | [AddDocumentReferenceRequest](#services-docstore-AddDocumentReferenceRequest) | [AddDocumentReferenceResponse](#services-docstore-AddDocumentReferenceResponse) | @perm |
-| `RemoveDocumentReference` | [RemoveDocumentReferenceRequest](#services-docstore-RemoveDocumentReferenceRequest) | [RemoveDocumentReferenceResponse](#services-docstore-RemoveDocumentReferenceResponse) | @perm: Name=AddDocumentReference |
-| `AddDocumentRelation` | [AddDocumentRelationRequest](#services-docstore-AddDocumentRelationRequest) | [AddDocumentRelationResponse](#services-docstore-AddDocumentRelationResponse) | @perm |
-| `RemoveDocumentRelation` | [RemoveDocumentRelationRequest](#services-docstore-RemoveDocumentRelationRequest) | [RemoveDocumentRelationResponse](#services-docstore-RemoveDocumentRelationResponse) | @perm: Name=AddDocumentRelation |
-| `GetComments` | [GetCommentsRequest](#services-docstore-GetCommentsRequest) | [GetCommentsResponse](#services-docstore-GetCommentsResponse) | @perm: Name=ListDocuments |
-| `PostComment` | [PostCommentRequest](#services-docstore-PostCommentRequest) | [PostCommentResponse](#services-docstore-PostCommentResponse) | @perm: Name=ListDocuments |
-| `EditComment` | [EditCommentRequest](#services-docstore-EditCommentRequest) | [EditCommentResponse](#services-docstore-EditCommentResponse) | @perm: Name=ListDocuments |
-| `DeleteComment` | [DeleteCommentRequest](#services-docstore-DeleteCommentRequest) | [DeleteCommentResponse](#services-docstore-DeleteCommentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `GetDocumentAccess` | [GetDocumentAccessRequest](#services-docstore-GetDocumentAccessRequest) | [GetDocumentAccessResponse](#services-docstore-GetDocumentAccessResponse) | @perm: Name=ListDocuments |
-| `SetDocumentAccess` | [SetDocumentAccessRequest](#services-docstore-SetDocumentAccessRequest) | [SetDocumentAccessResponse](#services-docstore-SetDocumentAccessResponse) | @perm: Name=CreateDocument |
-| `ListDocumentActivity` | [ListDocumentActivityRequest](#services-docstore-ListDocumentActivityRequest) | [ListDocumentActivityResponse](#services-docstore-ListDocumentActivityResponse) | @perm |
-| `ListDocumentReqs` | [ListDocumentReqsRequest](#services-docstore-ListDocumentReqsRequest) | [ListDocumentReqsResponse](#services-docstore-ListDocumentReqsResponse) | @perm |
-| `CreateDocumentReq` | [CreateDocumentReqRequest](#services-docstore-CreateDocumentReqRequest) | [CreateDocumentReqResponse](#services-docstore-CreateDocumentReqResponse) | @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"} |
-| `UpdateDocumentReq` | [UpdateDocumentReqRequest](#services-docstore-UpdateDocumentReqRequest) | [UpdateDocumentReqResponse](#services-docstore-UpdateDocumentReqResponse) | @perm: Name=CreateDocumentReq |
-| `DeleteDocumentReq` | [DeleteDocumentReqRequest](#services-docstore-DeleteDocumentReqRequest) | [DeleteDocumentReqResponse](#services-docstore-DeleteDocumentReqResponse) | @perm |
-| `ListUserDocuments` | [ListUserDocumentsRequest](#services-docstore-ListUserDocumentsRequest) | [ListUserDocumentsResponse](#services-docstore-ListUserDocumentsResponse) | @perm |
-| `ListCategories` | [ListCategoriesRequest](#services-docstore-ListCategoriesRequest) | [ListCategoriesResponse](#services-docstore-ListCategoriesResponse) | @perm |
-| `CreateOrUpdateCategory` | [CreateOrUpdateCategoryRequest](#services-docstore-CreateOrUpdateCategoryRequest) | [CreateOrUpdateCategoryResponse](#services-docstore-CreateOrUpdateCategoryResponse) | @perm |
-| `DeleteCategory` | [DeleteCategoryRequest](#services-docstore-DeleteCategoryRequest) | [DeleteCategoryResponse](#services-docstore-DeleteCategoryResponse) | @perm |
-| `ListDocumentPins` | [ListDocumentPinsRequest](#services-docstore-ListDocumentPinsRequest) | [ListDocumentPinsResponse](#services-docstore-ListDocumentPinsResponse) | @perm: Name=ListDocuments |
-| `ToggleDocumentPin` | [ToggleDocumentPinRequest](#services-docstore-ToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#services-docstore-ToggleDocumentPinResponse) | @perm |
-| `SetDocumentReminder` | [SetDocumentReminderRequest](#services-docstore-SetDocumentReminderRequest) | [SetDocumentReminderResponse](#services-docstore-SetDocumentReminderResponse) | @perm |
 
  <!-- end services -->
 
@@ -10677,9 +9253,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
  <!-- end HasExtensions -->
 
 
-<a name="services-jobs-JobsConductService"></a>
+<a name="services-jobs-ConductService"></a>
 
-### JobsConductService
+### ConductService
 
 
 | Method Name | Request Type | Response Type | Description |
@@ -10852,7 +9428,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | `user_ids` | [int32](#int32) | repeated | Search params |
-| `activity_types` | [resources.jobs.JobsUserActivityType](#resources-jobs-JobsUserActivityType) | repeated |  |
+| `activity_types` | [resources.jobs.ColleagueActivityType](#resources-jobs-ColleagueActivityType) | repeated |  |
 
 
 
@@ -10868,7 +9444,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `activity` | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) | repeated |  |
+| `activity` | [resources.jobs.ColleagueActivity](#resources-jobs-ColleagueActivity) | repeated |  |
 
 
 
@@ -10913,24 +9489,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services-jobs-ManageColleagueLabelsRequest"></a>
+<a name="services-jobs-ManageLabelsRequest"></a>
 
-### ManageColleagueLabelsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `labels` | [resources.jobs.Label](#resources-jobs-Label) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ManageColleagueLabelsResponse"></a>
-
-### ManageColleagueLabelsResponse
+### ManageLabelsRequest
 
 
 
@@ -10943,15 +9504,30 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services-jobs-SetJobsUserPropsRequest"></a>
+<a name="services-jobs-ManageLabelsResponse"></a>
 
-### SetJobsUserPropsRequest
+### ManageLabelsResponse
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `props` | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) |  |  |
+| `labels` | [resources.jobs.Label](#resources-jobs-Label) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-SetColleaguePropsRequest"></a>
+
+### SetColleaguePropsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `props` | [resources.jobs.ColleagueProps](#resources-jobs-ColleagueProps) |  |  |
 | `reason` | [string](#string) |  | @sanitize |
 
 
@@ -10959,15 +9535,15 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services-jobs-SetJobsUserPropsResponse"></a>
+<a name="services-jobs-SetColleaguePropsResponse"></a>
 
-### SetJobsUserPropsResponse
+### SetColleaguePropsResponse
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `props` | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) |  |  |
+| `props` | [resources.jobs.ColleagueProps](#resources-jobs-ColleagueProps) |  |  |
 
 
 
@@ -11021,9 +9597,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetSelf` | [GetSelfRequest](#services-jobs-GetSelfRequest) | [GetSelfResponse](#services-jobs-GetSelfResponse) | @perm: Name=ListColleagues |
 | `GetColleague` | [GetColleagueRequest](#services-jobs-GetColleagueRequest) | [GetColleagueResponse](#services-jobs-GetColleagueResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"} |
 | `ListColleagueActivity` | [ListColleagueActivityRequest](#services-jobs-ListColleagueActivityRequest) | [ListColleagueActivityResponse](#services-jobs-ListColleagueActivityResponse) | @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"} |
-| `SetJobsUserProps` | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"} |
+| `SetColleagueProps` | [SetColleaguePropsRequest](#services-jobs-SetColleaguePropsRequest) | [SetColleaguePropsResponse](#services-jobs-SetColleaguePropsResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"} |
 | `GetColleagueLabels` | [GetColleagueLabelsRequest](#services-jobs-GetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#services-jobs-GetColleagueLabelsResponse) | @perm: Name=GetColleague |
-| `ManageColleagueLabels` | [ManageColleagueLabelsRequest](#services-jobs-ManageColleagueLabelsRequest) | [ManageColleagueLabelsResponse](#services-jobs-ManageColleagueLabelsResponse) | @perm |
+| `ManageLabels` | [ManageLabelsRequest](#services-jobs-ManageLabelsRequest) | [ManageLabelsResponse](#services-jobs-ManageLabelsResponse) | @perm |
 | `GetColleagueLabelsStats` | [GetColleagueLabelsStatsRequest](#services-jobs-GetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#services-jobs-GetColleagueLabelsStatsResponse) | @perm: Name=GetColleague |
 | `GetMOTD` | [GetMOTDRequest](#services-jobs-GetMOTDRequest) | [GetMOTDResponse](#services-jobs-GetMOTDResponse) | @perm: Name=Any |
 | `SetMOTD` | [SetMOTDRequest](#services-jobs-SetMOTDRequest) | [SetMOTDResponse](#services-jobs-SetMOTDResponse) | @perm |
@@ -11113,7 +9689,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `user_mode` | [resources.jobs.TimeclockUserMode](#resources-jobs-TimeclockUserMode) |  | Search params |
+| `user_mode` | [resources.jobs.TimeclockViewMode](#resources-jobs-TimeclockViewMode) |  | Search params |
 | `mode` | [resources.jobs.TimeclockMode](#resources-jobs-TimeclockMode) |  |  |
 | `date` | [resources.common.database.DateRange](#resources-common-database-DateRange) | optional |  |
 | `per_day` | [bool](#bool) |  |  |
@@ -11201,9 +9777,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
  <!-- end HasExtensions -->
 
 
-<a name="services-jobs-JobsTimeclockService"></a>
+<a name="services-jobs-TimeclockService"></a>
 
-### JobsTimeclockService
+### TimeclockService
 
 
 | Method Name | Request Type | Response Type | Description |
@@ -11211,170 +9787,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ListTimeclock` | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{"All"} |
 | `GetTimeclockStats` | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
 | `ListInactiveEmployees` | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
-
- <!-- end services -->
-
-
-
-<a name="services_livemapper_livemap-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/livemapper/livemap.proto
-
-
-
-<a name="services-livemapper-CreateOrUpdateMarkerRequest"></a>
-
-### CreateOrUpdateMarkerRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `marker` | [resources.livemap.MarkerMarker](#resources-livemap-MarkerMarker) |  |  |
-
-
-
-
-
-
-<a name="services-livemapper-CreateOrUpdateMarkerResponse"></a>
-
-### CreateOrUpdateMarkerResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `marker` | [resources.livemap.MarkerMarker](#resources-livemap-MarkerMarker) |  |  |
-
-
-
-
-
-
-<a name="services-livemapper-DeleteMarkerRequest"></a>
-
-### DeleteMarkerRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-livemapper-DeleteMarkerResponse"></a>
-
-### DeleteMarkerResponse
-
-
-
-
-
-
-
-<a name="services-livemapper-JobsList"></a>
-
-### JobsList
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `users` | [resources.users.Job](#resources-users-Job) | repeated |  |
-| `markers` | [resources.users.Job](#resources-users-Job) | repeated |  |
-
-
-
-
-
-
-<a name="services-livemapper-MarkerMarkersUpdates"></a>
-
-### MarkerMarkersUpdates
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `updated` | [resources.livemap.MarkerMarker](#resources-livemap-MarkerMarker) | repeated |  |
-| `deleted` | [uint64](#uint64) | repeated |  |
-| `part` | [int32](#int32) |  |  |
-| `partial` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="services-livemapper-StreamRequest"></a>
-
-### StreamRequest
-
-
-
-
-
-
-
-<a name="services-livemapper-StreamResponse"></a>
-
-### StreamResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [JobsList](#services-livemapper-JobsList) |  |  |
-| `markers` | [MarkerMarkersUpdates](#services-livemapper-MarkerMarkersUpdates) |  |  |
-| `users` | [UserMarkersUpdates](#services-livemapper-UserMarkersUpdates) |  |  |
-| `user_on_duty` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-livemapper-UserMarkersUpdates"></a>
-
-### UserMarkersUpdates
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `updated` | [resources.livemap.UserMarker](#resources-livemap-UserMarker) | repeated |  |
-| `deleted` | [int32](#int32) | repeated |  |
-| `part` | [int32](#int32) |  |  |
-| `partial` | [bool](#bool) |  |  |
-| `clear` | [bool](#bool) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-livemapper-LivemapperService"></a>
-
-### LivemapperService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `Stream` | [StreamRequest](#services-livemapper-StreamRequest) | [StreamResponse](#services-livemapper-StreamResponse) stream | @perm: Attrs=Markers/JobList|Players/JobGradeList |
-| `CreateOrUpdateMarker` | [CreateOrUpdateMarkerRequest](#services-livemapper-CreateOrUpdateMarkerRequest) | [CreateOrUpdateMarkerResponse](#services-livemapper-CreateOrUpdateMarkerResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
-| `DeleteMarker` | [DeleteMarkerRequest](#services-livemapper-DeleteMarkerRequest) | [DeleteMarkerResponse](#services-livemapper-DeleteMarkerResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
 
  <!-- end services -->
 
@@ -12056,1018 +10468,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `TakeExam` | [TakeExamRequest](#services-qualifications-TakeExamRequest) | [TakeExamResponse](#services-qualifications-TakeExamResponse) | @perm: Name=ListQualifications |
 | `SubmitExam` | [SubmitExamRequest](#services-qualifications-SubmitExamRequest) | [SubmitExamResponse](#services-qualifications-SubmitExamResponse) | @perm: Name=ListQualifications |
 | `GetUserExam` | [GetUserExamRequest](#services-qualifications-GetUserExamRequest) | [GetUserExamResponse](#services-qualifications-GetUserExamResponse) | @perm: Name=ListQualifications |
-
- <!-- end services -->
-
-
-
-<a name="services_rector_config-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/rector/config.proto
-
-
-
-<a name="services-rector-GetAppConfigRequest"></a>
-
-### GetAppConfigRequest
-
-
-
-
-
-
-
-<a name="services-rector-GetAppConfigResponse"></a>
-
-### GetAppConfigResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `config` | [resources.rector.AppConfig](#resources-rector-AppConfig) |  |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateAppConfigRequest"></a>
-
-### UpdateAppConfigRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `config` | [resources.rector.AppConfig](#resources-rector-AppConfig) |  |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateAppConfigResponse"></a>
-
-### UpdateAppConfigResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `config` | [resources.rector.AppConfig](#resources-rector-AppConfig) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-rector-RectorConfigService"></a>
-
-### RectorConfigService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `GetAppConfig` | [GetAppConfigRequest](#services-rector-GetAppConfigRequest) | [GetAppConfigResponse](#services-rector-GetAppConfigResponse) | @perm: Name=SuperUser |
-| `UpdateAppConfig` | [UpdateAppConfigRequest](#services-rector-UpdateAppConfigRequest) | [UpdateAppConfigResponse](#services-rector-UpdateAppConfigResponse) | @perm: Name=SuperUser |
-
- <!-- end services -->
-
-
-
-<a name="services_rector_cron-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/rector/cron.proto
-
-
-
-<a name="services-rector-ListCronjobsRequest"></a>
-
-### ListCronjobsRequest
-
-
-
-
-
-
-
-<a name="services-rector-ListCronjobsResponse"></a>
-
-### ListCronjobsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [resources.common.cron.Cronjob](#resources-common-cron-Cronjob) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-rector-RectorCronService"></a>
-
-### RectorCronService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListCronjobs` | [ListCronjobsRequest](#services-rector-ListCronjobsRequest) | [ListCronjobsResponse](#services-rector-ListCronjobsResponse) | @perm: Name=SuperUser |
-
- <!-- end services -->
-
-
-
-<a name="services_rector_filestore-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/rector/filestore.proto
-
-
-
-<a name="services-rector-DeleteFileRequest"></a>
-
-### DeleteFileRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `path` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteFileResponse"></a>
-
-### DeleteFileResponse
-
-
-
-
-
-
-
-<a name="services-rector-ListFilesRequest"></a>
-
-### ListFilesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `path` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-ListFilesResponse"></a>
-
-### ListFilesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `files` | [resources.filestore.FileInfo](#resources-filestore-FileInfo) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-UploadFileRequest"></a>
-
-### UploadFileRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `prefix` | [string](#string) |  |  |
-| `name` | [string](#string) |  |  |
-| `file` | [resources.filestore.File](#resources-filestore-File) |  |  |
-
-
-
-
-
-
-<a name="services-rector-UploadFileResponse"></a>
-
-### UploadFileResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `file` | [resources.filestore.FileInfo](#resources-filestore-FileInfo) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-rector-RectorFilestoreService"></a>
-
-### RectorFilestoreService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListFiles` | [ListFilesRequest](#services-rector-ListFilesRequest) | [ListFilesResponse](#services-rector-ListFilesResponse) | @perm: Name=SuperUser |
-| `UploadFile` | [UploadFileRequest](#services-rector-UploadFileRequest) | [UploadFileResponse](#services-rector-UploadFileResponse) | @perm: Name=SuperUser |
-| `DeleteFile` | [DeleteFileRequest](#services-rector-DeleteFileRequest) | [DeleteFileResponse](#services-rector-DeleteFileResponse) | @perm: Name=SuperUser |
-
- <!-- end services -->
-
-
-
-<a name="services_rector_laws-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/rector/laws.proto
-
-
-
-<a name="services-rector-CreateOrUpdateLawBookRequest"></a>
-
-### CreateOrUpdateLawBookRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `lawBook` | [resources.laws.LawBook](#resources-laws-LawBook) |  |  |
-
-
-
-
-
-
-<a name="services-rector-CreateOrUpdateLawBookResponse"></a>
-
-### CreateOrUpdateLawBookResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `lawBook` | [resources.laws.LawBook](#resources-laws-LawBook) |  |  |
-
-
-
-
-
-
-<a name="services-rector-CreateOrUpdateLawRequest"></a>
-
-### CreateOrUpdateLawRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `law` | [resources.laws.Law](#resources-laws-Law) |  |  |
-
-
-
-
-
-
-<a name="services-rector-CreateOrUpdateLawResponse"></a>
-
-### CreateOrUpdateLawResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `law` | [resources.laws.Law](#resources-laws-Law) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteLawBookRequest"></a>
-
-### DeleteLawBookRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteLawBookResponse"></a>
-
-### DeleteLawBookResponse
-
-
-
-
-
-
-
-<a name="services-rector-DeleteLawRequest"></a>
-
-### DeleteLawRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteLawResponse"></a>
-
-### DeleteLawResponse
-
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-rector-RectorLawsService"></a>
-
-### RectorLawsService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#services-rector-CreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#services-rector-CreateOrUpdateLawBookResponse) | @perm |
-| `DeleteLawBook` | [DeleteLawBookRequest](#services-rector-DeleteLawBookRequest) | [DeleteLawBookResponse](#services-rector-DeleteLawBookResponse) | @perm |
-| `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#services-rector-CreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#services-rector-CreateOrUpdateLawResponse) | @perm: Name=CreateOrUpdateLawBook |
-| `DeleteLaw` | [DeleteLawRequest](#services-rector-DeleteLawRequest) | [DeleteLawResponse](#services-rector-DeleteLawResponse) | @perm: Name=DeleteLawBook |
-
- <!-- end services -->
-
-
-
-<a name="services_rector_accounts-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/rector/accounts.proto
-
-
-
-<a name="services-rector-DeleteAccountRequest"></a>
-
-### DeleteAccountRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteAccountResponse"></a>
-
-### DeleteAccountResponse
-
-
-
-
-
-
-
-<a name="services-rector-ListAccountsRequest"></a>
-
-### ListAccountsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `license` | [string](#string) | optional | Search params |
-| `enabled` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-ListAccountsResponse"></a>
-
-### ListAccountsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `accounts` | [resources.accounts.Account](#resources-accounts-Account) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateAccountRequest"></a>
-
-### UpdateAccountRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `enabled` | [bool](#bool) | optional |  |
-| `last_char` | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateAccountResponse"></a>
-
-### UpdateAccountResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `account` | [resources.accounts.Account](#resources-accounts-Account) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-rector-RectorAccountsService"></a>
-
-### RectorAccountsService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListAccounts` | [ListAccountsRequest](#services-rector-ListAccountsRequest) | [ListAccountsResponse](#services-rector-ListAccountsResponse) | @perm: Name=SuperUser |
-| `UpdateAccount` | [UpdateAccountRequest](#services-rector-UpdateAccountRequest) | [UpdateAccountResponse](#services-rector-UpdateAccountResponse) | @perm: Name=SuperUser |
-| `DeleteAccount` | [DeleteAccountRequest](#services-rector-DeleteAccountRequest) | [DeleteAccountResponse](#services-rector-DeleteAccountResponse) | @perm: Name=SuperUser |
-
- <!-- end services -->
-
-
-
-<a name="services_rector_rector-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/rector/rector.proto
-
-
-
-<a name="services-rector-AttrsUpdate"></a>
-
-### AttrsUpdate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `to_update` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
-| `to_remove` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-CreateRoleRequest"></a>
-
-### CreateRoleRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `grade` | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="services-rector-CreateRoleResponse"></a>
-
-### CreateRoleResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role` | [resources.permissions.Role](#resources-permissions-Role) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteFactionRequest"></a>
-
-### DeleteFactionRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteFactionResponse"></a>
-
-### DeleteFactionResponse
-
-
-
-
-
-
-
-<a name="services-rector-DeleteRoleRequest"></a>
-
-### DeleteRoleRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-rector-DeleteRoleResponse"></a>
-
-### DeleteRoleResponse
-
-
-
-
-
-
-
-<a name="services-rector-GetAllPermissionsRequest"></a>
-
-### GetAllPermissionsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="services-rector-GetAllPermissionsResponse"></a>
-
-### GetAllPermissionsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
-| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-GetEffectivePermissionsRequest"></a>
-
-### GetEffectivePermissionsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-rector-GetEffectivePermissionsResponse"></a>
-
-### GetEffectivePermissionsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role` | [resources.permissions.Role](#resources-permissions-Role) |  |  |
-| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
-| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-GetJobLimitsRequest"></a>
-
-### GetJobLimitsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="services-rector-GetJobLimitsResponse"></a>
-
-### GetJobLimitsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
-| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-GetJobPropsRequest"></a>
-
-### GetJobPropsRequest
-
-
-
-
-
-
-
-<a name="services-rector-GetJobPropsResponse"></a>
-
-### GetJobPropsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_props` | [resources.users.JobProps](#resources-users-JobProps) |  |  |
-
-
-
-
-
-
-<a name="services-rector-GetPermissionsRequest"></a>
-
-### GetPermissionsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
-| `filtered` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-GetPermissionsResponse"></a>
-
-### GetPermissionsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
-| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-GetRoleRequest"></a>
-
-### GetRoleRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `filtered` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-GetRoleResponse"></a>
-
-### GetRoleResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role` | [resources.permissions.Role](#resources-permissions-Role) |  |  |
-
-
-
-
-
-
-<a name="services-rector-GetRolesRequest"></a>
-
-### GetRolesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `lowest_rank` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-GetRolesResponse"></a>
-
-### GetRolesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `roles` | [resources.permissions.Role](#resources-permissions-Role) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-PermItem"></a>
-
-### PermItem
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `val` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="services-rector-PermsUpdate"></a>
-
-### PermsUpdate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `to_update` | [PermItem](#services-rector-PermItem) | repeated |  |
-| `to_remove` | [uint64](#uint64) | repeated |  |
-
-
-
-
-
-
-<a name="services-rector-SetJobPropsRequest"></a>
-
-### SetJobPropsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_props` | [resources.users.JobProps](#resources-users-JobProps) |  |  |
-
-
-
-
-
-
-<a name="services-rector-SetJobPropsResponse"></a>
-
-### SetJobPropsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_props` | [resources.users.JobProps](#resources-users-JobProps) |  |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateJobLimitsRequest"></a>
-
-### UpdateJobLimitsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `perms` | [PermsUpdate](#services-rector-PermsUpdate) | optional |  |
-| `attrs` | [AttrsUpdate](#services-rector-AttrsUpdate) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateJobLimitsResponse"></a>
-
-### UpdateJobLimitsResponse
-
-
-
-
-
-
-
-<a name="services-rector-UpdateRolePermsRequest"></a>
-
-### UpdateRolePermsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `perms` | [PermsUpdate](#services-rector-PermsUpdate) | optional |  |
-| `attrs` | [AttrsUpdate](#services-rector-AttrsUpdate) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-UpdateRolePermsResponse"></a>
-
-### UpdateRolePermsResponse
-
-
-
-
-
-
-
-<a name="services-rector-ViewAuditLogRequest"></a>
-
-### ViewAuditLogRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `user_ids` | [int32](#int32) | repeated | Search params |
-| `from` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `to` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `services` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `methods` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `search` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="services-rector-ViewAuditLogResponse"></a>
-
-### ViewAuditLogResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `logs` | [resources.rector.AuditEntry](#resources-rector-AuditEntry) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-rector-RectorService"></a>
-
-### RectorService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `GetJobProps` | [GetJobPropsRequest](#services-rector-GetJobPropsRequest) | [GetJobPropsResponse](#services-rector-GetJobPropsResponse) | @perm |
-| `SetJobProps` | [SetJobPropsRequest](#services-rector-SetJobPropsRequest) | [SetJobPropsResponse](#services-rector-SetJobPropsResponse) | @perm |
-| `GetRoles` | [GetRolesRequest](#services-rector-GetRolesRequest) | [GetRolesResponse](#services-rector-GetRolesResponse) | @perm |
-| `GetRole` | [GetRoleRequest](#services-rector-GetRoleRequest) | [GetRoleResponse](#services-rector-GetRoleResponse) | @perm: Name=GetRoles |
-| `CreateRole` | [CreateRoleRequest](#services-rector-CreateRoleRequest) | [CreateRoleResponse](#services-rector-CreateRoleResponse) | @perm |
-| `DeleteRole` | [DeleteRoleRequest](#services-rector-DeleteRoleRequest) | [DeleteRoleResponse](#services-rector-DeleteRoleResponse) | @perm |
-| `UpdateRolePerms` | [UpdateRolePermsRequest](#services-rector-UpdateRolePermsRequest) | [UpdateRolePermsResponse](#services-rector-UpdateRolePermsResponse) | @perm |
-| `GetPermissions` | [GetPermissionsRequest](#services-rector-GetPermissionsRequest) | [GetPermissionsResponse](#services-rector-GetPermissionsResponse) | @perm: Name=GetRoles |
-| `GetEffectivePermissions` | [GetEffectivePermissionsRequest](#services-rector-GetEffectivePermissionsRequest) | [GetEffectivePermissionsResponse](#services-rector-GetEffectivePermissionsResponse) | @perm: Name=GetRoles |
-| `ViewAuditLog` | [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest) | [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse) | @perm |
-| `GetAllPermissions` | [GetAllPermissionsRequest](#services-rector-GetAllPermissionsRequest) | [GetAllPermissionsResponse](#services-rector-GetAllPermissionsResponse) | @perm: Name=SuperUser |
-| `GetJobLimits` | [GetJobLimitsRequest](#services-rector-GetJobLimitsRequest) | [GetJobLimitsResponse](#services-rector-GetJobLimitsResponse) | @perm: Name=SuperUser |
-| `UpdateJobLimits` | [UpdateJobLimitsRequest](#services-rector-UpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#services-rector-UpdateJobLimitsResponse) | @perm: Name=SuperUser |
-| `DeleteFaction` | [DeleteFactionRequest](#services-rector-DeleteFactionRequest) | [DeleteFactionResponse](#services-rector-DeleteFactionResponse) | @perm: Name=SuperUser |
 
  <!-- end services -->
 
@@ -14630,13 +12030,13 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ListThreads` | [ListThreadsRequest](#services-mailer-ListThreadsRequest) | [ListThreadsResponse](#services-mailer-ListThreadsResponse) | @perm: Name=ListEmails |
 | `GetThread` | [GetThreadRequest](#services-mailer-GetThreadRequest) | [GetThreadResponse](#services-mailer-GetThreadResponse) | @perm: Name=ListEmails |
 | `CreateThread` | [CreateThreadRequest](#services-mailer-CreateThreadRequest) | [CreateThreadResponse](#services-mailer-CreateThreadResponse) | @perm: Name=ListEmails |
-| `DeleteThread` | [DeleteThreadRequest](#services-mailer-DeleteThreadRequest) | [DeleteThreadResponse](#services-mailer-DeleteThreadResponse) | @perm: Name=SuperUser |
+| `DeleteThread` | [DeleteThreadRequest](#services-mailer-DeleteThreadRequest) | [DeleteThreadResponse](#services-mailer-DeleteThreadResponse) | @perm: Name=Superuser |
 | `GetThreadState` | [GetThreadStateRequest](#services-mailer-GetThreadStateRequest) | [GetThreadStateResponse](#services-mailer-GetThreadStateResponse) | @perm: Name=ListEmails |
 | `SetThreadState` | [SetThreadStateRequest](#services-mailer-SetThreadStateRequest) | [SetThreadStateResponse](#services-mailer-SetThreadStateResponse) | @perm: Name=ListEmails |
 | `SearchThreads` | [SearchThreadsRequest](#services-mailer-SearchThreadsRequest) | [SearchThreadsResponse](#services-mailer-SearchThreadsResponse) | @perm: Name=ListEmails |
 | `ListThreadMessages` | [ListThreadMessagesRequest](#services-mailer-ListThreadMessagesRequest) | [ListThreadMessagesResponse](#services-mailer-ListThreadMessagesResponse) | @perm: Name=ListEmails |
 | `PostMessage` | [PostMessageRequest](#services-mailer-PostMessageRequest) | [PostMessageResponse](#services-mailer-PostMessageResponse) | @perm: Name=ListEmails |
-| `DeleteMessage` | [DeleteMessageRequest](#services-mailer-DeleteMessageRequest) | [DeleteMessageResponse](#services-mailer-DeleteMessageResponse) | @perm: Name=SuperUser |
+| `DeleteMessage` | [DeleteMessageRequest](#services-mailer-DeleteMessageRequest) | [DeleteMessageResponse](#services-mailer-DeleteMessageResponse) | @perm: Name=Superuser |
 | `GetEmailSettings` | [GetEmailSettingsRequest](#services-mailer-GetEmailSettingsRequest) | [GetEmailSettingsResponse](#services-mailer-GetEmailSettingsResponse) | @perm: Name=ListEmails |
 | `SetEmailSettings` | [SetEmailSettingsRequest](#services-mailer-SetEmailSettingsRequest) | [SetEmailSettingsResponse](#services-mailer-SetEmailSettingsResponse) | @perm: Name=ListEmails |
 
@@ -14876,9 +12276,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `dispatch` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
 | `user_activity` | [resources.users.UserActivity](#resources-users-UserActivity) |  | User activity |
 | `user_props` | [resources.sync.UserProps](#resources-sync-UserProps) |  | Setting props will cause activity to be created automtically |
-| `jobs_user_activity` | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  | Jobs user activity |
-| `jobs_user_props` | [resources.sync.JobsUserProps](#resources-sync-JobsUserProps) |  | Setting props will cause activity to be created automtically |
-| `jobs_timeclock` | [resources.sync.TimeclockUpdate](#resources-sync-TimeclockUpdate) |  | Timeclock user entry |
+| `job_colleague_activity` | [resources.jobs.ColleagueActivity](#resources-jobs-ColleagueActivity) |  | Jobs user activity |
+| `colleague_props` | [resources.sync.ColleagueProps](#resources-sync-ColleagueProps) |  | Setting props will cause activity to be created automtically |
+| `job_timeclock` | [resources.sync.TimeclockUpdate](#resources-sync-TimeclockUpdate) |  | Timeclock user entry |
 | `user_update` | [resources.sync.UserUpdate](#resources-sync-UserUpdate) |  | User/Char info updates that aren't tracked by activity (yet) |
 
 
@@ -15094,6 +12494,2639 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `SendData` | [SendDataRequest](#services-sync-SendDataRequest) | [SendDataResponse](#services-sync-SendDataResponse) | DBSync's method of sending (mass) data to the FiveNet server for storing. |
 | `DeleteData` | [DeleteDataRequest](#services-sync-DeleteDataRequest) | [DeleteDataResponse](#services-sync-DeleteDataResponse) | Way for the gameserver to delete certain data as well |
 | `Stream` | [StreamRequest](#services-sync-StreamRequest) | [StreamResponse](#services-sync-StreamResponse) stream | Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
+
+ <!-- end services -->
+
+
+
+<a name="services_documents_documents-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/documents/documents.proto
+
+
+
+<a name="services-documents-AddDocumentReferenceRequest"></a>
+
+### AddDocumentReferenceRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `reference` | [resources.documents.DocumentReference](#resources-documents-DocumentReference) |  |  |
+
+
+
+
+
+
+<a name="services-documents-AddDocumentReferenceResponse"></a>
+
+### AddDocumentReferenceResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-AddDocumentRelationRequest"></a>
+
+### AddDocumentRelationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `relation` | [resources.documents.DocumentRelation](#resources-documents-DocumentRelation) |  |  |
+
+
+
+
+
+
+<a name="services-documents-AddDocumentRelationResponse"></a>
+
+### AddDocumentRelationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-ChangeDocumentOwnerRequest"></a>
+
+### ChangeDocumentOwnerRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+| `new_user_id` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-documents-ChangeDocumentOwnerResponse"></a>
+
+### ChangeDocumentOwnerResponse
+
+
+
+
+
+
+
+<a name="services-documents-CreateDocumentReqRequest"></a>
+
+### CreateDocumentReqRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+| `request_type` | [resources.documents.DocActivityType](#resources-documents-DocActivityType) |  |  |
+| `reason` | [string](#string) | optional | @sanitize |
+| `data` | [resources.documents.DocActivityData](#resources-documents-DocActivityData) | optional |  |
+
+
+
+
+
+
+<a name="services-documents-CreateDocumentReqResponse"></a>
+
+### CreateDocumentReqResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `request` | [resources.documents.DocRequest](#resources-documents-DocRequest) |  |  |
+
+
+
+
+
+
+<a name="services-documents-CreateDocumentRequest"></a>
+
+### CreateDocumentRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category_id` | [uint64](#uint64) | optional | @gotags: alias:"category_id" |
+| `title` | [string](#string) |  | @sanitize: method=StripTags
+
+@gotags: alias:"title" |
+| `content` | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
+| `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
+| `data` | [string](#string) | optional | @gotags: alias:"data" |
+| `state` | [string](#string) |  | @sanitize
+
+@gotags: alias:"state" |
+| `closed` | [bool](#bool) |  | @gotags: alias:"closed" |
+| `public` | [bool](#bool) |  | @gotags: alias:"public" |
+| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) | optional |  |
+| `template_id` | [uint64](#uint64) | optional |  |
+
+
+
+
+
+
+<a name="services-documents-CreateDocumentResponse"></a>
+
+### CreateDocumentResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+
+
+
+
+
+
+<a name="services-documents-CreateOrUpdateCategoryRequest"></a>
+
+### CreateOrUpdateCategoryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [resources.documents.Category](#resources-documents-Category) |  |  |
+
+
+
+
+
+
+<a name="services-documents-CreateOrUpdateCategoryResponse"></a>
+
+### CreateOrUpdateCategoryResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `category` | [resources.documents.Category](#resources-documents-Category) |  |  |
+
+
+
+
+
+
+<a name="services-documents-CreateTemplateRequest"></a>
+
+### CreateTemplateRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.documents.Template](#resources-documents-Template) |  |  |
+
+
+
+
+
+
+<a name="services-documents-CreateTemplateResponse"></a>
+
+### CreateTemplateResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-DeleteCategoryRequest"></a>
+
+### DeleteCategoryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-DeleteCategoryResponse"></a>
+
+### DeleteCategoryResponse
+
+
+
+
+
+
+
+<a name="services-documents-DeleteCommentRequest"></a>
+
+### DeleteCommentRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-DeleteCommentResponse"></a>
+
+### DeleteCommentResponse
+
+
+
+
+
+
+
+<a name="services-documents-DeleteDocumentReqRequest"></a>
+
+### DeleteDocumentReqRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `request_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-DeleteDocumentReqResponse"></a>
+
+### DeleteDocumentReqResponse
+
+
+
+
+
+
+
+<a name="services-documents-DeleteDocumentRequest"></a>
+
+### DeleteDocumentRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `reason` | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="services-documents-DeleteDocumentResponse"></a>
+
+### DeleteDocumentResponse
+
+
+
+
+
+
+
+<a name="services-documents-DeleteTemplateRequest"></a>
+
+### DeleteTemplateRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-DeleteTemplateResponse"></a>
+
+### DeleteTemplateResponse
+
+
+
+
+
+
+
+<a name="services-documents-EditCommentRequest"></a>
+
+### EditCommentRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [resources.documents.Comment](#resources-documents-Comment) |  |  |
+
+
+
+
+
+
+<a name="services-documents-EditCommentResponse"></a>
+
+### EditCommentResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [resources.documents.Comment](#resources-documents-Comment) |  |  |
+
+
+
+
+
+
+<a name="services-documents-GetCommentsRequest"></a>
+
+### GetCommentsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `document_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-GetCommentsResponse"></a>
+
+### GetCommentsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `comments` | [resources.documents.Comment](#resources-documents-Comment) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-GetDocumentAccessRequest"></a>
+
+### GetDocumentAccessRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-GetDocumentAccessResponse"></a>
+
+### GetDocumentAccessResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) |  |  |
+
+
+
+
+
+
+<a name="services-documents-GetDocumentReferencesRequest"></a>
+
+### GetDocumentReferencesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-GetDocumentReferencesResponse"></a>
+
+### GetDocumentReferencesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `references` | [resources.documents.DocumentReference](#resources-documents-DocumentReference) | repeated | @gotags: alias:"reference" |
+
+
+
+
+
+
+<a name="services-documents-GetDocumentRelationsRequest"></a>
+
+### GetDocumentRelationsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-GetDocumentRelationsResponse"></a>
+
+### GetDocumentRelationsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `relations` | [resources.documents.DocumentRelation](#resources-documents-DocumentRelation) | repeated | @gotags: alias:"relation" |
+
+
+
+
+
+
+<a name="services-documents-GetDocumentRequest"></a>
+
+### GetDocumentRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+| `info_only` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-documents-GetDocumentResponse"></a>
+
+### GetDocumentResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document` | [resources.documents.Document](#resources-documents-Document) |  |  |
+| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) |  |  |
+
+
+
+
+
+
+<a name="services-documents-GetTemplateRequest"></a>
+
+### GetTemplateRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template_id` | [uint64](#uint64) |  |  |
+| `data` | [resources.documents.TemplateData](#resources-documents-TemplateData) | optional |  |
+| `render` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-documents-GetTemplateResponse"></a>
+
+### GetTemplateResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.documents.Template](#resources-documents-Template) |  |  |
+| `rendered` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-documents-ListCategoriesRequest"></a>
+
+### ListCategoriesRequest
+
+
+
+
+
+
+
+<a name="services-documents-ListCategoriesResponse"></a>
+
+### ListCategoriesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `categories` | [resources.documents.Category](#resources-documents-Category) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-ListDocumentActivityRequest"></a>
+
+### ListDocumentActivityRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `document_id` | [uint64](#uint64) |  |  |
+| `activity_types` | [resources.documents.DocActivityType](#resources-documents-DocActivityType) | repeated | Search params |
+
+
+
+
+
+
+<a name="services-documents-ListDocumentActivityResponse"></a>
+
+### ListDocumentActivityResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `activity` | [resources.documents.DocActivity](#resources-documents-DocActivity) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-ListDocumentPinsRequest"></a>
+
+### ListDocumentPinsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+
+
+
+
+
+
+<a name="services-documents-ListDocumentPinsResponse"></a>
+
+### ListDocumentPinsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `documents` | [resources.documents.DocumentShort](#resources-documents-DocumentShort) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-ListDocumentReqsRequest"></a>
+
+### ListDocumentReqsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `document_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-ListDocumentReqsResponse"></a>
+
+### ListDocumentReqsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `requests` | [resources.documents.DocRequest](#resources-documents-DocRequest) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-ListDocumentsRequest"></a>
+
+### ListDocumentsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `search` | [string](#string) | optional | Search params |
+| `category_ids` | [uint64](#uint64) | repeated |  |
+| `creator_ids` | [int32](#int32) | repeated |  |
+| `from` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `to` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `closed` | [bool](#bool) | optional |  |
+| `document_ids` | [uint64](#uint64) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-ListDocumentsResponse"></a>
+
+### ListDocumentsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `documents` | [resources.documents.DocumentShort](#resources-documents-DocumentShort) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-ListTemplatesRequest"></a>
+
+### ListTemplatesRequest
+
+
+
+
+
+
+
+<a name="services-documents-ListTemplatesResponse"></a>
+
+### ListTemplatesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `templates` | [resources.documents.TemplateShort](#resources-documents-TemplateShort) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-ListUserDocumentsRequest"></a>
+
+### ListUserDocumentsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `user_id` | [int32](#int32) |  |  |
+| `relations` | [resources.documents.DocRelation](#resources-documents-DocRelation) | repeated |  |
+| `closed` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-documents-ListUserDocumentsResponse"></a>
+
+### ListUserDocumentsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `relations` | [resources.documents.DocumentRelation](#resources-documents-DocumentRelation) | repeated |  |
+
+
+
+
+
+
+<a name="services-documents-PostCommentRequest"></a>
+
+### PostCommentRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [resources.documents.Comment](#resources-documents-Comment) |  |  |
+
+
+
+
+
+
+<a name="services-documents-PostCommentResponse"></a>
+
+### PostCommentResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `comment` | [resources.documents.Comment](#resources-documents-Comment) |  |  |
+
+
+
+
+
+
+<a name="services-documents-RemoveDocumentReferenceRequest"></a>
+
+### RemoveDocumentReferenceRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-RemoveDocumentReferenceResponse"></a>
+
+### RemoveDocumentReferenceResponse
+
+
+
+
+
+
+
+<a name="services-documents-RemoveDocumentRelationRequest"></a>
+
+### RemoveDocumentRelationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-documents-RemoveDocumentRelationResponse"></a>
+
+### RemoveDocumentRelationResponse
+
+
+
+
+
+
+
+<a name="services-documents-SetDocumentAccessRequest"></a>
+
+### SetDocumentAccessRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) |  |  |
+
+
+
+
+
+
+<a name="services-documents-SetDocumentAccessResponse"></a>
+
+### SetDocumentAccessResponse
+
+
+
+
+
+
+
+<a name="services-documents-SetDocumentReminderRequest"></a>
+
+### SetDocumentReminderRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+| `reminder_time` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `message` | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="services-documents-SetDocumentReminderResponse"></a>
+
+### SetDocumentReminderResponse
+
+
+
+
+
+
+
+<a name="services-documents-ToggleDocumentPinRequest"></a>
+
+### ToggleDocumentPinRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+| `state` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-documents-ToggleDocumentPinResponse"></a>
+
+### ToggleDocumentPinResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `state` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-documents-ToggleDocumentRequest"></a>
+
+### ToggleDocumentRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+| `closed` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-documents-ToggleDocumentResponse"></a>
+
+### ToggleDocumentResponse
+
+
+
+
+
+
+
+<a name="services-documents-UpdateDocumentReqRequest"></a>
+
+### UpdateDocumentReqRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  |  |
+| `request_id` | [uint64](#uint64) |  |  |
+| `reason` | [string](#string) | optional | @sanitize |
+| `data` | [resources.documents.DocActivityData](#resources-documents-DocActivityData) | optional |  |
+| `accepted` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-documents-UpdateDocumentReqResponse"></a>
+
+### UpdateDocumentReqResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `request` | [resources.documents.DocRequest](#resources-documents-DocRequest) |  |  |
+
+
+
+
+
+
+<a name="services-documents-UpdateDocumentRequest"></a>
+
+### UpdateDocumentRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `category_id` | [uint64](#uint64) | optional | @gotags: alias:"category_id" |
+| `title` | [string](#string) |  | @sanitize: method=StripTags
+
+@gotags: alias:"title" |
+| `content` | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
+| `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
+| `data` | [string](#string) | optional | @gotags: alias:"data" |
+| `state` | [string](#string) |  | @sanitize
+
+@gotags: alias:"state" |
+| `closed` | [bool](#bool) |  | @gotags: alias:"closed" |
+| `public` | [bool](#bool) |  | @gotags: alias:"public" |
+| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) | optional |  |
+
+
+
+
+
+
+<a name="services-documents-UpdateDocumentResponse"></a>
+
+### UpdateDocumentResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+
+
+
+
+
+
+<a name="services-documents-UpdateTemplateRequest"></a>
+
+### UpdateTemplateRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.documents.Template](#resources-documents-Template) |  |  |
+
+
+
+
+
+
+<a name="services-documents-UpdateTemplateResponse"></a>
+
+### UpdateTemplateResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `template` | [resources.documents.Template](#resources-documents-Template) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-documents-DocumentsService"></a>
+
+### DocumentsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListTemplates` | [ListTemplatesRequest](#services-documents-ListTemplatesRequest) | [ListTemplatesResponse](#services-documents-ListTemplatesResponse) | @perm |
+| `GetTemplate` | [GetTemplateRequest](#services-documents-GetTemplateRequest) | [GetTemplateResponse](#services-documents-GetTemplateResponse) | @perm: Name=ListTemplates |
+| `CreateTemplate` | [CreateTemplateRequest](#services-documents-CreateTemplateRequest) | [CreateTemplateResponse](#services-documents-CreateTemplateResponse) | @perm |
+| `UpdateTemplate` | [UpdateTemplateRequest](#services-documents-UpdateTemplateRequest) | [UpdateTemplateResponse](#services-documents-UpdateTemplateResponse) | @perm: Name=CreateTemplate |
+| `DeleteTemplate` | [DeleteTemplateRequest](#services-documents-DeleteTemplateRequest) | [DeleteTemplateResponse](#services-documents-DeleteTemplateResponse) | @perm |
+| `ListDocuments` | [ListDocumentsRequest](#services-documents-ListDocumentsRequest) | [ListDocumentsResponse](#services-documents-ListDocumentsResponse) | @perm |
+| `GetDocument` | [GetDocumentRequest](#services-documents-GetDocumentRequest) | [GetDocumentResponse](#services-documents-GetDocumentResponse) | @perm: Name=ListDocuments |
+| `CreateDocument` | [CreateDocumentRequest](#services-documents-CreateDocumentRequest) | [CreateDocumentResponse](#services-documents-CreateDocumentResponse) | @perm |
+| `UpdateDocument` | [UpdateDocumentRequest](#services-documents-UpdateDocumentRequest) | [UpdateDocumentResponse](#services-documents-UpdateDocumentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
+| `DeleteDocument` | [DeleteDocumentRequest](#services-documents-DeleteDocumentRequest) | [DeleteDocumentResponse](#services-documents-DeleteDocumentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
+| `ToggleDocument` | [ToggleDocumentRequest](#services-documents-ToggleDocumentRequest) | [ToggleDocumentResponse](#services-documents-ToggleDocumentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
+| `ChangeDocumentOwner` | [ChangeDocumentOwnerRequest](#services-documents-ChangeDocumentOwnerRequest) | [ChangeDocumentOwnerResponse](#services-documents-ChangeDocumentOwnerResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
+| `GetDocumentReferences` | [GetDocumentReferencesRequest](#services-documents-GetDocumentReferencesRequest) | [GetDocumentReferencesResponse](#services-documents-GetDocumentReferencesResponse) | @perm: Name=ListDocuments |
+| `GetDocumentRelations` | [GetDocumentRelationsRequest](#services-documents-GetDocumentRelationsRequest) | [GetDocumentRelationsResponse](#services-documents-GetDocumentRelationsResponse) | @perm: Name=ListDocuments |
+| `AddDocumentReference` | [AddDocumentReferenceRequest](#services-documents-AddDocumentReferenceRequest) | [AddDocumentReferenceResponse](#services-documents-AddDocumentReferenceResponse) | @perm |
+| `RemoveDocumentReference` | [RemoveDocumentReferenceRequest](#services-documents-RemoveDocumentReferenceRequest) | [RemoveDocumentReferenceResponse](#services-documents-RemoveDocumentReferenceResponse) | @perm: Name=AddDocumentReference |
+| `AddDocumentRelation` | [AddDocumentRelationRequest](#services-documents-AddDocumentRelationRequest) | [AddDocumentRelationResponse](#services-documents-AddDocumentRelationResponse) | @perm |
+| `RemoveDocumentRelation` | [RemoveDocumentRelationRequest](#services-documents-RemoveDocumentRelationRequest) | [RemoveDocumentRelationResponse](#services-documents-RemoveDocumentRelationResponse) | @perm: Name=AddDocumentRelation |
+| `GetComments` | [GetCommentsRequest](#services-documents-GetCommentsRequest) | [GetCommentsResponse](#services-documents-GetCommentsResponse) | @perm: Name=ListDocuments |
+| `PostComment` | [PostCommentRequest](#services-documents-PostCommentRequest) | [PostCommentResponse](#services-documents-PostCommentResponse) | @perm: Name=ListDocuments |
+| `EditComment` | [EditCommentRequest](#services-documents-EditCommentRequest) | [EditCommentResponse](#services-documents-EditCommentResponse) | @perm: Name=ListDocuments |
+| `DeleteComment` | [DeleteCommentRequest](#services-documents-DeleteCommentRequest) | [DeleteCommentResponse](#services-documents-DeleteCommentResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
+| `GetDocumentAccess` | [GetDocumentAccessRequest](#services-documents-GetDocumentAccessRequest) | [GetDocumentAccessResponse](#services-documents-GetDocumentAccessResponse) | @perm: Name=ListDocuments |
+| `SetDocumentAccess` | [SetDocumentAccessRequest](#services-documents-SetDocumentAccessRequest) | [SetDocumentAccessResponse](#services-documents-SetDocumentAccessResponse) | @perm: Name=CreateDocument |
+| `ListDocumentActivity` | [ListDocumentActivityRequest](#services-documents-ListDocumentActivityRequest) | [ListDocumentActivityResponse](#services-documents-ListDocumentActivityResponse) | @perm |
+| `ListDocumentReqs` | [ListDocumentReqsRequest](#services-documents-ListDocumentReqsRequest) | [ListDocumentReqsResponse](#services-documents-ListDocumentReqsResponse) | @perm |
+| `CreateDocumentReq` | [CreateDocumentReqRequest](#services-documents-CreateDocumentReqRequest) | [CreateDocumentReqResponse](#services-documents-CreateDocumentReqResponse) | @perm: Attrs=Types/StringList:[]string{"Access", "Closure", "Update", "Deletion", "OwnerChange"} |
+| `UpdateDocumentReq` | [UpdateDocumentReqRequest](#services-documents-UpdateDocumentReqRequest) | [UpdateDocumentReqResponse](#services-documents-UpdateDocumentReqResponse) | @perm: Name=CreateDocumentReq |
+| `DeleteDocumentReq` | [DeleteDocumentReqRequest](#services-documents-DeleteDocumentReqRequest) | [DeleteDocumentReqResponse](#services-documents-DeleteDocumentReqResponse) | @perm |
+| `ListUserDocuments` | [ListUserDocumentsRequest](#services-documents-ListUserDocumentsRequest) | [ListUserDocumentsResponse](#services-documents-ListUserDocumentsResponse) | @perm |
+| `ListCategories` | [ListCategoriesRequest](#services-documents-ListCategoriesRequest) | [ListCategoriesResponse](#services-documents-ListCategoriesResponse) | @perm |
+| `CreateOrUpdateCategory` | [CreateOrUpdateCategoryRequest](#services-documents-CreateOrUpdateCategoryRequest) | [CreateOrUpdateCategoryResponse](#services-documents-CreateOrUpdateCategoryResponse) | @perm |
+| `DeleteCategory` | [DeleteCategoryRequest](#services-documents-DeleteCategoryRequest) | [DeleteCategoryResponse](#services-documents-DeleteCategoryResponse) | @perm |
+| `ListDocumentPins` | [ListDocumentPinsRequest](#services-documents-ListDocumentPinsRequest) | [ListDocumentPinsResponse](#services-documents-ListDocumentPinsResponse) | @perm: Name=ListDocuments |
+| `ToggleDocumentPin` | [ToggleDocumentPinRequest](#services-documents-ToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#services-documents-ToggleDocumentPinResponse) | @perm |
+| `SetDocumentReminder` | [SetDocumentReminderRequest](#services-documents-SetDocumentReminderRequest) | [SetDocumentReminderResponse](#services-documents-SetDocumentReminderResponse) | @perm |
+
+ <!-- end services -->
+
+
+
+<a name="services_livemap_livemap-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/livemap/livemap.proto
+
+
+
+<a name="services-livemap-CreateOrUpdateMarkerRequest"></a>
+
+### CreateOrUpdateMarkerRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `marker` | [resources.livemap.MarkerMarker](#resources-livemap-MarkerMarker) |  |  |
+
+
+
+
+
+
+<a name="services-livemap-CreateOrUpdateMarkerResponse"></a>
+
+### CreateOrUpdateMarkerResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `marker` | [resources.livemap.MarkerMarker](#resources-livemap-MarkerMarker) |  |  |
+
+
+
+
+
+
+<a name="services-livemap-DeleteMarkerRequest"></a>
+
+### DeleteMarkerRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-livemap-DeleteMarkerResponse"></a>
+
+### DeleteMarkerResponse
+
+
+
+
+
+
+
+<a name="services-livemap-JobsList"></a>
+
+### JobsList
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `users` | [resources.jobs.Job](#resources-jobs-Job) | repeated |  |
+| `markers` | [resources.jobs.Job](#resources-jobs-Job) | repeated |  |
+
+
+
+
+
+
+<a name="services-livemap-MarkerMarkersUpdates"></a>
+
+### MarkerMarkersUpdates
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updated` | [resources.livemap.MarkerMarker](#resources-livemap-MarkerMarker) | repeated |  |
+| `deleted` | [uint64](#uint64) | repeated |  |
+| `part` | [int32](#int32) |  |  |
+| `partial` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-livemap-StreamRequest"></a>
+
+### StreamRequest
+
+
+
+
+
+
+
+<a name="services-livemap-StreamResponse"></a>
+
+### StreamResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [JobsList](#services-livemap-JobsList) |  |  |
+| `markers` | [MarkerMarkersUpdates](#services-livemap-MarkerMarkersUpdates) |  |  |
+| `users` | [UserMarkersUpdates](#services-livemap-UserMarkersUpdates) |  |  |
+| `user_on_duty` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-livemap-UserMarkersUpdates"></a>
+
+### UserMarkersUpdates
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updated` | [resources.livemap.UserMarker](#resources-livemap-UserMarker) | repeated |  |
+| `deleted` | [int32](#int32) | repeated |  |
+| `part` | [int32](#int32) |  |  |
+| `partial` | [bool](#bool) |  |  |
+| `clear` | [bool](#bool) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-livemap-LivemapService"></a>
+
+### LivemapService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `Stream` | [StreamRequest](#services-livemap-StreamRequest) | [StreamResponse](#services-livemap-StreamResponse) stream | @perm: Attrs=Markers/JobList|Players/JobGradeList |
+| `CreateOrUpdateMarker` | [CreateOrUpdateMarkerRequest](#services-livemap-CreateOrUpdateMarkerRequest) | [CreateOrUpdateMarkerResponse](#services-livemap-CreateOrUpdateMarkerResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
+| `DeleteMarker` | [DeleteMarkerRequest](#services-livemap-DeleteMarkerRequest) | [DeleteMarkerResponse](#services-livemap-DeleteMarkerResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
+
+ <!-- end services -->
+
+
+
+<a name="services_citizens_citizens-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/citizens/citizens.proto
+
+
+
+<a name="services-citizens-GetUserRequest"></a>
+
+### GetUserRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `info_only` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-citizens-GetUserResponse"></a>
+
+### GetUserResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user` | [resources.users.User](#resources-users-User) |  |  |
+
+
+
+
+
+
+<a name="services-citizens-ListCitizensRequest"></a>
+
+### ListCitizensRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `search` | [string](#string) |  | Search params |
+| `wanted` | [bool](#bool) | optional |  |
+| `phone_number` | [string](#string) | optional |  |
+| `traffic_infraction_points` | [uint32](#uint32) | optional |  |
+| `dateofbirth` | [string](#string) | optional |  |
+| `open_fines` | [uint64](#uint64) | optional |  |
+
+
+
+
+
+
+<a name="services-citizens-ListCitizensResponse"></a>
+
+### ListCitizensResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `users` | [resources.users.User](#resources-users-User) | repeated |  |
+
+
+
+
+
+
+<a name="services-citizens-ListUserActivityRequest"></a>
+
+### ListUserActivityRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `user_id` | [int32](#int32) |  | Search params |
+| `types` | [resources.users.UserActivityType](#resources-users-UserActivityType) | repeated |  |
+
+
+
+
+
+
+<a name="services-citizens-ListUserActivityResponse"></a>
+
+### ListUserActivityResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `activity` | [resources.users.UserActivity](#resources-users-UserActivity) | repeated |  |
+
+
+
+
+
+
+<a name="services-citizens-ManageLabelsRequest"></a>
+
+### ManageLabelsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `labels` | [resources.users.Label](#resources-users-Label) | repeated |  |
+
+
+
+
+
+
+<a name="services-citizens-ManageLabelsResponse"></a>
+
+### ManageLabelsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `labels` | [resources.users.Label](#resources-users-Label) | repeated |  |
+
+
+
+
+
+
+<a name="services-citizens-SetProfilePictureRequest"></a>
+
+### SetProfilePictureRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `avatar` | [resources.filestore.File](#resources-filestore-File) |  |  |
+
+
+
+
+
+
+<a name="services-citizens-SetProfilePictureResponse"></a>
+
+### SetProfilePictureResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `avatar` | [resources.filestore.File](#resources-filestore-File) |  |  |
+
+
+
+
+
+
+<a name="services-citizens-SetUserPropsRequest"></a>
+
+### SetUserPropsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `props` | [resources.users.UserProps](#resources-users-UserProps) |  |  |
+| `reason` | [string](#string) |  | @sanitize |
+
+
+
+
+
+
+<a name="services-citizens-SetUserPropsResponse"></a>
+
+### SetUserPropsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `props` | [resources.users.UserProps](#resources-users-UserProps) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-citizens-CitizensService"></a>
+
+### CitizensService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListCitizens` | [ListCitizensRequest](#services-citizens-ListCitizensRequest) | [ListCitizensResponse](#services-citizens-ListCitizensResponse) | @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"} |
+| `GetUser` | [GetUserRequest](#services-citizens-GetUserRequest) | [GetUserResponse](#services-citizens-GetUserResponse) | @perm: Attrs=Jobs/JobGradeList |
+| `ListUserActivity` | [ListUserActivityRequest](#services-citizens-ListUserActivityRequest) | [ListUserActivityResponse](#services-citizens-ListUserActivityResponse) | @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"} |
+| `SetUserProps` | [SetUserPropsRequest](#services-citizens-SetUserPropsRequest) | [SetUserPropsResponse](#services-citizens-SetUserPropsResponse) | @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"} |
+| `SetProfilePicture` | [SetProfilePictureRequest](#services-citizens-SetProfilePictureRequest) | [SetProfilePictureResponse](#services-citizens-SetProfilePictureResponse) | @perm: Name=Any |
+| `ManageLabels` | [ManageLabelsRequest](#services-citizens-ManageLabelsRequest) | [ManageLabelsResponse](#services-citizens-ManageLabelsResponse) | @perm |
+
+ <!-- end services -->
+
+
+
+<a name="services_settings_config-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/settings/config.proto
+
+
+
+<a name="services-settings-GetAppConfigRequest"></a>
+
+### GetAppConfigRequest
+
+
+
+
+
+
+
+<a name="services-settings-GetAppConfigResponse"></a>
+
+### GetAppConfigResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `config` | [resources.settings.AppConfig](#resources-settings-AppConfig) |  |  |
+
+
+
+
+
+
+<a name="services-settings-UpdateAppConfigRequest"></a>
+
+### UpdateAppConfigRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `config` | [resources.settings.AppConfig](#resources-settings-AppConfig) |  |  |
+
+
+
+
+
+
+<a name="services-settings-UpdateAppConfigResponse"></a>
+
+### UpdateAppConfigResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `config` | [resources.settings.AppConfig](#resources-settings-AppConfig) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-settings-ConfigService"></a>
+
+### ConfigService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetAppConfig` | [GetAppConfigRequest](#services-settings-GetAppConfigRequest) | [GetAppConfigResponse](#services-settings-GetAppConfigResponse) | @perm: Name=Superuser |
+| `UpdateAppConfig` | [UpdateAppConfigRequest](#services-settings-UpdateAppConfigRequest) | [UpdateAppConfigResponse](#services-settings-UpdateAppConfigResponse) | @perm: Name=Superuser |
+
+ <!-- end services -->
+
+
+
+<a name="services_settings_cron-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/settings/cron.proto
+
+
+
+<a name="services-settings-ListCronjobsRequest"></a>
+
+### ListCronjobsRequest
+
+
+
+
+
+
+
+<a name="services-settings-ListCronjobsResponse"></a>
+
+### ListCronjobsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [resources.common.cron.Cronjob](#resources-common-cron-Cronjob) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-settings-CronService"></a>
+
+### CronService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListCronjobs` | [ListCronjobsRequest](#services-settings-ListCronjobsRequest) | [ListCronjobsResponse](#services-settings-ListCronjobsResponse) | @perm: Name=Superuser |
+
+ <!-- end services -->
+
+
+
+<a name="services_settings_filestore-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/settings/filestore.proto
+
+
+
+<a name="services-settings-DeleteFileRequest"></a>
+
+### DeleteFileRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `path` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DeleteFileResponse"></a>
+
+### DeleteFileResponse
+
+
+
+
+
+
+
+<a name="services-settings-ListFilesRequest"></a>
+
+### ListFilesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `path` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-ListFilesResponse"></a>
+
+### ListFilesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `files` | [resources.filestore.FileInfo](#resources-filestore-FileInfo) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-UploadFileRequest"></a>
+
+### UploadFileRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `prefix` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+| `file` | [resources.filestore.File](#resources-filestore-File) |  |  |
+
+
+
+
+
+
+<a name="services-settings-UploadFileResponse"></a>
+
+### UploadFileResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `file` | [resources.filestore.FileInfo](#resources-filestore-FileInfo) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-settings-FilestoreService"></a>
+
+### FilestoreService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListFiles` | [ListFilesRequest](#services-settings-ListFilesRequest) | [ListFilesResponse](#services-settings-ListFilesResponse) | @perm: Name=Superuser |
+| `UploadFile` | [UploadFileRequest](#services-settings-UploadFileRequest) | [UploadFileResponse](#services-settings-UploadFileResponse) | @perm: Name=Superuser |
+| `DeleteFile` | [DeleteFileRequest](#services-settings-DeleteFileRequest) | [DeleteFileResponse](#services-settings-DeleteFileResponse) | @perm: Name=Superuser |
+
+ <!-- end services -->
+
+
+
+<a name="services_settings_laws-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/settings/laws.proto
+
+
+
+<a name="services-settings-CreateOrUpdateLawBookRequest"></a>
+
+### CreateOrUpdateLawBookRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `lawBook` | [resources.laws.LawBook](#resources-laws-LawBook) |  |  |
+
+
+
+
+
+
+<a name="services-settings-CreateOrUpdateLawBookResponse"></a>
+
+### CreateOrUpdateLawBookResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `lawBook` | [resources.laws.LawBook](#resources-laws-LawBook) |  |  |
+
+
+
+
+
+
+<a name="services-settings-CreateOrUpdateLawRequest"></a>
+
+### CreateOrUpdateLawRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `law` | [resources.laws.Law](#resources-laws-Law) |  |  |
+
+
+
+
+
+
+<a name="services-settings-CreateOrUpdateLawResponse"></a>
+
+### CreateOrUpdateLawResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `law` | [resources.laws.Law](#resources-laws-Law) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DeleteLawBookRequest"></a>
+
+### DeleteLawBookRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DeleteLawBookResponse"></a>
+
+### DeleteLawBookResponse
+
+
+
+
+
+
+
+<a name="services-settings-DeleteLawRequest"></a>
+
+### DeleteLawRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DeleteLawResponse"></a>
+
+### DeleteLawResponse
+
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-settings-LawsService"></a>
+
+### LawsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `CreateOrUpdateLawBook` | [CreateOrUpdateLawBookRequest](#services-settings-CreateOrUpdateLawBookRequest) | [CreateOrUpdateLawBookResponse](#services-settings-CreateOrUpdateLawBookResponse) | @perm |
+| `DeleteLawBook` | [DeleteLawBookRequest](#services-settings-DeleteLawBookRequest) | [DeleteLawBookResponse](#services-settings-DeleteLawBookResponse) | @perm |
+| `CreateOrUpdateLaw` | [CreateOrUpdateLawRequest](#services-settings-CreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#services-settings-CreateOrUpdateLawResponse) | @perm: Name=CreateOrUpdateLawBook |
+| `DeleteLaw` | [DeleteLawRequest](#services-settings-DeleteLawRequest) | [DeleteLawResponse](#services-settings-DeleteLawResponse) | @perm: Name=DeleteLawBook |
+
+ <!-- end services -->
+
+
+
+<a name="services_settings_accounts-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/settings/accounts.proto
+
+
+
+<a name="services-settings-DeleteAccountRequest"></a>
+
+### DeleteAccountRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DeleteAccountResponse"></a>
+
+### DeleteAccountResponse
+
+
+
+
+
+
+
+<a name="services-settings-DisconnectOAuth2ConnectionRequest"></a>
+
+### DisconnectOAuth2ConnectionRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `providerName` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DisconnectOAuth2ConnectionResponse"></a>
+
+### DisconnectOAuth2ConnectionResponse
+
+
+
+
+
+
+
+<a name="services-settings-ListAccountsRequest"></a>
+
+### ListAccountsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `license` | [string](#string) | optional | Search params |
+| `enabled` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-ListAccountsResponse"></a>
+
+### ListAccountsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `accounts` | [resources.accounts.Account](#resources-accounts-Account) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-UpdateAccountRequest"></a>
+
+### UpdateAccountRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `enabled` | [bool](#bool) | optional |  |
+| `last_char` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-UpdateAccountResponse"></a>
+
+### UpdateAccountResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account` | [resources.accounts.Account](#resources-accounts-Account) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-settings-AccountsService"></a>
+
+### AccountsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListAccounts` | [ListAccountsRequest](#services-settings-ListAccountsRequest) | [ListAccountsResponse](#services-settings-ListAccountsResponse) | @perm: Name=Superuser |
+| `UpdateAccount` | [UpdateAccountRequest](#services-settings-UpdateAccountRequest) | [UpdateAccountResponse](#services-settings-UpdateAccountResponse) | @perm: Name=Superuser |
+| `DisconnectOAuth2Connection` | [DisconnectOAuth2ConnectionRequest](#services-settings-DisconnectOAuth2ConnectionRequest) | [DisconnectOAuth2ConnectionResponse](#services-settings-DisconnectOAuth2ConnectionResponse) | @perm: Name=Superuser |
+| `DeleteAccount` | [DeleteAccountRequest](#services-settings-DeleteAccountRequest) | [DeleteAccountResponse](#services-settings-DeleteAccountResponse) | @perm: Name=Superuser |
+
+ <!-- end services -->
+
+
+
+<a name="services_settings_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/settings/settings.proto
+
+
+
+<a name="services-settings-AttrsUpdate"></a>
+
+### AttrsUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_update` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+| `to_remove` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-CreateRoleRequest"></a>
+
+### CreateRoleRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `grade` | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="services-settings-CreateRoleResponse"></a>
+
+### CreateRoleResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role` | [resources.permissions.Role](#resources-permissions-Role) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DeleteFactionRequest"></a>
+
+### DeleteFactionRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DeleteFactionResponse"></a>
+
+### DeleteFactionResponse
+
+
+
+
+
+
+
+<a name="services-settings-DeleteRoleRequest"></a>
+
+### DeleteRoleRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-settings-DeleteRoleResponse"></a>
+
+### DeleteRoleResponse
+
+
+
+
+
+
+
+<a name="services-settings-GetAllPermissionsRequest"></a>
+
+### GetAllPermissionsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-settings-GetAllPermissionsResponse"></a>
+
+### GetAllPermissionsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-GetEffectivePermissionsRequest"></a>
+
+### GetEffectivePermissionsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-settings-GetEffectivePermissionsResponse"></a>
+
+### GetEffectivePermissionsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role` | [resources.permissions.Role](#resources-permissions-Role) |  |  |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-GetJobLimitsRequest"></a>
+
+### GetJobLimitsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-settings-GetJobLimitsResponse"></a>
+
+### GetJobLimitsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-GetJobPropsRequest"></a>
+
+### GetJobPropsRequest
+
+
+
+
+
+
+
+<a name="services-settings-GetJobPropsResponse"></a>
+
+### GetJobPropsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
+
+
+
+
+
+
+<a name="services-settings-GetPermissionsRequest"></a>
+
+### GetPermissionsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role_id` | [uint64](#uint64) |  |  |
+| `filtered` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-GetPermissionsResponse"></a>
+
+### GetPermissionsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-GetRoleRequest"></a>
+
+### GetRoleRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `filtered` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-GetRoleResponse"></a>
+
+### GetRoleResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role` | [resources.permissions.Role](#resources-permissions-Role) |  |  |
+
+
+
+
+
+
+<a name="services-settings-GetRolesRequest"></a>
+
+### GetRolesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `lowest_rank` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-GetRolesResponse"></a>
+
+### GetRolesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `roles` | [resources.permissions.Role](#resources-permissions-Role) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-PermItem"></a>
+
+### PermItem
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `val` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-settings-PermsUpdate"></a>
+
+### PermsUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_update` | [PermItem](#services-settings-PermItem) | repeated |  |
+| `to_remove` | [uint64](#uint64) | repeated |  |
+
+
+
+
+
+
+<a name="services-settings-SetJobPropsRequest"></a>
+
+### SetJobPropsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
+
+
+
+
+
+
+<a name="services-settings-SetJobPropsResponse"></a>
+
+### SetJobPropsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
+
+
+
+
+
+
+<a name="services-settings-UpdateJobLimitsRequest"></a>
+
+### UpdateJobLimitsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `perms` | [PermsUpdate](#services-settings-PermsUpdate) | optional |  |
+| `attrs` | [AttrsUpdate](#services-settings-AttrsUpdate) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-UpdateJobLimitsResponse"></a>
+
+### UpdateJobLimitsResponse
+
+
+
+
+
+
+
+<a name="services-settings-UpdateRolePermsRequest"></a>
+
+### UpdateRolePermsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `perms` | [PermsUpdate](#services-settings-PermsUpdate) | optional |  |
+| `attrs` | [AttrsUpdate](#services-settings-AttrsUpdate) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-UpdateRolePermsResponse"></a>
+
+### UpdateRolePermsResponse
+
+
+
+
+
+
+
+<a name="services-settings-ViewAuditLogRequest"></a>
+
+### ViewAuditLogRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `user_ids` | [int32](#int32) | repeated | Search params |
+| `from` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `to` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `services` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `methods` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `search` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="services-settings-ViewAuditLogResponse"></a>
+
+### ViewAuditLogResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `logs` | [resources.audit.AuditEntry](#resources-audit-AuditEntry) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-settings-SettingsService"></a>
+
+### SettingsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetJobProps` | [GetJobPropsRequest](#services-settings-GetJobPropsRequest) | [GetJobPropsResponse](#services-settings-GetJobPropsResponse) | @perm |
+| `SetJobProps` | [SetJobPropsRequest](#services-settings-SetJobPropsRequest) | [SetJobPropsResponse](#services-settings-SetJobPropsResponse) | @perm |
+| `GetRoles` | [GetRolesRequest](#services-settings-GetRolesRequest) | [GetRolesResponse](#services-settings-GetRolesResponse) | @perm |
+| `GetRole` | [GetRoleRequest](#services-settings-GetRoleRequest) | [GetRoleResponse](#services-settings-GetRoleResponse) | @perm: Name=GetRoles |
+| `CreateRole` | [CreateRoleRequest](#services-settings-CreateRoleRequest) | [CreateRoleResponse](#services-settings-CreateRoleResponse) | @perm |
+| `DeleteRole` | [DeleteRoleRequest](#services-settings-DeleteRoleRequest) | [DeleteRoleResponse](#services-settings-DeleteRoleResponse) | @perm |
+| `UpdateRolePerms` | [UpdateRolePermsRequest](#services-settings-UpdateRolePermsRequest) | [UpdateRolePermsResponse](#services-settings-UpdateRolePermsResponse) | @perm |
+| `GetPermissions` | [GetPermissionsRequest](#services-settings-GetPermissionsRequest) | [GetPermissionsResponse](#services-settings-GetPermissionsResponse) | @perm: Name=GetRoles |
+| `GetEffectivePermissions` | [GetEffectivePermissionsRequest](#services-settings-GetEffectivePermissionsRequest) | [GetEffectivePermissionsResponse](#services-settings-GetEffectivePermissionsResponse) | @perm: Name=GetRoles |
+| `ViewAuditLog` | [ViewAuditLogRequest](#services-settings-ViewAuditLogRequest) | [ViewAuditLogResponse](#services-settings-ViewAuditLogResponse) | @perm |
+| `GetAllPermissions` | [GetAllPermissionsRequest](#services-settings-GetAllPermissionsRequest) | [GetAllPermissionsResponse](#services-settings-GetAllPermissionsResponse) | @perm: Name=Superuser |
+| `GetJobLimits` | [GetJobLimitsRequest](#services-settings-GetJobLimitsRequest) | [GetJobLimitsResponse](#services-settings-GetJobLimitsResponse) | @perm: Name=Superuser |
+| `UpdateJobLimits` | [UpdateJobLimitsRequest](#services-settings-UpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#services-settings-UpdateJobLimitsResponse) | @perm: Name=Superuser |
+| `DeleteFaction` | [DeleteFactionRequest](#services-settings-DeleteFactionRequest) | [DeleteFactionResponse](#services-settings-DeleteFactionResponse) | @perm: Name=Superuser |
+
+ <!-- end services -->
+
+
+
+<a name="services_vehicles_vehicles-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/vehicles/vehicles.proto
+
+
+
+<a name="services-vehicles-ListVehiclesRequest"></a>
+
+### ListVehiclesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `license_plate` | [string](#string) | optional | Search params |
+| `model` | [string](#string) | optional |  |
+| `user_id` | [int32](#int32) | optional |  |
+| `job` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="services-vehicles-ListVehiclesResponse"></a>
+
+### ListVehiclesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `vehicles` | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-vehicles-VehiclesService"></a>
+
+### VehiclesService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListVehicles` | [ListVehiclesRequest](#services-vehicles-ListVehiclesRequest) | [ListVehiclesResponse](#services-vehicles-ListVehiclesResponse) | @perm |
 
  <!-- end services -->
 

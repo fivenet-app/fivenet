@@ -38,7 +38,7 @@ const state = reactive<Schema>({
 
 async function createDocumentRequest(values: Schema): Promise<void> {
     try {
-        const call = $grpc.docstore.docStore.createDocumentReq({
+        const call = $grpc.documents.documents.createDocumentReq({
             documentId: props.documentId,
             requestType: DocActivityType.REQUESTED_ACCESS,
             reason: values.reason,
@@ -54,8 +54,8 @@ async function createDocumentRequest(values: Schema): Promise<void> {
         await call;
 
         notifications.add({
-            title: { key: 'notifications.docstore.requests.created.title' },
-            description: { key: 'notifications.docstore.requests.created.content' },
+            title: { key: 'notifications.documents.requests.created.title' },
+            description: { key: 'notifications.documents.requests.created.content' },
             type: NotificationType.SUCCESS,
         });
 
@@ -102,12 +102,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             >
                                 <template #label>
                                     <span v-if="state.accessLevel" class="truncate">{{
-                                        $t(`enums.docstore.AccessLevel.${AccessLevel[state.accessLevel]}`)
+                                        $t(`enums.documents.AccessLevel.${AccessLevel[state.accessLevel]}`)
                                     }}</span>
                                 </template>
 
                                 <template #option="{ option }">
-                                    <span class="truncate">{{ $t(`enums.docstore.AccessLevel.${AccessLevel[option]}`) }}</span>
+                                    <span class="truncate">{{ $t(`enums.documents.AccessLevel.${AccessLevel[option]}`) }}</span>
                                 </template>
 
                                 <template #option-empty="{ query: search }">

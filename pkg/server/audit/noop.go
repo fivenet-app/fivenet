@@ -1,11 +1,11 @@
 package audit
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 )
 
 type Noop struct{}
 
-func (a *Noop) Log(in *model.FivenetAuditLog, data any, callbacks ...FilterFn) {
+func (a *Noop) Log(in *audit.AuditEntry, data any, callbacks ...FilterFn) {
 	// Nothing
 }

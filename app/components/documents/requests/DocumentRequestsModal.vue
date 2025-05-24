@@ -9,7 +9,7 @@ import { AccessLevel, type DocumentAccess } from '~~/gen/ts/resources/documents/
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { ListDocumentReqsResponse } from '~~/gen/ts/services/documents/documents';
 import DocumentRequestsListEntry from './DocumentRequestsListEntry.vue';
 
 const props = defineProps<{
@@ -38,7 +38,7 @@ const requestTypes = [
 ] as RequestType[];
 
 const availableRequestTypes = computed<RequestType[]>(() =>
-    requestTypes.filter((rt) => attr('DocStoreService.CreateDocumentReq', 'Types', rt.attrKey).value),
+    requestTypes.filter((rt) => attr('documents.DocumentsService.CreateDocumentReq', 'Types', rt.attrKey).value),
 );
 
 const schema = z.object({
@@ -64,7 +64,7 @@ const {
 
 async function listDocumnetReqs(documentId: number): Promise<ListDocumentReqsResponse> {
     try {
-        const call = $grpc.docstore.docStore.listDocumentReqs({
+        const call = $grpc.documents.documents.listDocumentReqs({
             pagination: {
                 offset: offset.value,
             },
@@ -85,7 +85,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.docstore.docStore.createDocumentReq({
+        const call = $grpc.documents.documents.createDocumentReq({
             documentId: props.doc.id,
             reason: values.reason,
             requestType: values.requestType,
@@ -93,8 +93,8 @@ async function createDocumentRequest(values: Schema): Promise<void> {
         const { response } = await call;
 
         notifications.add({
-            title: { key: 'notifications.docstore.requests.created.title' },
-            description: { key: 'notifications.docstore.requests.created.content' },
+            title: { key: 'notifications.documents.requests.created.title' },
+            description: { key: 'notifications.documents.requests.created.content' },
             type: NotificationType.SUCCESS,
         });
 
@@ -118,14 +118,14 @@ const canDo = computed(() => ({
     create:
         props.doc.creatorId !== activeChar.value?.userId &&
         availableRequestTypes.value.length > 0 &&
-        can('DocStoreService.CreateDocumentReq').value &&
+        can('documents.DocumentsService.CreateDocumentReq').value &&
         checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW),
     update:
-        can('DocStoreService.CreateDocumentReq').value &&
-        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.CreateDocumentReq'),
+        can('documents.DocumentsService.CreateDocumentReq').value &&
+        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'documents.DocumentsService.CreateDocumentReq'),
     delete:
-        can('DocStoreService.DeleteDocumentReq').value &&
-        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocumentReq'),
+        can('documents.DocumentsService.DeleteDocumentReq').value &&
+        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'documents.DocumentsService.DeleteDocumentReq'),
 }));
 
 const canSubmit = ref(true);
@@ -169,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <span v-if="state.requestType" class="truncate">
                                                 {{
                                                     $t(
-                                                        `enums.docstore.DocActivityType.${DocActivityType[state.requestType]}`,
+                                                        `enums.documents.DocActivityType.${DocActivityType[state.requestType]}`,
                                                         2,
                                                     )
                                                 }}
@@ -178,7 +178,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                         <template #option="{ option }">
                                             <span class="truncate">{{
-                                                $t(`enums.docstore.DocActivityType.${DocActivityType[option.key]}`, 2)
+                                                $t(`enums.documents.DocActivityType.${DocActivityType[option.key]}`, 2)
                                             }}</span>
                                         </template>
 

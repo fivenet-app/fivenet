@@ -4,14 +4,13 @@ import (
 	"context"
 	"errors"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -20,7 +19,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tConduct = table.FivenetJobsConduct.AS("conduct_entry")
+var tConduct = table.FivenetJobConduct.AS("conduct_entry")
 
 func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConductEntriesRequest) (*pbjobs.ListConductEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -28,7 +27,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 	condition := tConduct.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fields, err := s.ps.AttrStringList(userInfo, permsjobs.JobsConductServicePerm, permsjobs.JobsConductServiceListConductEntriesPerm, permsjobs.JobsConductServiceListConductEntriesAccessPermField)
+	fields, err := s.ps.AttrStringList(userInfo, permsjobs.ConductServicePerm, permsjobs.ConductServiceListConductEntriesPerm, permsjobs.ConductServiceListConductEntriesAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -77,7 +76,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 	}
 
 	countStmt := tConduct.
-		SELECT(jet.COUNT(tConduct.ID).AS("datacount.totalcount")).
+		SELECT(jet.COUNT(tConduct.ID).AS("data_count.total")).
 		FROM(tConduct).
 		WHERE(condition)
 
@@ -88,11 +87,11 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponse(count.TotalCount)
+	pag, limit := req.Pagination.GetResponse(count.Total)
 	resp := &pbjobs.ListConductEntriesResponse{
 		Pagination: pag,
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -120,7 +119,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 		orderBys = append(orderBys, tConduct.ID.DESC())
 	}
 
-	tUser := tables.Users().AS("target_user")
+	tUser := tables.User().AS("target_user")
 	tUserUserProps := tUserProps.AS("target_user_props")
 	tCreator := tUser.AS("creator")
 	tCreatorUserProps := tUserProps.AS("creator_props")
@@ -143,12 +142,12 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
 			tUserUserProps.Avatar.AS("target_user.avatar"),
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
+			tColleagueProps.UserID,
+			tColleagueProps.Job,
+			tColleagueProps.AbsenceBegin,
+			tColleagueProps.AbsenceEnd,
+			tColleagueProps.NamePrefix,
+			tColleagueProps.NameSuffix,
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Job,
@@ -167,8 +166,8 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 				LEFT_JOIN(tUserUserProps,
 					tUserUserProps.UserID.EQ(tConduct.TargetUserID),
 				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tConduct.TargetUserID).
+				LEFT_JOIN(tColleagueProps,
+					tColleagueProps.UserID.EQ(tConduct.TargetUserID).
 						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 				).
 				LEFT_JOIN(tCreator,
@@ -207,18 +206,18 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 func (s *Server) CreateConductEntry(ctx context.Context, req *pbjobs.CreateConductEntryRequest) (*pbjobs.CreateConductEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
-		Service: pbjobs.JobsConductService_ServiceDesc.ServiceName,
+	auditEntry := &audit.AuditEntry{
+		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
 		Method:  "CreateConductEntry",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	req.Entry.Job = userInfo.Job
 
-	tConduct := table.FivenetJobsConduct
+	tConduct := table.FivenetJobConduct
 	stmt := tConduct.
 		INSERT(
 			tConduct.Job,
@@ -253,7 +252,7 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *pbjobs.CreateCondu
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbjobs.CreateConductEntryResponse{
 		Entry: entry,
@@ -265,18 +264,22 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
-		Service: pbjobs.JobsConductService_ServiceDesc.ServiceName,
+	auditEntry := &audit.AuditEntry{
+		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
 		Method:  "UpdateConductEntry",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	entry, err := s.getConductEntry(ctx, req.Entry.Id)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	if entry == nil || entry.Job != userInfo.Job {
+		return nil, errorsjobs.ErrFailedQuery
 	}
 
 	if req.Entry.Type == 0 {
@@ -291,7 +294,7 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 
 	req.Entry.Job = userInfo.Job
 
-	tConduct := table.FivenetJobsConduct
+	tConduct := table.FivenetJobConduct
 	stmt := tConduct.
 		UPDATE(
 			tConduct.Type,
@@ -319,7 +322,7 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbjobs.UpdateConductEntryResponse{
 		Entry: entry,
@@ -331,18 +334,33 @@ func (s *Server) DeleteConductEntry(ctx context.Context, req *pbjobs.DeleteCondu
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
-		Service: pbjobs.JobsConductService_ServiceDesc.ServiceName,
+	auditEntry := &audit.AuditEntry{
+		Service: pbjobs.ConductService_ServiceDesc.ServiceName,
 		Method:  "DeleteConductEntry",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	tConduct := table.FivenetJobsConduct
+	entry, err := s.getConductEntry(ctx, req.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if entry != nil && entry.DeletedAt != nil && userInfo.Superuser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
+	tConduct := table.FivenetJobConduct
 	stmt := tConduct.
-		DELETE().
+		UPDATE(
+			tConduct.DeletedAt,
+		).
+		SET(
+			tConduct.DeletedAt.SET(deletedAtTime),
+		).
 		WHERE(jet.AND(
 			tConduct.Job.EQ(jet.String(userInfo.Job)),
 			tConduct.ID.EQ(jet.Uint64(req.Id)),
@@ -352,7 +370,7 @@ func (s *Server) DeleteConductEntry(ctx context.Context, req *pbjobs.DeleteCondu
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbjobs.DeleteConductEntryResponse{}, nil
 }

@@ -17,7 +17,7 @@ import (
 )
 
 func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []string) (*UserProps, error) {
-	tUserProps := table.FivenetUserProps.AS("userprops")
+	tUserProps := table.FivenetUserProps.AS("user_props")
 	stmt := tUserProps.
 		SELECT(
 			tUserProps.UserID,
@@ -56,9 +56,9 @@ func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []strin
 	return dest, nil
 }
 
-func GetUserLabels(ctx context.Context, tx qrm.DB, userId int32, jobs []string) (*CitizenLabels, error) {
-	list := &CitizenLabels{
-		List: []*CitizenLabel{},
+func GetUserLabels(ctx context.Context, tx qrm.DB, userId int32, jobs []string) (*Labels, error) {
+	list := &Labels{
+		List: []*Label{},
 	}
 
 	if len(jobs) == 0 {
@@ -70,28 +70,28 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, userId int32, jobs []string) 
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
-	tJobCitizenLabels := table.FivenetJobCitizenLabels.AS("citizen_label")
-	tUserCitizenLabels := table.FivenetUserCitizenLabels
+	tCitizensLabelsJob := table.FivenetUserLabelsJob.AS("citizen_label")
+	tUserLabels := table.FivenetUserLabels
 
-	stmt := tUserCitizenLabels.
+	stmt := tUserLabels.
 		SELECT(
-			tJobCitizenLabels.ID,
-			tJobCitizenLabels.Job,
-			tJobCitizenLabels.Name,
-			tJobCitizenLabels.Color,
+			tCitizensLabelsJob.ID,
+			tCitizensLabelsJob.Job,
+			tCitizensLabelsJob.Name,
+			tCitizensLabelsJob.Color,
 		).
 		FROM(
-			tUserCitizenLabels.
-				INNER_JOIN(tJobCitizenLabels,
-					tJobCitizenLabels.ID.EQ(tUserCitizenLabels.AttributeID),
+			tUserLabels.
+				INNER_JOIN(tCitizensLabelsJob,
+					tCitizensLabelsJob.ID.EQ(tUserLabels.LabelID),
 				),
 		).
 		WHERE(jet.AND(
-			tUserCitizenLabels.UserID.EQ(jet.Int32(userId)),
-			tJobCitizenLabels.Job.IN(jobsExp...),
+			tUserLabels.UserID.EQ(jet.Int32(userId)),
+			tCitizensLabelsJob.Job.IN(jobsExp...),
 		)).
 		ORDER_BY(
-			tJobCitizenLabels.SortKey.ASC(),
+			tCitizensLabelsJob.SortKey.ASC(),
 		)
 
 	if err := stmt.QueryContext(ctx, tx, &list.List); err != nil {
@@ -120,7 +120,7 @@ func (x *UserProps) Default() {
 	}
 
 	if x.Labels == nil {
-		x.Labels = &CitizenLabels{}
+		x.Labels = &Labels{}
 	}
 }
 
@@ -195,10 +195,10 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 
 	if in.Labels != nil {
 		if in.Labels.List == nil {
-			in.Labels.List = []*CitizenLabel{}
+			in.Labels.List = []*Label{}
 		}
 
-		slices.SortFunc(in.Labels.List, func(a, b *CitizenLabel) int {
+		slices.SortFunc(in.Labels.List, func(a, b *Label) int {
 			return strings.Compare(a.Name, b.Name)
 		})
 	} else {
@@ -253,7 +253,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			Reason:       reason,
 			Data: &UserActivityData{
 				Data: &UserActivityData_WantedChange{
-					WantedChange: &UserWantedChange{
+					WantedChange: &WantedChange{
 						Wanted: wanted,
 					},
 				},
@@ -279,7 +279,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			Reason:       reason,
 			Data: &UserActivityData{
 				Data: &UserActivityData_JobChange{
-					JobChange: &UserJobChange{
+					JobChange: &JobChange{
 						Job:        jobLabel,
 						JobLabel:   in.JobName,
 						Grade:      in.JobGradeNumber,
@@ -307,7 +307,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			Reason:       reason,
 			Data: &UserActivityData{
 				Data: &UserActivityData_TrafficInfractionPointsChange{
-					TrafficInfractionPointsChange: &UserTrafficInfractionPointsChange{
+					TrafficInfractionPointsChange: &TrafficInfractionPointsChange{
 						Old: old,
 						New: new,
 					},
@@ -328,7 +328,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			Reason:       reason,
 			Data: &UserActivityData{
 				Data: &UserActivityData_MugshotChange{
-					MugshotChange: &UserMugshotChange{
+					MugshotChange: &MugshotChange{
 						New: url,
 					},
 				},
@@ -337,15 +337,15 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 	}
 	if x.Labels != in.Labels && !proto.Equal(in.Labels, x.Labels) {
 		if in.Labels == nil {
-			in.Labels = &CitizenLabels{}
+			in.Labels = &Labels{}
 		}
 
 		added, removed := utils.SlicesDifferenceFunc(x.Labels.List, in.Labels.List,
-			func(in *CitizenLabel) uint64 {
+			func(in *Label) uint64 {
 				return in.Id
 			})
 
-		if err := x.updateCitizenLabels(ctx, tx, in.UserId, added, removed); err != nil {
+		if err := x.updateLabels(ctx, tx, in.UserId, added, removed); err != nil {
 			return nil, err
 		}
 
@@ -356,7 +356,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			Reason:       reason,
 			Data: &UserActivityData{
 				Data: &UserActivityData_LabelsChange{
-					LabelsChange: &UserLabelsChange{
+					LabelsChange: &LabelsChange{
 						Added:   added,
 						Removed: removed,
 					},
@@ -368,22 +368,22 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 	return activities, nil
 }
 
-func (s *UserProps) updateCitizenLabels(ctx context.Context, tx qrm.DB, userId int32, added []*CitizenLabel, removed []*CitizenLabel) error {
-	tUserCitizenLabels := table.FivenetUserCitizenLabels
+func (s *UserProps) updateLabels(ctx context.Context, tx qrm.DB, userId int32, added []*Label, removed []*Label) error {
+	tUserLabels := table.FivenetUserLabels
 
 	if len(added) > 0 {
-		addedLabels := make([]*model.FivenetUserCitizenLabels, len(added))
-		for i, attribute := range added {
-			addedLabels[i] = &model.FivenetUserCitizenLabels{
-				UserID:      userId,
-				AttributeID: attribute.Id,
+		addedLabels := make([]*model.FivenetUserLabels, len(added))
+		for i, label := range added {
+			addedLabels[i] = &model.FivenetUserLabels{
+				UserID:  userId,
+				LabelID: label.Id,
 			}
 		}
 
-		stmt := tUserCitizenLabels.
+		stmt := tUserLabels.
 			INSERT(
-				tUserCitizenLabels.UserID,
-				tUserCitizenLabels.AttributeID,
+				tUserLabels.UserID,
+				tUserLabels.LabelID,
 			).
 			MODELS(addedLabels)
 
@@ -401,11 +401,11 @@ func (s *UserProps) updateCitizenLabels(ctx context.Context, tx qrm.DB, userId i
 			ids[i] = jet.Uint64(removed[i].Id)
 		}
 
-		stmt := tUserCitizenLabels.
+		stmt := tUserLabels.
 			DELETE().
 			WHERE(jet.AND(
-				tUserCitizenLabels.UserID.EQ(jet.Int32(userId)),
-				tUserCitizenLabels.AttributeID.IN(ids...),
+				tUserLabels.UserID.EQ(jet.Int32(userId)),
+				tUserLabels.LabelID.IN(ids...),
 			)).
 			LIMIT(int64(len(removed)))
 

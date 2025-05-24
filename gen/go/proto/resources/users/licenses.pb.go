@@ -74,7 +74,7 @@ func (x *License) GetLabel() string {
 	return ""
 }
 
-type UserLicenses struct {
+type CitizensLicenses struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UserId        int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	Licenses      []*License             `protobuf:"bytes,2,rep,name=licenses,proto3" json:"licenses,omitempty"`
@@ -82,20 +82,20 @@ type UserLicenses struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UserLicenses) Reset() {
-	*x = UserLicenses{}
+func (x *CitizensLicenses) Reset() {
+	*x = CitizensLicenses{}
 	mi := &file_resources_users_licenses_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UserLicenses) String() string {
+func (x *CitizensLicenses) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UserLicenses) ProtoMessage() {}
+func (*CitizensLicenses) ProtoMessage() {}
 
-func (x *UserLicenses) ProtoReflect() protoreflect.Message {
+func (x *CitizensLicenses) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_users_licenses_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -107,19 +107,19 @@ func (x *UserLicenses) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UserLicenses.ProtoReflect.Descriptor instead.
-func (*UserLicenses) Descriptor() ([]byte, []int) {
+// Deprecated: Use CitizensLicenses.ProtoReflect.Descriptor instead.
+func (*CitizensLicenses) Descriptor() ([]byte, []int) {
 	return file_resources_users_licenses_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *UserLicenses) GetUserId() int32 {
+func (x *CitizensLicenses) GetUserId() int32 {
 	if x != nil {
 		return x.UserId
 	}
 	return 0
 }
 
-func (x *UserLicenses) GetLicenses() []*License {
+func (x *CitizensLicenses) GetLicenses() []*License {
 	if x != nil {
 		return x.Licenses
 	}
@@ -133,8 +133,8 @@ const file_resources_users_licenses_proto_rawDesc = "" +
 	"\x1eresources/users/licenses.proto\x12\x0fresources.users\x1a\x17validate/validate.proto\"G\n" +
 	"\aLicense\x12\x1d\n" +
 	"\x04type\x18\x01 \x01(\tB\t\xfaB\x06r\x04\x10\x01\x18<R\x04type\x12\x1d\n" +
-	"\x05label\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18<R\x05label\"f\n" +
-	"\fUserLicenses\x12 \n" +
+	"\x05label\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18<R\x05label\"j\n" +
+	"\x10CitizensLicenses\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x124\n" +
 	"\blicenses\x18\x02 \x03(\v2\x18.resources.users.LicenseR\blicensesBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
@@ -152,11 +152,11 @@ func file_resources_users_licenses_proto_rawDescGZIP() []byte {
 
 var file_resources_users_licenses_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_users_licenses_proto_goTypes = []any{
-	(*License)(nil),      // 0: resources.users.License
-	(*UserLicenses)(nil), // 1: resources.users.UserLicenses
+	(*License)(nil),          // 0: resources.users.License
+	(*CitizensLicenses)(nil), // 1: resources.users.CitizensLicenses
 }
 var file_resources_users_licenses_proto_depIdxs = []int32{
-	0, // 0: resources.users.UserLicenses.licenses:type_name -> resources.users.License
+	0, // 0: resources.users.CitizensLicenses.licenses:type_name -> resources.users.License
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

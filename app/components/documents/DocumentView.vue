@@ -25,7 +25,7 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
 import ConfirmModalWithReason from '../partials/ConfirmModalWithReason.vue';
 import DocumentReminderModal from './DocumentReminderModal.vue';
 
@@ -57,7 +57,7 @@ const {
 
 async function getDocument(id: number): Promise<Document> {
     try {
-        const call = $grpc.docstore.docStore.getDocument({
+        const call = $grpc.documents.documents.getDocument({
             documentId: id,
         });
         const { response } = await call;
@@ -73,7 +73,7 @@ async function getDocument(id: number): Promise<Document> {
 
 async function deleteDocument(id: number, reason?: string): Promise<void> {
     try {
-        await $grpc.docstore.docStore.deleteDocument({
+        await $grpc.documents.documents.deleteDocument({
             documentId: id,
             reason: reason,
         });
@@ -104,7 +104,7 @@ async function deleteDocument(id: number, reason?: string): Promise<void> {
 
 async function toggleDocument(id: number, closed: boolean): Promise<void> {
     try {
-        await $grpc.docstore.docStore.toggleDocument({
+        await $grpc.documents.documents.toggleDocument({
             documentId: id,
             closed,
         });
@@ -113,14 +113,14 @@ async function toggleDocument(id: number, closed: boolean): Promise<void> {
 
         if (!closed) {
             notifications.add({
-                title: { key: `notifications.docstore.document_toggled.open.title`, parameters: {} },
-                description: { key: `notifications.docstore.document_toggled.open.content`, parameters: {} },
+                title: { key: `notifications.documents.document_toggled.open.title`, parameters: {} },
+                description: { key: `notifications.documents.document_toggled.open.content`, parameters: {} },
                 type: NotificationType.SUCCESS,
             });
         } else {
             notifications.add({
-                title: { key: `notifications.docstore.document_toggled.closed.title`, parameters: {} },
-                description: { key: `notifications.docstore.document_toggled.closed.content`, parameters: {} },
+                title: { key: `notifications.documents.document_toggled.closed.title`, parameters: {} },
+                description: { key: `notifications.documents.document_toggled.closed.content`, parameters: {} },
                 type: NotificationType.SUCCESS,
             });
         }
@@ -132,13 +132,13 @@ async function toggleDocument(id: number, closed: boolean): Promise<void> {
 
 async function changeDocumentOwner(id: number): Promise<void> {
     try {
-        await $grpc.docstore.docStore.changeDocumentOwner({
+        await $grpc.documents.documents.changeDocumentOwner({
             documentId: id,
         });
 
         notifications.add({
-            title: { key: 'notifications.docstore.document_take_ownership.title', parameters: {} },
-            description: { key: 'notifications.docstore.document_take_ownership.content', parameters: {} },
+            title: { key: 'notifications.documents.document_take_ownership.title', parameters: {} },
+            description: { key: 'notifications.documents.document_take_ownership.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
@@ -183,7 +183,7 @@ function openRequestsModal(): void {
 
 async function togglePin(documentId: number, state: boolean): Promise<ToggleDocumentPinResponse> {
     try {
-        const call = $grpc.docstore.docStore.toggleDocumentPin({
+        const call = $grpc.documents.documents.toggleDocumentPin({
             documentId: documentId,
             state: state,
         });
@@ -221,7 +221,7 @@ const accordionItems = computed(() =>
         { slot: 'references', label: t('common.reference', 2), icon: 'i-mdi-file-document' },
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
         { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
-        can('DocStoreService.ListDocumentActivity').value
+        can('documents.DocumentsService.ListDocumentActivity').value
             ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -232,8 +232,8 @@ defineShortcuts({
         if (
             !doc.value ||
             !(
-                can('DocStoreService.ToggleDocument').value &&
-                checkDocAccess(access.value, doc.value.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
+                can('documents.DocumentsService.ToggleDocument').value &&
+                checkDocAccess(access.value, doc.value.creator, AccessLevel.STATUS, 'documents.DocumentsService.ToggleDocument')
             )
         ) {
             return;
@@ -245,8 +245,8 @@ defineShortcuts({
         if (
             !doc.value ||
             !(
-                can('DocStoreService.UpdateDocument').value &&
-                checkDocAccess(access.value, doc.value.creator, AccessLevel.EDIT, 'DocStoreService.ToggleDocument')
+                can('documents.DocumentsService.UpdateDocument').value &&
+                checkDocAccess(access.value, doc.value.creator, AccessLevel.EDIT, 'documents.DocumentsService.ToggleDocument')
             )
         ) {
             return;
@@ -258,7 +258,7 @@ defineShortcuts({
         });
     },
     'd-r': () => {
-        if (!doc.value || !can('DocStoreService.ListDocumentReqs').value) {
+        if (!doc.value || !can('documents.DocumentsService.ListDocumentReqs').value) {
             return;
         }
 
@@ -302,8 +302,8 @@ defineShortcuts({
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                     <UTooltip
                         v-if="
-                            can('DocStoreService.ToggleDocument').value &&
-                            checkDocAccess(access, doc.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
+                            can('documents.DocumentsService.ToggleDocument').value &&
+                            checkDocAccess(access, doc.creator, AccessLevel.STATUS, 'documents.DocumentsService.ToggleDocument')
                         "
                         class="flex-1"
                         :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
@@ -327,8 +327,8 @@ defineShortcuts({
 
                     <UTooltip
                         v-if="
-                            can('DocStoreService.UpdateDocument').value &&
-                            checkDocAccess(access, doc.creator, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument')
+                            can('documents.DocumentsService.UpdateDocument').value &&
+                            checkDocAccess(access, doc.creator, AccessLevel.ACCESS, 'documents.DocumentsService.UpdateDocument')
                         "
                         class="flex-1"
                         :text="$t('common.edit')"
@@ -348,7 +348,7 @@ defineShortcuts({
                     </UTooltip>
 
                     <UTooltip
-                        v-if="can('DocStoreService.ToggleDocumentPin').value"
+                        v-if="can('documents.DocumentsService.ToggleDocumentPin').value"
                         class="flex-1"
                         :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
                     >
@@ -365,7 +365,7 @@ defineShortcuts({
                     </UTooltip>
 
                     <UTooltip
-                        v-if="can('DocStoreService.ListDocumentReqs').value"
+                        v-if="can('documents.DocumentsService.ListDocumentReqs').value"
                         class="flex-1"
                         :text="$t('common.request', 2)"
                         :shortcuts="['D', 'R']"
@@ -381,7 +381,7 @@ defineShortcuts({
                     </UTooltip>
 
                     <UButton
-                        v-if="can('DocStoreService.SetDocumentReminder').value"
+                        v-if="can('documents.DocumentsService.SetDocumentReminder').value"
                         class="flex-1 flex-col"
                         block
                         icon="i-mdi-reminder"
@@ -399,8 +399,13 @@ defineShortcuts({
                     <UButton
                         v-if="
                             (doc?.creatorJob === activeChar?.job || isSuperuser) &&
-                            can('DocStoreService.ChangeDocumentOwner').value &&
-                            checkDocAccess(access, doc?.creator, AccessLevel.EDIT, 'DocStoreService.ChangeDocumentOwner')
+                            can('documents.DocumentsService.ChangeDocumentOwner').value &&
+                            checkDocAccess(
+                                access,
+                                doc?.creator,
+                                AccessLevel.EDIT,
+                                'documents.DocumentsService.ChangeDocumentOwner',
+                            )
                         "
                         class="flex-1 flex-col"
                         block
@@ -417,8 +422,8 @@ defineShortcuts({
 
                     <UButton
                         v-if="
-                            can('DocStoreService.DeleteDocument').value &&
-                            checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
+                            can('documents.DocumentsService.DeleteDocument').value &&
+                            checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'documents.DocumentsService.DeleteDocument')
                         "
                         class="flex-1 flex-col"
                         block
@@ -562,7 +567,7 @@ defineShortcuts({
                                 :access-level="AccessLevel"
                                 :jobs="access.jobs"
                                 :users="access.users"
-                                i18n-key="enums.docstore"
+                                i18n-key="enums.documents"
                             />
                         </UContainer>
                     </template>
@@ -582,7 +587,7 @@ defineShortcuts({
                         </UContainer>
                     </template>
 
-                    <template v-if="can('DocStoreService.ListDocumentActivity').value" #activity>
+                    <template v-if="can('documents.DocumentsService.ListDocumentActivity').value" #activity>
                         <UContainer>
                             <DocumentActivityList :document-id="documentId" />
                         </UContainer>

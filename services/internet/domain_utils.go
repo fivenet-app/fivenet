@@ -32,7 +32,7 @@ func cleanAndSplitDomain(in string) (string, string) {
 }
 
 func (s *Server) getDomainByCondition(ctx context.Context, tx *sql.DB, condition jet.BoolExpression) (*internet.Domain, error) {
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	stmt := tDomains.
 		SELECT(

@@ -104,7 +104,7 @@ const modal = useModal();
             </div>
         </template>
 
-        <template #footer>
+        <template v-if="account" #footer>
             <div class="inline-flex items-center gap-4">
                 <template v-if="account">
                     <UAvatar :as="NuxtImg" size="md" :src="account.avatar" :alt="$t('common.image')" loading="lazy" />

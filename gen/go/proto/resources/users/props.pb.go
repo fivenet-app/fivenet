@@ -9,6 +9,7 @@ package users
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -30,15 +31,15 @@ type UserProps struct {
 	UpdatedAt                        *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Wanted                           *bool                  `protobuf:"varint,3,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
 	JobName                          *string                `protobuf:"bytes,4,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty" alias:"job"` // @gotags: alias:"job"
-	Job                              *Job                   `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	Job                              *jobs.Job              `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	JobGradeNumber                   *int32                 `protobuf:"varint,6,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof" json:"job_grade_number,omitempty" alias:"job_grade"` // @gotags: alias:"job_grade"
-	JobGrade                         *JobGrade              `protobuf:"bytes,7,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
+	JobGrade                         *jobs.JobGrade         `protobuf:"bytes,7,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
 	TrafficInfractionPoints          *uint32                `protobuf:"varint,8,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty"`
 	TrafficInfractionPointsUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,13,opt,name=traffic_infraction_points_updated_at,json=trafficInfractionPointsUpdatedAt,proto3,oneof" json:"traffic_infraction_points_updated_at,omitempty"`
 	OpenFines                        *int64                 `protobuf:"varint,9,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
 	BloodType                        *string                `protobuf:"bytes,10,opt,name=blood_type,json=bloodType,proto3,oneof" json:"blood_type,omitempty"`
 	MugShot                          *filestore.File        `protobuf:"bytes,11,opt,name=mug_shot,json=mugShot,proto3,oneof" json:"mug_shot,omitempty"`
-	Labels                           *CitizenLabels         `protobuf:"bytes,12,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
+	Labels                           *Labels                `protobuf:"bytes,12,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
 	// @sanitize: method=StripTags
 	Email         *string `protobuf:"bytes,19,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -103,7 +104,7 @@ func (x *UserProps) GetJobName() string {
 	return ""
 }
 
-func (x *UserProps) GetJob() *Job {
+func (x *UserProps) GetJob() *jobs.Job {
 	if x != nil {
 		return x.Job
 	}
@@ -117,7 +118,7 @@ func (x *UserProps) GetJobGradeNumber() int32 {
 	return 0
 }
 
-func (x *UserProps) GetJobGrade() *JobGrade {
+func (x *UserProps) GetJobGrade() *jobs.JobGrade {
 	if x != nil {
 		return x.JobGrade
 	}
@@ -159,7 +160,7 @@ func (x *UserProps) GetMugShot() *filestore.File {
 	return nil
 }
 
-func (x *UserProps) GetLabels() *CitizenLabels {
+func (x *UserProps) GetLabels() *Labels {
 	if x != nil {
 		return x.Labels
 	}
@@ -177,16 +178,16 @@ var File_resources_users_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1aresources/users/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x17validate/validate.proto\"\xbc\a\n" +
+	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x17validate/validate.proto\"\xb3\a\n" +
 	"\tUserProps\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12B\n" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
 	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01\x12\x1e\n" +
-	"\bjob_name\x18\x04 \x01(\tH\x02R\ajobName\x88\x01\x01\x12+\n" +
-	"\x03job\x18\x05 \x01(\v2\x14.resources.users.JobH\x03R\x03job\x88\x01\x01\x12-\n" +
-	"\x10job_grade_number\x18\x06 \x01(\x05H\x04R\x0ejobGradeNumber\x88\x01\x01\x12;\n" +
-	"\tjob_grade\x18\a \x01(\v2\x19.resources.users.JobGradeH\x05R\bjobGrade\x88\x01\x01\x12?\n" +
+	"\bjob_name\x18\x04 \x01(\tH\x02R\ajobName\x88\x01\x01\x12*\n" +
+	"\x03job\x18\x05 \x01(\v2\x13.resources.jobs.JobH\x03R\x03job\x88\x01\x01\x12-\n" +
+	"\x10job_grade_number\x18\x06 \x01(\x05H\x04R\x0ejobGradeNumber\x88\x01\x01\x12:\n" +
+	"\tjob_grade\x18\a \x01(\v2\x18.resources.jobs.JobGradeH\x05R\bjobGrade\x88\x01\x01\x12?\n" +
 	"\x19traffic_infraction_points\x18\b \x01(\rH\x06R\x17trafficInfractionPoints\x88\x01\x01\x12s\n" +
 	"$traffic_infraction_points_updated_at\x18\r \x01(\v2\x1e.resources.timestamp.TimestampH\aR trafficInfractionPointsUpdatedAt\x88\x01\x01\x12\"\n" +
 	"\n" +
@@ -195,8 +196,8 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"blood_type\x18\n" +
 	" \x01(\tH\tR\tbloodType\x88\x01\x01\x129\n" +
 	"\bmug_shot\x18\v \x01(\v2\x19.resources.filestore.FileH\n" +
-	"R\amugShot\x88\x01\x01\x12;\n" +
-	"\x06labels\x18\f \x01(\v2\x1e.resources.users.CitizenLabelsH\vR\x06labels\x88\x01\x01\x12$\n" +
+	"R\amugShot\x88\x01\x01\x124\n" +
+	"\x06labels\x18\f \x01(\v2\x17.resources.users.LabelsH\vR\x06labels\x88\x01\x01\x12$\n" +
 	"\x05email\x18\x13 \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PH\fR\x05email\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\v\n" +
@@ -229,18 +230,18 @@ var file_resources_users_props_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_users_props_proto_goTypes = []any{
 	(*UserProps)(nil),           // 0: resources.users.UserProps
 	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
-	(*Job)(nil),                 // 2: resources.users.Job
-	(*JobGrade)(nil),            // 3: resources.users.JobGrade
+	(*jobs.Job)(nil),            // 2: resources.jobs.Job
+	(*jobs.JobGrade)(nil),       // 3: resources.jobs.JobGrade
 	(*filestore.File)(nil),      // 4: resources.filestore.File
-	(*CitizenLabels)(nil),       // 5: resources.users.CitizenLabels
+	(*Labels)(nil),              // 5: resources.users.Labels
 }
 var file_resources_users_props_proto_depIdxs = []int32{
 	1, // 0: resources.users.UserProps.updated_at:type_name -> resources.timestamp.Timestamp
-	2, // 1: resources.users.UserProps.job:type_name -> resources.users.Job
-	3, // 2: resources.users.UserProps.job_grade:type_name -> resources.users.JobGrade
+	2, // 1: resources.users.UserProps.job:type_name -> resources.jobs.Job
+	3, // 2: resources.users.UserProps.job_grade:type_name -> resources.jobs.JobGrade
 	1, // 3: resources.users.UserProps.traffic_infraction_points_updated_at:type_name -> resources.timestamp.Timestamp
 	4, // 4: resources.users.UserProps.mug_shot:type_name -> resources.filestore.File
-	5, // 5: resources.users.UserProps.labels:type_name -> resources.users.CitizenLabels
+	5, // 5: resources.users.UserProps.labels:type_name -> resources.users.Labels
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
@@ -253,7 +254,6 @@ func file_resources_users_props_proto_init() {
 	if File_resources_users_props_proto != nil {
 		return
 	}
-	file_resources_users_jobs_proto_init()
 	file_resources_users_labels_proto_init()
 	file_resources_users_props_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}

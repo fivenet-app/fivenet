@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
-import type { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
+import type { ListDocumentsRequest } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
     modelValue: MessageAttachment[];
@@ -29,7 +29,7 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
     };
 
     try {
-        const call = $grpc.docstore.docStore.listDocuments(req);
+        const call = $grpc.documents.documents.listDocuments(req);
         const { response } = await call;
 
         return response.documents;

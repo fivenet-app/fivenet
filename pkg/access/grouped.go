@@ -139,7 +139,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 	}
 
 	// Allow superusers access to any docs
-	if userInfo.SuperUser {
+	if userInfo.Superuser {
 		return targetIds, nil
 	}
 

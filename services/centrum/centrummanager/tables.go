@@ -5,14 +5,14 @@ import (
 )
 
 var (
-	tUnits           = table.FivenetCentrumUnits.AS("unit")
-	tUnitStatus      = table.FivenetCentrumUnitsStatus.AS("unitstatus")
-	tUnitUser        = table.FivenetCentrumUnitsUsers.AS("unitassignment")
-	tUserProps       = table.FivenetUserProps
-	tJobsUserProps   = table.FivenetJobsUserProps.AS("jobs_user_props")
-	tCentrumSettings = table.FivenetCentrumSettings
-	tCentrumUsers    = table.FivenetCentrumUsers
-	tDispatch        = table.FivenetCentrumDispatches.AS("dispatch")
-	tDispatchStatus  = table.FivenetCentrumDispatchesStatus.AS("dispatchstatus")
-	tDispatchUnit    = table.FivenetCentrumDispatchesAsgmts.AS("dispatchassignment")
+	tUnits             = table.FivenetCentrumUnits.AS("unit")
+	tUnitStatus        = table.FivenetCentrumUnitsStatus.AS("unit_status")
+	tUnitUser          = table.FivenetCentrumUnitsUsers.AS("unit_assignment")
+	tUserProps         = table.FivenetUserProps
+	tColleagueProps    = table.FivenetJobColleagueProps.AS("jobs_user_props")
+	tCentrumSettings   = table.FivenetCentrumSettings
+	tCentrumDisponents = table.FivenetCentrumDisponents
+	tDispatch          = table.FivenetCentrumDispatches.AS("dispatch")
+	tDispatchStatus    = table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
+	tDispatchUnit      = table.FivenetCentrumDispatchesAsgmts.AS("dispatch_assignment")
 )

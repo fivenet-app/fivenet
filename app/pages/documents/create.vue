@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.create.title',
     requiresAuth: true,
-    permission: 'DocStoreService.CreateDocument',
+    permission: 'documents.DocumentsService.CreateDocument',
 });
 </script>
 

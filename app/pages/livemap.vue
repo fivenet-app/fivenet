@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'common.livemap',
     requiresAuth: true,
-    permission: 'LivemapperService.Stream',
+    permission: 'livemap.LivemapService.Stream',
 });
 </script>
 

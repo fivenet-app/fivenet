@@ -35,11 +35,11 @@ message AddActivityRequest {
     resources.sync.UserProps user_props = 4;
 
     // Jobs user activity
-    resources.jobs.JobsUserActivity jobs_user_activity = 5;
+    resources.jobs.ColleagueActivity job_colleague_activity = 5;
     // Setting props will cause activity to be created automtically
-    resources.sync.JobsUserProps jobs_user_props = 6;
+    resources.sync.ColleagueProps colleague_props = 6;
     // Timeclock user entry
-    resources.sync.TimeclockUpdate jobs_timeclock = 7;
+    resources.sync.TimeclockUpdate job_timeclock = 7;
 
     // User/Char info updates that aren't tracked by activity (yet)
     resources.sync.UserUpdate user_update = 8;

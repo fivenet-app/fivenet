@@ -11,7 +11,7 @@ const (
 )
 
 type DataCount struct {
-	TotalCount int64 `alias:"total_count"`
+	Total int64 `alias:"total"`
 }
 
 func (p *PaginationRequest) GetResponse(totalCount int64) (*PaginationResponse, int64) {

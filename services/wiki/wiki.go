@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 	pbwiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki"
 	permswiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki/perms"
@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -29,12 +28,12 @@ import (
 func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*pbwiki.ListPagesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
 		Method:  "ListPages",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -59,7 +58,7 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		groupBys = []jet.GroupByClause{tPageShort.Job}
 	}
 
-	if !userInfo.SuperUser {
+	if !userInfo.Superuser {
 		condition = condition.AND(jet.AND(
 			tPageShort.DeletedAt.IS_NULL(),
 			jet.OR(
@@ -85,7 +84,7 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 
 	countStmt := tPageShort.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tPageShort.ID)).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tPageShort.ID)).AS("data_count.total"),
 		).
 		FROM(
 			tPageShort.
@@ -103,12 +102,12 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, defaultWikiUpperLimit)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, defaultWikiUpperLimit)
 	resp := &pbwiki.ListPagesResponse{
 		Pagination: pag,
 		Pages:      []*wiki.PageShort{},
 	}
-	if count.TotalCount <= 0 {
+	if count.Total <= 0 {
 		return resp, nil
 	}
 
@@ -124,7 +123,7 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 			tJobProps.LogoURL.AS("page_root_info.logo"),
 		)
 	}
-	if userInfo.SuperUser {
+	if userInfo.Superuser {
 		columns = append(columns, tPageShort.DeletedAt)
 	}
 
@@ -177,12 +176,12 @@ func (s *Server) GetPage(ctx context.Context, req *pbwiki.GetPageRequest) (*pbwi
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
 		Method:  "GetPage",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -213,7 +212,7 @@ func (s *Server) GetPage(ctx context.Context, req *pbwiki.GetPageRequest) (*pbwi
 		}
 		resp.Page.Access = access
 
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+		auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 	}
 
 	return resp, nil
@@ -247,7 +246,7 @@ func (s *Server) getPageAccess(ctx context.Context, userInfo *userinfo.UserInfo,
 }
 
 func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, withAccess bool, userInfo *userinfo.UserInfo) (*wiki.Page, error) {
-	tCreator := tables.Users().AS("creator")
+	tCreator := tables.User().AS("creator")
 
 	columns := []jet.Projection{
 		tPage.ID,
@@ -321,19 +320,19 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) (*pbwiki.CreatePageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
 		Method:  "CreatePage",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	if req.Page.ParentId == nil || *req.Page.ParentId <= 0 {
 		countStmt := tPage.
 			SELECT(
-				jet.COUNT(tPage.ID).AS("datacount.totalcount"),
+				jet.COUNT(tPage.ID).AS("data_count.total"),
 			).
 			FROM(tPage).
 			WHERE(jet.AND(
@@ -348,7 +347,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 			}
 		}
 
-		if count.TotalCount > 0 {
+		if count.Total > 0 {
 			return nil, errorswiki.ErrPageDenied
 		}
 	} else {
@@ -465,7 +464,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	page, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)
 	if err != nil {
@@ -482,12 +481,12 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
 		Method:  "UpdatePage",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -512,7 +511,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 			}
 		}
 
-		if ids.ID != req.Page.Id && !userInfo.SuperUser {
+		if ids.ID != req.Page.Id && !userInfo.Superuser {
 			return nil, errorswiki.ErrPageDenied
 		}
 	} else {
@@ -521,7 +520,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
 
-		if p.Job != userInfo.Job && !userInfo.SuperUser {
+		if p.Job != userInfo.Job && !userInfo.Superuser {
 			return nil, errorswiki.ErrPageDenied
 		}
 
@@ -644,7 +643,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	page, err = s.getPage(ctx, req.Page.Id, true, true, userInfo)
 	if err != nil {
@@ -700,12 +699,12 @@ func (s *Server) DeletePage(ctx context.Context, req *pbwiki.DeletePageRequest) 
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbwiki.WikiService_ServiceDesc.ServiceName,
 		Method:  "DeletePage",
-		UserID:  userInfo.UserId,
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -723,7 +722,7 @@ func (s *Server) DeletePage(ctx context.Context, req *pbwiki.DeletePageRequest) 
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if page.Meta != nil && page.Meta.DeletedAt != nil && userInfo.SuperUser {
+	if page.Meta != nil && page.Meta.DeletedAt != nil && userInfo.Superuser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
@@ -742,7 +741,7 @@ func (s *Server) DeletePage(ctx context.Context, req *pbwiki.DeletePageRequest) 
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbwiki.DeletePageResponse{}, nil
 }

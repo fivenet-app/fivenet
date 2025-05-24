@@ -5,9 +5,9 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/rector"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
@@ -15,17 +15,16 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorscitizenstore "github.com/fivenet-app/fivenet/v2025/services/citizenstore/errors"
+	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
 	errorsjobs "github.com/fivenet-app/fivenet/v2025/services/jobs/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 var (
-	tJobLabels  = table.FivenetJobsLabels.AS("label")
-	tUserLabels = table.FivenetJobsLabelsUsers
+	tJobLabels       = table.FivenetJobLabels.AS("label")
+	tColleagueLabels = table.FivenetJobColleagueLabels
 )
 
 func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagueLabelsRequest) (*pbjobs.GetColleagueLabelsResponse, error) {
@@ -40,18 +39,19 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.SuperUser {
+	if userInfo.Superuser {
 		fields.Strings = []string{"Labels"}
 	}
 
 	if !fields.Contains("Labels") {
 		// Fallback to checking if user has manage colleague labels permission
-		if !s.ps.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceManageColleagueLabelsPerm) {
+		if !s.ps.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceManageLabelsPerm) {
 			return nil, errorsjobs.ErrLabelsNoPerms
 		}
 	}
 
-	condition := tJobLabels.Job.EQ(jet.String(userInfo.Job))
+	condition := tJobLabels.Job.EQ(jet.String(userInfo.Job)).
+		AND(tJobLabels.DeletedAt.IS_NULL())
 
 	if req.Search != nil && *req.Search != "" {
 		*req.Search = strings.TrimSpace(*req.Search)
@@ -67,6 +67,7 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 		SELECT(
 			tJobLabels.ID,
 			tJobLabels.Job,
+			tJobLabels.DeletedAt,
 			tJobLabels.Name,
 			tJobLabels.Color,
 			tJobLabels.Order,
@@ -80,42 +81,43 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
 
 	return resp, nil
 }
 
-func (s *Server) ManageColleagueLabels(ctx context.Context, req *pbjobs.ManageColleagueLabelsRequest) (*pbjobs.ManageColleagueLabelsResponse, error) {
+func (s *Server) ManageLabels(ctx context.Context, req *pbjobs.ManageLabelsRequest) (*pbjobs.ManageLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	auditEntry := &model.FivenetAuditLog{
+	auditEntry := &audit.AuditEntry{
 		Service: pbjobs.JobsService_ServiceDesc.ServiceName,
-		Method:  "ManageColleagueLabels",
-		UserID:  userInfo.UserId,
+		Method:  "ManageLabels",
+		UserId:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 	defer s.aud.Log(auditEntry, req)
 
 	stmt := tJobLabels.
 		SELECT(
 			tJobLabels.ID,
+			tJobLabels.DeletedAt,
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
 			tJobLabels.Order,
 		).
 		FROM(tJobLabels).
-		WHERE(
+		WHERE(jet.AND(
 			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
-		)
+		))
 
 	labels := []*jobs.Label{}
 	if err := stmt.QueryContext(ctx, s.db, &labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
 
@@ -129,7 +131,7 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *pbjobs.ManageCo
 		req.Labels[i].Order = int32(i)
 	}
 
-	tJobLabels := table.FivenetJobsLabels
+	tJobLabels := table.FivenetJobLabels
 	if len(req.Labels) > 0 {
 		toCreate := []*jobs.Label{}
 		toUpdate := []*jobs.Label{}
@@ -155,10 +157,11 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *pbjobs.ManageCo
 					tJobLabels.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
 					tJobLabels.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
 					tJobLabels.Order.SET(jet.IntExp(jet.Raw("VALUES(`order`)"))),
+					tJobLabels.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
 				)
 
 			if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
-				return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+				return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 			}
 		}
 
@@ -174,6 +177,7 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *pbjobs.ManageCo
 						tJobLabels.Name.SET(jet.String(label.Name)),
 						tJobLabels.Color.SET(jet.String(label.Color)),
 						tJobLabels.Order.SET(jet.Int32(label.Order)),
+						tJobLabels.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
 					).
 					WHERE(jet.AND(
 						tJobLabels.ID.EQ(jet.Uint64(label.Id)),
@@ -181,7 +185,7 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *pbjobs.ManageCo
 					))
 
 				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
-					return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+					return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 				}
 			}
 		}
@@ -195,7 +199,10 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *pbjobs.ManageCo
 		}
 
 		deleteStmt := tJobLabels.
-			DELETE().
+			UPDATE().
+			SET(
+				tJobLabels.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			).
 			WHERE(jet.AND(
 				tJobLabels.ID.IN(ids...),
 				tJobLabels.Job.EQ(jet.String(userInfo.Job)),
@@ -203,20 +210,20 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *pbjobs.ManageCo
 			LIMIT(int64(len(removed)))
 
 		if _, err := deleteStmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
 
-	resp := &pbjobs.ManageColleagueLabelsResponse{
+	resp := &pbjobs.ManageLabelsResponse{
 		Labels: []*jobs.Label{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return resp, nil
 }
@@ -233,11 +240,12 @@ func (s *Server) validateLabels(ctx context.Context, userInfo *userinfo.UserInfo
 
 	stmt := tJobLabels.
 		SELECT(
-			jet.COUNT(tJobLabels.ID).AS("datacount.totalcount"),
+			jet.COUNT(tJobLabels.ID).AS("data_count.total"),
 		).
 		FROM(tJobLabels).
 		WHERE(jet.AND(
 			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+			tJobLabels.DeletedAt.IS_NULL(),
 			tJobLabels.ID.IN(idsExp...),
 		)).
 		ORDER_BY(
@@ -252,11 +260,11 @@ func (s *Server) validateLabels(ctx context.Context, userInfo *userinfo.UserInfo
 		}
 	}
 
-	return len(labels) == int(count.TotalCount), nil
+	return len(labels) == int(count.Total), nil
 }
 
 func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*jobs.Labels, error) {
-	stmt := tUserLabels.
+	stmt := tColleagueLabels.
 		SELECT(
 			tJobLabels.ID,
 			tJobLabels.Job,
@@ -264,18 +272,17 @@ func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo,
 			tJobLabels.Color,
 		).
 		FROM(
-			tUserLabels.
+			tColleagueLabels.
 				INNER_JOIN(tJobLabels,
-					tJobLabels.ID.EQ(tUserLabels.LabelID),
+					tJobLabels.ID.EQ(tColleagueLabels.LabelID),
 				),
 		).
 		WHERE(jet.AND(
-			tUserLabels.UserID.EQ(jet.Int32(userId)),
+			tColleagueLabels.UserID.EQ(jet.Int32(userId)),
 			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+			tJobLabels.DeletedAt.IS_NULL(),
 		)).
-		ORDER_BY(
-			tJobLabels.Order.ASC(),
-		)
+		ORDER_BY(tJobLabels.Order.ASC())
 
 	list := &jobs.Labels{
 		List: []*jobs.Label{},
@@ -297,7 +304,7 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *pbjobs.GetCol
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	if userInfo.SuperUser {
+	if userInfo.Superuser {
 		fields.Strings = []string{"Labels"}
 	}
 
@@ -305,27 +312,29 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *pbjobs.GetCol
 		return &pbjobs.GetColleagueLabelsStatsResponse{}, nil
 	}
 
-	tUser := tables.Users().AS("user")
+	tUser := tables.User().AS("user")
 
-	stmt := tUserLabels.
+	stmt := tColleagueLabels.
 		SELECT(
-			jet.COUNT(tUserLabels.LabelID).AS("label_count.count"),
+			jet.COUNT(tColleagueLabels.LabelID).AS("label_count.count"),
 			tJobLabels.ID,
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
 		).
 		FROM(
-			tUserLabels.
+			tColleagueLabels.
 				INNER_JOIN(tJobLabels,
-					tJobLabels.ID.EQ(tUserLabels.LabelID),
+					tJobLabels.ID.EQ(tColleagueLabels.LabelID),
 				).
 				INNER_JOIN(tUser,
-					tUser.ID.EQ(tUserLabels.UserID),
+					tUser.ID.EQ(tColleagueLabels.UserID),
 				),
 		).
 		WHERE(jet.AND(
-			tUserLabels.Job.EQ(jet.String(userInfo.Job)),
+			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+			tJobLabels.DeletedAt.IS_NULL(),
+			tColleagueLabels.Job.EQ(jet.String(userInfo.Job)),
 			tUser.Job.EQ(jet.String(userInfo.Job)),
 		)).
 		GROUP_BY(tJobLabels.ID).
@@ -336,7 +345,7 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *pbjobs.GetCol
 	dest := []*jobs.LabelCount{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 		}
 	}
 

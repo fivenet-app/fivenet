@@ -863,22 +863,22 @@ var _ interface {
 	ErrorName() string
 } = DataUserLocationsValidationError{}
 
-// Validate checks the field values on UserLocation with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *UserLocation) Validate() error {
+// Validate checks the field values on CitizenLocations with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CitizenLocations) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserLocation with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UserLocationMultiError, or
-// nil if none found.
-func (m *UserLocation) ValidateAll() error {
+// ValidateAll checks the field values on CitizenLocations with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CitizenLocationsMultiError, or nil if none found.
+func (m *CitizenLocations) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserLocation) validate(all bool) error {
+func (m *CitizenLocations) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -886,7 +886,7 @@ func (m *UserLocation) validate(all bool) error {
 	var errors []error
 
 	if utf8.RuneCountInString(m.GetIdentifier()) > 64 {
-		err := UserLocationValidationError{
+		err := CitizenLocationsValidationError{
 			field:  "Identifier",
 			reason: "value length must be at most 64 runes",
 		}
@@ -897,7 +897,7 @@ func (m *UserLocation) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
-		err := UserLocationValidationError{
+		err := CitizenLocationsValidationError{
 			field:  "Job",
 			reason: "value length must be at most 20 runes",
 		}
@@ -908,7 +908,7 @@ func (m *UserLocation) validate(all bool) error {
 	}
 
 	if m.GetCoords() == nil {
-		err := UserLocationValidationError{
+		err := CitizenLocationsValidationError{
 			field:  "Coords",
 			reason: "value is required",
 		}
@@ -922,7 +922,7 @@ func (m *UserLocation) validate(all bool) error {
 		switch v := interface{}(m.GetCoords()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UserLocationValidationError{
+				errors = append(errors, CitizenLocationsValidationError{
 					field:  "Coords",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -930,7 +930,7 @@ func (m *UserLocation) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UserLocationValidationError{
+				errors = append(errors, CitizenLocationsValidationError{
 					field:  "Coords",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -939,7 +939,7 @@ func (m *UserLocation) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCoords()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return UserLocationValidationError{
+			return CitizenLocationsValidationError{
 				field:  "Coords",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -952,18 +952,19 @@ func (m *UserLocation) validate(all bool) error {
 	// no validation rules for Remove
 
 	if len(errors) > 0 {
-		return UserLocationMultiError(errors)
+		return CitizenLocationsMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserLocationMultiError is an error wrapping multiple validation errors
-// returned by UserLocation.ValidateAll() if the designated constraints aren't met.
-type UserLocationMultiError []error
+// CitizenLocationsMultiError is an error wrapping multiple validation errors
+// returned by CitizenLocations.ValidateAll() if the designated constraints
+// aren't met.
+type CitizenLocationsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserLocationMultiError) Error() string {
+func (m CitizenLocationsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -972,11 +973,11 @@ func (m UserLocationMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserLocationMultiError) AllErrors() []error { return m }
+func (m CitizenLocationsMultiError) AllErrors() []error { return m }
 
-// UserLocationValidationError is the validation error returned by
-// UserLocation.Validate if the designated constraints aren't met.
-type UserLocationValidationError struct {
+// CitizenLocationsValidationError is the validation error returned by
+// CitizenLocations.Validate if the designated constraints aren't met.
+type CitizenLocationsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -984,22 +985,22 @@ type UserLocationValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserLocationValidationError) Field() string { return e.field }
+func (e CitizenLocationsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserLocationValidationError) Reason() string { return e.reason }
+func (e CitizenLocationsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserLocationValidationError) Cause() error { return e.cause }
+func (e CitizenLocationsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserLocationValidationError) Key() bool { return e.key }
+func (e CitizenLocationsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserLocationValidationError) ErrorName() string { return "UserLocationValidationError" }
+func (e CitizenLocationsValidationError) ErrorName() string { return "CitizenLocationsValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserLocationValidationError) Error() string {
+func (e CitizenLocationsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1011,14 +1012,14 @@ func (e UserLocationValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserLocation.%s: %s%s",
+		"invalid %sCitizenLocations.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserLocationValidationError{}
+var _ error = CitizenLocationsValidationError{}
 
 var _ interface {
 	Field() string
@@ -1026,7 +1027,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserLocationValidationError{}
+} = CitizenLocationsValidationError{}
 
 // Validate checks the field values on DeleteUsers with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

@@ -251,7 +251,7 @@ service MailerService {
   rpc GetThread(GetThreadRequest) returns (GetThreadResponse);
   // @perm: Name=ListEmails
   rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse);
-  // @perm: Name=SuperUser
+  // @perm: Name=Superuser
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
   // @perm: Name=ListEmails
   rpc GetThreadState(GetThreadStateRequest) returns (GetThreadStateResponse);
@@ -264,7 +264,7 @@ service MailerService {
   rpc ListThreadMessages(ListThreadMessagesRequest) returns (ListThreadMessagesResponse);
   // @perm: Name=ListEmails
   rpc PostMessage(PostMessageRequest) returns (PostMessageResponse);
-  // @perm: Name=SuperUser
+  // @perm: Name=Superuser
   rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
 
   // @perm: Name=ListEmails

@@ -18,7 +18,7 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { ObjectSpecs, Template, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
+import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
 const props = defineProps<{
@@ -191,7 +191,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
 
     try {
         if (templateId === undefined) {
-            const call = $grpc.docstore.docStore.createTemplate(req);
+            const call = $grpc.documents.documents.createTemplate(req);
             const { response } = await call;
 
             notifications.add({
@@ -205,7 +205,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                 params: { id: response.id },
             });
         } else {
-            const call = $grpc.docstore.docStore.updateTemplate(req);
+            const call = $grpc.documents.documents.updateTemplate(req);
             const { response } = await call;
             if (response.template) {
                 setValuesFromTemplate(response.template);
@@ -292,7 +292,7 @@ function setValuesFromTemplate(tpl: Template): void {
 onBeforeMount(async () => {
     if (props.templateId) {
         try {
-            const call = $grpc.docstore.docStore.getTemplate({
+            const call = $grpc.documents.documents.getTemplate({
                 templateId: props.templateId,
                 render: false,
             });
@@ -452,7 +452,7 @@ const categoriesLoading = ref(false);
                                 :target-id="templateId ?? 0"
                                 :access-types="accessTypes"
                                 :access-roles="
-                                    enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
+                                    enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel').filter(
                                         (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
                                     )
                                 "
@@ -488,7 +488,7 @@ const categoriesLoading = ref(false);
                                 v-model:users="state.contentAccess.users"
                                 :target-id="templateId ?? 0"
                                 :access-types="contentAccessTypes"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
                                 :show-required="true"
                             />
                         </div>

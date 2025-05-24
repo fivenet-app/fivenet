@@ -2,11 +2,11 @@
 import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from '~/components/jobs/colleagues/info/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { JobsUserActivityType, type JobsUserActivity } from '~~/gen/ts/resources/jobs/activity';
+import { ColleagueActivityType, type ColleagueActivity } from '~~/gen/ts/resources/jobs/activity';
 
 withDefaults(
     defineProps<{
-        activity: JobsUserActivity;
+        activity: ColleagueActivity;
         showTargetUser?: boolean;
     }>(),
     {
@@ -28,7 +28,7 @@ withDefaults(
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-medium">
-                    {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[activity.activityType]}`) }}
+                    {{ $t(`enums.jobs.ColleagueActivityType.${ColleagueActivityType[activity.activityType]}`) }}
                     <template v-if="activity.data?.data.oneofKind !== undefined">
                         {{ ' - ' }}
                         <template v-if="activity.data?.data.oneofKind === 'absenceDate'">

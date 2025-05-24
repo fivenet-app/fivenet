@@ -262,7 +262,7 @@ func (m *LogoutResponse) Sanitize() error {
 	return nil
 }
 
-func (m *SetSuperUserModeRequest) Sanitize() error {
+func (m *SetSuperuserModeRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -270,7 +270,7 @@ func (m *SetSuperUserModeRequest) Sanitize() error {
 	return nil
 }
 
-func (m *SetSuperUserModeResponse) Sanitize() error {
+func (m *SetSuperuserModeResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

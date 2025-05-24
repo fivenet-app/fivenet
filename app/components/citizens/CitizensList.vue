@@ -11,7 +11,7 @@ import { useClipboardStore } from '~/stores/clipboard';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
-import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
+import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
 
 const { $grpc } = useNuxtApp();
 
@@ -79,7 +79,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             req.dateofbirth = query.dateofbirth;
         }
 
-        const call = $grpc.citizenstore.citizenStore.listCitizens(req);
+        const call = $grpc.citizens.citizens.listCitizens(req);
         const { response } = await call;
 
         return response;
@@ -134,7 +134,7 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber').value
+    attr('citizens.CitizensService.ListCitizens', 'Fields', 'PhoneNumber').value
         ? { key: 'phoneNumber', label: t('common.phone_number') }
         : undefined,
     {
@@ -143,14 +143,14 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
+    attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
         ? {
               key: 'trafficInfractionPoints',
               label: t('common.traffic_infraction_points', 2),
               sortable: true,
           }
         : undefined,
-    attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines').value
+    attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.OpenFines').value
         ? {
               key: 'openFines',
               label: t('common.fine', 2),
@@ -163,7 +163,7 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    can('CitizenStoreService.GetUser').value
+    can('citizens.CitizensService.GetUser').value
         ? {
               key: 'actions',
               label: t('common.action', 2),
@@ -213,7 +213,7 @@ defineShortcuts({
                 </UFormGroup>
 
                 <UFormGroup
-                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted').value"
+                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.Wanted').value"
                     class="flex flex-initial flex-col"
                     name="wanted"
                     :label="$t('components.citizens.CitizensList.only_wanted')"
@@ -239,7 +239,7 @@ defineShortcuts({
                 <template #search>
                     <div class="flex flex-row gap-2">
                         <UFormGroup
-                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber').value"
+                            v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'PhoneNumber').value"
                             class="flex-1"
                             name="phoneNumber"
                             :label="$t('common.phone_number')"
@@ -254,7 +254,7 @@ defineShortcuts({
                         </UFormGroup>
 
                         <UFormGroup
-                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'TrafficInfractionPoints').value"
+                            v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'TrafficInfractionPoints').value"
                             class="flex-1"
                             name="trafficInfractionPoints"
                             :label="$t('common.traffic_infraction_points', 2)"
@@ -270,7 +270,7 @@ defineShortcuts({
                         </UFormGroup>
 
                         <UFormGroup
-                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines').value"
+                            v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.OpenFines').value"
                             class="flex-1"
                             name="openFines"
                             :label="$t('components.citizens.CitizensList.open_fine')"
@@ -361,7 +361,7 @@ defineShortcuts({
 
         <template #height-data="{ row: citizen }"> {{ citizen.height.value ? citizen.height.value + 'cm' : '' }} </template>
 
-        <template v-if="can('CitizenStoreService.GetUser').value" #actions-data="{ row: citizen }">
+        <template v-if="can('citizens.CitizensService.GetUser').value" #actions-data="{ row: citizen }">
             <div :key="citizen.userId" class="flex flex-col justify-end md:flex-row">
                 <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
                     <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />

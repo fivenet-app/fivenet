@@ -545,7 +545,7 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 		}
 
-	case *AddActivityRequest_JobsUserActivity:
+	case *AddActivityRequest_JobColleagueActivity:
 		if v == nil {
 			err := AddActivityRequestValidationError{
 				field:  "Activity",
@@ -559,11 +559,11 @@ func (m *AddActivityRequest) validate(all bool) error {
 		oneofActivityPresent = true
 
 		if all {
-			switch v := interface{}(m.GetJobsUserActivity()).(type) {
+			switch v := interface{}(m.GetJobColleagueActivity()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, AddActivityRequestValidationError{
-						field:  "JobsUserActivity",
+						field:  "JobColleagueActivity",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -571,23 +571,23 @@ func (m *AddActivityRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, AddActivityRequestValidationError{
-						field:  "JobsUserActivity",
+						field:  "JobColleagueActivity",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetJobsUserActivity()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetJobColleagueActivity()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return AddActivityRequestValidationError{
-					field:  "JobsUserActivity",
+					field:  "JobColleagueActivity",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	case *AddActivityRequest_JobsUserProps:
+	case *AddActivityRequest_ColleagueProps:
 		if v == nil {
 			err := AddActivityRequestValidationError{
 				field:  "Activity",
@@ -601,11 +601,11 @@ func (m *AddActivityRequest) validate(all bool) error {
 		oneofActivityPresent = true
 
 		if all {
-			switch v := interface{}(m.GetJobsUserProps()).(type) {
+			switch v := interface{}(m.GetColleagueProps()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, AddActivityRequestValidationError{
-						field:  "JobsUserProps",
+						field:  "ColleagueProps",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -613,23 +613,23 @@ func (m *AddActivityRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, AddActivityRequestValidationError{
-						field:  "JobsUserProps",
+						field:  "ColleagueProps",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetJobsUserProps()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetColleagueProps()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return AddActivityRequestValidationError{
-					field:  "JobsUserProps",
+					field:  "ColleagueProps",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	case *AddActivityRequest_JobsTimeclock:
+	case *AddActivityRequest_JobTimeclock:
 		if v == nil {
 			err := AddActivityRequestValidationError{
 				field:  "Activity",
@@ -643,11 +643,11 @@ func (m *AddActivityRequest) validate(all bool) error {
 		oneofActivityPresent = true
 
 		if all {
-			switch v := interface{}(m.GetJobsTimeclock()).(type) {
+			switch v := interface{}(m.GetJobTimeclock()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, AddActivityRequestValidationError{
-						field:  "JobsTimeclock",
+						field:  "JobTimeclock",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -655,16 +655,16 @@ func (m *AddActivityRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, AddActivityRequestValidationError{
-						field:  "JobsTimeclock",
+						field:  "JobTimeclock",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetJobsTimeclock()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetJobTimeclock()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return AddActivityRequestValidationError{
-					field:  "JobsTimeclock",
+					field:  "JobTimeclock",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

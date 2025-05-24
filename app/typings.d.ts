@@ -34,6 +34,7 @@ export type ProviderConfig = {
     name: string;
     label: string;
     icon?: string;
+    homepage?: string;
 };
 
 export type LoginConfig = {

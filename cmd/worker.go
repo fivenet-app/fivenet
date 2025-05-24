@@ -6,7 +6,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
-	pbdocstore "github.com/fivenet-app/fivenet/v2025/services/docstore"
+	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	"go.uber.org/fx"
 )
@@ -36,7 +36,7 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 		fxOpts = append(fxOpts, fx.Invoke(func(*pbjobs.Housekeeper) {}))
 	}
 	if c.ModuleDocsWorkflow {
-		fxOpts = append(fxOpts, fx.Invoke(func(*pbdocstore.Workflow) {}))
+		fxOpts = append(fxOpts, fx.Invoke(func(*pbdocuments.Workflow) {}))
 	}
 	if c.ModuleHousekeeper {
 		fxOpts = append(fxOpts, fx.Invoke(func(*housekeeper.Housekeeper) {}))

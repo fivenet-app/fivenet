@@ -10,7 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { CitizenLabel } from "./labels";
+import { Label } from "./labels";
 import { License } from "./licenses";
 import { UserShort } from "./users";
 import { Timestamp } from "../timestamp/timestamp";
@@ -21,15 +21,15 @@ export interface UserActivity {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: number; // @gotags: alias:"fivenet_user_activity.id"
+    id: number; // @gotags: alias:"user_activity.id"
     /**
      * @generated from protobuf field: resources.users.UserActivityType type = 2;
      */
-    type: UserActivityType; // @gotags: alias:"fivenet_user_activity.type"
+    type: UserActivityType; // @gotags: alias:"user_activity.type"
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3;
      */
-    createdAt?: Timestamp; // @gotags: alias:"fivenet_user_activity.created_at"
+    createdAt?: Timestamp; // @gotags: alias:"user_activity.created_at"
     /**
      * @generated from protobuf field: optional int32 source_user_id = 4;
      */
@@ -51,25 +51,25 @@ export interface UserActivity {
      *
      * @generated from protobuf field: string key = 8;
      */
-    key: string; // @gotags: alias:"fivenet_user_activity.key"
+    key: string; // @gotags: alias:"user_activity.key"
     /**
      * @sanitize
      *
      * @generated from protobuf field: string reason = 9;
      */
-    reason: string; // @gotags: alias:"fivenet_user_activity.reason"
+    reason: string; // @gotags: alias:"user_activity.reason"
     /**
      * @generated from protobuf field: optional resources.users.UserActivityData data = 10;
      */
-    data?: UserActivityData; // @gotags: alias:"fivenet_user_activity.data"
+    data?: UserActivityData; // @gotags: alias:"user_activity.data"
     /**
      * @generated from protobuf field: string old_value = 11;
      */
-    oldValue: string; // @gotags: alias:"fivenet_user_activity.old_value"
+    oldValue: string; // @gotags: alias:"user_activity.old_value"
     /**
      * @generated from protobuf field: string new_value = 12;
      */
-    newValue: string; // @gotags: alias:"fivenet_user_activity.new_value"
+    newValue: string; // @gotags: alias:"user_activity.new_value"
 }
 /**
  * @dbscanner: json
@@ -83,77 +83,77 @@ export interface UserActivityData {
     data: {
         oneofKind: "nameChange";
         /**
-         * @generated from protobuf field: resources.users.UserNameChange name_change = 1;
+         * @generated from protobuf field: resources.users.NameChange name_change = 1;
          */
-        nameChange: UserNameChange;
+        nameChange: NameChange;
     } | {
         oneofKind: "licensesChange";
         /**
-         * @generated from protobuf field: resources.users.UserLicenseChange licenses_change = 2;
+         * @generated from protobuf field: resources.users.LicenseChange licenses_change = 2;
          */
-        licensesChange: UserLicenseChange;
+        licensesChange: LicenseChange;
     } | {
         oneofKind: "wantedChange";
         /**
          * User Props
          *
-         * @generated from protobuf field: resources.users.UserWantedChange wanted_change = 3;
+         * @generated from protobuf field: resources.users.WantedChange wanted_change = 3;
          */
-        wantedChange: UserWantedChange;
+        wantedChange: WantedChange;
     } | {
         oneofKind: "trafficInfractionPointsChange";
         /**
-         * @generated from protobuf field: resources.users.UserTrafficInfractionPointsChange traffic_infraction_points_change = 4;
+         * @generated from protobuf field: resources.users.TrafficInfractionPointsChange traffic_infraction_points_change = 4;
          */
-        trafficInfractionPointsChange: UserTrafficInfractionPointsChange;
+        trafficInfractionPointsChange: TrafficInfractionPointsChange;
     } | {
         oneofKind: "mugshotChange";
         /**
-         * @generated from protobuf field: resources.users.UserMugshotChange mugshot_change = 5;
+         * @generated from protobuf field: resources.users.MugshotChange mugshot_change = 5;
          */
-        mugshotChange: UserMugshotChange;
+        mugshotChange: MugshotChange;
     } | {
         oneofKind: "labelsChange";
         /**
-         * @generated from protobuf field: resources.users.UserLabelsChange labels_change = 6;
+         * @generated from protobuf field: resources.users.LabelsChange labels_change = 6;
          */
-        labelsChange: UserLabelsChange;
+        labelsChange: LabelsChange;
     } | {
         oneofKind: "jobChange";
         /**
-         * @generated from protobuf field: resources.users.UserJobChange job_change = 7;
+         * @generated from protobuf field: resources.users.JobChange job_change = 7;
          */
-        jobChange: UserJobChange;
+        jobChange: JobChange;
     } | {
         oneofKind: "documentRelation";
         /**
          * Docstore related
          *
-         * @generated from protobuf field: resources.users.UserDocumentRelation document_relation = 8;
+         * @generated from protobuf field: resources.users.CitizenDocumentRelation document_relation = 8;
          */
-        documentRelation: UserDocumentRelation;
+        documentRelation: CitizenDocumentRelation;
     } | {
         oneofKind: "jailChange";
         /**
          * "Plugin" activities
          *
-         * @generated from protobuf field: resources.users.UserJailChange jail_change = 9;
+         * @generated from protobuf field: resources.users.JailChange jail_change = 9;
          */
-        jailChange: UserJailChange;
+        jailChange: JailChange;
     } | {
         oneofKind: "fineChange";
         /**
-         * @generated from protobuf field: resources.users.UserFineChange fine_change = 10;
+         * @generated from protobuf field: resources.users.FineChange fine_change = 10;
          */
-        fineChange: UserFineChange;
+        fineChange: FineChange;
     } | {
         oneofKind: undefined;
     };
 }
 /**
- * @generated from protobuf message resources.users.UserNameChange
+ * @generated from protobuf message resources.users.NameChange
  */
-export interface UserNameChange {
+export interface NameChange {
     /**
      * @generated from protobuf field: string old = 1;
      */
@@ -164,9 +164,9 @@ export interface UserNameChange {
     new: string;
 }
 /**
- * @generated from protobuf message resources.users.UserLicenseChange
+ * @generated from protobuf message resources.users.LicenseChange
  */
-export interface UserLicenseChange {
+export interface LicenseChange {
     /**
      * @generated from protobuf field: bool added = 1;
      */
@@ -177,18 +177,18 @@ export interface UserLicenseChange {
     licenses: License[];
 }
 /**
- * @generated from protobuf message resources.users.UserWantedChange
+ * @generated from protobuf message resources.users.WantedChange
  */
-export interface UserWantedChange {
+export interface WantedChange {
     /**
      * @generated from protobuf field: bool wanted = 1;
      */
     wanted: boolean;
 }
 /**
- * @generated from protobuf message resources.users.UserTrafficInfractionPointsChange
+ * @generated from protobuf message resources.users.TrafficInfractionPointsChange
  */
-export interface UserTrafficInfractionPointsChange {
+export interface TrafficInfractionPointsChange {
     /**
      * @generated from protobuf field: uint32 old = 1;
      */
@@ -199,31 +199,31 @@ export interface UserTrafficInfractionPointsChange {
     new: number;
 }
 /**
- * @generated from protobuf message resources.users.UserMugshotChange
+ * @generated from protobuf message resources.users.MugshotChange
  */
-export interface UserMugshotChange {
+export interface MugshotChange {
     /**
      * @generated from protobuf field: optional string new = 1;
      */
     new?: string;
 }
 /**
- * @generated from protobuf message resources.users.UserLabelsChange
+ * @generated from protobuf message resources.users.LabelsChange
  */
-export interface UserLabelsChange {
+export interface LabelsChange {
     /**
-     * @generated from protobuf field: repeated resources.users.CitizenLabel added = 1;
+     * @generated from protobuf field: repeated resources.users.Label added = 1;
      */
-    added: CitizenLabel[];
+    added: Label[];
     /**
-     * @generated from protobuf field: repeated resources.users.CitizenLabel removed = 2;
+     * @generated from protobuf field: repeated resources.users.Label removed = 2;
      */
-    removed: CitizenLabel[];
+    removed: Label[];
 }
 /**
- * @generated from protobuf message resources.users.UserJobChange
+ * @generated from protobuf message resources.users.JobChange
  */
-export interface UserJobChange {
+export interface JobChange {
     /**
      * @generated from protobuf field: optional string job = 1;
      */
@@ -242,9 +242,9 @@ export interface UserJobChange {
     gradeLabel?: string;
 }
 /**
- * @generated from protobuf message resources.users.UserDocumentRelation
+ * @generated from protobuf message resources.users.CitizenDocumentRelation
  */
-export interface UserDocumentRelation {
+export interface CitizenDocumentRelation {
     /**
      * @generated from protobuf field: bool added = 1;
      */
@@ -259,9 +259,9 @@ export interface UserDocumentRelation {
     relation: number; // resources.documents.DocRelation enum
 }
 /**
- * @generated from protobuf message resources.users.UserJailChange
+ * @generated from protobuf message resources.users.JailChange
  */
-export interface UserJailChange {
+export interface JailChange {
     /**
      * @generated from protobuf field: int32 seconds = 1;
      */
@@ -276,9 +276,9 @@ export interface UserJailChange {
     location?: string;
 }
 /**
- * @generated from protobuf message resources.users.UserFineChange
+ * @generated from protobuf message resources.users.FineChange
  */
-export interface UserFineChange {
+export interface FineChange {
     /**
      * @generated from protobuf field: bool removed = 1;
      */
@@ -471,16 +471,16 @@ export const UserActivity = new UserActivity$Type();
 class UserActivityData$Type extends MessageType<UserActivityData> {
     constructor() {
         super("resources.users.UserActivityData", [
-            { no: 1, name: "name_change", kind: "message", oneof: "data", T: () => UserNameChange },
-            { no: 2, name: "licenses_change", kind: "message", oneof: "data", T: () => UserLicenseChange },
-            { no: 3, name: "wanted_change", kind: "message", oneof: "data", T: () => UserWantedChange },
-            { no: 4, name: "traffic_infraction_points_change", kind: "message", oneof: "data", T: () => UserTrafficInfractionPointsChange },
-            { no: 5, name: "mugshot_change", kind: "message", oneof: "data", T: () => UserMugshotChange },
-            { no: 6, name: "labels_change", kind: "message", oneof: "data", T: () => UserLabelsChange },
-            { no: 7, name: "job_change", kind: "message", oneof: "data", T: () => UserJobChange },
-            { no: 8, name: "document_relation", kind: "message", oneof: "data", T: () => UserDocumentRelation },
-            { no: 9, name: "jail_change", kind: "message", oneof: "data", T: () => UserJailChange },
-            { no: 10, name: "fine_change", kind: "message", oneof: "data", T: () => UserFineChange }
+            { no: 1, name: "name_change", kind: "message", oneof: "data", T: () => NameChange },
+            { no: 2, name: "licenses_change", kind: "message", oneof: "data", T: () => LicenseChange },
+            { no: 3, name: "wanted_change", kind: "message", oneof: "data", T: () => WantedChange },
+            { no: 4, name: "traffic_infraction_points_change", kind: "message", oneof: "data", T: () => TrafficInfractionPointsChange },
+            { no: 5, name: "mugshot_change", kind: "message", oneof: "data", T: () => MugshotChange },
+            { no: 6, name: "labels_change", kind: "message", oneof: "data", T: () => LabelsChange },
+            { no: 7, name: "job_change", kind: "message", oneof: "data", T: () => JobChange },
+            { no: 8, name: "document_relation", kind: "message", oneof: "data", T: () => CitizenDocumentRelation },
+            { no: 9, name: "jail_change", kind: "message", oneof: "data", T: () => JailChange },
+            { no: 10, name: "fine_change", kind: "message", oneof: "data", T: () => FineChange }
         ]);
     }
     create(value?: PartialMessage<UserActivityData>): UserActivityData {
@@ -495,64 +495,64 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.users.UserNameChange name_change */ 1:
+                case /* resources.users.NameChange name_change */ 1:
                     message.data = {
                         oneofKind: "nameChange",
-                        nameChange: UserNameChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).nameChange)
+                        nameChange: NameChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).nameChange)
                     };
                     break;
-                case /* resources.users.UserLicenseChange licenses_change */ 2:
+                case /* resources.users.LicenseChange licenses_change */ 2:
                     message.data = {
                         oneofKind: "licensesChange",
-                        licensesChange: UserLicenseChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).licensesChange)
+                        licensesChange: LicenseChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).licensesChange)
                     };
                     break;
-                case /* resources.users.UserWantedChange wanted_change */ 3:
+                case /* resources.users.WantedChange wanted_change */ 3:
                     message.data = {
                         oneofKind: "wantedChange",
-                        wantedChange: UserWantedChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).wantedChange)
+                        wantedChange: WantedChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).wantedChange)
                     };
                     break;
-                case /* resources.users.UserTrafficInfractionPointsChange traffic_infraction_points_change */ 4:
+                case /* resources.users.TrafficInfractionPointsChange traffic_infraction_points_change */ 4:
                     message.data = {
                         oneofKind: "trafficInfractionPointsChange",
-                        trafficInfractionPointsChange: UserTrafficInfractionPointsChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).trafficInfractionPointsChange)
+                        trafficInfractionPointsChange: TrafficInfractionPointsChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).trafficInfractionPointsChange)
                     };
                     break;
-                case /* resources.users.UserMugshotChange mugshot_change */ 5:
+                case /* resources.users.MugshotChange mugshot_change */ 5:
                     message.data = {
                         oneofKind: "mugshotChange",
-                        mugshotChange: UserMugshotChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).mugshotChange)
+                        mugshotChange: MugshotChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).mugshotChange)
                     };
                     break;
-                case /* resources.users.UserLabelsChange labels_change */ 6:
+                case /* resources.users.LabelsChange labels_change */ 6:
                     message.data = {
                         oneofKind: "labelsChange",
-                        labelsChange: UserLabelsChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).labelsChange)
+                        labelsChange: LabelsChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).labelsChange)
                     };
                     break;
-                case /* resources.users.UserJobChange job_change */ 7:
+                case /* resources.users.JobChange job_change */ 7:
                     message.data = {
                         oneofKind: "jobChange",
-                        jobChange: UserJobChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobChange)
+                        jobChange: JobChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobChange)
                     };
                     break;
-                case /* resources.users.UserDocumentRelation document_relation */ 8:
+                case /* resources.users.CitizenDocumentRelation document_relation */ 8:
                     message.data = {
                         oneofKind: "documentRelation",
-                        documentRelation: UserDocumentRelation.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).documentRelation)
+                        documentRelation: CitizenDocumentRelation.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).documentRelation)
                     };
                     break;
-                case /* resources.users.UserJailChange jail_change */ 9:
+                case /* resources.users.JailChange jail_change */ 9:
                     message.data = {
                         oneofKind: "jailChange",
-                        jailChange: UserJailChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jailChange)
+                        jailChange: JailChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jailChange)
                     };
                     break;
-                case /* resources.users.UserFineChange fine_change */ 10:
+                case /* resources.users.FineChange fine_change */ 10:
                     message.data = {
                         oneofKind: "fineChange",
-                        fineChange: UserFineChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).fineChange)
+                        fineChange: FineChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).fineChange)
                     };
                     break;
                 default:
@@ -567,36 +567,36 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
         return message;
     }
     internalBinaryWrite(message: UserActivityData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.users.UserNameChange name_change = 1; */
+        /* resources.users.NameChange name_change = 1; */
         if (message.data.oneofKind === "nameChange")
-            UserNameChange.internalBinaryWrite(message.data.nameChange, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserLicenseChange licenses_change = 2; */
+            NameChange.internalBinaryWrite(message.data.nameChange, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.LicenseChange licenses_change = 2; */
         if (message.data.oneofKind === "licensesChange")
-            UserLicenseChange.internalBinaryWrite(message.data.licensesChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserWantedChange wanted_change = 3; */
+            LicenseChange.internalBinaryWrite(message.data.licensesChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.WantedChange wanted_change = 3; */
         if (message.data.oneofKind === "wantedChange")
-            UserWantedChange.internalBinaryWrite(message.data.wantedChange, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserTrafficInfractionPointsChange traffic_infraction_points_change = 4; */
+            WantedChange.internalBinaryWrite(message.data.wantedChange, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.TrafficInfractionPointsChange traffic_infraction_points_change = 4; */
         if (message.data.oneofKind === "trafficInfractionPointsChange")
-            UserTrafficInfractionPointsChange.internalBinaryWrite(message.data.trafficInfractionPointsChange, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserMugshotChange mugshot_change = 5; */
+            TrafficInfractionPointsChange.internalBinaryWrite(message.data.trafficInfractionPointsChange, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.MugshotChange mugshot_change = 5; */
         if (message.data.oneofKind === "mugshotChange")
-            UserMugshotChange.internalBinaryWrite(message.data.mugshotChange, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserLabelsChange labels_change = 6; */
+            MugshotChange.internalBinaryWrite(message.data.mugshotChange, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.LabelsChange labels_change = 6; */
         if (message.data.oneofKind === "labelsChange")
-            UserLabelsChange.internalBinaryWrite(message.data.labelsChange, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserJobChange job_change = 7; */
+            LabelsChange.internalBinaryWrite(message.data.labelsChange, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.JobChange job_change = 7; */
         if (message.data.oneofKind === "jobChange")
-            UserJobChange.internalBinaryWrite(message.data.jobChange, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserDocumentRelation document_relation = 8; */
+            JobChange.internalBinaryWrite(message.data.jobChange, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.CitizenDocumentRelation document_relation = 8; */
         if (message.data.oneofKind === "documentRelation")
-            UserDocumentRelation.internalBinaryWrite(message.data.documentRelation, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserJailChange jail_change = 9; */
+            CitizenDocumentRelation.internalBinaryWrite(message.data.documentRelation, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.JailChange jail_change = 9; */
         if (message.data.oneofKind === "jailChange")
-            UserJailChange.internalBinaryWrite(message.data.jailChange, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserFineChange fine_change = 10; */
+            JailChange.internalBinaryWrite(message.data.jailChange, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.FineChange fine_change = 10; */
         if (message.data.oneofKind === "fineChange")
-            UserFineChange.internalBinaryWrite(message.data.fineChange, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+            FineChange.internalBinaryWrite(message.data.fineChange, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -608,22 +608,22 @@ class UserActivityData$Type extends MessageType<UserActivityData> {
  */
 export const UserActivityData = new UserActivityData$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserNameChange$Type extends MessageType<UserNameChange> {
+class NameChange$Type extends MessageType<NameChange> {
     constructor() {
-        super("resources.users.UserNameChange", [
+        super("resources.users.NameChange", [
             { no: 1, name: "old", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<UserNameChange>): UserNameChange {
+    create(value?: PartialMessage<NameChange>): NameChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.old = "";
         message.new = "";
         if (value !== undefined)
-            reflectionMergePartial<UserNameChange>(this, message, value);
+            reflectionMergePartial<NameChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserNameChange): UserNameChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: NameChange): NameChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -645,7 +645,7 @@ class UserNameChange$Type extends MessageType<UserNameChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserNameChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: NameChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string old = 1; */
         if (message.old !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.old);
@@ -659,26 +659,26 @@ class UserNameChange$Type extends MessageType<UserNameChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserNameChange
+ * @generated MessageType for protobuf message resources.users.NameChange
  */
-export const UserNameChange = new UserNameChange$Type();
+export const NameChange = new NameChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserLicenseChange$Type extends MessageType<UserLicenseChange> {
+class LicenseChange$Type extends MessageType<LicenseChange> {
     constructor() {
-        super("resources.users.UserLicenseChange", [
+        super("resources.users.LicenseChange", [
             { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License }
         ]);
     }
-    create(value?: PartialMessage<UserLicenseChange>): UserLicenseChange {
+    create(value?: PartialMessage<LicenseChange>): LicenseChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = false;
         message.licenses = [];
         if (value !== undefined)
-            reflectionMergePartial<UserLicenseChange>(this, message, value);
+            reflectionMergePartial<LicenseChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserLicenseChange): UserLicenseChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LicenseChange): LicenseChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -700,7 +700,7 @@ class UserLicenseChange$Type extends MessageType<UserLicenseChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserLicenseChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: LicenseChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* bool added = 1; */
         if (message.added !== false)
             writer.tag(1, WireType.Varint).bool(message.added);
@@ -714,24 +714,24 @@ class UserLicenseChange$Type extends MessageType<UserLicenseChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserLicenseChange
+ * @generated MessageType for protobuf message resources.users.LicenseChange
  */
-export const UserLicenseChange = new UserLicenseChange$Type();
+export const LicenseChange = new LicenseChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserWantedChange$Type extends MessageType<UserWantedChange> {
+class WantedChange$Type extends MessageType<WantedChange> {
     constructor() {
-        super("resources.users.UserWantedChange", [
+        super("resources.users.WantedChange", [
             { no: 1, name: "wanted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<UserWantedChange>): UserWantedChange {
+    create(value?: PartialMessage<WantedChange>): WantedChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.wanted = false;
         if (value !== undefined)
-            reflectionMergePartial<UserWantedChange>(this, message, value);
+            reflectionMergePartial<WantedChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserWantedChange): UserWantedChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WantedChange): WantedChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -750,7 +750,7 @@ class UserWantedChange$Type extends MessageType<UserWantedChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserWantedChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: WantedChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* bool wanted = 1; */
         if (message.wanted !== false)
             writer.tag(1, WireType.Varint).bool(message.wanted);
@@ -761,26 +761,26 @@ class UserWantedChange$Type extends MessageType<UserWantedChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserWantedChange
+ * @generated MessageType for protobuf message resources.users.WantedChange
  */
-export const UserWantedChange = new UserWantedChange$Type();
+export const WantedChange = new WantedChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserTrafficInfractionPointsChange$Type extends MessageType<UserTrafficInfractionPointsChange> {
+class TrafficInfractionPointsChange$Type extends MessageType<TrafficInfractionPointsChange> {
     constructor() {
-        super("resources.users.UserTrafficInfractionPointsChange", [
+        super("resources.users.TrafficInfractionPointsChange", [
             { no: 1, name: "old", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
             { no: 2, name: "new", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
-    create(value?: PartialMessage<UserTrafficInfractionPointsChange>): UserTrafficInfractionPointsChange {
+    create(value?: PartialMessage<TrafficInfractionPointsChange>): TrafficInfractionPointsChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.old = 0;
         message.new = 0;
         if (value !== undefined)
-            reflectionMergePartial<UserTrafficInfractionPointsChange>(this, message, value);
+            reflectionMergePartial<TrafficInfractionPointsChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserTrafficInfractionPointsChange): UserTrafficInfractionPointsChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TrafficInfractionPointsChange): TrafficInfractionPointsChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -802,7 +802,7 @@ class UserTrafficInfractionPointsChange$Type extends MessageType<UserTrafficInfr
         }
         return message;
     }
-    internalBinaryWrite(message: UserTrafficInfractionPointsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: TrafficInfractionPointsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint32 old = 1; */
         if (message.old !== 0)
             writer.tag(1, WireType.Varint).uint32(message.old);
@@ -816,23 +816,23 @@ class UserTrafficInfractionPointsChange$Type extends MessageType<UserTrafficInfr
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserTrafficInfractionPointsChange
+ * @generated MessageType for protobuf message resources.users.TrafficInfractionPointsChange
  */
-export const UserTrafficInfractionPointsChange = new UserTrafficInfractionPointsChange$Type();
+export const TrafficInfractionPointsChange = new TrafficInfractionPointsChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserMugshotChange$Type extends MessageType<UserMugshotChange> {
+class MugshotChange$Type extends MessageType<MugshotChange> {
     constructor() {
-        super("resources.users.UserMugshotChange", [
+        super("resources.users.MugshotChange", [
             { no: 1, name: "new", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<UserMugshotChange>): UserMugshotChange {
+    create(value?: PartialMessage<MugshotChange>): MugshotChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<UserMugshotChange>(this, message, value);
+            reflectionMergePartial<MugshotChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserMugshotChange): UserMugshotChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MugshotChange): MugshotChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -851,7 +851,7 @@ class UserMugshotChange$Type extends MessageType<UserMugshotChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserMugshotChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: MugshotChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional string new = 1; */
         if (message.new !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.new);
@@ -862,35 +862,35 @@ class UserMugshotChange$Type extends MessageType<UserMugshotChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserMugshotChange
+ * @generated MessageType for protobuf message resources.users.MugshotChange
  */
-export const UserMugshotChange = new UserMugshotChange$Type();
+export const MugshotChange = new MugshotChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserLabelsChange$Type extends MessageType<UserLabelsChange> {
+class LabelsChange$Type extends MessageType<LabelsChange> {
     constructor() {
-        super("resources.users.UserLabelsChange", [
-            { no: 1, name: "added", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CitizenLabel },
-            { no: 2, name: "removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CitizenLabel }
+        super("resources.users.LabelsChange", [
+            { no: 1, name: "added", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label },
+            { no: 2, name: "removed", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Label }
         ]);
     }
-    create(value?: PartialMessage<UserLabelsChange>): UserLabelsChange {
+    create(value?: PartialMessage<LabelsChange>): LabelsChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = [];
         message.removed = [];
         if (value !== undefined)
-            reflectionMergePartial<UserLabelsChange>(this, message, value);
+            reflectionMergePartial<LabelsChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserLabelsChange): UserLabelsChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LabelsChange): LabelsChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.CitizenLabel added */ 1:
-                    message.added.push(CitizenLabel.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.users.Label added */ 1:
+                    message.added.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.users.CitizenLabel removed */ 2:
-                    message.removed.push(CitizenLabel.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.users.Label removed */ 2:
+                    message.removed.push(Label.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -903,13 +903,13 @@ class UserLabelsChange$Type extends MessageType<UserLabelsChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserLabelsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.CitizenLabel added = 1; */
+    internalBinaryWrite(message: LabelsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.users.Label added = 1; */
         for (let i = 0; i < message.added.length; i++)
-            CitizenLabel.internalBinaryWrite(message.added[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.CitizenLabel removed = 2; */
+            Label.internalBinaryWrite(message.added[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.users.Label removed = 2; */
         for (let i = 0; i < message.removed.length; i++)
-            CitizenLabel.internalBinaryWrite(message.removed[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Label.internalBinaryWrite(message.removed[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -917,26 +917,26 @@ class UserLabelsChange$Type extends MessageType<UserLabelsChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserLabelsChange
+ * @generated MessageType for protobuf message resources.users.LabelsChange
  */
-export const UserLabelsChange = new UserLabelsChange$Type();
+export const LabelsChange = new LabelsChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserJobChange$Type extends MessageType<UserJobChange> {
+class JobChange$Type extends MessageType<JobChange> {
     constructor() {
-        super("resources.users.UserJobChange", [
+        super("resources.users.JobChange", [
             { no: 1, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<UserJobChange>): UserJobChange {
+    create(value?: PartialMessage<JobChange>): JobChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<UserJobChange>(this, message, value);
+            reflectionMergePartial<JobChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserJobChange): UserJobChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobChange): JobChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -964,7 +964,7 @@ class UserJobChange$Type extends MessageType<UserJobChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserJobChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: JobChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* optional string job = 1; */
         if (message.job !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.job);
@@ -984,28 +984,28 @@ class UserJobChange$Type extends MessageType<UserJobChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserJobChange
+ * @generated MessageType for protobuf message resources.users.JobChange
  */
-export const UserJobChange = new UserJobChange$Type();
+export const JobChange = new JobChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
+class CitizenDocumentRelation$Type extends MessageType<CitizenDocumentRelation> {
     constructor() {
-        super("resources.users.UserDocumentRelation", [
+        super("resources.users.CitizenDocumentRelation", [
             { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "relation", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
-    create(value?: PartialMessage<UserDocumentRelation>): UserDocumentRelation {
+    create(value?: PartialMessage<CitizenDocumentRelation>): CitizenDocumentRelation {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = false;
         message.documentId = 0;
         message.relation = 0;
         if (value !== undefined)
-            reflectionMergePartial<UserDocumentRelation>(this, message, value);
+            reflectionMergePartial<CitizenDocumentRelation>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserDocumentRelation): UserDocumentRelation {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenDocumentRelation): CitizenDocumentRelation {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1030,7 +1030,7 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserDocumentRelation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CitizenDocumentRelation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* bool added = 1; */
         if (message.added !== false)
             writer.tag(1, WireType.Varint).bool(message.added);
@@ -1047,27 +1047,27 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserDocumentRelation
+ * @generated MessageType for protobuf message resources.users.CitizenDocumentRelation
  */
-export const UserDocumentRelation = new UserDocumentRelation$Type();
+export const CitizenDocumentRelation = new CitizenDocumentRelation$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserJailChange$Type extends MessageType<UserJailChange> {
+class JailChange$Type extends MessageType<JailChange> {
     constructor() {
-        super("resources.users.UserJailChange", [
+        super("resources.users.JailChange", [
             { no: 1, name: "seconds", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "admin", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "location", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<UserJailChange>): UserJailChange {
+    create(value?: PartialMessage<JailChange>): JailChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.seconds = 0;
         message.admin = false;
         if (value !== undefined)
-            reflectionMergePartial<UserJailChange>(this, message, value);
+            reflectionMergePartial<JailChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserJailChange): UserJailChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JailChange): JailChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1092,7 +1092,7 @@ class UserJailChange$Type extends MessageType<UserJailChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserJailChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: JailChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* int32 seconds = 1; */
         if (message.seconds !== 0)
             writer.tag(1, WireType.Varint).int32(message.seconds);
@@ -1109,26 +1109,26 @@ class UserJailChange$Type extends MessageType<UserJailChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserJailChange
+ * @generated MessageType for protobuf message resources.users.JailChange
  */
-export const UserJailChange = new UserJailChange$Type();
+export const JailChange = new JailChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserFineChange$Type extends MessageType<UserFineChange> {
+class FineChange$Type extends MessageType<FineChange> {
     constructor() {
-        super("resources.users.UserFineChange", [
+        super("resources.users.FineChange", [
             { no: 1, name: "removed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "amount", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
-    create(value?: PartialMessage<UserFineChange>): UserFineChange {
+    create(value?: PartialMessage<FineChange>): FineChange {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.removed = false;
         message.amount = 0;
         if (value !== undefined)
-            reflectionMergePartial<UserFineChange>(this, message, value);
+            reflectionMergePartial<FineChange>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserFineChange): UserFineChange {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FineChange): FineChange {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -1150,7 +1150,7 @@ class UserFineChange$Type extends MessageType<UserFineChange> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserFineChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: FineChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* bool removed = 1; */
         if (message.removed !== false)
             writer.tag(1, WireType.Varint).bool(message.removed);
@@ -1164,6 +1164,6 @@ class UserFineChange$Type extends MessageType<UserFineChange> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.UserFineChange
+ * @generated MessageType for protobuf message resources.users.FineChange
  */
-export const UserFineChange = new UserFineChange$Type();
+export const FineChange = new FineChange$Type();

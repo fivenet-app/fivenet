@@ -75,12 +75,12 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
         };
 
         if (id === undefined) {
-            const call = $grpc.jobs.jobsConduct.createConductEntry(req);
+            const call = $grpc.jobs.conduct.createConductEntry(req);
             const { response } = await call;
 
             emit('created', response.entry!);
         } else {
-            const call = $grpc.jobs.jobsConduct.updateConductEntry(req);
+            const call = $grpc.jobs.conduct.updateConductEntry(req);
             const { response } = await call;
 
             emit('updated', response.entry!);

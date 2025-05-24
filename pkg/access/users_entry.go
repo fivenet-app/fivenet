@@ -10,7 +10,7 @@ import (
 )
 
 func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id uint64) (T, error) {
-	tUsers := tables.Users().AS("usershort")
+	tUsers := tables.User().AS("user_short")
 
 	stmt := a.selectTable.
 		SELECT(

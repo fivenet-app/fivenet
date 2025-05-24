@@ -37,7 +37,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 
 	// Clone user info and disable superuser
 	cloned := currentUserInfo.Clone()
-	cloned.SuperUser = false
+	cloned.Superuser = false
 	emails, err := pbmailer.ListUserEmails(srv.Context(), s.db, &cloned, nil, false)
 	if err != nil {
 		return ErrFailedStream
@@ -261,7 +261,7 @@ func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInf
 	}
 
 	if currentUserInfo.LastChar != nil && *newUserInfo.LastChar != currentUserInfo.UserId && s.appCfg.Get().Auth.LastCharLock {
-		if !currentUserInfo.CanBeSuper && !currentUserInfo.SuperUser {
+		if !currentUserInfo.CanBeSuper && !currentUserInfo.Superuser {
 			return nil, true, auth.ErrCharLock
 		}
 	}

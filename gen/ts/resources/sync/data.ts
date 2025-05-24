@@ -14,7 +14,7 @@ import { Coords } from "../livemap/livemap";
 import { License } from "../users/licenses";
 import { Vehicle } from "../vehicles/vehicles";
 import { User } from "../users/users";
-import { Job } from "../users/jobs";
+import { Job } from "../jobs/jobs";
 /**
  * @generated from protobuf message resources.sync.DataStatus
  */
@@ -29,7 +29,7 @@ export interface DataStatus {
  */
 export interface DataJobs {
     /**
-     * @generated from protobuf field: repeated resources.users.Job jobs = 1;
+     * @generated from protobuf field: repeated resources.jobs.Job jobs = 1;
      */
     jobs: Job[];
 }
@@ -65,18 +65,18 @@ export interface DataLicenses {
  */
 export interface DataUserLocations {
     /**
-     * @generated from protobuf field: repeated resources.sync.UserLocation users = 1;
+     * @generated from protobuf field: repeated resources.sync.CitizenLocations users = 1;
      */
-    users: UserLocation[];
+    users: CitizenLocations[];
     /**
      * @generated from protobuf field: optional bool clear_all = 2;
      */
     clearAll?: boolean;
 }
 /**
- * @generated from protobuf message resources.sync.UserLocation
+ * @generated from protobuf message resources.sync.CitizenLocations
  */
-export interface UserLocation {
+export interface CitizenLocations {
     /**
      * @generated from protobuf field: string identifier = 1;
      */
@@ -182,7 +182,7 @@ class DataJobs$Type extends MessageType<DataJobs> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.Job jobs */ 1:
+                case /* repeated resources.jobs.Job jobs */ 1:
                     message.jobs.push(Job.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -197,7 +197,7 @@ class DataJobs$Type extends MessageType<DataJobs> {
         return message;
     }
     internalBinaryWrite(message: DataJobs, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.Job jobs = 1; */
+        /* repeated resources.jobs.Job jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
             Job.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -355,7 +355,7 @@ export const DataLicenses = new DataLicenses$Type();
 class DataUserLocations$Type extends MessageType<DataUserLocations> {
     constructor() {
         super("resources.sync.DataUserLocations", [
-            { no: 1, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserLocation, options: { "validate.rules": { repeated: { maxItems: "2000" } } } },
+            { no: 1, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => CitizenLocations, options: { "validate.rules": { repeated: { maxItems: "2000" } } } },
             { no: 2, name: "clear_all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -371,8 +371,8 @@ class DataUserLocations$Type extends MessageType<DataUserLocations> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.sync.UserLocation users */ 1:
-                    message.users.push(UserLocation.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.sync.CitizenLocations users */ 1:
+                    message.users.push(CitizenLocations.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* optional bool clear_all */ 2:
                     message.clearAll = reader.bool();
@@ -389,9 +389,9 @@ class DataUserLocations$Type extends MessageType<DataUserLocations> {
         return message;
     }
     internalBinaryWrite(message: DataUserLocations, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.sync.UserLocation users = 1; */
+        /* repeated resources.sync.CitizenLocations users = 1; */
         for (let i = 0; i < message.users.length; i++)
-            UserLocation.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            CitizenLocations.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* optional bool clear_all = 2; */
         if (message.clearAll !== undefined)
             writer.tag(2, WireType.Varint).bool(message.clearAll);
@@ -406,9 +406,9 @@ class DataUserLocations$Type extends MessageType<DataUserLocations> {
  */
 export const DataUserLocations = new DataUserLocations$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserLocation$Type extends MessageType<UserLocation> {
+class CitizenLocations$Type extends MessageType<CitizenLocations> {
     constructor() {
-        super("resources.sync.UserLocation", [
+        super("resources.sync.CitizenLocations", [
             { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "coords", kind: "message", T: () => Coords, options: { "validate.rules": { message: { required: true } } } },
@@ -416,17 +416,17 @@ class UserLocation$Type extends MessageType<UserLocation> {
             { no: 5, name: "remove", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<UserLocation>): UserLocation {
+    create(value?: PartialMessage<CitizenLocations>): CitizenLocations {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.identifier = "";
         message.job = "";
         message.hidden = false;
         message.remove = false;
         if (value !== undefined)
-            reflectionMergePartial<UserLocation>(this, message, value);
+            reflectionMergePartial<CitizenLocations>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserLocation): UserLocation {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenLocations): CitizenLocations {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -457,7 +457,7 @@ class UserLocation$Type extends MessageType<UserLocation> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserLocation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CitizenLocations, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string identifier = 1; */
         if (message.identifier !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.identifier);
@@ -480,9 +480,9 @@ class UserLocation$Type extends MessageType<UserLocation> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.sync.UserLocation
+ * @generated MessageType for protobuf message resources.sync.CitizenLocations
  */
-export const UserLocation = new UserLocation$Type();
+export const CitizenLocations = new CitizenLocations$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteUsers$Type extends MessageType<DeleteUsers> {
     constructor() {

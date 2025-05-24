@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.jobs;
 
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
@@ -13,13 +14,14 @@ message Labels {
 message Label {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional string job = 2 [(validate.rules).string.max_len = 20];
-  string name = 3 [(validate.rules).string.max_len = 48];
+  optional resources.timestamp.Timestamp deleted_at = 3;
+  string name = 4 [(validate.rules).string.max_len = 48];
   // @sanitize: method=StripTags
-  string color = 4 [(validate.rules).string = {
+  string color = 5 [(validate.rules).string = {
     len: 7,
     pattern: "^#[A-Fa-f0-9]{6}$",
   }];
-  int32 order = 5;
+  int32 order = 6;
 }
 
 message LabelCount {

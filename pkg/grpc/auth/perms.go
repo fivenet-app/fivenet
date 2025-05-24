@@ -34,7 +34,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 				}
 			}
 
-			if perm == PermSuperUser && userInfo.SuperUser {
+			if perm == PermSuperuser && userInfo.Superuser {
 				return ctx, nil
 			} else if perm == PermAny {
 				return ctx, nil
@@ -70,7 +70,7 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv any, info *
 				}
 			}
 
-			if perm == PermSuperUser && userInfo.SuperUser {
+			if perm == PermSuperuser && userInfo.Superuser {
 				return ctx, nil
 			} else if perm == PermAny {
 				return ctx, nil

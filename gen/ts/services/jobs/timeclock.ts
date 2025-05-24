@@ -19,7 +19,7 @@ import { TimeclockStats } from "../../resources/jobs/timeclock";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { DateRange } from "../../resources/common/database/database";
 import { TimeclockMode } from "../../resources/jobs/timeclock";
-import { TimeclockUserMode } from "../../resources/jobs/timeclock";
+import { TimeclockViewMode } from "../../resources/jobs/timeclock";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Time Clock
@@ -39,9 +39,9 @@ export interface ListTimeclockRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: resources.jobs.TimeclockUserMode user_mode = 3;
+     * @generated from protobuf field: resources.jobs.TimeclockViewMode user_mode = 3;
      */
-    userMode: TimeclockUserMode;
+    userMode: TimeclockViewMode;
     /**
      * @generated from protobuf field: resources.jobs.TimeclockMode mode = 4;
      */
@@ -211,7 +211,7 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         super("services.jobs.ListTimeclockRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "user_mode", kind: "enum", T: () => ["resources.jobs.TimeclockUserMode", TimeclockUserMode, "TIMECLOCK_USER_MODE_"] },
+            { no: 3, name: "user_mode", kind: "enum", T: () => ["resources.jobs.TimeclockViewMode", TimeclockViewMode, "TIMECLOCK_VIEW_MODE_"] },
             { no: 4, name: "mode", kind: "enum", T: () => ["resources.jobs.TimeclockMode", TimeclockMode, "TIMECLOCK_MODE_"] },
             { no: 5, name: "date", kind: "message", T: () => DateRange },
             { no: 6, name: "per_day", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -239,7 +239,7 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
                 case /* optional resources.common.database.Sort sort */ 2:
                     message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
-                case /* resources.jobs.TimeclockUserMode user_mode */ 3:
+                case /* resources.jobs.TimeclockViewMode user_mode */ 3:
                     message.userMode = reader.int32();
                     break;
                 case /* resources.jobs.TimeclockMode mode */ 4:
@@ -276,7 +276,7 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         /* optional resources.common.database.Sort sort = 2; */
         if (message.sort)
             Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.TimeclockUserMode user_mode = 3; */
+        /* resources.jobs.TimeclockViewMode user_mode = 3; */
         if (message.userMode !== 0)
             writer.tag(3, WireType.Varint).int32(message.userMode);
         /* resources.jobs.TimeclockMode mode = 4; */
@@ -799,9 +799,9 @@ class ListInactiveEmployeesResponse$Type extends MessageType<ListInactiveEmploye
  */
 export const ListInactiveEmployeesResponse = new ListInactiveEmployeesResponse$Type();
 /**
- * @generated ServiceType for protobuf service services.jobs.JobsTimeclockService
+ * @generated ServiceType for protobuf service services.jobs.TimeclockService
  */
-export const JobsTimeclockService = new ServiceType("services.jobs.JobsTimeclockService", [
+export const TimeclockService = new ServiceType("services.jobs.TimeclockService", [
     { name: "ListTimeclock", options: {}, I: ListTimeclockRequest, O: ListTimeclockResponse },
     { name: "GetTimeclockStats", options: {}, I: GetTimeclockStatsRequest, O: GetTimeclockStatsResponse },
     { name: "ListInactiveEmployees", options: {}, I: ListInactiveEmployeesRequest, O: ListInactiveEmployeesResponse }

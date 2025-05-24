@@ -30,6 +30,15 @@ func (m *ConductEntry) Sanitize() error {
 		}
 	}
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: ExpiresAt
 	if m.ExpiresAt != nil {
 		if v, ok := any(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {

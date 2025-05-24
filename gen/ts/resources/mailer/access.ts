@@ -24,7 +24,7 @@ export interface Access {
     /**
      * @generated from protobuf field: repeated resources.mailer.UserAccess users = 2;
      */
-    users: UserAccess[]; // @gotags: alias:"user_access"
+    users: UserAccess[]; // @gotags: alias:"citizen_access"
     /**
      * @generated from protobuf field: repeated resources.mailer.QualificationAccess qualifications = 3;
      */

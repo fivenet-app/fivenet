@@ -8,5 +8,5 @@ import (
 )
 
 const (
-	NotificatorServicePerm perms.Category = "NotificatorService"
+	NotificatorServicePerm perms.Category = "notificator.NotificatorService"
 )
