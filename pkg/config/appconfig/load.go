@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"slices"
+	"strings"
 	"sync/atomic"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
@@ -192,6 +194,12 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 		}
 	}
 	dest.AppConfig.Default()
+
+	if slices.ContainsFunc(dest.AppConfig.Perms.Default, func(p *settings.Perm) bool {
+		return !strings.Contains(p.Category, ".")
+	}) {
+		c.logger.Error("WARNING! You must update the default permissions in the app config to include the category prefix.")
+	}
 
 	return dest.AppConfig, nil
 }

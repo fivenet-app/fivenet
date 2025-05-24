@@ -178,5 +178,7 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	assert.NoError(t, err)
 	assert.NotNil(t, chooseCharRes)
-	assert.NotNil(t, chooseCharRes.Char)
+	if chooseCharRes != nil {
+		assert.NotNil(t, chooseCharRes.Char)
+	}
 }

@@ -144,7 +144,15 @@ func (a *AuditStorer) store(ctx context.Context, in *audit.AuditEntry) error {
 			tAudit.State,
 			tAudit.Data,
 		).
-		MODEL(in)
+		VALUES(
+			in.UserId,
+			in.UserJob,
+			in.TargetUserId,
+			in.Service,
+			in.Method,
+			in.State,
+			in.Data,
+		)
 
 	if _, err := stmt.ExecContext(ctx, a.db); err != nil {
 		return err

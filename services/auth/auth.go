@@ -621,7 +621,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		return nil, err
 	}
 
-	if len(ps) == 0 || (!isSuperuser && !slices.Contains(ps, "authservice-choosecharacter")) {
+	if len(ps) == 0 || (!isSuperuser && !slices.Contains(ps, "auth-authservice-choosecharacter")) {
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 

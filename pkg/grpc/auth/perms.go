@@ -21,11 +21,13 @@ func NewGRPCPerms(p perms.Permissions) *GRPCPerm {
 
 func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
 	// Check if the method is from a service otherwise the request must be invalid
-	if strings.HasPrefix(info.FullMethod, "/services") {
+	if strings.HasPrefix(info.FullMethod, "/services.") {
 		userInfo, ok := FromContext(ctx)
 		if ok {
-			split := strings.Split(info.FullMethod[10:], ".")
-			perm := strings.Join(split[1:], "-")
+			perm, found := strings.CutPrefix(info.FullMethod, "/services.")
+			if !found {
+				return nil, ErrPermissionDenied
+			}
 
 			if overrideSrv, ok := info.Server.(grpc_permission.GetPermsRemapFunc); ok {
 				remap := overrideSrv.GetPermsRemap()

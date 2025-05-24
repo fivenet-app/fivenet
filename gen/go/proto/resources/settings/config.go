@@ -26,19 +26,23 @@ func (x *AppConfig) Default() {
 		x.Perms = &Perms{
 			Default: []*Perm{
 				{
-					Category: "AuthService",
+					Category: "auth.AuthService",
 					Name:     "ChooseCharacter",
 				},
 				{
-					Category: "DocumentsService",
+					Category: "completor.CompletorService",
+					Name:     "CompleteJobs",
+				},
+				{
+					Category: "documents.DocumentsService",
 					Name:     "ListDocuments",
 				},
 				{
-					Category: "QualificationsService",
+					Category: "qualifications.QualificationsService",
 					Name:     "ListQualifications",
 				},
 				{
-					Category: "WikiService",
+					Category: "wiki.WikiService",
 					Name:     "ListPages",
 				},
 			},
