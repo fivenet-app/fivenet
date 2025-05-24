@@ -19,7 +19,7 @@ const _useDashboard = () => {
         'g-w': () => router.push('/centrum'),
         'g-l': () => router.push('/wiki'),
         'g-i': () => router.push('/internet'),
-        'g-p': () => router.push('/settings/'),
+        'g-p': () => router.push('/settings'),
         '?': () => (isHelpSlideoverOpen.value = true),
         b: () => (isNotificationsSlideoverOpen.value = true),
     });
