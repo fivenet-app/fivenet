@@ -26,13 +26,13 @@ const items = computed(() => [
     [
         {
             label: t('components.auth.AccountInfo.title'),
-            icon: 'i-mdi-account-cog-outline',
+            icon: 'i-mdi-account-details-outline',
             to: '/auth/account-info',
         },
         {
-            label: t('common.setting', 2),
-            icon: 'i-mdi-cog-outline',
-            to: '/settings',
+            label: t('components.auth.UserSettingsPanel.title'),
+            icon: 'i-mdi-account-cog-outline',
+            to: '/user-settings',
         },
         {
             label: t('common.commandpalette'),

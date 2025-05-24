@@ -1086,7 +1086,7 @@
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
             },
             "documenteditor": {
-                "content": "Sie können in den Konto-Einstellungen einen dunklen Modus für den Editor aktivieren."
+                "content": "Sie können in den Benutzer-Einstellungen einen dunklen Modus für den Editor aktivieren."
             },
             "settings_roles_list": {
                 "content": "Die Berechtigungen werden von den unteren auf die oberen Ränge vererbt. Wenn Rang 1 Dokumente einsehen kann, können alle Ränge einschließlich Rang 1 dies ebenfalls tun. Wird Rang 4 die Einsichtnahme in Dokumente verweigert, können die Ränge 4 und höher keine Dokumente einsehen.",
@@ -1203,8 +1203,8 @@
                 "open_server_account_management": "Klicken sie unten, um ihren Registrierungstoken zu erhalten (sie können auch den Befehl {command} nutzen)."
             },
             "UserSettingsPanel": {
-                "title": "Eigene FiveNet-Einstellungen",
-                "subtitle": "Eigene FiveNet-Einstellungen.",
+                "title": "Benutzer-Einstellungen",
+                "subtitle": "Passen Sie Ihre Benutzererfahrung an und verwalten Sie Ihre Einstellungen.",
                 "set_startpage": {
                     "title": "Startseite nach Charakterauswahl",
                     "no_char_selected": "Um eine Startseite auszuwählen, müssen Sie zuerst einen Charakter auswählen."

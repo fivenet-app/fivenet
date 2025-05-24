@@ -1203,8 +1203,8 @@
                 "open_server_account_management": "Click below to retrieve your registration token (you can also use {command})."
             },
             "UserSettingsPanel": {
-                "title": "Settings",
-                "subtitle": "Client-side FiveNet Settings.",
+                "title": "User Settings",
+                "subtitle": "Customize your user experience and manage your settings.",
                 "set_startpage": {
                     "title": "Start Page after character selector",
                     "no_char_selected": "To select a start page you must select a character first."

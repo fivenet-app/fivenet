@@ -10,11 +10,11 @@ const hints = shuffle([
     },
     {
         key: 'startpage',
-        to: { name: 'settings' },
+        to: { name: 'user-settings' },
     },
     {
         key: 'documenteditor',
-        to: { name: 'settings' },
+        to: { name: 'user-settings' },
     },
     {
         key: 'sociallogin_discord',
