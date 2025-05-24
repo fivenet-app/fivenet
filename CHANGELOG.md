@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.5.3] - 2025-05-24
+
+### ⚙️ Miscellaneous Tasks
+
+- Fix release-it issue with git-cliff caused by fetch-depth in
+
 ## [2025.5.2] - 2025-05-24
 
 ### 🐛 Fixes
