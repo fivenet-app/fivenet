@@ -26,6 +26,8 @@ jobs:
             goos: windows
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Set APP_VERSION env
         run: echo APP_VERSION=$(git describe --tags --exclude='fivenet-*') >> ${GITHUB_ENV}
