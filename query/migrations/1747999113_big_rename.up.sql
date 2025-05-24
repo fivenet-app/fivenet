@@ -37,7 +37,7 @@ ALTER TABLE `fivenet_rbac_job_permissions` RENAME INDEX `fk_fivenet_job_permissi
 ALTER TABLE `fivenet_job_conduct` RENAME INDEX `fivenet_jobs_conduct_type` TO `idx_conduct_type`;
 ALTER TABLE `fivenet_job_conduct` RENAME INDEX `fivenet_jobs_conduct_created_at` TO `idx_conduct_created_at`;
 ALTER TABLE `fivenet_job_conduct` RENAME INDEX `fivenet_jobs_conduct_target_user_id` TO `fk_fivenet_jobs_conduct_target_user_id`;
-ALTER TABLE `fivenet_job_conduct` RENAME INDEX `fk_fivenet_jobs_conduct_creator_id` TO `fk_fivenet_jobs_conduct_creator_id`;
+ALTER TABLE `fivenet_job_conduct` RENAME INDEX `fk_fivenet_jobs_conduct_creator_id` TO `fk_fivenet_job_conduct_creator_id`;
 ALTER TABLE `fivenet_job_conduct` RENAME INDEX `idx_fivenet_jobs_conduct_deleted_at` TO `idx_deleted_at`;
 ALTER TABLE `fivenet_user_labels` RENAME INDEX `idx_fivenet_user_citizen_attributes_unique` TO `idx_unique`;
 ALTER TABLE `fivenet_user_labels` RENAME INDEX `fk_fivenet_user_citizen_attributes_attribute_id` TO `fk_fivenet_user_labels_label_id`;
