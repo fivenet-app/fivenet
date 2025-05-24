@@ -37,7 +37,6 @@ const schema = z.object({
     livemapMarkerColor: z.string().length(7),
     quickButtons: z.object({
         penaltyCalculator: z.boolean(),
-        bodyCheckup: z.boolean(),
         mathCalculator: z.boolean(),
     }),
     radioFrequency: z.string().max(24),
@@ -89,7 +88,6 @@ const state = reactive<Schema>({
     livemapMarkerColor: '',
     quickButtons: {
         penaltyCalculator: false,
-        bodyCheckup: false,
         mathCalculator: false,
     },
     radioFrequency: '',
@@ -377,15 +375,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 <UToggle v-model="state.quickButtons.penaltyCalculator" />
                                                 <span class="text-sm font-medium">{{
                                                     $t('components.penaltycalculator.title')
-                                                }}</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="space-y-4">
-                                            <div class="flex items-center gap-2">
-                                                <UToggle v-model="state.quickButtons.bodyCheckup" />
-                                                <span class="text-sm font-medium">{{
-                                                    $t('components.bodycheckup.title')
                                                 }}</span>
                                             </div>
                                         </div>

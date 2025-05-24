@@ -33,7 +33,6 @@ export const useAuthStore = defineStore(
             quickButtons: {
                 penaltyCalculator: false,
                 mathCalculator: false,
-                bodyCheckup: false,
             },
             logoUrl: undefined,
         });

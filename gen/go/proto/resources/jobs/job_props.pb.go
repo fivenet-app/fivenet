@@ -168,7 +168,6 @@ func (x *JobProps) GetSettings() *JobSettings {
 type QuickButtons struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	PenaltyCalculator bool                   `protobuf:"varint,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penalty_calculator,omitempty"`
-	BodyCheckup       bool                   `protobuf:"varint,2,opt,name=body_checkup,json=bodyCheckup,proto3" json:"body_checkup,omitempty"`
 	MathCalculator    bool                   `protobuf:"varint,3,opt,name=math_calculator,json=mathCalculator,proto3" json:"math_calculator,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
@@ -211,13 +210,6 @@ func (x *QuickButtons) GetPenaltyCalculator() bool {
 	return false
 }
 
-func (x *QuickButtons) GetBodyCheckup() bool {
-	if x != nil {
-		return x.BodyCheckup
-	}
-	return false
-}
-
 func (x *QuickButtons) GetMathCalculator() bool {
 	if x != nil {
 		return x.MathCalculator
@@ -254,11 +246,10 @@ const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\x12_discord_last_syncB\x17\n" +
 	"\x15_discord_sync_changesB\a\n" +
 	"\x05_motdB\v\n" +
-	"\t_logo_url\"\x89\x01\n" +
+	"\t_logo_url\"l\n" +
 	"\fQuickButtons\x12-\n" +
-	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator\x12!\n" +
-	"\fbody_checkup\x18\x02 \x01(\bR\vbodyCheckup\x12'\n" +
-	"\x0fmath_calculator\x18\x03 \x01(\bR\x0emathCalculatorBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
+	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator\x12'\n" +
+	"\x0fmath_calculator\x18\x03 \x01(\bR\x0emathCalculatorJ\x04\b\x02\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
 
 var (
 	file_resources_jobs_job_props_proto_rawDescOnce sync.Once

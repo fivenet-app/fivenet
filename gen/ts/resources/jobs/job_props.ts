@@ -83,10 +83,6 @@ export interface QuickButtons {
      */
     penaltyCalculator: boolean;
     /**
-     * @generated from protobuf field: bool body_checkup = 2;
-     */
-    bodyCheckup: boolean;
-    /**
      * @generated from protobuf field: bool math_calculator = 3;
      */
     mathCalculator: boolean;
@@ -228,14 +224,12 @@ class QuickButtons$Type extends MessageType<QuickButtons> {
     constructor() {
         super("resources.jobs.QuickButtons", [
             { no: 1, name: "penalty_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "body_checkup", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "math_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<QuickButtons>): QuickButtons {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.penaltyCalculator = false;
-        message.bodyCheckup = false;
         message.mathCalculator = false;
         if (value !== undefined)
             reflectionMergePartial<QuickButtons>(this, message, value);
@@ -248,9 +242,6 @@ class QuickButtons$Type extends MessageType<QuickButtons> {
             switch (fieldNo) {
                 case /* bool penalty_calculator */ 1:
                     message.penaltyCalculator = reader.bool();
-                    break;
-                case /* bool body_checkup */ 2:
-                    message.bodyCheckup = reader.bool();
                     break;
                 case /* bool math_calculator */ 3:
                     message.mathCalculator = reader.bool();
@@ -270,9 +261,6 @@ class QuickButtons$Type extends MessageType<QuickButtons> {
         /* bool penalty_calculator = 1; */
         if (message.penaltyCalculator !== false)
             writer.tag(1, WireType.Varint).bool(message.penaltyCalculator);
-        /* bool body_checkup = 2; */
-        if (message.bodyCheckup !== false)
-            writer.tag(2, WireType.Varint).bool(message.bodyCheckup);
         /* bool math_calculator = 3; */
         if (message.mathCalculator !== false)
             writer.tag(3, WireType.Varint).bool(message.mathCalculator);

@@ -4,7 +4,6 @@ import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
 import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
-import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
 import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCalculatorModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
@@ -396,16 +395,6 @@ const quickAccessButtons = computed(() =>
                   click: () => {
                       isDashboardSidebarSlideoverOpen.value = false;
                       modal.open(PenaltyCalculatorModal);
-                  },
-              }
-            : undefined,
-        jobProps.value?.quickButtons?.bodyCheckup || isSuperuser.value
-            ? {
-                  label: t('components.bodycheckup.title'),
-                  icon: 'i-mdi-human',
-                  click: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(BodyCheckupModal, {});
                   },
               }
             : undefined,

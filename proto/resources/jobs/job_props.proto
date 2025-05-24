@@ -30,7 +30,8 @@ message JobProps {
 
 // @dbscanner: json
 message QuickButtons {
+  reserved 2;
+
   bool penalty_calculator = 1;
-  bool body_checkup = 2;
   bool math_calculator = 3;
 }
