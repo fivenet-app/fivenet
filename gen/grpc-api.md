@@ -179,10 +179,6 @@
   
     - [ColleagueActivityType](#resources-jobs-ColleagueActivityType)
   
-- [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
-    - [Colleague](#resources-jobs-Colleague)
-    - [ColleagueProps](#resources-jobs-ColleagueProps)
-  
 - [resources/jobs/conduct.proto](#resources_jobs_conduct-proto)
     - [ConductEntry](#resources-jobs-ConductEntry)
   
@@ -221,6 +217,10 @@
   
     - [TimeclockMode](#resources-jobs-TimeclockMode)
     - [TimeclockViewMode](#resources-jobs-TimeclockViewMode)
+  
+- [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
+    - [Colleague](#resources-jobs-Colleague)
+    - [ColleagueProps](#resources-jobs-ColleagueProps)
   
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
@@ -3475,72 +3475,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_jobs_colleagues-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/jobs/colleagues.proto
-
-
-
-<a name="resources-jobs-Colleague"></a>
-
-### Colleague
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
-| `identifier` | [string](#string) | optional |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `job_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `firstname` | [string](#string) |  |  |
-| `lastname` | [string](#string) |  |  |
-| `dateofbirth` | [string](#string) |  |  |
-| `phone_number` | [string](#string) | optional |  |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| `props` | [ColleagueProps](#resources-jobs-ColleagueProps) |  | @gotags: alias:"colleague_props" |
-| `email` | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-jobs-ColleagueProps"></a>
-
-### ColleagueProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `job` | [string](#string) |  |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `absence_begin` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `absence_end` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `note` | [string](#string) | optional | @sanitize: method=StripTags |
-| `labels` | [Labels](#resources-jobs-Labels) | optional |  |
-| `name_prefix` | [string](#string) | optional |  |
-| `name_suffix` | [string](#string) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_jobs_conduct-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4062,6 +3996,72 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources_jobs_colleagues-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/colleagues.proto
+
+
+
+<a name="resources-jobs-Colleague"></a>
+
+### Colleague
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
+| `identifier` | [string](#string) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `firstname` | [string](#string) |  |  |
+| `lastname` | [string](#string) |  |  |
+| `dateofbirth` | [string](#string) |  |  |
+| `phone_number` | [string](#string) | optional |  |
+| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `props` | [ColleagueProps](#resources-jobs-ColleagueProps) |  | @gotags: alias:"colleague_props" |
+| `email` | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueProps"></a>
+
+### ColleagueProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `job` | [string](#string) |  |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `absence_begin` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `absence_end` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `note` | [string](#string) | optional | @sanitize: method=StripTags |
+| `labels` | [Labels](#resources-jobs-Labels) | optional |  |
+| `name_prefix` | [string](#string) | optional |  |
+| `name_suffix` | [string](#string) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_laws_laws-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4438,6 +4438,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `banner_message_enabled` | [bool](#bool) |  |  |
 | `banner_message` | [resources.settings.BannerMessage](#resources-settings-BannerMessage) | optional |  |
 
 

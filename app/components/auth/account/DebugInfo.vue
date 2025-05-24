@@ -52,6 +52,7 @@ async function sendTestNotifications(): Promise<void> {
 
 function triggerBannerMessage(): void {
     const { system } = useAppConfig();
+    system.bannerMessageEnabled = true;
     system.bannerMessage = {
         id: 'test-' + new Date().getTime().toString(),
         title: 'Test Banner: Insert cool message here',

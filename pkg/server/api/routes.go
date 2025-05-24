@@ -129,6 +129,7 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 	}
 	clientCfg.Game.StartJobGrade = r.cfg.Game.StartJobGrade
 
+	clientCfg.System.BannerMessageEnabled = appCfg.System.BannerMessageEnabled
 	if appCfg.System.BannerMessage != nil {
 		clientCfg.System.BannerMessage = &BannerMessage{
 			Id:        appCfg.System.BannerMessage.Id,

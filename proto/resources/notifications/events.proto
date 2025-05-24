@@ -54,5 +54,6 @@ message SystemEvent {
 }
 
 message BannerMessageWrapper {
-  optional resources.settings.BannerMessage banner_message = 1;
+  bool banner_message_enabled = 1;
+  optional resources.settings.BannerMessage banner_message = 2;
 }

@@ -141,6 +141,8 @@ export const useNotificatorStore = defineStore(
                             // Pong!
                         } else if (resp.data.systemEvent.data.oneofKind === 'bannerMessage') {
                             const { system } = useAppConfig();
+                            resp.data.systemEvent.data.bannerMessage.bannerMessageEnabled =
+                                resp.data.systemEvent.data.bannerMessage.bannerMessageEnabled ?? false;
                             if (resp.data.systemEvent.data.bannerMessage.bannerMessage === undefined) {
                                 system.bannerMessage = undefined;
                                 continue;

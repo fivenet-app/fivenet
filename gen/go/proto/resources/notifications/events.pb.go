@@ -338,10 +338,11 @@ func (*SystemEvent_Ping) isSystemEvent_Data() {}
 func (*SystemEvent_BannerMessage) isSystemEvent_Data() {}
 
 type BannerMessageWrapper struct {
-	state         protoimpl.MessageState  `protogen:"open.v1"`
-	BannerMessage *settings.BannerMessage `protobuf:"bytes,1,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"banner_message,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                protoimpl.MessageState  `protogen:"open.v1"`
+	BannerMessageEnabled bool                    `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3" json:"banner_message_enabled,omitempty"`
+	BannerMessage        *settings.BannerMessage `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"banner_message,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *BannerMessageWrapper) Reset() {
@@ -374,6 +375,13 @@ func (*BannerMessageWrapper) Descriptor() ([]byte, []int) {
 	return file_resources_notifications_events_proto_rawDescGZIP(), []int{4}
 }
 
+func (x *BannerMessageWrapper) GetBannerMessageEnabled() bool {
+	if x != nil {
+		return x.BannerMessageEnabled
+	}
+	return false
+}
+
 func (x *BannerMessageWrapper) GetBannerMessage() *settings.BannerMessage {
 	if x != nil {
 		return x.BannerMessage
@@ -400,9 +408,10 @@ const file_resources_notifications_events_proto_rawDesc = "" +
 	"\vSystemEvent\x12\x14\n" +
 	"\x04ping\x18\x01 \x01(\bH\x00R\x04ping\x12V\n" +
 	"\x0ebanner_message\x18\x02 \x01(\v2-.resources.notifications.BannerMessageWrapperH\x00R\rbannerMessageB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"x\n" +
-	"\x14BannerMessageWrapper\x12M\n" +
-	"\x0ebanner_message\x18\x01 \x01(\v2!.resources.settings.BannerMessageH\x00R\rbannerMessage\x88\x01\x01B\x11\n" +
+	"\x04data\x12\x03\xf8B\x01\"\xae\x01\n" +
+	"\x14BannerMessageWrapper\x124\n" +
+	"\x16banner_message_enabled\x18\x01 \x01(\bR\x14bannerMessageEnabled\x12M\n" +
+	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageH\x00R\rbannerMessage\x88\x01\x01B\x11\n" +
 	"\x0f_banner_messageBYZWgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
 var (

@@ -56,7 +56,8 @@ type Game struct {
 }
 
 type System struct {
-	BannerMessage *BannerMessage `json:"bannerMessage,omitempty"`
+	BannerMessageEnabled bool           `json:"bannerMessageEnabled"`
+	BannerMessage        *BannerMessage `json:"bannerMessage,omitempty"`
 }
 
 type BannerMessage struct {

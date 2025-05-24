@@ -70,6 +70,7 @@ export type GameConfig = {
 };
 
 export type SystemConfig = {
+    bannerMessageEnabled: boolean;
     bannerMessage?: BannerMessage;
 };
 

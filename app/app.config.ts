@@ -22,7 +22,9 @@ export default defineAppConfig({
         unemployedJobName: 'unemployed',
         startJobGrade: 0,
     } as GameConfig,
-    system: {} as SystemConfig,
+    system: {
+        bannerMessageEnabled: false,
+    } as SystemConfig,
 
     // File upload related config
     fileUpload: {

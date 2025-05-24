@@ -696,6 +696,8 @@ func (m *BannerMessageWrapper) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for BannerMessageEnabled
+
 	if m.BannerMessage != nil {
 
 		if all {

@@ -182,7 +182,10 @@ const route = router.currentRoute;
             />
         </NuxtLayout>
 
-        <BannerMessage v-if="appConfig.system.bannerMessage" :message="appConfig.system.bannerMessage" />
+        <BannerMessage
+            v-if="appConfig.system.bannerMessageEnabled && appConfig.system.bannerMessage"
+            :message="appConfig.system.bannerMessage"
+        />
 
         <UNotifications />
         <UModals />

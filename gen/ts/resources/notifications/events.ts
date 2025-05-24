@@ -114,7 +114,11 @@ export interface SystemEvent {
  */
 export interface BannerMessageWrapper {
     /**
-     * @generated from protobuf field: optional resources.settings.BannerMessage banner_message = 1;
+     * @generated from protobuf field: bool banner_message_enabled = 1;
+     */
+    bannerMessageEnabled: boolean;
+    /**
+     * @generated from protobuf field: optional resources.settings.BannerMessage banner_message = 2;
      */
     bannerMessage?: BannerMessage;
 }
@@ -352,11 +356,13 @@ export const SystemEvent = new SystemEvent$Type();
 class BannerMessageWrapper$Type extends MessageType<BannerMessageWrapper> {
     constructor() {
         super("resources.notifications.BannerMessageWrapper", [
-            { no: 1, name: "banner_message", kind: "message", T: () => BannerMessage }
+            { no: 1, name: "banner_message_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "banner_message", kind: "message", T: () => BannerMessage }
         ]);
     }
     create(value?: PartialMessage<BannerMessageWrapper>): BannerMessageWrapper {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.bannerMessageEnabled = false;
         if (value !== undefined)
             reflectionMergePartial<BannerMessageWrapper>(this, message, value);
         return message;
@@ -366,7 +372,10 @@ class BannerMessageWrapper$Type extends MessageType<BannerMessageWrapper> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional resources.settings.BannerMessage banner_message */ 1:
+                case /* bool banner_message_enabled */ 1:
+                    message.bannerMessageEnabled = reader.bool();
+                    break;
+                case /* optional resources.settings.BannerMessage banner_message */ 2:
                     message.bannerMessage = BannerMessage.internalBinaryRead(reader, reader.uint32(), options, message.bannerMessage);
                     break;
                 default:
@@ -381,9 +390,12 @@ class BannerMessageWrapper$Type extends MessageType<BannerMessageWrapper> {
         return message;
     }
     internalBinaryWrite(message: BannerMessageWrapper, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional resources.settings.BannerMessage banner_message = 1; */
+        /* bool banner_message_enabled = 1; */
+        if (message.bannerMessageEnabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.bannerMessageEnabled);
+        /* optional resources.settings.BannerMessage banner_message = 2; */
         if (message.bannerMessage)
-            BannerMessage.internalBinaryWrite(message.bannerMessage, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            BannerMessage.internalBinaryWrite(message.bannerMessage, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
