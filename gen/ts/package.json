@@ -4,6 +4,7 @@
     "version": "2025.5.2",
     "license": "Apache-2.0",
     "type": "module",
+    "homepage": "https://fivenet.app",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/fivenet-app/fivenet.git"
