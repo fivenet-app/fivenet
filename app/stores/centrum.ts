@@ -572,10 +572,7 @@ export const useCentrumStore = defineStore(
                 if (rpcError.code !== 'CANCELLED' && rpcError.code !== 'ABORTED') {
                     logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
 
-                    if (
-                        rpcError.code === 'INVALID_ARGUMENT' &&
-                        rpcError.message.includes('centrum.CentrumService.ErrDisabled')
-                    ) {
+                    if (rpcError.code === 'INVALID_ARGUMENT' && rpcError.message.includes('CentrumService.ErrDisabled')) {
                         // Create empty settings object with enabled set to false
                         settings.value = {
                             enabled: false,
