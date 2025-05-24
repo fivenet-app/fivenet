@@ -8,9 +8,17 @@ func (m *AddActivityRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: ColleagueProps
+	// Field: ColleagueActivity
 	switch v := m.Activity.(type) {
 
+	case *AddActivityRequest_ColleagueActivity:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: ColleagueProps
 	case *AddActivityRequest_ColleagueProps:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
@@ -20,14 +28,6 @@ func (m *AddActivityRequest) Sanitize() error {
 
 		// Field: Dispatch
 	case *AddActivityRequest_Dispatch:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: JobColleagueActivity
-	case *AddActivityRequest_JobColleagueActivity:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

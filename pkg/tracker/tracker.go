@@ -21,7 +21,7 @@ import (
 var (
 	tLocs           = table.FivenetCentrumUserLocations
 	tJobProps       = table.FivenetJobProps
-	tColleagueProps = table.FivenetJobColleagueProps.AS("jobs_user_props")
+	tColleagueProps = table.FivenetJobColleagueProps.AS("colleague_props")
 )
 
 type ITracker interface {

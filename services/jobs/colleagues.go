@@ -34,8 +34,8 @@ const (
 )
 
 var (
-	tColleagueProps  = table.FivenetJobColleagueProps.AS("jobs_user_props")
-	tJobUserActivity = table.FivenetJobColleagueActivity
+	tColleagueProps    = table.FivenetJobColleagueProps.AS("colleague_props")
+	tColleagueActivity = table.FivenetJobColleagueActivity
 )
 
 func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesRequest) (*pbjobs.ListColleaguesResponse, error) {
@@ -628,7 +628,7 @@ func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleague
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if err := jobs.CreateJobColleagueActivity(ctx, tx, activities...); err != nil {
+	if err := jobs.CreateColleagueActivity(ctx, tx, activities...); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
@@ -687,11 +687,11 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	tJobUserActivity := tJobUserActivity.AS("job_user_activity")
+	tColleagueActivity := tColleagueActivity.AS("colleague_activity")
 	tTargetUser := tables.User().AS("target_user")
 	tSourceUser := tTargetUser.AS("source_user")
 
-	condition := tJobUserActivity.Job.EQ(jet.String(userInfo.Job))
+	condition := tColleagueActivity.Job.EQ(jet.String(userInfo.Job))
 
 	resp := &pbjobs.ListColleagueActivityResponse{
 		Pagination: &database.PaginationResponse{
@@ -705,7 +705,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 
 	// If no user IDs given or more than 2, show all the user has access to
 	if len(req.UserIds) == 0 || len(req.UserIds) >= 2 {
-		condition = condition.AND(s.getConditionForColleagueAccess(tJobUserActivity, tTargetUser, colleagueAccess.Strings, userInfo))
+		condition = condition.AND(s.getConditionForColleagueAccess(tColleagueActivity, tTargetUser, colleagueAccess.Strings, userInfo))
 
 		if len(req.UserIds) >= 2 {
 			// More than 2 user ids
@@ -735,7 +735,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 			return nil, errorsjobs.ErrFailedQuery
 		}
 
-		condition = condition.AND(tJobUserActivity.TargetUserID.EQ(jet.Int32(userId)))
+		condition = condition.AND(tColleagueActivity.TargetUserID.EQ(jet.Int32(userId)))
 	}
 
 	// Types Field Permission Check
@@ -768,17 +768,17 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 		return resp, nil
 	}
 
-	condition = condition.AND(tJobUserActivity.ActivityType.IN(condTypes...))
+	condition = condition.AND(tColleagueActivity.ActivityType.IN(condTypes...))
 
 	// Get total count of values
-	countStmt := tJobUserActivity.
+	countStmt := tColleagueActivity.
 		SELECT(
-			jet.COUNT(tJobUserActivity.ID).AS("data_count.total"),
+			jet.COUNT(tColleagueActivity.ID).AS("data_count.total"),
 		).
 		FROM(
-			tJobUserActivity.
+			tColleagueActivity.
 				INNER_JOIN(tTargetUser,
-					tTargetUser.ID.EQ(tJobUserActivity.TargetUserID),
+					tTargetUser.ID.EQ(tColleagueActivity.TargetUserID),
 				),
 		).
 		WHERE(condition)
@@ -804,7 +804,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 		case "createdAt":
 			fallthrough
 		default:
-			column = tJobUserActivity.CreatedAt
+			column = tColleagueActivity.CreatedAt
 		}
 
 		if req.Sort.Direction == database.AscSortDirection {
@@ -813,23 +813,23 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 			orderBys = append(orderBys, column.DESC())
 		}
 	} else {
-		orderBys = append(orderBys, tJobUserActivity.CreatedAt.DESC())
+		orderBys = append(orderBys, tColleagueActivity.CreatedAt.DESC())
 	}
 
 	tTargetUserProps := tUserProps.AS("target_user_props")
 	tTargetColleagueProps := tColleagueProps.AS("fivenet_colleague_props")
 	tSourceUserProps := tUserProps.AS("source_user_props")
 
-	stmt := tJobUserActivity.
+	stmt := tColleagueActivity.
 		SELECT(
-			tJobUserActivity.ID,
-			tJobUserActivity.CreatedAt,
-			tJobUserActivity.Job,
-			tJobUserActivity.SourceUserID,
-			tJobUserActivity.TargetUserID,
-			tJobUserActivity.ActivityType,
-			tJobUserActivity.Reason,
-			tJobUserActivity.Data,
+			tColleagueActivity.ID,
+			tColleagueActivity.CreatedAt,
+			tColleagueActivity.Job,
+			tColleagueActivity.SourceUserID,
+			tColleagueActivity.TargetUserID,
+			tColleagueActivity.ActivityType,
+			tColleagueActivity.Reason,
+			tColleagueActivity.Data,
 			tTargetUser.ID,
 			tTargetUser.Job,
 			tTargetUser.JobGrade,
@@ -854,9 +854,9 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 			tSourceUserProps.Avatar.AS("source_user.avatar"),
 		).
 		FROM(
-			tJobUserActivity.
+			tColleagueActivity.
 				INNER_JOIN(tTargetUser,
-					tTargetUser.ID.EQ(tJobUserActivity.TargetUserID),
+					tTargetUser.ID.EQ(tColleagueActivity.TargetUserID),
 				).
 				LEFT_JOIN(tTargetUserProps,
 					tTargetUserProps.UserID.EQ(tTargetUser.ID),
@@ -866,7 +866,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 						AND(tTargetUser.Job.EQ(jet.String(userInfo.Job))),
 				).
 				LEFT_JOIN(tSourceUser,
-					tSourceUser.ID.EQ(tJobUserActivity.SourceUserID),
+					tSourceUser.ID.EQ(tColleagueActivity.SourceUserID),
 				).
 				LEFT_JOIN(tSourceUserProps,
 					tSourceUserProps.UserID.EQ(tSourceUser.ID),

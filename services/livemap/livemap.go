@@ -17,8 +17,8 @@ import (
 )
 
 const (
-	userMarkerChunkSize   = 25
-	markerMarkerChunkSize = 50
+	userMarkerChunkSize   = 30
+	markerMarkerChunkSize = 75
 )
 
 func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapService_StreamServer) error {

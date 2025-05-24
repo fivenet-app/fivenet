@@ -27,10 +27,10 @@ import (
 )
 
 var (
-	tAccsOauth2      = table.FivenetAccountsOauth2
-	tAccs            = table.FivenetAccounts
-	tColleagueProps  = table.FivenetJobColleagueProps
-	tJobUserActivity = table.FivenetJobColleagueActivity
+	tAccsOauth2        = table.FivenetAccountsOauth2
+	tAccs              = table.FivenetAccounts
+	tColleagueProps    = table.FivenetJobColleagueProps
+	tColleagueActivity = table.FivenetJobColleagueActivity
 )
 
 const absentDateFormat = "2006-01-02"
@@ -333,14 +333,14 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 		return false, err
 	}
 
-	activityStmt := tJobUserActivity.
+	activityStmt := tColleagueActivity.
 		INSERT(
-			tJobUserActivity.Job,
-			tJobUserActivity.SourceUserID,
-			tJobUserActivity.TargetUserID,
-			tJobUserActivity.ActivityType,
-			tJobUserActivity.Reason,
-			tJobUserActivity.Data,
+			tColleagueActivity.Job,
+			tColleagueActivity.SourceUserID,
+			tColleagueActivity.TargetUserID,
+			tColleagueActivity.ActivityType,
+			tColleagueActivity.Reason,
+			tColleagueActivity.Data,
 		).
 		VALUES(
 			job,

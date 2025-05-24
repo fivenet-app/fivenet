@@ -5,6 +5,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { availableIcons, fallbackIcon } from '../partials/icons';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 
 defineProps<{
@@ -84,7 +85,21 @@ async function deleteMarker(id: number): Promise<void> {
 
             <p class="inline-flex items-center gap-1">
                 <span class="font-semibold"> {{ $t('common.marker') }}:</span>
-                <span>{{ marker.name }}</span>
+                <span class="flex-1">{{ marker.name }}</span>
+
+                <template v-if="marker.data?.data.oneofKind === 'icon'">
+                    <component
+                        :is="
+                            availableIcons.find(
+                                (icon) =>
+                                    marker.data?.data.oneofKind === 'icon' &&
+                                    icon.name === convertDynamicIconNameToComponent(marker.data?.data.icon.icon),
+                            ) ?? fallbackIcon.name
+                        "
+                        class="size-6"
+                        :style="{ color: marker.color ?? 'currentColor' }"
+                    />
+                </template>
             </p>
 
             <ul role="list">

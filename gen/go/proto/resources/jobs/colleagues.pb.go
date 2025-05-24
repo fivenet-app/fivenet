@@ -37,7 +37,7 @@ type Colleague struct {
 	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
 	Avatar        *filestore.File        `protobuf:"bytes,17,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
-	Props         *ColleagueProps        `protobuf:"bytes,18,opt,name=props,proto3" json:"props,omitempty" alias:"jobs_user_props"` // @gotags: alias:"jobs_user_props"
+	Props         *ColleagueProps        `protobuf:"bytes,18,opt,name=props,proto3" json:"props,omitempty" alias:"colleague_props"` // @gotags: alias:"colleague_props"
 	// @sanitize: method=StripTags
 	Email         *string `protobuf:"bytes,19,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields

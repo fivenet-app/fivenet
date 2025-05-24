@@ -42,8 +42,8 @@ func (s *Server) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest
 			return nil, fmt.Errorf("failed to handle UserProps activity. %w", err)
 		}
 
-	case *pbsync.AddActivityRequest_JobColleagueActivity:
-		if err := jobs.CreateJobColleagueActivity(ctx, s.db, d.JobColleagueActivity); err != nil {
+	case *pbsync.AddActivityRequest_ColleagueActivity:
+		if err := jobs.CreateColleagueActivity(ctx, s.db, d.ColleagueActivity); err != nil {
 			return nil, fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 
@@ -198,7 +198,7 @@ func (s *Server) handleColleagueProps(ctx context.Context, data *pbsync.AddActiv
 	}
 
 	if data.ColleagueProps.Reason != nil && *data.ColleagueProps.Reason != "" {
-		if err := jobs.CreateJobColleagueActivity(ctx, tx, activities...); err != nil {
+		if err := jobs.CreateColleagueActivity(ctx, tx, activities...); err != nil {
 			return fmt.Errorf("failed to create jobs user activities. %w", err)
 		}
 	}

@@ -28,7 +28,7 @@ var (
 	tUnitStatus     = table.FivenetCentrumUnitsStatus.AS("unit_status")
 	tUserProps      = table.FivenetUserProps
 	tUnits          = table.FivenetCentrumUnits.AS("unit")
-	tColleagueProps = table.FivenetJobColleagueProps.AS("jobs_user_props")
+	tColleagueProps = table.FivenetJobColleagueProps.AS("colleague_props")
 )
 
 func (s *Server) ListUnits(ctx context.Context, req *pbcentrum.ListUnitsRequest) (*pbcentrum.ListUnitsResponse, error) {

@@ -7,7 +7,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func CreateJobColleagueActivity(ctx context.Context, tx qrm.DB, activities ...*ColleagueActivity) error {
+func CreateColleagueActivity(ctx context.Context, tx qrm.DB, activities ...*ColleagueActivity) error {
 	if len(activities) == 0 {
 		return nil
 	}

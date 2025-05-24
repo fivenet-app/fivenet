@@ -64,7 +64,7 @@ export interface Colleague {
     /**
      * @generated from protobuf field: resources.jobs.ColleagueProps props = 18;
      */
-    props?: ColleagueProps; // @gotags: alias:"jobs_user_props"
+    props?: ColleagueProps; // @gotags: alias:"colleague_props"
     /**
      * @sanitize: method=StripTags
      *

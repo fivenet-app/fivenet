@@ -138,7 +138,7 @@ type AddActivityRequest struct {
 	//	*AddActivityRequest_Dispatch
 	//	*AddActivityRequest_UserActivity
 	//	*AddActivityRequest_UserProps
-	//	*AddActivityRequest_JobColleagueActivity
+	//	*AddActivityRequest_ColleagueActivity
 	//	*AddActivityRequest_ColleagueProps
 	//	*AddActivityRequest_JobTimeclock
 	//	*AddActivityRequest_UserUpdate
@@ -220,10 +220,10 @@ func (x *AddActivityRequest) GetUserProps() *sync.UserProps {
 	return nil
 }
 
-func (x *AddActivityRequest) GetJobColleagueActivity() *jobs.ColleagueActivity {
+func (x *AddActivityRequest) GetColleagueActivity() *jobs.ColleagueActivity {
 	if x != nil {
-		if x, ok := x.Activity.(*AddActivityRequest_JobColleagueActivity); ok {
-			return x.JobColleagueActivity
+		if x, ok := x.Activity.(*AddActivityRequest_ColleagueActivity); ok {
+			return x.ColleagueActivity
 		}
 	}
 	return nil
@@ -278,9 +278,9 @@ type AddActivityRequest_UserProps struct {
 	UserProps *sync.UserProps `protobuf:"bytes,4,opt,name=user_props,json=userProps,proto3,oneof"`
 }
 
-type AddActivityRequest_JobColleagueActivity struct {
+type AddActivityRequest_ColleagueActivity struct {
 	// Jobs user activity
-	JobColleagueActivity *jobs.ColleagueActivity `protobuf:"bytes,5,opt,name=job_colleague_activity,json=jobColleagueActivity,proto3,oneof"`
+	ColleagueActivity *jobs.ColleagueActivity `protobuf:"bytes,5,opt,name=colleague_activity,json=colleagueActivity,proto3,oneof"`
 }
 
 type AddActivityRequest_ColleagueProps struct {
@@ -306,7 +306,7 @@ func (*AddActivityRequest_UserActivity) isAddActivityRequest_Activity() {}
 
 func (*AddActivityRequest_UserProps) isAddActivityRequest_Activity() {}
 
-func (*AddActivityRequest_JobColleagueActivity) isAddActivityRequest_Activity() {}
+func (*AddActivityRequest_ColleagueActivity) isAddActivityRequest_Activity() {}
 
 func (*AddActivityRequest_ColleagueProps) isAddActivityRequest_Activity() {}
 
@@ -948,15 +948,15 @@ const file_services_sync_sync_proto_rawDesc = "" +
 	"\x04jobs\x18\x01 \x01(\v2\x1a.resources.sync.DataStatusR\x04jobs\x126\n" +
 	"\blicenses\x18\x02 \x01(\v2\x1a.resources.sync.DataStatusR\blicenses\x120\n" +
 	"\x05users\x18\x03 \x01(\v2\x1a.resources.sync.DataStatusR\x05users\x126\n" +
-	"\bvehicles\x18\x04 \x01(\v2\x1a.resources.sync.DataStatusR\bvehicles\"\xd2\x04\n" +
+	"\bvehicles\x18\x04 \x01(\v2\x1a.resources.sync.DataStatusR\bvehicles\"\xcb\x04\n" +
 	"\x12AddActivityRequest\x12A\n" +
 	"\vuser_oauth2\x18\x01 \x01(\v2\x1e.resources.sync.UserOAuth2ConnH\x00R\n" +
 	"userOauth2\x129\n" +
 	"\bdispatch\x18\x02 \x01(\v2\x1b.resources.centrum.DispatchH\x00R\bdispatch\x12D\n" +
 	"\ruser_activity\x18\x03 \x01(\v2\x1d.resources.users.UserActivityH\x00R\fuserActivity\x12:\n" +
 	"\n" +
-	"user_props\x18\x04 \x01(\v2\x19.resources.sync.UserPropsH\x00R\tuserProps\x12Y\n" +
-	"\x16job_colleague_activity\x18\x05 \x01(\v2!.resources.jobs.ColleagueActivityH\x00R\x14jobColleagueActivity\x12I\n" +
+	"user_props\x18\x04 \x01(\v2\x19.resources.sync.UserPropsH\x00R\tuserProps\x12R\n" +
+	"\x12colleague_activity\x18\x05 \x01(\v2!.resources.jobs.ColleagueActivityH\x00R\x11colleagueActivity\x12I\n" +
 	"\x0fcolleague_props\x18\x06 \x01(\v2\x1e.resources.sync.ColleaguePropsH\x00R\x0ecolleagueProps\x12F\n" +
 	"\rjob_timeclock\x18\a \x01(\v2\x1f.resources.sync.TimeclockUpdateH\x00R\fjobTimeclock\x12=\n" +
 	"\vuser_update\x18\b \x01(\v2\x1a.resources.sync.UserUpdateH\x00R\n" +
@@ -1070,7 +1070,7 @@ var file_services_sync_sync_proto_depIdxs = []int32{
 	16, // 5: services.sync.AddActivityRequest.dispatch:type_name -> resources.centrum.Dispatch
 	17, // 6: services.sync.AddActivityRequest.user_activity:type_name -> resources.users.UserActivity
 	18, // 7: services.sync.AddActivityRequest.user_props:type_name -> resources.sync.UserProps
-	19, // 8: services.sync.AddActivityRequest.job_colleague_activity:type_name -> resources.jobs.ColleagueActivity
+	19, // 8: services.sync.AddActivityRequest.colleague_activity:type_name -> resources.jobs.ColleagueActivity
 	20, // 9: services.sync.AddActivityRequest.colleague_props:type_name -> resources.sync.ColleagueProps
 	21, // 10: services.sync.AddActivityRequest.job_timeclock:type_name -> resources.sync.TimeclockUpdate
 	22, // 11: services.sync.AddActivityRequest.user_update:type_name -> resources.sync.UserUpdate
@@ -1112,7 +1112,7 @@ func file_services_sync_sync_proto_init() {
 		(*AddActivityRequest_Dispatch)(nil),
 		(*AddActivityRequest_UserActivity)(nil),
 		(*AddActivityRequest_UserProps)(nil),
-		(*AddActivityRequest_JobColleagueActivity)(nil),
+		(*AddActivityRequest_ColleagueActivity)(nil),
 		(*AddActivityRequest_ColleagueProps)(nil),
 		(*AddActivityRequest_JobTimeclock)(nil),
 		(*AddActivityRequest_UserUpdate)(nil),

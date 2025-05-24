@@ -89,13 +89,13 @@ export interface AddActivityRequest {
          */
         userProps: UserProps;
     } | {
-        oneofKind: "jobColleagueActivity";
+        oneofKind: "colleagueActivity";
         /**
          * Jobs user activity
          *
-         * @generated from protobuf field: resources.jobs.ColleagueActivity job_colleague_activity = 5;
+         * @generated from protobuf field: resources.jobs.ColleagueActivity colleague_activity = 5;
          */
-        jobColleagueActivity: ColleagueActivity;
+        colleagueActivity: ColleagueActivity;
     } | {
         oneofKind: "colleagueProps";
         /**
@@ -390,7 +390,7 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
             { no: 2, name: "dispatch", kind: "message", oneof: "activity", T: () => Dispatch },
             { no: 3, name: "user_activity", kind: "message", oneof: "activity", T: () => UserActivity },
             { no: 4, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
-            { no: 5, name: "job_colleague_activity", kind: "message", oneof: "activity", T: () => ColleagueActivity },
+            { no: 5, name: "colleague_activity", kind: "message", oneof: "activity", T: () => ColleagueActivity },
             { no: 6, name: "colleague_props", kind: "message", oneof: "activity", T: () => ColleagueProps },
             { no: 7, name: "job_timeclock", kind: "message", oneof: "activity", T: () => TimeclockUpdate },
             { no: 8, name: "user_update", kind: "message", oneof: "activity", T: () => UserUpdate }
@@ -432,10 +432,10 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         userProps: UserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userProps)
                     };
                     break;
-                case /* resources.jobs.ColleagueActivity job_colleague_activity */ 5:
+                case /* resources.jobs.ColleagueActivity colleague_activity */ 5:
                     message.activity = {
-                        oneofKind: "jobColleagueActivity",
-                        jobColleagueActivity: ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobColleagueActivity)
+                        oneofKind: "colleagueActivity",
+                        colleagueActivity: ColleagueActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).colleagueActivity)
                     };
                     break;
                 case /* resources.sync.ColleagueProps colleague_props */ 6:
@@ -480,9 +480,9 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         /* resources.sync.UserProps user_props = 4; */
         if (message.activity.oneofKind === "userProps")
             UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.ColleagueActivity job_colleague_activity = 5; */
-        if (message.activity.oneofKind === "jobColleagueActivity")
-            ColleagueActivity.internalBinaryWrite(message.activity.jobColleagueActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.ColleagueActivity colleague_activity = 5; */
+        if (message.activity.oneofKind === "colleagueActivity")
+            ColleagueActivity.internalBinaryWrite(message.activity.colleagueActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* resources.sync.ColleagueProps colleague_props = 6; */
         if (message.activity.oneofKind === "colleagueProps")
             ColleagueProps.internalBinaryWrite(message.activity.colleagueProps, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
