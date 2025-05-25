@@ -23,7 +23,7 @@ export interface PageAccess {
     /**
      * @generated from protobuf field: repeated resources.internet.PageUserAccess users = 2;
      */
-    users: PageUserAccess[]; // @gotags: alias:"citizen_access"
+    users: PageUserAccess[]; // @gotags: alias:"user_access"
 }
 /**
  * @generated from protobuf message resources.internet.PageJobAccess

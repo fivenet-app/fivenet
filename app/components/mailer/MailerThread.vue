@@ -314,7 +314,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     v-if="attachment.data.oneofKind === 'document'"
                                     class="flex-1"
                                     :document-id="attachment.data.document.id"
-                                    button-class="flex-1"
+                                    button-class="flex-1 items-center"
                                     show-id
                                     load-on-open
                                     disable-tooltip

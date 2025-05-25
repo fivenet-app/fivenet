@@ -129,7 +129,7 @@ type DocumentsServiceClient interface {
 	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error)
 	// @perm: Name=ListDocuments
 	ListDocumentPins(ctx context.Context, in *ListDocumentPinsRequest, opts ...grpc.CallOption) (*ListDocumentPinsResponse, error)
-	// @perm
+	// @perm: Attrs=Types/StringList:[]string{"JobWide"}
 	ToggleDocumentPin(ctx context.Context, in *ToggleDocumentPinRequest, opts ...grpc.CallOption) (*ToggleDocumentPinResponse, error)
 	// @perm
 	SetDocumentReminder(ctx context.Context, in *SetDocumentReminderRequest, opts ...grpc.CallOption) (*SetDocumentReminderResponse, error)
@@ -575,7 +575,7 @@ type DocumentsServiceServer interface {
 	DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error)
 	// @perm: Name=ListDocuments
 	ListDocumentPins(context.Context, *ListDocumentPinsRequest) (*ListDocumentPinsResponse, error)
-	// @perm
+	// @perm: Attrs=Types/StringList:[]string{"JobWide"}
 	ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error)
 	// @perm
 	SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error)

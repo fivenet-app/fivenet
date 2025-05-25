@@ -29,7 +29,7 @@ const props = withDefaults(
         hideCategory: false,
         showId: false,
         loadOnOpen: false,
-        buttonClass: '',
+        buttonClass: 'items-center',
         disableTooltip: false,
     },
 );
@@ -84,13 +84,15 @@ watchOnce(opened, async () => {
 
 <template>
     <template v-if="!document && !documentId">
-        <span class="inline-flex items-center">
-            {{ $t('common.na') }}
-        </span>
+        <slot name="title" :document="document" :loading="loading">
+            <span class="inline-flex items-center">
+                {{ $t('common.na') }}
+            </span>
+        </slot>
     </template>
     <UPopover v-else :ui="{ container: 'max-w-[50%]' }">
         <UButton
-            class="line-clamp-2 inline-flex w-full items-center gap-1 whitespace-normal break-words p-px"
+            class="line-clamp-2 inline-flex w-full gap-1 whitespace-normal break-words p-px"
             :class="buttonClass"
             variant="link"
             :padded="false"
@@ -108,7 +110,7 @@ watchOnce(opened, async () => {
                     <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
                     <DocumentCategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
 
-                    <span v-bind="$attrs">{{ document.title }} </span>
+                    <span v-bind="$attrs">{{ document?.title }} </span>
                 </template>
             </slot>
         </UButton>

@@ -31,6 +31,7 @@ type fivenetDocumentsTable struct {
 	CreatorJob  mysql.ColumnString
 	State       mysql.ColumnString
 	Closed      mysql.ColumnBool
+	Draft       mysql.ColumnBool
 	Public      mysql.ColumnBool
 	TemplateID  mysql.ColumnInteger
 
@@ -88,11 +89,12 @@ func newFivenetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDo
 		CreatorJobColumn  = mysql.StringColumn("creator_job")
 		StateColumn       = mysql.StringColumn("state")
 		ClosedColumn      = mysql.BoolColumn("closed")
+		DraftColumn       = mysql.BoolColumn("draft")
 		PublicColumn      = mysql.BoolColumn("public")
 		TemplateIDColumn  = mysql.IntegerColumn("template_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn, TemplateIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn, TemplateIDColumn}
-		defaultColumns    = mysql.ColumnList{CreatedAtColumn, ClosedColumn, PublicColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, DraftColumn, PublicColumn, TemplateIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, DraftColumn, PublicColumn, TemplateIDColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, ClosedColumn, DraftColumn, PublicColumn}
 	)
 
 	return fivenetDocumentsTable{
@@ -113,6 +115,7 @@ func newFivenetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDo
 		CreatorJob:  CreatorJobColumn,
 		State:       StateColumn,
 		Closed:      ClosedColumn,
+		Draft:       DraftColumn,
 		Public:      PublicColumn,
 		TemplateID:  TemplateIDColumn,
 

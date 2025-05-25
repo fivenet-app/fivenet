@@ -36,6 +36,7 @@ const (
 	DocumentsServiceToggleDocumentPerm                 perms.Name = "ToggleDocument"
 	DocumentsServiceToggleDocumentAccessPermField      perms.Key  = "Access"
 	DocumentsServiceToggleDocumentPinPerm              perms.Name = "ToggleDocumentPin"
+	DocumentsServiceToggleDocumentPinTypesPermField    perms.Key  = "Types"
 	DocumentsServiceUpdateDocumentPerm                 perms.Name = "UpdateDocument"
 	DocumentsServiceUpdateDocumentAccessPermField      perms.Key  = "Access"
 )

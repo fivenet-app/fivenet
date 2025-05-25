@@ -635,7 +635,9 @@
         "effective_permissions": "Effective Permissions",
         "check_all": "Check All",
         "uncheck_all": "Uncheck All",
-        "refresh_in_x": "Refresh in {d} {unit}"
+        "refresh_in_x": "Refresh in {d} {unit}",
+        "personal": "Personal",
+        "no_access_to_document": "No access to document"
     },
     "components": {
         "partials": {
@@ -2108,7 +2110,13 @@
                 },
                 "ToggleDocumentPin": {
                     "key": "Pin or upnin document",
-                    "description": "Allows to pin or upin documents for the whole faction."
+                    "description": "Allows to pin or upin documents for the whole faction.",
+                    "attrs_types": {
+                        "Types": "Access to Job document pinning"
+                    },
+                    "attrs": {
+                        "JobWide": "Job Wide"
+                    }
                 },
                 "SetDocumentReminder": {
                     "key": "Set own reminders on documents",

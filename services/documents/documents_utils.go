@@ -14,7 +14,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
+func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, additionalColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
 
 	wheres := []jet.BoolExpression{}
@@ -92,6 +92,10 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 		fields, _ := s.ps.AttrStringList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceListCitizensPerm, permscitizens.CitizensServiceListCitizensFieldsPermField)
 		if fields.Contains("PhoneNumber") {
 			columns = append(columns, tCreator.PhoneNumber)
+		}
+
+		if additionalColumns != nil {
+			columns = append(columns, additionalColumns...)
 		}
 
 		q = tDocumentShort.SELECT(columns[0], columns[1:])
@@ -195,9 +199,12 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			tDocument.CreatorJob,
 			tDocument.State,
 			tDocument.Closed,
+			tDocument.Draft,
 			tDocument.Public,
 			tDocument.TemplateID,
-			tDPins.State.AS("document.pinned"),
+			tDPins.State,
+			tDPins.Job,
+			tDPins.UserID,
 			tWorkflow.DocumentID,
 			tWorkflow.AutoCloseTime,
 			tWorkflow.NextReminderTime,

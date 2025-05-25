@@ -19,6 +19,7 @@ type fivenetDocumentsPinsTable struct {
 	// Columns
 	DocumentID mysql.ColumnInteger
 	Job        mysql.ColumnString
+	UserID     mysql.ColumnInteger
 	CreatedAt  mysql.ColumnTimestamp
 	State      mysql.ColumnBool
 	CreatorID  mysql.ColumnInteger
@@ -65,11 +66,12 @@ func newFivenetDocumentsPinsTableImpl(schemaName, tableName, alias string) fiven
 	var (
 		DocumentIDColumn = mysql.IntegerColumn("document_id")
 		JobColumn        = mysql.StringColumn("job")
+		UserIDColumn     = mysql.IntegerColumn("user_id")
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
 		StateColumn      = mysql.BoolColumn("state")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		allColumns       = mysql.ColumnList{DocumentIDColumn, JobColumn, CreatedAtColumn, StateColumn, CreatorIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, StateColumn, CreatorIDColumn}
+		allColumns       = mysql.ColumnList{DocumentIDColumn, JobColumn, UserIDColumn, CreatedAtColumn, StateColumn, CreatorIDColumn}
+		mutableColumns   = mysql.ColumnList{DocumentIDColumn, JobColumn, UserIDColumn, CreatedAtColumn, StateColumn, CreatorIDColumn}
 		defaultColumns   = mysql.ColumnList{CreatedAtColumn, StateColumn}
 	)
 
@@ -79,6 +81,7 @@ func newFivenetDocumentsPinsTableImpl(schemaName, tableName, alias string) fiven
 		//Columns
 		DocumentID: DocumentIDColumn,
 		Job:        JobColumn,
+		UserID:     UserIDColumn,
 		CreatedAt:  CreatedAtColumn,
 		State:      StateColumn,
 		CreatorID:  CreatorIDColumn,

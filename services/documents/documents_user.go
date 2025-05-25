@@ -184,6 +184,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocuments.ListUse
 			tDocument.CreatorID,
 			tDocument.State,
 			tDocument.Closed,
+			tDocument.Draft,
+			tDocument.Public,
 			tDocument.Title,
 			tDCategory.ID,
 			tDCategory.Name,

@@ -184,8 +184,14 @@ func init() {
 		{
 			Category: permkeys.DocumentsServicePerm,
 			Name:     permkeys.DocumentsServiceToggleDocumentPinPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.DocumentsServiceToggleDocumentPinTypesPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"JobWide"},
+				},
+			},
+			Order: 0,
 		},
 		{
 			Category: permkeys.DocumentsServicePerm,

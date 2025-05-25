@@ -15,5 +15,5 @@ mysqldump -h 127.0.0.1 -u fivenet -pchangeme --no-create-info --skip-triggers --
 ### 2. Documents
 
 ```console
-mysqldump -h 127.0.0.1 -u fivenet -pchangeme --no-create-info --skip-triggers --complete-insert fivenet fivenet_documents fivenet_documents_categories fivenet_documents_comments fivenet_documents_job_access fivenet_documents_references fivenet_documents_relations fivenet_documents_templates fivenet_documents_templates_job_access fivenet_documents_citizen_access > base_010_documents.sql
+mysqldump -h 127.0.0.1 -u fivenet -pchangeme --no-create-info --skip-triggers --complete-insert fivenet fivenet_documents fivenet_documents_categories fivenet_documents_comments fivenet_documents_job_access fivenet_documents_references fivenet_documents_relations fivenet_documents_templates fivenet_documents_templates_job_access fivenet_documents_user_access > base_010_documents.sql
 ```

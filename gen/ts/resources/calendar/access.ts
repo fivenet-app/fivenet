@@ -23,7 +23,7 @@ export interface CalendarAccess {
     /**
      * @generated from protobuf field: repeated resources.calendar.CalendarUserAccess users = 2;
      */
-    users: CalendarUserAccess[]; // @gotags: alias:"citizen_access"
+    users: CalendarUserAccess[]; // @gotags: alias:"user_access"
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarJobAccess

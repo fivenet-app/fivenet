@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DocumentPin } from "../../resources/documents/pins";
 import { Category } from "../../resources/documents/category";
 import { DocRelation } from "../../resources/documents/documents";
 import { DocActivityData } from "../../resources/documents/activity";
@@ -172,6 +173,10 @@ export interface ListDocumentsRequest {
      * @generated from protobuf field: repeated uint64 document_ids = 9;
      */
     documentIds: number[];
+    /**
+     * @generated from protobuf field: optional bool include_drafts = 10;
+     */
+    includeDrafts?: boolean;
 }
 /**
  * @generated from protobuf message services.documents.ListDocumentsResponse
@@ -462,13 +467,13 @@ export interface CreateDocumentRequest {
     /**
      * @generated from protobuf field: optional uint64 category_id = 1;
      */
-    categoryId?: number; // @gotags: alias:"category_id"
+    categoryId?: number;
     /**
      * @sanitize: method=StripTags
      *
      * @generated from protobuf field: string title = 2;
      */
-    title: string; // @gotags: alias:"title"
+    title: string;
     /**
      * @sanitize
      *
@@ -478,31 +483,35 @@ export interface CreateDocumentRequest {
     /**
      * @generated from protobuf field: resources.common.content.ContentType content_type = 4;
      */
-    contentType: ContentType; // @gotags: alias:"content_type"
+    contentType: ContentType;
     /**
      * @generated from protobuf field: optional string data = 5;
      */
-    data?: string; // @gotags: alias:"data"
+    data?: string;
     /**
      * @sanitize
      *
      * @generated from protobuf field: string state = 6;
      */
-    state: string; // @gotags: alias:"state"
+    state: string;
     /**
      * @generated from protobuf field: bool closed = 7;
      */
-    closed: boolean; // @gotags: alias:"closed"
+    closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 8;
+     * @generated from protobuf field: bool draft = 8;
      */
-    public: boolean; // @gotags: alias:"public"
+    draft: boolean;
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentAccess access = 9;
+     * @generated from protobuf field: bool public = 9;
+     */
+    public: boolean;
+    /**
+     * @generated from protobuf field: optional resources.documents.DocumentAccess access = 10;
      */
     access?: DocumentAccess;
     /**
-     * @generated from protobuf field: optional uint64 template_id = 10;
+     * @generated from protobuf field: optional uint64 template_id = 11;
      */
     templateId?: number;
 }
@@ -526,7 +535,7 @@ export interface UpdateDocumentRequest {
     /**
      * @generated from protobuf field: optional uint64 category_id = 2;
      */
-    categoryId?: number; // @gotags: alias:"category_id"
+    categoryId?: number;
     /**
      * @sanitize: method=StripTags
      *
@@ -542,27 +551,31 @@ export interface UpdateDocumentRequest {
     /**
      * @generated from protobuf field: resources.common.content.ContentType content_type = 5;
      */
-    contentType: ContentType; // @gotags: alias:"content_type"
+    contentType: ContentType;
     /**
      * @generated from protobuf field: optional string data = 6;
      */
-    data?: string; // @gotags: alias:"data"
+    data?: string;
     /**
      * @sanitize
      *
      * @generated from protobuf field: string state = 7;
      */
-    state: string; // @gotags: alias:"state"
+    state: string;
     /**
      * @generated from protobuf field: bool closed = 8;
      */
-    closed: boolean; // @gotags: alias:"closed"
+    closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 9;
+     * @generated from protobuf field: bool draft = 9;
      */
-    public: boolean; // @gotags: alias:"public"
+    draft: boolean;
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentAccess access = 10;
+     * @generated from protobuf field: bool public = 10;
+     */
+    public: boolean;
+    /**
+     * @generated from protobuf field: optional resources.documents.DocumentAccess access = 11;
      */
     access?: DocumentAccess;
 }
@@ -842,6 +855,13 @@ export interface ListDocumentPinsRequest {
      * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
      */
     pagination?: PaginationRequest;
+    /**
+     * Search params
+     * If true, only personal pins are returned
+     *
+     * @generated from protobuf field: optional bool personal = 2;
+     */
+    personal?: boolean;
 }
 /**
  * @generated from protobuf message services.documents.ListDocumentPinsResponse
@@ -868,15 +888,21 @@ export interface ToggleDocumentPinRequest {
      * @generated from protobuf field: bool state = 2;
      */
     state: boolean;
+    /**
+     * If true, the pin is personal and not shared with other job members
+     *
+     * @generated from protobuf field: optional bool personal = 3;
+     */
+    personal?: boolean;
 }
 /**
  * @generated from protobuf message services.documents.ToggleDocumentPinResponse
  */
 export interface ToggleDocumentPinResponse {
     /**
-     * @generated from protobuf field: bool state = 1;
+     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 1;
      */
-    state: boolean;
+    pin?: DocumentPin; // @gotags: alias:"pin"
 }
 // Reminders ==================================================================
 
@@ -1386,7 +1412,8 @@ class ListDocumentsRequest$Type extends MessageType<ListDocumentsRequest> {
             { no: 6, name: "from", kind: "message", T: () => Timestamp },
             { no: 7, name: "to", kind: "message", T: () => Timestamp },
             { no: 8, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "document_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { repeated: { maxItems: "5" } } } }
+            { no: 9, name: "document_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { repeated: { maxItems: "5" } } } },
+            { no: 10, name: "include_drafts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListDocumentsRequest>): ListDocumentsRequest {
@@ -1442,6 +1469,9 @@ class ListDocumentsRequest$Type extends MessageType<ListDocumentsRequest> {
                     else
                         message.documentIds.push(reader.uint64().toNumber());
                     break;
+                case /* optional bool include_drafts */ 10:
+                    message.includeDrafts = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1493,6 +1523,9 @@ class ListDocumentsRequest$Type extends MessageType<ListDocumentsRequest> {
                 writer.uint64(message.documentIds[i]);
             writer.join();
         }
+        /* optional bool include_drafts = 10; */
+        if (message.includeDrafts !== undefined)
+            writer.tag(10, WireType.Varint).bool(message.includeDrafts);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2920,9 +2953,10 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
             { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "access", kind: "message", T: () => DocumentAccess },
-            { no: 10, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 8, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 10, name: "access", kind: "message", T: () => DocumentAccess },
+            { no: 11, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CreateDocumentRequest>): CreateDocumentRequest {
@@ -2931,6 +2965,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         message.contentType = 0;
         message.state = "";
         message.closed = false;
+        message.draft = false;
         message.public = false;
         if (value !== undefined)
             reflectionMergePartial<CreateDocumentRequest>(this, message, value);
@@ -2962,13 +2997,16 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
                 case /* bool closed */ 7:
                     message.closed = reader.bool();
                     break;
-                case /* bool public */ 8:
+                case /* bool draft */ 8:
+                    message.draft = reader.bool();
+                    break;
+                case /* bool public */ 9:
                     message.public = reader.bool();
                     break;
-                case /* optional resources.documents.DocumentAccess access */ 9:
+                case /* optional resources.documents.DocumentAccess access */ 10:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
-                case /* optional uint64 template_id */ 10:
+                case /* optional uint64 template_id */ 11:
                     message.templateId = reader.uint64().toNumber();
                     break;
                 default:
@@ -3004,15 +3042,18 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         /* bool closed = 7; */
         if (message.closed !== false)
             writer.tag(7, WireType.Varint).bool(message.closed);
-        /* bool public = 8; */
+        /* bool draft = 8; */
+        if (message.draft !== false)
+            writer.tag(8, WireType.Varint).bool(message.draft);
+        /* bool public = 9; */
         if (message.public !== false)
-            writer.tag(8, WireType.Varint).bool(message.public);
-        /* optional resources.documents.DocumentAccess access = 9; */
+            writer.tag(9, WireType.Varint).bool(message.public);
+        /* optional resources.documents.DocumentAccess access = 10; */
         if (message.access)
-            DocumentAccess.internalBinaryWrite(message.access, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 template_id = 10; */
+            DocumentAccess.internalBinaryWrite(message.access, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint64 template_id = 11; */
         if (message.templateId !== undefined)
-            writer.tag(10, WireType.Varint).uint64(message.templateId);
+            writer.tag(11, WireType.Varint).uint64(message.templateId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3082,8 +3123,9 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "access", kind: "message", T: () => DocumentAccess }
+            { no: 9, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 10, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 11, name: "access", kind: "message", T: () => DocumentAccess }
         ]);
     }
     create(value?: PartialMessage<UpdateDocumentRequest>): UpdateDocumentRequest {
@@ -3093,6 +3135,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         message.contentType = 0;
         message.state = "";
         message.closed = false;
+        message.draft = false;
         message.public = false;
         if (value !== undefined)
             reflectionMergePartial<UpdateDocumentRequest>(this, message, value);
@@ -3127,10 +3170,13 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
                 case /* bool closed */ 8:
                     message.closed = reader.bool();
                     break;
-                case /* bool public */ 9:
+                case /* bool draft */ 9:
+                    message.draft = reader.bool();
+                    break;
+                case /* bool public */ 10:
                     message.public = reader.bool();
                     break;
-                case /* optional resources.documents.DocumentAccess access */ 10:
+                case /* optional resources.documents.DocumentAccess access */ 11:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -3169,12 +3215,15 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         /* bool closed = 8; */
         if (message.closed !== false)
             writer.tag(8, WireType.Varint).bool(message.closed);
-        /* bool public = 9; */
+        /* bool draft = 9; */
+        if (message.draft !== false)
+            writer.tag(9, WireType.Varint).bool(message.draft);
+        /* bool public = 10; */
         if (message.public !== false)
-            writer.tag(9, WireType.Varint).bool(message.public);
-        /* optional resources.documents.DocumentAccess access = 10; */
+            writer.tag(10, WireType.Varint).bool(message.public);
+        /* optional resources.documents.DocumentAccess access = 11; */
         if (message.access)
-            DocumentAccess.internalBinaryWrite(message.access, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+            DocumentAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4329,7 +4378,8 @@ export const DeleteCategoryResponse = new DeleteCategoryResponse$Type();
 class ListDocumentPinsRequest$Type extends MessageType<ListDocumentPinsRequest> {
     constructor() {
         super("services.documents.ListDocumentPinsRequest", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "personal", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListDocumentPinsRequest>): ListDocumentPinsRequest {
@@ -4346,6 +4396,9 @@ class ListDocumentPinsRequest$Type extends MessageType<ListDocumentPinsRequest> 
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
+                case /* optional bool personal */ 2:
+                    message.personal = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4361,6 +4414,9 @@ class ListDocumentPinsRequest$Type extends MessageType<ListDocumentPinsRequest> 
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool personal = 2; */
+        if (message.personal !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.personal);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4430,7 +4486,8 @@ class ToggleDocumentPinRequest$Type extends MessageType<ToggleDocumentPinRequest
     constructor() {
         super("services.documents.ToggleDocumentPinRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "state", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "state", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "personal", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ToggleDocumentPinRequest>): ToggleDocumentPinRequest {
@@ -4452,6 +4509,9 @@ class ToggleDocumentPinRequest$Type extends MessageType<ToggleDocumentPinRequest
                 case /* bool state */ 2:
                     message.state = reader.bool();
                     break;
+                case /* optional bool personal */ 3:
+                    message.personal = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -4470,6 +4530,9 @@ class ToggleDocumentPinRequest$Type extends MessageType<ToggleDocumentPinRequest
         /* bool state = 2; */
         if (message.state !== false)
             writer.tag(2, WireType.Varint).bool(message.state);
+        /* optional bool personal = 3; */
+        if (message.personal !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.personal);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -4484,12 +4547,11 @@ export const ToggleDocumentPinRequest = new ToggleDocumentPinRequest$Type();
 class ToggleDocumentPinResponse$Type extends MessageType<ToggleDocumentPinResponse> {
     constructor() {
         super("services.documents.ToggleDocumentPinResponse", [
-            { no: 1, name: "state", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "pin", kind: "message", T: () => DocumentPin }
         ]);
     }
     create(value?: PartialMessage<ToggleDocumentPinResponse>): ToggleDocumentPinResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.state = false;
         if (value !== undefined)
             reflectionMergePartial<ToggleDocumentPinResponse>(this, message, value);
         return message;
@@ -4499,8 +4561,8 @@ class ToggleDocumentPinResponse$Type extends MessageType<ToggleDocumentPinRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool state */ 1:
-                    message.state = reader.bool();
+                case /* optional resources.documents.DocumentPin pin */ 1:
+                    message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -4514,9 +4576,9 @@ class ToggleDocumentPinResponse$Type extends MessageType<ToggleDocumentPinRespon
         return message;
     }
     internalBinaryWrite(message: ToggleDocumentPinResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool state = 1; */
-        if (message.state !== false)
-            writer.tag(1, WireType.Varint).bool(message.state);
+        /* optional resources.documents.DocumentPin pin = 1; */
+        if (message.pin)
+            DocumentPin.internalBinaryWrite(message.pin, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
