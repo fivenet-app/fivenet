@@ -24,6 +24,7 @@
 // source: resources/documents/category.proto
 // source: resources/documents/comment.proto
 // source: resources/documents/documents.proto
+// source: resources/documents/pins.proto
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto

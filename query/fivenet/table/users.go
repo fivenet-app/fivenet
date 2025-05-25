@@ -30,6 +30,8 @@ type usersTable struct {
 	PhoneNumber mysql.ColumnString
 	Visum       mysql.ColumnInteger
 	Playtime    mysql.ColumnInteger
+	CreatedAt   mysql.ColumnTimestamp
+	LastSeen    mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -84,9 +86,11 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		PhoneNumberColumn = mysql.StringColumn("phone_number")
 		VisumColumn       = mysql.IntegerColumn("visum")
 		PlaytimeColumn    = mysql.IntegerColumn("playtime")
-		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, VisumColumn, PlaytimeColumn}
-		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, VisumColumn, PlaytimeColumn}
-		defaultColumns    = mysql.ColumnList{JobColumn, JobGradeColumn}
+		CreatedAtColumn   = mysql.TimestampColumn("created_at")
+		LastSeenColumn    = mysql.TimestampColumn("last_seen")
+		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn}
+		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn}
+		defaultColumns    = mysql.ColumnList{JobColumn, JobGradeColumn, CreatedAtColumn}
 	)
 
 	return usersTable{
@@ -106,6 +110,8 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		PhoneNumber: PhoneNumberColumn,
 		Visum:       VisumColumn,
 		Playtime:    PlaytimeColumn,
+		CreatedAt:   CreatedAtColumn,
+		LastSeen:    LastSeenColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

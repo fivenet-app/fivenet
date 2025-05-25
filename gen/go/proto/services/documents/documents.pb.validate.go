@@ -1493,6 +1493,10 @@ func (m *ListDocumentsRequest) validate(all bool) error {
 		// no validation rules for Closed
 	}
 
+	if m.IncludeDrafts != nil {
+		// no validation rules for IncludeDrafts
+	}
+
 	if len(errors) > 0 {
 		return ListDocumentsRequestMultiError(errors)
 	}
@@ -5303,6 +5307,8 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for Closed
 
+	// no validation rules for Draft
+
 	// no validation rules for Public
 
 	if m.CategoryId != nil {
@@ -5632,6 +5638,8 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 	}
 
 	// no validation rules for Closed
+
+	// no validation rules for Draft
 
 	// no validation rules for Public
 
@@ -8869,6 +8877,10 @@ func (m *ListDocumentPinsRequest) validate(all bool) error {
 		}
 	}
 
+	if m.Personal != nil {
+		// no validation rules for Personal
+	}
+
 	if len(errors) > 0 {
 		return ListDocumentPinsRequestMultiError(errors)
 	}
@@ -9140,6 +9152,10 @@ func (m *ToggleDocumentPinRequest) validate(all bool) error {
 
 	// no validation rules for State
 
+	if m.Personal != nil {
+		// no validation rules for Personal
+	}
+
 	if len(errors) > 0 {
 		return ToggleDocumentPinRequestMultiError(errors)
 	}
@@ -9242,7 +9258,38 @@ func (m *ToggleDocumentPinResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for State
+	if m.Pin != nil {
+
+		if all {
+			switch v := interface{}(m.GetPin()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ToggleDocumentPinResponseValidationError{
+						field:  "Pin",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ToggleDocumentPinResponseValidationError{
+						field:  "Pin",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetPin()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ToggleDocumentPinResponseValidationError{
+					field:  "Pin",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return ToggleDocumentPinResponseMultiError(errors)

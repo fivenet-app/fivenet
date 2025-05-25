@@ -635,7 +635,9 @@
         "effective_permissions": "Effektive Berechtigungen",
         "check_all": "Alle auswählen",
         "uncheck_all": "Alle abwählen",
-        "refresh_in_x": "Aktualisierung in {d} {unit}"
+        "refresh_in_x": "Aktualisierung in {d} {unit}",
+        "personal": "Persönlich",
+        "no_access_to_document": "Kein Zugriff auf das Dokument"
     },
     "components": {
         "partials": {
@@ -2104,7 +2106,13 @@
                 },
                 "ToggleDocumentPin": {
                     "key": "Dokument Anheften oder Lösen",
-                    "description": "Erlaubt es Dokumente anzuheften oder zulösen für die Gesamte Fraktion."
+                    "description": "Erlaubt es Dokumente anzuheften oder zulösen für sich selbst und die Gesamte Fraktion.",
+                    "attrs_types": {
+                        "Types": "Zugriff auf das Anheften von Dokumenten für den Beruf"
+                    },
+                    "attrs": {
+                        "JobWide": "Beruf-weit"
+                    }
                 },
                 "SetDocumentReminder": {
                     "key": "Setzen von eigenen Dokumenten-Erinnerungen",

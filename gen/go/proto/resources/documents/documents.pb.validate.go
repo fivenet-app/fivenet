@@ -167,9 +167,9 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for Closed
 
-	// no validation rules for Public
+	// no validation rules for Draft
 
-	// no validation rules for Pinned
+	// no validation rules for Public
 
 	if m.UpdatedAt != nil {
 
@@ -354,6 +354,39 @@ func (m *Document) validate(all bool) error {
 
 	if m.TemplateId != nil {
 		// no validation rules for TemplateId
+	}
+
+	if m.Pin != nil {
+
+		if all {
+			switch v := interface{}(m.GetPin()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "Pin",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "Pin",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetPin()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentValidationError{
+					field:  "Pin",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if m.WorkflowState != nil {
@@ -627,6 +660,8 @@ func (m *DocumentShort) validate(all bool) error {
 
 	// no validation rules for Closed
 
+	// no validation rules for Draft
+
 	// no validation rules for Public
 
 	if m.UpdatedAt != nil {
@@ -791,6 +826,39 @@ func (m *DocumentShort) validate(all bool) error {
 				return err
 			}
 			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Pin != nil {
+
+		if all {
+			switch v := interface{}(m.GetPin()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "Pin",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "Pin",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetPin()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentShortValidationError{
+					field:  "Pin",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
 
 	}

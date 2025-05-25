@@ -9,6 +9,7 @@ import "resources/documents/activity.proto";
 import "resources/documents/category.proto";
 import "resources/documents/comment.proto";
 import "resources/documents/documents.proto";
+import "resources/documents/pins.proto";
 import "resources/documents/requests.proto";
 import "resources/documents/templates.proto";
 import "resources/timestamp/timestamp.proto";
@@ -70,6 +71,7 @@ message ListDocumentsRequest {
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;
   repeated uint64 document_ids = 9 [(validate.rules).repeated.max_items = 5];
+  optional bool include_drafts = 10;
 }
 
 message ListDocumentsResponse {
@@ -192,24 +194,25 @@ message ChangeDocumentOwnerRequest {
 message ChangeDocumentOwnerResponse {}
 
 message CreateDocumentRequest {
-  optional uint64 category_id = 1; // @gotags: alias:"category_id"
+  optional uint64 category_id = 1;
   // @sanitize: method=StripTags
   string title = 2 [(validate.rules).string = {
     min_len: 3,
     max_len: 255
-  }]; // @gotags: alias:"title"
+  }];
   // @sanitize
   resources.common.content.Content content = 3;
-  resources.common.content.ContentType content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  resources.common.content.ContentType content_type = 4 [(validate.rules).enum.defined_only = true];
   optional string data = 5 [(validate.rules).string = {
     max_bytes: 1000000 // 1 Megabyte
-  }]; // @gotags: alias:"data"
+  }];
   // @sanitize
-  string state = 6 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
-  bool closed = 7; // @gotags: alias:"closed"
-  bool public = 8; // @gotags: alias:"public"
-  optional resources.documents.DocumentAccess access = 9;
-  optional uint64 template_id = 10;
+  string state = 6 [(validate.rules).string.max_len = 32];
+  bool closed = 7;
+  bool draft = 8;
+  bool public = 9;
+  optional resources.documents.DocumentAccess access = 10;
+  optional uint64 template_id = 11;
 }
 
 message CreateDocumentResponse {
@@ -218,7 +221,7 @@ message CreateDocumentResponse {
 
 message UpdateDocumentRequest {
   uint64 document_id = 1; // @gotags: alias:"id"
-  optional uint64 category_id = 2; // @gotags: alias:"category_id"
+  optional uint64 category_id = 2;
   // @sanitize: method=StripTags
   string title = 3 [(validate.rules).string = {
     min_len: 3,
@@ -226,15 +229,16 @@ message UpdateDocumentRequest {
   }]; // @gotags: alias:"title"
   // @sanitize
   resources.common.content.Content content = 4;
-  resources.common.content.ContentType content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  resources.common.content.ContentType content_type = 5 [(validate.rules).enum.defined_only = true];
   optional string data = 6 [(validate.rules).string = {
     max_bytes: 1000000 // 1 Megabyte
-  }]; // @gotags: alias:"data"
+  }];
   // @sanitize
-  string state = 7 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
-  bool closed = 8; // @gotags: alias:"closed"
-  bool public = 9; // @gotags: alias:"public"
-  optional resources.documents.DocumentAccess access = 10;
+  string state = 7 [(validate.rules).string.max_len = 32];
+  bool closed = 8;
+  bool draft = 9;
+  bool public = 10;
+  optional resources.documents.DocumentAccess access = 11;
 }
 
 // Document Activity and Requests =============================================
@@ -351,6 +355,9 @@ message DeleteCategoryResponse {}
 
 message ListDocumentPinsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search params
+  // If true, only personal pins are returned
+  optional bool personal = 2;
 }
 
 message ListDocumentPinsResponse {
@@ -361,10 +368,12 @@ message ListDocumentPinsResponse {
 message ToggleDocumentPinRequest {
   uint64 document_id = 1;
   bool state = 2;
+  // If true, the pin is personal and not shared with other job members
+  optional bool personal = 3;
 }
 
 message ToggleDocumentPinResponse {
-  bool state = 1;
+  optional resources.documents.DocumentPin pin = 1; // @gotags: alias:"pin"
 }
 
 // Reminders ==================================================================
@@ -458,7 +467,7 @@ service DocumentsService {
 
   // @perm: Name=ListDocuments
   rpc ListDocumentPins(ListDocumentPinsRequest) returns (ListDocumentPinsResponse);
-  // @perm
+  // @perm: Attrs=Types/StringList:[]string{"JobWide"}
   rpc ToggleDocumentPin(ToggleDocumentPinRequest) returns (ToggleDocumentPinResponse);
 
   // @perm

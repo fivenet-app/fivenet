@@ -144,7 +144,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 		Pagination: pag,
 	}
 
-	stmt := s.listDocumentsQuery(condition, nil, userInfo).
+	stmt := s.listDocumentsQuery(condition, nil, nil, userInfo).
 		ORDER_BY(orderBys...).
 		GROUP_BY(tDocumentShort.ID).
 		OFFSET(req.Pagination.Offset).
@@ -210,6 +210,11 @@ func (s *Server) GetDocument(ctx context.Context, req *pbdocuments.GetDocumentRe
 
 	if resp.Document.Creator != nil {
 		s.enricher.EnrichJobInfoSafe(userInfo, resp.Document.Creator)
+	}
+
+	resp.Document.Pin, err = s.getDocumentPin(ctx, resp.Document.Id, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
 	if !infoOnly {
@@ -301,6 +306,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 			tDocument.CreatorJob,
 			tDocument.State,
 			tDocument.Closed,
+			tDocument.Draft,
 			tDocument.Public,
 			tDocument.TemplateID,
 		).
@@ -316,6 +322,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 			req.State,
 			req.Closed,
 			req.Public,
+			req.Draft,
 			req.TemplateId,
 		)
 
@@ -440,6 +447,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 				tDocument.Data,
 				tDocument.State,
 				tDocument.Closed,
+				tDocument.Draft,
 				tDocument.Public,
 			).
 			SET(
@@ -450,6 +458,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 				jet.NULL,
 				req.State,
 				req.Closed,
+				req.Draft,
 				req.Public,
 			).
 			WHERE(

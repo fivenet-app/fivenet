@@ -37,7 +37,7 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
-const { can, activeChar, isSuperuser } = useAuth();
+const { attr, can, activeChar, isSuperuser } = useAuth();
 
 const clipboardStore = useClipboardStore();
 
@@ -181,16 +181,17 @@ function openRequestsModal(): void {
     });
 }
 
-async function togglePin(documentId: number, state: boolean): Promise<ToggleDocumentPinResponse> {
+async function togglePin(documentId: number, state: boolean, personal: boolean): Promise<ToggleDocumentPinResponse> {
     try {
         const call = $grpc.documents.documents.toggleDocumentPin({
             documentId: documentId,
             state: state,
+            personal: personal,
         });
         const { response } = await call;
 
         if (doc.value) {
-            doc.value.pinned = response.state;
+            doc.value.pin = response.pin;
         }
 
         return response;
@@ -349,19 +350,33 @@ defineShortcuts({
 
                     <UTooltip
                         v-if="can('documents.DocumentsService.ToggleDocumentPin').value"
-                        class="flex-1"
+                        class="flex flex-1"
                         :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
                     >
-                        <UButton class="flex-1 flex-col" block @click="togglePin(documentId, !doc.pinned)">
-                            <template v-if="!doc.pinned">
-                                <UIcon class="size-5" name="i-mdi-pin" />
-                                {{ $t('common.pin') }}
-                            </template>
-                            <template v-else>
-                                <UIcon class="size-5" name="i-mdi-pin-off" />
-                                {{ $t('common.unpin') }}
-                            </template>
-                        </UButton>
+                        <UButtonGroup class="flex flex-1">
+                            <UButton
+                                v-if="attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value"
+                                class="flex-1 flex-col"
+                                block
+                                :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
+                                @click="togglePin(documentId, !doc.pin?.job, false)"
+                            >
+                                <UIcon class="size-5" :name="doc.pin?.state && doc.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'" />
+                                {{ $t('common.job') }}
+                            </UButton>
+                            <UButton
+                                class="flex-1 flex-col"
+                                block
+                                :color="doc.pin?.state && doc.pin?.userId ? 'error' : 'primary'"
+                                @click="togglePin(documentId, !doc.pin?.userId, true)"
+                            >
+                                <UIcon
+                                    class="size-5"
+                                    :name="doc.pin?.state && doc.pin?.userId ? 'i-mdi-playlist-remove' : 'i-mdi-playlist-plus'"
+                                />
+                                {{ $t('common.personal') }}
+                            </UButton>
+                        </UButtonGroup>
                     </UTooltip>
 
                     <UTooltip

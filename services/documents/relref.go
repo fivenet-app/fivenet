@@ -594,6 +594,7 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 			tDocument.CreatorID,
 			tDocument.State,
 			tDocument.Closed,
+			tDocument.Draft,
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,

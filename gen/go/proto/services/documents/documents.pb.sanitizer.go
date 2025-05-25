@@ -996,6 +996,15 @@ func (m *ToggleDocumentPinResponse) Sanitize() error {
 		return nil
 	}
 
+	// Field: Pin
+	if m.Pin != nil {
+		if v, ok := any(m.GetPin()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
