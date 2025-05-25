@@ -109,8 +109,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UDashboardPanelContent class="flex flex-col gap-2 lg:flex-row">
-        <div class="basis-1/3">
+    <UDashboardPanelContent class="grid grid-cols-1 gap-2 lg:grid-cols-3">
+        <div class="mb-2">
             <UForm
                 v-if="can('settings.SettingsService.CreateRole').value"
                 class="flex flex-row gap-2"
@@ -188,15 +188,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </template>
 
                     <template #actions-data="{ row: role }">
-                        <div class="text-right">
-                            <UTooltip :text="$t('common.show')">
-                                <UButton
-                                    :to="{ name: 'settings-roles-id', params: { id: role.id } }"
-                                    variant="link"
-                                    icon="i-mdi-eye"
-                                />
-                            </UTooltip>
-                        </div>
+                        <UTooltip :text="$t('common.show')">
+                            <UButton
+                                :to="{ name: 'settings-roles-id', params: { id: role.id } }"
+                                variant="link"
+                                icon="i-mdi-eye"
+                            />
+                        </UTooltip>
                     </template>
                 </UTable>
 
@@ -206,7 +204,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
             </div>
         </div>
 
-        <div class="w-full basis-2/3">
+        <div class="col-span-2 mb-2 w-full">
             <DataNoDataBlock
                 v-if="!route.params.id"
                 icon="i-mdi-select"

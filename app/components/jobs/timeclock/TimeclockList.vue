@@ -609,19 +609,17 @@ const { game } = useAppConfig();
         </template>
 
         <template #time-data="{ row: entry }">
-            <div class="text-right">
-                {{
-                    entry.spentTime > 0
-                        ? fromSecondsToFormattedDuration(Math.round(entry.spentTime * 60 * 60), {
-                              seconds: false,
-                          })
-                        : ''
-                }}
+            {{
+                entry.spentTime > 0
+                    ? fromSecondsToFormattedDuration(Math.round(entry.spentTime * 60 * 60), {
+                          seconds: false,
+                      })
+                    : ''
+            }}
 
-                <UBadge v-if="entry.startTime !== undefined && entry.endTime === undefined" color="green">
-                    {{ $t('common.active') }}
-                </UBadge>
-            </div>
+            <UBadge v-if="entry.startTime !== undefined && entry.endTime === undefined" color="green">
+                {{ $t('common.active') }}
+            </UBadge>
         </template>
     </UTable>
 
