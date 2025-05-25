@@ -18,6 +18,7 @@ import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 import { Permission } from "../../resources/permissions/permissions";
 import { RoleAttribute } from "../../resources/permissions/attributes";
+import { PermItem } from "../../resources/permissions/permissions";
 import { Role } from "../../resources/permissions/permissions";
 import { JobProps } from "../../resources/jobs/job_props";
 /**
@@ -78,10 +79,6 @@ export interface GetRoleRequest {
      * @generated from protobuf field: uint64 id = 1;
      */
     id: number;
-    /**
-     * @generated from protobuf field: optional bool filtered = 2;
-     */
-    filtered?: boolean;
 }
 /**
  * @generated from protobuf message services.settings.GetRoleResponse
@@ -150,26 +147,13 @@ export interface UpdateRolePermsRequest {
  */
 export interface PermsUpdate {
     /**
-     * @generated from protobuf field: repeated services.settings.PermItem to_update = 1;
+     * @generated from protobuf field: repeated resources.permissions.PermItem to_update = 1;
      */
     toUpdate: PermItem[];
     /**
-     * @generated from protobuf field: repeated uint64 to_remove = 2;
+     * @generated from protobuf field: repeated resources.permissions.PermItem to_remove = 2;
      */
-    toRemove: number[];
-}
-/**
- * @generated from protobuf message services.settings.PermItem
- */
-export interface PermItem {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: number;
-    /**
-     * @generated from protobuf field: bool val = 2;
-     */
-    val: boolean;
+    toRemove: PermItem[];
 }
 /**
  * @generated from protobuf message services.settings.AttrsUpdate
@@ -197,10 +181,6 @@ export interface GetPermissionsRequest {
      * @generated from protobuf field: uint64 role_id = 1;
      */
     roleId: number;
-    /**
-     * @generated from protobuf field: optional bool filtered = 2;
-     */
-    filtered?: boolean;
 }
 /**
  * @generated from protobuf message services.settings.GetPermissionsResponse
@@ -658,8 +638,7 @@ export const GetRolesResponse = new GetRolesResponse$Type();
 class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
     constructor() {
         super("services.settings.GetRoleRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "filtered", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetRoleRequest>): GetRoleRequest {
@@ -677,9 +656,6 @@ class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
                 case /* uint64 id */ 1:
                     message.id = reader.uint64().toNumber();
                     break;
-                case /* optional bool filtered */ 2:
-                    message.filtered = reader.bool();
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -695,9 +671,6 @@ class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
-        /* optional bool filtered = 2; */
-        if (message.filtered !== undefined)
-            writer.tag(2, WireType.Varint).bool(message.filtered);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1006,7 +979,7 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
     constructor() {
         super("services.settings.PermsUpdate", [
             { no: 1, name: "to_update", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PermItem },
-            { no: 2, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "to_remove", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PermItem }
         ]);
     }
     create(value?: PartialMessage<PermsUpdate>): PermsUpdate {
@@ -1022,15 +995,11 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated services.settings.PermItem to_update */ 1:
+                case /* repeated resources.permissions.PermItem to_update */ 1:
                     message.toUpdate.push(PermItem.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated uint64 to_remove */ 2:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.toRemove.push(reader.uint64().toNumber());
-                    else
-                        message.toRemove.push(reader.uint64().toNumber());
+                case /* repeated resources.permissions.PermItem to_remove */ 2:
+                    message.toRemove.push(PermItem.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1044,16 +1013,12 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
         return message;
     }
     internalBinaryWrite(message: PermsUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated services.settings.PermItem to_update = 1; */
+        /* repeated resources.permissions.PermItem to_update = 1; */
         for (let i = 0; i < message.toUpdate.length; i++)
             PermItem.internalBinaryWrite(message.toUpdate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated uint64 to_remove = 2; */
-        if (message.toRemove.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.toRemove.length; i++)
-                writer.uint64(message.toRemove[i]);
-            writer.join();
-        }
+        /* repeated resources.permissions.PermItem to_remove = 2; */
+        for (let i = 0; i < message.toRemove.length; i++)
+            PermItem.internalBinaryWrite(message.toRemove[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1064,61 +1029,6 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
  * @generated MessageType for protobuf message services.settings.PermsUpdate
  */
 export const PermsUpdate = new PermsUpdate$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class PermItem$Type extends MessageType<PermItem> {
-    constructor() {
-        super("services.settings.PermItem", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<PermItem>): PermItem {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        message.val = false;
-        if (value !== undefined)
-            reflectionMergePartial<PermItem>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PermItem): PermItem {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
-                    break;
-                case /* bool val */ 2:
-                    message.val = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: PermItem, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
-        /* bool val = 2; */
-        if (message.val !== false)
-            writer.tag(2, WireType.Varint).bool(message.val);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.PermItem
- */
-export const PermItem = new PermItem$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AttrsUpdate$Type extends MessageType<AttrsUpdate> {
     constructor() {
@@ -1216,8 +1126,7 @@ export const UpdateRolePermsResponse = new UpdateRolePermsResponse$Type();
 class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
     constructor() {
         super("services.settings.GetPermissionsRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "filtered", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetPermissionsRequest>): GetPermissionsRequest {
@@ -1235,9 +1144,6 @@ class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
                 case /* uint64 role_id */ 1:
                     message.roleId = reader.uint64().toNumber();
                     break;
-                case /* optional bool filtered */ 2:
-                    message.filtered = reader.bool();
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1253,9 +1159,6 @@ class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
         /* uint64 role_id = 1; */
         if (message.roleId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.roleId);
-        /* optional bool filtered = 2; */
-        if (message.filtered !== undefined)
-            writer.tag(2, WireType.Varint).bool(message.filtered);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

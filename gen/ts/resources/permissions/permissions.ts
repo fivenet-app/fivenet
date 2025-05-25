@@ -82,6 +82,19 @@ export interface Role {
      */
     attributes: RoleAttribute[];
 }
+/**
+ * @generated from protobuf message resources.permissions.PermItem
+ */
+export interface PermItem {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: bool val = 2;
+     */
+    val: boolean;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Permission$Type extends MessageType<Permission> {
     constructor() {
@@ -275,3 +288,58 @@ class Role$Type extends MessageType<Role> {
  * @generated MessageType for protobuf message resources.permissions.Role
  */
 export const Role = new Role$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PermItem$Type extends MessageType<PermItem> {
+    constructor() {
+        super("resources.permissions.PermItem", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PermItem>): PermItem {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.val = false;
+        if (value !== undefined)
+            reflectionMergePartial<PermItem>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PermItem): PermItem {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
+                    break;
+                case /* bool val */ 2:
+                    message.val = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PermItem, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* bool val = 2; */
+        if (message.val !== false)
+            writer.tag(2, WireType.Varint).bool(message.val);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.permissions.PermItem
+ */
+export const PermItem = new PermItem$Type();

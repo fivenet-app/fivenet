@@ -343,17 +343,21 @@ func (m *GetRolesResponse) Sanitize() error {
 	return nil
 }
 
-func (m *PermItem) Sanitize() error {
+func (m *PermsUpdate) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	return nil
-}
+	// Field: ToRemove
+	for idx, item := range m.ToRemove {
+		_, _ = idx, item
 
-func (m *PermsUpdate) Sanitize() error {
-	if m == nil {
-		return nil
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// Field: ToUpdate

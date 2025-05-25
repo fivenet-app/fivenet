@@ -54,7 +54,6 @@ type Permissions interface {
 
 	// Role Attributes management
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
-	GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions.RoleAttribute, bool)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	GetEffectiveRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
 	UpdateRoleAttributes(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error
@@ -63,13 +62,13 @@ type Permissions interface {
 
 	// Limit - Job permissions
 	GetJobPermissions(ctx context.Context, job string) ([]*permissions.Permission, error)
-	UpdateJobPermissions(ctx context.Context, job string, id uint64, val bool) error
+	UpdateJobPermissions(ctx context.Context, job string, perms ...*permissions.PermItem) error
 	ApplyJobPermissions(ctx context.Context, job string) error
 	ClearJobPermissions(ctx context.Context, job string) error
 
 	// Limit - Job attributes (max values)
 	GetJobAttributes(job string) ([]*permissions.RoleAttribute, bool)
-	UpdateJobAttributes(ctx context.Context, job string, attrId uint64, maxValues *permissions.AttributeValues) error
+	UpdateJobAttributes(ctx context.Context, job string, attrs ...*permissions.RoleAttribute) error
 	ClearJobAttributes(ctx context.Context, job string) error
 
 	// Perms Check
@@ -113,7 +112,7 @@ type Perms struct {
 	attrsMap *xsync.Map[uint64, *cacheAttr]
 	// Role ID to map of role attributes
 	attrsRoleMap *xsync.Map[uint64, *xsync.Map[uint64, *cacheRoleAttr]]
-	// Perm ID to map `Key` -> cached attribute
+	// Perm ID to map `Key` -> cached attribute (key is name of attribute)
 	attrsPermsMap *xsync.Map[uint64, *xsync.Map[string, uint64]]
 	// Job to map attr ID to job max value attribute
 	attrsJobMaxValuesMap *xsync.Map[string, *xsync.Map[uint64, *permissions.AttributeValues]]

@@ -50,8 +50,7 @@ const attrList = ref<RoleAttribute[]>([]);
 async function getRole(id: number): Promise<Role> {
     try {
         const call = $grpc.settings.settings.getRole({
-            id,
-            filtered: true,
+            id: id,
         });
         const { response } = await call;
 
@@ -85,7 +84,6 @@ async function getPermissions(roleId: number): Promise<void> {
     try {
         const call = $grpc.settings.settings.getPermissions({
             roleId: roleId,
-            filtered: true,
         });
         const { response } = await call;
 

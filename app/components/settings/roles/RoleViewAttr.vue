@@ -109,11 +109,10 @@ if (attribute.value?.value === undefined) {
 
 const attrValues = ref<AttributeValues>(attribute.value.value!);
 
-let maxValues = attribute.value.maxValues;
-if (maxValues === undefined) {
+if (attribute.value.maxValues === undefined) {
     switch (lowercaseFirstLetter(attribute.value.type)) {
         case 'stringList':
-            maxValues = {
+            attribute.value.maxValues = {
                 validValues: {
                     oneofKind: 'stringList',
                     stringList: {
@@ -124,7 +123,7 @@ if (maxValues === undefined) {
             break;
 
         case 'jobList':
-            maxValues = {
+            attribute.value.maxValues = {
                 validValues: {
                     oneofKind: 'jobList',
                     jobList: {
@@ -135,7 +134,7 @@ if (maxValues === undefined) {
             break;
 
         case 'jobGradeList':
-            maxValues = {
+            attribute.value.maxValues = {
                 validValues: {
                     oneofKind: 'jobGradeList',
                     jobGradeList: {
@@ -148,6 +147,7 @@ if (maxValues === undefined) {
             break;
     }
 }
+const maxValues = attribute.value.maxValues;
 
 const validValues = computed<AttributeValues | undefined>(() => attribute.value.validValues);
 

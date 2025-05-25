@@ -36,7 +36,6 @@ message GetRolesResponse {
 
 message GetRoleRequest {
   uint64 id = 1;
-  optional bool filtered = 2;
 }
 
 message GetRoleResponse {
@@ -65,13 +64,8 @@ message UpdateRolePermsRequest {
 }
 
 message PermsUpdate {
-  repeated PermItem to_update = 1;
-  repeated uint64 to_remove = 2;
-}
-
-message PermItem {
-  uint64 id = 1;
-  bool val = 2;
+  repeated resources.permissions.PermItem to_update = 1;
+  repeated resources.permissions.PermItem to_remove = 2;
 }
 
 message AttrsUpdate {
@@ -83,7 +77,6 @@ message UpdateRolePermsResponse {}
 
 message GetPermissionsRequest {
   uint64 role_id = 1;
-  optional bool filtered = 2;
 }
 
 message GetPermissionsResponse {

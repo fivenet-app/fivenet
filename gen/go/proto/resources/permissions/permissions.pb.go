@@ -215,6 +215,58 @@ func (x *Role) GetAttributes() []*RoleAttribute {
 	return nil
 }
 
+type PermItem struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Val           bool                   `protobuf:"varint,2,opt,name=val,proto3" json:"val,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PermItem) Reset() {
+	*x = PermItem{}
+	mi := &file_resources_permissions_permissions_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PermItem) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PermItem) ProtoMessage() {}
+
+func (x *PermItem) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_permissions_permissions_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PermItem.ProtoReflect.Descriptor instead.
+func (*PermItem) Descriptor() ([]byte, []int) {
+	return file_resources_permissions_permissions_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *PermItem) GetId() uint64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *PermItem) GetVal() bool {
+	if x != nil {
+		return x.Val
+	}
+	return false
+}
+
 var File_resources_permissions_permissions_proto protoreflect.FileDescriptor
 
 const file_resources_permissions_permissions_proto_rawDesc = "" +
@@ -248,7 +300,10 @@ const file_resources_permissions_permissions_proto_rawDesc = "" +
 	"\v_created_atB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
-	"\x10_job_grade_labelBUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissionsb\x06proto3"
+	"\x10_job_grade_label\",\n" +
+	"\bPermItem\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x10\n" +
+	"\x03val\x18\x02 \x01(\bR\x03valBUZSgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissionsb\x06proto3"
 
 var (
 	file_resources_permissions_permissions_proto_rawDescOnce sync.Once
@@ -262,18 +317,19 @@ func file_resources_permissions_permissions_proto_rawDescGZIP() []byte {
 	return file_resources_permissions_permissions_proto_rawDescData
 }
 
-var file_resources_permissions_permissions_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_permissions_permissions_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_permissions_permissions_proto_goTypes = []any{
 	(*Permission)(nil),          // 0: resources.permissions.Permission
 	(*Role)(nil),                // 1: resources.permissions.Role
-	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*RoleAttribute)(nil),       // 3: resources.permissions.RoleAttribute
+	(*PermItem)(nil),            // 2: resources.permissions.PermItem
+	(*timestamp.Timestamp)(nil), // 3: resources.timestamp.Timestamp
+	(*RoleAttribute)(nil),       // 4: resources.permissions.RoleAttribute
 }
 var file_resources_permissions_permissions_proto_depIdxs = []int32{
-	2, // 0: resources.permissions.Permission.created_at:type_name -> resources.timestamp.Timestamp
-	2, // 1: resources.permissions.Role.created_at:type_name -> resources.timestamp.Timestamp
+	3, // 0: resources.permissions.Permission.created_at:type_name -> resources.timestamp.Timestamp
+	3, // 1: resources.permissions.Role.created_at:type_name -> resources.timestamp.Timestamp
 	0, // 2: resources.permissions.Role.permissions:type_name -> resources.permissions.Permission
-	3, // 3: resources.permissions.Role.attributes:type_name -> resources.permissions.RoleAttribute
+	4, // 3: resources.permissions.Role.attributes:type_name -> resources.permissions.RoleAttribute
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -295,7 +351,7 @@ func file_resources_permissions_permissions_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_permissions_permissions_proto_rawDesc), len(file_resources_permissions_permissions_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

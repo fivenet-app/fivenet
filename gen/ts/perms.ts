@@ -54,6 +54,7 @@
 // source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/attributes.proto
+// source: resources/permissions/events.proto
 // source: resources/permissions/permissions.proto
 // source: resources/qualifications/access.proto
 // source: resources/qualifications/exam.proto

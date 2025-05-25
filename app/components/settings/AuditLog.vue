@@ -253,8 +253,12 @@ const expand = ref({
                                 searchable
                                 name="service"
                                 :placeholder="$t('common.service')"
-                                :options="grpcServices"
+                                :options="grpcServices.map((s) => s.split('.').pop() ?? s)"
                             >
+                                <template #option="{ option }">
+                                    {{ option }}
+                                </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
@@ -273,8 +277,12 @@ const expand = ref({
                             searchable
                             name="method"
                             :placeholder="$t('common.method')"
-                            :options="grpcMethods.filter((m) => query.services.some((s) => m.startsWith(s + '/')))"
+                            :options="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
                         >
+                            <template #option="{ option }">
+                                {{ option.split('/').pop() }}
+                            </template>
+
                             <template #option-empty="{ query: search }">
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>
