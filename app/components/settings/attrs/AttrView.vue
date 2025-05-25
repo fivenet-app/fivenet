@@ -250,7 +250,18 @@ const state = reactive<Schema>({
 });
 
 async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
-    const parsed = JSON.parse(event.data.input) as CopyRole;
+    let parsed: CopyRole;
+    try {
+        parsed = JSON.parse(event.data.input) as CopyRole;
+    } catch (e) {
+        console.error('Failed to parse role data from clipboard', e);
+        notifications.add({
+            title: { key: 'notifications.action_failed.title', parameters: {} },
+            description: { key: 'notifications.action_failed.content', parameters: {} },
+            type: NotificationType.ERROR,
+        });
+        return;
+    }
 
     if (parsed.attrList) {
         parsed.attrList?.forEach((a) => {
@@ -304,12 +315,14 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
                         );
                     }
                 }
+
                 at.maxValues = a.maxValues;
             } else {
                 attrList.value.push(a);
             }
         });
     }
+
     parsed.permStates?.forEach((p) => {
         const pe = permList.value.find((pe) => pe.id === p.id);
         if (pe) {

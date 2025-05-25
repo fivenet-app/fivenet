@@ -8,7 +8,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
+import { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions';
 import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/services/settings/settings';
 import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
@@ -250,7 +250,11 @@ async function copyRole(): Promise<void> {
     copyToClipboardWrapper(
         JSON.stringify({
             roleId: props.roleId,
-            attrList: attrList.value,
+            attrList: attrList.value.map((a) => ({
+                attrId: a.attrId,
+                permissionId: a.permissionId,
+                value: a.value,
+            })),
             permStates: [...permStates.value.entries()].map((v) => ({ id: v[0], val: v[1] })),
         } as CopyRole),
     );
@@ -274,7 +278,18 @@ const state = reactive<Schema>({
 });
 
 async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
-    const parsed = JSON.parse(event.data.input) as CopyRole;
+    let parsed: CopyRole;
+    try {
+        parsed = JSON.parse(event.data.input) as CopyRole;
+    } catch (e) {
+        console.error('Failed to parse role data from clipboard', e);
+        notifications.add({
+            title: { key: 'notifications.action_failed.title', parameters: {} },
+            description: { key: 'notifications.action_failed.content', parameters: {} },
+            type: NotificationType.ERROR,
+        });
+        return;
+    }
 
     if (parsed.attrList) {
         parsed.attrList?.forEach((a) => {
@@ -322,12 +337,14 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
                         );
                     }
                 }
+
                 at.value = a.value;
             } else {
                 attrList.value.push(a);
             }
         });
     }
+
     parsed.permStates?.forEach((p) => {
         const pe = permList.value.find((pe) => pe.id === p.id);
         if (pe) {
