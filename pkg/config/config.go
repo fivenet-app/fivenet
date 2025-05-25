@@ -138,7 +138,7 @@ type S3Storage struct {
 	UseSSL          bool   `default:"true" yaml:"useSSL"`
 	BucketName      string `yaml:"bucketName"`
 	Prefix          string `yaml:"prefix"`
-	Retries         int    `default:"10" yaml:"retries"`
+	Retries         int    `default:"3" yaml:"retries"`
 	UsePreSigned    bool   `default:"true" yaml:"usePresigned"`
 }
 
