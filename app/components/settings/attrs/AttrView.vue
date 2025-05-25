@@ -216,6 +216,12 @@ watch(props, async (value) => {
     }
 });
 
+type CopyRole = {
+    job: string;
+    attrList: RoleAttribute[];
+    permStates: { id: number; val?: boolean | undefined }[];
+};
+
 async function copyRole(): Promise<void> {
     copyToClipboardWrapper(
         JSON.stringify({
@@ -242,12 +248,6 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     input: '',
 });
-
-type CopyRole = {
-    job: string;
-    attrList: RoleAttribute[];
-    permStates: { id: number; val?: boolean | undefined }[];
-};
 
 async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
     const parsed = JSON.parse(event.data.input) as CopyRole;
