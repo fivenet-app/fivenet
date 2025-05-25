@@ -72,7 +72,7 @@ storage:
     useSSL: true
     bucketName: ""
     prefix: ""
-    retries: 10
+    retries: 3
     usePresigned: true
 imageProxy:
   enabled: true
