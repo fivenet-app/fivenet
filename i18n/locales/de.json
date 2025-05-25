@@ -1856,6 +1856,10 @@
         "category_restored": {
             "title": "Kategorie wiederhergestellt!",
             "content": "Kategorie wurde wiederhergestellt."
+        },
+        "action_failed": {
+            "title": "Fehlgeschlagen!",
+            "content": "Ihre Aktion ist fehlgeschlagen, bitte versuchen Sie es erneut."
         }
     },
     "perms": {
