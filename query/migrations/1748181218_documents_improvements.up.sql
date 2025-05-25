@@ -18,6 +18,8 @@ ALTER TABLE `fivenet_documents` DROP INDEX idx_fivenet_documents_title;
 ALTER TABLE `fivenet_documents` ADD COLUMN `draft` tinyint(1) DEFAULT '0', ALGORITHM=INPLACE;
 ALTER TABLE `fivenet_documents` CHANGE `draft` `draft` tinyint(1) DEFAULT '0' AFTER `closed`, ALGORITHM=INPLACE;
 
+ALTER TABLE `fivenet_documents` ADD INDEX `idx_draft` (`draft`);
+
 ALTER TABLE `fivenet_documents`
   ADD FULLTEXT KEY `idx_fivenet_documents_title` (`title`);
 ALTER TABLE `fivenet_documents`
