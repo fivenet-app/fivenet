@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -8,7 +10,7 @@ import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions';
-import type { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/settings/settings';
+import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/services/settings/settings';
 import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
 import { isEmptyAttributes } from './helpers';
 
@@ -139,15 +141,16 @@ async function updateRolePerms(): Promise<void> {
             const p = role.value?.permissions.find((v) => v.id === perm);
 
             if (p?.val !== state) {
-                const item: PermItem = {
+                perms.toUpdate.push({
                     id: perm,
                     val: state,
-                };
-
-                perms.toUpdate.push(item);
+                });
             }
         } else if (state === undefined && currentPermissions.includes(perm)) {
-            perms.toRemove.push(perm);
+            perms.toRemove.push({
+                id: perm,
+                val: false,
+            });
         }
     });
 
@@ -237,6 +240,105 @@ watch(props, async () => {
     }
 });
 
+type CopyRole = {
+    roleId: number;
+    attrList: RoleAttribute[];
+    permStates: { id: number; val?: boolean | undefined }[];
+};
+
+async function copyRole(): Promise<void> {
+    copyToClipboardWrapper(
+        JSON.stringify({
+            roleId: props.roleId,
+            attrList: attrList.value,
+            permStates: [...permStates.value.entries()].map((v) => ({ id: v[0], val: v[1] })),
+        } as CopyRole),
+    );
+
+    notifications.add({
+        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
+        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
+        timeout: 3250,
+        type: NotificationType.INFO,
+    });
+}
+
+const schema = z.object({
+    input: z.string(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    input: '',
+});
+
+async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
+    const parsed = JSON.parse(event.data.input) as CopyRole;
+
+    if (parsed.attrList) {
+        parsed.attrList?.forEach((a) => {
+            if (a.value?.validValues.oneofKind === undefined) {
+                return;
+            }
+
+            const at = attrList.value.find((at) => at.attrId === a.attrId);
+            if (at) {
+                if (at.maxValues?.validValues.oneofKind === 'stringList' && a.value?.validValues.oneofKind === 'stringList') {
+                    a.value.validValues.stringList.strings = a.value.validValues.stringList.strings.filter(
+                        (s) =>
+                            at.maxValues?.validValues.oneofKind === 'stringList' &&
+                            at.maxValues.validValues.stringList.strings.includes(s),
+                    );
+                } else if (at.maxValues?.validValues.oneofKind === 'jobList' && a.value?.validValues.oneofKind === 'jobList') {
+                    a.value.validValues.jobList.strings = a.value.validValues.jobList.strings.filter(
+                        (s) =>
+                            at.maxValues?.validValues.oneofKind === 'jobList' &&
+                            at.maxValues.validValues.jobList.strings.includes(s),
+                    );
+                } else if (
+                    at.maxValues?.validValues.oneofKind === 'jobGradeList' &&
+                    a.value?.validValues.oneofKind === 'jobGradeList'
+                ) {
+                    if (!a.value.validValues.jobGradeList.fineGrained) {
+                        const jobs = Object.keys(a.value.validValues.jobGradeList.jobs);
+                        const maxJobs = Object.keys(at.maxValues.validValues.jobGradeList.jobs);
+
+                        jobs.filter((j) => !maxJobs.includes(j)).forEach(
+                            (j) =>
+                                a.value?.validValues.oneofKind === 'jobGradeList' &&
+                                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                                delete a.value.validValues.jobGradeList.jobs[j],
+                        );
+                    } else {
+                        const jobs = Object.keys(a.value.validValues.jobGradeList.jobs);
+                        const maxJobs = Object.keys(at.maxValues.validValues.jobGradeList.jobs);
+
+                        jobs.filter((j) => !maxJobs.includes(j)).forEach(
+                            (j) =>
+                                a.value?.validValues.oneofKind === 'jobGradeList' &&
+                                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                                delete a.value.validValues.jobGradeList.jobs[j],
+                        );
+                    }
+                }
+                at.value = a.value;
+            } else {
+                attrList.value.push(a);
+            }
+        });
+    }
+    parsed.permStates?.forEach((p) => {
+        const pe = permList.value.find((pe) => pe.id === p.id);
+        if (pe) {
+            permStates.value.set(p.id, p.val);
+        }
+    });
+
+    state.input = '';
+    changed.value = true;
+}
+
 const accordionCategories = computed(() =>
     [...permCategories.value.entries()].map((category) => {
         return {
@@ -310,16 +412,42 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 <UDivider class="mb-1" :label="$t('common.permission', 2)" />
 
                 <div class="flex flex-col gap-2">
-                    <UButton
-                        v-if="canUpdate"
-                        block
-                        :disabled="!changed || !canSubmit"
-                        :loading="!canSubmit"
-                        icon="i-mdi-content-save"
-                        @click="onSubmitThrottle"
-                    >
-                        {{ $t('common.save', 1) }}
-                    </UButton>
+                    <div class="flex flex-row gap-1">
+                        <UButton
+                            v-if="canUpdate"
+                            class="flex-1"
+                            :disabled="!changed || !canSubmit"
+                            :loading="!canSubmit"
+                            icon="i-mdi-content-save"
+                            @click="onSubmitThrottle"
+                        >
+                            {{ $t('common.save', 1) }}
+                        </UButton>
+
+                        <UPopover>
+                            <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">
+                                {{ $t('common.paste') }}
+                            </UButton>
+
+                            <template #panel>
+                                <div class="p-4">
+                                    <UForm class="flex flex-col gap-1" :state="state" :schema="schema" @submit="pasteRole">
+                                        <UFormGroup name="input">
+                                            <UInput v-model="state.input" type="text" name="input" />
+                                        </UFormGroup>
+
+                                        <UButton type="submit">
+                                            {{ $t('common.save') }}
+                                        </UButton>
+                                    </UForm>
+                                </div>
+                            </template>
+                        </UPopover>
+
+                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="white" @click="copyRole">
+                            {{ $t('common.copy') }}
+                        </UButton>
+                    </div>
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
                         <template #item="{ item: category }">

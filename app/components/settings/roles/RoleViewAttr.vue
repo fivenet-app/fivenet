@@ -433,6 +433,7 @@ const { game } = useAppConfig();
                                                         g.grade,
                                             )
                                         "
+                                        searchable
                                         :search-attributes="['label']"
                                         :searchable-placeholder="$t('common.search_field')"
                                         :placeholder="$t('common.rank')"
@@ -489,6 +490,7 @@ const { game } = useAppConfig();
                                                         g.grade,
                                             )
                                         "
+                                        searchable
                                         :search-attributes="['label']"
                                         :searchable-placeholder="$t('common.search_field')"
                                         :placeholder="$t('common.rank')"
