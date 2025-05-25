@@ -19,7 +19,7 @@ enum AccessLevel {
 
 message Access {
   repeated JobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
-  repeated UserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"citizen_access"
+  repeated UserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
   repeated QualificationAccess qualifications = 3 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"qualification_access"
 }
 

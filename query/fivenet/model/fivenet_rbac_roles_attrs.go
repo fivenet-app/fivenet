@@ -16,5 +16,5 @@ type FivenetRbacRolesAttrs struct {
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	AttrID    uint64     `sql:"primary_key" json:"attr_id"`
-	Value     string     `json:"value"`
+	Value     *string    `json:"value"`
 }

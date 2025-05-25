@@ -64,6 +64,12 @@ func init() {
 
 				MinDays: housekeeperMinDays,
 			},
+
+			// Pins
+			{
+				Table:      table.FivenetDocumentsPins,
+				ForeignKey: table.FivenetDocumentsPins.DocumentID,
+			},
 		},
 	})
 
@@ -211,14 +217,14 @@ func newAccess(db *sql.DB) *access.Grouped[documents.DocumentJobAccess, *documen
 				},
 				UserId: table.FivenetDocumentsAccess.UserID,
 			},
-			table.FivenetDocumentsAccess.AS("document_citizen_access"),
+			table.FivenetDocumentsAccess.AS("document_user_access"),
 			&access.UserAccessColumns{
 				BaseAccessColumns: access.BaseAccessColumns{
-					ID:       table.FivenetDocumentsAccess.AS("document_citizen_access").ID,
-					TargetID: table.FivenetDocumentsAccess.AS("document_citizen_access").TargetID,
-					Access:   table.FivenetDocumentsAccess.AS("document_citizen_access").Access,
+					ID:       table.FivenetDocumentsAccess.AS("document_user_access").ID,
+					TargetID: table.FivenetDocumentsAccess.AS("document_user_access").TargetID,
+					Access:   table.FivenetDocumentsAccess.AS("document_user_access").Access,
 				},
-				UserId: table.FivenetDocumentsAccess.AS("document_citizen_access").UserID,
+				UserId: table.FivenetDocumentsAccess.AS("document_user_access").UserID,
 			},
 		),
 		nil,

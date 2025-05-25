@@ -18,7 +18,7 @@ enum AccessLevel {
 
 message PageAccess {
   repeated PageJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
-  repeated PageUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"citizen_access"
+  repeated PageUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
 }
 
 message PageJobAccess {

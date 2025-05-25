@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Workflow } from "./workflow";
+import { DocumentPin } from "./pins";
 import { UserShort } from "../users/users";
 import { Content } from "../common/content/content";
 import { ContentType } from "../common/content/content";
@@ -53,7 +54,7 @@ export interface Document {
     /**
      * @generated from protobuf field: resources.common.content.ContentType content_type = 8;
      */
-    contentType: ContentType; // @gotags: alias:"content_type"
+    contentType: ContentType;
     /**
      * @generated from protobuf field: resources.common.content.Content content = 9;
      */
@@ -91,23 +92,27 @@ export interface Document {
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 17;
+     * @generated from protobuf field: bool draft = 17;
+     */
+    draft: boolean;
+    /**
+     * @generated from protobuf field: bool public = 18;
      */
     public: boolean;
     /**
-     * @generated from protobuf field: optional uint64 template_id = 18;
+     * @generated from protobuf field: optional uint64 template_id = 19;
      */
     templateId?: number;
     /**
-     * @generated from protobuf field: bool pinned = 19;
+     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 20;
      */
-    pinned: boolean;
+    pin?: DocumentPin; // @gotags: alias:"pin"
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 20;
+     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 21;
      */
     workflowState?: WorkflowState;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 21;
+     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 22;
      */
     workflowUser?: WorkflowUserState;
 }
@@ -148,7 +153,7 @@ export interface DocumentShort {
     /**
      * @generated from protobuf field: resources.common.content.ContentType content_type = 8;
      */
-    contentType: ContentType; // @gotags: alias:"content_type"
+    contentType: ContentType;
     /**
      * @sanitize
      *
@@ -156,41 +161,49 @@ export interface DocumentShort {
      */
     content?: Content;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 10;
+     * @generated from protobuf field: optional int32 creator_id = 11;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string creator_job = 12;
+     * @generated from protobuf field: string creator_job = 13;
      */
-    creatorJob: string; // @gotags: alias:"creator_job"
+    creatorJob: string;
     /**
-     * @generated from protobuf field: optional string creator_job_label = 13;
+     * @generated from protobuf field: optional string creator_job_label = 14;
      */
     creatorJobLabel?: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string state = 14;
+     * @generated from protobuf field: string state = 15;
      */
-    state: string; // @gotags: alias:"state"
+    state: string;
     /**
-     * @generated from protobuf field: bool closed = 15;
+     * @generated from protobuf field: bool closed = 16;
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 16;
+     * @generated from protobuf field: bool draft = 17;
+     */
+    draft: boolean;
+    /**
+     * @generated from protobuf field: bool public = 18;
      */
     public: boolean;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 20;
+     * @generated from protobuf field: optional resources.documents.DocumentPin pin = 20;
+     */
+    pin?: DocumentPin; // @gotags: alias:"pin"
+    /**
+     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 21;
      */
     workflowState?: WorkflowState;
     /**
-     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 21;
+     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 22;
      */
     workflowUser?: WorkflowUserState;
 }
@@ -400,11 +413,12 @@ class Document$Type extends MessageType<Document> {
             { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 17, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 18, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 19, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 20, name: "workflow_state", kind: "message", T: () => WorkflowState },
-            { no: 21, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
+            { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 19, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 20, name: "pin", kind: "message", T: () => DocumentPin },
+            { no: 21, name: "workflow_state", kind: "message", T: () => WorkflowState },
+            { no: 22, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
         ]);
     }
     create(value?: PartialMessage<Document>): Document {
@@ -415,8 +429,8 @@ class Document$Type extends MessageType<Document> {
         message.creatorJob = "";
         message.state = "";
         message.closed = false;
+        message.draft = false;
         message.public = false;
-        message.pinned = false;
         if (value !== undefined)
             reflectionMergePartial<Document>(this, message, value);
         return message;
@@ -474,19 +488,22 @@ class Document$Type extends MessageType<Document> {
                 case /* bool closed */ 16:
                     message.closed = reader.bool();
                     break;
-                case /* bool public */ 17:
+                case /* bool draft */ 17:
+                    message.draft = reader.bool();
+                    break;
+                case /* bool public */ 18:
                     message.public = reader.bool();
                     break;
-                case /* optional uint64 template_id */ 18:
+                case /* optional uint64 template_id */ 19:
                     message.templateId = reader.uint64().toNumber();
                     break;
-                case /* bool pinned */ 19:
-                    message.pinned = reader.bool();
+                case /* optional resources.documents.DocumentPin pin */ 20:
+                    message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
                     break;
-                case /* optional resources.documents.WorkflowState workflow_state */ 20:
+                case /* optional resources.documents.WorkflowState workflow_state */ 21:
                     message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
                     break;
-                case /* optional resources.documents.WorkflowUserState workflow_user */ 21:
+                case /* optional resources.documents.WorkflowUserState workflow_user */ 22:
                     message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
                     break;
                 default:
@@ -549,21 +566,24 @@ class Document$Type extends MessageType<Document> {
         /* bool closed = 16; */
         if (message.closed !== false)
             writer.tag(16, WireType.Varint).bool(message.closed);
-        /* bool public = 17; */
+        /* bool draft = 17; */
+        if (message.draft !== false)
+            writer.tag(17, WireType.Varint).bool(message.draft);
+        /* bool public = 18; */
         if (message.public !== false)
-            writer.tag(17, WireType.Varint).bool(message.public);
-        /* optional uint64 template_id = 18; */
+            writer.tag(18, WireType.Varint).bool(message.public);
+        /* optional uint64 template_id = 19; */
         if (message.templateId !== undefined)
-            writer.tag(18, WireType.Varint).uint64(message.templateId);
-        /* bool pinned = 19; */
-        if (message.pinned !== false)
-            writer.tag(19, WireType.Varint).bool(message.pinned);
-        /* optional resources.documents.WorkflowState workflow_state = 20; */
+            writer.tag(19, WireType.Varint).uint64(message.templateId);
+        /* optional resources.documents.DocumentPin pin = 20; */
+        if (message.pin)
+            DocumentPin.internalBinaryWrite(message.pin, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowState workflow_state = 21; */
         if (message.workflowState)
-            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowUserState workflow_user = 21; */
+            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowUserState workflow_user = 22; */
         if (message.workflowUser)
-            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -587,15 +607,17 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "message", T: () => Content },
-            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort },
-            { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 13, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 14, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
-            { no: 15, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 20, name: "workflow_state", kind: "message", T: () => WorkflowState },
-            { no: 21, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
+            { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 12, name: "creator", kind: "message", T: () => UserShort },
+            { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
+            { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 17, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 18, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 20, name: "pin", kind: "message", T: () => DocumentPin },
+            { no: 21, name: "workflow_state", kind: "message", T: () => WorkflowState },
+            { no: 22, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
         ]);
     }
     create(value?: PartialMessage<DocumentShort>): DocumentShort {
@@ -606,6 +628,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         message.creatorJob = "";
         message.state = "";
         message.closed = false;
+        message.draft = false;
         message.public = false;
         if (value !== undefined)
             reflectionMergePartial<DocumentShort>(this, message, value);
@@ -643,31 +666,37 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* resources.common.content.Content content */ 9:
                     message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
-                case /* optional int32 creator_id */ 10:
+                case /* optional int32 creator_id */ 11:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 11:
+                case /* optional resources.users.UserShort creator */ 12:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 12:
+                case /* string creator_job */ 13:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional string creator_job_label */ 13:
+                case /* optional string creator_job_label */ 14:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* string state */ 14:
+                case /* string state */ 15:
                     message.state = reader.string();
                     break;
-                case /* bool closed */ 15:
+                case /* bool closed */ 16:
                     message.closed = reader.bool();
                     break;
-                case /* bool public */ 16:
+                case /* bool draft */ 17:
+                    message.draft = reader.bool();
+                    break;
+                case /* bool public */ 18:
                     message.public = reader.bool();
                     break;
-                case /* optional resources.documents.WorkflowState workflow_state */ 20:
+                case /* optional resources.documents.DocumentPin pin */ 20:
+                    message.pin = DocumentPin.internalBinaryRead(reader, reader.uint32(), options, message.pin);
+                    break;
+                case /* optional resources.documents.WorkflowState workflow_state */ 21:
                     message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
                     break;
-                case /* optional resources.documents.WorkflowUserState workflow_user */ 21:
+                case /* optional resources.documents.WorkflowUserState workflow_user */ 22:
                     message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
                     break;
                 default:
@@ -709,33 +738,39 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* resources.common.content.Content content = 9; */
         if (message.content)
             Content.internalBinaryWrite(message.content, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 creator_id = 10; */
+        /* optional int32 creator_id = 11; */
         if (message.creatorId !== undefined)
-            writer.tag(10, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 11; */
+            writer.tag(11, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 12; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 12; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 13; */
         if (message.creatorJob !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional string creator_job_label = 13; */
+            writer.tag(13, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string creator_job_label = 14; */
         if (message.creatorJobLabel !== undefined)
-            writer.tag(13, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* string state = 14; */
+            writer.tag(14, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* string state = 15; */
         if (message.state !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 15; */
+            writer.tag(15, WireType.LengthDelimited).string(message.state);
+        /* bool closed = 16; */
         if (message.closed !== false)
-            writer.tag(15, WireType.Varint).bool(message.closed);
-        /* bool public = 16; */
+            writer.tag(16, WireType.Varint).bool(message.closed);
+        /* bool draft = 17; */
+        if (message.draft !== false)
+            writer.tag(17, WireType.Varint).bool(message.draft);
+        /* bool public = 18; */
         if (message.public !== false)
-            writer.tag(16, WireType.Varint).bool(message.public);
-        /* optional resources.documents.WorkflowState workflow_state = 20; */
+            writer.tag(18, WireType.Varint).bool(message.public);
+        /* optional resources.documents.DocumentPin pin = 20; */
+        if (message.pin)
+            DocumentPin.internalBinaryWrite(message.pin, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowState workflow_state = 21; */
         if (message.workflowState)
-            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.documents.WorkflowUserState workflow_user = 21; */
+            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowUserState workflow_user = 22; */
         if (message.workflowUser)
-            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

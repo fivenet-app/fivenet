@@ -25,7 +25,7 @@ export interface DocumentAccess {
     /**
      * @generated from protobuf field: repeated resources.documents.DocumentUserAccess users = 2;
      */
-    users: DocumentUserAccess[]; // @gotags: alias:"citizen_access"
+    users: DocumentUserAccess[]; // @gotags: alias:"user_access"
 }
 /**
  * @generated from protobuf message resources.documents.DocumentJobAccess

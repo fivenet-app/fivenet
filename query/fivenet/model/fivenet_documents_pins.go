@@ -12,8 +12,9 @@ import (
 )
 
 type FivenetDocumentsPins struct {
-	DocumentID uint64     `sql:"primary_key" json:"document_id"`
-	Job        string     `sql:"primary_key" json:"job"`
+	DocumentID uint64     `json:"document_id"`
+	Job        *string    `json:"job"`
+	UserID     *int32     `json:"user_id"`
 	CreatedAt  *time.Time `json:"created_at"`
 	State      *bool      `json:"state"`
 	CreatorID  int32      `json:"creator_id"`

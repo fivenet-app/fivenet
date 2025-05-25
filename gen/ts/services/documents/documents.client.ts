@@ -288,7 +288,7 @@ export interface IDocumentsServiceClient {
      */
     listDocumentPins(input: ListDocumentPinsRequest, options?: RpcOptions): UnaryCall<ListDocumentPinsRequest, ListDocumentPinsResponse>;
     /**
-     * @perm
+     * @perm: Attrs=Types/StringList:[]string{"JobWide"}
      *
      * @generated from protobuf rpc: ToggleDocumentPin(services.documents.ToggleDocumentPinRequest) returns (services.documents.ToggleDocumentPinResponse);
      */
@@ -616,7 +616,7 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<ListDocumentPinsRequest, ListDocumentPinsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Attrs=Types/StringList:[]string{"JobWide"}
      *
      * @generated from protobuf rpc: ToggleDocumentPin(services.documents.ToggleDocumentPinRequest) returns (services.documents.ToggleDocumentPinResponse);
      */

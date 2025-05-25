@@ -63,6 +63,15 @@ func (m *Document) Sanitize() error {
 		}
 	}
 
+	// Field: Pin
+	if m.Pin != nil {
+		if v, ok := any(m.GetPin()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: State
 	m.State = htmlsanitizer.Sanitize(m.State)
 
@@ -231,6 +240,15 @@ func (m *DocumentShort) Sanitize() error {
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
 		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Pin
+	if m.Pin != nil {
+		if v, ok := any(m.GetPin()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -12,19 +12,19 @@ import (
 )
 
 type Users struct {
-	ID          int32   `json:"id"`
-	Identifier  string  `sql:"primary_key" json:"identifier"`
-	Group       *string `json:"group"`
-	Job         *string `json:"job"`
-	JobGrade    *int32  `json:"job_grade"`
-	Firstname   *string `json:"firstname"`
-	Lastname    *string `json:"lastname"`
-	Dateofbirth *string `json:"dateofbirth"`
-	Sex         *string `json:"sex"`
-	Height      *string `json:"height"`
-	PhoneNumber *string `json:"phone_number"`
-	Visum       *int32  `json:"visum"`
-	Playtime    *int32  `json:"playtime"`
-    CreatedAt   *time.Time `json:"created_at"`
+	ID          int32      `json:"id"`
+	Identifier  string     `sql:"primary_key" json:"identifier"`
+	Group       *string    `json:"group"`
+	Job         *string    `json:"job"`
+	JobGrade    *int32     `json:"job_grade"`
+	Firstname   *string    `json:"firstname"`
+	Lastname    *string    `json:"lastname"`
+	Dateofbirth *string    `json:"dateofbirth"`
+	Sex         *string    `json:"sex"`
+	Height      *string    `json:"height"`
+	PhoneNumber *string    `json:"phone_number"`
+	Visum       *int32     `json:"visum"`
+	Playtime    *int32     `json:"playtime"`
+	CreatedAt   *time.Time `json:"created_at"`
 	LastSeen    *time.Time `json:"last_seen"`
 }

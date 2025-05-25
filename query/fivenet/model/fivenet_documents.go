@@ -26,6 +26,7 @@ type FivenetDocuments struct {
 	CreatorJob  string     `json:"creator_job"`
 	State       string     `json:"state"`
 	Closed      *bool      `json:"closed"`
+	Draft       *bool      `json:"draft"`
 	Public      bool       `json:"public"`
 	TemplateID  *uint64    `json:"template_id"`
 }

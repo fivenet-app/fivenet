@@ -85,7 +85,7 @@ func (AccessLevel) EnumDescriptor() ([]byte, []int) {
 type CalendarAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Jobs          []*CalendarJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`   // @gotags: alias:"job_access"
-	Users         []*CalendarUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"citizen_access"` // @gotags: alias:"citizen_access"
+	Users         []*CalendarUserAccess  `protobuf:"bytes,2,rep,name=users,proto3" json:"users,omitempty" alias:"user_access"` // @gotags: alias:"user_access"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

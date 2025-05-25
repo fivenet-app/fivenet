@@ -142,7 +142,7 @@ type Document struct {
 	Category   *Category              `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"` // @gotags: alias:"category"
 	// @sanitize
 	Title       string              `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
-	ContentType content.ContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
+	ContentType content.ContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	Content     *content.Content    `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
 	// @sanitize
 	Data            *string          `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"` // @gotags: alias:"data"
@@ -153,11 +153,12 @@ type Document struct {
 	// @sanitize
 	State         string             `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
 	Closed        bool               `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
-	Public        bool               `protobuf:"varint,17,opt,name=public,proto3" json:"public,omitempty"`
-	TemplateId    *uint64            `protobuf:"varint,18,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
-	Pinned        bool               `protobuf:"varint,19,opt,name=pinned,proto3" json:"pinned,omitempty"`
-	WorkflowState *WorkflowState     `protobuf:"bytes,20,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
-	WorkflowUser  *WorkflowUserState `protobuf:"bytes,21,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
+	Draft         bool               `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public        bool               `protobuf:"varint,18,opt,name=public,proto3" json:"public,omitempty"`
+	TemplateId    *uint64            `protobuf:"varint,19,opt,name=template_id,json=templateId,proto3,oneof" json:"template_id,omitempty"`
+	Pin           *DocumentPin       `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"` // @gotags: alias:"pin"
+	WorkflowState *WorkflowState     `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
+	WorkflowUser  *WorkflowUserState `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -304,6 +305,13 @@ func (x *Document) GetClosed() bool {
 	return false
 }
 
+func (x *Document) GetDraft() bool {
+	if x != nil {
+		return x.Draft
+	}
+	return false
+}
+
 func (x *Document) GetPublic() bool {
 	if x != nil {
 		return x.Public
@@ -318,11 +326,11 @@ func (x *Document) GetTemplateId() uint64 {
 	return 0
 }
 
-func (x *Document) GetPinned() bool {
+func (x *Document) GetPin() *DocumentPin {
 	if x != nil {
-		return x.Pinned
+		return x.Pin
 	}
-	return false
+	return nil
 }
 
 func (x *Document) GetWorkflowState() *WorkflowState {
@@ -349,19 +357,21 @@ type DocumentShort struct {
 	Category   *Category              `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"` // @gotags: alias:"category"
 	// @sanitize
 	Title       string              `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
-	ContentType content.ContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
+	ContentType content.ContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	// @sanitize
 	Content         *content.Content `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
-	CreatorId       *int32           `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *users.UserShort `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                   // @gotags: alias:"creator"
-	CreatorJob      string           `protobuf:"bytes,12,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty" alias:"creator_job"` // @gotags: alias:"creator_job"
-	CreatorJobLabel *string          `protobuf:"bytes,13,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	CreatorId       *int32           `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator         *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
+	CreatorJob      string           `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string          `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
 	// @sanitize
-	State         string             `protobuf:"bytes,14,opt,name=state,proto3" json:"state,omitempty" alias:"state"` // @gotags: alias:"state"
-	Closed        bool               `protobuf:"varint,15,opt,name=closed,proto3" json:"closed,omitempty"`
-	Public        bool               `protobuf:"varint,16,opt,name=public,proto3" json:"public,omitempty"`
-	WorkflowState *WorkflowState     `protobuf:"bytes,20,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
-	WorkflowUser  *WorkflowUserState `protobuf:"bytes,21,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
+	State         string             `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
+	Closed        bool               `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`
+	Draft         bool               `protobuf:"varint,17,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public        bool               `protobuf:"varint,18,opt,name=public,proto3" json:"public,omitempty"`
+	Pin           *DocumentPin       `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"` // @gotags: alias:"pin"
+	WorkflowState *WorkflowState     `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
+	WorkflowUser  *WorkflowUserState `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -501,11 +511,25 @@ func (x *DocumentShort) GetClosed() bool {
 	return false
 }
 
+func (x *DocumentShort) GetDraft() bool {
+	if x != nil {
+		return x.Draft
+	}
+	return false
+}
+
 func (x *DocumentShort) GetPublic() bool {
 	if x != nil {
 		return x.Public
 	}
 	return false
+}
+
+func (x *DocumentShort) GetPin() *DocumentPin {
+	if x != nil {
+		return x.Pin
+	}
+	return nil
 }
 
 func (x *DocumentShort) GetWorkflowState() *WorkflowState {
@@ -910,7 +934,8 @@ var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/documents.proto\x12\x13resources.documents\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xc3\t\n" +
+	"#resources/documents/documents.proto\x12\x13resources.documents\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x82\n" +
+	"\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
 	"\n" +
@@ -935,14 +960,15 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"creatorJob\x128\n" +
 	"\x11creator_job_label\x18\x0e \x01(\tB\a\xfaB\x04r\x02\x182H\aR\x0fcreatorJobLabel\x88\x01\x01\x12\x1d\n" +
 	"\x05state\x18\x0f \x01(\tB\a\xfaB\x04r\x02\x18 R\x05state\x12\x16\n" +
-	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x16\n" +
-	"\x06public\x18\x11 \x01(\bR\x06public\x12$\n" +
-	"\vtemplate_id\x18\x12 \x01(\x04H\bR\n" +
-	"templateId\x88\x01\x01\x12\x16\n" +
-	"\x06pinned\x18\x13 \x01(\bR\x06pinned\x12N\n" +
-	"\x0eworkflow_state\x18\x14 \x01(\v2\".resources.documents.WorkflowStateH\tR\rworkflowState\x88\x01\x01\x12P\n" +
-	"\rworkflow_user\x18\x15 \x01(\v2&.resources.documents.WorkflowUserStateH\n" +
-	"R\fworkflowUser\x88\x01\x01B\r\n" +
+	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x14\n" +
+	"\x05draft\x18\x11 \x01(\bR\x05draft\x12\x16\n" +
+	"\x06public\x18\x12 \x01(\bR\x06public\x12$\n" +
+	"\vtemplate_id\x18\x13 \x01(\x04H\bR\n" +
+	"templateId\x88\x01\x01\x127\n" +
+	"\x03pin\x18\x14 \x01(\v2 .resources.documents.DocumentPinH\tR\x03pin\x88\x01\x01\x12N\n" +
+	"\x0eworkflow_state\x18\x15 \x01(\v2\".resources.documents.WorkflowStateH\n" +
+	"R\rworkflowState\x88\x01\x01\x12P\n" +
+	"\rworkflow_user\x18\x16 \x01(\v2&.resources.documents.WorkflowUserStateH\vR\fworkflowUser\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_category_idB\v\n" +
@@ -952,9 +978,10 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
 	"\b_creatorB\x14\n" +
 	"\x12_creator_job_labelB\x0e\n" +
-	"\f_template_idB\x11\n" +
+	"\f_template_idB\x06\n" +
+	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
-	"\x0e_workflow_user\"\xcd\b\n" +
+	"\x0e_workflow_user\"\xa4\t\n" +
 	"\rDocumentShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
 	"\n" +
@@ -971,17 +998,18 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\fcontent_type\x18\b \x01(\x0e2%.resources.common.content.ContentTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\vcontentType\x12;\n" +
 	"\acontent\x18\t \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
 	"\n" +
-	"creator_id\x18\n" +
-	" \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x129\n" +
-	"\acreator\x18\v \x01(\v2\x1a.resources.users.UserShortH\x05R\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\f \x01(\tB\a\xfaB\x04r\x02\x18\x14R\n" +
+	"creator_id\x18\v \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x129\n" +
+	"\acreator\x18\f \x01(\v2\x1a.resources.users.UserShortH\x05R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\r \x01(\tB\a\xfaB\x04r\x02\x18\x14R\n" +
 	"creatorJob\x128\n" +
-	"\x11creator_job_label\x18\r \x01(\tB\a\xfaB\x04r\x02\x182H\x06R\x0fcreatorJobLabel\x88\x01\x01\x12\x1d\n" +
-	"\x05state\x18\x0e \x01(\tB\a\xfaB\x04r\x02\x18 R\x05state\x12\x16\n" +
-	"\x06closed\x18\x0f \x01(\bR\x06closed\x12\x16\n" +
-	"\x06public\x18\x10 \x01(\bR\x06public\x12N\n" +
-	"\x0eworkflow_state\x18\x14 \x01(\v2\".resources.documents.WorkflowStateH\aR\rworkflowState\x88\x01\x01\x12P\n" +
-	"\rworkflow_user\x18\x15 \x01(\v2&.resources.documents.WorkflowUserStateH\bR\fworkflowUser\x88\x01\x01B\r\n" +
+	"\x11creator_job_label\x18\x0e \x01(\tB\a\xfaB\x04r\x02\x182H\x06R\x0fcreatorJobLabel\x88\x01\x01\x12\x1d\n" +
+	"\x05state\x18\x0f \x01(\tB\a\xfaB\x04r\x02\x18 R\x05state\x12\x16\n" +
+	"\x06closed\x18\x10 \x01(\bR\x06closed\x12\x14\n" +
+	"\x05draft\x18\x11 \x01(\bR\x05draft\x12\x16\n" +
+	"\x06public\x18\x12 \x01(\bR\x06public\x127\n" +
+	"\x03pin\x18\x14 \x01(\v2 .resources.documents.DocumentPinH\aR\x03pin\x88\x01\x01\x12N\n" +
+	"\x0eworkflow_state\x18\x15 \x01(\v2\".resources.documents.WorkflowStateH\bR\rworkflowState\x88\x01\x01\x12P\n" +
+	"\rworkflow_user\x18\x16 \x01(\v2&.resources.documents.WorkflowUserStateH\tR\fworkflowUser\x88\x01\x01B\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_category_idB\v\n" +
@@ -989,7 +1017,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x14\n" +
-	"\x12_creator_job_labelB\x11\n" +
+	"\x12_creator_job_labelB\x06\n" +
+	"\x04_pinB\x11\n" +
 	"\x0f_workflow_stateB\x10\n" +
 	"\x0e_workflow_user\"\xf8\x04\n" +
 	"\x11DocumentReference\x12\x13\n" +
@@ -1095,7 +1124,8 @@ var file_resources_documents_documents_proto_goTypes = []any{
 	(content.ContentType)(0),    // 10: resources.common.content.ContentType
 	(*content.Content)(nil),     // 11: resources.common.content.Content
 	(*users.UserShort)(nil),     // 12: resources.users.UserShort
-	(*Workflow)(nil),            // 13: resources.documents.Workflow
+	(*DocumentPin)(nil),         // 13: resources.documents.DocumentPin
+	(*Workflow)(nil),            // 14: resources.documents.Workflow
 }
 var file_resources_documents_documents_proto_depIdxs = []int32{
 	8,  // 0: resources.documents.Document.created_at:type_name -> resources.timestamp.Timestamp
@@ -1105,39 +1135,41 @@ var file_resources_documents_documents_proto_depIdxs = []int32{
 	10, // 4: resources.documents.Document.content_type:type_name -> resources.common.content.ContentType
 	11, // 5: resources.documents.Document.content:type_name -> resources.common.content.Content
 	12, // 6: resources.documents.Document.creator:type_name -> resources.users.UserShort
-	6,  // 7: resources.documents.Document.workflow_state:type_name -> resources.documents.WorkflowState
-	7,  // 8: resources.documents.Document.workflow_user:type_name -> resources.documents.WorkflowUserState
-	8,  // 9: resources.documents.DocumentShort.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 10: resources.documents.DocumentShort.updated_at:type_name -> resources.timestamp.Timestamp
-	8,  // 11: resources.documents.DocumentShort.deleted_at:type_name -> resources.timestamp.Timestamp
-	9,  // 12: resources.documents.DocumentShort.category:type_name -> resources.documents.Category
-	10, // 13: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
-	11, // 14: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
-	12, // 15: resources.documents.DocumentShort.creator:type_name -> resources.users.UserShort
-	6,  // 16: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.WorkflowState
-	7,  // 17: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.WorkflowUserState
-	8,  // 18: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 19: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
-	0,  // 20: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
-	3,  // 21: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
-	12, // 22: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
-	8,  // 23: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 24: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
-	12, // 25: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
-	1,  // 26: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
-	12, // 27: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
-	8,  // 28: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
-	8,  // 29: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
-	13, // 30: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
-	3,  // 31: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
-	8,  // 32: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
-	13, // 33: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
-	3,  // 34: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
-	35, // [35:35] is the sub-list for method output_type
-	35, // [35:35] is the sub-list for method input_type
-	35, // [35:35] is the sub-list for extension type_name
-	35, // [35:35] is the sub-list for extension extendee
-	0,  // [0:35] is the sub-list for field type_name
+	13, // 7: resources.documents.Document.pin:type_name -> resources.documents.DocumentPin
+	6,  // 8: resources.documents.Document.workflow_state:type_name -> resources.documents.WorkflowState
+	7,  // 9: resources.documents.Document.workflow_user:type_name -> resources.documents.WorkflowUserState
+	8,  // 10: resources.documents.DocumentShort.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 11: resources.documents.DocumentShort.updated_at:type_name -> resources.timestamp.Timestamp
+	8,  // 12: resources.documents.DocumentShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	9,  // 13: resources.documents.DocumentShort.category:type_name -> resources.documents.Category
+	10, // 14: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
+	11, // 15: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
+	12, // 16: resources.documents.DocumentShort.creator:type_name -> resources.users.UserShort
+	13, // 17: resources.documents.DocumentShort.pin:type_name -> resources.documents.DocumentPin
+	6,  // 18: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.WorkflowState
+	7,  // 19: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.WorkflowUserState
+	8,  // 20: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 21: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
+	0,  // 22: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
+	3,  // 23: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
+	12, // 24: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
+	8,  // 25: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 26: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
+	12, // 27: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
+	1,  // 28: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
+	12, // 29: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
+	8,  // 30: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
+	8,  // 31: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
+	14, // 32: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
+	3,  // 33: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
+	8,  // 34: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
+	14, // 35: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
+	3,  // 36: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
+	37, // [37:37] is the sub-list for method output_type
+	37, // [37:37] is the sub-list for method input_type
+	37, // [37:37] is the sub-list for extension type_name
+	37, // [37:37] is the sub-list for extension extendee
+	0,  // [0:37] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_documents_proto_init() }
@@ -1146,6 +1178,7 @@ func file_resources_documents_documents_proto_init() {
 		return
 	}
 	file_resources_documents_category_proto_init()
+	file_resources_documents_pins_proto_init()
 	file_resources_documents_workflow_proto_init()
 	file_resources_documents_documents_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_documents_documents_proto_msgTypes[1].OneofWrappers = []any{}
