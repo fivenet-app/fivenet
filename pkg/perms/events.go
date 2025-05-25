@@ -43,11 +43,6 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 	return func(msg *nats.Msg) {
 		p.logger.Debug("received event message", zap.String("subject", msg.Subject))
 
-		if err := msg.Ack(); err != nil {
-			p.logger.Error("failed to acknowledge message", zap.Error(err), zap.String("subject", msg.Subject))
-			return
-		}
-
 		switch events.Type(strings.TrimPrefix(msg.Subject, string(BaseSubject)+".")) {
 		case RoleCreatedSubject:
 			fallthrough
