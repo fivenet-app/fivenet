@@ -1859,598 +1859,624 @@
         }
     },
     "perms": {
-        "AuthService": {
-            "category": "Authentication",
-            "ChooseCharacter": {
-                "key": "Choose Character",
-                "description": "Permission to choose character, basically allow or disallow access to FiveNet."
-            }
-        },
-        "CitizensService": {
-            "category": "Citizens",
-            "ListCitizens": {
-                "key": "List Citizens",
-                "description": "List and search through citizens.",
-                "attrs": {
-                    "PhoneNumber": "Phone Number",
-                    "Licenses": "Licenses",
-                    "UserProps_Wanted": "Wanted Status",
-                    "UserProps_Job": "Job",
-                    "UserProps_TrafficInfractionPoints": "Traffic Points",
-                    "UserProps_OpenFines": "Open Fines",
-                    "UserProps_BloodType": "Blood Type",
-                    "UserProps_MugShot": "Mug Shot",
-                    "UserProps_Email": "E-Mail",
-                    "UserProps_Labels": "Labels"
-                },
-                "attrs_types": {
-                    "Fields": "Fields"
-                }
-            },
-            "ListUserActivity": {
-                "key": "List User Activity",
-                "description": "Citizen Info Activity Feed",
-                "attrs": {
-                    "SourceUser": "Source User",
-                    "Own": "Own Activity Feed"
-                },
-                "attrs_types": {
-                    "Fields": "Fields"
-                }
-            },
-            "SetUserProps": {
-                "key": "Set User Properties",
-                "description": "Set Citizen Props (e.g., wanted status, suspected job).",
-                "attrs": {
-                    "Wanted": "Wanted Status",
-                    "Job": "Job",
-                    "TrafficInfractionPoints": "Traffic Points",
-                    "MugShot": "Mug Shot",
-                    "Labels": "Labels"
-                },
-                "attrs_types": {
-                    "Fields": "User Properties Fields"
-                }
-            },
-            "GetUser": {
-                "key": "Get User",
-                "description": "View a citizen's.",
-                "attrs_types": {
-                    "Jobs": "Factions"
-                }
-            },
-            "ManageLabels": {
-                "key": "Manage Citizen Labels",
-                "description": "Create, update and delete citizens labels."
-            }
-        },
-        "CompletorService": {
-            "category": "Auto Complete",
-            "CompleteCitizens": {
-                "key": "Citizen Names",
-                "description": "Complete citizen names."
-            },
-            "CompleteJobs": {
-                "key": "Complete job names and ranks",
-                "description": "Complete job names and ranks."
-            },
-            "CompleteDocumentCategories": {
-                "key": "List document categories",
-                "description": "Complete a document categories.",
-                "attrs_types": {
-                    "Jobs": "Factions"
-                }
-            },
-            "CompleteLabels": {
-                "key": "List job's citizen labels",
-                "description": "Complete citizen labels from multiple jobs.",
-                "attrs_types": {
-                    "Jobs": "Factions"
+        "auth": {
+            "AuthService": {
+                "category": "Authentication",
+                "ChooseCharacter": {
+                    "key": "Choose Character",
+                    "description": "Permission to choose character, basically allow or disallow access to FiveNet."
                 }
             }
         },
-        "VehiclesService": {
-            "category": "Vehicles",
-            "ListVehicles": {
-                "key": "Search Vehicles",
-                "description": "Search and find citizen's vehicles."
-            }
-        },
-        "DocumentsService": {
-            "category": "Documents",
-            "AddDocumentReference": {
-                "key": "Add Document References",
-                "description": "Add/ Remove document references."
-            },
-            "AddDocumentRelation": {
-                "key": "Add Document Relations",
-                "description": "Add/ Remove citizen relation."
-            },
-            "CreateDocument": {
-                "key": "Create Documents",
-                "description": "Create new documents."
-            },
-            "ListDocuments": {
-                "key": "List and view Documents",
-                "description": "List, search and view documents."
-            },
-            "ListUserDocuments": {
-                "key": "List User Documents",
-                "description": "View the documents linked to a citizen."
-            },
-            "ListTemplates": {
-                "key": "List Templates",
-                "description": "List available document templates."
-            },
-            "UpdateDocument": {
-                "key": "Update Documents",
-                "description": "Edit/ Update an existing document.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
+        "citizens": {
+            "CitizensService": {
+                "category": "Citizens",
+                "ListCitizens": {
+                    "key": "List Citizens",
+                    "description": "List and search through citizens.",
+                    "attrs": {
+                        "PhoneNumber": "Phone Number",
+                        "Licenses": "Licenses",
+                        "UserProps_Wanted": "Wanted Status",
+                        "UserProps_Job": "Job",
+                        "UserProps_TrafficInfractionPoints": "Traffic Points",
+                        "UserProps_OpenFines": "Open Fines",
+                        "UserProps_BloodType": "Blood Type",
+                        "UserProps_MugShot": "Mug Shot",
+                        "UserProps_Email": "E-Mail",
+                        "UserProps_Labels": "Labels"
+                    },
+                    "attrs_types": {
+                        "Fields": "Fields"
+                    }
                 },
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                }
-            },
-            "CreateTemplate": {
-                "key": "Create Template",
-                "description": "Create document templates."
-            },
-            "DeleteTemplate": {
-                "key": "DeleteTemplate",
-                "description": "Delete document templates."
-            },
-            "DeleteDocument": {
-                "key": "DeleteDocument",
-                "description": "Delete documents.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
+                "ListUserActivity": {
+                    "key": "List User Activity",
+                    "description": "Citizen Info Activity Feed",
+                    "attrs": {
+                        "SourceUser": "Source User",
+                        "Own": "Own Activity Feed"
+                    },
+                    "attrs_types": {
+                        "Fields": "Fields"
+                    }
                 },
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                }
-            },
-            "ToggleDocument": {
-                "key": "Toggle Document Open/ Closed Status",
-                "description": "Toggle a document open/ closed.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
+                "SetUserProps": {
+                    "key": "Set User Properties",
+                    "description": "Set Citizen Props (e.g., wanted status, suspected job).",
+                    "attrs": {
+                        "Wanted": "Wanted Status",
+                        "Job": "Job",
+                        "TrafficInfractionPoints": "Traffic Points",
+                        "MugShot": "Mug Shot",
+                        "Labels": "Labels"
+                    },
+                    "attrs_types": {
+                        "Fields": "User Properties Fields"
+                    }
                 },
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                }
-            },
-            "DeleteComment": {
-                "key": "DeleteComment",
-                "description": "Delete document comments.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
+                "GetUser": {
+                    "key": "Get User",
+                    "description": "View a citizen's.",
+                    "attrs_types": {
+                        "Jobs": "Factions"
+                    }
                 },
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                }
-            },
-            "CreateOrUpdateCategory": {
-                "key": "Create or Update Categories",
-                "description": "Create/ Update document categories."
-            },
-            "DeleteCategory": {
-                "key": "DeleteCategory",
-                "description": "Delete document categories."
-            },
-            "ListCategories": {
-                "key": "ListCategories",
-                "description": "View and List document categories."
-            },
-            "ListDocumentActivity": {
-                "key": "ListDocumentActivity",
-                "description": "Being able to view document activity."
-            },
-            "ListDocumentReqs": {
-                "key": "List Document Requests",
-                "description": "List requests for documents."
-            },
-            "ChangeDocumentOwner": {
-                "key": "Change Document Owner",
-                "description": "Take over the document owner.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
-                },
-                "attrs_types": {
-                    "Access": "Access to factions-own documents"
-                }
-            },
-            "CreateDocumentReq": {
-                "key": "Create Document Requests",
-                "description": "Request actions for documents.",
-                "attrs_types": {
-                    "Types": "Available Actions"
-                },
-                "attrs": {
-                    "Access": "Access",
-                    "Closure": "Closure",
-                    "Update": "Update",
-                    "Deletion": "Deletion",
-                    "OwnerChange": "Owner Change"
-                }
-            },
-            "DeleteDocumentReq": {
-                "key": "Delete Document Requests",
-                "description": "Delete document requests."
-            },
-            "ToggleDocumentPin": {
-                "key": "Pin or upnin document",
-                "description": "Allows to pin or upin documents for the whole faction."
-            },
-            "SetDocumentReminder": {
-                "key": "Set own reminders on documents",
-                "description": "Allows to set own reminders for documents."
-            }
-        },
-        "LivemapService": {
-            "category": "Map",
-            "Stream": {
-                "key": "View",
-                "description": "Being able to view the Map.",
-                "attrs_types": {
-                    "Players": "Player Location",
-                    "Markers": "Markers"
-                }
-            },
-            "CreateOrUpdateMarker": {
-                "key": "Create and Update Markers",
-                "description": "Being able to create and update markers on the Map.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
-                },
-                "attrs_types": {
-                    "Access": "Access to factions-own markers"
-                }
-            },
-            "DeleteMarker": {
-                "key": "Delete Marker",
-                "description": "Being able to delete markers on the Map.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
-                },
-                "attrs_types": {
-                    "Access": "Access to factions-own markers"
+                "ManageLabels": {
+                    "key": "Manage Citizen Labels",
+                    "description": "Create, update and delete citizens labels."
                 }
             }
         },
-        "SettingsService": {
-            "category": "Control Panel",
-            "GetJobProps": {
-                "key": "View Job Properties",
-                "description": "View your job's properties."
-            },
-            "SetJobProps": {
-                "key": "Set Job Properties",
-                "description": "Set your job's properties."
-            },
-            "GetRoles": {
-                "key": "View Roles",
-                "description": "Get/ List FiveNet job roles."
-            },
-            "CreateRole": {
-                "key": "Create Role",
-                "description": "Create FiveNet job roles."
-            },
-            "DeleteRole": {
-                "key": "Delete Role",
-                "description": "Delete FiveNet job roles."
-            },
-            "ViewAuditLog": {
-                "key": "Audit Log",
-                "description": "View audit log of FiveNet actions."
-            },
-            "UpdateRolePerms": {
-                "key": "Manage Role Permissions",
-                "description": "Add/ Delete permissions to FiveNet job roles."
-            }
-        },
-        "CentrumService": {
-            "category": "Dispatch Center",
-            "CreateDispatch": {
-                "key": "Create Dispatches",
-                "description": "Create new dispatches via the Map/ Dispatch Center."
-            },
-            "Stream": {
-                "key": "Access to Dispatches and Units.",
-                "description": "Basic access required to see dispatches."
-            },
-            "UpdateDispatch": {
-                "key": "Update Dispatches",
-                "description": "Updating dispatches information."
-            },
-            "CreateOrUpdateUnit": {
-                "key": "Create and Update Units",
-                "description": "Allows to create and update units via the control panel."
-            },
-            "DeleteUnit": {
-                "key": "Delete Units",
-                "description": "Allows to delete units via the control panel."
-            },
-            "TakeDispatch": {
-                "key": "Take Dispatches",
-                "description": "Basic access to allow an user to take dispatches."
-            },
-            "TakeControl": {
-                "key": "Join Dispatch Center",
-                "description": "Allows an user to join and act in the dispatch center."
-            },
-            "UpdateSettings": {
-                "key": "Update Dispatch Center Settings",
-                "description": "Allows to update the dispatch center settings via the control panel."
-            },
-            "DeleteDispatch": {
-                "key": "Delete Dispatches",
-                "description": "Allows to delete dispatches."
-            }
-        },
-        "JobsService": {
-            "category": "Job",
-            "ListColleagues": {
-                "key": "List colleagues",
-                "description": "List your colleagues (of your own job)."
-            },
-            "SetMOTD": {
-                "key": "Update Job MOTD",
-                "description": "Update Job MOTD text on job page."
-            },
-            "GetColleague": {
-                "key": "Get a colleague's profile",
-                "description": "Retrieve a colleague's detailed profile.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any",
-                    "Note": "Note",
-                    "AbsenceDate": "Absence Date",
-                    "Labels": "Labels"
+        "completor": {
+            "CompletorService": {
+                "category": "Auto Complete",
+                "CompleteCitizens": {
+                    "key": "Citizen Names",
+                    "description": "Complete citizen names."
                 },
-                "attrs_types": {
-                    "Access": "Access to factions-own colleague",
-                    "Types": "Colleague Properties"
-                }
-            },
-            "SetColleagueProps": {
-                "key": "Set a colleague's properties",
-                "description": "E.g., absence date.",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any",
-                    "Note": "Note",
-                    "AbsenceDate": "Absence Date",
-                    "Labels": "Labels",
-                    "Name": "Name"
+                "CompleteJobs": {
+                    "key": "Complete job names and ranks",
+                    "description": "Complete job names and ranks."
                 },
-                "attrs_types": {
-                    "Access": "Access to factions-own colleague's properties",
-                    "Types": "Colleague Properties"
-                }
-            },
-            "ListColleagueActivity": {
-                "key": "View Colleague Activity",
-                "description": "View activities by types of your colleagues",
-                "attrs": {
-                    "HIRED": "Hired",
-                    "FIRED": "Fired",
-                    "PROMOTED": "Promoted",
-                    "DEMOTED": "Demoted",
-                    "ABSENCE_DATE": "Absence Date",
-                    "NOTE": "Note",
-                    "LABELS": "Labels",
-                    "NAME": "Name"
+                "CompleteDocumentCategories": {
+                    "key": "List document categories",
+                    "description": "Complete a document categories.",
+                    "attrs_types": {
+                        "Jobs": "Factions"
+                    }
                 },
-                "attrs_types": {
-                    "Types": "Types"
-                }
-            },
-            "ManageLabels": {
-                "key": "Manage labels",
-                "description": "Manage labels to be added/removed on colleagues."
-            }
-        },
-        "ConductService": {
-            "CreateConductEntry": {
-                "key": "Create Conduct Register entries",
-                "description": "Create Conduct Register entries."
-            },
-            "DeleteConductEntry": {
-                "key": "Delete Conduct Register Entries",
-                "description": "Delete Conduct Register entries."
-            },
-            "ListConductEntries": {
-                "key": "List Conduct Register Entries",
-                "description": "List Conduct Register entries.",
-                "attrs": {
-                    "Own": "Own",
-                    "All": "All"
-                },
-                "attrs_types": {
-                    "Access": "Access to conduct register entries"
-                }
-            },
-            "UpdateConductEntry": {
-                "key": "Update Conduct Register Entries",
-                "description": "Update Conduct Register entries."
-            },
-            "category": "Job Conduct Register"
-        },
-        "TimeclockService": {
-            "ListTimeclock": {
-                "key": "View Timeclock",
-                "description": "See Timeclock entries.",
-                "attrs": {
-                    "All": "All"
-                },
-                "attrs_types": {
-                    "Access": "Access to time clock entries"
-                }
-            },
-            "category": "Job Timeclock",
-            "ListInactiveEmployees": {
-                "key": "List inactive colleagues",
-                "description": "List inactive colleagues."
-            }
-        },
-        "QualificationsService": {
-            "category": "Qualifications",
-            "ListQualifications": {
-                "key": "List Qualifications",
-                "description": "List available qualifications"
-            },
-            "GetQualification": {
-                "key": "Get Qualifications",
-                "description": "Retrieve qualification info"
-            },
-            "CreateQualification": {
-                "key": "Create Qualifications",
-                "description": "Create qualifications",
-                "attrs": {
-                    "Public": "Public qualifications for anyone to view"
-                },
-                "attrs_types": {
-                    "Fields": "Access to creating qualifications with specific access"
-                }
-            },
-            "UpdateQualification": {
-                "key": "Update Qualifications",
-                "description": "Update qualifications",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
-                },
-                "attrs_types": {
-                    "Access": "Access to factions-own qualifications"
-                }
-            },
-            "DeleteQualification": {
-                "key": "Delete Qualifications",
-                "description": "Delete qualifications",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank",
-                    "Any": "Any"
-                },
-                "attrs_types": {
-                    "Access": "Access to factions-own qualifications"
-                }
-            },
-            "ListQualificationsResults": {
-                "key": "List Qualification Results",
-                "description": "List qualification results"
-            },
-            "ListQualificationRequests": {
-                "key": "List Qualification Requests",
-                "description": "List qualification requests"
-            }
-        },
-        "CalendarService": {
-            "category": "Calendar",
-            "CreateCalendar": {
-                "key": "Create calendars",
-                "description": "Manage calendars.",
-                "attrs": {
-                    "Job": "Calendar for user's job",
-                    "Public": "Public calendar's for anyone to subscribe to"
-                },
-                "attrs_types": {
-                    "Fields": "Access to creating faction-own calendars"
-                }
-            },
-            "DeleteCalendar": {
-                "key": "Delete calendars",
-                "description": "Delete calendars"
-            },
-            "DeleteCalendarEntry": {
-                "key": "Delete Calendar Entries",
-                "description": "Delete entries from calendars (requires manage access.)"
-            }
-        },
-        "WikiService": {
-            "category": "Wiki",
-            "ListPages": {
-                "key": "List and view Pages",
-                "description": "Should always be given."
-            },
-            "CreatePage": {
-                "key": "Create Pages",
-                "description": "Create pages in wiki.",
-                "attrs": {
-                    "Public": "Public pages for anyone to view"
-                },
-                "attrs_types": {
-                    "Fields": "Access to creating pages with specific access"
-                }
-            },
-            "DeletePage": {
-                "key": "Delete Pages",
-                "description": "Deleting wiki pages (requires Owner access)."
-            },
-            "ListPageActivity": {
-                "key": "View Page history",
-                "description": "Viewing page history."
-            }
-        },
-        "MailerService": {
-            "category": "E-Mail",
-            "DeleteEmail": {
-                "key": "Delete E-Mail addresses",
-                "description": "Requires manage access to the E-Mail address."
-            },
-            "ListEmails": {
-                "key": "List E-Mail threads",
-                "description": "Minimum permission to see E-Mails."
-            },
-            "CreateOrUpdateEmail": {
-                "key": "Create or update E-Mails",
-                "description": "Updating E-Mails requires manage or higher access to a E-Mail thread.",
-                "attrs": {
-                    "Job": "E-Mail addresses for your job (+ internal option)"
-                },
-                "attrs_types": {
-                    "Fields": "Access to create special E-Mail addresses"
+                "CompleteLabels": {
+                    "key": "List job's citizen labels",
+                    "description": "Complete citizen labels from multiple jobs.",
+                    "attrs_types": {
+                        "Jobs": "Factions"
+                    }
                 }
             }
         },
-        "LawsService": {
-            "category": "Law Books",
-            "CreateOrUpdateLawBook": {
-                "key": "Create and Update Law Book",
-                "description": "Create and update laws and law books."
+        "vehicles": {
+            "VehiclesService": {
+                "category": "Vehicles",
+                "ListVehicles": {
+                    "key": "Search Vehicles",
+                    "description": "Search and find citizen's vehicles."
+                }
+            }
+        },
+        "documents": {
+            "DocumentsService": {
+                "category": "Documents",
+                "AddDocumentReference": {
+                    "key": "Add Document References",
+                    "description": "Add/ Remove document references."
+                },
+                "AddDocumentRelation": {
+                    "key": "Add Document Relations",
+                    "description": "Add/ Remove citizen relation."
+                },
+                "CreateDocument": {
+                    "key": "Create Documents",
+                    "description": "Create new documents."
+                },
+                "ListDocuments": {
+                    "key": "List and view Documents",
+                    "description": "List, search and view documents."
+                },
+                "ListUserDocuments": {
+                    "key": "List User Documents",
+                    "description": "View the documents linked to a citizen."
+                },
+                "ListTemplates": {
+                    "key": "List Templates",
+                    "description": "List available document templates."
+                },
+                "UpdateDocument": {
+                    "key": "Update Documents",
+                    "description": "Edit/ Update an existing document.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own documents"
+                    }
+                },
+                "CreateTemplate": {
+                    "key": "Create Template",
+                    "description": "Create document templates."
+                },
+                "DeleteTemplate": {
+                    "key": "DeleteTemplate",
+                    "description": "Delete document templates."
+                },
+                "DeleteDocument": {
+                    "key": "DeleteDocument",
+                    "description": "Delete documents.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own documents"
+                    }
+                },
+                "ToggleDocument": {
+                    "key": "Toggle Document Open/ Closed Status",
+                    "description": "Toggle a document open/ closed.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own documents"
+                    }
+                },
+                "DeleteComment": {
+                    "key": "DeleteComment",
+                    "description": "Delete document comments.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own documents"
+                    }
+                },
+                "CreateOrUpdateCategory": {
+                    "key": "Create or Update Categories",
+                    "description": "Create/ Update document categories."
+                },
+                "DeleteCategory": {
+                    "key": "DeleteCategory",
+                    "description": "Delete document categories."
+                },
+                "ListCategories": {
+                    "key": "ListCategories",
+                    "description": "View and List document categories."
+                },
+                "ListDocumentActivity": {
+                    "key": "ListDocumentActivity",
+                    "description": "Being able to view document activity."
+                },
+                "ListDocumentReqs": {
+                    "key": "List Document Requests",
+                    "description": "List requests for documents."
+                },
+                "ChangeDocumentOwner": {
+                    "key": "Change Document Owner",
+                    "description": "Take over the document owner.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own documents"
+                    }
+                },
+                "CreateDocumentReq": {
+                    "key": "Create Document Requests",
+                    "description": "Request actions for documents.",
+                    "attrs_types": {
+                        "Types": "Available Actions"
+                    },
+                    "attrs": {
+                        "Access": "Access",
+                        "Closure": "Closure",
+                        "Update": "Update",
+                        "Deletion": "Deletion",
+                        "OwnerChange": "Owner Change"
+                    }
+                },
+                "DeleteDocumentReq": {
+                    "key": "Delete Document Requests",
+                    "description": "Delete document requests."
+                },
+                "ToggleDocumentPin": {
+                    "key": "Pin or upnin document",
+                    "description": "Allows to pin or upin documents for the whole faction."
+                },
+                "SetDocumentReminder": {
+                    "key": "Set own reminders on documents",
+                    "description": "Allows to set own reminders for documents."
+                }
+            }
+        },
+        "livemap": {
+            "LivemapService": {
+                "category": "Map",
+                "Stream": {
+                    "key": "View",
+                    "description": "Being able to view the Map.",
+                    "attrs_types": {
+                        "Players": "Player Location",
+                        "Markers": "Markers"
+                    }
+                },
+                "CreateOrUpdateMarker": {
+                    "key": "Create and Update Markers",
+                    "description": "Being able to create and update markers on the Map.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own markers"
+                    }
+                },
+                "DeleteMarker": {
+                    "key": "Delete Marker",
+                    "description": "Being able to delete markers on the Map.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own markers"
+                    }
+                }
+            }
+        },
+        "centrum": {
+            "CentrumService": {
+                "category": "Dispatch Center",
+                "CreateDispatch": {
+                    "key": "Create Dispatches",
+                    "description": "Create new dispatches via the Map/ Dispatch Center."
+                },
+                "Stream": {
+                    "key": "Access to Dispatches and Units.",
+                    "description": "Basic access required to see dispatches."
+                },
+                "UpdateDispatch": {
+                    "key": "Update Dispatches",
+                    "description": "Updating dispatches information."
+                },
+                "CreateOrUpdateUnit": {
+                    "key": "Create and Update Units",
+                    "description": "Allows to create and update units via the control panel."
+                },
+                "DeleteUnit": {
+                    "key": "Delete Units",
+                    "description": "Allows to delete units via the control panel."
+                },
+                "TakeDispatch": {
+                    "key": "Take Dispatches",
+                    "description": "Basic access to allow an user to take dispatches."
+                },
+                "TakeControl": {
+                    "key": "Join Dispatch Center",
+                    "description": "Allows an user to join and act in the dispatch center."
+                },
+                "UpdateSettings": {
+                    "key": "Update Dispatch Center Settings",
+                    "description": "Allows to update the dispatch center settings via the control panel."
+                },
+                "DeleteDispatch": {
+                    "key": "Delete Dispatches",
+                    "description": "Allows to delete dispatches."
+                }
+            }
+        },
+        "jobs": {
+            "JobsService": {
+                "category": "Job",
+                "ListColleagues": {
+                    "key": "List colleagues",
+                    "description": "List your colleagues (of your own job)."
+                },
+                "SetMOTD": {
+                    "key": "Update Job MOTD",
+                    "description": "Update Job MOTD text on job page."
+                },
+                "GetColleague": {
+                    "key": "Get a colleague's profile",
+                    "description": "Retrieve a colleague's detailed profile.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any",
+                        "Note": "Note",
+                        "AbsenceDate": "Absence Date",
+                        "Labels": "Labels"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own colleague",
+                        "Types": "Colleague Properties"
+                    }
+                },
+                "SetColleagueProps": {
+                    "key": "Set a colleague's properties",
+                    "description": "E.g., absence date.",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any",
+                        "Note": "Note",
+                        "AbsenceDate": "Absence Date",
+                        "Labels": "Labels",
+                        "Name": "Name"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own colleague's properties",
+                        "Types": "Colleague Properties"
+                    }
+                },
+                "ListColleagueActivity": {
+                    "key": "View Colleague Activity",
+                    "description": "View activities by types of your colleagues",
+                    "attrs": {
+                        "HIRED": "Hired",
+                        "FIRED": "Fired",
+                        "PROMOTED": "Promoted",
+                        "DEMOTED": "Demoted",
+                        "ABSENCE_DATE": "Absence Date",
+                        "NOTE": "Note",
+                        "LABELS": "Labels",
+                        "NAME": "Name"
+                    },
+                    "attrs_types": {
+                        "Types": "Types"
+                    }
+                },
+                "ManageLabels": {
+                    "key": "Manage labels",
+                    "description": "Manage labels to be added/removed on colleagues."
+                }
             },
-            "DeleteLawBook": {
-                "key": "Delete Laws and Law Books",
-                "description": "Delete laws and law books."
+            "ConductService": {
+                "CreateConductEntry": {
+                    "key": "Create Conduct Register entries",
+                    "description": "Create Conduct Register entries."
+                },
+                "DeleteConductEntry": {
+                    "key": "Delete Conduct Register Entries",
+                    "description": "Delete Conduct Register entries."
+                },
+                "ListConductEntries": {
+                    "key": "List Conduct Register Entries",
+                    "description": "List Conduct Register entries.",
+                    "attrs": {
+                        "Own": "Own",
+                        "All": "All"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to conduct register entries"
+                    }
+                },
+                "UpdateConductEntry": {
+                    "key": "Update Conduct Register Entries",
+                    "description": "Update Conduct Register entries."
+                },
+                "category": "Job Conduct Register"
+            },
+            "TimeclockService": {
+                "ListTimeclock": {
+                    "key": "View Timeclock",
+                    "description": "See Timeclock entries.",
+                    "attrs": {
+                        "All": "All"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to time clock entries"
+                    }
+                },
+                "category": "Job Timeclock",
+                "ListInactiveEmployees": {
+                    "key": "List inactive colleagues",
+                    "description": "List inactive colleagues."
+                }
+            }
+        },
+        "qualifications": {
+            "QualificationsService": {
+                "category": "Qualifications",
+                "ListQualifications": {
+                    "key": "List Qualifications",
+                    "description": "List available qualifications"
+                },
+                "GetQualification": {
+                    "key": "Get Qualifications",
+                    "description": "Retrieve qualification info"
+                },
+                "CreateQualification": {
+                    "key": "Create Qualifications",
+                    "description": "Create qualifications",
+                    "attrs": {
+                        "Public": "Public qualifications for anyone to view"
+                    },
+                    "attrs_types": {
+                        "Fields": "Access to creating qualifications with specific access"
+                    }
+                },
+                "UpdateQualification": {
+                    "key": "Update Qualifications",
+                    "description": "Update qualifications",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own qualifications"
+                    }
+                },
+                "DeleteQualification": {
+                    "key": "Delete Qualifications",
+                    "description": "Delete qualifications",
+                    "attrs": {
+                        "Own": "Own",
+                        "Lower_Rank": "Lower Rank",
+                        "Same_Rank": "Same Rank",
+                        "Any": "Any"
+                    },
+                    "attrs_types": {
+                        "Access": "Access to factions-own qualifications"
+                    }
+                },
+                "ListQualificationsResults": {
+                    "key": "List Qualification Results",
+                    "description": "List qualification results"
+                },
+                "ListQualificationRequests": {
+                    "key": "List Qualification Requests",
+                    "description": "List qualification requests"
+                }
+            }
+        },
+        "calendar": {
+            "CalendarService": {
+                "category": "Calendar",
+                "CreateCalendar": {
+                    "key": "Create calendars",
+                    "description": "Manage calendars.",
+                    "attrs": {
+                        "Job": "Calendar for user's job",
+                        "Public": "Public calendar's for anyone to subscribe to"
+                    },
+                    "attrs_types": {
+                        "Fields": "Access to creating faction-own calendars"
+                    }
+                },
+                "DeleteCalendar": {
+                    "key": "Delete calendars",
+                    "description": "Delete calendars"
+                },
+                "DeleteCalendarEntry": {
+                    "key": "Delete Calendar Entries",
+                    "description": "Delete entries from calendars (requires manage access.)"
+                }
+            }
+        },
+        "wiki": {
+            "WikiService": {
+                "category": "Wiki",
+                "ListPages": {
+                    "key": "List and view Pages",
+                    "description": "Should always be given."
+                },
+                "CreatePage": {
+                    "key": "Create Pages",
+                    "description": "Create pages in wiki.",
+                    "attrs": {
+                        "Public": "Public pages for anyone to view"
+                    },
+                    "attrs_types": {
+                        "Fields": "Access to creating pages with specific access"
+                    }
+                },
+                "DeletePage": {
+                    "key": "Delete Pages",
+                    "description": "Deleting wiki pages (requires Owner access)."
+                },
+                "ListPageActivity": {
+                    "key": "View Page history",
+                    "description": "Viewing page history."
+                }
+            }
+        },
+        "mailer": {
+            "MailerService": {
+                "category": "E-Mail",
+                "DeleteEmail": {
+                    "key": "Delete E-Mail addresses",
+                    "description": "Requires manage access to the E-Mail address."
+                },
+                "ListEmails": {
+                    "key": "List E-Mail threads",
+                    "description": "Minimum permission to see E-Mails."
+                },
+                "CreateOrUpdateEmail": {
+                    "key": "Create or update E-Mails",
+                    "description": "Updating E-Mails requires manage or higher access to a E-Mail thread.",
+                    "attrs": {
+                        "Job": "E-Mail addresses for your job (+ internal option)"
+                    },
+                    "attrs_types": {
+                        "Fields": "Access to create special E-Mail addresses"
+                    }
+                }
+            }
+        },
+        "settings": {
+            "LawsService": {
+                "category": "Law Books",
+                "CreateOrUpdateLawBook": {
+                    "key": "Create and Update Law Book",
+                    "description": "Create and update laws and law books."
+                },
+                "DeleteLawBook": {
+                    "key": "Delete Laws and Law Books",
+                    "description": "Delete laws and law books."
+                }
+            },
+            "SettingsService": {
+                "category": "Control Panel",
+                "GetJobProps": {
+                    "key": "View Job Properties",
+                    "description": "View your job's properties."
+                },
+                "SetJobProps": {
+                    "key": "Set Job Properties",
+                    "description": "Set your job's properties."
+                },
+                "GetRoles": {
+                    "key": "View Roles",
+                    "description": "Get/ List FiveNet job roles."
+                },
+                "CreateRole": {
+                    "key": "Create Role",
+                    "description": "Create FiveNet job roles."
+                },
+                "DeleteRole": {
+                    "key": "Delete Role",
+                    "description": "Delete FiveNet job roles."
+                },
+                "ViewAuditLog": {
+                    "key": "Audit Log",
+                    "description": "View audit log of FiveNet actions."
+                },
+                "UpdateRolePerms": {
+                    "key": "Manage Role Permissions",
+                    "description": "Add/ Delete permissions to FiveNet job roles."
+                }
             }
         }
     },

@@ -3,6 +3,14 @@
 
 package permissions
 
+func (m *PermItem) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *Permission) Sanitize() error {
 	if m == nil {
 		return nil

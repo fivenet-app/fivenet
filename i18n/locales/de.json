@@ -1859,598 +1859,624 @@
         }
     },
     "perms": {
-        "AuthService": {
-            "category": "Authentifizierung",
-            "ChooseCharacter": {
-                "key": "Charakter auswählen",
-                "description": "Berechtigung zur Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
-            }
-        },
-        "CitizensService": {
-            "category": "Bürger",
-            "ListCitizens": {
-                "key": "Bürger auflisten",
-                "description": "Bürger auflisten und suchen.",
-                "attrs": {
-                    "PhoneNumber": "Telefonnummer",
-                    "Licenses": "Lizenzen",
-                    "UserProps_Wanted": "Gesuchten Status",
-                    "UserProps_Job": "Job",
-                    "UserProps_TrafficInfractionPoints": "Verkehrspunkte",
-                    "UserProps_OpenFines": "Offene Geldstrafen",
-                    "UserProps_BloodType": "Blutgruppe",
-                    "UserProps_MugShot": "Fahndungsfoto",
-                    "UserProps_Email": "E-Mail",
-                    "UserProps_Labels": "Labels"
-                },
-                "attrs_types": {
-                    "Fields": "Felder"
-                }
-            },
-            "ListUserActivity": {
-                "key": "Nutzeraktivität auflisten",
-                "description": "Aktivitäten-Feed für Bürgerinformationen",
-                "attrs": {
-                    "SourceUser": "Quellbenutzer",
-                    "Own": "Eigene Aktivitäten"
-                },
-                "attrs_types": {
-                    "Fields": "Felder"
-                }
-            },
-            "SetUserProps": {
-                "key": "Bürger-Eigenschaften festlegen",
-                "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
-                "attrs": {
-                    "Wanted": "Gesuchter Status",
-                    "Job": "Job",
-                    "TrafficInfractionPoints": "Verkehrspunkte",
-                    "MugShot": "Fahndungsfoto",
-                    "Labels": "Labels"
-                },
-                "attrs_types": {
-                    "Fields": "Bürger Eigenschaften"
-                }
-            },
-            "GetUser": {
-                "key": "Nutzer abrufen",
-                "description": "Einen Bürger ansehen.",
-                "attrs_types": {
-                    "Jobs": "Fraktionen"
-                }
-            },
-            "ManageLabels": {
-                "key": "Verwalten von Bürger-Labels",
-                "description": "Erstellen, aktualisieren und löschen von Bürger-Labels."
-            }
-        },
-        "CompletorService": {
-            "category": "Autovervollständigung",
-            "CompleteCitizens": {
-                "key": "Bürger-Namen",
-                "description": "Vollständige Bürger-Namen."
-            },
-            "CompleteJobs": {
-                "key": "Vollständige Job-Namen und Ränge",
-                "description": "Vollständige Job-Namen und Ränge."
-            },
-            "CompleteDocumentCategories": {
-                "key": "Auflisten von Dokumentkategorien",
-                "description": "Auflisten der Dokumentkategorien von bestimmten Jobs.",
-                "attrs_types": {
-                    "Jobs": "Fraktionen"
-                }
-            },
-            "CompleteLabels": {
-                "key": "Auflisten von Bürger-Labels",
-                "description": "Damit wird der Zugriff auf Bürger-Labels von anderen Berufen kontrolliert.",
-                "attrs_types": {
-                    "Jobs": "Fraktionen"
+        "auth": {
+            "AuthService": {
+                "category": "Authentifizierung",
+                "ChooseCharacter": {
+                    "key": "Charakter auswählen",
+                    "description": "Berechtigung zur Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
                 }
             }
         },
-        "VehiclesService": {
-            "category": "Fahrzeuge",
-            "ListVehicles": {
-                "key": "Fahrzeuge suchen",
-                "description": "Suchen und Finden von Fahrzeugen von Bürgern."
-            }
-        },
-        "DocumentsService": {
-            "category": "Dokumenten-System",
-            "AddDocumentReference": {
-                "key": "Dokument-Referenzen erstellen",
-                "description": "Hinzufügen von Dokument-Referenzen."
-            },
-            "AddDocumentRelation": {
-                "key": "Dokumenten-Bürger-Beziehungen hinzufügen",
-                "description": "Bürgerbeziehung hinzufügen/ entfernen."
-            },
-            "CreateDocument": {
-                "key": "Dokument erstellen",
-                "description": "Ein neues Dokument erstellen."
-            },
-            "ListDocuments": {
-                "key": "Dokumente auflisten, suchen und anzeigen",
-                "description": "Dokumente auflisten/ suchen, und anzeigen."
-            },
-            "ListUserDocuments": {
-                "key": "Bürger-Dokumente sehen",
-                "description": "Die mit einem Bürger verknüpften Dokumente anzeigen."
-            },
-            "ListTemplates": {
-                "key": "Vorlagen auflisten",
-                "description": "Verfügbare Vorlagen auflisten."
-            },
-            "UpdateDocument": {
-                "key": "Dokument aktualisieren",
-                "description": "Ein vorhandenes Dokument bearbeiten/ aktualisieren.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
+        "citizens": {
+            "CitizensService": {
+                "category": "Bürger",
+                "ListCitizens": {
+                    "key": "Bürger auflisten",
+                    "description": "Bürger auflisten und suchen.",
+                    "attrs": {
+                        "PhoneNumber": "Telefonnummer",
+                        "Licenses": "Lizenzen",
+                        "UserProps_Wanted": "Gesuchten Status",
+                        "UserProps_Job": "Job",
+                        "UserProps_TrafficInfractionPoints": "Verkehrspunkte",
+                        "UserProps_OpenFines": "Offene Geldstrafen",
+                        "UserProps_BloodType": "Blutgruppe",
+                        "UserProps_MugShot": "Fahndungsfoto",
+                        "UserProps_Email": "E-Mail",
+                        "UserProps_Labels": "Labels"
+                    },
+                    "attrs_types": {
+                        "Fields": "Felder"
+                    }
                 },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Dokumente"
-                }
-            },
-            "CreateTemplate": {
-                "key": "Vorlage erstellen",
-                "description": "Erstellen von Dokumentenvorlagen."
-            },
-            "DeleteTemplate": {
-                "key": "Vorlage löschen",
-                "description": "Dokumentenvorlagen löschen."
-            },
-            "DeleteDocument": {
-                "key": "Dokumenten Löschung",
-                "description": "Dokumente löschen.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
+                "ListUserActivity": {
+                    "key": "Nutzeraktivität auflisten",
+                    "description": "Aktivitäten-Feed für Bürgerinformationen",
+                    "attrs": {
+                        "SourceUser": "Quellbenutzer",
+                        "Own": "Eigene Aktivitäten"
+                    },
+                    "attrs_types": {
+                        "Fields": "Felder"
+                    }
                 },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Dokumente"
-                }
-            },
-            "ToggleDocument": {
-                "key": "Dokument per Knopf öffnen/ schließen",
-                "description": "Dokument per Knopf öffnen/ schließen.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
+                "SetUserProps": {
+                    "key": "Bürger-Eigenschaften festlegen",
+                    "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
+                    "attrs": {
+                        "Wanted": "Gesuchter Status",
+                        "Job": "Job",
+                        "TrafficInfractionPoints": "Verkehrspunkte",
+                        "MugShot": "Fahndungsfoto",
+                        "Labels": "Labels"
+                    },
+                    "attrs_types": {
+                        "Fields": "Bürger Eigenschaften"
+                    }
                 },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Dokumente"
-                }
-            },
-            "DeleteComment": {
-                "key": "Dokumenten Kommentare löschen",
-                "description": "Eigenen Dokumentenkommentar löschen.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
+                "GetUser": {
+                    "key": "Nutzer abrufen",
+                    "description": "Einen Bürger ansehen.",
+                    "attrs_types": {
+                        "Jobs": "Fraktionen"
+                    }
                 },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Dokumente"
-                }
-            },
-            "DeleteCategory": {
-                "key": "Dokumentenkategorie löschen",
-                "description": "Dokumentenkategorien löschen."
-            },
-            "ListCategories": {
-                "key": "Auflisten der Dokumentenkategorien",
-                "description": "Liste der Dokumentkategorien."
-            },
-            "ListDocumentActivity": {
-                "key": "Dokumenten-Aktivität anzeigen",
-                "description": "Dokumenten-Aktivität von Dokumente mit Status oder höher Zugriff sehen können."
-            },
-            "ListDocumentReqs": {
-                "key": "Auflistung der Dokumentenanfragen",
-                "description": "Liste die Dokumentenanfragen auf."
-            },
-            "ChangeDocumentOwner": {
-                "key": "Änderung des Dokumentenbesitzers",
-                "description": "Übernimm den Besitz des Dokumentes.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
-                },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Dokumente"
-                }
-            },
-            "CreateDocumentReq": {
-                "key": "Erstelle eine Dokumenten-Anfrage",
-                "description": "Aktionen für Dokumente anfordern",
-                "attrs_types": {
-                    "Types": "Verfügbare Aktionen"
-                },
-                "attrs": {
-                    "Access": "Zugriffsanfrage",
-                    "Closure": "Schließungsanfrage",
-                    "Update": "Aktualisierungsanfrage",
-                    "Deletion": "Löschungsanfrage",
-                    "OwnerChange": "Besitzerwechsel"
-                }
-            },
-            "DeleteDocumentReq": {
-                "key": "Dokument-Anforderungen löschen",
-                "description": "Dokument-Anforderungen löschen"
-            },
-            "ToggleDocumentPin": {
-                "key": "Dokument Anheften oder Lösen",
-                "description": "Erlaubt es Dokumente anzuheften oder zulösen für die Gesamte Fraktion."
-            },
-            "SetDocumentReminder": {
-                "key": "Setzen von eigenen Dokumenten-Erinnerungen",
-                "description": "Erlaubt es eigene Erinnerungen für Dokumente zu setzen."
-            },
-            "CreateOrUpdateCategory": {
-                "key": "Dokumentenkategorie erstellen",
-                "description": "Dokumentenkategorien erstellen/ aktualisieren."
-            }
-        },
-        "LivemapService": {
-            "category": "Karte",
-            "Stream": {
-                "key": "Aufrufen",
-                "description": "Karte aufrufen können.",
-                "attrs_types": {
-                    "Players": "Spieler Positionen",
-                    "Markers": "Markierungen"
-                }
-            },
-            "CreateOrUpdateMarker": {
-                "key": "Erstellen und Aktualisieren von Markierungen",
-                "description": "Markierungen auf der Karte erstellen und aktualisieren können.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
-                },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Markierungen"
-                }
-            },
-            "DeleteMarker": {
-                "key": "Markierung Löschen",
-                "description": "Markierungen auf der Karte löschen können.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
-                },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Markierungen"
+                "ManageLabels": {
+                    "key": "Verwalten von Bürger-Labels",
+                    "description": "Erstellen, aktualisieren und löschen von Bürger-Labels."
                 }
             }
         },
-        "SettingsService": {
-            "category": "Einstellungen",
-            "GetJobProps": {
-                "key": "Job Eigenschaften ansehen",
-                "description": "Die Eigenschaften deines Jobs anzeigen."
-            },
-            "SetJobProps": {
-                "key": "Job Eigenschaften ändern",
-                "description": "Setze Eigenschaften deines Jobs."
-            },
-            "GetRoles": {
-                "key": "Rollen ansehen",
-                "description": "FiveNet-Jobrollen abrufen/ auflisten."
-            },
-            "CreateRole": {
-                "key": "Rollen erstellen",
-                "description": "FiveNet-Jobrollen erstellen."
-            },
-            "DeleteRole": {
-                "key": "Rollen löschen",
-                "description": "FiveNet-Jobrollen löschen."
-            },
-            "ViewAuditLog": {
-                "key": "Zugriff auf Audit Log",
-                "description": "Audit-Protokoll anzeigen."
-            },
-            "UpdateRolePerms": {
-                "key": "Berechtigungen für Rollen verwalten",
-                "description": "Hinzufügen/ Löschen von Berechtigungen für FiveNet-Jobrollen."
-            }
-        },
-        "CentrumService": {
-            "category": "Leitstelle",
-            "CreateDispatch": {
-                "key": "Einsätze erstellen",
-                "description": "Neue Einsätze per Karte/ Leitstelle erstellen."
-            },
-            "Stream": {
-                "key": "Zugriff auf Einsätze und Einheiten.",
-                "description": "Basiszugang für Einsätze und Einheiten."
-            },
-            "UpdateDispatch": {
-                "key": "Einsätze aktualisieren",
-                "description": "Aktualisieren von Einsatz-Informationen."
-            },
-            "CreateOrUpdateUnit": {
-                "key": "Erstellen und Aktualisieren von Einheiten",
-                "description": "Erlaubt das Erstellen und Aktualisieren von Einheiten via der Leistellen-Einstellungen."
-            },
-            "DeleteUnit": {
-                "key": "Einheiten löschen",
-                "description": "Erstellen von Einheiten per Leitstellen-Einstellungen."
-            },
-            "TakeDispatch": {
-                "key": "Einsätze annehmen",
-                "description": "Basiszugang um Einsätze annehmen zu können."
-            },
-            "TakeControl": {
-                "key": "Leitstelle beitreten",
-                "description": "Erlaubt es der Leitstelle beizutreten."
-            },
-            "UpdateSettings": {
-                "key": "Aktualisieren der Leitstellen Einstellungen",
-                "description": "Erlaubt es die Einstellungen der Leitstelle zu aktualisieren."
-            },
-            "DeleteDispatch": {
-                "key": "Einsätze löschen",
-                "description": "Erlaubt es Einsätze zu löschen."
-            }
-        },
-        "JobsService": {
-            "category": "Beruf",
-            "ListColleagues": {
-                "key": "Kollegen anzeigen",
-                "description": "Liste der Kollegen (vom eigenen Beruf) sehen können."
-            },
-            "SetMOTD": {
-                "key": "Beruf's MOTD aktualisieren",
-                "description": "Die Beruf's MOTD der Übersicht aktualisieren können."
-            },
-            "GetColleague": {
-                "key": "Detailierte Kollegen-Info anzeigen",
-                "description": "Rufe die detailierte Kollegen-Info Übersicht auf.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal",
-                    "Note": "Notiz",
-                    "AbsenceDate": "Abwesenheitsdatum",
-                    "Labels": "Labels"
+        "completor": {
+            "CompletorService": {
+                "category": "Autovervollständigung",
+                "CompleteCitizens": {
+                    "key": "Bürger-Namen",
+                    "description": "Vollständige Bürger-Namen."
                 },
-                "attrs_types": {
-                    "Access": "Zugriff auf Kollegen",
-                    "Types": "Kollegen-Eigenschaften"
-                }
-            },
-            "SetColleagueProps": {
-                "key": "Setzte die Eigenschaften eines Kollegen",
-                "description": "E.g., Abwesenheitsdatum.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal",
-                    "Note": "Notiz",
-                    "AbsenceDate": "Abwesenheitsdatum",
-                    "Labels": "Labels",
-                    "Name": "Name"
+                "CompleteJobs": {
+                    "key": "Vollständige Job-Namen und Ränge",
+                    "description": "Vollständige Job-Namen und Ränge."
                 },
-                "attrs_types": {
-                    "Access": "Zugriff auf Kollegen Eigenschaften",
-                    "Types": "Kollegen-Eigenschaften"
-                }
-            },
-            "ListColleagueActivity": {
-                "key": "Zeige Aktivitäten deiner Kollegen an",
-                "description": "Zeige Aktivitäten deiner Kollegen an",
-                "attrs": {
-                    "HIRED": "Angestellt",
-                    "FIRED": "Gefeuert",
-                    "PROMOTED": "Befördert",
-                    "DEMOTED": "Degradiert",
-                    "ABSENCE_DATE": "Abwesenheitsdatum",
-                    "NOTE": "Notiz",
-                    "LABELS": "Labels",
-                    "NAME": "Name"
+                "CompleteDocumentCategories": {
+                    "key": "Auflisten von Dokumentkategorien",
+                    "description": "Auflisten der Dokumentkategorien von bestimmten Jobs.",
+                    "attrs_types": {
+                        "Jobs": "Fraktionen"
+                    }
                 },
-                "attrs_types": {
-                    "Types": "Aktivitäts-Arten"
-                }
-            },
-            "ManageLabels": {
-                "key": "Labels verwalten",
-                "description": "Verwalten von Labels für Kollegen."
-            }
-        },
-        "ConductService": {
-            "CreateConductEntry": {
-                "key": "Führungsregister: Einträge erstellen",
-                "description": "Erstellen von Führungsregister Einträgen."
-            },
-            "DeleteConductEntry": {
-                "key": "Führungsregister: Einträge löschen",
-                "description": "Löschen von Führungsregister Einträgen."
-            },
-            "ListConductEntries": {
-                "key": "Führungsregister: Einträge anzeigen",
-                "description": "Anzeigen von Führungsregister Einträgen.",
-                "attrs": {
-                    "Own": "Eigene",
-                    "All": "Alle"
-                },
-                "attrs_types": {
-                    "Access": "Zugriff auf Führungsregister-Einträge"
-                }
-            },
-            "UpdateConductEntry": {
-                "key": "Führungsregister: Einträge bearbeiten",
-                "description": "Aktualisieren von Führungsregister Einträgen."
-            },
-            "category": "Beruf Führungsregister"
-        },
-        "TimeclockService": {
-            "ListTimeclock": {
-                "key": "Stempeluhr Einträge: Anzeigen",
-                "description": "Stempeluhr Einträge anzeigen lassen.",
-                "attrs": {
-                    "All": "Alle"
-                },
-                "attrs_types": {
-                    "Access": "Zugriff auf Stempeluhr-Einträge"
-                }
-            },
-            "category": "Beruf Stempeluhr",
-            "ListInactiveEmployees": {
-                "key": "Zeige inaktive Kollegen an",
-                "description": "Zeige inaktive Kollegen nach Tagen an."
-            }
-        },
-        "QualificationsService": {
-            "category": "Qualifizierungen",
-            "ListQualifications": {
-                "key": "Auflisten von Qualifizierungen",
-                "description": "Auflisten verfügbarer Qualifizierungen"
-            },
-            "GetQualification": {
-                "key": "Qualifizierung aufrufen",
-                "description": "Rufe Qualifizierungsinformationen ab"
-            },
-            "CreateQualification": {
-                "key": "Qualifizierungen erstellen",
-                "description": "Erstelle Qualifizierungen",
-                "attrs": {
-                    "Public": "Öffentliche Qualifizierungen die jeder sehen kann"
-                },
-                "attrs_types": {
-                    "Fields": "Zugriff auf spezielle Freigaben von Qualifizierungen"
-                }
-            },
-            "UpdateQualification": {
-                "key": "Qualifizierung aktualisieren",
-                "description": "Aktualisiere Qualifizierungen",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
-                },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Qualifizierungen"
-                }
-            },
-            "DeleteQualification": {
-                "key": "Qualifizierungen löschen",
-                "description": "Lösche Qualifizierungen",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
-                },
-                "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Qualifizierungen"
-                }
-            },
-            "ListQualificationsResults": {
-                "key": "Auflisten von Qualifizierungsergebnissen",
-                "description": "Auflisten von Qualifizierungsergebnissen"
-            },
-            "ListQualificationRequests": {
-                "key": "Auflisten von Qualifizierungsanfragen",
-                "description": "Auflisten von Qualifizierungsanfragen"
-            }
-        },
-        "CalendarService": {
-            "category": "Kalender",
-            "DeleteCalendar": {
-                "key": "Löschen von Kalendern",
-                "description": "Löschen von Kalendern."
-            },
-            "DeleteCalendarEntry": {
-                "key": "Löschen von Kalendereinträgen",
-                "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
-            },
-            "CreateCalendar": {
-                "key": "Erstellen von Kalendern",
-                "description": "Verwalten von Kalendern.",
-                "attrs": {
-                    "Job": "Kalender für Nutzer seinen Beruf",
-                    "Public": "Öffentliche Kalender, die jede Person abonnieren kann"
-                },
-                "attrs_types": {
-                    "Fields": "Zugriff Fraktionseigene Kalender zu erstellen"
+                "CompleteLabels": {
+                    "key": "Auflisten von Bürger-Labels",
+                    "description": "Damit wird der Zugriff auf Bürger-Labels von anderen Berufen kontrolliert.",
+                    "attrs_types": {
+                        "Jobs": "Fraktionen"
+                    }
                 }
             }
         },
-        "WikiService": {
-            "category": "Lexikon",
-            "ListPages": {
-                "key": "Seiten auflisten und anzeigen",
-                "description": "Sollte immer gegeben werden."
-            },
-            "CreatePage": {
-                "key": "Seiten erstellen",
-                "description": "Lexikon Seiten erstellen können.",
-                "attrs": {
-                    "Public": "Öffentliche Seiten, die jeder aufrufen kann"
-                },
-                "attrs_types": {
-                    "Fields": "Zugriff auf spezielle Freigaben von Seiten"
-                }
-            },
-            "DeletePage": {
-                "key": "Seiten löschen",
-                "description": "Lexikon Seiten löschen können (Erfordert Besitzer Rechte)."
-            },
-            "ListPageActivity": {
-                "key": "Seiten Aktivität anzeigen",
-                "description": "Historische Aktivität von Seiten anzeigen lassen."
-            }
-        },
-        "MailerService": {
-            "category": "E-Mail",
-            "DeleteEmail": {
-                "key": "E-Mail Adressen löschen",
-                "description": "Benötigt Verwaltungsrechte auf die E-Mail Adresse."
-            },
-            "ListEmails": {
-                "key": "E-Mails Feature nutzen können",
-                "description": "Minimum um das E-Mail Feature komplett nutzen zu können."
-            },
-            "CreateOrUpdateEmail": {
-                "key": "Erstellen und aktualisieren von E-Mails",
-                "description": "Aktualisieren von E-Mails benötigt entsprechende Rechte auf die E-Mail.",
-                "attrs": {
-                    "Job": "E-Mail Adressen für seinen Beruf (+ Interne Option)"
-                },
-                "attrs_types": {
-                    "Fields": "Zugriff auf spezielle E-Mail Adressen"
+        "vehicles": {
+            "VehiclesService": {
+                "category": "Fahrzeuge",
+                "ListVehicles": {
+                    "key": "Fahrzeuge suchen",
+                    "description": "Suchen und Finden von Fahrzeugen von Bürgern."
                 }
             }
         },
-        "LawsService": {
-            "category": "Gesetzesbücher",
-            "CreateOrUpdateLawBook": {
-                "key": "Gesetzbuch erstellen und aktualisieren",
-                "description": "Erstellen und aktualisieren von Gesetzen und Gesetzbüchern."
+        "documents": {
+            "DocumentsService": {
+                "category": "Dokumenten-System",
+                "AddDocumentReference": {
+                    "key": "Dokument-Referenzen erstellen",
+                    "description": "Hinzufügen von Dokument-Referenzen."
+                },
+                "AddDocumentRelation": {
+                    "key": "Dokumenten-Bürger-Beziehungen hinzufügen",
+                    "description": "Bürgerbeziehung hinzufügen/ entfernen."
+                },
+                "CreateDocument": {
+                    "key": "Dokument erstellen",
+                    "description": "Ein neues Dokument erstellen."
+                },
+                "ListDocuments": {
+                    "key": "Dokumente auflisten, suchen und anzeigen",
+                    "description": "Dokumente auflisten/ suchen, und anzeigen."
+                },
+                "ListUserDocuments": {
+                    "key": "Bürger-Dokumente sehen",
+                    "description": "Die mit einem Bürger verknüpften Dokumente anzeigen."
+                },
+                "ListTemplates": {
+                    "key": "Vorlagen auflisten",
+                    "description": "Verfügbare Vorlagen auflisten."
+                },
+                "UpdateDocument": {
+                    "key": "Dokument aktualisieren",
+                    "description": "Ein vorhandenes Dokument bearbeiten/ aktualisieren.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Dokumente"
+                    }
+                },
+                "CreateTemplate": {
+                    "key": "Vorlage erstellen",
+                    "description": "Erstellen von Dokumentenvorlagen."
+                },
+                "DeleteTemplate": {
+                    "key": "Vorlage löschen",
+                    "description": "Dokumentenvorlagen löschen."
+                },
+                "DeleteDocument": {
+                    "key": "Dokumenten Löschung",
+                    "description": "Dokumente löschen.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Dokumente"
+                    }
+                },
+                "ToggleDocument": {
+                    "key": "Dokument per Knopf öffnen/ schließen",
+                    "description": "Dokument per Knopf öffnen/ schließen.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Dokumente"
+                    }
+                },
+                "DeleteComment": {
+                    "key": "Dokumenten Kommentare löschen",
+                    "description": "Eigenen Dokumentenkommentar löschen.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Dokumente"
+                    }
+                },
+                "DeleteCategory": {
+                    "key": "Dokumentenkategorie löschen",
+                    "description": "Dokumentenkategorien löschen."
+                },
+                "ListCategories": {
+                    "key": "Auflisten der Dokumentenkategorien",
+                    "description": "Liste der Dokumentkategorien."
+                },
+                "ListDocumentActivity": {
+                    "key": "Dokumenten-Aktivität anzeigen",
+                    "description": "Dokumenten-Aktivität von Dokumente mit Status oder höher Zugriff sehen können."
+                },
+                "ListDocumentReqs": {
+                    "key": "Auflistung der Dokumentenanfragen",
+                    "description": "Liste die Dokumentenanfragen auf."
+                },
+                "ChangeDocumentOwner": {
+                    "key": "Änderung des Dokumentenbesitzers",
+                    "description": "Übernimm den Besitz des Dokumentes.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Dokumente"
+                    }
+                },
+                "CreateDocumentReq": {
+                    "key": "Erstelle eine Dokumenten-Anfrage",
+                    "description": "Aktionen für Dokumente anfordern",
+                    "attrs_types": {
+                        "Types": "Verfügbare Aktionen"
+                    },
+                    "attrs": {
+                        "Access": "Zugriffsanfrage",
+                        "Closure": "Schließungsanfrage",
+                        "Update": "Aktualisierungsanfrage",
+                        "Deletion": "Löschungsanfrage",
+                        "OwnerChange": "Besitzerwechsel"
+                    }
+                },
+                "DeleteDocumentReq": {
+                    "key": "Dokument-Anforderungen löschen",
+                    "description": "Dokument-Anforderungen löschen"
+                },
+                "ToggleDocumentPin": {
+                    "key": "Dokument Anheften oder Lösen",
+                    "description": "Erlaubt es Dokumente anzuheften oder zulösen für die Gesamte Fraktion."
+                },
+                "SetDocumentReminder": {
+                    "key": "Setzen von eigenen Dokumenten-Erinnerungen",
+                    "description": "Erlaubt es eigene Erinnerungen für Dokumente zu setzen."
+                },
+                "CreateOrUpdateCategory": {
+                    "key": "Dokumentenkategorie erstellen",
+                    "description": "Dokumentenkategorien erstellen/ aktualisieren."
+                }
+            }
+        },
+        "livemap": {
+            "LivemapService": {
+                "category": "Karte",
+                "Stream": {
+                    "key": "Aufrufen",
+                    "description": "Karte aufrufen können.",
+                    "attrs_types": {
+                        "Players": "Spieler Positionen",
+                        "Markers": "Markierungen"
+                    }
+                },
+                "CreateOrUpdateMarker": {
+                    "key": "Erstellen und Aktualisieren von Markierungen",
+                    "description": "Markierungen auf der Karte erstellen und aktualisieren können.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Markierungen"
+                    }
+                },
+                "DeleteMarker": {
+                    "key": "Markierung Löschen",
+                    "description": "Markierungen auf der Karte löschen können.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Markierungen"
+                    }
+                }
+            }
+        },
+        "centrum": {
+            "CentrumService": {
+                "category": "Leitstelle",
+                "CreateDispatch": {
+                    "key": "Einsätze erstellen",
+                    "description": "Neue Einsätze per Karte/ Leitstelle erstellen."
+                },
+                "Stream": {
+                    "key": "Zugriff auf Einsätze und Einheiten.",
+                    "description": "Basiszugang für Einsätze und Einheiten."
+                },
+                "UpdateDispatch": {
+                    "key": "Einsätze aktualisieren",
+                    "description": "Aktualisieren von Einsatz-Informationen."
+                },
+                "CreateOrUpdateUnit": {
+                    "key": "Erstellen und Aktualisieren von Einheiten",
+                    "description": "Erlaubt das Erstellen und Aktualisieren von Einheiten via der Leistellen-Einstellungen."
+                },
+                "DeleteUnit": {
+                    "key": "Einheiten löschen",
+                    "description": "Erstellen von Einheiten per Leitstellen-Einstellungen."
+                },
+                "TakeDispatch": {
+                    "key": "Einsätze annehmen",
+                    "description": "Basiszugang um Einsätze annehmen zu können."
+                },
+                "TakeControl": {
+                    "key": "Leitstelle beitreten",
+                    "description": "Erlaubt es der Leitstelle beizutreten."
+                },
+                "UpdateSettings": {
+                    "key": "Aktualisieren der Leitstellen Einstellungen",
+                    "description": "Erlaubt es die Einstellungen der Leitstelle zu aktualisieren."
+                },
+                "DeleteDispatch": {
+                    "key": "Einsätze löschen",
+                    "description": "Erlaubt es Einsätze zu löschen."
+                }
+            }
+        },
+        "jobs": {
+            "JobsService": {
+                "category": "Beruf",
+                "ListColleagues": {
+                    "key": "Kollegen anzeigen",
+                    "description": "Liste der Kollegen (vom eigenen Beruf) sehen können."
+                },
+                "SetMOTD": {
+                    "key": "Beruf's MOTD aktualisieren",
+                    "description": "Die Beruf's MOTD der Übersicht aktualisieren können."
+                },
+                "GetColleague": {
+                    "key": "Detailierte Kollegen-Info anzeigen",
+                    "description": "Rufe die detailierte Kollegen-Info Übersicht auf.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal",
+                        "Note": "Notiz",
+                        "AbsenceDate": "Abwesenheitsdatum",
+                        "Labels": "Labels"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf Kollegen",
+                        "Types": "Kollegen-Eigenschaften"
+                    }
+                },
+                "SetColleagueProps": {
+                    "key": "Setzte die Eigenschaften eines Kollegen",
+                    "description": "E.g., Abwesenheitsdatum.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal",
+                        "Note": "Notiz",
+                        "AbsenceDate": "Abwesenheitsdatum",
+                        "Labels": "Labels",
+                        "Name": "Name"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf Kollegen Eigenschaften",
+                        "Types": "Kollegen-Eigenschaften"
+                    }
+                },
+                "ListColleagueActivity": {
+                    "key": "Zeige Aktivitäten deiner Kollegen an",
+                    "description": "Zeige Aktivitäten deiner Kollegen an",
+                    "attrs": {
+                        "HIRED": "Angestellt",
+                        "FIRED": "Gefeuert",
+                        "PROMOTED": "Befördert",
+                        "DEMOTED": "Degradiert",
+                        "ABSENCE_DATE": "Abwesenheitsdatum",
+                        "NOTE": "Notiz",
+                        "LABELS": "Labels",
+                        "NAME": "Name"
+                    },
+                    "attrs_types": {
+                        "Types": "Aktivitäts-Arten"
+                    }
+                },
+                "ManageLabels": {
+                    "key": "Labels verwalten",
+                    "description": "Verwalten von Labels für Kollegen."
+                }
             },
-            "DeleteLawBook": {
-                "key": "Gesetze und Gesetzbücher löschen",
-                "description": "Löschen von Gesetzen und Gesetzbüchern."
+            "ConductService": {
+                "CreateConductEntry": {
+                    "key": "Führungsregister: Einträge erstellen",
+                    "description": "Erstellen von Führungsregister Einträgen."
+                },
+                "DeleteConductEntry": {
+                    "key": "Führungsregister: Einträge löschen",
+                    "description": "Löschen von Führungsregister Einträgen."
+                },
+                "ListConductEntries": {
+                    "key": "Führungsregister: Einträge anzeigen",
+                    "description": "Anzeigen von Führungsregister Einträgen.",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "All": "Alle"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf Führungsregister-Einträge"
+                    }
+                },
+                "UpdateConductEntry": {
+                    "key": "Führungsregister: Einträge bearbeiten",
+                    "description": "Aktualisieren von Führungsregister Einträgen."
+                },
+                "category": "Beruf Führungsregister"
+            },
+            "TimeclockService": {
+                "ListTimeclock": {
+                    "key": "Stempeluhr Einträge: Anzeigen",
+                    "description": "Stempeluhr Einträge anzeigen lassen.",
+                    "attrs": {
+                        "All": "Alle"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf Stempeluhr-Einträge"
+                    }
+                },
+                "category": "Beruf Stempeluhr",
+                "ListInactiveEmployees": {
+                    "key": "Zeige inaktive Kollegen an",
+                    "description": "Zeige inaktive Kollegen nach Tagen an."
+                }
+            }
+        },
+        "qualifications": {
+            "QualificationsService": {
+                "category": "Qualifizierungen",
+                "ListQualifications": {
+                    "key": "Auflisten von Qualifizierungen",
+                    "description": "Auflisten verfügbarer Qualifizierungen"
+                },
+                "GetQualification": {
+                    "key": "Qualifizierung aufrufen",
+                    "description": "Rufe Qualifizierungsinformationen ab"
+                },
+                "CreateQualification": {
+                    "key": "Qualifizierungen erstellen",
+                    "description": "Erstelle Qualifizierungen",
+                    "attrs": {
+                        "Public": "Öffentliche Qualifizierungen die jeder sehen kann"
+                    },
+                    "attrs_types": {
+                        "Fields": "Zugriff auf spezielle Freigaben von Qualifizierungen"
+                    }
+                },
+                "UpdateQualification": {
+                    "key": "Qualifizierung aktualisieren",
+                    "description": "Aktualisiere Qualifizierungen",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Qualifizierungen"
+                    }
+                },
+                "DeleteQualification": {
+                    "key": "Qualifizierungen löschen",
+                    "description": "Lösche Qualifizierungen",
+                    "attrs": {
+                        "Own": "Eigene",
+                        "Lower_Rank": "Niedrigerer Rang",
+                        "Same_Rank": "Gleicher Rang",
+                        "Any": "Egal"
+                    },
+                    "attrs_types": {
+                        "Access": "Zugriff auf fraktionseigene Qualifizierungen"
+                    }
+                },
+                "ListQualificationsResults": {
+                    "key": "Auflisten von Qualifizierungsergebnissen",
+                    "description": "Auflisten von Qualifizierungsergebnissen"
+                },
+                "ListQualificationRequests": {
+                    "key": "Auflisten von Qualifizierungsanfragen",
+                    "description": "Auflisten von Qualifizierungsanfragen"
+                }
+            }
+        },
+        "calendar": {
+            "CalendarService": {
+                "category": "Kalender",
+                "DeleteCalendar": {
+                    "key": "Löschen von Kalendern",
+                    "description": "Löschen von Kalendern."
+                },
+                "DeleteCalendarEntry": {
+                    "key": "Löschen von Kalendereinträgen",
+                    "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
+                },
+                "CreateCalendar": {
+                    "key": "Erstellen von Kalendern",
+                    "description": "Verwalten von Kalendern.",
+                    "attrs": {
+                        "Job": "Kalender für Nutzer seinen Beruf",
+                        "Public": "Öffentliche Kalender, die jede Person abonnieren kann"
+                    },
+                    "attrs_types": {
+                        "Fields": "Zugriff Fraktionseigene Kalender zu erstellen"
+                    }
+                }
+            }
+        },
+        "wiki": {
+            "WikiService": {
+                "category": "Lexikon",
+                "ListPages": {
+                    "key": "Seiten auflisten und anzeigen",
+                    "description": "Sollte immer gegeben werden."
+                },
+                "CreatePage": {
+                    "key": "Seiten erstellen",
+                    "description": "Lexikon Seiten erstellen können.",
+                    "attrs": {
+                        "Public": "Öffentliche Seiten, die jeder aufrufen kann"
+                    },
+                    "attrs_types": {
+                        "Fields": "Zugriff auf spezielle Freigaben von Seiten"
+                    }
+                },
+                "DeletePage": {
+                    "key": "Seiten löschen",
+                    "description": "Lexikon Seiten löschen können (Erfordert Besitzer Rechte)."
+                },
+                "ListPageActivity": {
+                    "key": "Seiten Aktivität anzeigen",
+                    "description": "Historische Aktivität von Seiten anzeigen lassen."
+                }
+            }
+        },
+        "mailer": {
+            "MailerService": {
+                "category": "E-Mail",
+                "DeleteEmail": {
+                    "key": "E-Mail Adressen löschen",
+                    "description": "Benötigt Verwaltungsrechte auf die E-Mail Adresse."
+                },
+                "ListEmails": {
+                    "key": "E-Mails Feature nutzen können",
+                    "description": "Minimum um das E-Mail Feature komplett nutzen zu können."
+                },
+                "CreateOrUpdateEmail": {
+                    "key": "Erstellen und aktualisieren von E-Mails",
+                    "description": "Aktualisieren von E-Mails benötigt entsprechende Rechte auf die E-Mail.",
+                    "attrs": {
+                        "Job": "E-Mail Adressen für seinen Beruf (+ Interne Option)"
+                    },
+                    "attrs_types": {
+                        "Fields": "Zugriff auf spezielle E-Mail Adressen"
+                    }
+                }
+            }
+        },
+        "settings": {
+            "LawsService": {
+                "category": "Gesetzesbücher",
+                "CreateOrUpdateLawBook": {
+                    "key": "Gesetzbuch erstellen und aktualisieren",
+                    "description": "Erstellen und aktualisieren von Gesetzen und Gesetzbüchern."
+                },
+                "DeleteLawBook": {
+                    "key": "Gesetze und Gesetzbücher löschen",
+                    "description": "Löschen von Gesetzen und Gesetzbüchern."
+                }
+            },
+            "SettingsService": {
+                "category": "Einstellungen",
+                "GetJobProps": {
+                    "key": "Job Eigenschaften ansehen",
+                    "description": "Die Eigenschaften deines Jobs anzeigen."
+                },
+                "SetJobProps": {
+                    "key": "Job Eigenschaften ändern",
+                    "description": "Setze Eigenschaften deines Jobs."
+                },
+                "GetRoles": {
+                    "key": "Rollen ansehen",
+                    "description": "FiveNet-Jobrollen abrufen/ auflisten."
+                },
+                "CreateRole": {
+                    "key": "Rollen erstellen",
+                    "description": "FiveNet-Jobrollen erstellen."
+                },
+                "DeleteRole": {
+                    "key": "Rollen löschen",
+                    "description": "FiveNet-Jobrollen löschen."
+                },
+                "ViewAuditLog": {
+                    "key": "Zugriff auf Audit Log",
+                    "description": "Audit-Protokoll anzeigen."
+                },
+                "UpdateRolePerms": {
+                    "key": "Berechtigungen für Rollen verwalten",
+                    "description": "Hinzufügen/ Löschen von Berechtigungen für FiveNet-Jobrollen."
+                }
             }
         }
     },

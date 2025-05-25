@@ -18,6 +18,7 @@ import (
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 type Key string
@@ -488,7 +489,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			return false
 		}
 
-		maxVal, _ := p.GetJobAttribute(job, attr.ID)
+		maxVals, _ := p.GetJobAttribute(job, attr.ID)
 
 		attrs = append(attrs, &permissions.RoleAttribute{
 			RoleId:       roleId,
@@ -500,7 +501,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			Type:         string(attr.Type),
 			Value:        attrVal.Value,
 			ValidValues:  attr.ValidValues,
-			MaxValues:    maxVal,
+			MaxValues:    maxVals,
 		})
 
 		return true
@@ -674,9 +675,9 @@ func (p *Perms) UpdateRoleAttributes(ctx context.Context, job string, roleId uin
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
 
-			max, _ := p.GetJobAttribute(job, a.ID)
+			maxValues, _ := p.GetJobAttribute(job, a.ID)
 
-			valid, _ := attrs[i].Value.Check(a.Type, a.ValidValues, max)
+			valid, _ := attrs[i].Value.Check(a.Type, a.ValidValues, maxValues)
 			if !valid {
 				return errors.Wrapf(ErrAttrInvalid, "attribute %s/%s failed validation", a.Key, a.Name)
 			}
@@ -687,8 +688,8 @@ func (p *Perms) UpdateRoleAttributes(ctx context.Context, job string, roleId uin
 		return fmt.Errorf("failed to add or update attributes to role. %w", err)
 	}
 
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
-		RoleID: roleId,
+	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, &permissions.RoleIDEvent{
+		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf("failed to publish role attribute update message. %w", err)
 	}
@@ -771,8 +772,8 @@ func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, att
 		p.removeRoleAttributeFromMap(roleId, attrs[i].AttrId)
 	}
 
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
-		RoleID: roleId,
+	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, &permissions.RoleIDEvent{
+		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf("failed to publish role attribute removal message. %w", err)
 	}
@@ -786,27 +787,24 @@ func (p *Perms) RemoveAttributesFromRoleByPermission(ctx context.Context, roleId
 		return nil
 	}
 
-	attrs := []uint64{}
+	ras := []*permissions.RoleAttribute{}
 	as.Range(func(key string, attrId uint64) bool {
-		attrs = append(attrs, attrId)
+		ras = append(ras, &permissions.RoleAttribute{
+			AttrId: attrId,
+		})
 		return true
 	})
 
-	if len(attrs) > 0 {
-		ras := []*permissions.RoleAttribute{}
-		for i := range attrs {
-			ras = append(ras, &permissions.RoleAttribute{
-				AttrId: attrs[i],
-			})
-		}
-
-		if err := p.RemoveAttributesFromRole(ctx, roleId, ras...); err != nil {
-			return fmt.Errorf("failed to remove attributes from role by perm. %w", err)
-		}
+	if len(ras) == 0 {
+		return nil
 	}
 
-	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, RoleIDEvent{
-		RoleID: roleId,
+	if err := p.RemoveAttributesFromRole(ctx, roleId, ras...); err != nil {
+		return fmt.Errorf("failed to remove attributes from role by perm. %w", err)
+	}
+
+	if err := p.publishMessage(ctx, RoleAttrUpdateSubject, &permissions.RoleIDEvent{
+		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf("failed to publish role attribute removal message. %w", err)
 	}
@@ -814,72 +812,51 @@ func (p *Perms) RemoveAttributesFromRoleByPermission(ctx context.Context, roleId
 	return nil
 }
 
-func (p *Perms) GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions.RoleAttribute, bool) {
-	ra, ok := p.lookupRoleAttribute(roleId, attrId)
-	if !ok {
-		return nil, false
-	}
-
-	maxVals, _ := p.GetJobAttribute(ra.Job, ra.AttrID)
-
-	return &permissions.RoleAttribute{
-		RoleId:    roleId,
-		AttrId:    attrId,
-		Key:       string(ra.Key),
-		Type:      string(ra.Type),
-		MaxValues: maxVals,
-	}, true
-}
-
-func (p *Perms) UpdateJobAttributes(ctx context.Context, job string, attrId uint64, maxValues *permissions.AttributeValues) error {
-	a, ok := p.LookupAttributeByID(attrId)
-	if !ok {
-		return fmt.Errorf("unable to update role attribute max values, didn't find attribute by ID %d. %w", attrId, fmt.Errorf("attribute not found"))
-	}
-
-	maxVal := jet.NULL
-	if maxValues != nil {
-		maxValues.Default(permissions.AttributeTypes(a.Type))
-
-		out, err := protoutils.Marshal(maxValues)
-		if err != nil {
-			return fmt.Errorf("failed to marshal max values. %w", err)
+func (p *Perms) UpdateJobAttributes(ctx context.Context, job string, attrs ...*permissions.RoleAttribute) error {
+	for _, attr := range attrs {
+		a, ok := p.LookupAttributeByID(attr.AttrId)
+		if !ok {
+			return fmt.Errorf("unable to update role attribute max values, didn't find attribute by ID %d. %w", attr.AttrId, fmt.Errorf("attribute not found"))
 		}
 
-		maxVal = jet.String(string(out))
-	}
+		maxVal := jet.NULL
+		if attr.MaxValues != nil {
+			attr.MaxValues.Default(permissions.AttributeTypes(a.Type))
 
-	stmt := tJobAttrs.
-		INSERT(
-			tJobAttrs.Job,
-			tJobAttrs.AttrID,
-			tJobAttrs.MaxValues,
-		).
-		VALUES(
-			job,
-			attrId,
-			maxVal,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobAttrs.MaxValues.SET(jet.StringExp(jet.Raw("VALUES(`max_values`)"))),
-		)
+			out, err := protoutils.Marshal(attr.MaxValues)
+			if err != nil {
+				return fmt.Errorf("failed to marshal max values. %w", err)
+			}
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return fmt.Errorf("failed to execute insert statement for job attributes. %w", err)
+			maxVal = jet.String(string(out))
 		}
-	}
 
-	jobMaxValuesMap, _ := p.attrsJobMaxValuesMap.LoadOrCompute(job, func() (*xsync.Map[uint64, *permissions.AttributeValues], bool) {
-		return xsync.NewMap[uint64, *permissions.AttributeValues](), false
-	})
+		stmt := tJobAttrs.
+			INSERT(
+				tJobAttrs.Job,
+				tJobAttrs.AttrID,
+				tJobAttrs.MaxValues,
+			).
+			VALUES(
+				job,
+				attr.AttrId,
+				maxVal,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tJobAttrs.MaxValues.SET(jet.StringExp(jet.Raw("VALUES(`max_values`)"))),
+			)
 
-	jobMaxValuesMap.Store(attrId, maxValues)
+		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return fmt.Errorf("failed to execute insert statement for job attributes. %w", err)
+			}
+		}
 
-	if err := p.publishMessage(ctx, JobAttrUpdateSubject, JobAttrUpdateEvent{
-		Job: job,
-	}); err != nil {
-		return fmt.Errorf("failed to publish job attribute update message. %w", err)
+		jobMaxValuesMap, _ := p.attrsJobMaxValuesMap.LoadOrCompute(job, func() (*xsync.Map[uint64, *permissions.AttributeValues], bool) {
+			return xsync.NewMap[uint64, *permissions.AttributeValues](), false
+		})
+		// Clone the max values to avoid using the original reference
+		jobMaxValuesMap.Store(attr.AttrId, proto.Clone(attr.MaxValues).(*permissions.AttributeValues))
 	}
 
 	return nil
@@ -894,10 +871,8 @@ func (p *Perms) ClearJobAttributes(ctx context.Context, job string) error {
 		return fmt.Errorf("failed to execute delete statement for job attributes. %w", err)
 	}
 
-	if err := p.publishMessage(ctx, JobAttrUpdateSubject, JobAttrUpdateEvent{
-		Job: job,
-	}); err != nil {
-		return fmt.Errorf("failed to publish job attribute clear message. %w", err)
+	if jobMaxValuesMap, ok := p.attrsJobMaxValuesMap.Load(job); ok {
+		jobMaxValuesMap.Clear()
 	}
 
 	return nil

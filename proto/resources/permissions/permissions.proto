@@ -28,3 +28,8 @@ message Role {
   repeated Permission permissions = 7;
   repeated resources.permissions.RoleAttribute attributes = 8;
 }
+
+message PermItem {
+  uint64 id = 1;
+  bool val = 2;
+}

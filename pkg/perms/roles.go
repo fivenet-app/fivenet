@@ -225,9 +225,10 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 
 	p.roleIDToJobMap.Store(role.ID, role.Job)
 
-	if err := p.publishMessage(ctx, RoleCreatedSubject, RoleIDEvent{
-		RoleID: role.ID,
+	if err := p.publishMessage(ctx, RoleCreatedSubject, &permissions.RoleIDEvent{
+		RoleId: role.ID,
 		Job:    role.Job,
+		Grade:  role.Grade,
 	}); err != nil {
 		return nil, fmt.Errorf("failed to publish role creation message for role ID %d. %w", role.ID, err)
 	}
@@ -256,8 +257,8 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 		return fmt.Errorf("failed to delete role with ID %d. %w", id, err)
 	}
 
-	if err := p.publishMessage(ctx, RoleDeletedSubject, RoleIDEvent{
-		RoleID: role.ID,
+	if err := p.publishMessage(ctx, RoleDeletedSubject, &permissions.RoleIDEvent{
+		RoleId: role.ID,
 		Job:    role.Job,
 		Grade:  role.Grade,
 	}); err != nil {
@@ -446,8 +447,8 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		roleCache.Store(v.PermissionID, v.Val)
 	}
 
-	if err := p.publishMessage(ctx, RolePermUpdateSubject, RoleIDEvent{
-		RoleID: roleId,
+	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissions.RoleIDEvent{
+		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf("failed to publish role permission update message for role ID %d. %w", roleId, err)
 	}
@@ -479,8 +480,8 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		}
 	}
 
-	if err := p.publishMessage(ctx, RolePermUpdateSubject, RoleIDEvent{
-		RoleID: roleId,
+	if err := p.publishMessage(ctx, RolePermUpdateSubject, &permissions.RoleIDEvent{
+		RoleId: roleId,
 	}); err != nil {
 		return fmt.Errorf("failed to publish role permission removal message for role ID %d. %w", roleId, err)
 	}
@@ -519,25 +520,27 @@ func (p *Perms) GetJobPermissions(ctx context.Context, job string) ([]*permissio
 	return dest, nil
 }
 
-func (p *Perms) UpdateJobPermissions(ctx context.Context, job string, id uint64, val bool) error {
-	stmt := tJobPerms.
-		INSERT(
-			tJobPerms.Job,
-			tJobPerms.PermissionID,
-			tJobPerms.Val,
-		).
-		VALUES(
-			job,
-			id,
-			val,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobPerms.Val.SET(jet.RawBool("VALUES(`val`)")),
-		)
+func (p *Perms) UpdateJobPermissions(ctx context.Context, job string, perms ...*permissions.PermItem) error {
+	for _, ps := range perms {
+		stmt := tJobPerms.
+			INSERT(
+				tJobPerms.Job,
+				tJobPerms.PermissionID,
+				tJobPerms.Val,
+			).
+			VALUES(
+				job,
+				ps.Id,
+				ps.Val,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tJobPerms.Val.SET(jet.RawBool("VALUES(`val`)")),
+			)
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return fmt.Errorf("failed to update job permissions for job %s and permission ID %d. %w", job, id, err)
+		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return fmt.Errorf("failed to update job permissions for job %s and permission ID %d. %w", job, ps.Id, err)
+			}
 		}
 	}
 
@@ -555,12 +558,6 @@ func (p *Perms) ClearJobPermissions(ctx context.Context, job string) error {
 		if !dbutils.IsDuplicateError(err) {
 			return fmt.Errorf("failed to clear job permissions for job %s. %w", job, err)
 		}
-	}
-
-	if err := p.publishMessage(ctx, JobAttrUpdateSubject, RoleIDEvent{
-		Job: job,
-	}); err != nil {
-		return fmt.Errorf("failed to publish job attribute update message for job %s. %w", job, err)
 	}
 
 	return nil

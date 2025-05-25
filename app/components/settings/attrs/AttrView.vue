@@ -10,7 +10,7 @@ import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
-import type { AttrsUpdate, GetJobLimitsResponse, PermItem, PermsUpdate } from '~~/gen/ts/services/settings/settings';
+import type { AttrsUpdate, GetJobLimitsResponse, PermsUpdate } from '~~/gen/ts/services/settings/settings';
 
 const props = defineProps<{
     job: string;
@@ -116,17 +116,17 @@ async function updateJobLimits(): Promise<void> {
     permStates.value.forEach((state, perm) => {
         if (state !== undefined) {
             const p = jobLimits.value?.permissions.find((v) => v.id === perm);
-
             if (p?.val !== state) {
-                const item: PermItem = {
+                perms.toUpdate.push({
                     id: perm,
                     val: state,
-                };
-
-                perms.toUpdate.push(item);
+                });
             }
         } else if (state === undefined && currentPermissions.includes(perm)) {
-            perms.toRemove.push(perm);
+            perms.toRemove.push({
+                id: perm,
+                val: false,
+            });
         }
     });
 

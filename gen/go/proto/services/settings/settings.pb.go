@@ -286,7 +286,6 @@ func (x *GetRolesResponse) GetRoles() []*permissions.Role {
 type GetRoleRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Filtered      *bool                  `protobuf:"varint,2,opt,name=filtered,proto3,oneof" json:"filtered,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -326,13 +325,6 @@ func (x *GetRoleRequest) GetId() uint64 {
 		return x.Id
 	}
 	return 0
-}
-
-func (x *GetRoleRequest) GetFiltered() bool {
-	if x != nil && x.Filtered != nil {
-		return *x.Filtered
-	}
-	return false
 }
 
 type GetRoleResponse struct {
@@ -616,9 +608,9 @@ func (x *UpdateRolePermsRequest) GetAttrs() *AttrsUpdate {
 }
 
 type PermsUpdate struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ToUpdate      []*PermItem            `protobuf:"bytes,1,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
-	ToRemove      []uint64               `protobuf:"varint,2,rep,packed,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	ToUpdate      []*permissions.PermItem `protobuf:"bytes,1,rep,name=to_update,json=toUpdate,proto3" json:"to_update,omitempty"`
+	ToRemove      []*permissions.PermItem `protobuf:"bytes,2,rep,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -653,70 +645,18 @@ func (*PermsUpdate) Descriptor() ([]byte, []int) {
 	return file_services_settings_settings_proto_rawDescGZIP(), []int{13}
 }
 
-func (x *PermsUpdate) GetToUpdate() []*PermItem {
+func (x *PermsUpdate) GetToUpdate() []*permissions.PermItem {
 	if x != nil {
 		return x.ToUpdate
 	}
 	return nil
 }
 
-func (x *PermsUpdate) GetToRemove() []uint64 {
+func (x *PermsUpdate) GetToRemove() []*permissions.PermItem {
 	if x != nil {
 		return x.ToRemove
 	}
 	return nil
-}
-
-type PermItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Val           bool                   `protobuf:"varint,2,opt,name=val,proto3" json:"val,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *PermItem) Reset() {
-	*x = PermItem{}
-	mi := &file_services_settings_settings_proto_msgTypes[14]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *PermItem) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*PermItem) ProtoMessage() {}
-
-func (x *PermItem) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[14]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use PermItem.ProtoReflect.Descriptor instead.
-func (*PermItem) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{14}
-}
-
-func (x *PermItem) GetId() uint64 {
-	if x != nil {
-		return x.Id
-	}
-	return 0
-}
-
-func (x *PermItem) GetVal() bool {
-	if x != nil {
-		return x.Val
-	}
-	return false
 }
 
 type AttrsUpdate struct {
@@ -729,7 +669,7 @@ type AttrsUpdate struct {
 
 func (x *AttrsUpdate) Reset() {
 	*x = AttrsUpdate{}
-	mi := &file_services_settings_settings_proto_msgTypes[15]
+	mi := &file_services_settings_settings_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -741,7 +681,7 @@ func (x *AttrsUpdate) String() string {
 func (*AttrsUpdate) ProtoMessage() {}
 
 func (x *AttrsUpdate) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[15]
+	mi := &file_services_settings_settings_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -754,7 +694,7 @@ func (x *AttrsUpdate) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AttrsUpdate.ProtoReflect.Descriptor instead.
 func (*AttrsUpdate) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{15}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *AttrsUpdate) GetToUpdate() []*permissions.RoleAttribute {
@@ -779,7 +719,7 @@ type UpdateRolePermsResponse struct {
 
 func (x *UpdateRolePermsResponse) Reset() {
 	*x = UpdateRolePermsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[16]
+	mi := &file_services_settings_settings_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -791,7 +731,7 @@ func (x *UpdateRolePermsResponse) String() string {
 func (*UpdateRolePermsResponse) ProtoMessage() {}
 
 func (x *UpdateRolePermsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[16]
+	mi := &file_services_settings_settings_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -804,20 +744,19 @@ func (x *UpdateRolePermsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateRolePermsResponse.ProtoReflect.Descriptor instead.
 func (*UpdateRolePermsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{16}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{15}
 }
 
 type GetPermissionsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RoleId        uint64                 `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty"`
-	Filtered      *bool                  `protobuf:"varint,2,opt,name=filtered,proto3,oneof" json:"filtered,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetPermissionsRequest) Reset() {
 	*x = GetPermissionsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[17]
+	mi := &file_services_settings_settings_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -829,7 +768,7 @@ func (x *GetPermissionsRequest) String() string {
 func (*GetPermissionsRequest) ProtoMessage() {}
 
 func (x *GetPermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[17]
+	mi := &file_services_settings_settings_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -842,7 +781,7 @@ func (x *GetPermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPermissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetPermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{17}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetPermissionsRequest) GetRoleId() uint64 {
@@ -850,13 +789,6 @@ func (x *GetPermissionsRequest) GetRoleId() uint64 {
 		return x.RoleId
 	}
 	return 0
-}
-
-func (x *GetPermissionsRequest) GetFiltered() bool {
-	if x != nil && x.Filtered != nil {
-		return *x.Filtered
-	}
-	return false
 }
 
 type GetPermissionsResponse struct {
@@ -869,7 +801,7 @@ type GetPermissionsResponse struct {
 
 func (x *GetPermissionsResponse) Reset() {
 	*x = GetPermissionsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[18]
+	mi := &file_services_settings_settings_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -881,7 +813,7 @@ func (x *GetPermissionsResponse) String() string {
 func (*GetPermissionsResponse) ProtoMessage() {}
 
 func (x *GetPermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[18]
+	mi := &file_services_settings_settings_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -894,7 +826,7 @@ func (x *GetPermissionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetPermissionsResponse.ProtoReflect.Descriptor instead.
 func (*GetPermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{18}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetPermissionsResponse) GetPermissions() []*permissions.Permission {
@@ -920,7 +852,7 @@ type GetEffectivePermissionsRequest struct {
 
 func (x *GetEffectivePermissionsRequest) Reset() {
 	*x = GetEffectivePermissionsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[19]
+	mi := &file_services_settings_settings_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -932,7 +864,7 @@ func (x *GetEffectivePermissionsRequest) String() string {
 func (*GetEffectivePermissionsRequest) ProtoMessage() {}
 
 func (x *GetEffectivePermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[19]
+	mi := &file_services_settings_settings_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -945,7 +877,7 @@ func (x *GetEffectivePermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEffectivePermissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetEffectivePermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{19}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetEffectivePermissionsRequest) GetRoleId() uint64 {
@@ -966,7 +898,7 @@ type GetEffectivePermissionsResponse struct {
 
 func (x *GetEffectivePermissionsResponse) Reset() {
 	*x = GetEffectivePermissionsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[20]
+	mi := &file_services_settings_settings_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -978,7 +910,7 @@ func (x *GetEffectivePermissionsResponse) String() string {
 func (*GetEffectivePermissionsResponse) ProtoMessage() {}
 
 func (x *GetEffectivePermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[20]
+	mi := &file_services_settings_settings_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -991,7 +923,7 @@ func (x *GetEffectivePermissionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEffectivePermissionsResponse.ProtoReflect.Descriptor instead.
 func (*GetEffectivePermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{20}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetEffectivePermissionsResponse) GetRole() *permissions.Role {
@@ -1034,7 +966,7 @@ type ViewAuditLogRequest struct {
 
 func (x *ViewAuditLogRequest) Reset() {
 	*x = ViewAuditLogRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[21]
+	mi := &file_services_settings_settings_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1046,7 +978,7 @@ func (x *ViewAuditLogRequest) String() string {
 func (*ViewAuditLogRequest) ProtoMessage() {}
 
 func (x *ViewAuditLogRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[21]
+	mi := &file_services_settings_settings_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1059,7 +991,7 @@ func (x *ViewAuditLogRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ViewAuditLogRequest.ProtoReflect.Descriptor instead.
 func (*ViewAuditLogRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{21}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ViewAuditLogRequest) GetPagination() *database.PaginationRequest {
@@ -1128,7 +1060,7 @@ type ViewAuditLogResponse struct {
 
 func (x *ViewAuditLogResponse) Reset() {
 	*x = ViewAuditLogResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[22]
+	mi := &file_services_settings_settings_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1140,7 +1072,7 @@ func (x *ViewAuditLogResponse) String() string {
 func (*ViewAuditLogResponse) ProtoMessage() {}
 
 func (x *ViewAuditLogResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[22]
+	mi := &file_services_settings_settings_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1153,7 +1085,7 @@ func (x *ViewAuditLogResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ViewAuditLogResponse.ProtoReflect.Descriptor instead.
 func (*ViewAuditLogResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{22}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *ViewAuditLogResponse) GetPagination() *database.PaginationResponse {
@@ -1179,7 +1111,7 @@ type GetAllPermissionsRequest struct {
 
 func (x *GetAllPermissionsRequest) Reset() {
 	*x = GetAllPermissionsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[23]
+	mi := &file_services_settings_settings_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1191,7 +1123,7 @@ func (x *GetAllPermissionsRequest) String() string {
 func (*GetAllPermissionsRequest) ProtoMessage() {}
 
 func (x *GetAllPermissionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[23]
+	mi := &file_services_settings_settings_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1204,7 +1136,7 @@ func (x *GetAllPermissionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllPermissionsRequest.ProtoReflect.Descriptor instead.
 func (*GetAllPermissionsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{23}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *GetAllPermissionsRequest) GetJob() string {
@@ -1224,7 +1156,7 @@ type GetAllPermissionsResponse struct {
 
 func (x *GetAllPermissionsResponse) Reset() {
 	*x = GetAllPermissionsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[24]
+	mi := &file_services_settings_settings_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1236,7 +1168,7 @@ func (x *GetAllPermissionsResponse) String() string {
 func (*GetAllPermissionsResponse) ProtoMessage() {}
 
 func (x *GetAllPermissionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[24]
+	mi := &file_services_settings_settings_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1249,7 +1181,7 @@ func (x *GetAllPermissionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAllPermissionsResponse.ProtoReflect.Descriptor instead.
 func (*GetAllPermissionsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{24}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *GetAllPermissionsResponse) GetPermissions() []*permissions.Permission {
@@ -1275,7 +1207,7 @@ type GetJobLimitsRequest struct {
 
 func (x *GetJobLimitsRequest) Reset() {
 	*x = GetJobLimitsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[25]
+	mi := &file_services_settings_settings_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1287,7 +1219,7 @@ func (x *GetJobLimitsRequest) String() string {
 func (*GetJobLimitsRequest) ProtoMessage() {}
 
 func (x *GetJobLimitsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[25]
+	mi := &file_services_settings_settings_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1300,7 +1232,7 @@ func (x *GetJobLimitsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetJobLimitsRequest.ProtoReflect.Descriptor instead.
 func (*GetJobLimitsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{25}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetJobLimitsRequest) GetJob() string {
@@ -1322,7 +1254,7 @@ type GetJobLimitsResponse struct {
 
 func (x *GetJobLimitsResponse) Reset() {
 	*x = GetJobLimitsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[26]
+	mi := &file_services_settings_settings_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1334,7 +1266,7 @@ func (x *GetJobLimitsResponse) String() string {
 func (*GetJobLimitsResponse) ProtoMessage() {}
 
 func (x *GetJobLimitsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[26]
+	mi := &file_services_settings_settings_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1347,7 +1279,7 @@ func (x *GetJobLimitsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetJobLimitsResponse.ProtoReflect.Descriptor instead.
 func (*GetJobLimitsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{26}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetJobLimitsResponse) GetJob() string {
@@ -1389,7 +1321,7 @@ type UpdateJobLimitsRequest struct {
 
 func (x *UpdateJobLimitsRequest) Reset() {
 	*x = UpdateJobLimitsRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[27]
+	mi := &file_services_settings_settings_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1401,7 +1333,7 @@ func (x *UpdateJobLimitsRequest) String() string {
 func (*UpdateJobLimitsRequest) ProtoMessage() {}
 
 func (x *UpdateJobLimitsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[27]
+	mi := &file_services_settings_settings_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1414,7 +1346,7 @@ func (x *UpdateJobLimitsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateJobLimitsRequest.ProtoReflect.Descriptor instead.
 func (*UpdateJobLimitsRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{27}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *UpdateJobLimitsRequest) GetJob() string {
@@ -1446,7 +1378,7 @@ type UpdateJobLimitsResponse struct {
 
 func (x *UpdateJobLimitsResponse) Reset() {
 	*x = UpdateJobLimitsResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[28]
+	mi := &file_services_settings_settings_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1458,7 +1390,7 @@ func (x *UpdateJobLimitsResponse) String() string {
 func (*UpdateJobLimitsResponse) ProtoMessage() {}
 
 func (x *UpdateJobLimitsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[28]
+	mi := &file_services_settings_settings_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1471,7 +1403,7 @@ func (x *UpdateJobLimitsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateJobLimitsResponse.ProtoReflect.Descriptor instead.
 func (*UpdateJobLimitsResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{28}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{27}
 }
 
 type DeleteFactionRequest struct {
@@ -1483,7 +1415,7 @@ type DeleteFactionRequest struct {
 
 func (x *DeleteFactionRequest) Reset() {
 	*x = DeleteFactionRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[29]
+	mi := &file_services_settings_settings_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1495,7 +1427,7 @@ func (x *DeleteFactionRequest) String() string {
 func (*DeleteFactionRequest) ProtoMessage() {}
 
 func (x *DeleteFactionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[29]
+	mi := &file_services_settings_settings_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1508,7 +1440,7 @@ func (x *DeleteFactionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFactionRequest.ProtoReflect.Descriptor instead.
 func (*DeleteFactionRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{29}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *DeleteFactionRequest) GetJob() string {
@@ -1526,7 +1458,7 @@ type DeleteFactionResponse struct {
 
 func (x *DeleteFactionResponse) Reset() {
 	*x = DeleteFactionResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[30]
+	mi := &file_services_settings_settings_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1538,7 +1470,7 @@ func (x *DeleteFactionResponse) String() string {
 func (*DeleteFactionResponse) ProtoMessage() {}
 
 func (x *DeleteFactionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[30]
+	mi := &file_services_settings_settings_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1551,7 +1483,7 @@ func (x *DeleteFactionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteFactionResponse.ProtoReflect.Descriptor instead.
 func (*DeleteFactionResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{30}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{29}
 }
 
 var File_services_settings_settings_proto protoreflect.FileDescriptor
@@ -1571,11 +1503,9 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"lowestRank\x88\x01\x01B\x0e\n" +
 	"\f_lowest_rank\"E\n" +
 	"\x10GetRolesResponse\x121\n" +
-	"\x05roles\x18\x01 \x03(\v2\x1b.resources.permissions.RoleR\x05roles\"N\n" +
+	"\x05roles\x18\x01 \x03(\v2\x1b.resources.permissions.RoleR\x05roles\" \n" +
 	"\x0eGetRoleRequest\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x1f\n" +
-	"\bfiltered\x18\x02 \x01(\bH\x00R\bfiltered\x88\x01\x01B\v\n" +
-	"\t_filtered\"B\n" +
+	"\x02id\x18\x01 \x01(\x04R\x02id\"B\n" +
 	"\x0fGetRoleResponse\x12/\n" +
 	"\x04role\x18\x01 \x01(\v2\x1b.resources.permissions.RoleR\x04role\"M\n" +
 	"\x11CreateRoleRequest\x12\x19\n" +
@@ -1591,21 +1521,16 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x05perms\x18\x02 \x01(\v2\x1e.services.settings.PermsUpdateH\x00R\x05perms\x88\x01\x01\x129\n" +
 	"\x05attrs\x18\x03 \x01(\v2\x1e.services.settings.AttrsUpdateH\x01R\x05attrs\x88\x01\x01B\b\n" +
 	"\x06_permsB\b\n" +
-	"\x06_attrs\"d\n" +
-	"\vPermsUpdate\x128\n" +
-	"\tto_update\x18\x01 \x03(\v2\x1b.services.settings.PermItemR\btoUpdate\x12\x1b\n" +
-	"\tto_remove\x18\x02 \x03(\x04R\btoRemove\",\n" +
-	"\bPermItem\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x10\n" +
-	"\x03val\x18\x02 \x01(\bR\x03val\"\x93\x01\n" +
+	"\x06_attrs\"\x89\x01\n" +
+	"\vPermsUpdate\x12<\n" +
+	"\tto_update\x18\x01 \x03(\v2\x1f.resources.permissions.PermItemR\btoUpdate\x12<\n" +
+	"\tto_remove\x18\x02 \x03(\v2\x1f.resources.permissions.PermItemR\btoRemove\"\x93\x01\n" +
 	"\vAttrsUpdate\x12A\n" +
 	"\tto_update\x18\x01 \x03(\v2$.resources.permissions.RoleAttributeR\btoUpdate\x12A\n" +
 	"\tto_remove\x18\x02 \x03(\v2$.resources.permissions.RoleAttributeR\btoRemove\"\x19\n" +
-	"\x17UpdateRolePermsResponse\"^\n" +
+	"\x17UpdateRolePermsResponse\"0\n" +
 	"\x15GetPermissionsRequest\x12\x17\n" +
-	"\arole_id\x18\x01 \x01(\x04R\x06roleId\x12\x1f\n" +
-	"\bfiltered\x18\x02 \x01(\bH\x00R\bfiltered\x88\x01\x01B\v\n" +
-	"\t_filtered\"\xa3\x01\n" +
+	"\arole_id\x18\x01 \x01(\x04R\x06roleId\"\xa3\x01\n" +
 	"\x16GetPermissionsResponse\x12C\n" +
 	"\vpermissions\x18\x01 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
 	"\n" +
@@ -1700,7 +1625,7 @@ func file_services_settings_settings_proto_rawDescGZIP() []byte {
 	return file_services_settings_settings_proto_rawDescData
 }
 
-var file_services_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 31)
+var file_services_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 30)
 var file_services_settings_settings_proto_goTypes = []any{
 	(*GetJobPropsRequest)(nil),              // 0: services.settings.GetJobPropsRequest
 	(*GetJobPropsResponse)(nil),             // 1: services.settings.GetJobPropsResponse
@@ -1716,25 +1641,25 @@ var file_services_settings_settings_proto_goTypes = []any{
 	(*DeleteRoleResponse)(nil),              // 11: services.settings.DeleteRoleResponse
 	(*UpdateRolePermsRequest)(nil),          // 12: services.settings.UpdateRolePermsRequest
 	(*PermsUpdate)(nil),                     // 13: services.settings.PermsUpdate
-	(*PermItem)(nil),                        // 14: services.settings.PermItem
-	(*AttrsUpdate)(nil),                     // 15: services.settings.AttrsUpdate
-	(*UpdateRolePermsResponse)(nil),         // 16: services.settings.UpdateRolePermsResponse
-	(*GetPermissionsRequest)(nil),           // 17: services.settings.GetPermissionsRequest
-	(*GetPermissionsResponse)(nil),          // 18: services.settings.GetPermissionsResponse
-	(*GetEffectivePermissionsRequest)(nil),  // 19: services.settings.GetEffectivePermissionsRequest
-	(*GetEffectivePermissionsResponse)(nil), // 20: services.settings.GetEffectivePermissionsResponse
-	(*ViewAuditLogRequest)(nil),             // 21: services.settings.ViewAuditLogRequest
-	(*ViewAuditLogResponse)(nil),            // 22: services.settings.ViewAuditLogResponse
-	(*GetAllPermissionsRequest)(nil),        // 23: services.settings.GetAllPermissionsRequest
-	(*GetAllPermissionsResponse)(nil),       // 24: services.settings.GetAllPermissionsResponse
-	(*GetJobLimitsRequest)(nil),             // 25: services.settings.GetJobLimitsRequest
-	(*GetJobLimitsResponse)(nil),            // 26: services.settings.GetJobLimitsResponse
-	(*UpdateJobLimitsRequest)(nil),          // 27: services.settings.UpdateJobLimitsRequest
-	(*UpdateJobLimitsResponse)(nil),         // 28: services.settings.UpdateJobLimitsResponse
-	(*DeleteFactionRequest)(nil),            // 29: services.settings.DeleteFactionRequest
-	(*DeleteFactionResponse)(nil),           // 30: services.settings.DeleteFactionResponse
-	(*jobs.JobProps)(nil),                   // 31: resources.jobs.JobProps
-	(*permissions.Role)(nil),                // 32: resources.permissions.Role
+	(*AttrsUpdate)(nil),                     // 14: services.settings.AttrsUpdate
+	(*UpdateRolePermsResponse)(nil),         // 15: services.settings.UpdateRolePermsResponse
+	(*GetPermissionsRequest)(nil),           // 16: services.settings.GetPermissionsRequest
+	(*GetPermissionsResponse)(nil),          // 17: services.settings.GetPermissionsResponse
+	(*GetEffectivePermissionsRequest)(nil),  // 18: services.settings.GetEffectivePermissionsRequest
+	(*GetEffectivePermissionsResponse)(nil), // 19: services.settings.GetEffectivePermissionsResponse
+	(*ViewAuditLogRequest)(nil),             // 20: services.settings.ViewAuditLogRequest
+	(*ViewAuditLogResponse)(nil),            // 21: services.settings.ViewAuditLogResponse
+	(*GetAllPermissionsRequest)(nil),        // 22: services.settings.GetAllPermissionsRequest
+	(*GetAllPermissionsResponse)(nil),       // 23: services.settings.GetAllPermissionsResponse
+	(*GetJobLimitsRequest)(nil),             // 24: services.settings.GetJobLimitsRequest
+	(*GetJobLimitsResponse)(nil),            // 25: services.settings.GetJobLimitsResponse
+	(*UpdateJobLimitsRequest)(nil),          // 26: services.settings.UpdateJobLimitsRequest
+	(*UpdateJobLimitsResponse)(nil),         // 27: services.settings.UpdateJobLimitsResponse
+	(*DeleteFactionRequest)(nil),            // 28: services.settings.DeleteFactionRequest
+	(*DeleteFactionResponse)(nil),           // 29: services.settings.DeleteFactionResponse
+	(*jobs.JobProps)(nil),                   // 30: resources.jobs.JobProps
+	(*permissions.Role)(nil),                // 31: resources.permissions.Role
+	(*permissions.PermItem)(nil),            // 32: resources.permissions.PermItem
 	(*permissions.RoleAttribute)(nil),       // 33: resources.permissions.RoleAttribute
 	(*permissions.Permission)(nil),          // 34: resources.permissions.Permission
 	(*database.PaginationRequest)(nil),      // 35: resources.common.database.PaginationRequest
@@ -1744,67 +1669,68 @@ var file_services_settings_settings_proto_goTypes = []any{
 	(*audit.AuditEntry)(nil),                // 39: resources.audit.AuditEntry
 }
 var file_services_settings_settings_proto_depIdxs = []int32{
-	31, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
-	31, // 1: services.settings.SetJobPropsRequest.job_props:type_name -> resources.jobs.JobProps
-	31, // 2: services.settings.SetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
-	32, // 3: services.settings.GetRolesResponse.roles:type_name -> resources.permissions.Role
-	32, // 4: services.settings.GetRoleResponse.role:type_name -> resources.permissions.Role
-	32, // 5: services.settings.CreateRoleResponse.role:type_name -> resources.permissions.Role
+	30, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
+	30, // 1: services.settings.SetJobPropsRequest.job_props:type_name -> resources.jobs.JobProps
+	30, // 2: services.settings.SetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
+	31, // 3: services.settings.GetRolesResponse.roles:type_name -> resources.permissions.Role
+	31, // 4: services.settings.GetRoleResponse.role:type_name -> resources.permissions.Role
+	31, // 5: services.settings.CreateRoleResponse.role:type_name -> resources.permissions.Role
 	13, // 6: services.settings.UpdateRolePermsRequest.perms:type_name -> services.settings.PermsUpdate
-	15, // 7: services.settings.UpdateRolePermsRequest.attrs:type_name -> services.settings.AttrsUpdate
-	14, // 8: services.settings.PermsUpdate.to_update:type_name -> services.settings.PermItem
-	33, // 9: services.settings.AttrsUpdate.to_update:type_name -> resources.permissions.RoleAttribute
-	33, // 10: services.settings.AttrsUpdate.to_remove:type_name -> resources.permissions.RoleAttribute
-	34, // 11: services.settings.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	33, // 12: services.settings.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	32, // 13: services.settings.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
-	34, // 14: services.settings.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	33, // 15: services.settings.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	35, // 16: services.settings.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	36, // 17: services.settings.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
-	37, // 18: services.settings.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp
-	37, // 19: services.settings.ViewAuditLogRequest.to:type_name -> resources.timestamp.Timestamp
-	38, // 20: services.settings.ViewAuditLogResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	39, // 21: services.settings.ViewAuditLogResponse.logs:type_name -> resources.audit.AuditEntry
-	34, // 22: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	33, // 23: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	34, // 24: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
-	33, // 25: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	13, // 26: services.settings.UpdateJobLimitsRequest.perms:type_name -> services.settings.PermsUpdate
-	15, // 27: services.settings.UpdateJobLimitsRequest.attrs:type_name -> services.settings.AttrsUpdate
-	0,  // 28: services.settings.SettingsService.GetJobProps:input_type -> services.settings.GetJobPropsRequest
-	2,  // 29: services.settings.SettingsService.SetJobProps:input_type -> services.settings.SetJobPropsRequest
-	4,  // 30: services.settings.SettingsService.GetRoles:input_type -> services.settings.GetRolesRequest
-	6,  // 31: services.settings.SettingsService.GetRole:input_type -> services.settings.GetRoleRequest
-	8,  // 32: services.settings.SettingsService.CreateRole:input_type -> services.settings.CreateRoleRequest
-	10, // 33: services.settings.SettingsService.DeleteRole:input_type -> services.settings.DeleteRoleRequest
-	12, // 34: services.settings.SettingsService.UpdateRolePerms:input_type -> services.settings.UpdateRolePermsRequest
-	17, // 35: services.settings.SettingsService.GetPermissions:input_type -> services.settings.GetPermissionsRequest
-	19, // 36: services.settings.SettingsService.GetEffectivePermissions:input_type -> services.settings.GetEffectivePermissionsRequest
-	21, // 37: services.settings.SettingsService.ViewAuditLog:input_type -> services.settings.ViewAuditLogRequest
-	23, // 38: services.settings.SettingsService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
-	25, // 39: services.settings.SettingsService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
-	27, // 40: services.settings.SettingsService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
-	29, // 41: services.settings.SettingsService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
-	1,  // 42: services.settings.SettingsService.GetJobProps:output_type -> services.settings.GetJobPropsResponse
-	3,  // 43: services.settings.SettingsService.SetJobProps:output_type -> services.settings.SetJobPropsResponse
-	5,  // 44: services.settings.SettingsService.GetRoles:output_type -> services.settings.GetRolesResponse
-	7,  // 45: services.settings.SettingsService.GetRole:output_type -> services.settings.GetRoleResponse
-	9,  // 46: services.settings.SettingsService.CreateRole:output_type -> services.settings.CreateRoleResponse
-	11, // 47: services.settings.SettingsService.DeleteRole:output_type -> services.settings.DeleteRoleResponse
-	16, // 48: services.settings.SettingsService.UpdateRolePerms:output_type -> services.settings.UpdateRolePermsResponse
-	18, // 49: services.settings.SettingsService.GetPermissions:output_type -> services.settings.GetPermissionsResponse
-	20, // 50: services.settings.SettingsService.GetEffectivePermissions:output_type -> services.settings.GetEffectivePermissionsResponse
-	22, // 51: services.settings.SettingsService.ViewAuditLog:output_type -> services.settings.ViewAuditLogResponse
-	24, // 52: services.settings.SettingsService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
-	26, // 53: services.settings.SettingsService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
-	28, // 54: services.settings.SettingsService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
-	30, // 55: services.settings.SettingsService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
-	42, // [42:56] is the sub-list for method output_type
-	28, // [28:42] is the sub-list for method input_type
-	28, // [28:28] is the sub-list for extension type_name
-	28, // [28:28] is the sub-list for extension extendee
-	0,  // [0:28] is the sub-list for field type_name
+	14, // 7: services.settings.UpdateRolePermsRequest.attrs:type_name -> services.settings.AttrsUpdate
+	32, // 8: services.settings.PermsUpdate.to_update:type_name -> resources.permissions.PermItem
+	32, // 9: services.settings.PermsUpdate.to_remove:type_name -> resources.permissions.PermItem
+	33, // 10: services.settings.AttrsUpdate.to_update:type_name -> resources.permissions.RoleAttribute
+	33, // 11: services.settings.AttrsUpdate.to_remove:type_name -> resources.permissions.RoleAttribute
+	34, // 12: services.settings.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	33, // 13: services.settings.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	31, // 14: services.settings.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
+	34, // 15: services.settings.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	33, // 16: services.settings.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	35, // 17: services.settings.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	36, // 18: services.settings.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
+	37, // 19: services.settings.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp
+	37, // 20: services.settings.ViewAuditLogRequest.to:type_name -> resources.timestamp.Timestamp
+	38, // 21: services.settings.ViewAuditLogResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	39, // 22: services.settings.ViewAuditLogResponse.logs:type_name -> resources.audit.AuditEntry
+	34, // 23: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	33, // 24: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	34, // 25: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
+	33, // 26: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	13, // 27: services.settings.UpdateJobLimitsRequest.perms:type_name -> services.settings.PermsUpdate
+	14, // 28: services.settings.UpdateJobLimitsRequest.attrs:type_name -> services.settings.AttrsUpdate
+	0,  // 29: services.settings.SettingsService.GetJobProps:input_type -> services.settings.GetJobPropsRequest
+	2,  // 30: services.settings.SettingsService.SetJobProps:input_type -> services.settings.SetJobPropsRequest
+	4,  // 31: services.settings.SettingsService.GetRoles:input_type -> services.settings.GetRolesRequest
+	6,  // 32: services.settings.SettingsService.GetRole:input_type -> services.settings.GetRoleRequest
+	8,  // 33: services.settings.SettingsService.CreateRole:input_type -> services.settings.CreateRoleRequest
+	10, // 34: services.settings.SettingsService.DeleteRole:input_type -> services.settings.DeleteRoleRequest
+	12, // 35: services.settings.SettingsService.UpdateRolePerms:input_type -> services.settings.UpdateRolePermsRequest
+	16, // 36: services.settings.SettingsService.GetPermissions:input_type -> services.settings.GetPermissionsRequest
+	18, // 37: services.settings.SettingsService.GetEffectivePermissions:input_type -> services.settings.GetEffectivePermissionsRequest
+	20, // 38: services.settings.SettingsService.ViewAuditLog:input_type -> services.settings.ViewAuditLogRequest
+	22, // 39: services.settings.SettingsService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
+	24, // 40: services.settings.SettingsService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
+	26, // 41: services.settings.SettingsService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
+	28, // 42: services.settings.SettingsService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
+	1,  // 43: services.settings.SettingsService.GetJobProps:output_type -> services.settings.GetJobPropsResponse
+	3,  // 44: services.settings.SettingsService.SetJobProps:output_type -> services.settings.SetJobPropsResponse
+	5,  // 45: services.settings.SettingsService.GetRoles:output_type -> services.settings.GetRolesResponse
+	7,  // 46: services.settings.SettingsService.GetRole:output_type -> services.settings.GetRoleResponse
+	9,  // 47: services.settings.SettingsService.CreateRole:output_type -> services.settings.CreateRoleResponse
+	11, // 48: services.settings.SettingsService.DeleteRole:output_type -> services.settings.DeleteRoleResponse
+	15, // 49: services.settings.SettingsService.UpdateRolePerms:output_type -> services.settings.UpdateRolePermsResponse
+	17, // 50: services.settings.SettingsService.GetPermissions:output_type -> services.settings.GetPermissionsResponse
+	19, // 51: services.settings.SettingsService.GetEffectivePermissions:output_type -> services.settings.GetEffectivePermissionsResponse
+	21, // 52: services.settings.SettingsService.ViewAuditLog:output_type -> services.settings.ViewAuditLogResponse
+	23, // 53: services.settings.SettingsService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
+	25, // 54: services.settings.SettingsService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
+	27, // 55: services.settings.SettingsService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
+	29, // 56: services.settings.SettingsService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
+	43, // [43:57] is the sub-list for method output_type
+	29, // [29:43] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_services_settings_settings_proto_init() }
@@ -1813,19 +1739,17 @@ func file_services_settings_settings_proto_init() {
 		return
 	}
 	file_services_settings_settings_proto_msgTypes[4].OneofWrappers = []any{}
-	file_services_settings_settings_proto_msgTypes[6].OneofWrappers = []any{}
 	file_services_settings_settings_proto_msgTypes[12].OneofWrappers = []any{}
-	file_services_settings_settings_proto_msgTypes[17].OneofWrappers = []any{}
-	file_services_settings_settings_proto_msgTypes[21].OneofWrappers = []any{}
+	file_services_settings_settings_proto_msgTypes[20].OneofWrappers = []any{}
+	file_services_settings_settings_proto_msgTypes[25].OneofWrappers = []any{}
 	file_services_settings_settings_proto_msgTypes[26].OneofWrappers = []any{}
-	file_services_settings_settings_proto_msgTypes[27].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_settings_proto_rawDesc), len(file_services_settings_settings_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   31,
+			NumMessages:   30,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

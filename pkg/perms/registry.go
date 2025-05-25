@@ -380,6 +380,12 @@ func (p *Perms) ApplyJobPermissions(ctx context.Context, job string) error {
 		}
 	}
 
+	if err := p.publishMessage(ctx, JobLimitsUpdatedSubject, &permissions.RoleIDEvent{
+		Job: job,
+	}); err != nil {
+		return fmt.Errorf("failed to publish job perm update message for job %s. %w", job, err)
+	}
+
 	return nil
 }
 

@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -128,9 +129,12 @@ func (m *Manager) refreshCache(ctx context.Context) {
 func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any) error {
 	event := &livemap.UsersUpdateEvent{}
 
+	var errs error
+
 	now := time.Now()
-	m.logger.Debug("cleaning up user IDs", zap.Any("found_user_ids", foundUserIDs))
+	m.logger.Debug("cleaning up user IDs", zap.Int32s("found_user_ids", utils.GetMapKeys(foundUserIDs)))
 	keys := m.userStore.Keys(ctx, "")
+	removed := []string{}
 	for _, key := range keys {
 		idKey, err := strconv.ParseInt(key, 10, 32)
 		if err != nil {
@@ -146,25 +150,29 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any
 			continue
 		}
 
-		// Marker has been updated in the latest 15 seconds, skip it
-		if marker.UpdatedAt != nil && now.Sub(marker.UpdatedAt.AsTime()) <= 15*time.Second {
+		// Marker has been updated in the latest 30 seconds, skip it
+		if marker.UpdatedAt != nil && now.Sub(marker.UpdatedAt.AsTime()) <= 30*time.Second {
 			continue
 		}
 
 		if err := m.userStore.Delete(ctx, key); err != nil {
-			return err
+			errs = multierr.Append(errs, err)
+			continue
 		}
 
 		event.Removed = append(event.Removed, marker)
+		removed = append(removed, key)
 	}
+
+	m.logger.Debug("removed user ids from tracker cache", zap.Strings("user_ids", removed))
 
 	if len(event.Removed) > 0 {
 		if err := m.sendUpdateEvent(ctx, UsersUpdate, event); err != nil {
-			return err
+			errs = multierr.Append(errs, err)
 		}
 	}
 
-	return nil
+	return errs
 }
 
 func (m *Manager) refreshUserLocations(ctx context.Context) error {

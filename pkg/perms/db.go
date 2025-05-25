@@ -195,8 +195,8 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	}
 
 	// Check if any role perms don't exist anymore in the db and need to be deleted
-	for roleId, list := range found {
-		perms, ok := p.permsRoleMap.Load(roleId)
+	for rId, list := range found {
+		perms, ok := p.permsRoleMap.Load(rId)
 		if !ok {
 			continue
 		}
@@ -331,8 +331,8 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 	}
 
 	// Check if any role attrs that don't exist anymore in the db and need to be deleted
-	for roleId, list := range found {
-		attrRoleMap, ok := p.attrsRoleMap.Load(roleId)
+	for rId, list := range found {
+		attrRoleMap, ok := p.attrsRoleMap.Load(rId)
 		if !ok {
 			continue
 		}
@@ -343,6 +343,37 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 			}
 			return true
 		})
+	}
+
+	return nil
+}
+
+func (p *Perms) loadJobRoles(ctx context.Context, job string) error {
+	if job == "" {
+		if err := p.loadRolePermissions(ctx, 0); err != nil {
+			return fmt.Errorf("failed to load roles permissions for job %s: %w", job, err)
+		}
+
+		if err := p.loadRoleAttributes(ctx, 0); err != nil {
+			return fmt.Errorf("failed to load role attributes for job %s: %w", job, err)
+		}
+
+		return nil
+	}
+
+	roles, err := p.GetJobRoles(ctx, job)
+	if err != nil {
+		return err
+	}
+
+	for _, role := range roles {
+		if err := p.loadRolePermissions(ctx, role.ID); err != nil {
+			return fmt.Errorf("failed to load role permissions for job %s, role %d: %w", job, role.ID, err)
+		}
+
+		if err := p.loadRoleAttributes(ctx, role.ID); err != nil {
+			return fmt.Errorf("failed to load role attributes for job %s, role %d: %w", job, role.ID, err)
+		}
 	}
 
 	return nil
