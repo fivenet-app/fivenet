@@ -14,4 +14,4 @@ UPDATE `fivenet_rbac_permissions`
 	SET name='ManageLabels', guard_name='citizens-citizensservice-managelabels'
 	WHERE category = 'citizens.CitizensService' AND name = 'ManageCitizenLabels';
 
-COMMIT:
+COMMIT;
