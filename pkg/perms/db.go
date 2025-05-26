@@ -201,7 +201,7 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 }
 
 func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
-	tRoleAttrs := table.FivenetRbacRolesAttrs
+	tRoleAttrs := table.FivenetRbacRolesAttrs.AS("role_attribute")
 	stmt := tRoleAttrs.
 		SELECT(
 			tRoleAttrs.AttrID,
