@@ -1,11 +1,11 @@
 package collections
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 )
 
 // Permissions provides methods for you to manage array data more easily.
-type Permissions []*model.FivenetRbacPermissions
+type Permissions []*permissions.Permission
 
 // Len returns the number of elements of the array.
 // @return int64
@@ -17,7 +17,7 @@ func (u Permissions) Len() (length int64) {
 // @return []uint
 func (u Permissions) IDs() (IDs []uint64) {
 	for _, permission := range u {
-		IDs = append(IDs, permission.ID)
+		IDs = append(IDs, permission.Id)
 	}
 	return IDs
 }

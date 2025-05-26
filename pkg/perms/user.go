@@ -5,9 +5,9 @@ import (
 	"slices"
 
 	cache "github.com/Code-Hex/go-generics-cache"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 )
 
 func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
@@ -32,8 +32,8 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 
 	perms := make(collections.Permissions, len(ps))
 	for i := range ps {
-		perms[i] = &model.FivenetRbacPermissions{
-			ID:        ps[i].ID,
+		perms[i] = &permissions.Permission{
+			Id:        ps[i].ID,
 			Category:  string(ps[i].Category),
 			Name:      string(ps[i].Name),
 			GuardName: ps[i].GuardName,

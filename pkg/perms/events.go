@@ -97,11 +97,6 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 				return
 			}
 
-			if err := p.loadJobAttrs(ctx, event.Job); err != nil {
-				p.logger.Error("failed to update job attributes", zap.Error(err))
-				return
-			}
-
 			if err := p.loadJobRoles(ctx, event.Job); err != nil {
 				p.logger.Error("failed to load job role permissions and attributes", zap.Error(err))
 				return

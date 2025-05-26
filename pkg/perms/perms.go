@@ -14,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -39,13 +38,13 @@ type Permissions interface {
 
 	// Roles management
 	GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error)
-	GetRole(ctx context.Context, id uint64) (*model.FivenetRbacRoles, error)
-	GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error)
+	GetRole(ctx context.Context, id uint64) (*permissions.Role, error)
+	GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*permissions.Role, error)
 	GetJobRoles(ctx context.Context, job string) (collections.Roles, error)
 	GetJobRolesUpTo(ctx context.Context, job string, grade int32) (collections.Roles, error)
-	GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error)
+	GetClosestJobRole(ctx context.Context, job string, grade int32) (*permissions.Role, error)
 	CountRolesForJob(ctx context.Context, prefix string) (int64, error)
-	CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error)
+	CreateRole(ctx context.Context, job string, grade int32) (*permissions.Role, error)
 	DeleteRole(ctx context.Context, id uint64) error
 	GetRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
 	GetEffectiveRolePermissions(ctx context.Context, id uint64) ([]*permissions.Permission, error)
@@ -53,9 +52,9 @@ type Permissions interface {
 	RemovePermissionsFromRole(ctx context.Context, id uint64, perms ...uint64) error
 
 	// Role Attributes management
-	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
+	GetRoleAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
-	GetEffectiveRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
+	GetEffectiveRoleAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
 	UpdateRoleAttributes(ctx context.Context, job string, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRoleByPermission(ctx context.Context, roleId uint64, permissionId uint64) error
@@ -67,7 +66,7 @@ type Permissions interface {
 	ClearJobPermissions(ctx context.Context, job string) error
 
 	// Limit - Job attributes (max values)
-	GetJobAttributes(job string) ([]*permissions.RoleAttribute, bool)
+	GetJobAttributes(ctx context.Context, job string) ([]*permissions.RoleAttribute, error)
 	UpdateJobAttributes(ctx context.Context, job string, attrs ...*permissions.RoleAttribute) error
 	ClearJobAttributes(ctx context.Context, job string) error
 
@@ -114,8 +113,6 @@ type Perms struct {
 	attrsRoleMap *xsync.Map[uint64, *xsync.Map[uint64, *cacheRoleAttr]]
 	// Perm ID to map `Key` -> cached attribute (key is name of attribute)
 	attrsPermsMap *xsync.Map[uint64, *xsync.Map[string, uint64]]
-	// Job to map attr ID to job max value attribute
-	attrsJobMaxValuesMap *xsync.Map[string, *xsync.Map[uint64, *permissions.AttributeValues]]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[userCacheKey, bool]
@@ -165,10 +162,9 @@ func New(p Params) (Permissions, error) {
 		permsRoleMap:      xsync.NewMap[uint64, *xsync.Map[uint64, bool]](),
 		roleIDToJobMap:    xsync.NewMap[uint64, string](),
 
-		attrsMap:             xsync.NewMap[uint64, *cacheAttr](),
-		attrsRoleMap:         xsync.NewMap[uint64, *xsync.Map[uint64, *cacheRoleAttr]](),
-		attrsPermsMap:        xsync.NewMap[uint64, *xsync.Map[string, uint64]](),
-		attrsJobMaxValuesMap: xsync.NewMap[string, *xsync.Map[uint64, *permissions.AttributeValues]](),
+		attrsMap:      xsync.NewMap[uint64, *cacheAttr](),
+		attrsRoleMap:  xsync.NewMap[uint64, *xsync.Map[uint64, *cacheRoleAttr]](),
+		attrsPermsMap: xsync.NewMap[uint64, *xsync.Map[string, uint64]](),
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,

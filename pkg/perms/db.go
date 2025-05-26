@@ -6,6 +6,7 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/pkg/errors"
@@ -34,10 +35,6 @@ func (p *Perms) loadData(ctx context.Context) error {
 
 	if err := p.loadRoleAttributes(ctx, 0); err != nil {
 		return fmt.Errorf("failed to load role attributes. %w", err)
-	}
-
-	if err := p.loadJobAttrs(ctx, ""); err != nil {
-		return fmt.Errorf("failed to load job attributes. %w", err)
 	}
 
 	return nil
@@ -77,23 +74,18 @@ func (p *Perms) loadPermissions(ctx context.Context) error {
 }
 
 func (p *Perms) loadAttributes(ctx context.Context) error {
+	tAttrs := table.FivenetRbacAttrs.AS("role_attribute")
 	stmt := tAttrs.
 		SELECT(
-			tAttrs.ID.AS("id"),
-			tAttrs.PermissionID.AS("permission_id"),
-			tAttrs.Key.AS("key"),
-			tAttrs.Type.AS("type"),
-			tAttrs.ValidValues.AS("valid_values"),
+			tAttrs.ID.AS("role_attribute.attr_id"),
+			tAttrs.PermissionID,
+			tAttrs.Key,
+			tAttrs.Type,
+			tAttrs.ValidValues,
 		).
 		FROM(tAttrs)
 
-	var dest []struct {
-		ID           uint64
-		PermissionID uint64
-		Key          Key
-		Type         permissions.AttributeTypes
-		ValidValues  *permissions.AttributeValues
-	}
+	var dest []*permissions.RoleAttribute
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query attributes. %w", err)
@@ -101,7 +93,7 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 	}
 
 	for _, attr := range dest {
-		if err := p.addOrUpdateAttributeInMap(attr.PermissionID, attr.ID, attr.Key, attr.Type, attr.ValidValues); err != nil {
+		if err := p.addOrUpdateAttributeInMap(attr.PermissionId, attr.AttrId, Key(attr.Key), permissions.AttributeTypes(attr.Type), attr.ValidValues); err != nil {
 			return fmt.Errorf("failed to add/update attribute in map. %w", err)
 		}
 	}
@@ -112,9 +104,9 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 	stmt := tRoles.
 		SELECT(
-			tRoles.ID.AS("id"),
-			tRoles.Job.AS("job"),
-			tRoles.Grade.AS("grade"),
+			tRoles.ID,
+			tRoles.Job,
+			tRoles.Grade,
 		).
 		FROM(tRoles)
 
@@ -123,11 +115,7 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 			WHERE(tRoles.ID.EQ(jet.Uint64(id)))
 	}
 
-	var dest []struct {
-		ID    uint64
-		Job   string
-		Grade int32
-	}
+	var dest []*permissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query roles. %w", err)
@@ -138,9 +126,9 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() (*xsync.Map[int32, uint64], bool) {
 			return xsync.NewMap[int32, uint64](), false
 		})
-		grades.Store(role.Grade, role.ID)
+		grades.Store(role.Grade, role.Id)
 
-		p.roleIDToJobMap.Store(role.ID, role.Job)
+		p.roleIDToJobMap.Store(role.Id, role.Job)
 	}
 
 	return nil
@@ -212,84 +200,16 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	return nil
 }
 
-func (p *Perms) loadJobAttrs(ctx context.Context, job string) error {
-	stmt := tJobAttrs.
-		SELECT(
-			tJobAttrs.Job.AS("job"),
-			tJobAttrs.AttrID.AS("attr_id"),
-			tJobAttrs.MaxValues.AS("max_values"),
-		).
-		FROM(tJobAttrs).
-		ORDER_BY(
-			tJobAttrs.Job.ASC(),
-		)
-
-	if job != "" {
-		stmt = stmt.WHERE(
-			tJobAttrs.Job.EQ(jet.String(job)),
-		)
-	}
-
-	var dest []struct {
-		Job       string
-		AttrID    uint64
-		MaxValues *permissions.AttributeValues
-	}
-	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query job attributes. %w", err)
-		}
-	}
-
-	// No attributes? Delete cached data
-	if len(dest) == 0 {
-		if job != "" {
-			p.attrsJobMaxValuesMap.Delete(job)
-		} else {
-			p.attrsJobMaxValuesMap.Clear()
-		}
-	} else {
-		found := map[string][]uint64{}
-		for _, jobAttrs := range dest {
-			attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, func() (*xsync.Map[uint64, *permissions.AttributeValues], bool) {
-				return xsync.NewMap[uint64, *permissions.AttributeValues](), false
-			})
-			attrs.Store(jobAttrs.AttrID, jobAttrs.MaxValues)
-
-			if _, ok := found[jobAttrs.Job]; !ok {
-				found[jobAttrs.Job] = []uint64{}
-			}
-			found[jobAttrs.Job] = append(found[jobAttrs.Job], jobAttrs.AttrID)
-		}
-
-		// Check if any job attrs don't exist anymore in the db and need to be deleted
-		for job, list := range found {
-			attrs, ok := p.attrsJobMaxValuesMap.Load(job)
-			if !ok {
-				continue
-			}
-
-			attrs.Range(func(attrId uint64, _ *permissions.AttributeValues) bool {
-				if !slices.Contains(list, attrId) {
-					attrs.Delete(attrId)
-				}
-				return true
-			})
-		}
-	}
-
-	return nil
-}
-
 func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
+	tRoleAttrs := table.FivenetRbacRolesAttrs
 	stmt := tRoleAttrs.
 		SELECT(
-			tRoleAttrs.AttrID.AS("attr_id"),
-			tAttrs.PermissionID.AS("permission_id"),
-			tRoleAttrs.RoleID.AS("role_id"),
-			tAttrs.Key.AS("key"),
-			tAttrs.Type.AS("type"),
-			tRoleAttrs.Value.AS("value"),
+			tRoleAttrs.AttrID,
+			tAttrs.PermissionID.AS("role_attribute.permission_id"),
+			tRoleAttrs.RoleID,
+			tAttrs.Key.AS("role_attribute.key"),
+			tAttrs.Type.AS("role_attribute.type"),
+			tRoleAttrs.Value.AS("role_attribute.value"),
 		).
 		FROM(
 			tRoleAttrs.
@@ -304,15 +224,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 		)
 	}
 
-	var dest []struct {
-		AttrID       uint64
-		PermissionID uint64
-		RoleID       uint64
-		Key          Key
-		Type         permissions.AttributeTypes
-		Value        *permissions.AttributeValues
-	}
-
+	var dest []*permissions.RoleAttribute
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return fmt.Errorf("failed to query role attributes. %w", err)
@@ -321,13 +233,13 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 
 	found := map[uint64][]uint64{}
 	for _, ra := range dest {
-		ra.Value.Default(ra.Type)
-		p.updateRoleAttributeInMap(ra.RoleID, ra.PermissionID, ra.AttrID, ra.Key, ra.Type, ra.Value)
+		ra.Value.Default(permissions.AttributeTypes(ra.Type))
+		p.updateRoleAttributeInMap(ra.RoleId, ra.PermissionId, ra.AttrId, Key(ra.Key), permissions.AttributeTypes(ra.Type), ra.Value)
 
-		if _, ok := found[ra.RoleID]; !ok {
-			found[ra.RoleID] = []uint64{}
+		if _, ok := found[ra.RoleId]; !ok {
+			found[ra.RoleId] = []uint64{}
 		}
-		found[ra.RoleID] = append(found[ra.RoleID], ra.AttrID)
+		found[ra.RoleId] = append(found[ra.RoleId], ra.AttrId)
 	}
 
 	// Check if any role attrs that don't exist anymore in the db and need to be deleted
@@ -367,12 +279,12 @@ func (p *Perms) loadJobRoles(ctx context.Context, job string) error {
 	}
 
 	for _, role := range roles {
-		if err := p.loadRolePermissions(ctx, role.ID); err != nil {
-			return fmt.Errorf("failed to load role permissions for job %s, role %d: %w", job, role.ID, err)
+		if err := p.loadRolePermissions(ctx, role.Id); err != nil {
+			return fmt.Errorf("failed to load role permissions for job %s, role %d: %w", job, role.Id, err)
 		}
 
-		if err := p.loadRoleAttributes(ctx, role.ID); err != nil {
-			return fmt.Errorf("failed to load role attributes for job %s, role %d: %w", job, role.ID, err)
+		if err := p.loadRoleAttributes(ctx, role.Id); err != nil {
+			return fmt.Errorf("failed to load role attributes for job %s, role %d: %w", job, role.Id, err)
 		}
 	}
 

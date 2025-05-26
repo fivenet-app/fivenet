@@ -18,7 +18,6 @@ import (
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/proto"
 )
 
 type Key string
@@ -257,43 +256,47 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 	return nil
 }
 
-func (p *Perms) GetJobAttribute(job string, attrId uint64) (*permissions.AttributeValues, bool) {
-	jas, ok := p.attrsJobMaxValuesMap.Load(job)
-	if !ok {
-		return nil, false
+func (p *Perms) GetJobAttribute(ctx context.Context, job string, attrId uint64) (*permissions.AttributeValues, error) {
+	stmt := tJobAttrs.
+		SELECT(
+			tJobAttrs.MaxValues.AS("value"),
+		).
+		FROM(tJobAttrs).
+		WHERE(jet.AND(
+			tJobAttrs.Job.EQ(jet.String(job)),
+			tJobAttrs.AttrID.EQ(jet.Uint64(attrId)),
+		)).
+		LIMIT(1)
+
+	dest := &struct {
+		Value *permissions.AttributeValues `alias:"value"`
+	}{}
+	if err := stmt.QueryContext(ctx, p.db, dest); err != nil {
+		return nil, err
 	}
 
-	return jas.Load(attrId)
+	return dest.Value, nil
 }
 
-func (p *Perms) GetJobAttributes(job string) ([]*permissions.RoleAttribute, bool) {
-	jas, ok := p.attrsJobMaxValuesMap.Load(job)
-	if !ok {
-		return nil, false
+func (p *Perms) GetJobAttributes(ctx context.Context, job string) ([]*permissions.RoleAttribute, error) {
+	stmt := tJobAttrs.
+		SELECT(
+			tJobAttrs.Job,
+			tJobAttrs.AttrID,
+			tJobAttrs.MaxValues,
+		).
+		FROM(tJobAttrs).
+		WHERE(
+			tJobAttrs.Job.EQ(jet.String(job)),
+		)
+	dest := []*permissions.RoleAttribute{}
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+		return nil, err
 	}
 
-	var attrs []*permissions.RoleAttribute
-	jas.Range(func(attrId uint64, value *permissions.AttributeValues) bool {
-		attr, ok := p.LookupAttributeByID(attrId)
-		if !ok {
-			return true
-		}
+	attrs := []*permissions.RoleAttribute{}
 
-		attrs = append(attrs, &permissions.RoleAttribute{
-			AttrId:       attr.ID,
-			PermissionId: attr.PermissionID,
-			Key:          string(attr.Key),
-			Type:         string(attr.Type),
-			Category:     string(attr.Category),
-			Name:         string(attr.Name),
-			ValidValues:  attr.ValidValues,
-			MaxValues:    value,
-		})
-
-		return true
-	})
-
-	return attrs, true
+	return attrs, nil
 }
 
 func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.AttributeValues, error) {
@@ -385,44 +388,6 @@ func (p *Perms) AttrJobGradeList(userInfo *userinfo.UserInfo, category Category,
 	}
 }
 
-func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, job string) []*permissions.RoleAttribute {
-	res := make([]*permissions.RoleAttribute, len(in))
-	for i := range in {
-		res[i] = &permissions.RoleAttribute{
-			RoleId:       in[i].RoleId,
-			CreatedAt:    in[i].CreatedAt,
-			AttrId:       in[i].AttrId,
-			PermissionId: in[i].PermissionId,
-			Category:     in[i].Category,
-			Name:         in[i].Name,
-			Key:          in[i].Key,
-			Type:         in[i].Type,
-			Value:        in[i].Value,
-			ValidValues:  in[i].ValidValues,
-			MaxValues:    &permissions.AttributeValues{},
-		}
-
-		if res[i].Value == nil {
-			res[i].Value = &permissions.AttributeValues{}
-			res[i].Value.Default(permissions.AttributeTypes(in[i].Type))
-		}
-
-		if res[i].ValidValues == nil {
-			res[i].ValidValues = &permissions.AttributeValues{}
-			res[i].ValidValues.Default(permissions.AttributeTypes(in[i].Type))
-		}
-
-		if job != "" {
-			res[i].MaxValues, _ = p.GetJobAttribute(job, in[i].AttrId)
-			if res[i].MaxValues != nil {
-				res[i].MaxValues.Default(permissions.AttributeTypes(res[i].Type))
-			}
-		}
-	}
-
-	return res
-}
-
 func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal string, aType permissions.AttributeTypes) error {
 	if err := protojson.Unmarshal([]byte(rawVal), targetVal); err != nil {
 		return fmt.Errorf("failed to unmarshal raw value. %w", err)
@@ -457,10 +422,25 @@ func (p *Perms) GetAllAttributes(ctx context.Context) ([]*permissions.RoleAttrib
 		}
 	}
 
-	return p.convertRawToRoleAttributes(dest, ""), nil
+	res := make([]*permissions.RoleAttribute, len(dest))
+	for i := range res {
+		if res[i].Value == nil {
+			res[i].Value = &permissions.AttributeValues{}
+			res[i].Value.Default(permissions.AttributeTypes(dest[i].Type))
+		}
+
+		if res[i].ValidValues == nil {
+			res[i].ValidValues = &permissions.AttributeValues{}
+			res[i].ValidValues.Default(permissions.AttributeTypes(dest[i].Type))
+		}
+
+		// MaxValues are not set because we don't know the job context here
+	}
+
+	return res, nil
 }
 
-func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) GetRoleAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error) {
 	roleId, ok := p.lookupRoleIDForJobAndGrade(job, grade)
 	if !ok {
 		roleId, ok = p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
@@ -489,7 +469,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			return false
 		}
 
-		maxVals, _ := p.GetJobAttribute(job, attr.ID)
+		maxVals, _ := p.GetJobAttribute(ctx, job, attr.ID)
 
 		attrs = append(attrs, &permissions.RoleAttribute{
 			RoleId:       roleId,
@@ -513,7 +493,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 	return attrs, nil
 }
 
-func (p *Perms) GetEffectiveRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) GetEffectiveRoleAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error) {
 	roleAttrs := map[uint64]interface{}{}
 
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
@@ -560,7 +540,7 @@ func (p *Perms) GetEffectiveRoleAttributes(job string, grade int32) ([]*permissi
 				return false
 			}
 
-			maxVal, _ := p.GetJobAttribute(job, attr.ID)
+			maxVal, _ := p.GetJobAttribute(ctx, job, attr.ID)
 
 			attrs = append(attrs, &permissions.RoleAttribute{
 				RoleId:       roleIds[i],
@@ -675,7 +655,10 @@ func (p *Perms) UpdateRoleAttributes(ctx context.Context, job string, roleId uin
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
 
-			maxValues, _ := p.GetJobAttribute(job, a.ID)
+			maxValues, err := p.GetJobAttribute(ctx, job, a.ID)
+			if err != nil {
+				return fmt.Errorf("failed to retrieve max values for attribute %s/%s/%s. %w", a.Category, a.Name, a.Key, err)
+			}
 
 			valid, _ := attrs[i].Value.Check(a.Type, a.ValidValues, maxValues)
 			if !valid {
@@ -704,20 +687,12 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			return fmt.Errorf("unable to add role attribute, didn't find attribute by ID %d. %w", attrs[i].AttrId, fmt.Errorf("attribute not found"))
 		}
 
-		attrValue := jet.NULL
 		if attrs[i].Value == nil {
 			attrs[i].Value = &permissions.AttributeValues{}
 		}
 
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(a.Type))
-
-			out, err := protoutils.Marshal(attrs[i].Value)
-			if err != nil {
-				return fmt.Errorf("failed to marshal attribute value. %w", err)
-			}
-
-			attrValue = jet.String(string(out))
 		}
 
 		stmt := tRoleAttrs.
@@ -729,7 +704,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			VALUES(
 				roleId,
 				a.ID,
-				attrValue,
+				attrs[i].Value,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("VALUES(`value`)"))),
@@ -851,12 +826,6 @@ func (p *Perms) UpdateJobAttributes(ctx context.Context, job string, attrs ...*p
 				return fmt.Errorf("failed to execute insert statement for job attributes. %w", err)
 			}
 		}
-
-		jobMaxValuesMap, _ := p.attrsJobMaxValuesMap.LoadOrCompute(job, func() (*xsync.Map[uint64, *permissions.AttributeValues], bool) {
-			return xsync.NewMap[uint64, *permissions.AttributeValues](), false
-		})
-		// Clone the max values to avoid using the original reference
-		jobMaxValuesMap.Store(attr.AttrId, proto.Clone(attr.MaxValues).(*permissions.AttributeValues))
 	}
 
 	return nil
@@ -869,10 +838,6 @@ func (p *Perms) ClearJobAttributes(ctx context.Context, job string) error {
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return fmt.Errorf("failed to execute delete statement for job attributes. %w", err)
-	}
-
-	if jobMaxValuesMap, ok := p.attrsJobMaxValuesMap.Load(job); ok {
-		jobMaxValuesMap.Clear()
 	}
 
 	return nil

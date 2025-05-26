@@ -11,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -115,7 +114,7 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 		})
 	}
 
-	currentPerms, err := p.GetRolePermissions(ctx, role.ID)
+	currentPerms, err := p.GetRolePermissions(ctx, role.Id)
 	if err != nil {
 		return fmt.Errorf("failed to get role permissions. %w", err)
 	}
@@ -137,18 +136,18 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 	}
 
 	if len(addPerms) > 0 {
-		if err := p.UpdateRolePermissions(ctx, role.ID, addPerms...); err != nil {
+		if err := p.UpdateRolePermissions(ctx, role.Id, addPerms...); err != nil {
 			return fmt.Errorf("failed to update role permissions. %w", err)
 		}
 	}
 
 	if len(removePerms) > 0 {
-		if err := p.RemovePermissionsFromRole(ctx, role.ID, removePerms...); err != nil {
+		if err := p.RemovePermissionsFromRole(ctx, role.Id, removePerms...); err != nil {
 			return fmt.Errorf("failed to remove permissions from role. %w", err)
 		}
 	}
 
-	if err := p.loadRolePermissions(ctx, role.ID); err != nil {
+	if err := p.loadRolePermissions(ctx, role.Id); err != nil {
 		return fmt.Errorf("failed to load role permissions. %w", err)
 	}
 
@@ -282,7 +281,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	}
 
 	// Remove default role from the list of roles
-	existingRoles = slices.DeleteFunc(existingRoles, func(role *model.FivenetRbacRoles) bool {
+	existingRoles = slices.DeleteFunc(existingRoles, func(role *permissions.Role) bool {
 		return role.Job == DefaultRoleJob && role.Grade == p.startJobGrade
 	})
 
@@ -297,8 +296,8 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 				continue
 			}
 
-			index := slices.IndexFunc(existingRoles, func(r *model.FivenetRbacRoles) bool {
-				return role.ID == r.ID
+			index := slices.IndexFunc(existingRoles, func(r *permissions.Role) bool {
+				return role.Id == r.Id
 			})
 			if index > -1 {
 				existingRoles = slices.Delete(existingRoles, index, index+1)
@@ -314,7 +313,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 
 	// Remove all roles that shouldn't exist anymore
 	for i := range existingRoles {
-		if err := p.DeleteRole(ctx, existingRoles[i].ID); err != nil {
+		if err := p.DeleteRole(ctx, existingRoles[i].Id); err != nil {
 			return fmt.Errorf("failed to delete role. %w", err)
 		}
 	}
@@ -405,9 +404,9 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 	}
 
 	for _, role := range roles {
-		ps, err := p.GetRolePermissions(ctx, role.ID)
+		ps, err := p.GetRolePermissions(ctx, role.Id)
 		if err != nil {
-			return fmt.Errorf("failed to get role permissions for role ID %d. %w", role.ID, err)
+			return fmt.Errorf("failed to get role permissions for role ID %d. %w", role.Id, err)
 		}
 
 		if len(ps) == 0 {
@@ -421,8 +420,8 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 				pIds = append(pIds, p.Id)
 			}
 
-			if err := p.RemovePermissionsFromRole(ctx, role.ID, pIds...); err != nil {
-				return fmt.Errorf("failed to remove permissions from role ID %d. %w", role.ID, err)
+			if err := p.RemovePermissionsFromRole(ctx, role.Id, pIds...); err != nil {
+				return fmt.Errorf("failed to remove permissions from role ID %d. %w", role.Id, err)
 			}
 			continue
 		}
@@ -438,8 +437,8 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 
 		if len(toRemove) > 0 {
 			p.logger.Debug("removing permissions from role due to job perms change", zap.String("job", job), zap.Int("perms_length", len(toRemove)))
-			if err := p.RemovePermissionsFromRole(ctx, role.ID, toRemove...); err != nil {
-				return fmt.Errorf("failed to remove permissions from role ID %d. %w", role.ID, err)
+			if err := p.RemovePermissionsFromRole(ctx, role.Id, toRemove...); err != nil {
+				return fmt.Errorf("failed to remove permissions from role ID %d. %w", role.Id, err)
 			}
 		}
 	}
@@ -457,7 +456,7 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 	}
 
 	for _, role := range roles {
-		attrs, err := p.GetRoleAttributes(role.Job, role.Grade)
+		attrs, err := p.GetRoleAttributes(ctx, role.Job, role.Grade)
 		if err != nil {
 			return fmt.Errorf("failed to get role attributes for job %s and grade %d. %w", role.Job, role.Grade, err)
 		}
@@ -468,8 +467,8 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 
 		if len(jps) == 0 {
 			p.logger.Debug("removing all attributes from role due to job perms change", zap.String("job", role.Job))
-			if err := p.RemoveAttributesFromRole(ctx, role.ID, attrs...); err != nil {
-				return fmt.Errorf("failed to remove all attributes from role %d. %w", role.ID, err)
+			if err := p.RemoveAttributesFromRole(ctx, role.Id, attrs...); err != nil {
+				return fmt.Errorf("failed to remove all attributes from role %d. %w", role.Id, err)
 			}
 			continue
 		}
@@ -477,7 +476,7 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 		toRemove := []*permissions.RoleAttribute{}
 		toUpdate := []*permissions.RoleAttribute{}
 		for _, attr := range attrs {
-			maxValues, _ := p.GetJobAttribute(role.Job, attr.AttrId)
+			maxValues, _ := p.GetJobAttribute(ctx, role.Job, attr.AttrId)
 
 			if slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
 				return in.Id == attr.PermissionId
@@ -495,15 +494,15 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 
 		if len(toRemove) > 0 {
 			p.logger.Debug("removing attribute from role due to job perms change", zap.String("job", role.Job), zap.Int("perms_length", len(toRemove)))
-			if err := p.RemoveAttributesFromRole(ctx, role.ID, toRemove...); err != nil {
-				return fmt.Errorf("failed to remove attributes from role %d. %w", role.ID, err)
+			if err := p.RemoveAttributesFromRole(ctx, role.Id, toRemove...); err != nil {
+				return fmt.Errorf("failed to remove attributes from role %d. %w", role.Id, err)
 			}
 		}
 
 		if len(toUpdate) > 0 {
 			p.logger.Debug("updating attribute on role due to job perms change", zap.String("job", role.Job), zap.Int("perms_length", len(toUpdate)))
-			if err := p.UpdateRoleAttributes(ctx, role.Job, role.ID, toUpdate...); err != nil {
-				return fmt.Errorf("failed to update attributes for role %d. %w", role.ID, err)
+			if err := p.UpdateRoleAttributes(ctx, role.Job, role.Id, toUpdate...); err != nil {
+				return fmt.Errorf("failed to update attributes for role %d. %w", role.Id, err)
 			}
 		}
 	}

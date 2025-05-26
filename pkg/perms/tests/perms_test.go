@@ -101,7 +101,7 @@ func TestBasicPerms(t *testing.T) {
 	assert.NoError(t, err, "GetRoleByJobAndGrade should not return an error")
 	require.NotNil(t, role, "GetRoleByJobAndGrade should return non-nil role")
 
-	rolePerms, err := ps.GetEffectiveRolePermissions(ctx, role.ID)
+	rolePerms, err := ps.GetEffectiveRolePermissions(ctx, role.Id)
 	assert.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
 	assert.Len(t, rolePerms, 43, "GetEffectiveRolePermissions should return 43 perms")
 
@@ -126,7 +126,7 @@ func TestBasicPerms(t *testing.T) {
 	role, err = ps.GetRoleByJobAndGrade(ctx, perms.DefaultRoleJob, userInfo.JobGrade)
 	assert.NoError(t, err, "GetRoleByJobAndGrade should not return an error")
 	require.NotNil(t, role, "GetRoleByJobAndGrade should return non-nil role")
-	rolePerms, err = ps.GetEffectiveRolePermissions(ctx, role.ID)
+	rolePerms, err = ps.GetEffectiveRolePermissions(ctx, role.Id)
 	assert.NoError(t, err, "GetEffectiveRolePermissions should not return an error")
 	assert.Len(t, rolePerms, 4, "GetEffectiveRolePermissions should return 4 perms")
 	attributes, err = ps.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
