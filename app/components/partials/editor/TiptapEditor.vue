@@ -173,9 +173,7 @@ const extensions: Extensions = [
 if (props.collabId && props.collabService) {
     const ydoc = new Y.Doc();
 
-    const { $grpc } = useNuxtApp();
-
-    const yProvider = new GrpcProvider(ydoc, $grpc.wiki.collab.joinDocument, {
+    const yProvider = new GrpcProvider(ydoc, props.collabService, {
         targetId: props.collabId,
     });
 
@@ -216,6 +214,8 @@ if (props.collabId && props.collabService) {
     );
 
     onBeforeUnmount(() => yProvider.destroy());
+
+    // TODO loading overlay is needed and a user count would be good
 } else {
     extensions.push(History);
 }

@@ -638,7 +638,8 @@
         "refresh_in_x": "Refresh in {d} {unit}",
         "personal": "Personal",
         "no_access_to_document": "No access to document",
-        "you": "You"
+        "you": "You",
+        "scroll_to_top": "Scroll to Top"
     },
     "components": {
         "partials": {

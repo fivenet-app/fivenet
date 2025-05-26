@@ -258,15 +258,6 @@
     - [SystemEvent](#resources-notifications-SystemEvent)
     - [UserEvent](#resources-notifications-UserEvent)
   
-- [resources/permissions/attributes.proto](#resources_permissions_attributes-proto)
-    - [AttributeValues](#resources-permissions-AttributeValues)
-    - [JobGradeList](#resources-permissions-JobGradeList)
-    - [JobGradeList.GradesEntry](#resources-permissions-JobGradeList-GradesEntry)
-    - [JobGradeList.JobsEntry](#resources-permissions-JobGradeList-JobsEntry)
-    - [JobGrades](#resources-permissions-JobGrades)
-    - [RoleAttribute](#resources-permissions-RoleAttribute)
-    - [StringList](#resources-permissions-StringList)
-  
 - [resources/permissions/events.proto](#resources_permissions_events-proto)
     - [JobLimitsUpdatedEvent](#resources-permissions-JobLimitsUpdatedEvent)
     - [RoleIDEvent](#resources-permissions-RoleIDEvent)
@@ -275,6 +266,15 @@
     - [PermItem](#resources-permissions-PermItem)
     - [Permission](#resources-permissions-Permission)
     - [Role](#resources-permissions-Role)
+  
+- [resources/permissions/attributes.proto](#resources_permissions_attributes-proto)
+    - [AttributeValues](#resources-permissions-AttributeValues)
+    - [JobGradeList](#resources-permissions-JobGradeList)
+    - [JobGradeList.GradesEntry](#resources-permissions-JobGradeList-GradesEntry)
+    - [JobGradeList.JobsEntry](#resources-permissions-JobGradeList-JobsEntry)
+    - [JobGrades](#resources-permissions-JobGrades)
+    - [RoleAttribute](#resources-permissions-RoleAttribute)
+    - [StringList](#resources-permissions-StringList)
   
 - [resources/qualifications/access.proto](#resources_qualifications_access-proto)
     - [QualificationAccess](#resources-qualifications-QualificationAccess)
@@ -4575,6 +4575,129 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources_permissions_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/permissions/events.proto
+
+
+
+<a name="resources-permissions-JobLimitsUpdatedEvent"></a>
+
+### JobLimitsUpdatedEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-permissions-RoleIDEvent"></a>
+
+### RoleIDEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `role_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `grade` | [int32](#int32) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_permissions_permissions-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/permissions/permissions.proto
+
+
+
+<a name="resources-permissions-PermItem"></a>
+
+### PermItem
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `val` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-permissions-Permission"></a>
+
+### Permission
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `category` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+| `guard_name` | [string](#string) |  |  |
+| `val` | [bool](#bool) |  |  |
+| `order` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="resources-permissions-Role"></a>
+
+### Role
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `permissions` | [Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_permissions_attributes-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4697,129 +4820,6 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `strings` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_permissions_events-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/permissions/events.proto
-
-
-
-<a name="resources-permissions-JobLimitsUpdatedEvent"></a>
-
-### JobLimitsUpdatedEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-permissions-RoleIDEvent"></a>
-
-### RoleIDEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `grade` | [int32](#int32) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_permissions_permissions-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/permissions/permissions.proto
-
-
-
-<a name="resources-permissions-PermItem"></a>
-
-### PermItem
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `val` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="resources-permissions-Permission"></a>
-
-### Permission
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `category` | [string](#string) |  |  |
-| `name` | [string](#string) |  |  |
-| `guard_name` | [string](#string) |  |  |
-| `val` | [bool](#bool) |  |  |
-| `order` | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="resources-permissions-Role"></a>
-
-### Role
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `permissions` | [Permission](#resources-permissions-Permission) | repeated |  |
-| `attributes` | [RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
 
 
 
@@ -6878,6 +6878,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `description` | [string](#string) |  |  |
 | `children` | [PageShort](#resources-wiki-PageShort) | repeated |  |
 | `root_info` | [PageRootInfo](#resources-wiki-PageRootInfo) | optional |  |
+| `level` | [int32](#int32) | optional |  |
 
 
 
@@ -12484,7 +12485,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `JoinDocument` | [.resources.collab.ClientPacket](#resources-collab-ClientPacket) stream | [.resources.collab.ServerPacket](#resources-collab-ServerPacket) stream | @perm: Name=wiki.WikiService/ListPages |
+| `JoinRoom` | [.resources.collab.ClientPacket](#resources-collab-ClientPacket) stream | [.resources.collab.ServerPacket](#resources-collab-ServerPacket) stream | @perm: Name=wiki.WikiService/ListPages |
 
  <!-- end services -->
 
@@ -14119,7 +14120,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `JoinDocument` | [.resources.collab.ClientPacket](#resources-collab-ClientPacket) stream | [.resources.collab.ServerPacket](#resources-collab-ServerPacket) stream | @perm: Name=documents.DocumentsService/ListDocuments |
+| `JoinRoom` | [.resources.collab.ClientPacket](#resources-collab-ClientPacket) stream | [.resources.collab.ServerPacket](#resources-collab-ServerPacket) stream | @perm: Name=documents.DocumentsService/ListDocuments |
 
  <!-- end services -->
 

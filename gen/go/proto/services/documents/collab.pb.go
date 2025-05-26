@@ -25,17 +25,17 @@ var File_services_documents_collab_proto protoreflect.FileDescriptor
 
 const file_services_documents_collab_proto_rawDesc = "" +
 	"\n" +
-	"\x1fservices/documents/collab.proto\x12\x12services.documents\x1a\x1dresources/collab/collab.proto2c\n" +
-	"\rCollabService\x12R\n" +
-	"\fJoinDocument\x12\x1e.resources.collab.ClientPacket\x1a\x1e.resources.collab.ServerPacket(\x010\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x1fservices/documents/collab.proto\x12\x12services.documents\x1a\x1dresources/collab/collab.proto2_\n" +
+	"\rCollabService\x12N\n" +
+	"\bJoinRoom\x12\x1e.resources.collab.ClientPacket\x1a\x1e.resources.collab.ServerPacket(\x010\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var file_services_documents_collab_proto_goTypes = []any{
 	(*collab.ClientPacket)(nil), // 0: resources.collab.ClientPacket
 	(*collab.ServerPacket)(nil), // 1: resources.collab.ServerPacket
 }
 var file_services_documents_collab_proto_depIdxs = []int32{
-	0, // 0: services.documents.CollabService.JoinDocument:input_type -> resources.collab.ClientPacket
-	1, // 1: services.documents.CollabService.JoinDocument:output_type -> resources.collab.ServerPacket
+	0, // 0: services.documents.CollabService.JoinRoom:input_type -> resources.collab.ClientPacket
+	1, // 1: services.documents.CollabService.JoinRoom:output_type -> resources.collab.ServerPacket
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

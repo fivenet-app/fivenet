@@ -14,7 +14,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func (s *Server) JoinDocument(stream pbdocuments.CollabService_JoinDocumentServer) error {
+func (s *Server) JoinRoom(stream pbdocuments.CollabService_JoinRoomServer) error {
 	ctx := stream.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

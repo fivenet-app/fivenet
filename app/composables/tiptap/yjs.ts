@@ -6,6 +6,8 @@ import { ClientPacket, type ServerPacket } from '~~/gen/ts/resources/collab/coll
 
 export type StreamConnectFn = (options?: RpcOptions) => DuplexStreamingCall<ClientPacket, ServerPacket>;
 
+const logger = useLogger('yjs:grpc');
+
 interface GrpcProviderOpts {
     /** Target id (e.g., document id, page id) */
     targetId: number;
@@ -30,15 +32,12 @@ export default class GrpcProvider {
     private reconnectAttempt = 0;
     private destroyed = false;
 
-    constructor(doc: Y.Doc, streamConnect: StreamConnectFn, opts: GrpcProviderOpts) {
+    constructor(doc: Y.Doc, streamProvider: StreamConnectFn, opts: GrpcProviderOpts) {
         this.yDoc = doc;
         this.opts = opts;
         this.awareness = new Awareness(doc);
 
-        this.streamConnect = streamConnect;
-
-        const { $grpc } = useNuxtApp();
-        this.stream = $grpc.documents.collab.joinDocument({});
+        this.streamConnect = streamProvider;
 
         /* Setup local listeners */
         this.yDoc.on('update', this.handleDocUpdate);
@@ -102,13 +101,13 @@ export default class GrpcProvider {
             }
 
             if (!this.clientId) {
-                console.warn('Received message before clientId was set', msg);
+                logger.warn('Received message before clientId was set', msg);
                 return;
             }
 
             // Ignore our own echoes (server broadcasts them to everyone incl. sender)
             if (msg.senderId === this.clientId) return;
-            console.log('message from', msg.senderId);
+            logger.debug('Received message from', msg.senderId);
 
             switch (msg.msg.oneofKind) {
                 case 'awareness': {
@@ -167,7 +166,7 @@ export default class GrpcProvider {
             },
         });
 
-        console.debug('SEND awareness', update.length);
+        logger.debug('Send awareness update', update.length);
         this.send(msg);
     };
 

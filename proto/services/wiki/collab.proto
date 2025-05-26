@@ -8,5 +8,5 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/
 
 service CollabService {
   // @perm: Name=wiki.WikiService/ListPages
-  rpc JoinDocument(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket);
+  rpc JoinRoom(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket);
 }

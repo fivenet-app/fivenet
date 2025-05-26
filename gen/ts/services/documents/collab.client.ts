@@ -16,9 +16,9 @@ export interface ICollabServiceClient {
     /**
      * @perm: Name=documents.DocumentsService/ListDocuments
      *
-     * @generated from protobuf rpc: JoinDocument(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket);
+     * @generated from protobuf rpc: JoinRoom(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket);
      */
-    joinDocument(options?: RpcOptions): DuplexStreamingCall<ClientPacket, ServerPacket>;
+    joinRoom(options?: RpcOptions): DuplexStreamingCall<ClientPacket, ServerPacket>;
 }
 /**
  * @generated from protobuf service services.documents.CollabService
@@ -32,9 +32,9 @@ export class CollabServiceClient implements ICollabServiceClient, ServiceInfo {
     /**
      * @perm: Name=documents.DocumentsService/ListDocuments
      *
-     * @generated from protobuf rpc: JoinDocument(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket);
+     * @generated from protobuf rpc: JoinRoom(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket);
      */
-    joinDocument(options?: RpcOptions): DuplexStreamingCall<ClientPacket, ServerPacket> {
+    joinRoom(options?: RpcOptions): DuplexStreamingCall<ClientPacket, ServerPacket> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
         return stackIntercept<ClientPacket, ServerPacket>("duplex", this._transport, method, opt);
     }

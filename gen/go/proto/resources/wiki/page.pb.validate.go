@@ -747,6 +747,21 @@ func (m *PageShort) validate(all bool) error {
 
 	}
 
+	if m.Level != nil {
+
+		if m.GetLevel() < 0 {
+			err := PageShortValidationError{
+				field:  "Level",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return PageShortMultiError(errors)
 	}

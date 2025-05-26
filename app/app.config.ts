@@ -202,8 +202,8 @@ export default defineAppConfig({
             },
             surround: {
                 icon: {
-                    prev: 'i-ph-arrow-left',
-                    next: 'i-ph-arrow-right',
+                    prev: 'i-mdi-arrow-left',
+                    next: 'i-mdi-arrow-right',
                 },
             },
             prose: {

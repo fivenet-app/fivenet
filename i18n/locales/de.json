@@ -637,7 +637,9 @@
         "uncheck_all": "Alle abwählen",
         "refresh_in_x": "Aktualisierung in {d} {unit}",
         "personal": "Persönlich",
-        "no_access_to_document": "Kein Zugriff auf das Dokument"
+        "no_access_to_document": "Kein Zugriff auf das Dokument",
+        "you": "Sie",
+        "scroll_to_top": "Nach oben scrollen"
     },
     "components": {
         "partials": {

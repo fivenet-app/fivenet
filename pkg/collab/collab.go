@@ -38,6 +38,10 @@ type CollabServer struct {
 }
 
 func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, category string) *CollabServer {
+	if category == "" {
+		panic("collab category must not be empty")
+	}
+
 	return &CollabServer{
 		ctx:    ctx,
 		logger: logger.Named("collab_server").With(zap.String("category", category)),

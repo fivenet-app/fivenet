@@ -368,6 +368,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-model="state.content"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 rounded="rounded-none"
+                                :collab-id="modelValue?.id"
+                                :collab-service="
+                                    (options) => {
+                                        const { $grpc } = useNuxtApp();
+                                        return $grpc.wiki.collab.joinRoom(options);
+                                    }
+                                "
                             >
                                 <template #linkModal="{ state: linkState }">
                                     <UDivider class="mt-1" :label="$t('common.or')" orientation="horizontal" />

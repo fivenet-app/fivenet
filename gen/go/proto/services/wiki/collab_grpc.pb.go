@@ -20,7 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CollabService_JoinDocument_FullMethodName = "/services.wiki.CollabService/JoinDocument"
+	CollabService_JoinRoom_FullMethodName = "/services.wiki.CollabService/JoinRoom"
 )
 
 // CollabServiceClient is the client API for CollabService service.
@@ -28,7 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CollabServiceClient interface {
 	// @perm: Name=wiki.WikiService/ListPages
-	JoinDocument(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[collab.ClientPacket, collab.ServerPacket], error)
+	JoinRoom(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[collab.ClientPacket, collab.ServerPacket], error)
 }
 
 type collabServiceClient struct {
@@ -39,9 +39,9 @@ func NewCollabServiceClient(cc grpc.ClientConnInterface) CollabServiceClient {
 	return &collabServiceClient{cc}
 }
 
-func (c *collabServiceClient) JoinDocument(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[collab.ClientPacket, collab.ServerPacket], error) {
+func (c *collabServiceClient) JoinRoom(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[collab.ClientPacket, collab.ServerPacket], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &CollabService_ServiceDesc.Streams[0], CollabService_JoinDocument_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &CollabService_ServiceDesc.Streams[0], CollabService_JoinRoom_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -50,14 +50,14 @@ func (c *collabServiceClient) JoinDocument(ctx context.Context, opts ...grpc.Cal
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CollabService_JoinDocumentClient = grpc.BidiStreamingClient[collab.ClientPacket, collab.ServerPacket]
+type CollabService_JoinRoomClient = grpc.BidiStreamingClient[collab.ClientPacket, collab.ServerPacket]
 
 // CollabServiceServer is the server API for CollabService service.
 // All implementations must embed UnimplementedCollabServiceServer
 // for forward compatibility.
 type CollabServiceServer interface {
 	// @perm: Name=wiki.WikiService/ListPages
-	JoinDocument(grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error
+	JoinRoom(grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error
 	mustEmbedUnimplementedCollabServiceServer()
 }
 
@@ -68,8 +68,8 @@ type CollabServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedCollabServiceServer struct{}
 
-func (UnimplementedCollabServiceServer) JoinDocument(grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
-	return status.Errorf(codes.Unimplemented, "method JoinDocument not implemented")
+func (UnimplementedCollabServiceServer) JoinRoom(grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
+	return status.Errorf(codes.Unimplemented, "method JoinRoom not implemented")
 }
 func (UnimplementedCollabServiceServer) mustEmbedUnimplementedCollabServiceServer() {}
 func (UnimplementedCollabServiceServer) testEmbeddedByValue()                       {}
@@ -92,12 +92,12 @@ func RegisterCollabServiceServer(s grpc.ServiceRegistrar, srv CollabServiceServe
 	s.RegisterService(&CollabService_ServiceDesc, srv)
 }
 
-func _CollabService_JoinDocument_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(CollabServiceServer).JoinDocument(&grpc.GenericServerStream[collab.ClientPacket, collab.ServerPacket]{ServerStream: stream})
+func _CollabService_JoinRoom_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CollabServiceServer).JoinRoom(&grpc.GenericServerStream[collab.ClientPacket, collab.ServerPacket]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CollabService_JoinDocumentServer = grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]
+type CollabService_JoinRoomServer = grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]
 
 // CollabService_ServiceDesc is the grpc.ServiceDesc for CollabService service.
 // It's only intended for direct use with grpc.RegisterService,
@@ -108,8 +108,8 @@ var CollabService_ServiceDesc = grpc.ServiceDesc{
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "JoinDocument",
-			Handler:       _CollabService_JoinDocument_Handler,
+			StreamName:    "JoinRoom",
+			Handler:       _CollabService_JoinRoom_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},

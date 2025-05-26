@@ -268,6 +268,7 @@ type PageShort struct {
 	Description   string        `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
 	Children      []*PageShort  `protobuf:"bytes,9,rep,name=children,proto3" json:"children,omitempty"`
 	RootInfo      *PageRootInfo `protobuf:"bytes,10,opt,name=root_info,json=rootInfo,proto3,oneof" json:"root_info,omitempty"`
+	Level         *int32        `protobuf:"varint,11,opt,name=level,proto3,oneof" json:"level,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -372,6 +373,13 @@ func (x *PageShort) GetRootInfo() *PageRootInfo {
 	return nil
 }
 
+func (x *PageShort) GetLevel() int32 {
+	if x != nil && x.Level != nil {
+		return *x.Level
+	}
+	return 0
+}
+
 type PageRootInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Logo          *filestore.File        `protobuf:"bytes,1,opt,name=logo,proto3,oneof" json:"logo,omitempty"`
@@ -458,7 +466,7 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x06\n" +
-	"\x04_toc\"\xda\x03\n" +
+	"\x04_toc\"\x88\x04\n" +
 	"\tPageShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x182R\x03job\x12)\n" +
@@ -471,7 +479,8 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\vdescription\x18\b \x01(\tR\vdescription\x125\n" +
 	"\bchildren\x18\t \x03(\v2\x19.resources.wiki.PageShortR\bchildren\x12>\n" +
 	"\troot_info\x18\n" +
-	" \x01(\v2\x1c.resources.wiki.PageRootInfoH\x04R\brootInfo\x88\x01\x01B\f\n" +
+	" \x01(\v2\x1c.resources.wiki.PageRootInfoH\x04R\brootInfo\x88\x01\x01\x12\"\n" +
+	"\x05level\x18\v \x01(\x05B\a\xfaB\x04\x1a\x02(\x00H\x05R\x05level\x88\x01\x01B\f\n" +
 	"\n" +
 	"_job_labelB\f\n" +
 	"\n" +
@@ -479,7 +488,8 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\v_deleted_atB\a\n" +
 	"\x05_slugB\f\n" +
 	"\n" +
-	"_root_info\"K\n" +
+	"_root_infoB\b\n" +
+	"\x06_level\"K\n" +
 	"\fPageRootInfo\x122\n" +
 	"\x04logo\x18\x01 \x01(\v2\x19.resources.filestore.FileH\x00R\x04logo\x88\x01\x01B\a\n" +
 	"\x05_logoBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"

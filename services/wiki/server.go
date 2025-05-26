@@ -51,6 +51,7 @@ var (
 
 type Server struct {
 	pbwiki.WikiServiceServer
+	pbwiki.CollabServiceServer
 
 	logger *zap.Logger
 	db     *sql.DB
@@ -166,6 +167,7 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbwiki.RegisterWikiServiceServer(srv, s)
+	pbwiki.RegisterCollabServiceServer(srv, s)
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

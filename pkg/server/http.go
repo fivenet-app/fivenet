@@ -224,6 +224,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	// GRPC-web and websocket handling
 	wrapperGrpc := grpcws.WrapServer(p.GRPCSrv,
 		grpcws.WithAllowedRequestHeaders(allowedHeaders),
+		grpcws.WithWebsocketsMessageReadLimit(4*1024*1024), // 4 MB in bytes
 	)
 	e.GET("/api/grpcws", func(ctx *gin.Context) {
 		resp, req := ctx.Writer, ctx.Request
