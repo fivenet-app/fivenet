@@ -171,11 +171,18 @@ func (p *Perms) GetRole(ctx context.Context, id uint64) (*permissions.Role, erro
 		FROM(tRoles).
 		WHERE(
 			tRoles.ID.EQ(jet.Uint64(id)),
-		)
+		).
+		LIMIT(1)
 
 	var dest permissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, fmt.Errorf("failed to get role with ID %d. %w", id, err)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to get role with ID %d. %w", id, err)
+		}
+	}
+
+	if dest.Id == 0 {
+		return nil, nil
 	}
 
 	return &dest, nil

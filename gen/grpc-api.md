@@ -264,7 +264,6 @@
     - [JobGradeList.GradesEntry](#resources-permissions-JobGradeList-GradesEntry)
     - [JobGradeList.JobsEntry](#resources-permissions-JobGradeList-JobsEntry)
     - [JobGrades](#resources-permissions-JobGrades)
-    - [RawRoleAttribute](#resources-permissions-RawRoleAttribute)
     - [RoleAttribute](#resources-permissions-RoleAttribute)
     - [StringList](#resources-permissions-StringList)
   
@@ -4643,30 +4642,6 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `grades` | [int32](#int32) | repeated |  |
-
-
-
-
-
-
-<a name="resources-permissions-RawRoleAttribute"></a>
-
-### RawRoleAttribute
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `role_id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `attr_id` | [uint64](#uint64) |  |  |
-| `permission_id` | [uint64](#uint64) |  |  |
-| `category` | [string](#string) |  |  |
-| `name` | [string](#string) |  |  |
-| `key` | [string](#string) |  |  |
-| `type` | [string](#string) |  |  |
-| `valid_values` | [AttributeValues](#resources-permissions-AttributeValues) |  |  |
-| `value` | [AttributeValues](#resources-permissions-AttributeValues) |  |  |
 
 
 

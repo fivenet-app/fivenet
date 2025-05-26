@@ -404,7 +404,7 @@ export const useMailerStore = defineStore(
 
                 const idx = emails.value.findIndex((e) => e.id === req.id);
                 if (idx > -1) {
-                    emails.value.slice(idx, 1);
+                    emails.value.splice(idx, 1);
                 }
 
                 useNotificatorStore().restartStream();

@@ -18,6 +18,7 @@ import (
 	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 type Key string
@@ -61,6 +62,7 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 		ids[i] = jet.Uint64(attrIds[i])
 	}
 
+	tAttrs := table.FivenetRbacAttrs.AS("role_attribute")
 	stmt := tAttrs.
 		SELECT(
 			tAttrs.ID,
@@ -76,31 +78,24 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 		)).
 		LIMIT(1)
 
-	var dest []*model.FivenetRbacAttrs
+	var dest []*permissions.RoleAttribute
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
-	attrs := make([]*permissions.RoleAttribute, len(dest))
 	for i := range dest {
-		attr, ok := p.LookupAttributeByID(dest[i].ID)
+		attr, ok := p.LookupAttributeByID(dest[i].AttrId)
 		if !ok {
 			return nil, fmt.Errorf("no attribute found by id")
 		}
 
-		attrs[i] = &permissions.RoleAttribute{
-			AttrId:       dest[i].ID,
-			PermissionId: dest[i].PermissionID,
-			Key:          dest[i].Key,
-			Type:         dest[i].Type,
-			Category:     string(attr.Category),
-			Name:         string(attr.Name),
-			ValidValues:  attr.ValidValues,
-			MaxValues:    nil,
-		}
+		dest[i].Category = string(attr.Category)
+		dest[i].Name = string(attr.Name)
 	}
 
-	return attrs, nil
+	return dest, nil
 }
 
 func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key Key) (*model.FivenetRbacAttrs, error) {
@@ -121,9 +116,10 @@ func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key
 		LIMIT(1)
 
 	var dest model.FivenetRbacAttrs
-
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, fmt.Errorf("failed to query attribute from database. %w", err)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to query attribute from database. %w", err)
+		}
 	}
 
 	return &dest, nil
@@ -256,12 +252,15 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 	return nil
 }
 
-func (p *Perms) GetJobAttribute(ctx context.Context, job string, attrId uint64) (*permissions.AttributeValues, error) {
+func (p *Perms) GetJobAttributeValue(ctx context.Context, job string, attrId uint64) (*permissions.AttributeValues, error) {
+	tJobAttrs := table.FivenetRbacJobAttrs.AS("role_attribute")
 	stmt := tJobAttrs.
 		SELECT(
 			tJobAttrs.MaxValues.AS("value"),
 		).
-		FROM(tJobAttrs).
+		FROM(
+			tJobAttrs,
+		).
 		WHERE(jet.AND(
 			tJobAttrs.Job.EQ(jet.String(job)),
 			tJobAttrs.AttrID.EQ(jet.Uint64(attrId)),
@@ -272,31 +271,48 @@ func (p *Perms) GetJobAttribute(ctx context.Context, job string, attrId uint64) 
 		Value *permissions.AttributeValues `alias:"value"`
 	}{}
 	if err := stmt.QueryContext(ctx, p.db, dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return dest.Value, nil
 }
 
 func (p *Perms) GetJobAttributes(ctx context.Context, job string) ([]*permissions.RoleAttribute, error) {
+	tJobAttrs := table.FivenetRbacJobAttrs.AS("role_attribute")
+	tAttrs := table.FivenetRbacAttrs
 	stmt := tJobAttrs.
 		SELECT(
 			tJobAttrs.Job,
 			tJobAttrs.AttrID,
+			tAttrs.PermissionID.AS("role_attribute.permission_id"),
+			tPerms.Category.AS("role_attribute.category"),
+			tPerms.Name.AS("role_attribute.name"),
+			tAttrs.Key.AS("role_attribute.key"),
+			tAttrs.Type.AS("role_attribute.type"),
+			tAttrs.ValidValues.AS("role_attribute.valid_values"),
 			tJobAttrs.MaxValues,
 		).
-		FROM(tJobAttrs).
-		WHERE(
-			tJobAttrs.Job.EQ(jet.String(job)),
-		)
+		FROM(
+			tJobAttrs.
+				INNER_JOIN(tAttrs,
+					tAttrs.ID.EQ(tJobAttrs.AttrID),
+				).
+				INNER_JOIN(tPerms,
+					tPerms.ID.EQ(tAttrs.PermissionID),
+				),
+		).
+		WHERE(tJobAttrs.Job.EQ(jet.String(job)))
+
 	dest := []*permissions.RoleAttribute{}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
-	attrs := []*permissions.RoleAttribute{}
-
-	return attrs, nil
+	return dest, nil
 }
 
 func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.AttributeValues, error) {
@@ -328,7 +344,7 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 		return nil, nil
 	}
 
-	return cached.Value, nil
+	return proto.Clone(cached.Value).(*permissions.AttributeValues), nil
 }
 
 func (p *Perms) AttrStringList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error) {
@@ -401,13 +417,13 @@ func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal s
 func (p *Perms) GetAllAttributes(ctx context.Context) ([]*permissions.RoleAttribute, error) {
 	stmt := tAttrs.
 		SELECT(
-			tAttrs.ID.AS("rawroleattribute.attr_id"),
-			tAttrs.PermissionID.AS("rawroleattribute.permission_id"),
-			tPerms.Category.AS("rawroleattribute.category"),
-			tPerms.Name.AS("rawroleattribute.name"),
-			tAttrs.Key.AS("rawroleattribute.key"),
-			tAttrs.Type.AS("rawroleattribute.type"),
-			tAttrs.ValidValues.AS("rawroleattribute.valid_values"),
+			tAttrs.ID.AS("role_attribute.attr_id"),
+			tAttrs.PermissionID.AS("role_attribute.permission_id"),
+			tPerms.Category.AS("role_attribute.category"),
+			tPerms.Name.AS("role_attribute.name"),
+			tAttrs.Key.AS("role_attribute.key"),
+			tAttrs.Type.AS("role_attribute.type"),
+			tAttrs.ValidValues.AS("role_attribute.valid_values"),
 		).
 		FROM(tAttrs.
 			INNER_JOIN(tPerms,
@@ -415,29 +431,28 @@ func (p *Perms) GetAllAttributes(ctx context.Context) ([]*permissions.RoleAttrib
 			),
 		)
 
-	var dest []*permissions.RawRoleAttribute
+	var dest []*permissions.RoleAttribute
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to query all attributes. %w", err)
 		}
 	}
 
-	res := make([]*permissions.RoleAttribute, len(dest))
-	for i := range res {
-		if res[i].Value == nil {
-			res[i].Value = &permissions.AttributeValues{}
-			res[i].Value.Default(permissions.AttributeTypes(dest[i].Type))
+	for i := range dest {
+		if dest[i].Value == nil {
+			dest[i].Value = &permissions.AttributeValues{}
+			dest[i].Value.Default(permissions.AttributeTypes(dest[i].Type))
 		}
 
-		if res[i].ValidValues == nil {
-			res[i].ValidValues = &permissions.AttributeValues{}
-			res[i].ValidValues.Default(permissions.AttributeTypes(dest[i].Type))
+		if dest[i].ValidValues == nil {
+			dest[i].ValidValues = &permissions.AttributeValues{}
+			dest[i].ValidValues.Default(permissions.AttributeTypes(dest[i].Type))
 		}
 
 		// MaxValues are not set because we don't know the job context here
 	}
 
-	return res, nil
+	return dest, nil
 }
 
 func (p *Perms) GetRoleAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error) {
@@ -449,27 +464,31 @@ func (p *Perms) GetRoleAttributes(ctx context.Context, job string, grade int32) 
 		}
 	}
 
-	attrMap, ok := p.attrsRoleMap.Load(roleId)
+	attrsRoleMap, ok := p.attrsRoleMap.Load(roleId)
 	if !ok {
 		return []*permissions.RoleAttribute{}, nil
 	}
 
 	var err error
 	attrs := []*permissions.RoleAttribute{}
-	attrMap.Range(func(key uint64, value *cacheRoleAttr) bool {
+	attrsRoleMap.Range(func(key uint64, value *cacheRoleAttr) bool {
 		attr, ok := p.LookupAttributeByID(key)
 		if !ok {
 			err = fmt.Errorf("no attribute found by id for role. %w", fmt.Errorf("attribute ID not found"))
 			return false
 		}
 
-		attrVal, ok := attrMap.Load(attr.ID)
+		attrVal, ok := attrsRoleMap.Load(attr.ID)
 		if !ok {
 			err = fmt.Errorf("no role attribute found by id for role. %w", fmt.Errorf("role attribute ID not found"))
 			return false
 		}
 
-		maxVals, _ := p.GetJobAttribute(ctx, job, attr.ID)
+		maxValues, er := p.GetJobAttributeValue(ctx, job, attr.ID)
+		if er != nil {
+			err = fmt.Errorf("failed to retrieve max values for attribute %s/%s/%s. %w", attr.Category, attr.Name, attr.Key, er)
+			return false
+		}
 
 		attrs = append(attrs, &permissions.RoleAttribute{
 			RoleId:       roleId,
@@ -481,7 +500,7 @@ func (p *Perms) GetRoleAttributes(ctx context.Context, job string, grade int32) 
 			Type:         string(attr.Type),
 			Value:        attrVal.Value,
 			ValidValues:  attr.ValidValues,
-			MaxValues:    maxVals,
+			MaxValues:    maxValues,
 		})
 
 		return true
@@ -540,7 +559,7 @@ func (p *Perms) GetEffectiveRoleAttributes(ctx context.Context, job string, grad
 				return false
 			}
 
-			maxVal, _ := p.GetJobAttribute(ctx, job, attr.ID)
+			maxVal, _ := p.GetJobAttributeValue(ctx, job, attr.ID)
 
 			attrs = append(attrs, &permissions.RoleAttribute{
 				RoleId:       roleIds[i],
@@ -655,7 +674,7 @@ func (p *Perms) UpdateRoleAttributes(ctx context.Context, job string, roleId uin
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
 
-			maxValues, err := p.GetJobAttribute(ctx, job, a.ID)
+			maxValues, err := p.GetJobAttributeValue(ctx, job, a.ID)
 			if err != nil {
 				return fmt.Errorf("failed to retrieve max values for attribute %s/%s/%s. %w", a.Category, a.Name, a.Key, err)
 			}

@@ -1952,7 +1952,7 @@
                         "Jobs": "Fraktionen"
                     }
                 },
-                "CompleteLabels": {
+                "CompleteCitizenLabels": {
                     "key": "Auflisten von Bürger-Labels",
                     "description": "Damit wird der Zugriff auf Bürger-Labels von anderen Berufen kontrolliert.",
                     "attrs_types": {
