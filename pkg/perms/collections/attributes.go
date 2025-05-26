@@ -1,11 +1,11 @@
 package collections
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 )
 
 // Attributes provides methods for you to manage array data more easily.
-type Attributes []*model.FivenetRbacAttrs
+type Attributes []*permissions.RoleAttribute
 
 // Len returns the number of elements of the array.
 // @return int64
@@ -17,7 +17,7 @@ func (u Attributes) Len() (length int64) {
 // @return []uint
 func (u Attributes) IDs() (IDs []uint64) {
 	for _, attribute := range u {
-		IDs = append(IDs, attribute.ID)
+		IDs = append(IDs, attribute.AttrId)
 	}
 	return IDs
 }

@@ -155,10 +155,10 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotNil(t, perm)
 
 	// user-1: Choose valid character, the job role doesn't have permissions but the **default permissions** should still allow us to login
-	err = srv.ps.RemovePermissionsFromRole(ctx, role.ID, perm.Id)
+	err = srv.ps.RemovePermissionsFromRole(ctx, role.Id, perm.Id)
 	assert.NoError(t, err)
 	// Disable choose char perm but the **default permissions** will still allow us to login
-	err = srv.ps.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
+	err = srv.ps.UpdateRolePermissions(ctx, role.Id, perms.AddPerm{
 		Id:  perm.Id,
 		Val: false,
 	})
@@ -169,7 +169,7 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotNil(t, chooseCharRes)
 
 	// user-1: Choose valid character, now we allow "choose char" perm for the job role
-	err = srv.ps.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
+	err = srv.ps.UpdateRolePermissions(ctx, role.Id, perms.AddPerm{
 		Id:  perm.Id,
 		Val: true,
 	})

@@ -11,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -23,7 +22,7 @@ const (
 )
 
 var (
-	tRoles     = table.FivenetRbacRoles
+	tRoles     = table.FivenetRbacRoles.AS("role")
 	tRolePerms = table.FivenetRbacRolesPermissions
 	tJobPerms  = table.FivenetRbacJobPermissions
 )
@@ -116,7 +115,7 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 	return dest, nil
 }
 
-func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error) {
+func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) (*permissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -131,7 +130,7 @@ func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) 
 		)).
 		LIMIT(1)
 
-	var dest model.FivenetRbacRoles
+	var dest permissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, fmt.Errorf("failed to get closest job role for job %s and grade %d. %w", job, grade, err)
@@ -161,7 +160,7 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 	return dest.Total, nil
 }
 
-func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRbacRoles, error) {
+func (p *Perms) GetRole(ctx context.Context, id uint64) (*permissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -174,7 +173,7 @@ func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRbacRoles
 			tRoles.ID.EQ(jet.Uint64(id)),
 		)
 
-	var dest model.FivenetRbacRoles
+	var dest permissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to get role with ID %d. %w", id, err)
 	}
@@ -182,7 +181,8 @@ func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRbacRoles
 	return &dest, nil
 }
 
-func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error) {
+func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*permissions.Role, error) {
+	tRoles := table.FivenetRbacRoles
 	stmt := tRoles.
 		INSERT(
 			tRoles.Job,
@@ -198,7 +198,7 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 		return nil, fmt.Errorf("failed to create role for job %s and grade %d. %w", job, grade, err)
 	}
 
-	var role *model.FivenetRbacRoles
+	var role *permissions.Role
 	if res != nil {
 		lastId, err := res.LastInsertId()
 		if err != nil {
@@ -216,21 +216,21 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 		}
 	}
 
-	p.permsRoleMap.Store(role.ID, xsync.NewMap[uint64, bool]())
+	p.permsRoleMap.Store(role.Id, xsync.NewMap[uint64, bool]())
 
 	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() (*xsync.Map[int32, uint64], bool) {
 		return xsync.NewMap[int32, uint64](), false
 	})
-	grades.Store(role.Grade, role.ID)
+	grades.Store(role.Grade, role.Id)
 
-	p.roleIDToJobMap.Store(role.ID, role.Job)
+	p.roleIDToJobMap.Store(role.Id, role.Job)
 
 	if err := p.publishMessage(ctx, RoleCreatedSubject, &permissions.RoleIDEvent{
-		RoleId: role.ID,
+		RoleId: role.Id,
 		Job:    role.Job,
 		Grade:  role.Grade,
 	}); err != nil {
-		return nil, fmt.Errorf("failed to publish role creation message for role ID %d. %w", role.ID, err)
+		return nil, fmt.Errorf("failed to publish role creation message for role ID %d. %w", role.Id, err)
 	}
 
 	return role, nil
@@ -247,6 +247,7 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 		return fmt.Errorf("failed to retrieve role for deletion with ID %d. %w", id, err)
 	}
 
+	tRoles := table.FivenetRbacRoles
 	stmt := tRoles.
 		DELETE().
 		WHERE(
@@ -258,14 +259,14 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	}
 
 	if err := p.publishMessage(ctx, RoleDeletedSubject, &permissions.RoleIDEvent{
-		RoleId: role.ID,
+		RoleId: role.Id,
 		Job:    role.Job,
 		Grade:  role.Grade,
 	}); err != nil {
-		return fmt.Errorf("failed to publish role deletion message for role ID %d. %w", role.ID, err)
+		return fmt.Errorf("failed to publish role deletion message for role ID %d. %w", role.Id, err)
 	}
 
-	p.deleteRole(role.ID, role.Job, role.Grade)
+	p.deleteRole(role.Id, role.Job, role.Grade)
 
 	return nil
 }
@@ -281,7 +282,7 @@ func (p *Perms) deleteRole(id uint64, job string, grade int32) {
 	p.roleIDToJobMap.Delete(id)
 }
 
-func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRbacRoles, error) {
+func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*permissions.Role, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.ID,
@@ -296,7 +297,7 @@ func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int3
 		)).
 		LIMIT(1)
 
-	var dest model.FivenetRbacRoles
+	var dest permissions.Role
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil

@@ -182,7 +182,7 @@ func (s *Server) DeleteFaction(ctx context.Context, req *pbsettings.DeleteFactio
 
 	errs := multierr.Combine()
 	for _, role := range roles {
-		if err := s.ps.DeleteRole(ctx, role.ID); err != nil {
+		if err := s.ps.DeleteRole(ctx, role.Id); err != nil {
 			errs = multierr.Append(errs, err)
 			continue
 		}
