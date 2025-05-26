@@ -8,7 +8,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions';
 import type { AttrsUpdate, PermsUpdate } from '~~/gen/ts/services/settings/settings';
 import EffectivePermsSlideover from './EffectivePermsSlideover.vue';
@@ -56,7 +56,30 @@ async function getRole(id: number): Promise<Role> {
         });
         const { response } = await call;
 
+        clearState();
+
+        await getPermissions(id);
+
+        await propogateRolePermissionStates(response.role!);
+
         return response.role!;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+async function getPermissions(roleId: number): Promise<void> {
+    try {
+        const call = $grpc.settings.settings.getPermissions({
+            roleId: roleId,
+        });
+        const { response } = await call;
+
+        permList.value = response.permissions;
+        attrList.value = response.attributes;
+
+        await genPermissionCategories();
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -82,23 +105,6 @@ async function deleteRole(id: number): Promise<void> {
     }
 }
 
-async function getPermissions(roleId: number): Promise<void> {
-    try {
-        const call = $grpc.settings.settings.getPermissions({
-            roleId: roleId,
-        });
-        const { response } = await call;
-
-        permList.value = response.permissions;
-        attrList.value = response.attributes;
-
-        genPermissionCategories();
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
-
 async function genPermissionCategories(): Promise<void> {
     permCategories.value.clear();
 
@@ -107,14 +113,12 @@ async function genPermissionCategories(): Promise<void> {
     });
 }
 
-async function propogatePermissionStates(): Promise<void> {
+async function propogateRolePermissionStates(role: Role): Promise<void> {
     permStates.value.clear();
 
-    role.value?.permissions.forEach((perm) => {
-        permStates.value.set(perm.id, Boolean(perm.val));
-    });
+    role.permissions.forEach((perm) => permStates.value.set(perm.id, Boolean(perm.val)));
 
-    role.value?.attributes.forEach((attr) => {
+    role.attributes.forEach((attr) => {
         const idx = attrList.value.findIndex((a) => a.attrId === attr.attrId);
         if (idx > -1 && attrList.value[idx]) {
             attrList.value[idx].value = attr.value;
@@ -210,7 +214,7 @@ async function updateRolePerms(): Promise<void> {
         });
 
         changed.value = false;
-        refresh();
+        await refresh();
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -220,19 +224,10 @@ async function updateRolePerms(): Promise<void> {
 function clearState(): void {
     changed.value = false;
     permList.value.length = 0;
+    attrList.value.length = 0;
     permCategories.value.clear();
     permStates.value.clear();
-    attrList.value.length = 0;
 }
-
-async function initializeRoleView(): Promise<void> {
-    clearState();
-
-    await getPermissions(props.roleId);
-    await propogatePermissionStates();
-}
-
-watch(role, async () => initializeRoleView());
 
 watch(props, async () => {
     if (!role.value || role.value?.id !== props.roleId) {
@@ -384,7 +379,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" />
+            <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" :retry="refresh" />
 
             <template v-else>
                 <div class="flex justify-between">

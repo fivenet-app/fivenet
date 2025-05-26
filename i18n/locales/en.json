@@ -1952,7 +1952,7 @@
                         "Jobs": "Factions"
                     }
                 },
-                "CompleteLabels": {
+                "CompleteCitizenLabels": {
                     "key": "List job's citizen labels",
                     "description": "Complete citizen labels from multiple jobs.",
                     "attrs_types": {

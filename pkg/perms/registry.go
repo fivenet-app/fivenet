@@ -164,12 +164,12 @@ func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category,
 
 	if perm != nil {
 		if Category(perm.Category) != category || Name(perm.Name) != name || (perm.Order == nil || *perm.Order != order) {
-			if err := p.UpdatePermission(ctx, perm.ID, category, name); err != nil {
-				return perm.ID, fmt.Errorf("failed to update permission. %w", err)
+			if err := p.UpdatePermission(ctx, perm.Id, category, name); err != nil {
+				return perm.Id, fmt.Errorf("failed to update permission. %w", err)
 			}
 		}
 
-		return perm.ID, nil
+		return perm.Id, nil
 	}
 
 	return p.CreatePermission(ctx, category, name)
@@ -476,7 +476,7 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, roles collection
 		toRemove := []*permissions.RoleAttribute{}
 		toUpdate := []*permissions.RoleAttribute{}
 		for _, attr := range attrs {
-			maxValues, _ := p.GetJobAttribute(ctx, role.Job, attr.AttrId)
+			maxValues, _ := p.GetJobAttributeValue(ctx, role.Job, attr.AttrId)
 
 			if slices.ContainsFunc(jps, func(in *permissions.Permission) bool {
 				return in.Id == attr.PermissionId

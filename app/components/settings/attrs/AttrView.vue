@@ -379,7 +379,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="!jobLimits" :type="$t('common.job', 1)" />
+            <DataNoDataBlock v-else-if="!jobLimits" :type="$t('common.job', 1)" :retry="refresh" />
 
             <template v-else>
                 <div class="flex justify-between">

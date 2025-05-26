@@ -6,7 +6,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -51,7 +50,7 @@ func (p *Perms) CreatePermission(ctx context.Context, category Category, name Na
 	return uint64(lastId), nil
 }
 
-func (p *Perms) loadPermissionFromDatabaseByCategoryName(ctx context.Context, category Category, name Name) (*model.FivenetRbacPermissions, error) {
+func (p *Perms) loadPermissionFromDatabaseByCategoryName(ctx context.Context, category Category, name Name) (*permissions.Permission, error) {
 	stmt := tPerms.
 		SELECT(
 			tPerms.ID,
@@ -67,10 +66,16 @@ func (p *Perms) loadPermissionFromDatabaseByCategoryName(ctx context.Context, ca
 		)).
 		LIMIT(1)
 
-	dest := &model.FivenetRbacPermissions{}
+	dest := &permissions.Permission{}
 
 	if err := stmt.QueryContext(ctx, p.db, dest); err != nil {
-		return nil, fmt.Errorf("failed to query permission by guard. %w", err)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to query permission by guard. %w", err)
+		}
+	}
+
+	if dest.Id == 0 {
+		return nil, nil
 	}
 
 	return dest, nil
@@ -181,7 +186,9 @@ func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*perm
 
 	var dest []*permissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, fmt.Errorf("failed to query permissions by IDs. %w", err)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to query permissions by IDs. %w", err)
+		}
 	}
 
 	return dest, nil
@@ -207,7 +214,13 @@ func (p *Perms) GetPermission(ctx context.Context, category Category, name Name)
 
 	var dest permissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, fmt.Errorf("failed to query permission by category and name. %w", err)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, fmt.Errorf("failed to query permission by category and name. %w", err)
+		}
+	}
+
+	if dest.Id == 0 {
+		return nil, nil
 	}
 
 	return &dest, nil

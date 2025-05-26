@@ -169,28 +169,27 @@ func (s *Server) GetRole(ctx context.Context, req *pbsettings.GetRoleRequest) (*
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
 
+	fPerms, err := s.filterPermissions(ctx, role.Job, perms)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
+	}
+
 	resp := &pbsettings.GetRoleResponse{
 		Role: &permissions.Role{
 			Id:        role.Id,
 			CreatedAt: role.CreatedAt,
 			Job:       role.Job,
 			Grade:     role.Grade,
+
+			Permissions: fPerms,
 		},
 	}
-	s.enricher.EnrichJobInfo(resp.Role)
-
-	fPerms, err := s.filterPermissions(ctx, role.Job, perms)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
-	}
-
-	resp.Role.Permissions = make([]*permissions.Permission, len(fPerms))
-	copy(resp.Role.Permissions, fPerms)
-
 	resp.Role.Attributes, err = s.ps.GetRoleAttributes(ctx, role.Job, role.Grade)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
+
+	s.enricher.EnrichJobInfo(resp.Role)
 
 	return resp, nil
 }

@@ -77,41 +77,6 @@ func (m *JobGrades) Sanitize() error {
 	return nil
 }
 
-func (m *RawRoleAttribute) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: CreatedAt
-	if m.CreatedAt != nil {
-		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: ValidValues
-	if m.ValidValues != nil {
-		if v, ok := any(m.GetValidValues()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Value
-	if m.Value != nil {
-		if v, ok := any(m.GetValue()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
 func (m *RoleAttribute) Sanitize() error {
 	if m == nil {
 		return nil
