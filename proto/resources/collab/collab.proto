@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package resources.collab;
+
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab;collab";
+
+enum ClientRole {
+  CLIENT_ROLE_UNSPECIFIED = 0;
+  CLIENT_ROLE_READER = 1;
+  CLIENT_ROLE_WRITER = 2;
+}
+
+message ClientPacket {
+  oneof msg {
+    option (validate.required) = true;
+
+    // Must be the first message
+    CollabHello hello = 1;
+    YjsUpdate yjs_update = 2;
+    AwarenessPing awareness = 3;
+  }
+}
+
+message CollabHello {
+  uint64 target_id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message YjsUpdate {
+  bytes data = 1;
+}
+
+message AwarenessPing {
+  bytes data = 1;
+}
+
+message ServerPacket {
+  // Who generated this packet (same ID used in awareness)
+  uint64 sender_id = 1 [(validate.rules).uint64.gt = 0];
+  oneof msg {
+    option (validate.required) = true;
+
+    uint64 client_id = 2;
+    YjsUpdate yjs_update = 3;
+    AwarenessPing awareness = 4;
+  }
+}

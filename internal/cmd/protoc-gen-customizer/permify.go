@@ -85,7 +85,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 		GoPath                string
 		PermissionServiceKeys []string
 		Permissions           map[string]map[string]*Perm
-		PermissionRemap       map[string]map[string]string
+		PermissionRemap       map[string]map[string]*Perm
 		Attributes            map[string]map[string]*Attr
 	}{
 		FS:                    fs,
@@ -93,7 +93,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 		GoPath:                fmt.Sprintf("github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/%s/perms", fqn[len(fqn)-1]),
 		PermissionServiceKeys: []string{},
 		Permissions:           map[string]map[string]*Perm{},
-		PermissionRemap:       map[string]map[string]string{},
+		PermissionRemap:       map[string]map[string]*Perm{},
 	}
 
 	slices.SortFunc(fs, func(a, b pgs.File) int {
@@ -139,18 +139,23 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 
 				if perm.Name != mName {
 					remapServiceName := strings.TrimPrefix(string(s.FullyQualifiedName()), ".services.")
+
 					if _, ok := data.PermissionRemap[remapServiceName]; !ok {
-						data.PermissionRemap[remapServiceName] = map[string]string{}
+						data.PermissionRemap[remapServiceName] = map[string]*Perm{}
 					}
 					if _, ok := data.PermissionRemap[remapServiceName][mName]; !ok {
-						data.PermissionRemap[remapServiceName][mName] = perm.Name
-						p.Debugf("Permission Remap added: %q -> %q\n", mName, perm.Name)
+						data.PermissionRemap[remapServiceName][mName] = perm
+						svc := sName
+						if perm.Service != nil {
+							svc = *perm.Service
+						}
+						p.Debugf("Permission Remap added: %q -> %q/%q\n", mName, svc, perm.Name)
 					} else {
 						p.Debugf("Permission Remap already exists: %q -> %q\n", mName, perm.Name)
 					}
 				}
 
-				if perm.Name == "Superuser" || perm.Name == "Any" {
+				if perm.Name == "Superuser" || perm.Name == "Any" || perm.Service != nil {
 					continue
 				}
 
@@ -202,7 +207,16 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 
 		switch strings.ToLower(k) {
 		case "name":
-			perm.Name = v
+			if strings.Contains(v, "/") {
+				split := strings.Split(v, "/")
+				if len(split) != 2 {
+					p.Failf("Invalid name value found: %s", v)
+				}
+				perm.Service = &split[0]
+				perm.Name = split[1]
+			} else {
+				perm.Name = v
+			}
 
 		case "order":
 			order, err := strconv.ParseInt(v, 10, 32)
@@ -258,7 +272,7 @@ var PermsRemap = map[string]string{
     {{- range $service, $remap := . }}
 	// Service: {{ $service }}
 	{{ range $key, $target := $remap -}}
-	"{{ $service }}/{{ $key }}": "{{- if and (ne $target "Superuser") (ne $target "Any") }}{{ $service }}/{{ end }}{{ $target }}",
+	"{{ $service }}/{{ $key }}": "{{- if and (ne $target.Name "Superuser") (ne $target.Name "Any") }}{{ or $target.Service $service }}/{{ end }}{{ $target.Name }}",
     {{ end }}
     {{ end }}
 }
@@ -320,9 +334,10 @@ const (
 `
 
 type Perm struct {
-	Name  string
-	Attrs []Attr
-	Order int32
+	Service *string
+	Name    string
+	Attrs   []Attr
+	Order   int32
 }
 
 type Attr struct {

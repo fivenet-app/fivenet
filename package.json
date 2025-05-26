@@ -34,6 +34,8 @@
         "@pinia/nuxt": "0.11.0",
         "@protobuf-ts/grpcweb-transport": "2.10.0",
         "@tiptap/extension-character-count": "2.12.0",
+        "@tiptap/extension-collaboration": "2.12.0",
+        "@tiptap/extension-collaboration-cursor": "2.12.0",
         "@tiptap/extension-color": "2.12.0",
         "@tiptap/extension-font-family": "2.12.0",
         "@tiptap/extension-highlight": "2.12.0",
@@ -83,6 +85,7 @@
         "vue-json-pretty": "2.4.0",
         "vue-timeline-chart": "3.1.0",
         "vue3-colorpicker": "2.3.0",
+        "yjs": "13.6.27",
         "zod": "3.25.28"
     },
     "devDependencies": {

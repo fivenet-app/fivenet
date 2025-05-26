@@ -43,7 +43,7 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !check {
+	if !check && !userInfo.Superuser {
 		return nil, errorsdocuments.ErrCommentViewDenied
 	}
 

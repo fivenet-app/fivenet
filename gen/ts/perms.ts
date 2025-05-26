@@ -11,6 +11,7 @@
 // source: resources/centrum/units.proto
 // source: resources/centrum/units_access.proto
 // source: resources/centrum/user_unit.proto
+// source: resources/collab/collab.proto
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto
 // source: resources/common/uuid.proto
@@ -80,6 +81,7 @@
 // source: services/centrum/centrum.proto
 // source: services/citizens/citizens.proto
 // source: services/completor/completor.proto
+// source: services/documents/collab.proto
 // source: services/documents/documents.proto
 // source: services/internet/ads.proto
 // source: services/internet/domain.proto
@@ -100,6 +102,7 @@
 // source: services/stats/stats.proto
 // source: services/sync/sync.proto
 // source: services/vehicles/vehicles.proto
+// source: services/wiki/collab.proto
 // source: services/wiki/wiki.proto
 
 export type Perms =

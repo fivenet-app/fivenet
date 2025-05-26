@@ -637,7 +637,8 @@
         "uncheck_all": "Uncheck All",
         "refresh_in_x": "Refresh in {d} {unit}",
         "personal": "Personal",
-        "no_access_to_document": "No access to document"
+        "no_access_to_document": "No access to document",
+        "you": "You"
     },
     "components": {
         "partials": {

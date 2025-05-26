@@ -499,6 +499,15 @@
   
     - [DiscordBotPresenceType](#resources-settings-DiscordBotPresenceType)
   
+- [resources/collab/collab.proto](#resources_collab_collab-proto)
+    - [AwarenessPing](#resources-collab-AwarenessPing)
+    - [ClientPacket](#resources-collab-ClientPacket)
+    - [CollabHello](#resources-collab-CollabHello)
+    - [ServerPacket](#resources-collab-ServerPacket)
+    - [YjsUpdate](#resources-collab-YjsUpdate)
+  
+    - [ClientRole](#resources-collab-ClientRole)
+  
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -812,6 +821,9 @@
   
     - [WikiService](#services-wiki-WikiService)
   
+- [services/wiki/collab.proto](#services_wiki_collab-proto)
+    - [CollabService](#services-wiki-CollabService)
+  
 - [services/sync/sync.proto](#services_sync_sync-proto)
     - [AddActivityRequest](#services-sync-AddActivityRequest)
     - [AddActivityResponse](#services-sync-AddActivityResponse)
@@ -921,6 +933,9 @@
     - [UpdateTemplateResponse](#services-documents-UpdateTemplateResponse)
   
     - [DocumentsService](#services-documents-DocumentsService)
+  
+- [services/documents/collab.proto](#services_documents_collab-proto)
+    - [CollabService](#services-documents-CollabService)
   
 - [services/livemap/livemap.proto](#services_livemap_livemap-proto)
     - [CreateOrUpdateMarkerRequest](#services-livemap-CreateOrUpdateMarkerRequest)
@@ -8021,6 +8036,115 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+<a name="resources_collab_collab-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/collab/collab.proto
+
+
+
+<a name="resources-collab-AwarenessPing"></a>
+
+### AwarenessPing
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `data` | [bytes](#bytes) |  |  |
+
+
+
+
+
+
+<a name="resources-collab-ClientPacket"></a>
+
+### ClientPacket
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `hello` | [CollabHello](#resources-collab-CollabHello) |  | Must be the first message |
+| `yjs_update` | [YjsUpdate](#resources-collab-YjsUpdate) |  |  |
+| `awareness` | [AwarenessPing](#resources-collab-AwarenessPing) |  |  |
+
+
+
+
+
+
+<a name="resources-collab-CollabHello"></a>
+
+### CollabHello
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `target_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="resources-collab-ServerPacket"></a>
+
+### ServerPacket
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `sender_id` | [uint64](#uint64) |  | Who generated this packet (same ID used in awareness) |
+| `client_id` | [uint64](#uint64) |  |  |
+| `yjs_update` | [YjsUpdate](#resources-collab-YjsUpdate) |  |  |
+| `awareness` | [AwarenessPing](#resources-collab-AwarenessPing) |  |  |
+
+
+
+
+
+
+<a name="resources-collab-YjsUpdate"></a>
+
+### YjsUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `data` | [bytes](#bytes) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-collab-ClientRole"></a>
+
+### ClientRole
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CLIENT_ROLE_UNSPECIFIED` | 0 |  |
+| `CLIENT_ROLE_READER` | 1 |  |
+| `CLIENT_ROLE_WRITER` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="services_auth_auth-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -12340,6 +12464,32 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services_wiki_collab-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/wiki/collab.proto
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-wiki-CollabService"></a>
+
+### CollabService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `JoinDocument` | [.resources.collab.ClientPacket](#resources-collab-ClientPacket) stream | [.resources.collab.ServerPacket](#resources-collab-ServerPacket) stream | @perm: Name=wiki.WikiService/ListPages |
+
+ <!-- end services -->
+
+
+
 <a name="services_sync_sync-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -13944,6 +14094,32 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `ListDocumentPins` | [ListDocumentPinsRequest](#services-documents-ListDocumentPinsRequest) | [ListDocumentPinsResponse](#services-documents-ListDocumentPinsResponse) | @perm: Name=ListDocuments |
 | `ToggleDocumentPin` | [ToggleDocumentPinRequest](#services-documents-ToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#services-documents-ToggleDocumentPinResponse) | @perm: Attrs=Types/StringList:[]string{"JobWide"} |
 | `SetDocumentReminder` | [SetDocumentReminderRequest](#services-documents-SetDocumentReminderRequest) | [SetDocumentReminderResponse](#services-documents-SetDocumentReminderResponse) | @perm |
+
+ <!-- end services -->
+
+
+
+<a name="services_documents_collab-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/documents/collab.proto
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-documents-CollabService"></a>
+
+### CollabService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `JoinDocument` | [.resources.collab.ClientPacket](#resources-collab-ClientPacket) stream | [.resources.collab.ServerPacket](#resources-collab-ServerPacket) stream | @perm: Name=documents.DocumentsService/ListDocuments |
 
  <!-- end services -->
 

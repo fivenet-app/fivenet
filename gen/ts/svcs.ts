@@ -11,6 +11,7 @@
 // source: resources/centrum/units.proto
 // source: resources/centrum/units_access.proto
 // source: resources/centrum/user_unit.proto
+// source: resources/collab/collab.proto
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto
 // source: resources/common/uuid.proto
@@ -80,6 +81,7 @@
 // source: services/centrum/centrum.proto
 // source: services/citizens/citizens.proto
 // source: services/completor/completor.proto
+// source: services/documents/collab.proto
 // source: services/documents/documents.proto
 // source: services/internet/ads.proto
 // source: services/internet/domain.proto
@@ -100,6 +102,7 @@
 // source: services/stats/stats.proto
 // source: services/sync/sync.proto
 // source: services/vehicles/vehicles.proto
+// source: services/wiki/collab.proto
 // source: services/wiki/wiki.proto
 
 export const grpcServices = [
@@ -108,6 +111,7 @@ export const grpcServices = [
     'centrum.CentrumService',
     'citizens.CitizensService',
     'completor.CompletorService',
+    'documents.CollabService',
     'documents.DocumentsService',
     'internet.AdsService',
     'internet.DomainService',
@@ -128,6 +132,7 @@ export const grpcServices = [
     'stats.StatsService',
     'sync.SyncService',
     'vehicles.VehiclesService',
+    'wiki.CollabService',
     'wiki.WikiService',
 ];
 
@@ -189,6 +194,7 @@ export const grpcMethods = [
 	'completor.CompletorService/CompleteDocumentCategories',
 	'completor.CompletorService/ListLawBooks',
 	'completor.CompletorService/CompleteCitizenLabels',
+	'documents.CollabService/JoinDocument',
 	'documents.DocumentsService/ListTemplates',
 	'documents.DocumentsService/GetTemplate',
 	'documents.DocumentsService/CreateTemplate',
@@ -329,6 +335,7 @@ export const grpcMethods = [
 	'sync.SyncService/DeleteData',
 	'sync.SyncService/Stream',
 	'vehicles.VehiclesService/ListVehicles',
+	'wiki.CollabService/JoinDocument',
 	'wiki.WikiService/ListPages',
 	'wiki.WikiService/GetPage',
 	'wiki.WikiService/CreatePage',

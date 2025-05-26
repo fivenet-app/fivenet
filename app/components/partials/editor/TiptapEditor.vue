@@ -6,6 +6,8 @@ import { BulletList } from '@tiptap/extension-bullet-list';
 import CharacterCount from '@tiptap/extension-character-count';
 import { Code } from '@tiptap/extension-code';
 import { CodeBlock } from '@tiptap/extension-code-block';
+import Collaboration from '@tiptap/extension-collaboration';
+import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import { Color } from '@tiptap/extension-color';
 import { Document } from '@tiptap/extension-document';
 import { Dropcursor } from '@tiptap/extension-dropcursor';
@@ -37,11 +39,14 @@ import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import FontSize from 'tiptap-extension-font-size';
+import * as Y from 'yjs';
 // @ts-expect-error doesn't have types
 import UniqueId from 'tiptap-unique-id';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/checkboxStandalone';
 import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
 import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
+import type { StreamConnectFn } from '~/composables/tiptap/yjs';
+import GrpcProvider from '~/composables/tiptap/yjs';
 import TiptapEditorImageModal from './TiptapEditorImageModal.vue';
 import TiptapEditorSourceCodeModal from './TiptapEditorSourceCodeModal.vue';
 import { fontColors, highlightColors } from './helpers';
@@ -54,8 +59,10 @@ const props = withDefaults(
         disabled?: boolean;
         placeholder?: string;
         hideToolbar?: boolean;
-        commentMode?: boolean;
         rounded?: string;
+        commentMode?: boolean;
+        collabId?: number;
+        collabService?: StreamConnectFn;
     }>(),
     {
         wrapperClass: '',
@@ -63,8 +70,10 @@ const props = withDefaults(
         disabled: false,
         placeholder: undefined,
         hideToolbar: false,
-        commentMode: false,
         rounded: 'rounded',
+        commentMode: false,
+        collabId: undefined,
+        collabService: undefined,
     },
 );
 
@@ -74,9 +83,13 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const { activeChar } = useAuth();
+
 const modal = useModal();
 
 const content = useVModel(props, 'modelValue', emit);
+
+const loading = ref(false);
 
 const extensions: Extensions = [
     UniqueId.configure({
@@ -101,7 +114,6 @@ const extensions: Extensions = [
     Highlight.configure({
         multicolor: true,
     }),
-    History,
     HorizontalRule,
     Italic,
     Link.configure({
@@ -157,6 +169,56 @@ const extensions: Extensions = [
         placeholder: props.placeholder ?? '',
     }),
 ];
+
+if (props.collabId && props.collabService) {
+    const ydoc = new Y.Doc();
+
+    const { $grpc } = useNuxtApp();
+
+    const yProvider = new GrpcProvider(ydoc, $grpc.wiki.collab.joinDocument, {
+        targetId: props.collabId,
+    });
+
+    const awareness = useAwarenessUsers(yProvider.awareness);
+
+    ydoc.on('sync', (isSynced: boolean) => {
+        if (isSynced === true) {
+            loading.value = false;
+
+            const instance = unref(editor);
+            if (!instance) return;
+
+            let ourName = `${activeChar.value?.firstname} ${activeChar.value?.lastname}`;
+            const u = awareness.users.value.find((u) => u.name === ourName);
+            if (u) {
+                ourName += ` (${t('common.you')})`;
+            }
+
+            instance.commands.updateUser({
+                name: ourName,
+                color: '#f2f2f2',
+            });
+        }
+    });
+
+    extensions.push(
+        Collaboration.configure({
+            document: ydoc,
+            field: 'content',
+        }),
+        CollaborationCursor.configure({
+            provider: yProvider,
+            user: {
+                name: `${activeChar.value?.firstname} ${activeChar.value?.lastname}`,
+                color: '#123456',
+            },
+        }),
+    );
+
+    onBeforeUnmount(() => yProvider.destroy());
+} else {
+    extensions.push(History);
+}
 
 if (!props.commentMode) {
     extensions.push(
@@ -214,6 +276,12 @@ watch(content, (value) => {
     // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value)
 
     if (isSame) {
+        return;
+    }
+
+    if (props.collabId && props.collabService) {
+        // If collaboration is enabled, we don't set the content directly
+        // as it will be handled by the Yjs provider.
         return;
     }
 
@@ -583,11 +651,11 @@ onBeforeUnmount(() => {
                                 <div v-for="(colors, idx) in fontColors" :key="idx">
                                     <div class="grid grid-cols-10 gap-0.5">
                                         <UButton
-                                            v-for="(color, cIdx) in colors"
+                                            v-for="(col, cIdx) in colors"
                                             :key="cIdx"
                                             class="size-6 rounded-none border-0"
-                                            :style="{ backgroundColor: color }"
-                                            @click="selectedFontColor = color"
+                                            :style="{ backgroundColor: col }"
+                                            @click="selectedFontColor = col"
                                         />
                                     </div>
                                 </div>
@@ -702,11 +770,11 @@ onBeforeUnmount(() => {
 
                                 <div class="grid grid-cols-6 gap-0.5">
                                     <UButton
-                                        v-for="(color, idx) in highlightColors"
+                                        v-for="(col, idx) in highlightColors"
                                         :key="idx"
                                         class="size-6 rounded-none border-0"
-                                        :style="{ backgroundColor: color.value }"
-                                        @click="selectedHighlightColor = color"
+                                        :style="{ backgroundColor: col.value }"
+                                        @click="selectedHighlightColor = col"
                                     />
                                 </div>
                             </div>

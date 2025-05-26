@@ -1,11 +1,14 @@
 package wiki
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 	pbwiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
+	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
@@ -49,14 +52,18 @@ var (
 type Server struct {
 	pbwiki.WikiServiceServer
 
-	logger   *zap.Logger
-	db       *sql.DB
+	logger *zap.Logger
+	db     *sql.DB
+	js     *events.JSWrapper
+
 	aud      audit.IAuditer
 	perms    perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	htmlDiff *htmldiffer.Differ
 
 	access *access.Grouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel], *access.DummyQualificationAccess[wiki.AccessLevel], wiki.AccessLevel]
+
+	collabServer *collab.CollabServer
 }
 
 type Params struct {
@@ -70,12 +77,19 @@ type Params struct {
 	Perms      perms.Permissions
 	Enricher   *mstlystcdata.UserAwareEnricher
 	HTMLDiffer *htmldiffer.Differ
+	JS         *events.JSWrapper
 }
 
 func NewServer(p Params) *Server {
+	ctxCancel, cancel := context.WithCancel(context.Background())
+
+	collabServer := collab.New(ctxCancel, p.Logger, p.JS, "wiki_pages")
+
 	s := &Server{
-		logger:   p.Logger.Named("wiki"),
-		db:       p.DB,
+		logger: p.Logger.Named("wiki"),
+		db:     p.DB,
+		js:     p.JS,
+
 		aud:      p.Audit,
 		perms:    p.Perms,
 		enricher: p.Enricher,
@@ -134,7 +148,18 @@ func NewServer(p Params) *Server {
 			),
 			nil,
 		),
+		collabServer: collabServer,
 	}
+
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		return s.collabServer.Start(ctxStartup)
+	}))
+
+	p.LC.Append(fx.StopHook(func(ctxStartup context.Context) error {
+		cancel()
+
+		return nil
+	}))
 
 	return s
 }

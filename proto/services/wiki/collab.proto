@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package services.wiki;
+
+import "resources/collab/collab.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wiki";
+
+service CollabService {
+  // @perm: Name=wiki.WikiService/ListPages
+  rpc JoinDocument(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket);
+}
