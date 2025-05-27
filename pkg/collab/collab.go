@@ -73,7 +73,7 @@ func (s *CollabServer) Start(ctx context.Context) error {
 }
 
 func (s *CollabServer) HandleFirstMsg(ctx context.Context, clientId uint64, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) (uint64, error) {
-	// Wait for the first message to determine client/document Id
+	// Wait for the first message to determine client/target id
 	firstMsg, err := stream.Recv()
 	if err != nil {
 		return 0, err
@@ -106,19 +106,19 @@ func (s *CollabServer) SendHelloResponse(clientId uint64, stream grpc.BidiStream
 	return nil
 }
 
-func (s *CollabServer) getOrCreateRoom(docId uint64) (*CollabRoom, error) {
+func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	var err error
 	// Get or create the document room
-	room, exists := s.rooms[docId]
+	room, exists := s.rooms[targetId]
 	if !exists {
-		room, err = NewCollabRoom(s.ctx, s.logger, docId, s.js.JetStream, s.category)
+		room, err = NewCollabRoom(s.ctx, s.logger, targetId, s.js.JetStream, s.category)
 		if err != nil {
 			return nil, err
 		}
-		s.rooms[docId] = room
+		s.rooms[targetId] = room
 		metricTotalCollabRooms.WithLabelValues(s.category).Inc()
 	}
 
@@ -131,11 +131,18 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 		return fmt.Errorf("get or create room: %w", err)
 	}
 
-	client := NewClient(s.logger.Named("client"), 0, targetId, userId, role, stream)
+	client := NewClient(s.logger.Named("client"), clientId, targetId, userId, role, stream)
 	room.Join(client)
 	defer func() {
-		if aw := encodeAwarenessRemove(clientId); len(aw) > 0 {
-			// Send a leave message to all clients in the room
+		// If the room is empty after the client leaves, remove it
+		if room.Leave(clientId) {
+			// Room now has zero clients
+			s.mu.Lock()
+			delete(s.rooms, targetId)
+			s.mu.Unlock()
+			metricTotalCollabRooms.WithLabelValues(s.category).Dec()
+		} else if aw := encodeAwarenessRemove(clientId); len(aw) > 0 {
+			// If not, send (valid) leave message to all clients left in the room
 			leave := &collab.ServerPacket{
 				SenderId: clientId,
 				Msg: &collab.ServerPacket_Awareness{
@@ -144,16 +151,8 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 					},
 				},
 			}
-			// Uncaught (in promise) RangeError: attempting to construct out-of-bounds Uint8Array on ArrayBuffer
+			// TODO in frontend yjs code: `Uncaught (in promise) RangeError: attempting to construct out-of-bounds Uint8Array on ArrayBuffer``
 			room.Broadcast(clientId, leave)
-		}
-
-		if room.Leave(clientId) {
-			// Room now has zero clients
-			s.mu.Lock()
-			delete(s.rooms, targetId)
-			s.mu.Unlock()
-			metricTotalCollabRooms.WithLabelValues(s.category).Dec()
 		}
 	}()
 

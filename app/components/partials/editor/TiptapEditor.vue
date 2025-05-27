@@ -170,6 +170,8 @@ const extensions: Extensions = [
     }),
 ];
 
+let awareness: ReturnType<typeof useAwarenessUsers> | undefined = undefined;
+
 if (props.collabId && props.collabService) {
     const ydoc = new Y.Doc();
 
@@ -177,26 +179,23 @@ if (props.collabId && props.collabService) {
         targetId: props.collabId,
     });
 
-    const awareness = useAwarenessUsers(yProvider.awareness);
+    awareness = useAwarenessUsers(yProvider.awareness);
 
+    const ourName = `${activeChar.value?.firstname} ${activeChar.value?.lastname}`;
+    const color = stringToColour(ourName);
     ydoc.on('sync', (isSynced: boolean) => {
-        if (isSynced === true) {
-            loading.value = false;
-
-            const instance = unref(editor);
-            if (!instance) return;
-
-            let ourName = `${activeChar.value?.firstname} ${activeChar.value?.lastname}`;
-            const u = awareness.users.value.find((u) => u.name === ourName);
-            if (u) {
-                ourName += ` (${t('common.you')})`;
-            }
-
-            instance.commands.updateUser({
-                name: ourName,
-                color: '#f2f2f2',
-            });
+        if (isSynced === false) {
+            return;
         }
+        loading.value = false;
+
+        const instance = unref(editor);
+        if (!instance) return;
+
+        instance.commands.updateUser({
+            name: ourName,
+            color: color,
+        });
     });
 
     extensions.push(
@@ -207,8 +206,8 @@ if (props.collabId && props.collabService) {
         CollaborationCursor.configure({
             provider: yProvider,
             user: {
-                name: `${activeChar.value?.firstname} ${activeChar.value?.lastname}`,
-                color: '#123456',
+                name: ourName,
+                color: color,
             },
         }),
     );
@@ -1114,11 +1113,44 @@ onBeforeUnmount(() => {
         />
 
         <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
-            <div class="flex flex-1">
+            <div class="flex" :class="{ 'flex-1': collabId }">
                 <slot name="footer" />
             </div>
 
-            <div>
+            <div v-if="collabId" class="inline-flex flex-1 items-center justify-center">
+                <UPopover :popper="{ placement: 'top' }" :disabled="(awareness?.users?.value.length || 0) === 0">
+                    <UButton
+                        :class="(awareness?.users?.value.length || 0) === 0 && 'cursor-not-allowed'"
+                        color="white"
+                        variant="link"
+                        trailing-icon="i-heroicons-chevron-down-20-solid"
+                    >
+                        {{ awareness?.users?.value.length || 0 }} {{ $t('common.user', awareness?.users?.value.length || 0) }}
+                    </UButton>
+
+                    <template #panel>
+                        <div class="p-4">
+                            <ul class="grid grid-cols-2 gap-2">
+                                <li
+                                    v-for="(user, idx) in awareness?.users?.value.filter((u) => u !== undefined && u !== null)"
+                                    :key="idx"
+                                    class="inline-flex items-center gap-1"
+                                >
+                                    <UBadge
+                                        class="shrink-0"
+                                        :style="{ backgroundColor: user.color }"
+                                        :ui="{ rounded: 'rounded-full' }"
+                                        size="lg"
+                                    />
+                                    {{ user.name }}
+                                </li>
+                            </ul>
+                        </div>
+                    </template>
+                </UPopover>
+            </div>
+
+            <div class="inline-flex flex-1 items-center justify-end">
                 {{ editor.storage.characterCount.characters() }}<template v-if="limit && limit > 0"> / {{ limit }}</template>
                 {{ $t('common.chars', editor.storage.characterCount.characters()) }}
                 |

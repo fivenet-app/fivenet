@@ -639,7 +639,8 @@
         "personal": "Personal",
         "no_access_to_document": "No access to document",
         "you": "You",
-        "scroll_to_top": "Scroll to Top"
+        "scroll_to_top": "Scroll to Top",
+        "publish": "Publish"
     },
     "components": {
         "partials": {

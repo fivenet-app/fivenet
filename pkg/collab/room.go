@@ -82,9 +82,10 @@ func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js je
 func (r *CollabRoom) Join(c *Client) {
 	r.mu.Lock()
 	r.clients[c.Id] = c
+	clientCount := len(r.clients)
 	r.mu.Unlock()
 	metricTotalConnectedClients.WithLabelValues(r.category).Inc()
-	r.logger.Debug("client joined", zap.Uint64("client_id", c.Id), zap.Int("clients", len(r.clients)))
+	r.logger.Debug("client joined", zap.Uint64("client_id", c.Id), zap.Int("clients", clientCount))
 }
 
 func (r *CollabRoom) Leave(clientId uint64) bool {
@@ -93,14 +94,15 @@ func (r *CollabRoom) Leave(clientId uint64) bool {
 		close(c.SendCh)
 		delete(r.clients, clientId)
 	}
-	empty := len(r.clients) == 0
+	clientCount := len(r.clients)
+	empty := clientCount == 0
 	r.mu.Unlock()
 
 	if empty {
 		r.shutdown()
 	}
 
-	r.logger.Debug("client left", zap.Uint64("client_id", clientId), zap.Int("clients", len(r.clients)))
+	r.logger.Debug("client left", zap.Uint64("client_id", clientId), zap.Int("clients", clientCount))
 
 	metricTotalConnectedClients.WithLabelValues(r.category).Dec()
 
@@ -171,9 +173,11 @@ func (r *CollabRoom) forwardToLocal(fromId uint64, cm *collab.ServerPacket) {
 	defer r.mu.RUnlock()
 
 	for id, c := range r.clients {
-		if id != fromId {
-			c.Send(cm)
+		if id == fromId {
+			continue // Skip sender
 		}
+
+		c.Send(cm)
 	}
 }
 

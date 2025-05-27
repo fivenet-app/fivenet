@@ -490,6 +490,17 @@ logger.info(
                             </template>
                         </span>
                     </UButton>
+
+                    <UButton
+                        type="submit"
+                        trailing-icon="i-mdi-publish"
+                        :disabled="!canEdit || !canSubmit"
+                        :loading="!canSubmit"
+                    >
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.publish') }}
+                        </span>
+                    </UButton>
                 </UButtonGroup>
             </template>
         </UDashboardNavbar>

@@ -373,19 +373,6 @@ const scrollRef = useTemplateRef('scrollRef');
                         >
                             <UButtonGroup class="flex flex-1">
                                 <UButton
-                                    v-if="attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value"
-                                    class="flex-1 flex-col"
-                                    block
-                                    :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
-                                    @click="togglePin(documentId, !doc.pin?.job, false)"
-                                >
-                                    <UIcon
-                                        class="size-5"
-                                        :name="doc.pin?.state && doc.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
-                                    />
-                                    {{ $t('common.job') }}
-                                </UButton>
-                                <UButton
                                     class="flex-1 flex-col"
                                     block
                                     :color="doc.pin?.state && doc.pin?.userId ? 'error' : 'primary'"
@@ -398,6 +385,20 @@ const scrollRef = useTemplateRef('scrollRef');
                                         "
                                     />
                                     {{ $t('common.personal') }}
+                                </UButton>
+
+                                <UButton
+                                    v-if="attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value"
+                                    class="flex-1 flex-col"
+                                    block
+                                    :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
+                                    @click="togglePin(documentId, !doc.pin?.job, false)"
+                                >
+                                    <UIcon
+                                        class="size-5"
+                                        :name="doc.pin?.state && doc.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
+                                    />
+                                    {{ $t('common.job') }}
                                 </UButton>
                             </UButtonGroup>
                         </UTooltip>
@@ -418,23 +419,28 @@ const scrollRef = useTemplateRef('scrollRef');
                             </UButton>
                         </UTooltip>
 
-                        <UButton
+                        <UTooltip
                             v-if="can('documents.DocumentsService.SetDocumentReminder').value"
-                            class="flex-1 flex-col"
-                            block
-                            icon="i-mdi-reminder"
-                            @click="
-                                modal.open(DocumentReminderModal, {
-                                    documentId: documentId,
-                                    reminderTime: doc.workflowUser?.manualReminderTime ?? undefined,
-                                    'onUpdate:reminderTime': () => updateReminderTime($event),
-                                })
-                            "
+                            class="flex-1"
+                            :text="$t('common.reminder')"
                         >
-                            {{ $t('common.reminder') }}
-                        </UButton>
+                            <UButton
+                                class="flex-1 flex-col"
+                                block
+                                icon="i-mdi-reminder"
+                                @click="
+                                    modal.open(DocumentReminderModal, {
+                                        documentId: documentId,
+                                        reminderTime: doc.workflowUser?.manualReminderTime ?? undefined,
+                                        'onUpdate:reminderTime': () => updateReminderTime($event),
+                                    })
+                                "
+                            >
+                                {{ $t('common.reminder') }}
+                            </UButton>
+                        </UTooltip>
 
-                        <UButton
+                        <UTooltip
                             v-if="
                                 (doc?.creatorJob === activeChar?.job || isSuperuser) &&
                                 can('documents.DocumentsService.ChangeDocumentOwner').value &&
@@ -445,20 +451,25 @@ const scrollRef = useTemplateRef('scrollRef');
                                     'documents.DocumentsService.ChangeDocumentOwner',
                                 )
                             "
-                            class="flex-1 flex-col"
-                            block
-                            :disabled="doc?.creatorId === activeChar?.userId"
-                            icon="i-mdi-creation"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => changeDocumentOwner(documentId),
-                                })
-                            "
+                            class="flex-1"
+                            :text="$t('components.documents.document_view.take_ownership')"
                         >
-                            {{ $t('components.documents.document_view.take_ownership') }}
-                        </UButton>
+                            <UButton
+                                class="flex-1 flex-col"
+                                block
+                                :disabled="doc?.creatorId === activeChar?.userId"
+                                icon="i-mdi-creation"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () => changeDocumentOwner(documentId),
+                                    })
+                                "
+                            >
+                                {{ $t('components.documents.document_view.take_ownership') }}
+                            </UButton>
+                        </UTooltip>
 
-                        <UButton
+                        <UTooltip
                             v-if="
                                 can('documents.DocumentsService.DeleteDocument').value &&
                                 checkDocAccess(
@@ -468,17 +479,22 @@ const scrollRef = useTemplateRef('scrollRef');
                                     'documents.DocumentsService.DeleteDocument',
                                 )
                             "
-                            class="flex-1 flex-col"
-                            block
-                            :color="!doc.deletedAt ? 'error' : 'success'"
-                            :icon="!doc.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
-                            :label="!doc.deletedAt ? $t('common.delete') : $t('common.restore')"
-                            @click="
-                                modal.open(doc.deletedAt !== undefined ? ConfirmModal : ConfirmModalWithReason, {
-                                    confirm: async (reason?: string) => deleteDocument(documentId, reason),
-                                })
-                            "
-                        />
+                            class="flex-1"
+                            :text="$t('common.delete')"
+                        >
+                            <UButton
+                                class="flex-1 flex-col"
+                                block
+                                :color="!doc.deletedAt ? 'error' : 'success'"
+                                :icon="!doc.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
+                                :label="!doc.deletedAt ? $t('common.delete') : $t('common.restore')"
+                                @click="
+                                    modal.open(doc.deletedAt !== undefined ? ConfirmModal : ConfirmModalWithReason, {
+                                        confirm: async (reason?: string) => deleteDocument(documentId, reason),
+                                    })
+                                "
+                            />
+                        </UTooltip>
                     </div>
                 </template>
             </UDashboardToolbar>
