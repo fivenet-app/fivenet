@@ -28,8 +28,7 @@ import (
 var (
 	tQualiResults = table.FivenetQualificationsResults.AS("qualification_result")
 
-	tJobLabels  = table.FivenetJobLabels
-	tUserLabels = table.FivenetJobColleagueLabels
+	tJobLabels = table.FivenetJobLabels
 )
 
 func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifications.ListQualificationsResultsRequest) (*pbqualifications.ListQualificationsResultsResponse, error) {
@@ -631,6 +630,7 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 
 		// Retrieve existing label
 		tJobLabels := tJobLabels.AS("label")
+
 		stmt := tJobLabels.
 			SELECT(
 				tJobLabels.ID.AS("id"),
@@ -658,6 +658,8 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 
 		labelId = uint64(lastId)
 	}
+
+	tUserLabels := table.FivenetJobColleagueLabels
 
 	// Ensure that the colleague has the label set if successful result or removed
 	if addLabel {

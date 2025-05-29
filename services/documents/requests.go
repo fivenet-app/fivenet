@@ -622,6 +622,8 @@ func (s *Server) getDocumentReq(ctx context.Context, tx qrm.DB, condition jet.Bo
 }
 
 func (s *Server) deleteDocumentReq(ctx context.Context, tx qrm.DB, id uint64) error {
+	tDocRequest := table.FivenetDocumentsRequests
+
 	stmt := tDocRequest.
 		DELETE().
 		WHERE(tDocRequest.ID.EQ(jet.Uint64(id))).

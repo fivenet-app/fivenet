@@ -437,6 +437,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 
 func (s *Housekeeper) deleteOldUnitStatus(ctx context.Context) error {
 	tUnitStatus := table.FivenetCentrumUnitsStatus
+
 	stmt := tUnitStatus.
 		DELETE().
 		WHERE(jet.AND(
