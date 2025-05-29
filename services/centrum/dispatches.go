@@ -554,7 +554,8 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tDispatchStatus.

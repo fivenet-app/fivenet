@@ -161,7 +161,7 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadPacket,
 		return errorscitizens.ErrJobGradeNoPermission
 	}
 
-	check, err := s.checkIfUserCanAccess(ctx, userInfo, u.Job, u.JobGrade)
+	check, err := s.checkIfUserCanAccess(userInfo, u.Job, u.JobGrade)
 	if err != nil {
 		return err
 	}
@@ -253,7 +253,7 @@ func (s *Server) DeleteMugshot(ctx context.Context, req *pbcitizens.DeleteMugsho
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	check, err := s.checkIfUserCanAccess(ctx, userInfo, u.Job, u.JobGrade)
+	check, err := s.checkIfUserCanAccess(userInfo, u.Job, u.JobGrade)
 	if err != nil {
 		return nil, err
 	}

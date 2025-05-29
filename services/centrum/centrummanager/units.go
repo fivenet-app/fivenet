@@ -664,7 +664,8 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, 
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tUnitStatus.

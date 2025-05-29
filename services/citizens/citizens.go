@@ -335,7 +335,7 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 	if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.User.Job) ||
 		slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
-		check, err := s.checkIfUserCanAccess(ctx, userInfo, resp.User.Job, resp.User.JobGrade)
+		check, err := s.checkIfUserCanAccess(userInfo, resp.User.Job, resp.User.JobGrade)
 		if err != nil {
 			return nil, err
 		}
@@ -496,7 +496,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 		return nil, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	check, err := s.checkIfUserCanAccess(ctx, userInfo, u.Job, u.JobGrade)
+	check, err := s.checkIfUserCanAccess(userInfo, u.Job, u.JobGrade)
 	if err != nil {
 		return nil, err
 	}
@@ -661,7 +661,7 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 	return &dest, nil
 }
 
-func (s *Server) checkIfUserCanAccess(ctx context.Context, userInfo *userinfo.UserInfo, targetUserJob string, targetUserGrade int32) (bool, error) {
+func (s *Server) checkIfUserCanAccess(userInfo *userinfo.UserInfo, targetUserJob string, targetUserGrade int32) (bool, error) {
 	jobGrades, err := s.ps.AttrJobGradeList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceGetUserPerm, permscitizens.CitizensServiceGetUserJobsPermField)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
