@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -90,6 +91,7 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 
 func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 	tUsers := tables.User().AS("colleague")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tCentrumDisponents.
 		SELECT(
@@ -119,6 +121,9 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
 						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		)
 

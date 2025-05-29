@@ -15,6 +15,9 @@ func (m *Label) Sanitize() error {
 	// Field: Color
 	m.Color = htmlsanitizer.StripTags(m.Color)
 
+	// Field: Name
+	m.Name = htmlsanitizer.StripTags(m.Name)
+
 	return nil
 }
 

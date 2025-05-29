@@ -30,6 +30,18 @@ func (m *Page) Sanitize() error {
 		}
 	}
 
+	// Field: Files
+	for idx, item := range m.Files {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Job
 	m.Job = htmlsanitizer.StripTags(m.Job)
 

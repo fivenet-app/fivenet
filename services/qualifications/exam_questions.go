@@ -6,11 +6,8 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -95,28 +92,31 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 			continue
 		}
 
-		switch data := question.Data.Data.(type) {
-		case *qualifications.ExamQuestionData_Image:
-			if data.Image.Image == nil || data.Image.Image.Url == nil {
-				continue
-			}
+		// TODO
+		/*
+			switch data := question.Data.Data.(type) {
+			case *qualifications.ExamQuestionData_Image:
+				if data.Image.Image == nil || data.Image.Image.Url == nil {
+					continue
+				}
 
-			if len(data.Image.Image.Data) == 0 {
-				continue
-			}
+				if len(data.Image.Image.Data) == 0 {
+					continue
+				}
 
-			if !data.Image.Image.IsImage() {
-				return errorsqualifications.ErrFailedQuery
-			}
+				if !data.Image.Image.IsImage() {
+					return errorsqualifications.ErrFailedQuery
+				}
 
-			if err := data.Image.Image.Optimize(ctx); err != nil {
-				return err
-			}
+				if err := data.Image.Image.Optimize(ctx); err != nil {
+					return err
+				}
 
-			if err := data.Image.Image.Upload(ctx, s.st, filestore.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
-				return err
+				if err := data.Image.Image.Upload(ctx, s.st, file.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
+					return err
+				}
 			}
-		}
+		*/
 
 		stmt := tExamQuestions.
 			INSERT(
@@ -149,21 +149,24 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 					continue
 				}
 
-				if len(data.Image.Image.Data) == 0 {
-					continue
-				}
+				// TODO
+				/*
+					if len(data.Image.Image.Data) == 0 {
+						continue
+					}
 
-				if !data.Image.Image.IsImage() {
-					return errorsqualifications.ErrFailedQuery
-				}
+					if !data.Image.Image.IsImage() {
+						return errorsqualifications.ErrFailedQuery
+					}
 
-				if err := data.Image.Image.Optimize(ctx); err != nil {
-					return err
-				}
+					if err := data.Image.Image.Optimize(ctx); err != nil {
+						return err
+					}
 
-				if err := data.Image.Image.Upload(ctx, s.st, filestore.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
-					return err
-				}
+					if err := data.Image.Image.Upload(ctx, s.st, file.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
+						return err
+					}
+				*/
 			}
 		}
 
@@ -214,16 +217,19 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 				continue
 			}
 
-			switch data := question.Data.Data.(type) {
-			case *qualifications.ExamQuestionData_Image:
-				if data.Image.Image == nil || data.Image.Image.Url == nil {
-					continue
-				}
+			// TODO
+			/*
+							switch data := question.Data.Data.(type) {
+							case *qualifications.ExamQuestionData_Image:
+				                if data.Image.Image == nil || data.Image.Image.Url == nil {
+									continue
+								}
 
-				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*data.Image.Image.Url)); err != nil {
-					return err
-				}
-			}
+								if err := s.st.Delete(ctx, file.StripURLPrefix(*data.Image.Image.Url)); err != nil {
+									return err
+								}
+							}
+			*/
 		}
 	}
 

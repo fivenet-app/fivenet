@@ -8,6 +8,7 @@ import { CitizensServiceClient as citizensCitizensServiceClient } from '~~/gen/t
 import { CompletorServiceClient as completorCompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
 import { CollabServiceClient as documentsCollabServiceClient } from '~~/gen/ts/services/documents/collab.client';
 import { DocumentsServiceClient as documentsDocumentsServiceClient } from '~~/gen/ts/services/documents/documents.client';
+import { FilestoreServiceClient as filestoreFilestoreServiceClient } from '~~/gen/ts/services/filestore/filestore.client';
 import { AdsServiceClient as internetAdsServiceClient } from '~~/gen/ts/services/internet/ads.client';
 import { DomainServiceClient as internetDomainServiceClient } from '~~/gen/ts/services/internet/domain.client';
 import { InternetServiceClient as internetInternetServiceClient } from '~~/gen/ts/services/internet/internet.client';
@@ -21,7 +22,6 @@ import { QualificationsServiceClient as qualificationsQualificationsServiceClien
 import { AccountsServiceClient as settingsAccountsServiceClient } from '~~/gen/ts/services/settings/accounts.client';
 import { ConfigServiceClient as settingsConfigServiceClient } from '~~/gen/ts/services/settings/config.client';
 import { CronServiceClient as settingsCronServiceClient } from '~~/gen/ts/services/settings/cron.client';
-import { FilestoreServiceClient as settingsFilestoreServiceClient } from '~~/gen/ts/services/settings/filestore.client';
 import { LawsServiceClient as settingsLawsServiceClient } from '~~/gen/ts/services/settings/laws.client';
 import { SettingsServiceClient as settingsSettingsServiceClient } from '~~/gen/ts/services/settings/settings.client';
 import { StatsServiceClient as statsStatsServiceClient } from '~~/gen/ts/services/stats/stats.client';
@@ -50,6 +50,9 @@ export class GRPCClients {
         collab: documentsCollabServiceClient;
         documents: documentsDocumentsServiceClient;
     };
+    public filestore: {
+        filestore: filestoreFilestoreServiceClient;
+    };
     public internet: {
         ads: internetAdsServiceClient;
         domain: internetDomainServiceClient;
@@ -76,7 +79,6 @@ export class GRPCClients {
         accounts: settingsAccountsServiceClient;
         config: settingsConfigServiceClient;
         cron: settingsCronServiceClient;
-        filestore: settingsFilestoreServiceClient;
         laws: settingsLawsServiceClient;
         settings: settingsSettingsServiceClient;
     };
@@ -114,6 +116,9 @@ export class GRPCClients {
             collab: new documentsCollabServiceClient(transport),
             documents: new documentsDocumentsServiceClient(transport),
         };
+        this.filestore = {
+            filestore: new filestoreFilestoreServiceClient(transport),
+        };
         this.internet = {
             ads: new internetAdsServiceClient(transport),
             domain: new internetDomainServiceClient(transport),
@@ -140,7 +145,6 @@ export class GRPCClients {
             accounts: new settingsAccountsServiceClient(transport),
             config: new settingsConfigServiceClient(transport),
             cron: new settingsCronServiceClient(transport),
-            filestore: new settingsFilestoreServiceClient(transport),
             laws: new settingsLawsServiceClient(transport),
             settings: new settingsSettingsServiceClient(transport),
         };

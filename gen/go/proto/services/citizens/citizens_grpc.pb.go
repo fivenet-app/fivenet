@@ -8,6 +8,7 @@ package citizens
 
 import (
 	context "context"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -19,28 +20,37 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CitizensService_ListCitizens_FullMethodName      = "/services.citizens.CitizensService/ListCitizens"
-	CitizensService_GetUser_FullMethodName           = "/services.citizens.CitizensService/GetUser"
-	CitizensService_ListUserActivity_FullMethodName  = "/services.citizens.CitizensService/ListUserActivity"
-	CitizensService_SetUserProps_FullMethodName      = "/services.citizens.CitizensService/SetUserProps"
-	CitizensService_SetProfilePicture_FullMethodName = "/services.citizens.CitizensService/SetProfilePicture"
-	CitizensService_ManageLabels_FullMethodName      = "/services.citizens.CitizensService/ManageLabels"
+	CitizensService_ListCitizens_FullMethodName     = "/services.citizens.CitizensService/ListCitizens"
+	CitizensService_GetUser_FullMethodName          = "/services.citizens.CitizensService/GetUser"
+	CitizensService_ListUserActivity_FullMethodName = "/services.citizens.CitizensService/ListUserActivity"
+	CitizensService_SetUserProps_FullMethodName     = "/services.citizens.CitizensService/SetUserProps"
+	CitizensService_UploadAvatar_FullMethodName     = "/services.citizens.CitizensService/UploadAvatar"
+	CitizensService_DeleteAvatar_FullMethodName     = "/services.citizens.CitizensService/DeleteAvatar"
+	CitizensService_UploadMugshot_FullMethodName    = "/services.citizens.CitizensService/UploadMugshot"
+	CitizensService_DeleteMugshot_FullMethodName    = "/services.citizens.CitizensService/DeleteMugshot"
+	CitizensService_ManageLabels_FullMethodName     = "/services.citizens.CitizensService/ManageLabels"
 )
 
 // CitizensServiceClient is the client API for CitizensService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizensServiceClient interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"}
+	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"}
 	ListCitizens(ctx context.Context, in *ListCitizensRequest, opts ...grpc.CallOption) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(ctx context.Context, in *ListUserActivityRequest, opts ...grpc.CallOption) (*ListUserActivityResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"}
+	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 	// @perm: Name=Any
-	SetProfilePicture(ctx context.Context, in *SetProfilePictureRequest, opts ...grpc.CallOption) (*SetProfilePictureResponse, error)
+	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	// @perm: Name=Any
+	DeleteAvatar(ctx context.Context, in *DeleteAvatarRequest, opts ...grpc.CallOption) (*DeleteAvatarResponse, error)
+	// @perm: Name=SetUserProps
+	UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	// @perm: Name=SetUserProps
+	DeleteMugshot(ctx context.Context, in *DeleteMugshotRequest, opts ...grpc.CallOption) (*DeleteMugshotResponse, error)
 	// @perm
 	ManageLabels(ctx context.Context, in *ManageLabelsRequest, opts ...grpc.CallOption) (*ManageLabelsResponse, error)
 }
@@ -93,10 +103,46 @@ func (c *citizensServiceClient) SetUserProps(ctx context.Context, in *SetUserPro
 	return out, nil
 }
 
-func (c *citizensServiceClient) SetProfilePicture(ctx context.Context, in *SetProfilePictureRequest, opts ...grpc.CallOption) (*SetProfilePictureResponse, error) {
+func (c *citizensServiceClient) UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetProfilePictureResponse)
-	err := c.cc.Invoke(ctx, CitizensService_SetProfilePicture_FullMethodName, in, out, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &CitizensService_ServiceDesc.Streams[0], CitizensService_UploadAvatar_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CitizensService_UploadAvatarClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+
+func (c *citizensServiceClient) DeleteAvatar(ctx context.Context, in *DeleteAvatarRequest, opts ...grpc.CallOption) (*DeleteAvatarResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteAvatarResponse)
+	err := c.cc.Invoke(ctx, CitizensService_DeleteAvatar_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *citizensServiceClient) UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &CitizensService_ServiceDesc.Streams[1], CitizensService_UploadMugshot_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CitizensService_UploadMugshotClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+
+func (c *citizensServiceClient) DeleteMugshot(ctx context.Context, in *DeleteMugshotRequest, opts ...grpc.CallOption) (*DeleteMugshotResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteMugshotResponse)
+	err := c.cc.Invoke(ctx, CitizensService_DeleteMugshot_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -117,16 +163,22 @@ func (c *citizensServiceClient) ManageLabels(ctx context.Context, in *ManageLabe
 // All implementations must embed UnimplementedCitizensServiceServer
 // for forward compatibility.
 type CitizensServiceServer interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"}
+	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"}
 	ListCitizens(context.Context, *ListCitizensRequest) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(context.Context, *ListUserActivityRequest) (*ListUserActivityResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"}
+	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	// @perm: Name=Any
-	SetProfilePicture(context.Context, *SetProfilePictureRequest) (*SetProfilePictureResponse, error)
+	UploadAvatar(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	// @perm: Name=Any
+	DeleteAvatar(context.Context, *DeleteAvatarRequest) (*DeleteAvatarResponse, error)
+	// @perm: Name=SetUserProps
+	UploadMugshot(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	// @perm: Name=SetUserProps
+	DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error)
 	// @perm
 	ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error)
 	mustEmbedUnimplementedCitizensServiceServer()
@@ -151,8 +203,17 @@ func (UnimplementedCitizensServiceServer) ListUserActivity(context.Context, *Lis
 func (UnimplementedCitizensServiceServer) SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserProps not implemented")
 }
-func (UnimplementedCitizensServiceServer) SetProfilePicture(context.Context, *SetProfilePictureRequest) (*SetProfilePictureResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetProfilePicture not implemented")
+func (UnimplementedCitizensServiceServer) UploadAvatar(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadAvatar not implemented")
+}
+func (UnimplementedCitizensServiceServer) DeleteAvatar(context.Context, *DeleteAvatarRequest) (*DeleteAvatarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteAvatar not implemented")
+}
+func (UnimplementedCitizensServiceServer) UploadMugshot(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadMugshot not implemented")
+}
+func (UnimplementedCitizensServiceServer) DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMugshot not implemented")
 }
 func (UnimplementedCitizensServiceServer) ManageLabels(context.Context, *ManageLabelsRequest) (*ManageLabelsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ManageLabels not implemented")
@@ -250,20 +311,52 @@ func _CitizensService_SetUserProps_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CitizensService_SetProfilePicture_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetProfilePictureRequest)
+func _CitizensService_UploadAvatar_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CitizensServiceServer).UploadAvatar(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CitizensService_UploadAvatarServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+
+func _CitizensService_DeleteAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteAvatarRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CitizensServiceServer).SetProfilePicture(ctx, in)
+		return srv.(CitizensServiceServer).DeleteAvatar(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CitizensService_SetProfilePicture_FullMethodName,
+		FullMethod: CitizensService_DeleteAvatar_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CitizensServiceServer).SetProfilePicture(ctx, req.(*SetProfilePictureRequest))
+		return srv.(CitizensServiceServer).DeleteAvatar(ctx, req.(*DeleteAvatarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CitizensService_UploadMugshot_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(CitizensServiceServer).UploadMugshot(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type CitizensService_UploadMugshotServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+
+func _CitizensService_DeleteMugshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMugshotRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CitizensServiceServer).DeleteMugshot(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CitizensService_DeleteMugshot_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CitizensServiceServer).DeleteMugshot(ctx, req.(*DeleteMugshotRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -310,14 +403,29 @@ var CitizensService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CitizensService_SetUserProps_Handler,
 		},
 		{
-			MethodName: "SetProfilePicture",
-			Handler:    _CitizensService_SetProfilePicture_Handler,
+			MethodName: "DeleteAvatar",
+			Handler:    _CitizensService_DeleteAvatar_Handler,
+		},
+		{
+			MethodName: "DeleteMugshot",
+			Handler:    _CitizensService_DeleteMugshot_Handler,
 		},
 		{
 			MethodName: "ManageLabels",
 			Handler:    _CitizensService_ManageLabels_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadAvatar",
+			Handler:       _CitizensService_UploadAvatar_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "UploadMugshot",
+			Handler:       _CitizensService_UploadMugshot_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "services/citizens/citizens.proto",
 }

@@ -32,9 +32,9 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := tables.User().AS("colleague")
+	tColleague := tables.User().AS("colleague")
 
-	condition := tUser.Job.EQ(jet.String(userInfo.Job))
+	condition := tColleague.Job.EQ(jet.String(userInfo.Job))
 	statsCondition := tTimeClock.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
@@ -119,8 +119,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
 				FROM(
 					tTimeClock.
-						INNER_JOIN(tUser,
-							tUser.ID.EQ(tTimeClock.UserID),
+						INNER_JOIN(tColleague,
+							tColleague.ID.EQ(tTimeClock.UserID),
 						),
 				).
 				WHERE(condition)
@@ -129,8 +129,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
 				FROM(
 					tTimeClock.
-						INNER_JOIN(tUser,
-							tUser.ID.EQ(tTimeClock.UserID),
+						INNER_JOIN(tColleague,
+							tColleague.ID.EQ(tTimeClock.UserID),
 						),
 				).
 				WHERE(condition)
@@ -140,8 +140,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("data_count.total")).
 			FROM(
 				tTimeClock.
-					INNER_JOIN(tUser,
-						tUser.ID.EQ(tTimeClock.UserID),
+					INNER_JOIN(tColleague,
+						tColleague.ID.EQ(tTimeClock.UserID),
 					),
 			).
 			WHERE(condition)
@@ -184,10 +184,10 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			columns = append(columns, tTimeClock.Date)
 		case "rank":
 			staticColumns = append(staticColumns, tTimeClock.Date.DESC())
-			columns = append(columns, tUser.JobGrade)
+			columns = append(columns, tColleague.JobGrade)
 		case "name":
 			staticColumns = append(staticColumns, tTimeClock.Date.DESC())
-			columns = append(columns, tUser.Firstname)
+			columns = append(columns, tColleague.Firstname)
 		case "time":
 			fallthrough
 		default:
@@ -230,14 +230,15 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tTimeClock.StartTime,
 				tTimeClock.EndTime,
 				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
-				tUser.ID,
-				tUser.Job,
-				tUser.JobGrade,
-				tUser.Firstname,
-				tUser.Lastname,
-				tUser.Dateofbirth,
-				tUser.PhoneNumber,
-				tUserProps.Avatar.AS("colleague.avatar"),
+				tColleague.ID,
+				tColleague.Job,
+				tColleague.JobGrade,
+				tColleague.Firstname,
+				tColleague.Lastname,
+				tColleague.Dateofbirth,
+				tColleague.PhoneNumber,
+				tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+				tAvatar.FilePath.AS("colleague.avatar"),
 				tColleagueProps.UserID,
 				tColleagueProps.Job,
 				tColleagueProps.AbsenceBegin,
@@ -247,15 +248,18 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			).
 			FROM(
 				tTimeClock.
-					INNER_JOIN(tUser,
-						tUser.ID.EQ(tTimeClock.UserID),
+					INNER_JOIN(tColleague,
+						tColleague.ID.EQ(tTimeClock.UserID),
 					).
 					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tUser.ID),
+						tUserProps.UserID.EQ(tColleague.ID),
 					).
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tUser.ID).
-							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+						tColleagueProps.UserID.EQ(tColleague.ID).
+							AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+					).
+					LEFT_JOIN(tAvatar,
+						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			).
 			WHERE(condition).
@@ -296,14 +300,15 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tTimeClock.StartTime,
 				tTimeClock.EndTime,
 				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
-				tUser.ID,
-				tUser.Job,
-				tUser.JobGrade,
-				tUser.Firstname,
-				tUser.Lastname,
-				tUser.Dateofbirth,
-				tUser.PhoneNumber,
-				tUserProps.Avatar.AS("colleague.avatar"),
+				tColleague.ID,
+				tColleague.Job,
+				tColleague.JobGrade,
+				tColleague.Firstname,
+				tColleague.Lastname,
+				tColleague.Dateofbirth,
+				tColleague.PhoneNumber,
+				tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+				tAvatar.FilePath.AS("colleague.avatar"),
 				tColleagueProps.UserID,
 				tColleagueProps.Job,
 				tColleagueProps.AbsenceBegin,
@@ -313,15 +318,18 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			).
 			FROM(
 				tTimeClock.
-					INNER_JOIN(tUser,
-						tUser.ID.EQ(tTimeClock.UserID),
+					INNER_JOIN(tColleague,
+						tColleague.ID.EQ(tTimeClock.UserID),
 					).
 					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tUser.ID),
+						tUserProps.UserID.EQ(tColleague.ID),
 					).
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tUser.ID).
-							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+						tColleagueProps.UserID.EQ(tColleague.ID).
+							AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+					).
+					LEFT_JOIN(tAvatar,
+						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			).
 			WHERE(condition).
@@ -361,14 +369,15 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tTimeClock.StartTime,
 				tTimeClock.EndTime,
 				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
-				tUser.ID,
-				tUser.Job,
-				tUser.JobGrade,
-				tUser.Firstname,
-				tUser.Lastname,
-				tUser.Dateofbirth,
-				tUser.PhoneNumber,
-				tUserProps.Avatar.AS("colleague.avatar"),
+				tColleague.ID,
+				tColleague.Job,
+				tColleague.JobGrade,
+				tColleague.Firstname,
+				tColleague.Lastname,
+				tColleague.Dateofbirth,
+				tColleague.PhoneNumber,
+				tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+				tAvatar.FilePath.AS("colleague.avatar"),
 				tColleagueProps.UserID,
 				tColleagueProps.Job,
 				tColleagueProps.AbsenceBegin,
@@ -378,15 +387,18 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			).
 			FROM(
 				tTimeClock.
-					INNER_JOIN(tUser,
-						tUser.ID.EQ(tTimeClock.UserID),
+					INNER_JOIN(tColleague,
+						tColleague.ID.EQ(tTimeClock.UserID),
 					).
 					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tUser.ID),
+						tUserProps.UserID.EQ(tColleague.ID),
 					).
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tUser.ID).
-							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+						tColleagueProps.UserID.EQ(tColleague.ID).
+							AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+					).
+					LEFT_JOIN(tAvatar,
+						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			).
 			WHERE(condition).
@@ -424,14 +436,15 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tTimeClock.StartTime,
 				tTimeClock.EndTime,
 				tTimeClock.SpentTime,
-				tUser.ID,
-				tUser.Job,
-				tUser.JobGrade,
-				tUser.Firstname,
-				tUser.Lastname,
-				tUser.Dateofbirth,
-				tUser.PhoneNumber,
-				tUserProps.Avatar.AS("colleague.avatar"),
+				tColleague.ID,
+				tColleague.Job,
+				tColleague.JobGrade,
+				tColleague.Firstname,
+				tColleague.Lastname,
+				tColleague.Dateofbirth,
+				tColleague.PhoneNumber,
+				tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+				tAvatar.FilePath.AS("colleague.avatar"),
 				tColleagueProps.UserID,
 				tColleagueProps.Job,
 				tColleagueProps.AbsenceBegin,
@@ -441,15 +454,18 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			).
 			FROM(
 				tTimeClock.
-					INNER_JOIN(tUser,
-						tUser.ID.EQ(tTimeClock.UserID),
+					INNER_JOIN(tColleague,
+						tColleague.ID.EQ(tTimeClock.UserID),
 					).
 					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tUser.ID),
+						tUserProps.UserID.EQ(tColleague.ID),
 					).
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tUser.ID).
-							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+						tColleagueProps.UserID.EQ(tColleague.ID).
+							AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+					).
+					LEFT_JOIN(tAvatar,
+						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			).
 			WHERE(condition).
@@ -514,11 +530,11 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *pbjobs.GetTimeclock
 func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInactiveEmployeesRequest) (*pbjobs.ListInactiveEmployeesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := tables.User().AS("colleague")
+	tColleague := tables.User().AS("colleague")
 
 	condition := jet.AND(
 		tTimeClock.Job.EQ(jet.String(userInfo.Job)),
-		tUser.Job.EQ(jet.String(userInfo.Job)),
+		tColleague.Job.EQ(jet.String(userInfo.Job)),
 		jet.OR(
 			jet.AND(
 				tColleagueProps.AbsenceBegin.IS_NULL(),
@@ -551,15 +567,15 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 		).
 		FROM(
 			tTimeClock.
-				INNER_JOIN(tUser,
-					tUser.ID.EQ(tTimeClock.UserID),
+				INNER_JOIN(tColleague,
+					tColleague.ID.EQ(tTimeClock.UserID),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tTimeClock.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tTimeClock.UserID).
-						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+						AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
 				),
 		).
 		WHERE(condition)
@@ -586,11 +602,11 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 		var columns []jet.Column
 		switch req.Sort.Column {
 		case "name":
-			columns = append(columns, tUser.Firstname, tUser.Lastname)
+			columns = append(columns, tColleague.Firstname, tColleague.Lastname)
 		case "rank":
 			fallthrough
 		default:
-			columns = append(columns, tUser.JobGrade)
+			columns = append(columns, tColleague.JobGrade)
 		}
 
 		for _, column := range columns {
@@ -601,20 +617,21 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 			}
 		}
 	} else {
-		orderBys = append(orderBys, tUser.JobGrade.ASC())
+		orderBys = append(orderBys, tColleague.JobGrade.ASC())
 	}
 
 	stmt := tTimeClock.
 		SELECT(
 			tTimeClock.UserID,
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tColleague.ID,
+			tColleague.Job,
+			tColleague.JobGrade,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
 			tColleagueProps.AbsenceBegin,
@@ -624,15 +641,18 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 		).
 		FROM(
 			tTimeClock.
-				INNER_JOIN(tUser,
-					tUser.ID.EQ(tTimeClock.UserID),
+				INNER_JOIN(tColleague,
+					tColleague.ID.EQ(tTimeClock.UserID),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tTimeClock.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tTimeClock.UserID).
-						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+						AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(condition).

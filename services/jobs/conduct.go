@@ -119,10 +119,12 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 		orderBys = append(orderBys, tConduct.ID.DESC())
 	}
 
-	tUser := tables.User().AS("target_user")
+	tColleague := tables.User().AS("target_user")
 	tUserUserProps := tUserProps.AS("target_user_props")
-	tCreator := tUser.AS("creator")
+	tColleagueAvatar := tAvatar.AS("target_user_avatar")
+	tCreator := tColleague.AS("creator")
 	tCreatorUserProps := tUserProps.AS("creator_props")
+	tCreatorAvatar := tAvatar.AS("creator_avatar")
 
 	stmt := tConduct.
 		SELECT(
@@ -134,14 +136,15 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 			tConduct.Message,
 			tConduct.ExpiresAt,
 			tConduct.TargetUserID,
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserUserProps.Avatar.AS("target_user.avatar"),
+			tColleague.ID,
+			tColleague.Job,
+			tColleague.JobGrade,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
+			tUserUserProps.AvatarFileID.AS("target_user.avatar_file_id"),
+			tColleagueAvatar.FilePath.AS("target_user.avatar"),
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
 			tColleagueProps.AbsenceBegin,
@@ -156,25 +159,32 @@ func (s *Server) ListConductEntries(ctx context.Context, req *pbjobs.ListConduct
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
-			tCreatorUserProps.Avatar.AS("creator.avatar"),
+			tCreatorUserProps.AvatarFileID.AS("creator.avatar_file_id"),
+			tCreatorAvatar.FilePath.AS("creator.avatar"),
 		).
 		FROM(
 			tConduct.
-				INNER_JOIN(tUser,
-					tUser.ID.EQ(tConduct.TargetUserID),
+				INNER_JOIN(tColleague,
+					tColleague.ID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tUserUserProps,
 					tUserUserProps.UserID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tConduct.TargetUserID).
-						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+						AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
 				).
 				LEFT_JOIN(tCreator,
 					tCreator.ID.EQ(tConduct.CreatorID),
 				).
 				LEFT_JOIN(tCreatorUserProps,
 					tCreatorUserProps.UserID.EQ(tConduct.CreatorID),
+				).
+				LEFT_JOIN(tColleagueAvatar,
+					tColleagueAvatar.ID.EQ(tUserUserProps.AvatarFileID),
+				).
+				LEFT_JOIN(tCreatorAvatar,
+					tCreatorAvatar.ID.EQ(tCreatorUserProps.AvatarFileID),
 				),
 		).
 		WHERE(condition).

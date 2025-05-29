@@ -11,6 +11,7 @@ import (
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	documents "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -479,14 +480,18 @@ type ListDocumentsRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	Search        *string              `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`
-	CategoryIds   []uint64             `protobuf:"varint,4,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
-	CreatorIds    []int32              `protobuf:"varint,5,rep,packed,name=creator_ids,json=creatorIds,proto3" json:"creator_ids,omitempty"`
-	From          *timestamp.Timestamp `protobuf:"bytes,6,opt,name=from,proto3,oneof" json:"from,omitempty"`
-	To            *timestamp.Timestamp `protobuf:"bytes,7,opt,name=to,proto3,oneof" json:"to,omitempty"`
-	Closed        *bool                `protobuf:"varint,8,opt,name=closed,proto3,oneof" json:"closed,omitempty"`
-	DocumentIds   []uint64             `protobuf:"varint,9,rep,packed,name=document_ids,json=documentIds,proto3" json:"document_ids,omitempty"`
-	IncludeDrafts *bool                `protobuf:"varint,10,opt,name=include_drafts,json=includeDrafts,proto3,oneof" json:"include_drafts,omitempty"`
+	Search      *string              `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`
+	CategoryIds []uint64             `protobuf:"varint,4,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
+	CreatorIds  []int32              `protobuf:"varint,5,rep,packed,name=creator_ids,json=creatorIds,proto3" json:"creator_ids,omitempty"`
+	From        *timestamp.Timestamp `protobuf:"bytes,6,opt,name=from,proto3,oneof" json:"from,omitempty"`
+	To          *timestamp.Timestamp `protobuf:"bytes,7,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	Closed      *bool                `protobuf:"varint,8,opt,name=closed,proto3,oneof" json:"closed,omitempty"`
+	DocumentIds []uint64             `protobuf:"varint,9,rep,packed,name=document_ids,json=documentIds,proto3" json:"document_ids,omitempty"`
+	// Controls inclusion of drafts in the result:
+	// - unset/null: include all documents (drafts and non-drafts)
+	// - false: only non-draft documents
+	// - true: only draft documents
+	OnlyDrafts    *bool `protobuf:"varint,10,opt,name=only_drafts,json=onlyDrafts,proto3,oneof" json:"only_drafts,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -584,9 +589,9 @@ func (x *ListDocumentsRequest) GetDocumentIds() []uint64 {
 	return nil
 }
 
-func (x *ListDocumentsRequest) GetIncludeDrafts() bool {
-	if x != nil && x.IncludeDrafts != nil {
-		return *x.IncludeDrafts
+func (x *ListDocumentsRequest) GetOnlyDrafts() bool {
+	if x != nil && x.OnlyDrafts != nil {
+		return *x.OnlyDrafts
 	}
 	return false
 }
@@ -3621,7 +3626,7 @@ var File_services_documents_documents_proto protoreflect.FileDescriptor
 
 const file_services_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"\"services/documents/documents.proto\x12\x12services.documents\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x16\n" +
+	"\"services/documents/documents.proto\x12\x12services.documents\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a resources/documents/access.proto\x1a\"resources/documents/activity.proto\x1a\"resources/documents/category.proto\x1a!resources/documents/comment.proto\x1a#resources/documents/documents.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/requests.proto\x1a#resources/documents/templates.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1eresources/file/filestore.proto\x1a\x17validate/validate.proto\"\x16\n" +
 	"\x14ListTemplatesRequest\"Y\n" +
 	"\x15ListTemplatesResponse\x12@\n" +
 	"\ttemplates\x18\x01 \x03(\v2\".resources.documents.TemplateShortR\ttemplates\"\xa2\x01\n" +
@@ -3645,7 +3650,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\btemplate\x18\x01 \x01(\v2\x1d.resources.documents.TemplateR\btemplate\"'\n" +
 	"\x15DeleteTemplateRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\"\x18\n" +
-	"\x16DeleteTemplateResponse\"\xcc\x04\n" +
+	"\x16DeleteTemplateResponse\"\xc3\x04\n" +
 	"\x14ListDocumentsRequest\x12V\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
@@ -3658,15 +3663,16 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x04from\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\x04from\x88\x01\x01\x123\n" +
 	"\x02to\x18\a \x01(\v2\x1e.resources.timestamp.TimestampH\x03R\x02to\x88\x01\x01\x12\x1b\n" +
 	"\x06closed\x18\b \x01(\bH\x04R\x06closed\x88\x01\x01\x12+\n" +
-	"\fdocument_ids\x18\t \x03(\x04B\b\xfaB\x05\x92\x01\x02\x10\x05R\vdocumentIds\x12*\n" +
-	"\x0einclude_drafts\x18\n" +
-	" \x01(\bH\x05R\rincludeDrafts\x88\x01\x01B\a\n" +
+	"\fdocument_ids\x18\t \x03(\x04B\b\xfaB\x05\x92\x01\x02\x10\x05R\vdocumentIds\x12$\n" +
+	"\vonly_drafts\x18\n" +
+	" \x01(\bH\x05R\n" +
+	"onlyDrafts\x88\x01\x01B\a\n" +
 	"\x05_sortB\t\n" +
 	"\a_searchB\a\n" +
 	"\x05_fromB\x05\n" +
 	"\x03_toB\t\n" +
-	"\a_closedB\x11\n" +
-	"\x0f_include_drafts\"\xb2\x01\n" +
+	"\a_closedB\x0e\n" +
+	"\f_only_drafts\"\xb2\x01\n" +
 	"\x15ListDocumentsResponse\x12W\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
@@ -3907,7 +3913,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +
-	"\x1bSetDocumentReminderResponse2\xaf\x1f\n" +
+	"\x1bSetDocumentReminderResponse2\xfd\x1f\n" +
 	"\x10DocumentsService\x12d\n" +
 	"\rListTemplates\x12(.services.documents.ListTemplatesRequest\x1a).services.documents.ListTemplatesResponse\x12^\n" +
 	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\x12g\n" +
@@ -3944,7 +3950,9 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0eDeleteCategory\x12).services.documents.DeleteCategoryRequest\x1a*.services.documents.DeleteCategoryResponse\x12m\n" +
 	"\x10ListDocumentPins\x12+.services.documents.ListDocumentPinsRequest\x1a,.services.documents.ListDocumentPinsResponse\x12p\n" +
 	"\x11ToggleDocumentPin\x12,.services.documents.ToggleDocumentPinRequest\x1a-.services.documents.ToggleDocumentPinResponse\x12v\n" +
-	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponseBPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponse\x12L\n" +
+	"\n" +
+	"UploadFile\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_documents_proto_rawDescOnce sync.Once
@@ -4054,6 +4062,8 @@ var file_services_documents_documents_proto_goTypes = []any{
 	(documents.DocRelation)(0),              // 91: resources.documents.DocRelation
 	(*documents.Category)(nil),              // 92: resources.documents.Category
 	(*documents.DocumentPin)(nil),           // 93: resources.documents.DocumentPin
+	(*file.UploadPacket)(nil),               // 94: resources.file.UploadPacket
+	(*file.UploadResponse)(nil),             // 95: resources.file.UploadResponse
 }
 var file_services_documents_documents_proto_depIdxs = []int32{
 	72, // 0: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.TemplateShort
@@ -4150,44 +4160,46 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	66, // 91: services.documents.DocumentsService.ListDocumentPins:input_type -> services.documents.ListDocumentPinsRequest
 	68, // 92: services.documents.DocumentsService.ToggleDocumentPin:input_type -> services.documents.ToggleDocumentPinRequest
 	70, // 93: services.documents.DocumentsService.SetDocumentReminder:input_type -> services.documents.SetDocumentReminderRequest
-	1,  // 94: services.documents.DocumentsService.ListTemplates:output_type -> services.documents.ListTemplatesResponse
-	3,  // 95: services.documents.DocumentsService.GetTemplate:output_type -> services.documents.GetTemplateResponse
-	5,  // 96: services.documents.DocumentsService.CreateTemplate:output_type -> services.documents.CreateTemplateResponse
-	7,  // 97: services.documents.DocumentsService.UpdateTemplate:output_type -> services.documents.UpdateTemplateResponse
-	9,  // 98: services.documents.DocumentsService.DeleteTemplate:output_type -> services.documents.DeleteTemplateResponse
-	11, // 99: services.documents.DocumentsService.ListDocuments:output_type -> services.documents.ListDocumentsResponse
-	13, // 100: services.documents.DocumentsService.GetDocument:output_type -> services.documents.GetDocumentResponse
-	42, // 101: services.documents.DocumentsService.CreateDocument:output_type -> services.documents.CreateDocumentResponse
-	34, // 102: services.documents.DocumentsService.UpdateDocument:output_type -> services.documents.UpdateDocumentResponse
-	36, // 103: services.documents.DocumentsService.DeleteDocument:output_type -> services.documents.DeleteDocumentResponse
-	38, // 104: services.documents.DocumentsService.ToggleDocument:output_type -> services.documents.ToggleDocumentResponse
-	40, // 105: services.documents.DocumentsService.ChangeDocumentOwner:output_type -> services.documents.ChangeDocumentOwnerResponse
-	15, // 106: services.documents.DocumentsService.GetDocumentReferences:output_type -> services.documents.GetDocumentReferencesResponse
-	17, // 107: services.documents.DocumentsService.GetDocumentRelations:output_type -> services.documents.GetDocumentRelationsResponse
-	19, // 108: services.documents.DocumentsService.AddDocumentReference:output_type -> services.documents.AddDocumentReferenceResponse
-	21, // 109: services.documents.DocumentsService.RemoveDocumentReference:output_type -> services.documents.RemoveDocumentReferenceResponse
-	23, // 110: services.documents.DocumentsService.AddDocumentRelation:output_type -> services.documents.AddDocumentRelationResponse
-	25, // 111: services.documents.DocumentsService.RemoveDocumentRelation:output_type -> services.documents.RemoveDocumentRelationResponse
-	27, // 112: services.documents.DocumentsService.GetComments:output_type -> services.documents.GetCommentsResponse
-	29, // 113: services.documents.DocumentsService.PostComment:output_type -> services.documents.PostCommentResponse
-	31, // 114: services.documents.DocumentsService.EditComment:output_type -> services.documents.EditCommentResponse
-	33, // 115: services.documents.DocumentsService.DeleteComment:output_type -> services.documents.DeleteCommentResponse
-	55, // 116: services.documents.DocumentsService.GetDocumentAccess:output_type -> services.documents.GetDocumentAccessResponse
-	57, // 117: services.documents.DocumentsService.SetDocumentAccess:output_type -> services.documents.SetDocumentAccessResponse
-	45, // 118: services.documents.DocumentsService.ListDocumentActivity:output_type -> services.documents.ListDocumentActivityResponse
-	47, // 119: services.documents.DocumentsService.ListDocumentReqs:output_type -> services.documents.ListDocumentReqsResponse
-	49, // 120: services.documents.DocumentsService.CreateDocumentReq:output_type -> services.documents.CreateDocumentReqResponse
-	51, // 121: services.documents.DocumentsService.UpdateDocumentReq:output_type -> services.documents.UpdateDocumentReqResponse
-	53, // 122: services.documents.DocumentsService.DeleteDocumentReq:output_type -> services.documents.DeleteDocumentReqResponse
-	59, // 123: services.documents.DocumentsService.ListUserDocuments:output_type -> services.documents.ListUserDocumentsResponse
-	61, // 124: services.documents.DocumentsService.ListCategories:output_type -> services.documents.ListCategoriesResponse
-	63, // 125: services.documents.DocumentsService.CreateOrUpdateCategory:output_type -> services.documents.CreateOrUpdateCategoryResponse
-	65, // 126: services.documents.DocumentsService.DeleteCategory:output_type -> services.documents.DeleteCategoryResponse
-	67, // 127: services.documents.DocumentsService.ListDocumentPins:output_type -> services.documents.ListDocumentPinsResponse
-	69, // 128: services.documents.DocumentsService.ToggleDocumentPin:output_type -> services.documents.ToggleDocumentPinResponse
-	71, // 129: services.documents.DocumentsService.SetDocumentReminder:output_type -> services.documents.SetDocumentReminderResponse
-	94, // [94:130] is the sub-list for method output_type
-	58, // [58:94] is the sub-list for method input_type
+	94, // 94: services.documents.DocumentsService.UploadFile:input_type -> resources.file.UploadPacket
+	1,  // 95: services.documents.DocumentsService.ListTemplates:output_type -> services.documents.ListTemplatesResponse
+	3,  // 96: services.documents.DocumentsService.GetTemplate:output_type -> services.documents.GetTemplateResponse
+	5,  // 97: services.documents.DocumentsService.CreateTemplate:output_type -> services.documents.CreateTemplateResponse
+	7,  // 98: services.documents.DocumentsService.UpdateTemplate:output_type -> services.documents.UpdateTemplateResponse
+	9,  // 99: services.documents.DocumentsService.DeleteTemplate:output_type -> services.documents.DeleteTemplateResponse
+	11, // 100: services.documents.DocumentsService.ListDocuments:output_type -> services.documents.ListDocumentsResponse
+	13, // 101: services.documents.DocumentsService.GetDocument:output_type -> services.documents.GetDocumentResponse
+	42, // 102: services.documents.DocumentsService.CreateDocument:output_type -> services.documents.CreateDocumentResponse
+	34, // 103: services.documents.DocumentsService.UpdateDocument:output_type -> services.documents.UpdateDocumentResponse
+	36, // 104: services.documents.DocumentsService.DeleteDocument:output_type -> services.documents.DeleteDocumentResponse
+	38, // 105: services.documents.DocumentsService.ToggleDocument:output_type -> services.documents.ToggleDocumentResponse
+	40, // 106: services.documents.DocumentsService.ChangeDocumentOwner:output_type -> services.documents.ChangeDocumentOwnerResponse
+	15, // 107: services.documents.DocumentsService.GetDocumentReferences:output_type -> services.documents.GetDocumentReferencesResponse
+	17, // 108: services.documents.DocumentsService.GetDocumentRelations:output_type -> services.documents.GetDocumentRelationsResponse
+	19, // 109: services.documents.DocumentsService.AddDocumentReference:output_type -> services.documents.AddDocumentReferenceResponse
+	21, // 110: services.documents.DocumentsService.RemoveDocumentReference:output_type -> services.documents.RemoveDocumentReferenceResponse
+	23, // 111: services.documents.DocumentsService.AddDocumentRelation:output_type -> services.documents.AddDocumentRelationResponse
+	25, // 112: services.documents.DocumentsService.RemoveDocumentRelation:output_type -> services.documents.RemoveDocumentRelationResponse
+	27, // 113: services.documents.DocumentsService.GetComments:output_type -> services.documents.GetCommentsResponse
+	29, // 114: services.documents.DocumentsService.PostComment:output_type -> services.documents.PostCommentResponse
+	31, // 115: services.documents.DocumentsService.EditComment:output_type -> services.documents.EditCommentResponse
+	33, // 116: services.documents.DocumentsService.DeleteComment:output_type -> services.documents.DeleteCommentResponse
+	55, // 117: services.documents.DocumentsService.GetDocumentAccess:output_type -> services.documents.GetDocumentAccessResponse
+	57, // 118: services.documents.DocumentsService.SetDocumentAccess:output_type -> services.documents.SetDocumentAccessResponse
+	45, // 119: services.documents.DocumentsService.ListDocumentActivity:output_type -> services.documents.ListDocumentActivityResponse
+	47, // 120: services.documents.DocumentsService.ListDocumentReqs:output_type -> services.documents.ListDocumentReqsResponse
+	49, // 121: services.documents.DocumentsService.CreateDocumentReq:output_type -> services.documents.CreateDocumentReqResponse
+	51, // 122: services.documents.DocumentsService.UpdateDocumentReq:output_type -> services.documents.UpdateDocumentReqResponse
+	53, // 123: services.documents.DocumentsService.DeleteDocumentReq:output_type -> services.documents.DeleteDocumentReqResponse
+	59, // 124: services.documents.DocumentsService.ListUserDocuments:output_type -> services.documents.ListUserDocumentsResponse
+	61, // 125: services.documents.DocumentsService.ListCategories:output_type -> services.documents.ListCategoriesResponse
+	63, // 126: services.documents.DocumentsService.CreateOrUpdateCategory:output_type -> services.documents.CreateOrUpdateCategoryResponse
+	65, // 127: services.documents.DocumentsService.DeleteCategory:output_type -> services.documents.DeleteCategoryResponse
+	67, // 128: services.documents.DocumentsService.ListDocumentPins:output_type -> services.documents.ListDocumentPinsResponse
+	69, // 129: services.documents.DocumentsService.ToggleDocumentPin:output_type -> services.documents.ToggleDocumentPinResponse
+	71, // 130: services.documents.DocumentsService.SetDocumentReminder:output_type -> services.documents.SetDocumentReminderResponse
+	95, // 131: services.documents.DocumentsService.UploadFile:output_type -> resources.file.UploadResponse
+	95, // [95:132] is the sub-list for method output_type
+	58, // [58:95] is the sub-list for method input_type
 	58, // [58:58] is the sub-list for extension type_name
 	58, // [58:58] is the sub-list for extension extendee
 	0,  // [0:58] is the sub-list for field type_name

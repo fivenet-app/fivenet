@@ -261,10 +261,10 @@ const props = defineProps<{
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
                         <template v-if="activity.data.data.mugshotChange.new">
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mug_shot_set') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mugshot_set') }}
                         </template>
                         <template v-else>
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mug_shot_removed') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mugshot_removed') }}
                         </template>
                     </h3>
 

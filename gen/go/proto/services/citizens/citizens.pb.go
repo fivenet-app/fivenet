@@ -9,7 +9,7 @@ package citizens
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -492,27 +492,26 @@ func (x *SetUserPropsResponse) GetProps() *users.UserProps {
 	return nil
 }
 
-type SetProfilePictureRequest struct {
+type DeleteAvatarRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Avatar        *filestore.File        `protobuf:"bytes,1,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetProfilePictureRequest) Reset() {
-	*x = SetProfilePictureRequest{}
+func (x *DeleteAvatarRequest) Reset() {
+	*x = DeleteAvatarRequest{}
 	mi := &file_services_citizens_citizens_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetProfilePictureRequest) String() string {
+func (x *DeleteAvatarRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetProfilePictureRequest) ProtoMessage() {}
+func (*DeleteAvatarRequest) ProtoMessage() {}
 
-func (x *SetProfilePictureRequest) ProtoReflect() protoreflect.Message {
+func (x *DeleteAvatarRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_citizens_citizens_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -524,39 +523,31 @@ func (x *SetProfilePictureRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetProfilePictureRequest.ProtoReflect.Descriptor instead.
-func (*SetProfilePictureRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteAvatarRequest.ProtoReflect.Descriptor instead.
+func (*DeleteAvatarRequest) Descriptor() ([]byte, []int) {
 	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *SetProfilePictureRequest) GetAvatar() *filestore.File {
-	if x != nil {
-		return x.Avatar
-	}
-	return nil
-}
-
-type SetProfilePictureResponse struct {
+type DeleteAvatarResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Avatar        *filestore.File        `protobuf:"bytes,1,opt,name=avatar,proto3" json:"avatar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *SetProfilePictureResponse) Reset() {
-	*x = SetProfilePictureResponse{}
+func (x *DeleteAvatarResponse) Reset() {
+	*x = DeleteAvatarResponse{}
 	mi := &file_services_citizens_citizens_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *SetProfilePictureResponse) String() string {
+func (x *DeleteAvatarResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*SetProfilePictureResponse) ProtoMessage() {}
+func (*DeleteAvatarResponse) ProtoMessage() {}
 
-func (x *SetProfilePictureResponse) ProtoReflect() protoreflect.Message {
+func (x *DeleteAvatarResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_citizens_citizens_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -568,16 +559,98 @@ func (x *SetProfilePictureResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use SetProfilePictureResponse.ProtoReflect.Descriptor instead.
-func (*SetProfilePictureResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use DeleteAvatarResponse.ProtoReflect.Descriptor instead.
+func (*DeleteAvatarResponse) Descriptor() ([]byte, []int) {
 	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{9}
 }
 
-func (x *SetProfilePictureResponse) GetAvatar() *filestore.File {
+type DeleteMugshotRequest struct {
+	state  protoimpl.MessageState `protogen:"open.v1"`
+	UserId int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	// @sanitize
+	Reason        string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteMugshotRequest) Reset() {
+	*x = DeleteMugshotRequest{}
+	mi := &file_services_citizens_citizens_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteMugshotRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteMugshotRequest) ProtoMessage() {}
+
+func (x *DeleteMugshotRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_citizens_proto_msgTypes[10]
 	if x != nil {
-		return x.Avatar
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
 	}
-	return nil
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteMugshotRequest.ProtoReflect.Descriptor instead.
+func (*DeleteMugshotRequest) Descriptor() ([]byte, []int) {
+	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *DeleteMugshotRequest) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *DeleteMugshotRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+type DeleteMugshotResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteMugshotResponse) Reset() {
+	*x = DeleteMugshotResponse{}
+	mi := &file_services_citizens_citizens_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteMugshotResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteMugshotResponse) ProtoMessage() {}
+
+func (x *DeleteMugshotResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_citizens_citizens_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteMugshotResponse.ProtoReflect.Descriptor instead.
+func (*DeleteMugshotResponse) Descriptor() ([]byte, []int) {
+	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{11}
 }
 
 type ManageLabelsRequest struct {
@@ -589,7 +662,7 @@ type ManageLabelsRequest struct {
 
 func (x *ManageLabelsRequest) Reset() {
 	*x = ManageLabelsRequest{}
-	mi := &file_services_citizens_citizens_proto_msgTypes[10]
+	mi := &file_services_citizens_citizens_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -601,7 +674,7 @@ func (x *ManageLabelsRequest) String() string {
 func (*ManageLabelsRequest) ProtoMessage() {}
 
 func (x *ManageLabelsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_citizens_proto_msgTypes[10]
+	mi := &file_services_citizens_citizens_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -614,7 +687,7 @@ func (x *ManageLabelsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ManageLabelsRequest.ProtoReflect.Descriptor instead.
 func (*ManageLabelsRequest) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{10}
+	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *ManageLabelsRequest) GetLabels() []*users.Label {
@@ -633,7 +706,7 @@ type ManageLabelsResponse struct {
 
 func (x *ManageLabelsResponse) Reset() {
 	*x = ManageLabelsResponse{}
-	mi := &file_services_citizens_citizens_proto_msgTypes[11]
+	mi := &file_services_citizens_citizens_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -645,7 +718,7 @@ func (x *ManageLabelsResponse) String() string {
 func (*ManageLabelsResponse) ProtoMessage() {}
 
 func (x *ManageLabelsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_citizens_citizens_proto_msgTypes[11]
+	mi := &file_services_citizens_citizens_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -658,7 +731,7 @@ func (x *ManageLabelsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ManageLabelsResponse.ProtoReflect.Descriptor instead.
 func (*ManageLabelsResponse) Descriptor() ([]byte, []int) {
-	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{11}
+	return file_services_citizens_citizens_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *ManageLabelsResponse) GetLabels() []*users.Label {
@@ -672,7 +745,7 @@ var File_services_citizens_citizens_proto protoreflect.FileDescriptor
 
 const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\n" +
-	" services/citizens/citizens.proto\x12\x11services.citizens\x1a(resources/common/database/database.proto\x1a\x1eresources/filestore/file.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/users.proto\x1a\x1bresources/users/props.proto\x1a\x17validate/validate.proto\"\x8d\x04\n" +
+	" services/citizens/citizens.proto\x12\x11services.citizens\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1eresources/users/activity.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/props.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x8d\x04\n" +
 	"\x13ListCitizensRequest\x12V\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
@@ -722,21 +795,27 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x06reason\x18\x02 \x01(\tB\r\xfaB\n" +
 	"r\b\x10\x03\x18\xff\x01\xd0\x01\x01R\x06reason\"H\n" +
 	"\x14SetUserPropsResponse\x120\n" +
-	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsR\x05props\"M\n" +
-	"\x18SetProfilePictureRequest\x121\n" +
-	"\x06avatar\x18\x01 \x01(\v2\x19.resources.filestore.FileR\x06avatar\"N\n" +
-	"\x19SetProfilePictureResponse\x121\n" +
-	"\x06avatar\x18\x01 \x01(\v2\x19.resources.filestore.FileR\x06avatar\"E\n" +
+	"\x05props\x18\x01 \x01(\v2\x1a.resources.users.UserPropsR\x05props\"\x15\n" +
+	"\x13DeleteAvatarRequest\"\x16\n" +
+	"\x14DeleteAvatarResponse\"_\n" +
+	"\x14DeleteMugshotRequest\x12 \n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12%\n" +
+	"\x06reason\x18\x02 \x01(\tB\r\xfaB\n" +
+	"r\b\x10\x03\x18\xff\x01\xd0\x01\x01R\x06reason\"\x17\n" +
+	"\x15DeleteMugshotResponse\"E\n" +
 	"\x13ManageLabelsRequest\x12.\n" +
 	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels\"F\n" +
 	"\x14ManageLabelsResponse\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xe3\x04\n" +
+	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xd9\x06\n" +
 	"\x0fCitizensService\x12_\n" +
 	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\x12P\n" +
 	"\aGetUser\x12!.services.citizens.GetUserRequest\x1a\".services.citizens.GetUserResponse\x12k\n" +
 	"\x10ListUserActivity\x12*.services.citizens.ListUserActivityRequest\x1a+.services.citizens.ListUserActivityResponse\x12_\n" +
-	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\x12n\n" +
-	"\x11SetProfilePicture\x12+.services.citizens.SetProfilePictureRequest\x1a,.services.citizens.SetProfilePictureResponse\x12_\n" +
+	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\x12N\n" +
+	"\fUploadAvatar\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01\x12_\n" +
+	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\x12O\n" +
+	"\rUploadMugshot\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01\x12b\n" +
+	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\x12_\n" +
 	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizensb\x06proto3"
 
 var (
@@ -751,7 +830,7 @@ func file_services_citizens_citizens_proto_rawDescGZIP() []byte {
 	return file_services_citizens_citizens_proto_rawDescData
 }
 
-var file_services_citizens_citizens_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
+var file_services_citizens_citizens_proto_msgTypes = make([]protoimpl.MessageInfo, 14)
 var file_services_citizens_citizens_proto_goTypes = []any{
 	(*ListCitizensRequest)(nil),         // 0: services.citizens.ListCitizensRequest
 	(*ListCitizensResponse)(nil),        // 1: services.citizens.ListCitizensResponse
@@ -761,54 +840,61 @@ var file_services_citizens_citizens_proto_goTypes = []any{
 	(*ListUserActivityResponse)(nil),    // 5: services.citizens.ListUserActivityResponse
 	(*SetUserPropsRequest)(nil),         // 6: services.citizens.SetUserPropsRequest
 	(*SetUserPropsResponse)(nil),        // 7: services.citizens.SetUserPropsResponse
-	(*SetProfilePictureRequest)(nil),    // 8: services.citizens.SetProfilePictureRequest
-	(*SetProfilePictureResponse)(nil),   // 9: services.citizens.SetProfilePictureResponse
-	(*ManageLabelsRequest)(nil),         // 10: services.citizens.ManageLabelsRequest
-	(*ManageLabelsResponse)(nil),        // 11: services.citizens.ManageLabelsResponse
-	(*database.PaginationRequest)(nil),  // 12: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),               // 13: resources.common.database.Sort
-	(*database.PaginationResponse)(nil), // 14: resources.common.database.PaginationResponse
-	(*users.User)(nil),                  // 15: resources.users.User
-	(users.UserActivityType)(0),         // 16: resources.users.UserActivityType
-	(*users.UserActivity)(nil),          // 17: resources.users.UserActivity
-	(*users.UserProps)(nil),             // 18: resources.users.UserProps
-	(*filestore.File)(nil),              // 19: resources.filestore.File
-	(*users.Label)(nil),                 // 20: resources.users.Label
+	(*DeleteAvatarRequest)(nil),         // 8: services.citizens.DeleteAvatarRequest
+	(*DeleteAvatarResponse)(nil),        // 9: services.citizens.DeleteAvatarResponse
+	(*DeleteMugshotRequest)(nil),        // 10: services.citizens.DeleteMugshotRequest
+	(*DeleteMugshotResponse)(nil),       // 11: services.citizens.DeleteMugshotResponse
+	(*ManageLabelsRequest)(nil),         // 12: services.citizens.ManageLabelsRequest
+	(*ManageLabelsResponse)(nil),        // 13: services.citizens.ManageLabelsResponse
+	(*database.PaginationRequest)(nil),  // 14: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),               // 15: resources.common.database.Sort
+	(*database.PaginationResponse)(nil), // 16: resources.common.database.PaginationResponse
+	(*users.User)(nil),                  // 17: resources.users.User
+	(users.UserActivityType)(0),         // 18: resources.users.UserActivityType
+	(*users.UserActivity)(nil),          // 19: resources.users.UserActivity
+	(*users.UserProps)(nil),             // 20: resources.users.UserProps
+	(*users.Label)(nil),                 // 21: resources.users.Label
+	(*file.UploadPacket)(nil),           // 22: resources.file.UploadPacket
+	(*file.UploadResponse)(nil),         // 23: resources.file.UploadResponse
 }
 var file_services_citizens_citizens_proto_depIdxs = []int32{
-	12, // 0: services.citizens.ListCitizensRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	13, // 1: services.citizens.ListCitizensRequest.sort:type_name -> resources.common.database.Sort
-	14, // 2: services.citizens.ListCitizensResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	15, // 3: services.citizens.ListCitizensResponse.users:type_name -> resources.users.User
-	15, // 4: services.citizens.GetUserResponse.user:type_name -> resources.users.User
-	12, // 5: services.citizens.ListUserActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	13, // 6: services.citizens.ListUserActivityRequest.sort:type_name -> resources.common.database.Sort
-	16, // 7: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.UserActivityType
-	14, // 8: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	17, // 9: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.UserActivity
-	18, // 10: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.UserProps
-	18, // 11: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.UserProps
-	19, // 12: services.citizens.SetProfilePictureRequest.avatar:type_name -> resources.filestore.File
-	19, // 13: services.citizens.SetProfilePictureResponse.avatar:type_name -> resources.filestore.File
-	20, // 14: services.citizens.ManageLabelsRequest.labels:type_name -> resources.users.Label
-	20, // 15: services.citizens.ManageLabelsResponse.labels:type_name -> resources.users.Label
-	0,  // 16: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
-	2,  // 17: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
-	4,  // 18: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
-	6,  // 19: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
-	8,  // 20: services.citizens.CitizensService.SetProfilePicture:input_type -> services.citizens.SetProfilePictureRequest
-	10, // 21: services.citizens.CitizensService.ManageLabels:input_type -> services.citizens.ManageLabelsRequest
-	1,  // 22: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
-	3,  // 23: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
-	5,  // 24: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
-	7,  // 25: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
-	9,  // 26: services.citizens.CitizensService.SetProfilePicture:output_type -> services.citizens.SetProfilePictureResponse
-	11, // 27: services.citizens.CitizensService.ManageLabels:output_type -> services.citizens.ManageLabelsResponse
-	22, // [22:28] is the sub-list for method output_type
-	16, // [16:22] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	14, // 0: services.citizens.ListCitizensRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	15, // 1: services.citizens.ListCitizensRequest.sort:type_name -> resources.common.database.Sort
+	16, // 2: services.citizens.ListCitizensResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	17, // 3: services.citizens.ListCitizensResponse.users:type_name -> resources.users.User
+	17, // 4: services.citizens.GetUserResponse.user:type_name -> resources.users.User
+	14, // 5: services.citizens.ListUserActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	15, // 6: services.citizens.ListUserActivityRequest.sort:type_name -> resources.common.database.Sort
+	18, // 7: services.citizens.ListUserActivityRequest.types:type_name -> resources.users.UserActivityType
+	16, // 8: services.citizens.ListUserActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	19, // 9: services.citizens.ListUserActivityResponse.activity:type_name -> resources.users.UserActivity
+	20, // 10: services.citizens.SetUserPropsRequest.props:type_name -> resources.users.UserProps
+	20, // 11: services.citizens.SetUserPropsResponse.props:type_name -> resources.users.UserProps
+	21, // 12: services.citizens.ManageLabelsRequest.labels:type_name -> resources.users.Label
+	21, // 13: services.citizens.ManageLabelsResponse.labels:type_name -> resources.users.Label
+	0,  // 14: services.citizens.CitizensService.ListCitizens:input_type -> services.citizens.ListCitizensRequest
+	2,  // 15: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
+	4,  // 16: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
+	6,  // 17: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
+	22, // 18: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadPacket
+	8,  // 19: services.citizens.CitizensService.DeleteAvatar:input_type -> services.citizens.DeleteAvatarRequest
+	22, // 20: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadPacket
+	10, // 21: services.citizens.CitizensService.DeleteMugshot:input_type -> services.citizens.DeleteMugshotRequest
+	12, // 22: services.citizens.CitizensService.ManageLabels:input_type -> services.citizens.ManageLabelsRequest
+	1,  // 23: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
+	3,  // 24: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
+	5,  // 25: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
+	7,  // 26: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
+	23, // 27: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadResponse
+	9,  // 28: services.citizens.CitizensService.DeleteAvatar:output_type -> services.citizens.DeleteAvatarResponse
+	23, // 29: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadResponse
+	11, // 30: services.citizens.CitizensService.DeleteMugshot:output_type -> services.citizens.DeleteMugshotResponse
+	13, // 31: services.citizens.CitizensService.ManageLabels:output_type -> services.citizens.ManageLabelsResponse
+	23, // [23:32] is the sub-list for method output_type
+	14, // [14:23] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_services_citizens_citizens_proto_init() }
@@ -825,7 +911,7 @@ func file_services_citizens_citizens_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_citizens_citizens_proto_rawDesc), len(file_services_citizens_citizens_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   12,
+			NumMessages:   14,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -17,6 +17,7 @@ var PermsRemap = map[string]string{
 	// Service: wiki.WikiService
 	"wiki.WikiService/GetPage":    "wiki.WikiService/ListPages",
 	"wiki.WikiService/UpdatePage": "wiki.WikiService/ListPages",
+	"wiki.WikiService/UploadFile": "wiki.WikiService/CreatePage",
 }
 
 func init() {

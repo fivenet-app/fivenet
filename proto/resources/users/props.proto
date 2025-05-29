@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resources.users;
 
-import "resources/filestore/file.proto";
+import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/jobs/jobs.proto";
 import "resources/users/labels.proto";
@@ -19,11 +19,12 @@ message UserProps {
   optional int32 job_grade_number = 6; // @gotags: alias:"job_grade"
   optional resources.jobs.JobGrade job_grade = 7;
   optional uint32 traffic_infraction_points = 8;
-  optional resources.timestamp.Timestamp traffic_infraction_points_updated_at = 13;
-  optional int64 open_fines = 9;
-  optional string blood_type = 10;
-  optional resources.filestore.File mug_shot = 11;
-  optional Labels labels = 12;
+  optional resources.timestamp.Timestamp traffic_infraction_points_updated_at = 9;
+  optional int64 open_fines = 10;
+  optional string blood_type = 11;
+  optional uint64 mugshot_file_id = 12;
+  optional resources.file.File mugshot = 13; // @gotags: alias:"mugshot"
+  optional Labels labels = 14;
   // @sanitize: method=StripTags
-  optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
+  optional string email = 15 [(validate.rules).string = {min_len: 6, max_len: 80}];
 }

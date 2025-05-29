@@ -14,6 +14,6 @@ var (
 	ErrPropsJobPublic           = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CitizensService.ErrPropsJobPublic"}, nil)
 	ErrPropsJobInvalid          = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CitizensService.ErrPropsJobInvalid"}, nil)
 	ErrPropsTrafficPointsDenied = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.CitizensService.ErrPropsTrafficPointsDenied"}, nil)
-	ErrPropsMugShotDenied       = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.CitizensService.ErrPropsMugShotDenied"}, nil)
+	ErrPropsMugshotDenied       = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.CitizensService.ErrPropsMugshotDenied"}, nil)
 	ErrPropsLabelsDenied        = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.CitizensService.ErrPropsLabelsDenied"}, nil)
 )

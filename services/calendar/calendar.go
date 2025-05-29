@@ -23,6 +23,7 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tCreator := tables.User().AS("creator")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	subsCondition := tCalendar.ID.IN(tCalendarSubs.
 		SELECT(
@@ -120,7 +121,8 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
+			tAvatar.FilePath.AS("creator.avatar"),
 			tCalendarSubs.CalendarID,
 			tCalendarSubs.UserID,
 			tCalendarSubs.CreatedAt,
@@ -150,6 +152,9 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 			LEFT_JOIN(tCalendarSubs,
 				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
 					AND(tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId))),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		GROUP_BY(tCalendar.ID).
@@ -516,6 +521,7 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *pbcalendar.DeleteCalen
 
 func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression) (*calendar.Calendar, error) {
 	tCreator := tables.User().AS("creator")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tCalendar.
 		SELECT(
@@ -538,7 +544,8 @@ func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, c
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
+			tAvatar.FilePath.AS("creator.avatar"),
 			tCalendarSubs.CalendarID,
 			tCalendarSubs.UserID,
 			tCalendarSubs.CreatedAt,
@@ -555,6 +562,9 @@ func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, c
 			LEFT_JOIN(tCalendarSubs,
 				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
 					AND(tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId))),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		GROUP_BY(tCalendar.ID).

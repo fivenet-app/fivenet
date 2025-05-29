@@ -2,6 +2,7 @@ import { GrpcStatusCode } from '@protobuf-ts/grpcweb-transport';
 import {
     ClientStreamingCall,
     Deferred,
+    DeferredState,
     DuplexStreamingCall,
     RpcError,
     RpcOutputStreamController,
@@ -196,7 +197,10 @@ export class GrpcWSTransport implements RpcTransport {
                     defStatus.rejectPending(err);
                     defTrailer.rejectPending(err);
 
-                    defMessage.resolve(method.O.create());
+                    if (defMessage.state === DeferredState.RESOLVED) {
+                        return;
+                    }
+                    defMessage.rejectPending(err);
                 },
                 onHeaders(headers: Metadata, _: number): void {
                     defHeader.resolvePending(headers.headersMap);

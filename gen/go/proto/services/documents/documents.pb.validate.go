@@ -1493,8 +1493,8 @@ func (m *ListDocumentsRequest) validate(all bool) error {
 		// no validation rules for Closed
 	}
 
-	if m.IncludeDrafts != nil {
-		// no validation rules for IncludeDrafts
+	if m.OnlyDrafts != nil {
+		// no validation rules for OnlyDrafts
 	}
 
 	if len(errors) > 0 {

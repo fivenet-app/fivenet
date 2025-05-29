@@ -17,14 +17,21 @@ message ClientPacket {
     option (validate.required) = true;
 
     // Must be the first message
-    CollabHello hello = 1;
-    YjsUpdate yjs_update = 2;
-    AwarenessPing awareness = 3;
+    CollabInit hello = 1;
+    SyncStep sync_step = 2;
+    YjsUpdate yjs_update = 3;
+    AwarenessPing awareness = 4;
   }
 }
 
-message CollabHello {
+message CollabInit {
   uint64 target_id = 1 [(validate.rules).uint64.gt = 0];
+}
+
+message SyncStep {
+  int32 step = 1 [(validate.rules).int32 = {in: [1,2]}];
+  bytes data = 2;
+  optional uint64 receiver_id = 3 [(validate.rules).uint64.gt = 0];
 }
 
 message YjsUpdate {
@@ -41,8 +48,19 @@ message ServerPacket {
   oneof msg {
     option (validate.required) = true;
 
-    uint64 client_id = 2;
-    YjsUpdate yjs_update = 3;
-    AwarenessPing awareness = 4;
+    CollabHandshake handshake = 2;
+    SyncStep sync_step = 3;
+    YjsUpdate yjs_update = 4;
+    AwarenessPing awareness = 5;
+    TargetSaved target_saved = 6;
   }
+}
+
+message CollabHandshake {
+  uint64 client_id = 1;
+  bool first = 2;
+}
+
+message TargetSaved {
+  uint64 target_id = 1 [(validate.rules).uint64.gt = 0];
 }

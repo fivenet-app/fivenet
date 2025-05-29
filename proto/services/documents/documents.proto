@@ -13,6 +13,7 @@ import "resources/documents/pins.proto";
 import "resources/documents/requests.proto";
 import "resources/documents/templates.proto";
 import "resources/timestamp/timestamp.proto";
+import "resources/file/filestore.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
@@ -71,7 +72,11 @@ message ListDocumentsRequest {
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;
   repeated uint64 document_ids = 9 [(validate.rules).repeated.max_items = 5];
-  optional bool include_drafts = 10;
+  // Controls inclusion of drafts in the result:
+  // - unset/null: include all documents (drafts and non-drafts)
+  // - false: only non-draft documents
+  // - true: only draft documents
+  optional bool only_drafts = 10;
 }
 
 message ListDocumentsResponse {
@@ -472,4 +477,7 @@ service DocumentsService {
 
   // @perm
   rpc SetDocumentReminder(SetDocumentReminderRequest) returns (SetDocumentReminderResponse);
+
+  // @perm: Name=CreateDocument
+  rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
 }

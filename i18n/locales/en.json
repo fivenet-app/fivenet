@@ -474,7 +474,7 @@
         "image": "Image",
         "logo": "Logo",
         "absence_date": "Absence Date",
-        "mug_shot": "Mug Shot",
+        "mugshot": "Mugshot",
         "file_size": "File Size",
         "predefined": "Predefined",
         "discord": "Discord",
@@ -640,7 +640,12 @@
         "no_access_to_document": "No access to document",
         "you": "You",
         "scroll_to_top": "Scroll to Top",
-        "publish": "Publish"
+        "publish": "Publish",
+        "draft": "Draft",
+        "drafts": "Draft | Drafts",
+        "all_documents": "All Documents",
+        "only_published": "Only Published",
+        "only_drafts": "Only Drafts"
     },
     "components": {
         "partials": {
@@ -1188,7 +1193,9 @@
             },
             "OAuth2Connections": {
                 "title": "Social Login Connections",
-                "subtitle": "Your Social Login connections, for faster login and cool additional features."
+                "subtitle": "Your Social Login connections, for faster login and cool additional features.",
+                "connection_website": "Open provider's website",
+                "external_id": "External ID"
             },
             "ForgotPassword": {
                 "title": "Forgot Password",
@@ -1271,7 +1278,7 @@
                 "set_wanted": "Set Person Wanted",
                 "set_job": "Set Person's Job",
                 "set_traffic_points": "Set Traffic Infraction Points",
-                "set_mug_shot": "Set Mug Shot Photo",
+                "set_mugshot": "Set Mugshot Photo",
                 "go_to_colleague_info": "Go to Colleague Info"
             },
             "CitizenInfoActivityFeedEntry": {
@@ -1298,10 +1305,10 @@
                     "removed": "Fine removed",
                     "created": "Fine created"
                 },
-                "user_props_mug_shot_set": "Set the citizen's mug shot picture",
+                "user_props_mugshot_set": "Set the citizen's mug shot picture",
                 "user_props_labels_updated": "Updated the citizen's labels",
                 "name_change": "Citizen's name changed from {old} to {new}",
-                "user_props_mug_shot_removed": "Removed citizen's mug shot picture"
+                "user_props_mugshot_removed": "Removed citizen's mug shot picture"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
@@ -1317,7 +1324,8 @@
             "title": "We use cookies!",
             "subtitle": "The main purpose of our cookies is to enable you to log in with our social login providers.",
             "description": "Please note that the \"Remove local data\" function might not remove all data depending on your browser's functionality.",
-            "clear_data": "Remove local data"
+            "clear_data": "Remove local data",
+            "name": "Cookie Settings"
         },
         "UserDropdown": {
             "signed_in_as": "Signed in as"
@@ -1891,7 +1899,7 @@
                         "UserProps_TrafficInfractionPoints": "Traffic Points",
                         "UserProps_OpenFines": "Open Fines",
                         "UserProps_BloodType": "Blood Type",
-                        "UserProps_MugShot": "Mug Shot",
+                        "UserProps_Mugshot": "Mugshot",
                         "UserProps_Email": "E-Mail",
                         "UserProps_Labels": "Labels"
                     },
@@ -1917,7 +1925,7 @@
                         "Wanted": "Wanted Status",
                         "Job": "Job",
                         "TrafficInfractionPoints": "Traffic Points",
-                        "MugShot": "Mug Shot",
+                        "Mugshot": "Mugshot",
                         "Labels": "Labels"
                     },
                     "attrs_types": {
@@ -2534,7 +2542,7 @@
             "ErrPropsJobPublic": "You can't set a state job!",
             "ErrPropsJobInvalid": "Invalid job or job rank set!",
             "ErrPropsTrafficPointsDenied": "You are not allowed to set a citizen's traffic infraction points!",
-            "ErrPropsMugShotDenied": "You are not allowed to set a citizen's mug shot!",
+            "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!",
             "ErrPropsLabelsDenied": "You are not allowed to set a citizen's labels!"
         },
         "CompletorService": {
@@ -2609,7 +2617,7 @@
             "ErrNotPartOfDispatch": "You are not part of this dispatch!",
             "ErrNotOnDuty": {
                 "title": "You are not on duty!",
-                "content": "Make sure you are on duty."
+                "content": "Make sure you are on duty and fullfil any other requirements to be visible on the livemap."
             },
             "ErrModeForbidsAction": {
                 "title": "Dispatch center forbids this!",
@@ -2672,7 +2680,11 @@
         },
         "WikiService": {
             "ErrFailedQuery": "Failed to load wiki data!",
-            "ErrPageDenied": "You don't have access to this page!"
+            "ErrPageDenied": "You don't have access to this page!",
+            "ErrPageHasChildren": {
+                "title": "Page has children",
+                "content": "You can't delete this page because it has child pages. Make sure to move or delete the child pages first."
+            }
         },
         "MailerService": {
             "ErrFailedQuery": "Failed to load mail data!",
@@ -2712,6 +2724,10 @@
                 "title": "NIC Service - Domain Registration",
                 "content": "Domain transfer code wrong or transfer not enabled."
             }
+        },
+        "Filestore": {
+            "ErrInvalidUploadMeta": "Invalid upload meta data!",
+            "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB."
         }
     },
     "system": {

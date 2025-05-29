@@ -8,6 +8,7 @@ package wiki
 
 import (
 	context "context"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -25,6 +26,7 @@ const (
 	WikiService_UpdatePage_FullMethodName       = "/services.wiki.WikiService/UpdatePage"
 	WikiService_DeletePage_FullMethodName       = "/services.wiki.WikiService/DeletePage"
 	WikiService_ListPageActivity_FullMethodName = "/services.wiki.WikiService/ListPageActivity"
+	WikiService_UploadFile_FullMethodName       = "/services.wiki.WikiService/UploadFile"
 )
 
 // WikiServiceClient is the client API for WikiService service.
@@ -43,6 +45,8 @@ type WikiServiceClient interface {
 	DeletePage(ctx context.Context, in *DeletePageRequest, opts ...grpc.CallOption) (*DeletePageResponse, error)
 	// @perm
 	ListPageActivity(ctx context.Context, in *ListPageActivityRequest, opts ...grpc.CallOption) (*ListPageActivityResponse, error)
+	// @perm: Name=CreatePage
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
 }
 
 type wikiServiceClient struct {
@@ -113,6 +117,19 @@ func (c *wikiServiceClient) ListPageActivity(ctx context.Context, in *ListPageAc
 	return out, nil
 }
 
+func (c *wikiServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &WikiService_ServiceDesc.Streams[0], WikiService_UploadFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type WikiService_UploadFileClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+
 // WikiServiceServer is the server API for WikiService service.
 // All implementations must embed UnimplementedWikiServiceServer
 // for forward compatibility.
@@ -129,6 +146,8 @@ type WikiServiceServer interface {
 	DeletePage(context.Context, *DeletePageRequest) (*DeletePageResponse, error)
 	// @perm
 	ListPageActivity(context.Context, *ListPageActivityRequest) (*ListPageActivityResponse, error)
+	// @perm: Name=CreatePage
+	UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
 	mustEmbedUnimplementedWikiServiceServer()
 }
 
@@ -156,6 +175,9 @@ func (UnimplementedWikiServiceServer) DeletePage(context.Context, *DeletePageReq
 }
 func (UnimplementedWikiServiceServer) ListPageActivity(context.Context, *ListPageActivityRequest) (*ListPageActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPageActivity not implemented")
+}
+func (UnimplementedWikiServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedWikiServiceServer) mustEmbedUnimplementedWikiServiceServer() {}
 func (UnimplementedWikiServiceServer) testEmbeddedByValue()                     {}
@@ -286,6 +308,13 @@ func _WikiService_ListPageActivity_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WikiService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(WikiServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type WikiService_UploadFileServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+
 // WikiService_ServiceDesc is the grpc.ServiceDesc for WikiService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -318,6 +347,12 @@ var WikiService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _WikiService_ListPageActivity_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadFile",
+			Handler:       _WikiService_UploadFile_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "services/wiki/wiki.proto",
 }

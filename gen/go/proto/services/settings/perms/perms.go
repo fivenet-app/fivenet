@@ -2,7 +2,6 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
-// source: services/settings/filestore.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 
@@ -13,12 +12,11 @@ import (
 )
 
 const (
-	AccountsServicePerm  perms.Category = "settings.AccountsService"
-	ConfigServicePerm    perms.Category = "settings.ConfigService"
-	CronServicePerm      perms.Category = "settings.CronService"
-	FilestoreServicePerm perms.Category = "settings.FilestoreService"
-	LawsServicePerm      perms.Category = "settings.LawsService"
-	SettingsServicePerm  perms.Category = "settings.SettingsService"
+	AccountsServicePerm perms.Category = "settings.AccountsService"
+	ConfigServicePerm   perms.Category = "settings.ConfigService"
+	CronServicePerm     perms.Category = "settings.CronService"
+	LawsServicePerm     perms.Category = "settings.LawsService"
+	SettingsServicePerm perms.Category = "settings.SettingsService"
 
 	LawsServiceCreateOrUpdateLawBookPerm perms.Name = "CreateOrUpdateLawBook"
 	LawsServiceDeleteLawBookPerm         perms.Name = "DeleteLawBook"

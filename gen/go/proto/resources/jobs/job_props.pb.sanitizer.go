@@ -44,9 +44,9 @@ func (m *JobProps) Sanitize() error {
 		}
 	}
 
-	// Field: LogoUrl
-	if m.LogoUrl != nil {
-		if v, ok := any(m.GetLogoUrl()).(interface{ Sanitize() error }); ok {
+	// Field: LogoFile
+	if m.LogoFile != nil {
+		if v, ok := any(m.GetLogoFile()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

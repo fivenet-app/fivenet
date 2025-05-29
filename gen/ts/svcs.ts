@@ -29,7 +29,9 @@
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
-// source: resources/filestore/file.proto
+// source: resources/file/file.proto
+// source: resources/file/filestore.proto
+// source: resources/file/meta.proto
 // source: resources/internet/access.proto
 // source: resources/internet/ads.proto
 // source: resources/internet/domain.proto
@@ -83,6 +85,7 @@
 // source: services/completor/completor.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/filestore/filestore.proto
 // source: services/internet/ads.proto
 // source: services/internet/domain.proto
 // source: services/internet/internet.proto
@@ -96,7 +99,6 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
-// source: services/settings/filestore.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 // source: services/stats/stats.proto
@@ -113,6 +115,7 @@ export const grpcServices = [
     'completor.CompletorService',
     'documents.CollabService',
     'documents.DocumentsService',
+    'filestore.FilestoreService',
     'internet.AdsService',
     'internet.DomainService',
     'internet.InternetService',
@@ -126,7 +129,6 @@ export const grpcServices = [
     'settings.AccountsService',
     'settings.ConfigService',
     'settings.CronService',
-    'settings.FilestoreService',
     'settings.LawsService',
     'settings.SettingsService',
     'stats.StatsService',
@@ -187,7 +189,10 @@ export const grpcMethods = [
 	'citizens.CitizensService/GetUser',
 	'citizens.CitizensService/ListUserActivity',
 	'citizens.CitizensService/SetUserProps',
-	'citizens.CitizensService/SetProfilePicture',
+	'citizens.CitizensService/UploadAvatar',
+	'citizens.CitizensService/DeleteAvatar',
+	'citizens.CitizensService/UploadMugshot',
+	'citizens.CitizensService/DeleteMugshot',
 	'citizens.CitizensService/ManageLabels',
 	'completor.CompletorService/CompleteCitizens',
 	'completor.CompletorService/CompleteJobs',
@@ -231,6 +236,11 @@ export const grpcMethods = [
 	'documents.DocumentsService/ListDocumentPins',
 	'documents.DocumentsService/ToggleDocumentPin',
 	'documents.DocumentsService/SetDocumentReminder',
+	'documents.DocumentsService/UploadFile',
+	'filestore.FilestoreService/Upload',
+	'filestore.FilestoreService/ListFiles',
+	'filestore.FilestoreService/DeleteFile',
+	'filestore.FilestoreService/DeleteFileByPath',
 	'internet.AdsService/GetAds',
 	'internet.DomainService/ListTLDs',
 	'internet.DomainService/CheckDomainAvailability',
@@ -305,9 +315,6 @@ export const grpcMethods = [
 	'settings.ConfigService/GetAppConfig',
 	'settings.ConfigService/UpdateAppConfig',
 	'settings.CronService/ListCronjobs',
-	'settings.FilestoreService/ListFiles',
-	'settings.FilestoreService/UploadFile',
-	'settings.FilestoreService/DeleteFile',
 	'settings.LawsService/CreateOrUpdateLawBook',
 	'settings.LawsService/DeleteLawBook',
 	'settings.LawsService/CreateOrUpdateLaw',
@@ -326,6 +333,8 @@ export const grpcMethods = [
 	'settings.SettingsService/GetJobLimits',
 	'settings.SettingsService/UpdateJobLimits',
 	'settings.SettingsService/DeleteFaction',
+	'settings.SettingsService/UploadJobLogo',
+	'settings.SettingsService/DeleteJobLogo',
 	'stats.StatsService/GetStats',
 	'sync.SyncService/GetStatus',
 	'sync.SyncService/AddActivity',
@@ -342,4 +351,5 @@ export const grpcMethods = [
 	'wiki.WikiService/UpdatePage',
 	'wiki.WikiService/DeletePage',
 	'wiki.WikiService/ListPageActivity',
+	'wiki.WikiService/UploadFile',
 ];

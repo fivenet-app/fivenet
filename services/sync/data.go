@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -708,6 +709,7 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 	if atLeastOne {
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
+			s.logger.Debug("failed to execute user locations insert statement", zap.Any("data", data), zap.Error(err))
 			return 0, fmt.Errorf("failed to execute user locations insert statement. %w", err)
 		}
 

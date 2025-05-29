@@ -26,7 +26,7 @@ const { game } = useAppConfig();
 <template>
     <div class="mb-4 flex items-center gap-2 px-4">
         <ProfilePictureImg
-            :src="colleague.avatar?.url"
+            :src="colleague.avatar"
             :name="`${colleague.firstname} ${colleague.lastname}`"
             :enable-popup="true"
             size="3xl"

@@ -8,15 +8,6 @@ func (m *User) Sanitize() error {
 		return nil
 	}
 
-	// Field: Avatar
-	if m.Avatar != nil {
-		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Licenses
 	for idx, item := range m.Licenses {
 		_, _ = idx, item
@@ -44,15 +35,6 @@ func (m *User) Sanitize() error {
 func (m *UserShort) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: Avatar
-	if m.Avatar != nil {
-		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

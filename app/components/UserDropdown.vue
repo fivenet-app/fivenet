@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { NuxtImg } from '#components';
 import SuperuserJobSelection from '~/components/partials/SuperuserJobSelection.vue';
 import { useAuthStore } from '~/stores/auth';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
+import ProfilePictureImg from './partials/citizens/ProfilePictureImg.vue';
 
 const { isDashboardSearchModalOpen } = useUIState();
 const { metaSymbol } = useShortcuts();
@@ -111,14 +111,7 @@ const open = ref(false);
                 @touchstart.passive="open = !open"
             >
                 <template #leading>
-                    <UAvatar
-                        :as="NuxtImg"
-                        :src="activeChar?.avatar?.url"
-                        :alt="$t('common.avatar')"
-                        :text="getInitials(name)"
-                        size="2xs"
-                        loading="lazy"
-                    />
+                    <ProfilePictureImg :src="activeChar?.avatar" :name="name" size="2xs" />
                 </template>
 
                 <template #trailing>

@@ -82,14 +82,14 @@ watch(question, () => {
         };
     } else {
         if (question.value.data?.data.oneofKind === 'image') {
-            imageUrl.value = question.value.data?.data.image.image?.url;
+            imageUrl.value = question.value.data?.data.image.image?.filePath;
         }
     }
 });
 
 const imageUrl = ref<string | undefined>();
 if (question.value?.data?.data.oneofKind === 'image') {
-    imageUrl.value = question.value.data?.data.image.image?.url;
+    imageUrl.value = question.value.data?.data.image.image?.filePath;
 }
 
 async function handleImage(files: FileList): Promise<void> {

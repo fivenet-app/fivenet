@@ -42,23 +42,34 @@ function toggleBlur(): void {
         visible.value = !visible.value;
     }
 }
+
+const src = computed(() => {
+    if (!props.src) {
+        return props.src;
+    }
+
+    if (!props.src.startsWith('http') && !props.src.startsWith('/images')) {
+        return '/api/filestore/' + props.src;
+    }
+
+    return props.src;
+});
 </script>
 
 <template>
-    <template v-if="!src || !enablePopup">
-        <UAvatar
-            :class="[visible ? '' : 'blur', imgClass]"
-            :as="NuxtImg"
-            :size="size"
-            :src="src"
-            :alt="alt"
-            :text="text"
-            :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
-            :img-class="imgClass"
-            loading="lazy"
-            @click="toggleBlur()"
-        />
-    </template>
+    <UAvatar
+        v-if="!src || !enablePopup"
+        :class="[visible ? '' : 'blur', imgClass]"
+        :as="NuxtImg"
+        :size="size"
+        :src="src"
+        :alt="alt"
+        :text="text"
+        :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
+        :img-class="imgClass"
+        loading="lazy"
+        @click="toggleBlur()"
+    />
     <UPopover v-else>
         <UButton variant="link" :padded="false">
             <UAvatar

@@ -22,18 +22,18 @@ type IStorage interface {
 	WithPrefix(prefix string) (IStorage, error)
 
 	// Get return object contents and info
-	Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error)
+	Get(ctx context.Context, key string) (IObject, IObjectInfo, error)
 	// Get URL of object (not every storage adapter supports this)
-	GetURL(ctx context.Context, filePath string, expires time.Duration, reqParams url.Values) (*string, error)
+	GetURL(ctx context.Context, key string, expires time.Duration, reqParams url.Values) (*string, error)
 	// Return object info
-	Stat(ctx context.Context, filePath string) (IObjectInfo, error)
+	Stat(ctx context.Context, key string) (IObjectInfo, error)
 	// Upload file, size and content type must be accurate
-	Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error)
+	Put(ctx context.Context, key string, reader io.Reader, size int64, contentType string) (string, error)
 	// Delete file
-	Delete(ctx context.Context, filePath string) error
+	Delete(ctx context.Context, key string) error
 
 	// List files by offset and page size
-	List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error)
+	List(ctx context.Context, key string, offset int, pageSize int) ([]*FileInfo, error)
 }
 
 type IObject interface {

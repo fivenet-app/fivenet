@@ -80,6 +80,22 @@ func (m *DeleteFactionResponse) Sanitize() error {
 	return nil
 }
 
+func (m *DeleteJobLogoRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *DeleteJobLogoResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *DeleteRoleRequest) Sanitize() error {
 	if m == nil {
 		return nil

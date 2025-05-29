@@ -8,6 +8,7 @@ const { isOpen } = useModal();
 
 const props = defineProps<{
     editor: Editor;
+    uploadHandler?: (file: File[]) => Promise<void>;
 }>();
 
 const { featureGates, fileUpload } = useAppConfig();
@@ -23,8 +24,9 @@ const imageState = reactive({
 });
 
 // Try to download image from remote url
-async function setViaURL(urlOrBlob: string | Blob): Promise<void> {
+async function setViaURL(urlOrBlob: string | File): Promise<void> {
     canSubmit.value = false;
+
     let dataUrl: string | undefined = undefined;
     if (typeof urlOrBlob === 'string') {
         // If Image Proxy is enabled use it to load the image
@@ -35,7 +37,11 @@ async function setViaURL(urlOrBlob: string | Blob): Promise<void> {
             dataUrl = urlOrBlob;
         }
     } else {
-        dataUrl = await blobToBase64(urlOrBlob);
+        if (props.uploadHandler) {
+            await props.uploadHandler([urlOrBlob]);
+        } else {
+            dataUrl = await blobToBase64(urlOrBlob);
+        }
     }
 
     setImage(dataUrl);
@@ -61,7 +67,9 @@ async function onFilesHandler(files: FileList | File[] | null): Promise<void> {
         return;
     }
 
-    return setViaURL(files[0]);
+    await setViaURL(files[0]);
+
+    isOpen.value = false;
 }
 
 const dropZoneRef = useTemplateRef('dropZoneRef');

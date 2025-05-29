@@ -9,6 +9,7 @@ package wiki
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	wiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -605,7 +606,7 @@ var File_services_wiki_wiki_proto protoreflect.FileDescriptor
 
 const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a(resources/common/database/database.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\x1a\x17validate/validate.proto\"\xb6\x02\n" +
+	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a(resources/common/database/database.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\x1a\x1eresources/file/filestore.proto\x1a\x17validate/validate.proto\"\xb6\x02\n" +
 	"\x10ListPagesRequest\x12V\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
@@ -648,7 +649,7 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
 	"pagination\x128\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityR\bactivity2\x85\x04\n" +
+	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityR\bactivity2\xd3\x04\n" +
 	"\vWikiService\x12N\n" +
 	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\x12H\n" +
 	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\x12Q\n" +
@@ -658,7 +659,9 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"UpdatePage\x12 .services.wiki.UpdatePageRequest\x1a!.services.wiki.UpdatePageResponse\x12Q\n" +
 	"\n" +
 	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\x12c\n" +
-	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponseBFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
+	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponse\x12L\n" +
+	"\n" +
+	"UploadFile\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var (
 	file_services_wiki_wiki_proto_rawDescOnce sync.Once
@@ -692,6 +695,8 @@ var file_services_wiki_wiki_proto_goTypes = []any{
 	(*wiki.PageShort)(nil),              // 15: resources.wiki.PageShort
 	(*wiki.Page)(nil),                   // 16: resources.wiki.Page
 	(*wiki.PageActivity)(nil),           // 17: resources.wiki.PageActivity
+	(*file.UploadPacket)(nil),           // 18: resources.file.UploadPacket
+	(*file.UploadResponse)(nil),         // 19: resources.file.UploadResponse
 }
 var file_services_wiki_wiki_proto_depIdxs = []int32{
 	12, // 0: services.wiki.ListPagesRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -712,14 +717,16 @@ var file_services_wiki_wiki_proto_depIdxs = []int32{
 	6,  // 15: services.wiki.WikiService.UpdatePage:input_type -> services.wiki.UpdatePageRequest
 	8,  // 16: services.wiki.WikiService.DeletePage:input_type -> services.wiki.DeletePageRequest
 	10, // 17: services.wiki.WikiService.ListPageActivity:input_type -> services.wiki.ListPageActivityRequest
-	1,  // 18: services.wiki.WikiService.ListPages:output_type -> services.wiki.ListPagesResponse
-	3,  // 19: services.wiki.WikiService.GetPage:output_type -> services.wiki.GetPageResponse
-	5,  // 20: services.wiki.WikiService.CreatePage:output_type -> services.wiki.CreatePageResponse
-	7,  // 21: services.wiki.WikiService.UpdatePage:output_type -> services.wiki.UpdatePageResponse
-	9,  // 22: services.wiki.WikiService.DeletePage:output_type -> services.wiki.DeletePageResponse
-	11, // 23: services.wiki.WikiService.ListPageActivity:output_type -> services.wiki.ListPageActivityResponse
-	18, // [18:24] is the sub-list for method output_type
-	12, // [12:18] is the sub-list for method input_type
+	18, // 18: services.wiki.WikiService.UploadFile:input_type -> resources.file.UploadPacket
+	1,  // 19: services.wiki.WikiService.ListPages:output_type -> services.wiki.ListPagesResponse
+	3,  // 20: services.wiki.WikiService.GetPage:output_type -> services.wiki.GetPageResponse
+	5,  // 21: services.wiki.WikiService.CreatePage:output_type -> services.wiki.CreatePageResponse
+	7,  // 22: services.wiki.WikiService.UpdatePage:output_type -> services.wiki.UpdatePageResponse
+	9,  // 23: services.wiki.WikiService.DeletePage:output_type -> services.wiki.DeletePageResponse
+	11, // 24: services.wiki.WikiService.ListPageActivity:output_type -> services.wiki.ListPageActivityResponse
+	19, // 25: services.wiki.WikiService.UploadFile:output_type -> resources.file.UploadResponse
+	19, // [19:26] is the sub-list for method output_type
+	12, // [12:19] is the sub-list for method input_type
 	12, // [12:12] is the sub-list for extension type_name
 	12, // [12:12] is the sub-list for extension extendee
 	0,  // [0:12] is the sub-list for field type_name

@@ -9,12 +9,15 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -65,6 +68,7 @@ type Server struct {
 	access *access.Grouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel], *access.DummyQualificationAccess[wiki.AccessLevel], wiki.AccessLevel]
 
 	collabServer *collab.CollabServer
+	fHandler     *filestore.Handler[uint64]
 }
 
 type Params struct {
@@ -79,12 +83,20 @@ type Params struct {
 	Enricher   *mstlystcdata.UserAwareEnricher
 	HTMLDiffer *htmldiffer.Differ
 	JS         *events.JSWrapper
+	Storage    storage.IStorage
 }
 
 func NewServer(p Params) *Server {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	collabServer := collab.New(ctxCancel, p.Logger, p.JS, "wiki_pages")
+
+	tPageFiles := table.FivenetWikiPagesFiles
+	fHandler := filestore.NewHandler(p.Storage, p.DB, tPageFiles, tPageFiles.PageID, tPageFiles.FileID, 3<<20,
+		func(parentID uint64) jet.BoolExpression {
+			return tPageFiles.PageID.EQ(jet.Uint64(parentID))
+		}, filestore.InsertJoinRow, false,
+	)
 
 	s := &Server{
 		logger: p.Logger.Named("wiki"),
@@ -150,6 +162,7 @@ func NewServer(p Params) *Server {
 			nil,
 		),
 		collabServer: collabServer,
+		fHandler:     fHandler,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

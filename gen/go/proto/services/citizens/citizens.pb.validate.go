@@ -1326,71 +1326,42 @@ var _ interface {
 	ErrorName() string
 } = SetUserPropsResponseValidationError{}
 
-// Validate checks the field values on SetProfilePictureRequest with the rules
+// Validate checks the field values on DeleteAvatarRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SetProfilePictureRequest) Validate() error {
+func (m *DeleteAvatarRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on SetProfilePictureRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on DeleteAvatarRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// SetProfilePictureRequestMultiError, or nil if none found.
-func (m *SetProfilePictureRequest) ValidateAll() error {
+// DeleteAvatarRequestMultiError, or nil if none found.
+func (m *DeleteAvatarRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *SetProfilePictureRequest) validate(all bool) error {
+func (m *DeleteAvatarRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetAvatar()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SetProfilePictureRequestValidationError{
-					field:  "Avatar",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, SetProfilePictureRequestValidationError{
-					field:  "Avatar",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAvatar()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return SetProfilePictureRequestValidationError{
-				field:  "Avatar",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if len(errors) > 0 {
-		return SetProfilePictureRequestMultiError(errors)
+		return DeleteAvatarRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// SetProfilePictureRequestMultiError is an error wrapping multiple validation
-// errors returned by SetProfilePictureRequest.ValidateAll() if the designated
+// DeleteAvatarRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteAvatarRequest.ValidateAll() if the designated
 // constraints aren't met.
-type SetProfilePictureRequestMultiError []error
+type DeleteAvatarRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m SetProfilePictureRequestMultiError) Error() string {
+func (m DeleteAvatarRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1399,11 +1370,11 @@ func (m SetProfilePictureRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m SetProfilePictureRequestMultiError) AllErrors() []error { return m }
+func (m DeleteAvatarRequestMultiError) AllErrors() []error { return m }
 
-// SetProfilePictureRequestValidationError is the validation error returned by
-// SetProfilePictureRequest.Validate if the designated constraints aren't met.
-type SetProfilePictureRequestValidationError struct {
+// DeleteAvatarRequestValidationError is the validation error returned by
+// DeleteAvatarRequest.Validate if the designated constraints aren't met.
+type DeleteAvatarRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1411,24 +1382,24 @@ type SetProfilePictureRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e SetProfilePictureRequestValidationError) Field() string { return e.field }
+func (e DeleteAvatarRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e SetProfilePictureRequestValidationError) Reason() string { return e.reason }
+func (e DeleteAvatarRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e SetProfilePictureRequestValidationError) Cause() error { return e.cause }
+func (e DeleteAvatarRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e SetProfilePictureRequestValidationError) Key() bool { return e.key }
+func (e DeleteAvatarRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e SetProfilePictureRequestValidationError) ErrorName() string {
-	return "SetProfilePictureRequestValidationError"
+func (e DeleteAvatarRequestValidationError) ErrorName() string {
+	return "DeleteAvatarRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e SetProfilePictureRequestValidationError) Error() string {
+func (e DeleteAvatarRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1440,14 +1411,14 @@ func (e SetProfilePictureRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sSetProfilePictureRequest.%s: %s%s",
+		"invalid %sDeleteAvatarRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = SetProfilePictureRequestValidationError{}
+var _ error = DeleteAvatarRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1455,73 +1426,44 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = SetProfilePictureRequestValidationError{}
+} = DeleteAvatarRequestValidationError{}
 
-// Validate checks the field values on SetProfilePictureResponse with the rules
+// Validate checks the field values on DeleteAvatarResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *SetProfilePictureResponse) Validate() error {
+func (m *DeleteAvatarResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on SetProfilePictureResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on DeleteAvatarResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// SetProfilePictureResponseMultiError, or nil if none found.
-func (m *SetProfilePictureResponse) ValidateAll() error {
+// DeleteAvatarResponseMultiError, or nil if none found.
+func (m *DeleteAvatarResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *SetProfilePictureResponse) validate(all bool) error {
+func (m *DeleteAvatarResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetAvatar()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, SetProfilePictureResponseValidationError{
-					field:  "Avatar",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, SetProfilePictureResponseValidationError{
-					field:  "Avatar",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAvatar()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return SetProfilePictureResponseValidationError{
-				field:  "Avatar",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if len(errors) > 0 {
-		return SetProfilePictureResponseMultiError(errors)
+		return DeleteAvatarResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// SetProfilePictureResponseMultiError is an error wrapping multiple validation
-// errors returned by SetProfilePictureResponse.ValidateAll() if the
-// designated constraints aren't met.
-type SetProfilePictureResponseMultiError []error
+// DeleteAvatarResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteAvatarResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteAvatarResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m SetProfilePictureResponseMultiError) Error() string {
+func (m DeleteAvatarResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1530,11 +1472,11 @@ func (m SetProfilePictureResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m SetProfilePictureResponseMultiError) AllErrors() []error { return m }
+func (m DeleteAvatarResponseMultiError) AllErrors() []error { return m }
 
-// SetProfilePictureResponseValidationError is the validation error returned by
-// SetProfilePictureResponse.Validate if the designated constraints aren't met.
-type SetProfilePictureResponseValidationError struct {
+// DeleteAvatarResponseValidationError is the validation error returned by
+// DeleteAvatarResponse.Validate if the designated constraints aren't met.
+type DeleteAvatarResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1542,24 +1484,24 @@ type SetProfilePictureResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e SetProfilePictureResponseValidationError) Field() string { return e.field }
+func (e DeleteAvatarResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e SetProfilePictureResponseValidationError) Reason() string { return e.reason }
+func (e DeleteAvatarResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e SetProfilePictureResponseValidationError) Cause() error { return e.cause }
+func (e DeleteAvatarResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e SetProfilePictureResponseValidationError) Key() bool { return e.key }
+func (e DeleteAvatarResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e SetProfilePictureResponseValidationError) ErrorName() string {
-	return "SetProfilePictureResponseValidationError"
+func (e DeleteAvatarResponseValidationError) ErrorName() string {
+	return "DeleteAvatarResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e SetProfilePictureResponseValidationError) Error() string {
+func (e DeleteAvatarResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1571,14 +1513,14 @@ func (e SetProfilePictureResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sSetProfilePictureResponse.%s: %s%s",
+		"invalid %sDeleteAvatarResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = SetProfilePictureResponseValidationError{}
+var _ error = DeleteAvatarResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1586,7 +1528,237 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = SetProfilePictureResponseValidationError{}
+} = DeleteAvatarResponseValidationError{}
+
+// Validate checks the field values on DeleteMugshotRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteMugshotRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteMugshotRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteMugshotRequestMultiError, or nil if none found.
+func (m *DeleteMugshotRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteMugshotRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetUserId() <= 0 {
+		err := DeleteMugshotRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetReason() != "" {
+
+		if l := utf8.RuneCountInString(m.GetReason()); l < 3 || l > 255 {
+			err := DeleteMugshotRequestValidationError{
+				field:  "Reason",
+				reason: "value length must be between 3 and 255 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DeleteMugshotRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteMugshotRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteMugshotRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteMugshotRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteMugshotRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteMugshotRequestMultiError) AllErrors() []error { return m }
+
+// DeleteMugshotRequestValidationError is the validation error returned by
+// DeleteMugshotRequest.Validate if the designated constraints aren't met.
+type DeleteMugshotRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteMugshotRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteMugshotRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteMugshotRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteMugshotRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteMugshotRequestValidationError) ErrorName() string {
+	return "DeleteMugshotRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteMugshotRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteMugshotRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteMugshotRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteMugshotRequestValidationError{}
+
+// Validate checks the field values on DeleteMugshotResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteMugshotResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteMugshotResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteMugshotResponseMultiError, or nil if none found.
+func (m *DeleteMugshotResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteMugshotResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteMugshotResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteMugshotResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteMugshotResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteMugshotResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteMugshotResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteMugshotResponseMultiError) AllErrors() []error { return m }
+
+// DeleteMugshotResponseValidationError is the validation error returned by
+// DeleteMugshotResponse.Validate if the designated constraints aren't met.
+type DeleteMugshotResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteMugshotResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteMugshotResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteMugshotResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteMugshotResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteMugshotResponseValidationError) ErrorName() string {
+	return "DeleteMugshotResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteMugshotResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteMugshotResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteMugshotResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteMugshotResponseValidationError{}
 
 // Validate checks the field values on ManageLabelsRequest with the rules
 // defined in the proto definition for this message. If any rules are

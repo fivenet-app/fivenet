@@ -3,11 +3,11 @@ syntax = "proto3";
 package services.citizens;
 
 import "resources/common/database/database.proto";
-import "resources/filestore/file.proto";
+import "resources/file/filestore.proto";
 import "resources/users/activity.proto";
 import "resources/users/labels.proto";
-import "resources/users/users.proto";
 import "resources/users/props.proto";
+import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizens";
@@ -65,13 +65,21 @@ message SetUserPropsResponse {
   resources.users.UserProps props = 1;
 }
 
-message SetProfilePictureRequest {
-  resources.filestore.File avatar = 1;
+message DeleteAvatarRequest {}
+
+message DeleteAvatarResponse {}
+
+message DeleteMugshotRequest {
+  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  // @sanitize
+  string reason = 2 [(validate.rules).string = {
+    ignore_empty: true,
+    min_len: 3,
+    max_len: 255
+  }];
 }
 
-message SetProfilePictureResponse {
-  resources.filestore.File avatar = 1;
-}
+message DeleteMugshotResponse {}
 
 message ManageLabelsRequest {
   repeated resources.users.Label labels = 1;
@@ -82,17 +90,25 @@ message ManageLabelsResponse {
 }
 
 service CitizensService {
-  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"}
+  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"}
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
   // @perm: Attrs=Jobs/JobGradeList
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
   rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"}
+  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 
   // @perm: Name=Any
-  rpc SetProfilePicture(SetProfilePictureRequest) returns (SetProfilePictureResponse);
+  rpc UploadAvatar(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  // @perm: Name=Any
+  rpc DeleteAvatar(DeleteAvatarRequest) returns (DeleteAvatarResponse);
+
+  // @perm: Name=SetUserProps
+  rpc UploadMugshot(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  // @perm: Name=SetUserProps
+  rpc DeleteMugshot(DeleteMugshotRequest) returns (DeleteMugshotResponse);
+
 
   // @perm
   rpc ManageLabels(ManageLabelsRequest) returns (ManageLabelsResponse);

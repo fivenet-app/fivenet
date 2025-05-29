@@ -349,6 +349,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 	}
 
 	tUsers := tables.User().AS("colleague")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -389,6 +390,9 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
 						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(

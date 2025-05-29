@@ -67,6 +67,19 @@ async function deletePage(id: number): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
+        // If the deleted page is not the "top page", navigate to it
+        if (props.pages[0] && props.page?.id !== props.pages[0].id) {
+            await navigateTo({
+                name: 'wiki-job-id-slug',
+                params: {
+                    job: props.pages[0].job,
+                    id: props.pages[0].id,
+                    slug: [props.pages[0].slug ?? ''],
+                },
+            });
+            return;
+        }
+
         await navigateTo({ name: 'wiki' });
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -336,8 +349,8 @@ const scrollRef = useTemplateRef('scrollRef');
 
                 <UContentToc :title="$t('common.toc')" :links="tocLinks" />
             </template>
-
-            <ScrollToTop :element="scrollRef?.$el" />
         </UPage>
+
+        <ScrollToTop :element="scrollRef?.$el" />
     </UDashboardPanelContent>
 </template>

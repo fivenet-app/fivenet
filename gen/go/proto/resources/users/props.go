@@ -28,7 +28,8 @@ func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []strin
 			tUserProps.TrafficInfractionPoints,
 			tUserProps.TrafficInfractionPointsUpdatedAt,
 			tUserProps.OpenFines,
-			tUserProps.MugShot,
+			tUserProps.Mugshot,
+			tUserProps.MugshotFileID,
 		).
 		FROM(tUserProps).
 		WHERE(
@@ -187,10 +188,10 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 		in.OpenFines = x.OpenFines
 	}
 
-	if in.MugShot != nil {
-		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
+	if in.Mugshot != nil {
+		updateSets = append(updateSets, tUserProps.Mugshot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
 	} else {
-		in.MugShot = x.MugShot
+		in.Mugshot = x.Mugshot
 	}
 
 	if in.Labels != nil {
@@ -215,7 +216,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				tUserProps.TrafficInfractionPoints,
 				tUserProps.TrafficInfractionPointsUpdatedAt,
 				tUserProps.OpenFines,
-				tUserProps.MugShot,
+				tUserProps.Mugshot,
 			).
 			VALUES(
 				in.UserId,
@@ -225,7 +226,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				in.TrafficInfractionPoints,
 				in.TrafficInfractionPointsUpdatedAt,
 				in.OpenFines,
-				in.MugShot,
+				in.Mugshot,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,
@@ -315,12 +316,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if x.MugShot != in.MugShot && (x.MugShot == nil || in.MugShot == nil || x.MugShot.GetUrl() != in.MugShot.GetUrl()) {
-		var url *string
-		if in.MugShot != nil && in.MugShot.Url != nil {
-			url = in.MugShot.Url
-		}
-
+	if x.MugshotFileId != in.MugshotFileId && (x.MugshotFileId == nil || in.MugshotFileId == nil || x.MugshotFileId != in.MugshotFileId) {
 		activities = append(activities, &UserActivity{
 			SourceUserId: sourceUserId,
 			TargetUserId: x.UserId,
@@ -328,9 +324,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			Reason:       reason,
 			Data: &UserActivityData{
 				Data: &UserActivityData_MugshotChange{
-					MugshotChange: &MugshotChange{
-						New: url,
-					},
+					MugshotChange: &MugshotChange{},
 				},
 			},
 		})

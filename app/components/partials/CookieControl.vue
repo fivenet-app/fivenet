@@ -3,11 +3,9 @@ import { emojiBlast } from 'emoji-blast';
 import { useCookiesStore } from '~/stores/cookies';
 
 const cookiesStore = useCookiesStore();
-const { cookiesState } = storeToRefs(cookiesStore);
+const { cookiesState, isConsentModalOpen: open } = storeToRefs(cookiesStore);
 
 const { website } = useAppConfig();
-
-const open = ref(cookiesState.value === null);
 </script>
 
 <template>
@@ -104,6 +102,8 @@ const open = ref(cookiesState.value === null);
             </template>
         </UCard>
 
-        <UButton class="fixed bottom-32 right-6" icon="i-mdi-cookie-cog" size="xl" @click="open = true" />
+        <UTooltip class="fixed bottom-32 right-6" :text="$t('components.CookieControl.name')" :popper="{ placement: 'left' }">
+            <UButton icon="i-mdi-cookie-cog" size="xl" @click="open = true" />
+        </UTooltip>
     </div>
 </template>

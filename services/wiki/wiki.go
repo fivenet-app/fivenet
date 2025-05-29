@@ -111,6 +111,8 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		return resp, nil
 	}
 
+	tFiles := table.FivenetFiles.AS("logo")
+
 	columns := []jet.Projection{
 		tPageShort.Job,
 		tPageShort.ParentID,
@@ -120,7 +122,9 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 	}
 	if req.RootOnly != nil && *req.RootOnly {
 		columns = append(columns,
-			tJobProps.LogoURL.AS("page_root_info.logo"),
+			tJobProps.LogoFileID.AS("page_root_info.logo"),
+			tFiles.ID,
+			tFiles.FilePath,
 		)
 	}
 	if userInfo.Superuser {
@@ -140,6 +144,9 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tPageShort.Job),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tJobProps.LogoFileID),
 				),
 		).
 		WHERE(condition).
@@ -603,7 +610,8 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 		).
 		WHERE(jet.AND(
 			tPage.ID.EQ(jet.Uint64(req.Page.Id)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -721,6 +729,27 @@ func (s *Server) DeletePage(ctx context.Context, req *pbwiki.DeletePageRequest) 
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
+	tPage := table.FivenetWikiPages
+
+	// Ensure page has no children
+	countStmt := tPage.
+		SELECT(
+			jet.COUNT(tPage.ID).AS("data_count.total"),
+		).
+		FROM(tPage).
+		WHERE(tPage.ParentID.EQ(jet.Uint64(page.Id)))
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+	}
+
+	if count.Total > 0 {
+		return nil, errorswiki.ErrPageHasChildren
+	}
+
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
 	if page.Meta != nil && page.Meta.DeletedAt != nil && userInfo.Superuser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
@@ -735,7 +764,8 @@ func (s *Server) DeletePage(ctx context.Context, req *pbwiki.DeletePageRequest) 
 		).
 		WHERE(jet.AND(
 			tPage.ID.EQ(jet.Uint64(req.Id)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)

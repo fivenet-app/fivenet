@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import type { Extensions, Range } from '@tiptap/core';
 import { Blockquote } from '@tiptap/extension-blockquote';
 import { Bold } from '@tiptap/extension-bold';
@@ -39,14 +40,15 @@ import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import FontSize from 'tiptap-extension-font-size';
-import * as Y from 'yjs';
 // @ts-expect-error doesn't have types
 import UniqueId from 'tiptap-unique-id';
+import type * as Y from 'yjs';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/checkboxStandalone';
 import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
+import { imageUploadPlugin } from '~/composables/tiptap/extensions/imageUploadPlugin';
 import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
-import type { StreamConnectFn } from '~/composables/tiptap/yjs';
-import GrpcProvider from '~/composables/tiptap/yjs';
+import type GrpcProvider from '~/composables/yjs/yjs';
+import type { UploadPacket, UploadResponse } from '~~/gen/ts/resources/file/filestore';
 import TiptapEditorImageModal from './TiptapEditorImageModal.vue';
 import TiptapEditorSourceCodeModal from './TiptapEditorSourceCodeModal.vue';
 import { fontColors, highlightColors } from './helpers';
@@ -61,8 +63,8 @@ const props = withDefaults(
         hideToolbar?: boolean;
         rounded?: string;
         commentMode?: boolean;
-        collabId?: number;
-        collabService?: StreamConnectFn;
+        targetId?: number;
+        filestoreService?: (options?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>;
     }>(),
     {
         wrapperClass: '',
@@ -72,8 +74,8 @@ const props = withDefaults(
         hideToolbar: false,
         rounded: 'rounded',
         commentMode: false,
-        collabId: undefined,
-        collabService: undefined,
+        targetId: undefined,
+        filestoreService: undefined,
     },
 );
 
@@ -89,7 +91,7 @@ const modal = useModal();
 
 const content = useVModel(props, 'modelValue', emit);
 
-const loading = ref(false);
+const loading = ref(true);
 
 const extensions: Extensions = [
     UniqueId.configure({
@@ -172,30 +174,30 @@ const extensions: Extensions = [
 
 let awareness: ReturnType<typeof useAwarenessUsers> | undefined = undefined;
 
-if (props.collabId && props.collabService) {
-    const ydoc = new Y.Doc();
-
-    const yProvider = new GrpcProvider(ydoc, props.collabService, {
-        targetId: props.collabId,
-    });
-
-    awareness = useAwarenessUsers(yProvider.awareness);
+const ydoc = inject<Y.Doc>('yjsDoc');
+const yjsProvider = inject<GrpcProvider>('yjsProvider');
+if (ydoc && yjsProvider) {
+    awareness = useAwarenessUsers(yjsProvider.awareness);
 
     const ourName = `${activeChar.value?.firstname} ${activeChar.value?.lastname}`;
-    const color = stringToColour(ourName);
+    const user = {
+        id: activeChar.value!.userId,
+        name: ourName,
+        color: stringToColour(ourName),
+    };
     ydoc.on('sync', (isSynced: boolean) => {
         if (isSynced === false) {
             return;
         }
+
         loading.value = false;
+    });
 
-        const instance = unref(editor);
-        if (!instance) return;
-
-        instance.commands.updateUser({
-            name: ourName,
-            color: color,
-        });
+    yjsProvider.on('loadContent', () => {
+        // When the Yjs provider is requesting us to seed the content,
+        // we can set the initial content.
+        // This is important for collaboration to work correctly.
+        unref(editor)?.commands.setContent(props.modelValue);
     });
 
     extensions.push(
@@ -204,17 +206,43 @@ if (props.collabId && props.collabService) {
             field: 'content',
         }),
         CollaborationCursor.configure({
-            provider: yProvider,
-            user: {
-                name: ourName,
-                color: color,
+            provider: yjsProvider,
+            user: user,
+            // Skip rendering if it's your own cursor
+            render: (user): HTMLElement => {
+                if (user.id === yjsProvider.yDoc.clientID) {
+                    // returns nothing → no widget for your own cursor
+                    return new HTMLElement();
+                }
+                // Otherwise build the “remote” cursor as normal:
+                const cursor = document.createElement('span');
+                cursor.classList.add('collaboration-cursor__caret');
+                cursor.setAttribute('style', `border-color: ${user.color}`);
+
+                const label = document.createElement('div');
+                label.classList.add('collaboration-cursor__label');
+                label.setAttribute('style', `background-color: ${user.color}`);
+                label.insertBefore(document.createTextNode(user.name), null);
+
+                cursor.insertBefore(label, null);
+                return cursor;
+            },
+            // Same for text selections
+            selectionRender: (user) => {
+                if (user.id === yjsProvider.yDoc.clientID) {
+                    return {};
+                }
+                return {
+                    nodeName: 'span',
+                    class: 'collaboration-cursor__selection',
+                    style: `background-color: ${user.color}`,
+                    'data-user': user.name,
+                };
             },
         }),
     );
 
-    onBeforeUnmount(() => yProvider.destroy());
-
-    // TODO loading overlay is needed and a user count would be good
+    // TODO loading overlay is needed
 } else {
     extensions.push(History);
 }
@@ -222,7 +250,7 @@ if (props.collabId && props.collabService) {
 if (!props.commentMode) {
     extensions.push(
         ImageResize.configure({
-            inline: true,
+            inline: false,
             allowBase64: true,
         }),
     );
@@ -241,6 +269,36 @@ const editor = useEditor({
     onBlur: () => focusTablet(false),
     onUpdate: () => emit('update:modelValue', unref(editor)?.getHTML() ?? ''),
 });
+
+let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefined;
+if (props.filestoreService && props.targetId) {
+    const { resizeAndUpload } = useFileUploader(props.filestoreService, 'wiki', props.targetId);
+
+    async function handleFiles(files: File[]): Promise<void> {
+        for (const f of files) {
+            if (!f.type.startsWith('image/')) continue;
+
+            try {
+                const resp = await resizeAndUpload(f);
+
+                unref(editor)!
+                    .chain()
+                    .focus()
+                    .setImage({ src: `${resp.url}` })
+                    .run();
+            } catch (e) {
+                console.warn('Image resize failed, uploading original image', e);
+            }
+        }
+    }
+    fileUploadHandler = handleFiles;
+
+    unref(editor)?.on('create', () => {
+        if (props.filestoreService) {
+            unref(editor)?.registerPlugin(imageUploadPlugin(unref(editor)!, handleFiles));
+        }
+    });
+}
 
 const fonts = [
     {
@@ -278,7 +336,7 @@ watch(content, (value) => {
         return;
     }
 
-    if (props.collabId && props.collabService) {
+    if (ydoc && yjsProvider) {
         // If collaboration is enabled, we don't set the content directly
         // as it will be handled by the Yjs provider.
         return;
@@ -393,6 +451,7 @@ const goToSelection = () => {
     node instanceof HTMLElement && node.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
+// Search And Replace Modal
 watch(
     () => searchAndReplace.search.trim(),
     (val, oldVal) => {
@@ -434,7 +493,6 @@ const clear = () => {
 const replaceAll = () => editor.value?.commands.replaceAll();
 
 const contentRef = useTemplateRef('contentRef');
-
 watch(contentRef, () => {
     if (!contentRef.value || !contentRef.value.$el) {
         return;
@@ -452,14 +510,12 @@ watch(contentRef, () => {
 });
 
 onMounted(() => {
-    if (unref(editor)) {
+    if (!ydoc) {
         unref(editor)?.commands.setContent(props.modelValue);
     }
 });
 
-onBeforeUnmount(() => {
-    unref(editor)?.destroy();
-});
+onBeforeUnmount(() => unref(editor)?.destroy());
 </script>
 
 <template>
@@ -841,6 +897,7 @@ onBeforeUnmount(() => {
                         @click="
                             modal.open(TiptapEditorImageModal, {
                                 editor: editor,
+                                uploadHandler: fileUploadHandler,
                             })
                         "
                     />
@@ -1113,11 +1170,12 @@ onBeforeUnmount(() => {
         />
 
         <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
-            <div class="flex" :class="{ 'flex-1': collabId }">
+            <div class="flex" :class="{ 'flex-1': targetId }">
                 <slot name="footer" />
+                {{ loading }}
             </div>
 
-            <div v-if="collabId" class="inline-flex flex-1 items-center justify-center">
+            <div v-if="targetId" class="inline-flex flex-1 items-center justify-center">
                 <UPopover :popper="{ placement: 'top' }" :disabled="(awareness?.users?.value.length || 0) === 0">
                     <UButton
                         :class="(awareness?.users?.value.length || 0) === 0 && 'cursor-not-allowed'"

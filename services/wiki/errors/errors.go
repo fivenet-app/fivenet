@@ -8,4 +8,6 @@ import (
 var (
 	ErrFailedQuery = common.I18nErr(codes.Internal, common.NewTranslateItem("errors.WikiService.ErrFailedQuery"), nil)
 	ErrPageDenied  = common.I18nErr(codes.InvalidArgument, common.NewTranslateItem("errors.WikiService.ErrPageDenied"), nil)
+
+	ErrPageHasChildren = common.I18nErr(codes.InvalidArgument, common.NewTranslateItem("errors.WikiService.ErrPageHasChildren.content"), common.NewTranslateItem("errors.WikiService.ErrPageHasChildren.title"))
 )

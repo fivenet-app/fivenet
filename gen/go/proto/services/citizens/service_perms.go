@@ -11,7 +11,10 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: citizens.CitizensService
-	"citizens.CitizensService/SetProfilePicture": "Any",
+	"citizens.CitizensService/DeleteAvatar":  "Any",
+	"citizens.CitizensService/DeleteMugshot": "citizens.CitizensService/SetUserProps",
+	"citizens.CitizensService/UploadAvatar":  "Any",
+	"citizens.CitizensService/UploadMugshot": "citizens.CitizensService/SetUserProps",
 }
 
 func init() {
@@ -36,7 +39,7 @@ func init() {
 				{
 					Key:         permkeys.CitizensServiceListCitizensFieldsPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"},
+					ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"},
 				},
 			},
 			Order: 0,
@@ -66,7 +69,7 @@ func init() {
 				{
 					Key:         permkeys.CitizensServiceSetUserPropsFieldsPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"},
+					ValidValues: []string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"},
 				},
 			},
 			Order: 0,

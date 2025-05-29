@@ -29,7 +29,9 @@
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
-// source: resources/filestore/file.proto
+// source: resources/file/file.proto
+// source: resources/file/filestore.proto
+// source: resources/file/meta.proto
 // source: resources/internet/access.proto
 // source: resources/internet/ads.proto
 // source: resources/internet/domain.proto
@@ -83,6 +85,7 @@
 // source: services/completor/completor.proto
 // source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/filestore/filestore.proto
 // source: services/internet/ads.proto
 // source: services/internet/domain.proto
 // source: services/internet/internet.proto
@@ -96,7 +99,6 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
-// source: services/settings/filestore.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 // source: services/stats/stats.proto

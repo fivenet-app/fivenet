@@ -29,6 +29,7 @@ var PermsRemap = map[string]string{
 	"documents.DocumentsService/SetDocumentAccess":       "documents.DocumentsService/CreateDocument",
 	"documents.DocumentsService/UpdateDocumentReq":       "documents.DocumentsService/CreateDocumentReq",
 	"documents.DocumentsService/UpdateTemplate":          "documents.DocumentsService/CreateTemplate",
+	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/CreateDocument",
 }
 
 func init() {

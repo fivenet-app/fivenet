@@ -3,7 +3,6 @@ import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
-import type { File } from '~~/gen/ts/resources/filestore/file';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
@@ -17,7 +16,7 @@ export class ClipboardUser {
     public lastname: string;
     public dateofbirth: string | undefined;
     public phoneNumber: string | undefined;
-    public avatar: File | undefined;
+    public avatar: string | undefined;
 
     constructor(u: UserShort | User) {
         this.userId = u.userId;
@@ -43,6 +42,7 @@ export class ClipboardDocument {
     public category: Category | undefined;
     public state: string;
     public closed: boolean;
+    public draft: boolean;
     public public: boolean;
 
     constructor(d: Document) {
@@ -53,6 +53,7 @@ export class ClipboardDocument {
         this.state = d.state;
         this.creator = new ClipboardUser(d.creator!);
         this.closed = d.closed;
+        this.draft = d.draft;
         this.public = d.public;
     }
 }
@@ -92,7 +93,7 @@ export function getUser(obj: ClipboardUser): User {
         dateofbirth: obj.dateofbirth ?? '',
         phoneNumber: obj.phoneNumber ?? '',
         licenses: [],
-        avatar: { url: obj.avatar?.url, data: new Uint8Array() },
+        avatar: obj.avatar,
     };
 
     return u;
@@ -115,6 +116,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         creatorJob: user.job,
         state: obj.state,
         closed: obj.closed,
+        draft: obj.draft,
         public: obj.public,
     };
     if (obj.createdAt !== undefined) {

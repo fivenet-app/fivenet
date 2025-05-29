@@ -312,7 +312,7 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *pbjobs.GetCol
 		return &pbjobs.GetColleagueLabelsStatsResponse{}, nil
 	}
 
-	tUser := tables.User().AS("user")
+	tColleague := tables.User().AS("user")
 
 	stmt := tColleagueLabels.
 		SELECT(
@@ -327,15 +327,15 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *pbjobs.GetCol
 				INNER_JOIN(tJobLabels,
 					tJobLabels.ID.EQ(tColleagueLabels.LabelID),
 				).
-				INNER_JOIN(tUser,
-					tUser.ID.EQ(tColleagueLabels.UserID),
+				INNER_JOIN(tColleague,
+					tColleague.ID.EQ(tColleagueLabels.UserID),
 				),
 		).
 		WHERE(jet.AND(
 			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
 			tJobLabels.DeletedAt.IS_NULL(),
 			tColleagueLabels.Job.EQ(jet.String(userInfo.Job)),
-			tUser.Job.EQ(jet.String(userInfo.Job)),
+			tColleague.Job.EQ(jet.String(userInfo.Job)),
 		)).
 		GROUP_BY(tJobLabels.ID).
 		ORDER_BY(

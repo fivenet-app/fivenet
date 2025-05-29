@@ -9,7 +9,7 @@ package wiki
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
-	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -36,6 +36,7 @@ type Page struct {
 	Meta          *PageMeta        `protobuf:"bytes,5,opt,name=meta,proto3" json:"meta,omitempty"`
 	Content       *content.Content `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
 	Access        *PageAccess      `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
+	Files         []*file.File     `protobuf:"bytes,8,rep,name=files,proto3" json:"files,omitempty" alias:"files"` // @gotags: alias:"files"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -115,6 +116,13 @@ func (x *Page) GetContent() *content.Content {
 func (x *Page) GetAccess() *PageAccess {
 	if x != nil {
 		return x.Access
+	}
+	return nil
+}
+
+func (x *Page) GetFiles() []*file.File {
+	if x != nil {
+		return x.Files
 	}
 	return nil
 }
@@ -382,7 +390,7 @@ func (x *PageShort) GetLevel() int32 {
 
 type PageRootInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Logo          *filestore.File        `protobuf:"bytes,1,opt,name=logo,proto3,oneof" json:"logo,omitempty"`
+	Logo          *file.File             `protobuf:"bytes,1,opt,name=logo,proto3,oneof" json:"logo,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -417,7 +425,7 @@ func (*PageRootInfo) Descriptor() ([]byte, []int) {
 	return file_resources_wiki_page_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *PageRootInfo) GetLogo() *filestore.File {
+func (x *PageRootInfo) GetLogo() *file.File {
 	if x != nil {
 		return x.Logo
 	}
@@ -428,7 +436,7 @@ var File_resources_wiki_page_proto protoreflect.FileDescriptor
 
 const file_resources_wiki_page_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a&resources/common/content/content.proto\x1a\x1eresources/filestore/file.proto\x1a\x1bresources/users/users.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/wiki/access.proto\x1a\x17validate/validate.proto\"\xcd\x02\n" +
+	"\x19resources/wiki/page.proto\x12\x0eresources.wiki\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a\x1bresources/users/users.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/wiki/access.proto\x1a\x17validate/validate.proto\"\xf9\x02\n" +
 	"\x04Page\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x182R\x03job\x12)\n" +
@@ -436,7 +444,8 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\tparent_id\x18\x04 \x01(\x04H\x01R\bparentId\x88\x01\x01\x126\n" +
 	"\x04meta\x18\x05 \x01(\v2\x18.resources.wiki.PageMetaB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x04meta\x12;\n" +
 	"\acontent\x18\x06 \x01(\v2!.resources.common.content.ContentR\acontent\x12<\n" +
-	"\x06access\x18\a \x01(\v2\x1a.resources.wiki.PageAccessB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x06accessB\f\n" +
+	"\x06access\x18\a \x01(\v2\x1a.resources.wiki.PageAccessB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x06access\x12*\n" +
+	"\x05files\x18\b \x03(\v2\x14.resources.file.FileR\x05filesB\f\n" +
 	"\n" +
 	"_job_labelB\f\n" +
 	"\n" +
@@ -489,9 +498,9 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\x05_slugB\f\n" +
 	"\n" +
 	"_root_infoB\b\n" +
-	"\x06_level\"K\n" +
-	"\fPageRootInfo\x122\n" +
-	"\x04logo\x18\x01 \x01(\v2\x19.resources.filestore.FileH\x00R\x04logo\x88\x01\x01B\a\n" +
+	"\x06_level\"F\n" +
+	"\fPageRootInfo\x12-\n" +
+	"\x04logo\x18\x01 \x01(\v2\x14.resources.file.FileH\x00R\x04logo\x88\x01\x01B\a\n" +
 	"\x05_logoBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"
 
 var (
@@ -514,29 +523,30 @@ var file_resources_wiki_page_proto_goTypes = []any{
 	(*PageRootInfo)(nil),        // 3: resources.wiki.PageRootInfo
 	(*content.Content)(nil),     // 4: resources.common.content.Content
 	(*PageAccess)(nil),          // 5: resources.wiki.PageAccess
-	(*timestamp.Timestamp)(nil), // 6: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 7: resources.users.UserShort
-	(content.ContentType)(0),    // 8: resources.common.content.ContentType
-	(*filestore.File)(nil),      // 9: resources.filestore.File
+	(*file.File)(nil),           // 6: resources.file.File
+	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),     // 8: resources.users.UserShort
+	(content.ContentType)(0),    // 9: resources.common.content.ContentType
 }
 var file_resources_wiki_page_proto_depIdxs = []int32{
 	1,  // 0: resources.wiki.Page.meta:type_name -> resources.wiki.PageMeta
 	4,  // 1: resources.wiki.Page.content:type_name -> resources.common.content.Content
 	5,  // 2: resources.wiki.Page.access:type_name -> resources.wiki.PageAccess
-	6,  // 3: resources.wiki.PageMeta.created_at:type_name -> resources.timestamp.Timestamp
-	6,  // 4: resources.wiki.PageMeta.updated_at:type_name -> resources.timestamp.Timestamp
-	6,  // 5: resources.wiki.PageMeta.deleted_at:type_name -> resources.timestamp.Timestamp
-	7,  // 6: resources.wiki.PageMeta.creator:type_name -> resources.users.UserShort
-	8,  // 7: resources.wiki.PageMeta.content_type:type_name -> resources.common.content.ContentType
-	6,  // 8: resources.wiki.PageShort.deleted_at:type_name -> resources.timestamp.Timestamp
-	2,  // 9: resources.wiki.PageShort.children:type_name -> resources.wiki.PageShort
-	3,  // 10: resources.wiki.PageShort.root_info:type_name -> resources.wiki.PageRootInfo
-	9,  // 11: resources.wiki.PageRootInfo.logo:type_name -> resources.filestore.File
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	6,  // 3: resources.wiki.Page.files:type_name -> resources.file.File
+	7,  // 4: resources.wiki.PageMeta.created_at:type_name -> resources.timestamp.Timestamp
+	7,  // 5: resources.wiki.PageMeta.updated_at:type_name -> resources.timestamp.Timestamp
+	7,  // 6: resources.wiki.PageMeta.deleted_at:type_name -> resources.timestamp.Timestamp
+	8,  // 7: resources.wiki.PageMeta.creator:type_name -> resources.users.UserShort
+	9,  // 8: resources.wiki.PageMeta.content_type:type_name -> resources.common.content.ContentType
+	7,  // 9: resources.wiki.PageShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	2,  // 10: resources.wiki.PageShort.children:type_name -> resources.wiki.PageShort
+	3,  // 11: resources.wiki.PageShort.root_info:type_name -> resources.wiki.PageRootInfo
+	6,  // 12: resources.wiki.PageRootInfo.logo:type_name -> resources.file.File
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_resources_wiki_page_proto_init() }

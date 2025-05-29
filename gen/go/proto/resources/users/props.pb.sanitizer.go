@@ -45,9 +45,9 @@ func (m *UserProps) Sanitize() error {
 		}
 	}
 
-	// Field: MugShot
-	if m.MugShot != nil {
-		if v, ok := any(m.GetMugShot()).(interface{ Sanitize() error }); ok {
+	// Field: Mugshot
+	if m.Mugshot != nil {
+		if v, ok := any(m.GetMugshot()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

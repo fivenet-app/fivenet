@@ -8,12 +8,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -33,7 +35,6 @@ type Server struct {
 	pbsettings.SettingsServiceServer
 	pbsettings.ConfigServiceServer
 	pbsettings.CronServiceServer
-	pbsettings.FilestoreServiceServer
 	pbsettings.LawsServiceServer
 	pbsettings.AccountsServiceServer
 
@@ -48,6 +49,8 @@ type Server struct {
 	appCfg    appconfig.IConfig
 	js        *events.JSWrapper
 	cronState *croner.Registry
+
+	jobPropsFileHandler *filestore.Handler[string]
 }
 
 type Params struct {
@@ -67,6 +70,13 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
+	tJobProps := table.FivenetJobProps
+	fHandler := filestore.NewHandler(p.Storage, p.DB, tJobProps, tJobProps.Job, tJobProps.LogoFileID, 2<<20,
+		func(parentID string) jet.BoolExpression {
+			return tJobProps.Job.EQ(jet.String(parentID))
+		},
+		filestore.UpdateJoinRow, true)
+
 	return &Server{
 		logger:    p.Logger,
 		db:        p.DB,
@@ -79,6 +89,8 @@ func NewServer(p Params) *Server {
 		appCfg:    p.AppConfig,
 		js:        p.JS,
 		cronState: p.CronState,
+
+		jobPropsFileHandler: fHandler,
 	}
 }
 
@@ -86,7 +98,6 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbsettings.RegisterSettingsServiceServer(srv, s)
 	pbsettings.RegisterConfigServiceServer(srv, s)
 	pbsettings.RegisterCronServiceServer(srv, s)
-	pbsettings.RegisterFilestoreServiceServer(srv, s)
 	pbsettings.RegisterLawsServiceServer(srv, s)
 	pbsettings.RegisterAccountsServiceServer(srv, s)
 }

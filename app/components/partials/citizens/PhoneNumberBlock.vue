@@ -61,7 +61,7 @@ async function doCall(): Promise<void> {
             </template>
         </span>
         <template v-else>
-            <UButton v-if="showIcon" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
+            <UButton v-if="showIcon" class="shrink-0" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
                 <span class="sr-only">{{ $t('common.call') }}</span>
                 <span v-if="showLabel" class="truncate">{{ $t('common.call') }}</span>
             </UButton>

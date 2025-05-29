@@ -8,6 +8,7 @@ package documents
 
 import (
 	context "context"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -55,6 +56,7 @@ const (
 	DocumentsService_ListDocumentPins_FullMethodName        = "/services.documents.DocumentsService/ListDocumentPins"
 	DocumentsService_ToggleDocumentPin_FullMethodName       = "/services.documents.DocumentsService/ToggleDocumentPin"
 	DocumentsService_SetDocumentReminder_FullMethodName     = "/services.documents.DocumentsService/SetDocumentReminder"
+	DocumentsService_UploadFile_FullMethodName              = "/services.documents.DocumentsService/UploadFile"
 )
 
 // DocumentsServiceClient is the client API for DocumentsService service.
@@ -133,6 +135,8 @@ type DocumentsServiceClient interface {
 	ToggleDocumentPin(ctx context.Context, in *ToggleDocumentPinRequest, opts ...grpc.CallOption) (*ToggleDocumentPinResponse, error)
 	// @perm
 	SetDocumentReminder(ctx context.Context, in *SetDocumentReminderRequest, opts ...grpc.CallOption) (*SetDocumentReminderResponse, error)
+	// @perm: Name=CreateDocument
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
 }
 
 type documentsServiceClient struct {
@@ -503,6 +507,19 @@ func (c *documentsServiceClient) SetDocumentReminder(ctx context.Context, in *Se
 	return out, nil
 }
 
+func (c *documentsServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &DocumentsService_ServiceDesc.Streams[0], DocumentsService_UploadFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type DocumentsService_UploadFileClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+
 // DocumentsServiceServer is the server API for DocumentsService service.
 // All implementations must embed UnimplementedDocumentsServiceServer
 // for forward compatibility.
@@ -579,6 +596,8 @@ type DocumentsServiceServer interface {
 	ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error)
 	// @perm
 	SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error)
+	// @perm: Name=CreateDocument
+	UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
 	mustEmbedUnimplementedDocumentsServiceServer()
 }
 
@@ -696,6 +715,9 @@ func (UnimplementedDocumentsServiceServer) ToggleDocumentPin(context.Context, *T
 }
 func (UnimplementedDocumentsServiceServer) SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetDocumentReminder not implemented")
+}
+func (UnimplementedDocumentsServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedDocumentsServiceServer) mustEmbedUnimplementedDocumentsServiceServer() {}
 func (UnimplementedDocumentsServiceServer) testEmbeddedByValue()                          {}
@@ -1366,6 +1388,13 @@ func _DocumentsService_SetDocumentReminder_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocumentsService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(DocumentsServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type DocumentsService_UploadFileServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+
 // DocumentsService_ServiceDesc is the grpc.ServiceDesc for DocumentsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1518,6 +1547,12 @@ var DocumentsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocumentsService_SetDocumentReminder_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadFile",
+			Handler:       _DocumentsService_UploadFile_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "services/documents/documents.proto",
 }

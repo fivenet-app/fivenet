@@ -3,7 +3,7 @@ syntax = "proto3";
 package resources.wiki;
 
 import "resources/common/content/content.proto";
-import "resources/filestore/file.proto";
+import "resources/file/file.proto";
 import "resources/users/users.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/wiki/access.proto";
@@ -20,6 +20,7 @@ message Page {
   PageMeta meta = 5 [(validate.rules).message.required = true];
   resources.common.content.Content content = 6;
   PageAccess access = 7 [(validate.rules).message.required = true];
+  repeated resources.file.File files = 8; // @gotags: alias:"files"
 }
 
 message PageMeta {
@@ -60,5 +61,5 @@ message PageShort {
 }
 
 message PageRootInfo {
-  optional resources.filestore.File logo = 1;
+  optional resources.file.File logo = 1;
 }

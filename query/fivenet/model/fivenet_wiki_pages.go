@@ -20,6 +20,7 @@ type FivenetWikiPages struct {
 	UpdatedAt   *time.Time `json:"updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at"`
 	Toc         *bool      `json:"toc"`
+	Draft       *bool      `json:"draft"`
 	Public      bool       `json:"public"`
 	Slug        string     `json:"slug"`
 	Title       string     `json:"title"`

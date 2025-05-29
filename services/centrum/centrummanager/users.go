@@ -9,12 +9,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Manager) RetrieveUserById(ctx context.Context, u int32) (*users.User, error) {
 	tUsers := tables.User().AS("user")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUsers.
 		SELECT(
@@ -30,7 +32,8 @@ func (s *Manager) RetrieveUserById(ctx context.Context, u int32) (*users.User, e
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("user.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tUsers.
@@ -40,6 +43,9 @@ func (s *Manager) RetrieveUserById(ctx context.Context, u int32) (*users.User, e
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
 						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(
@@ -83,6 +89,7 @@ func (s *Manager) retrieveColleagueById(ctx context.Context, u ...int32) ([]*job
 	}
 
 	tUsers := tables.User().AS("colleague")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUsers.
 		SELECT(
@@ -98,7 +105,8 @@ func (s *Manager) retrieveColleagueById(ctx context.Context, u ...int32) ([]*job
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tUsers.
@@ -108,6 +116,9 @@ func (s *Manager) retrieveColleagueById(ctx context.Context, u ...int32) ([]*job
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
 						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(

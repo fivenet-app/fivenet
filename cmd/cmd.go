@@ -17,6 +17,7 @@ import (
 	pbcitizens "github.com/fivenet-app/fivenet/v2025/services/citizens"
 	pbcompletor "github.com/fivenet-app/fivenet/v2025/services/completor"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
+	pbfilestore "github.com/fivenet-app/fivenet/v2025/services/filestore"
 	pbinternet "github.com/fivenet-app/fivenet/v2025/services/internet"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	pblivemap "github.com/fivenet-app/fivenet/v2025/services/livemap"
@@ -177,6 +178,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			grpc.AsService(pbwiki.NewServer),
 			grpc.AsService(pbinternet.NewServer),
 			grpc.AsService(pbsync.NewServer),
+			grpc.AsService(pbfilestore.NewServer),
 		),
 
 		fx.Invoke(func(*bluemonday.Policy) {}),

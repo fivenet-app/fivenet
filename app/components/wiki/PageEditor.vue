@@ -77,6 +77,8 @@ const notifications = useNotificatorStore();
 
 const { maxAccessEntries } = useAppConfig();
 
+const { ydoc, provider } = useCollabDoc('wiki', page.value.id);
+
 const canDo = computed(() => ({
     public: attr('wiki.WikiService.CreatePage', 'Fields', 'Public').value,
 }));
@@ -184,7 +186,7 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
         }
 
         if (createPage.value) {
-            navigateTo({
+            await navigateTo({
                 name: 'wiki-job-id-slug',
                 params: {
                     job: responsePage!.job,
@@ -260,6 +262,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await createOrUpdatePage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+useYText(ydoc.getText('title'), toRef(state.meta.title));
+useYText(ydoc.getText('description'), toRef(state.meta.description));
+
+provide('yjsDoc', ydoc);
+provide('yjsProvider', provider);
 </script>
 
 <template>
@@ -368,13 +376,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-model="state.content"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 rounded="rounded-none"
-                                :collab-id="modelValue?.id"
-                                :collab-service="
-                                    (options) => {
-                                        const { $grpc } = useNuxtApp();
-                                        return $grpc.wiki.collab.joinRoom(options);
-                                    }
-                                "
+                                :target-id="modelValue?.id"
+                                :filestore-service="$grpc.wiki.wiki"
                             >
                                 <template #linkModal="{ state: linkState }">
                                     <UDivider class="mt-1" :label="$t('common.or')" orientation="horizontal" />

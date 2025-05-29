@@ -425,36 +425,38 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                 <div class="flex flex-col gap-2">
                     <div class="flex flex-row gap-1">
-                        <UButton
-                            v-if="canUpdate"
-                            class="flex-1"
-                            :disabled="!changed || !canSubmit"
-                            :loading="!canSubmit"
-                            icon="i-mdi-content-save"
-                            @click="onSubmitThrottle"
-                        >
-                            {{ $t('common.save', 1) }}
-                        </UButton>
-
-                        <UPopover>
-                            <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">
-                                {{ $t('common.paste') }}
+                        <template v-if="canUpdate">
+                            <UButton
+                                class="flex-1"
+                                :disabled="!changed || !canSubmit"
+                                :loading="!canSubmit"
+                                icon="i-mdi-content-save"
+                                @click="onSubmitThrottle"
+                            >
+                                {{ $t('common.save', 1) }}
                             </UButton>
 
-                            <template #panel>
-                                <div class="p-4">
-                                    <UForm class="flex flex-col gap-1" :state="state" :schema="schema" @submit="pasteRole">
-                                        <UFormGroup name="input">
-                                            <UInput v-model="state.input" type="text" name="input" />
-                                        </UFormGroup>
+                            <UPopover>
+                                <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">
+                                    {{ $t('common.paste') }}
+                                </UButton>
 
-                                        <UButton type="submit">
-                                            {{ $t('common.save') }}
-                                        </UButton>
-                                    </UForm>
-                                </div>
-                            </template>
-                        </UPopover>
+                                <template #panel>
+                                    <div class="p-4">
+                                        <UForm class="flex flex-col gap-1" :state="state" :schema="schema" @submit="pasteRole">
+                                            <UFormGroup name="input">
+                                                <UInput v-model="state.input" type="text" name="input" />
+                                            </UFormGroup>
+
+                                            <UButton type="submit">
+                                                {{ $t('common.save') }}
+                                            </UButton>
+                                        </UForm>
+                                    </div>
+                                </template>
+                            </UPopover>
+                        </template>
+                        <span v-else class="flex-1" />
 
                         <UButton icon="i-mdi-content-copy" :disabled="changed" color="white" @click="copyRole">
                             {{ $t('common.copy') }}

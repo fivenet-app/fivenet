@@ -8,7 +8,7 @@ package users
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -35,13 +35,14 @@ type UserProps struct {
 	JobGradeNumber                   *int32                 `protobuf:"varint,6,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof" json:"job_grade_number,omitempty" alias:"job_grade"` // @gotags: alias:"job_grade"
 	JobGrade                         *jobs.JobGrade         `protobuf:"bytes,7,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
 	TrafficInfractionPoints          *uint32                `protobuf:"varint,8,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty"`
-	TrafficInfractionPointsUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,13,opt,name=traffic_infraction_points_updated_at,json=trafficInfractionPointsUpdatedAt,proto3,oneof" json:"traffic_infraction_points_updated_at,omitempty"`
-	OpenFines                        *int64                 `protobuf:"varint,9,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
-	BloodType                        *string                `protobuf:"bytes,10,opt,name=blood_type,json=bloodType,proto3,oneof" json:"blood_type,omitempty"`
-	MugShot                          *filestore.File        `protobuf:"bytes,11,opt,name=mug_shot,json=mugShot,proto3,oneof" json:"mug_shot,omitempty"`
-	Labels                           *Labels                `protobuf:"bytes,12,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
+	TrafficInfractionPointsUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,9,opt,name=traffic_infraction_points_updated_at,json=trafficInfractionPointsUpdatedAt,proto3,oneof" json:"traffic_infraction_points_updated_at,omitempty"`
+	OpenFines                        *int64                 `protobuf:"varint,10,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
+	BloodType                        *string                `protobuf:"bytes,11,opt,name=blood_type,json=bloodType,proto3,oneof" json:"blood_type,omitempty"`
+	MugshotFileId                    *uint64                `protobuf:"varint,12,opt,name=mugshot_file_id,json=mugshotFileId,proto3,oneof" json:"mugshot_file_id,omitempty"`
+	Mugshot                          *file.File             `protobuf:"bytes,13,opt,name=mugshot,proto3,oneof" json:"mugshot,omitempty" alias:"mugshot"` // @gotags: alias:"mugshot"
+	Labels                           *Labels                `protobuf:"bytes,14,opt,name=labels,proto3,oneof" json:"labels,omitempty"`
 	// @sanitize: method=StripTags
-	Email         *string `protobuf:"bytes,19,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	Email         *string `protobuf:"bytes,15,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -153,9 +154,16 @@ func (x *UserProps) GetBloodType() string {
 	return ""
 }
 
-func (x *UserProps) GetMugShot() *filestore.File {
+func (x *UserProps) GetMugshotFileId() uint64 {
+	if x != nil && x.MugshotFileId != nil {
+		return *x.MugshotFileId
+	}
+	return 0
+}
+
+func (x *UserProps) GetMugshot() *file.File {
 	if x != nil {
-		return x.MugShot
+		return x.Mugshot
 	}
 	return nil
 }
@@ -178,7 +186,7 @@ var File_resources_users_props_proto protoreflect.FileDescriptor
 
 const file_resources_users_props_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x17validate/validate.proto\"\xb3\a\n" +
+	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x17validate/validate.proto\"\xed\a\n" +
 	"\tUserProps\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12B\n" +
 	"\n" +
@@ -189,16 +197,17 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"\x10job_grade_number\x18\x06 \x01(\x05H\x04R\x0ejobGradeNumber\x88\x01\x01\x12:\n" +
 	"\tjob_grade\x18\a \x01(\v2\x18.resources.jobs.JobGradeH\x05R\bjobGrade\x88\x01\x01\x12?\n" +
 	"\x19traffic_infraction_points\x18\b \x01(\rH\x06R\x17trafficInfractionPoints\x88\x01\x01\x12s\n" +
-	"$traffic_infraction_points_updated_at\x18\r \x01(\v2\x1e.resources.timestamp.TimestampH\aR trafficInfractionPointsUpdatedAt\x88\x01\x01\x12\"\n" +
+	"$traffic_infraction_points_updated_at\x18\t \x01(\v2\x1e.resources.timestamp.TimestampH\aR trafficInfractionPointsUpdatedAt\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"open_fines\x18\t \x01(\x03H\bR\topenFines\x88\x01\x01\x12\"\n" +
+	"open_fines\x18\n" +
+	" \x01(\x03H\bR\topenFines\x88\x01\x01\x12\"\n" +
 	"\n" +
-	"blood_type\x18\n" +
-	" \x01(\tH\tR\tbloodType\x88\x01\x01\x129\n" +
-	"\bmug_shot\x18\v \x01(\v2\x19.resources.filestore.FileH\n" +
-	"R\amugShot\x88\x01\x01\x124\n" +
-	"\x06labels\x18\f \x01(\v2\x17.resources.users.LabelsH\vR\x06labels\x88\x01\x01\x12$\n" +
-	"\x05email\x18\x13 \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PH\fR\x05email\x88\x01\x01B\r\n" +
+	"blood_type\x18\v \x01(\tH\tR\tbloodType\x88\x01\x01\x12+\n" +
+	"\x0fmugshot_file_id\x18\f \x01(\x04H\n" +
+	"R\rmugshotFileId\x88\x01\x01\x123\n" +
+	"\amugshot\x18\r \x01(\v2\x14.resources.file.FileH\vR\amugshot\x88\x01\x01\x124\n" +
+	"\x06labels\x18\x0e \x01(\v2\x17.resources.users.LabelsH\fR\x06labels\x88\x01\x01\x12$\n" +
+	"\x05email\x18\x0f \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PH\rR\x05email\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_wantedB\v\n" +
 	"\t_job_nameB\x06\n" +
@@ -209,8 +218,10 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"\x1a_traffic_infraction_pointsB'\n" +
 	"%_traffic_infraction_points_updated_atB\r\n" +
 	"\v_open_finesB\r\n" +
-	"\v_blood_typeB\v\n" +
-	"\t_mug_shotB\t\n" +
+	"\v_blood_typeB\x12\n" +
+	"\x10_mugshot_file_idB\n" +
+	"\n" +
+	"\b_mugshotB\t\n" +
 	"\a_labelsB\b\n" +
 	"\x06_emailBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
@@ -232,7 +243,7 @@ var file_resources_users_props_proto_goTypes = []any{
 	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
 	(*jobs.Job)(nil),            // 2: resources.jobs.Job
 	(*jobs.JobGrade)(nil),       // 3: resources.jobs.JobGrade
-	(*filestore.File)(nil),      // 4: resources.filestore.File
+	(*file.File)(nil),           // 4: resources.file.File
 	(*Labels)(nil),              // 5: resources.users.Labels
 }
 var file_resources_users_props_proto_depIdxs = []int32{
@@ -240,7 +251,7 @@ var file_resources_users_props_proto_depIdxs = []int32{
 	2, // 1: resources.users.UserProps.job:type_name -> resources.jobs.Job
 	3, // 2: resources.users.UserProps.job_grade:type_name -> resources.jobs.JobGrade
 	1, // 3: resources.users.UserProps.traffic_infraction_points_updated_at:type_name -> resources.timestamp.Timestamp
-	4, // 4: resources.users.UserProps.mug_shot:type_name -> resources.filestore.File
+	4, // 4: resources.users.UserProps.mugshot:type_name -> resources.file.File
 	5, // 5: resources.users.UserProps.labels:type_name -> resources.users.Labels
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type

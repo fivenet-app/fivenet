@@ -132,6 +132,25 @@ func (r *CollabRoom) Broadcast(fromId uint64, msg *collab.ServerPacket) {
 	r.forwardToLocal(fromId, msg)
 }
 
+func (r *CollabRoom) SendToClient(fromId uint64, toId uint64, msg *collab.ServerPacket) {
+	// Ignore "hello" packets that carry no useful data
+	if (msg.GetYjsUpdate() != nil && len(msg.GetYjsUpdate().Data) == 0) || (msg.GetAwareness() != nil && len(msg.GetAwareness().Data) == 0) {
+		return
+	}
+
+	r.mu.RLock()
+	client, ok := r.clients[toId]
+	r.mu.RUnlock()
+
+	if !ok {
+		r.logger.Warn("client not found", zap.Uint64("to_id", toId))
+		return
+	}
+
+	msg.SenderId = fromId // Set sender ID
+	client.Send(msg)
+}
+
 // JetStream pull loop
 func (r *CollabRoom) consumeLoop() {
 	for {
@@ -179,6 +198,33 @@ func (r *CollabRoom) forwardToLocal(fromId uint64, cm *collab.ServerPacket) {
 
 		c.Send(cm)
 	}
+}
+
+func (r *CollabRoom) BroadcastSyncStep1(fromId uint64, data []byte) {
+	pkt := &collab.ServerPacket{
+		SenderId: fromId,
+		Msg: &collab.ServerPacket_SyncStep{
+			SyncStep: &collab.SyncStep{
+				Step: 1,
+				Data: data,
+			},
+		},
+	}
+	r.Broadcast(fromId, pkt)
+}
+
+func (r *CollabRoom) ForwardSyncStep2ToClient(fromId uint64, toId uint64, data []byte) {
+	pkt := &collab.ServerPacket{
+		SenderId: fromId,
+		Msg: &collab.ServerPacket_SyncStep{
+			SyncStep: &collab.SyncStep{
+				Step: 2,
+				Data: data,
+			},
+		},
+	}
+
+	r.SendToClient(fromId, toId, pkt)
 }
 
 func (r *CollabRoom) BroadcastYjs(fromId uint64, data []byte) {

@@ -326,14 +326,18 @@ func (m *JobProps) validate(all bool) error {
 
 	}
 
-	if m.LogoUrl != nil {
+	if m.LogoFileId != nil {
+		// no validation rules for LogoFileId
+	}
+
+	if m.LogoFile != nil {
 
 		if all {
-			switch v := interface{}(m.GetLogoUrl()).(type) {
+			switch v := interface{}(m.GetLogoFile()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, JobPropsValidationError{
-						field:  "LogoUrl",
+						field:  "LogoFile",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -341,16 +345,16 @@ func (m *JobProps) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, JobPropsValidationError{
-						field:  "LogoUrl",
+						field:  "LogoFile",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetLogoUrl()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetLogoFile()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return JobPropsValidationError{
-					field:  "LogoUrl",
+					field:  "LogoFile",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

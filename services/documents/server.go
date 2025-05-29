@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
@@ -16,7 +17,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
@@ -118,6 +121,7 @@ type Server struct {
 	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
 
 	collabServer *collab.CollabServer
+	fHandler     *filestore.Handler[uint64]
 }
 
 type Params struct {
@@ -128,6 +132,7 @@ type Params struct {
 	Logger        *zap.Logger
 	DB            *sql.DB
 	Perms         perms.Permissions
+	Storage       storage.IStorage
 	Jobs          *mstlystcdata.Jobs
 	DocCategories *mstlystcdata.DocumentCategories
 	Enricher      *mstlystcdata.UserAwareEnricher
@@ -142,6 +147,15 @@ func NewServer(p Params) (*Server, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	collabServer := collab.New(ctxCancel, p.Logger, p.JS, "documents")
+
+	tDocFiles := table.FivenetDocumentsFiles
+
+	// 3 MiB limit
+	fHandler := filestore.NewHandler(p.Storage, p.DB, tDocFiles, tDocFiles.FileID, tDocFiles.DocumentID, 3<<20,
+		func(parentId uint64) jet.BoolExpression {
+			return tDocFiles.DocumentID.EQ(jet.Uint64(parentId))
+		}, filestore.InsertJoinRow, false,
+	)
 
 	s := &Server{
 		logger: p.Logger.Named("documents"),
@@ -193,6 +207,7 @@ func NewServer(p Params) (*Server, error) {
 			nil,
 		),
 		collabServer: collabServer,
+		fHandler:     fHandler,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

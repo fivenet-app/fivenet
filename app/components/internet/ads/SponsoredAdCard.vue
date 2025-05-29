@@ -12,7 +12,7 @@ defineProps<{
             <UBadge class="w-full" :label="$t('components.internet.ads.sponsored_ad')" />
         </template>
 
-        <template v-if="ad.image?.url" #icon>
+        <template v-if="ad.image?.filePath" #icon>
             <NuxtImg class="mx-auto h-40" :src="ad.image.url" :alt="$t('common.logo')" loading="lazy" />
         </template>
     </UPageCard>

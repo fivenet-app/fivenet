@@ -8,7 +8,6 @@ package jobs
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -36,10 +35,11 @@ type Colleague struct {
 	Lastname      string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
 	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
-	Avatar        *filestore.File        `protobuf:"bytes,17,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
-	Props         *ColleagueProps        `protobuf:"bytes,18,opt,name=props,proto3" json:"props,omitempty" alias:"colleague_props"` // @gotags: alias:"colleague_props"
+	AvatarFileId  *uint64                `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
+	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty" alias:"avatar"` // @gotags: alias:"avatar"
+	Props         *ColleagueProps        `protobuf:"bytes,19,opt,name=props,proto3" json:"props,omitempty" alias:"colleague_props"`         // @gotags: alias:"colleague_props"
 	// @sanitize: method=StripTags
-	Email         *string `protobuf:"bytes,19,opt,name=email,proto3,oneof" json:"email,omitempty"`
+	Email         *string `protobuf:"bytes,20,opt,name=email,proto3,oneof" json:"email,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -144,11 +144,18 @@ func (x *Colleague) GetPhoneNumber() string {
 	return ""
 }
 
-func (x *Colleague) GetAvatar() *filestore.File {
-	if x != nil {
-		return x.Avatar
+func (x *Colleague) GetAvatarFileId() uint64 {
+	if x != nil && x.AvatarFileId != nil {
+		return *x.AvatarFileId
 	}
-	return nil
+	return 0
+}
+
+func (x *Colleague) GetAvatar() string {
+	if x != nil && x.Avatar != nil {
+		return *x.Avatar
+	}
+	return ""
 }
 
 func (x *Colleague) GetProps() *ColleagueProps {
@@ -278,7 +285,7 @@ var File_resources_jobs_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a\x1eresources/filestore/file.proto\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x9e\x05\n" +
+	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xc1\x05\n" +
 	"\tColleague\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12,\n" +
 	"\n" +
@@ -292,15 +299,17 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\blastname\x18\b \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\blastname\x12*\n" +
 	"\vdateofbirth\x18\t \x01(\tB\b\xfaB\x05r\x03\x98\x01\n" +
 	"R\vdateofbirth\x12/\n" +
-	"\fphone_number\x18\f \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x126\n" +
-	"\x06avatar\x18\x11 \x01(\v2\x19.resources.filestore.FileH\x04R\x06avatar\x88\x01\x01\x124\n" +
-	"\x05props\x18\x12 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\x12$\n" +
-	"\x05email\x18\x13 \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PH\x05R\x05email\x88\x01\x01B\r\n" +
+	"\fphone_number\x18\f \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12)\n" +
+	"\x0eavatar_file_id\x18\x11 \x01(\x04H\x04R\favatarFileId\x88\x01\x01\x12\x1b\n" +
+	"\x06avatar\x18\x12 \x01(\tH\x05R\x06avatar\x88\x01\x01\x124\n" +
+	"\x05props\x18\x13 \x01(\v2\x1e.resources.jobs.ColleaguePropsR\x05props\x12$\n" +
+	"\x05email\x18\x14 \x01(\tB\t\xfaB\x06r\x04\x10\x06\x18PH\x06R\x05email\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
-	"\r_phone_numberB\t\n" +
+	"\r_phone_numberB\x11\n" +
+	"\x0f_avatar_file_idB\t\n" +
 	"\a_avatarB\b\n" +
 	"\x06_email\"\xb2\x04\n" +
 	"\x0eColleagueProps\x12 \n" +
@@ -341,22 +350,20 @@ var file_resources_jobs_colleagues_proto_msgTypes = make([]protoimpl.MessageInfo
 var file_resources_jobs_colleagues_proto_goTypes = []any{
 	(*Colleague)(nil),           // 0: resources.jobs.Colleague
 	(*ColleagueProps)(nil),      // 1: resources.jobs.ColleagueProps
-	(*filestore.File)(nil),      // 2: resources.filestore.File
-	(*timestamp.Timestamp)(nil), // 3: resources.timestamp.Timestamp
-	(*Labels)(nil),              // 4: resources.jobs.Labels
+	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
+	(*Labels)(nil),              // 3: resources.jobs.Labels
 }
 var file_resources_jobs_colleagues_proto_depIdxs = []int32{
-	2, // 0: resources.jobs.Colleague.avatar:type_name -> resources.filestore.File
-	1, // 1: resources.jobs.Colleague.props:type_name -> resources.jobs.ColleagueProps
-	3, // 2: resources.jobs.ColleagueProps.deleted_at:type_name -> resources.timestamp.Timestamp
-	3, // 3: resources.jobs.ColleagueProps.absence_begin:type_name -> resources.timestamp.Timestamp
-	3, // 4: resources.jobs.ColleagueProps.absence_end:type_name -> resources.timestamp.Timestamp
-	4, // 5: resources.jobs.ColleagueProps.labels:type_name -> resources.jobs.Labels
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	1, // 0: resources.jobs.Colleague.props:type_name -> resources.jobs.ColleagueProps
+	2, // 1: resources.jobs.ColleagueProps.deleted_at:type_name -> resources.timestamp.Timestamp
+	2, // 2: resources.jobs.ColleagueProps.absence_begin:type_name -> resources.timestamp.Timestamp
+	2, // 3: resources.jobs.ColleagueProps.absence_end:type_name -> resources.timestamp.Timestamp
+	3, // 4: resources.jobs.ColleagueProps.labels:type_name -> resources.jobs.Labels
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_resources_jobs_colleagues_proto_init() }

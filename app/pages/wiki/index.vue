@@ -114,8 +114,13 @@ watch(pages, async () => {
                         icon="i-mdi-brain"
                         :ui="{ title: 'text-xl' }"
                     >
-                        <template v-if="p.rootInfo?.logo?.url" #icon>
-                            <NuxtImg class="h-10 w-10" :src="p.rootInfo?.logo?.url" :alt="$t('common.logo')" loading="lazy" />
+                        <template v-if="p.rootInfo?.logo?.filePath" #icon>
+                            <NuxtImg
+                                class="h-10 w-10"
+                                :src="p.rootInfo?.logo?.filePath"
+                                :alt="$t('common.logo')"
+                                loading="lazy"
+                            />
                         </template>
                     </UPageCard>
                 </UPageGrid>

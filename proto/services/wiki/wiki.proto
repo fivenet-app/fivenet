@@ -5,6 +5,7 @@ package services.wiki;
 import "resources/common/database/database.proto";
 import "resources/wiki/activity.proto";
 import "resources/wiki/page.proto";
+import "resources/file/filestore.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wiki";
@@ -77,4 +78,7 @@ service WikiService {
 
   // @perm
   rpc ListPageActivity(ListPageActivityRequest) returns (ListPageActivityResponse);
+
+  // @perm: Name=CreatePage
+  rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
 }

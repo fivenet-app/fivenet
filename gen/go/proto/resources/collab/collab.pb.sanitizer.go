@@ -36,6 +36,14 @@ func (m *ClientPacket) Sanitize() error {
 			}
 		}
 
+		// Field: SyncStep
+	case *ClientPacket_SyncStep:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: YjsUpdate
 	case *ClientPacket_YjsUpdate:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -49,7 +57,15 @@ func (m *ClientPacket) Sanitize() error {
 	return nil
 }
 
-func (m *CollabHello) Sanitize() error {
+func (m *CollabHandshake) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *CollabInit) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -72,6 +88,30 @@ func (m *ServerPacket) Sanitize() error {
 			}
 		}
 
+		// Field: Handshake
+	case *ServerPacket_Handshake:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: SyncStep
+	case *ServerPacket_SyncStep:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: TargetSaved
+	case *ServerPacket_TargetSaved:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: YjsUpdate
 	case *ServerPacket_YjsUpdate:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -80,6 +120,24 @@ func (m *ServerPacket) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *SyncStep) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Data
+
+	return nil
+}
+
+func (m *TargetSaved) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

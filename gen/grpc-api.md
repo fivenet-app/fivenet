@@ -168,10 +168,6 @@
 - [resources/documents/pins.proto](#resources_documents_pins-proto)
     - [DocumentPin](#resources-documents-DocumentPin)
   
-- [resources/filestore/file.proto](#resources_filestore_file-proto)
-    - [File](#resources-filestore-File)
-    - [FileInfo](#resources-filestore-FileInfo)
-  
 - [resources/jobs/activity.proto](#resources_jobs_activity-proto)
     - [AbsenceDateChange](#resources-jobs-AbsenceDateChange)
     - [ColleagueActivity](#resources-jobs-ColleagueActivity)
@@ -502,11 +498,28 @@
 - [resources/collab/collab.proto](#resources_collab_collab-proto)
     - [AwarenessPing](#resources-collab-AwarenessPing)
     - [ClientPacket](#resources-collab-ClientPacket)
-    - [CollabHello](#resources-collab-CollabHello)
+    - [CollabHandshake](#resources-collab-CollabHandshake)
+    - [CollabInit](#resources-collab-CollabInit)
     - [ServerPacket](#resources-collab-ServerPacket)
+    - [SyncStep](#resources-collab-SyncStep)
+    - [TargetSaved](#resources-collab-TargetSaved)
     - [YjsUpdate](#resources-collab-YjsUpdate)
   
     - [ClientRole](#resources-collab-ClientRole)
+  
+- [resources/file/file.proto](#resources_file_file-proto)
+    - [File](#resources-file-File)
+  
+- [resources/file/filestore.proto](#resources_file_filestore-proto)
+    - [DeleteFileRequest](#resources-file-DeleteFileRequest)
+    - [DeleteFileResponse](#resources-file-DeleteFileResponse)
+    - [UploadMeta](#resources-file-UploadMeta)
+    - [UploadPacket](#resources-file-UploadPacket)
+    - [UploadResponse](#resources-file-UploadResponse)
+  
+- [resources/file/meta.proto](#resources_file_meta-proto)
+    - [FileMeta](#resources-file-FileMeta)
+    - [ImageMeta](#resources-file-ImageMeta)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -843,6 +856,10 @@
     - [SyncService](#services-sync-SyncService)
   
 - [services/citizens/citizens.proto](#services_citizens_citizens-proto)
+    - [DeleteAvatarRequest](#services-citizens-DeleteAvatarRequest)
+    - [DeleteAvatarResponse](#services-citizens-DeleteAvatarResponse)
+    - [DeleteMugshotRequest](#services-citizens-DeleteMugshotRequest)
+    - [DeleteMugshotResponse](#services-citizens-DeleteMugshotResponse)
     - [GetUserRequest](#services-citizens-GetUserRequest)
     - [GetUserResponse](#services-citizens-GetUserResponse)
     - [ListCitizensRequest](#services-citizens-ListCitizensRequest)
@@ -851,8 +868,6 @@
     - [ListUserActivityResponse](#services-citizens-ListUserActivityResponse)
     - [ManageLabelsRequest](#services-citizens-ManageLabelsRequest)
     - [ManageLabelsResponse](#services-citizens-ManageLabelsResponse)
-    - [SetProfilePictureRequest](#services-citizens-SetProfilePictureRequest)
-    - [SetProfilePictureResponse](#services-citizens-SetProfilePictureResponse)
     - [SetUserPropsRequest](#services-citizens-SetUserPropsRequest)
     - [SetUserPropsResponse](#services-citizens-SetUserPropsResponse)
   
@@ -976,16 +991,6 @@
   
     - [CronService](#services-settings-CronService)
   
-- [services/settings/filestore.proto](#services_settings_filestore-proto)
-    - [DeleteFileRequest](#services-settings-DeleteFileRequest)
-    - [DeleteFileResponse](#services-settings-DeleteFileResponse)
-    - [ListFilesRequest](#services-settings-ListFilesRequest)
-    - [ListFilesResponse](#services-settings-ListFilesResponse)
-    - [UploadFileRequest](#services-settings-UploadFileRequest)
-    - [UploadFileResponse](#services-settings-UploadFileResponse)
-  
-    - [FilestoreService](#services-settings-FilestoreService)
-  
 - [services/settings/laws.proto](#services_settings_laws-proto)
     - [CreateOrUpdateLawBookRequest](#services-settings-CreateOrUpdateLawBookRequest)
     - [CreateOrUpdateLawBookResponse](#services-settings-CreateOrUpdateLawBookResponse)
@@ -1004,6 +1009,8 @@
     - [CreateRoleResponse](#services-settings-CreateRoleResponse)
     - [DeleteFactionRequest](#services-settings-DeleteFactionRequest)
     - [DeleteFactionResponse](#services-settings-DeleteFactionResponse)
+    - [DeleteJobLogoRequest](#services-settings-DeleteJobLogoRequest)
+    - [DeleteJobLogoResponse](#services-settings-DeleteJobLogoResponse)
     - [DeleteRoleRequest](#services-settings-DeleteRoleRequest)
     - [DeleteRoleResponse](#services-settings-DeleteRoleResponse)
     - [GetAllPermissionsRequest](#services-settings-GetAllPermissionsRequest)
@@ -1037,6 +1044,14 @@
     - [ListVehiclesResponse](#services-vehicles-ListVehiclesResponse)
   
     - [VehiclesService](#services-vehicles-VehiclesService)
+  
+- [services/filestore/filestore.proto](#services_filestore_filestore-proto)
+    - [DeleteFileByPathRequest](#services-filestore-DeleteFileByPathRequest)
+    - [DeleteFileByPathResponse](#services-filestore-DeleteFileByPathResponse)
+    - [ListFilesRequest](#services-filestore-ListFilesRequest)
+    - [ListFilesResponse](#services-filestore-ListFilesResponse)
+  
+    - [FilestoreService](#services-filestore-FilestoreService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -3139,6 +3154,7 @@ Dummy - DO NOT USE!
 | `pin` | [DocumentPin](#resources-documents-DocumentPin) | optional | @gotags: alias:"pin" |
 | `workflow_state` | [WorkflowState](#resources-documents-WorkflowState) | optional |  |
 | `workflow_user` | [WorkflowUserState](#resources-documents-WorkflowUserState) | optional |  |
+| `files` | [resources.file.File](#resources-file-File) | repeated | @gotags: alias:"files" |
 
 
 
@@ -3324,59 +3340,6 @@ Dummy - DO NOT USE!
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `state` | [bool](#bool) |  |  |
 | `creator_id` | [int32](#int32) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_filestore_file-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/filestore/file.proto
-
-
-
-<a name="resources-filestore-File"></a>
-
-### File
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `url` | [string](#string) | optional |  |
-| `data` | [bytes](#bytes) |  |  |
-| `delete` | [bool](#bool) | optional |  |
-| `content_type` | [string](#string) | optional |  |
-| `extension` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-filestore-FileInfo"></a>
-
-### FileInfo
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `last_modified` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `size` | [int64](#int64) |  |  |
-| `content_type` | [string](#string) |  |  |
 
 
 
@@ -4019,7 +3982,8 @@ Dummy - DO NOT USE!
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `avatar_file_id` | [uint64](#uint64) | optional |  |
+| `avatar` | [string](#string) | optional | @gotags: alias:"avatar" |
 | `props` | [ColleagueProps](#resources-jobs-ColleagueProps) |  | @gotags: alias:"colleague_props" |
 | `email` | [string](#string) | optional | @sanitize: method=StripTags |
 
@@ -4086,7 +4050,8 @@ Dummy - DO NOT USE!
 | `discord_sync_settings` | [DiscordSyncSettings](#resources-jobs-DiscordSyncSettings) |  |  |
 | `discord_sync_changes` | [DiscordSyncChanges](#resources-jobs-DiscordSyncChanges) | optional |  |
 | `motd` | [string](#string) | optional |  |
-| `logo_url` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `logo_file_id` | [uint64](#uint64) | optional |  |
+| `logo_file` | [resources.file.File](#resources-file-File) | optional | @gotags: alias:"logo_file" |
 | `settings` | [JobSettings](#resources-jobs-JobSettings) |  |  |
 
 
@@ -5020,7 +4985,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `image` | [resources.filestore.File](#resources-filestore-File) |  |  |
+| `image` | [resources.file.File](#resources-file-File) |  |  |
 | `alt` | [string](#string) | optional |  |
 
 
@@ -5888,7 +5853,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `ends_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `title` | [string](#string) |  | @sanitize: method=StripTags |
 | `description` | [string](#string) |  | @sanitize: method=StripTags |
-| `image` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `image` | [resources.file.File](#resources-file-File) | optional |  |
 | `approver_id` | [int32](#int32) | optional |  |
 | `approver_job` | [string](#string) | optional |  |
 | `creator_id` | [int32](#int32) | optional |  |
@@ -6813,6 +6778,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `meta` | [PageMeta](#resources-wiki-PageMeta) |  |  |
 | `content` | [resources.common.content.Content](#resources-common-content-Content) |  |  |
 | `access` | [PageAccess](#resources-wiki-PageAccess) |  |  |
+| `files` | [resources.file.File](#resources-file-File) | repeated | @gotags: alias:"files" |
 
 
 
@@ -6853,7 +6819,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `logo` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `logo` | [resources.file.File](#resources-file-File) | optional |  |
 
 
 
@@ -7273,7 +7239,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `playtime` | [int32](#int32) | optional |  |
 | `props` | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
 | `licenses` | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `avatar_file_id` | [uint64](#uint64) | optional |  |
+| `avatar` | [string](#string) | optional | @gotags: alias:"avatar" |
 | `group` | [string](#string) | optional |  |
 
 
@@ -7299,7 +7266,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `lastname` | [string](#string) |  |  |
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `avatar_file_id` | [uint64](#uint64) | optional |  |
+| `avatar` | [string](#string) | optional | @gotags: alias:"avatar" |
 
 
 
@@ -7585,7 +7553,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
 | `job` | [string](#string) | optional |  |
-| `name` | [string](#string) |  |  |
+| `name` | [string](#string) |  | @sanitize: method=StripTags |
 | `color` | [string](#string) |  | @sanitize: method=StripTags |
 
 
@@ -7691,7 +7659,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `traffic_infraction_points_updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `open_fines` | [int64](#int64) | optional |  |
 | `blood_type` | [string](#string) | optional |  |
-| `mug_shot` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `mugshot_file_id` | [uint64](#uint64) | optional |  |
+| `mugshot` | [resources.file.File](#resources-file-File) | optional | @gotags: alias:"mugshot" |
 | `labels` | [Labels](#resources-users-Labels) | optional |  |
 | `email` | [string](#string) | optional | @sanitize: method=StripTags |
 
@@ -8067,7 +8036,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `hello` | [CollabHello](#resources-collab-CollabHello) |  | Must be the first message |
+| `hello` | [CollabInit](#resources-collab-CollabInit) |  | Must be the first message |
+| `sync_step` | [SyncStep](#resources-collab-SyncStep) |  |  |
 | `yjs_update` | [YjsUpdate](#resources-collab-YjsUpdate) |  |  |
 | `awareness` | [AwarenessPing](#resources-collab-AwarenessPing) |  |  |
 
@@ -8076,9 +8046,25 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-<a name="resources-collab-CollabHello"></a>
+<a name="resources-collab-CollabHandshake"></a>
 
-### CollabHello
+### CollabHandshake
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `client_id` | [uint64](#uint64) |  |  |
+| `first` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-collab-CollabInit"></a>
+
+### CollabInit
 
 
 
@@ -8100,9 +8086,43 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `sender_id` | [uint64](#uint64) |  | Who generated this packet (same ID used in awareness) |
-| `client_id` | [uint64](#uint64) |  |  |
+| `handshake` | [CollabHandshake](#resources-collab-CollabHandshake) |  |  |
+| `sync_step` | [SyncStep](#resources-collab-SyncStep) |  |  |
 | `yjs_update` | [YjsUpdate](#resources-collab-YjsUpdate) |  |  |
 | `awareness` | [AwarenessPing](#resources-collab-AwarenessPing) |  |  |
+| `target_saved` | [TargetSaved](#resources-collab-TargetSaved) |  |  |
+
+
+
+
+
+
+<a name="resources-collab-SyncStep"></a>
+
+### SyncStep
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `step` | [int32](#int32) |  |  |
+| `data` | [bytes](#bytes) |  |  |
+| `receiver_id` | [uint64](#uint64) | optional |  |
+
+
+
+
+
+
+<a name="resources-collab-TargetSaved"></a>
+
+### TargetSaved
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `target_id` | [uint64](#uint64) |  |  |
 
 
 
@@ -8137,6 +8157,185 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `CLIENT_ROLE_READER` | 1 |  |
 | `CLIENT_ROLE_WRITER` | 2 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_file_file-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/file/file.proto
+
+
+
+<a name="resources-file-File"></a>
+
+### File
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `parent_id` | [uint64](#uint64) | optional |  |
+| `id` | [uint64](#uint64) |  |  |
+| `file_path` | [string](#string) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `byte_size` | [int64](#int64) |  | Bytes stored |
+| `content_type` | [string](#string) |  |  |
+| `meta` | [FileMeta](#resources-file-FileMeta) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_file_filestore-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/file/filestore.proto
+
+
+
+<a name="resources-file-DeleteFileRequest"></a>
+
+### DeleteFileRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `parent_id` | [uint64](#uint64) |  |  |
+| `file_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="resources-file-DeleteFileResponse"></a>
+
+### DeleteFileResponse
+
+
+
+
+
+
+
+<a name="resources-file-UploadMeta"></a>
+
+### UploadMeta
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `parent_id` | [uint64](#uint64) |  |  |
+| `namespace` | [string](#string) |  | "documents", "wiki", … |
+| `original_name` | [string](#string) |  |  |
+| `content_type` | [string](#string) |  | optional – server re-validates |
+| `size` | [int64](#int64) |  | Size in bytes |
+| `reason` | [string](#string) |  | @sanitize |
+
+
+
+
+
+
+<a name="resources-file-UploadPacket"></a>
+
+### UploadPacket
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `meta` | [UploadMeta](#resources-file-UploadMeta) |  |  |
+| `data` | [bytes](#bytes) |  | Raw bytes <= 128 KiB each, browsers should only read 64 KiB at a time, but this is a buffer just in case |
+
+
+
+
+
+
+<a name="resources-file-UploadResponse"></a>
+
+### UploadResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | Unique ID for the uploaded file |
+| `url` | [string](#string) |  | URL to the uploaded file |
+| `file` | [File](#resources-file-File) |  | File info |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_file_meta-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/file/meta.proto
+
+
+
+<a name="resources-file-FileMeta"></a>
+
+### FileMeta
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `image` | [ImageMeta](#resources-file-ImageMeta) |  |  |
+
+
+
+
+
+
+<a name="resources-file-ImageMeta"></a>
+
+### ImageMeta
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `width` | [int64](#int64) |  |  |
+| `height` | [int64](#int64) |  |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -12460,6 +12659,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `UpdatePage` | [UpdatePageRequest](#services-wiki-UpdatePageRequest) | [UpdatePageResponse](#services-wiki-UpdatePageResponse) | @perm: Name=ListPages |
 | `DeletePage` | [DeletePageRequest](#services-wiki-DeletePageRequest) | [DeletePageResponse](#services-wiki-DeletePageResponse) | @perm |
 | `ListPageActivity` | [ListPageActivityRequest](#services-wiki-ListPageActivityRequest) | [ListPageActivityResponse](#services-wiki-ListPageActivityResponse) | @perm |
+| `UploadFile` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=CreatePage |
 
  <!-- end services -->
 
@@ -12740,6 +12940,52 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
+<a name="services-citizens-DeleteAvatarRequest"></a>
+
+### DeleteAvatarRequest
+
+
+
+
+
+
+
+<a name="services-citizens-DeleteAvatarResponse"></a>
+
+### DeleteAvatarResponse
+
+
+
+
+
+
+
+<a name="services-citizens-DeleteMugshotRequest"></a>
+
+### DeleteMugshotRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `reason` | [string](#string) |  | @sanitize |
+
+
+
+
+
+
+<a name="services-citizens-DeleteMugshotResponse"></a>
+
+### DeleteMugshotResponse
+
+
+
+
+
+
+
 <a name="services-citizens-GetUserRequest"></a>
 
 ### GetUserRequest
@@ -12873,36 +13119,6 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
-<a name="services-citizens-SetProfilePictureRequest"></a>
-
-### SetProfilePictureRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) |  |  |
-
-
-
-
-
-
-<a name="services-citizens-SetProfilePictureResponse"></a>
-
-### SetProfilePictureResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) |  |  |
-
-
-
-
-
-
 <a name="services-citizens-SetUserPropsRequest"></a>
 
 ### SetUserPropsRequest
@@ -12947,11 +13163,14 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `ListCitizens` | [ListCitizensRequest](#services-citizens-ListCitizensRequest) | [ListCitizensResponse](#services-citizens-ListCitizensResponse) | @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"} |
+| `ListCitizens` | [ListCitizensRequest](#services-citizens-ListCitizensRequest) | [ListCitizensResponse](#services-citizens-ListCitizensResponse) | @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.Mugshot", "UserProps.Labels", "UserProps.Email"} |
 | `GetUser` | [GetUserRequest](#services-citizens-GetUserRequest) | [GetUserResponse](#services-citizens-GetUserResponse) | @perm: Attrs=Jobs/JobGradeList |
 | `ListUserActivity` | [ListUserActivityRequest](#services-citizens-ListUserActivityRequest) | [ListUserActivityResponse](#services-citizens-ListUserActivityResponse) | @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"} |
-| `SetUserProps` | [SetUserPropsRequest](#services-citizens-SetUserPropsRequest) | [SetUserPropsResponse](#services-citizens-SetUserPropsResponse) | @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"} |
-| `SetProfilePicture` | [SetProfilePictureRequest](#services-citizens-SetProfilePictureRequest) | [SetProfilePictureResponse](#services-citizens-SetProfilePictureResponse) | @perm: Name=Any |
+| `SetUserProps` | [SetUserPropsRequest](#services-citizens-SetUserPropsRequest) | [SetUserPropsResponse](#services-citizens-SetUserPropsResponse) | @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"} |
+| `UploadAvatar` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=Any |
+| `DeleteAvatar` | [DeleteAvatarRequest](#services-citizens-DeleteAvatarRequest) | [DeleteAvatarResponse](#services-citizens-DeleteAvatarResponse) | @perm: Name=Any |
+| `UploadMugshot` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=SetUserProps |
+| `DeleteMugshot` | [DeleteMugshotRequest](#services-citizens-DeleteMugshotRequest) | [DeleteMugshotResponse](#services-citizens-DeleteMugshotResponse) | @perm: Name=SetUserProps |
 | `ManageLabels` | [ManageLabelsRequest](#services-citizens-ManageLabelsRequest) | [ManageLabelsResponse](#services-citizens-ManageLabelsResponse) | @perm |
 
  <!-- end services -->
@@ -13666,7 +13885,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `to` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `closed` | [bool](#bool) | optional |  |
 | `document_ids` | [uint64](#uint64) | repeated |  |
-| `include_drafts` | [bool](#bool) | optional |  |
+| `only_drafts` | [bool](#bool) | optional | Controls inclusion of drafts in the result: - unset/null: include all documents (drafts and non-drafts) - false: only non-draft documents - true: only draft documents |
 
 
 
@@ -14095,6 +14314,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `ListDocumentPins` | [ListDocumentPinsRequest](#services-documents-ListDocumentPinsRequest) | [ListDocumentPinsResponse](#services-documents-ListDocumentPinsResponse) | @perm: Name=ListDocuments |
 | `ToggleDocumentPin` | [ToggleDocumentPinRequest](#services-documents-ToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#services-documents-ToggleDocumentPinResponse) | @perm: Attrs=Types/StringList:[]string{"JobWide"} |
 | `SetDocumentReminder` | [SetDocumentReminderRequest](#services-documents-SetDocumentReminderRequest) | [SetDocumentReminderResponse](#services-documents-SetDocumentReminderResponse) | @perm |
+| `UploadFile` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=CreateDocument |
 
  <!-- end services -->
 
@@ -14569,123 +14789,6 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
-<a name="services_settings_filestore-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/settings/filestore.proto
-
-
-
-<a name="services-settings-DeleteFileRequest"></a>
-
-### DeleteFileRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `path` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="services-settings-DeleteFileResponse"></a>
-
-### DeleteFileResponse
-
-
-
-
-
-
-
-<a name="services-settings-ListFilesRequest"></a>
-
-### ListFilesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `path` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="services-settings-ListFilesResponse"></a>
-
-### ListFilesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `files` | [resources.filestore.FileInfo](#resources-filestore-FileInfo) | repeated |  |
-
-
-
-
-
-
-<a name="services-settings-UploadFileRequest"></a>
-
-### UploadFileRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `prefix` | [string](#string) |  |  |
-| `name` | [string](#string) |  |  |
-| `file` | [resources.filestore.File](#resources-filestore-File) |  |  |
-
-
-
-
-
-
-<a name="services-settings-UploadFileResponse"></a>
-
-### UploadFileResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `file` | [resources.filestore.FileInfo](#resources-filestore-FileInfo) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-settings-FilestoreService"></a>
-
-### FilestoreService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListFiles` | [ListFilesRequest](#services-settings-ListFilesRequest) | [ListFilesResponse](#services-settings-ListFilesResponse) | @perm: Name=Superuser |
-| `UploadFile` | [UploadFileRequest](#services-settings-UploadFileRequest) | [UploadFileResponse](#services-settings-UploadFileResponse) | @perm: Name=Superuser |
-| `DeleteFile` | [DeleteFileRequest](#services-settings-DeleteFileRequest) | [DeleteFileResponse](#services-settings-DeleteFileResponse) | @perm: Name=Superuser |
-
- <!-- end services -->
-
-
-
 <a name="services_settings_laws-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -14897,6 +15000,26 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 <a name="services-settings-DeleteFactionResponse"></a>
 
 ### DeleteFactionResponse
+
+
+
+
+
+
+
+<a name="services-settings-DeleteJobLogoRequest"></a>
+
+### DeleteJobLogoRequest
+
+
+
+
+
+
+
+<a name="services-settings-DeleteJobLogoResponse"></a>
+
+### DeleteJobLogoResponse
 
 
 
@@ -15306,6 +15429,8 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `GetJobLimits` | [GetJobLimitsRequest](#services-settings-GetJobLimitsRequest) | [GetJobLimitsResponse](#services-settings-GetJobLimitsResponse) | @perm: Name=Superuser |
 | `UpdateJobLimits` | [UpdateJobLimitsRequest](#services-settings-UpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#services-settings-UpdateJobLimitsResponse) | @perm: Name=Superuser |
 | `DeleteFaction` | [DeleteFactionRequest](#services-settings-DeleteFactionRequest) | [DeleteFactionResponse](#services-settings-DeleteFactionResponse) | @perm: Name=Superuser |
+| `UploadJobLogo` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=SetJobProps |
+| `DeleteJobLogo` | [DeleteJobLogoRequest](#services-settings-DeleteJobLogoRequest) | [DeleteJobLogoResponse](#services-settings-DeleteJobLogoResponse) | @perm: Name=SetJobProps |
 
  <!-- end services -->
 
@@ -15368,6 +15493,92 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `ListVehicles` | [ListVehiclesRequest](#services-vehicles-ListVehiclesRequest) | [ListVehiclesResponse](#services-vehicles-ListVehiclesResponse) | @perm |
+
+ <!-- end services -->
+
+
+
+<a name="services_filestore_filestore-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/filestore/filestore.proto
+
+
+
+<a name="services-filestore-DeleteFileByPathRequest"></a>
+
+### DeleteFileByPathRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `path` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-filestore-DeleteFileByPathResponse"></a>
+
+### DeleteFileByPathResponse
+
+
+
+
+
+
+
+<a name="services-filestore-ListFilesRequest"></a>
+
+### ListFilesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `path` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="services-filestore-ListFilesResponse"></a>
+
+### ListFilesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `files` | [resources.file.File](#resources-file-File) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-filestore-FilestoreService"></a>
+
+### FilestoreService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `Upload` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=Superuser |
+| `ListFiles` | [ListFilesRequest](#services-filestore-ListFilesRequest) | [ListFilesResponse](#services-filestore-ListFilesResponse) | @perm: Name=Superuser |
+| `DeleteFile` | [.resources.file.DeleteFileRequest](#resources-file-DeleteFileRequest) | [.resources.file.DeleteFileResponse](#resources-file-DeleteFileResponse) | @perm: Name=Superuser |
+| `DeleteFileByPath` | [DeleteFileByPathRequest](#services-filestore-DeleteFileByPathRequest) | [DeleteFileByPathResponse](#services-filestore-DeleteFileByPathResponse) | @perm: Name=Superuser |
 
  <!-- end services -->
 

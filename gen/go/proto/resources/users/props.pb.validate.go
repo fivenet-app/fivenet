@@ -224,14 +224,18 @@ func (m *UserProps) validate(all bool) error {
 		// no validation rules for BloodType
 	}
 
-	if m.MugShot != nil {
+	if m.MugshotFileId != nil {
+		// no validation rules for MugshotFileId
+	}
+
+	if m.Mugshot != nil {
 
 		if all {
-			switch v := interface{}(m.GetMugShot()).(type) {
+			switch v := interface{}(m.GetMugshot()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, UserPropsValidationError{
-						field:  "MugShot",
+						field:  "Mugshot",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -239,16 +243,16 @@ func (m *UserProps) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, UserPropsValidationError{
-						field:  "MugShot",
+						field:  "Mugshot",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetMugShot()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetMugshot()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserPropsValidationError{
-					field:  "MugShot",
+					field:  "Mugshot",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

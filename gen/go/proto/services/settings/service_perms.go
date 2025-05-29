@@ -2,7 +2,6 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
-// source: services/settings/filestore.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 
@@ -27,23 +26,20 @@ var PermsRemap = map[string]string{
 	// Service: settings.CronService
 	"settings.CronService/ListCronjobs": "Superuser",
 
-	// Service: settings.FilestoreService
-	"settings.FilestoreService/DeleteFile": "Superuser",
-	"settings.FilestoreService/ListFiles":  "Superuser",
-	"settings.FilestoreService/UploadFile": "Superuser",
-
 	// Service: settings.LawsService
 	"settings.LawsService/CreateOrUpdateLaw": "settings.LawsService/CreateOrUpdateLawBook",
 	"settings.LawsService/DeleteLaw":         "settings.LawsService/DeleteLawBook",
 
 	// Service: settings.SettingsService
 	"settings.SettingsService/DeleteFaction":           "Superuser",
+	"settings.SettingsService/DeleteJobLogo":           "settings.SettingsService/SetJobProps",
 	"settings.SettingsService/GetAllPermissions":       "Superuser",
 	"settings.SettingsService/GetEffectivePermissions": "settings.SettingsService/GetRoles",
 	"settings.SettingsService/GetJobLimits":            "Superuser",
 	"settings.SettingsService/GetPermissions":          "settings.SettingsService/GetRoles",
 	"settings.SettingsService/GetRole":                 "settings.SettingsService/GetRoles",
 	"settings.SettingsService/UpdateJobLimits":         "Superuser",
+	"settings.SettingsService/UploadJobLogo":           "settings.SettingsService/SetJobProps",
 }
 
 func init() {

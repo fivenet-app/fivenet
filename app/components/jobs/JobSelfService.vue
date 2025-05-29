@@ -2,7 +2,7 @@
 import { isToday, parse } from 'date-fns';
 import { emojiBlasts } from 'emoji-blast';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
-import SelfServicePropsProfilePictureModal from '~/components/jobs/colleagues/SelfServicePropsProfilePictureModal.vue';
+import SelfServicePropsAvatarModal from '~/components/jobs/colleagues/SelfServicePropsAvatarModal.vue';
 
 defineProps<{
     userId: number;
@@ -68,7 +68,7 @@ onMounted(() => {
             >
                 <span>{{ $t('components.jobs.self_service.set_absence_date') }}</span>
             </UButton>
-            <UButton class="flex-1" block icon="i-mdi-camera" @click="modal.open(SelfServicePropsProfilePictureModal, {})">
+            <UButton class="flex-1" block icon="i-mdi-camera" @click="modal.open(SelfServicePropsAvatarModal, {})">
                 <span>{{ $t('components.jobs.self_service.set_profile_picture') }}</span>
             </UButton>
         </div>

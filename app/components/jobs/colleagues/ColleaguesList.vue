@@ -374,7 +374,7 @@ defineShortcuts({
                 <div class="inline-flex items-center text-gray-900 dark:text-white">
                     <ProfilePictureImg
                         class="mr-2"
-                        :src="colleague?.avatar?.url"
+                        :src="colleague?.avatar"
                         :name="`${colleague.firstname} ${colleague.lastname}`"
                         size="sm"
                         :enable-popup="true"
@@ -491,7 +491,7 @@ defineShortcuts({
                     <template #header>
                         <div class="flex items-center justify-center overflow-hidden">
                             <ProfilePictureImg
-                                :src="colleague?.avatar?.url"
+                                :src="colleague?.avatar"
                                 :name="`${colleague.firstname} ${colleague.lastname}`"
                                 size="3xl"
                                 :enable-popup="true"
@@ -514,13 +514,13 @@ defineShortcuts({
                             <PhoneNumberBlock :number="colleague.phoneNumber" />
 
                             <span class="inline-flex items-center gap-1">
-                                <UIcon class="h-5 w-5" name="i-mdi-birthday-cake" />
+                                <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
 
                                 <span>{{ colleague.dateofbirth.value }}</span>
                             </span>
 
                             <span class="inline-flex items-center gap-1">
-                                <UIcon class="h-5 w-5" name="i-mdi-email" />
+                                <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
 
                                 <EmailInfoPopover
                                     :email="colleague.email"

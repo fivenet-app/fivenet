@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	grpc_auth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/permission"
 	grpc_sanitizer "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/sanitizer"
@@ -160,6 +161,7 @@ func grpcPanicRecoveryHandler(logger *zap.Logger) recovery.RecoveryHandlerFunc {
 
 		if e, ok := pa.(error); ok {
 			logger.Error("recovered from panic", zap.Error(e))
+			return errswrap.NewError(e, ErrInternalServer)
 		} else {
 			logger.Error("recovered from panic", zap.Any("err", pa), zap.Stack("stacktrace"))
 		}

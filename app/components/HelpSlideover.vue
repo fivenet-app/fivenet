@@ -78,7 +78,7 @@ const categories = computed(() => [
             },
             {
                 shortcuts: ['C', 'M'],
-                name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.set_mug_shot')}`,
+                name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.set_mugshot')}`,
             },
             {
                 shortcuts: ['C', 'D'],

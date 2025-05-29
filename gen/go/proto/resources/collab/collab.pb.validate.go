@@ -101,6 +101,48 @@ func (m *ClientPacket) validate(all bool) error {
 			}
 		}
 
+	case *ClientPacket_SyncStep:
+		if v == nil {
+			err := ClientPacketValidationError{
+				field:  "Msg",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofMsgPresent = true
+
+		if all {
+			switch v := interface{}(m.GetSyncStep()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ClientPacketValidationError{
+						field:  "SyncStep",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ClientPacketValidationError{
+						field:  "SyncStep",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSyncStep()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ClientPacketValidationError{
+					field:  "SyncStep",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *ClientPacket_YjsUpdate:
 		if v == nil {
 			err := ClientPacketValidationError{
@@ -276,22 +318,22 @@ var _ interface {
 	ErrorName() string
 } = ClientPacketValidationError{}
 
-// Validate checks the field values on CollabHello with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on CollabInit with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *CollabHello) Validate() error {
+func (m *CollabInit) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CollabHello with the rules defined in
+// ValidateAll checks the field values on CollabInit with the rules defined in
 // the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in CollabHelloMultiError, or
+// result is a list of violation errors wrapped in CollabInitMultiError, or
 // nil if none found.
-func (m *CollabHello) ValidateAll() error {
+func (m *CollabInit) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CollabHello) validate(all bool) error {
+func (m *CollabInit) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -299,7 +341,7 @@ func (m *CollabHello) validate(all bool) error {
 	var errors []error
 
 	if m.GetTargetId() <= 0 {
-		err := CollabHelloValidationError{
+		err := CollabInitValidationError{
 			field:  "TargetId",
 			reason: "value must be greater than 0",
 		}
@@ -310,18 +352,18 @@ func (m *CollabHello) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CollabHelloMultiError(errors)
+		return CollabInitMultiError(errors)
 	}
 
 	return nil
 }
 
-// CollabHelloMultiError is an error wrapping multiple validation errors
-// returned by CollabHello.ValidateAll() if the designated constraints aren't met.
-type CollabHelloMultiError []error
+// CollabInitMultiError is an error wrapping multiple validation errors
+// returned by CollabInit.ValidateAll() if the designated constraints aren't met.
+type CollabInitMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CollabHelloMultiError) Error() string {
+func (m CollabInitMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -330,11 +372,11 @@ func (m CollabHelloMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CollabHelloMultiError) AllErrors() []error { return m }
+func (m CollabInitMultiError) AllErrors() []error { return m }
 
-// CollabHelloValidationError is the validation error returned by
-// CollabHello.Validate if the designated constraints aren't met.
-type CollabHelloValidationError struct {
+// CollabInitValidationError is the validation error returned by
+// CollabInit.Validate if the designated constraints aren't met.
+type CollabInitValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -342,22 +384,22 @@ type CollabHelloValidationError struct {
 }
 
 // Field function returns field value.
-func (e CollabHelloValidationError) Field() string { return e.field }
+func (e CollabInitValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CollabHelloValidationError) Reason() string { return e.reason }
+func (e CollabInitValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CollabHelloValidationError) Cause() error { return e.cause }
+func (e CollabInitValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CollabHelloValidationError) Key() bool { return e.key }
+func (e CollabInitValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CollabHelloValidationError) ErrorName() string { return "CollabHelloValidationError" }
+func (e CollabInitValidationError) ErrorName() string { return "CollabInitValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CollabHelloValidationError) Error() string {
+func (e CollabInitValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -369,14 +411,14 @@ func (e CollabHelloValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCollabHello.%s: %s%s",
+		"invalid %sCollabInit.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CollabHelloValidationError{}
+var _ error = CollabInitValidationError{}
 
 var _ interface {
 	Field() string
@@ -384,7 +426,139 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CollabHelloValidationError{}
+} = CollabInitValidationError{}
+
+// Validate checks the field values on SyncStep with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SyncStep) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SyncStep with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SyncStepMultiError, or nil
+// if none found.
+func (m *SyncStep) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SyncStep) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := _SyncStep_Step_InLookup[m.GetStep()]; !ok {
+		err := SyncStepValidationError{
+			field:  "Step",
+			reason: "value must be in list [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Data
+
+	if m.ReceiverId != nil {
+
+		if m.GetReceiverId() <= 0 {
+			err := SyncStepValidationError{
+				field:  "ReceiverId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SyncStepMultiError(errors)
+	}
+
+	return nil
+}
+
+// SyncStepMultiError is an error wrapping multiple validation errors returned
+// by SyncStep.ValidateAll() if the designated constraints aren't met.
+type SyncStepMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SyncStepMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SyncStepMultiError) AllErrors() []error { return m }
+
+// SyncStepValidationError is the validation error returned by
+// SyncStep.Validate if the designated constraints aren't met.
+type SyncStepValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SyncStepValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SyncStepValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SyncStepValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SyncStepValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SyncStepValidationError) ErrorName() string { return "SyncStepValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SyncStepValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSyncStep.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SyncStepValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SyncStepValidationError{}
+
+var _SyncStep_Step_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
 
 // Validate checks the field values on YjsUpdate with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -624,7 +798,7 @@ func (m *ServerPacket) validate(all bool) error {
 
 	oneofMsgPresent := false
 	switch v := m.Msg.(type) {
-	case *ServerPacket_ClientId:
+	case *ServerPacket_Handshake:
 		if v == nil {
 			err := ServerPacketValidationError{
 				field:  "Msg",
@@ -636,7 +810,78 @@ func (m *ServerPacket) validate(all bool) error {
 			errors = append(errors, err)
 		}
 		oneofMsgPresent = true
-		// no validation rules for ClientId
+
+		if all {
+			switch v := interface{}(m.GetHandshake()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ServerPacketValidationError{
+						field:  "Handshake",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ServerPacketValidationError{
+						field:  "Handshake",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetHandshake()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ServerPacketValidationError{
+					field:  "Handshake",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ServerPacket_SyncStep:
+		if v == nil {
+			err := ServerPacketValidationError{
+				field:  "Msg",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofMsgPresent = true
+
+		if all {
+			switch v := interface{}(m.GetSyncStep()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ServerPacketValidationError{
+						field:  "SyncStep",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ServerPacketValidationError{
+						field:  "SyncStep",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSyncStep()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ServerPacketValidationError{
+					field:  "SyncStep",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *ServerPacket_YjsUpdate:
 		if v == nil {
 			err := ServerPacketValidationError{
@@ -715,6 +960,48 @@ func (m *ServerPacket) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return ServerPacketValidationError{
 					field:  "Awareness",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ServerPacket_TargetSaved:
+		if v == nil {
+			err := ServerPacketValidationError{
+				field:  "Msg",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofMsgPresent = true
+
+		if all {
+			switch v := interface{}(m.GetTargetSaved()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ServerPacketValidationError{
+						field:  "TargetSaved",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ServerPacketValidationError{
+						field:  "TargetSaved",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTargetSaved()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ServerPacketValidationError{
+					field:  "TargetSaved",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -811,3 +1098,217 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ServerPacketValidationError{}
+
+// Validate checks the field values on CollabHandshake with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CollabHandshake) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CollabHandshake with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CollabHandshakeMultiError, or nil if none found.
+func (m *CollabHandshake) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CollabHandshake) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ClientId
+
+	// no validation rules for First
+
+	if len(errors) > 0 {
+		return CollabHandshakeMultiError(errors)
+	}
+
+	return nil
+}
+
+// CollabHandshakeMultiError is an error wrapping multiple validation errors
+// returned by CollabHandshake.ValidateAll() if the designated constraints
+// aren't met.
+type CollabHandshakeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CollabHandshakeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CollabHandshakeMultiError) AllErrors() []error { return m }
+
+// CollabHandshakeValidationError is the validation error returned by
+// CollabHandshake.Validate if the designated constraints aren't met.
+type CollabHandshakeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CollabHandshakeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CollabHandshakeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CollabHandshakeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CollabHandshakeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CollabHandshakeValidationError) ErrorName() string { return "CollabHandshakeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CollabHandshakeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCollabHandshake.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CollabHandshakeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CollabHandshakeValidationError{}
+
+// Validate checks the field values on TargetSaved with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TargetSaved) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TargetSaved with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TargetSavedMultiError, or
+// nil if none found.
+func (m *TargetSaved) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TargetSaved) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetTargetId() <= 0 {
+		err := TargetSavedValidationError{
+			field:  "TargetId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return TargetSavedMultiError(errors)
+	}
+
+	return nil
+}
+
+// TargetSavedMultiError is an error wrapping multiple validation errors
+// returned by TargetSaved.ValidateAll() if the designated constraints aren't met.
+type TargetSavedMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TargetSavedMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TargetSavedMultiError) AllErrors() []error { return m }
+
+// TargetSavedValidationError is the validation error returned by
+// TargetSaved.Validate if the designated constraints aren't met.
+type TargetSavedValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TargetSavedValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TargetSavedValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TargetSavedValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TargetSavedValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TargetSavedValidationError) ErrorName() string { return "TargetSavedValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TargetSavedValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTargetSaved.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TargetSavedValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TargetSavedValidationError{}

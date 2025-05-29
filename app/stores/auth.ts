@@ -34,7 +34,8 @@ export const useAuthStore = defineStore(
                 penaltyCalculator: false,
                 mathCalculator: false,
             },
-            logoUrl: undefined,
+            logoFileId: undefined,
+            logoFile: undefined,
         });
 
         // Actions
@@ -81,7 +82,8 @@ export const useAuthStore = defineStore(
                     jobProps.value.radioFrequency = jp.radioFrequency;
                     jobProps.value.quickButtons = jp.quickButtons;
                     jobProps.value.discordGuildId = jp.discordGuildId;
-                    jobProps.value.logoUrl = jp.logoUrl;
+                    jobProps.value.logoFileId = jp.logoFileId;
+                    jobProps.value.logoFile = jp.logoFile;
                 }
             }
         };

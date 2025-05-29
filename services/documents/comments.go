@@ -86,6 +86,7 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 	}
 
 	tCreator := tables.User().AS("creator")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	columns := jet.ProjectionList{
 		tDComments.ID,
@@ -99,7 +100,8 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 		tCreator.JobGrade,
 		tCreator.Firstname,
 		tCreator.Lastname,
-		tUserProps.Avatar.AS("creator.avatar"),
+		tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
+		tAvatar.FilePath.AS("creator.avatar"),
 	}
 	if userInfo.Superuser {
 		columns = append(columns, tDComments.DeletedAt)
@@ -117,6 +119,9 @@ func (s *Server) GetComments(ctx context.Context, req *pbdocuments.GetCommentsRe
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(condition).
@@ -292,6 +297,7 @@ func (s *Server) EditComment(ctx context.Context, req *pbdocuments.EditCommentRe
 func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.UserInfo) (*documents.Comment, error) {
 	tDComments := tDComments.AS("comment")
 	tCreator := tables.User().AS("creator")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tDComments.
 		SELECT(
@@ -308,7 +314,8 @@ func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.U
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tDComments.
@@ -317,6 +324,9 @@ func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.U
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(

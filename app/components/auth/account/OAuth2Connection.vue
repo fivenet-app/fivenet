@@ -49,26 +49,21 @@ const modal = useModal();
 </script>
 
 <template>
-    <UPageCard
+    <UCard
         :ui="{
+            base: 'flex flex-col',
             body: {
-                padding: 'px-4 py-4 sm:p-4',
+                base: 'flex-1 flex flex-col',
+                padding: 'px-2 py-2 sm:p-2',
             },
-            icon: { wrapper: 'mb-1' },
         }"
     >
-        <template #title>
+        <template #header>
             <div class="flex flex-1 gap-2">
-                <UButton
-                    class="inline-flex flex-1 gap-2"
-                    variant="ghost"
-                    :external="true"
-                    :to="provider.homepage"
-                    target="_blank"
-                >
+                <div class="inline-flex flex-1 gap-2">
                     <NuxtImg
                         v-if="!provider.icon?.startsWith('i-')"
-                        class="size-10"
+                        class="size-12"
                         :src="provider.icon"
                         :alt="provider.name"
                         placeholder-class="size-10"
@@ -76,15 +71,15 @@ const modal = useModal();
                     />
                     <UIcon
                         v-else
-                        class="size-10"
+                        class="size-12"
                         :name="provider.icon"
                         :style="provider.name === 'discord' && { color: '#7289da' }"
                     />
 
-                    <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
+                    <div class="flex items-center gap-1.5 truncate text-base font-semibold text-gray-900 dark:text-white">
                         {{ provider.label }}
                     </div>
-                </UButton>
+                </div>
 
                 <div v-if="account" class="flex items-center justify-between">
                     <UButton
@@ -100,24 +95,37 @@ const modal = useModal();
                     </UButton>
                 </div>
 
-                <OAuth2ConnectButton v-if="!account && !nuiEnabled" :provider="provider" />
+                <OAuth2ConnectButton v-else-if="!nuiEnabled" :provider="provider" />
             </div>
         </template>
 
-        <template v-if="account" #footer>
-            <div class="inline-flex items-center gap-4">
-                <template v-if="account">
+        <div v-if="account || nuiEnabled" class="flex flex-1 flex-col items-center justify-center gap-4">
+            <template v-if="account">
+                <div v-if="account" class="inline-flex items-center gap-2">
                     <UAvatar :as="NuxtImg" size="md" :src="account.avatar" :alt="$t('common.image')" loading="lazy" />
 
-                    <UTooltip :text="`ID: ${account.externalId}`">
+                    <UTooltip :text="`${$t('components.auth.OAuth2Connections.external_id')}: ${account.externalId}`">
                         <span class="text-left">
                             {{ account.username }}
                         </span>
                     </UTooltip>
-                </template>
+                </div>
+            </template>
 
-                <NotSupportedTabletBlock v-else-if="nuiEnabled" class="text-sm" />
-            </div>
+            <NotSupportedTabletBlock v-else-if="nuiEnabled" class="text-sm" />
+        </div>
+
+        <template #footer>
+            <UButton
+                size="2xs"
+                variant="link"
+                color="white"
+                :label="$t('components.auth.OAuth2Connections.connection_website')"
+                :external="true"
+                :to="provider.homepage"
+                target="_blank"
+                trailing-icon="i-mdi-external-link"
+            />
         </template>
-    </UPageCard>
+    </UCard>
 </template>

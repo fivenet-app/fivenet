@@ -474,7 +474,7 @@
         "image": "Bild",
         "logo": "Logo",
         "absence_date": "Abwesenheit",
-        "mug_shot": "Fahndungsfoto",
+        "mugshot": "Fahndungsfoto",
         "file_size": "Dateigröße",
         "predefined": "Vordefiniert | Vordefinierte",
         "discord": "Discord",
@@ -580,7 +580,7 @@
         "internet": "Internet",
         "ad": "Werbung | Werbung",
         "card_view": "Kartenansicht",
-        "show": "Aufrufen",
+        "show": "Anzeigen",
         "selected_no": "{0} ausgewählt",
         "required": "Benötigt",
         "reminder": "Erinnerung | Erinnerungen",
@@ -639,7 +639,13 @@
         "personal": "Persönlich",
         "no_access_to_document": "Kein Zugriff auf das Dokument",
         "you": "Sie",
-        "scroll_to_top": "Nach oben scrollen"
+        "scroll_to_top": "Nach oben scrollen",
+        "publish": "Veröffentlichen",
+        "draft": "Entwurf",
+        "drafts": "Entwurf | Entwürfe",
+        "all_documents": "Alle Dokumente",
+        "only_published": "Nur veröffentlicht",
+        "only_drafts": "Nur Entwürfe"
     },
     "components": {
         "partials": {
@@ -1177,7 +1183,7 @@
                 "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
                 "title": "Anmeldung",
                 "forgot_password": "Passwort vergessen",
-                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden.",
+                "social_login_disabled": "Um den Social Login Login zu nutzen, müssen Cookies akzeptiert werden.",
                 "login_with": "Anmelden mit {0}"
             },
             "ChangePasswordModal": {
@@ -1187,7 +1193,9 @@
             },
             "OAuth2Connections": {
                 "title": "Social Login-Verbindungen",
-                "subtitle": "Ihr Social Login Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
+                "subtitle": "Ihr Social Login Login, für schnelleres Anmelden und coole zusätzliche Funktionen.",
+                "connection_website": "Website des Anbieters öffnen",
+                "external_id": "Externe ID"
             },
             "ForgotPassword": {
                 "title": "Passwort vergessen",
@@ -1270,7 +1278,7 @@
                 "set_wanted": "Person zur Fahndung ausschreiben",
                 "set_job": "Job der Person setzen",
                 "set_traffic_points": "Setze StVo Punkte",
-                "set_mug_shot": "Setze Fahndungsfoto",
+                "set_mugshot": "Setze Fahndungsfoto",
                 "go_to_colleague_info": "Gehe zu Kollegen-Info"
             },
             "CitizenInfoActivityFeedEntry": {
@@ -1297,10 +1305,10 @@
                     "removed": "Strafe entfernt",
                     "created": "Strafe erstellt"
                 },
-                "user_props_mug_shot_set": "Setzte das Fahndungsfoto der Person",
+                "user_props_mugshot_set": "Setzte das Fahndungsfoto der Person",
                 "user_props_labels_updated": "Labels des Bürgers aktualisiert",
                 "name_change": "Bürgername wurde geändert von {old} zu {new}",
-                "user_props_mug_shot_removed": "Fahndungsfoto des Bürgers entfernt"
+                "user_props_mugshot_removed": "Fahndungsfoto des Bürgers entfernt"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
@@ -1890,7 +1898,7 @@
                         "UserProps_TrafficInfractionPoints": "Verkehrspunkte",
                         "UserProps_OpenFines": "Offene Geldstrafen",
                         "UserProps_BloodType": "Blutgruppe",
-                        "UserProps_MugShot": "Fahndungsfoto",
+                        "UserProps_Mugshot": "Fahndungsfoto",
                         "UserProps_Email": "E-Mail",
                         "UserProps_Labels": "Labels"
                     },
@@ -1916,7 +1924,7 @@
                         "Wanted": "Gesuchter Status",
                         "Job": "Job",
                         "TrafficInfractionPoints": "Verkehrspunkte",
-                        "MugShot": "Fahndungsfoto",
+                        "Mugshot": "Fahndungsfoto",
                         "Labels": "Labels"
                     },
                     "attrs_types": {
@@ -2533,7 +2541,7 @@
             "ErrPropsJobPublic": "Sie können keinen Staatsberuf für den Bürger-Beruf setzen!",
             "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang angegeben!",
             "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
-            "ErrPropsMugShotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
+            "ErrPropsMugshotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
             "ErrPropsLabelsDenied": "Sie dürfen nicht die Labels der Person ändern!"
         },
         "CompletorService": {
@@ -2608,7 +2616,7 @@
             "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
             "ErrNotOnDuty": {
                 "title": "Sie sind nicht im Dienst!",
-                "content": "Stellen Sie sicher, dass Sie im Dienst sind."
+                "content": "Stellen Sie sicher, dass Sie im Dienst sind und die anderen Vorraussetzungen erfüllen auf der Livemap sichtbar zu sein."
             },
             "ErrModeForbidsAction": {
                 "title": "Leitstelle verbietet diese Aktion!",
@@ -2671,7 +2679,11 @@
         },
         "WikiService": {
             "ErrFailedQuery": "Fehler beim Laden der Lexikon Daten!",
-            "ErrPageDenied": "Sie haben keinen Zugriff auf diese Seite!"
+            "ErrPageDenied": "Sie haben keinen Zugriff auf diese Seite!",
+            "ErrPageHasChildren": {
+                "title": "Die Seite hat Unterseiten!",
+                "content": "Sie können diese Seite nicht löschen, da sie Unterseiten hat. Stellen Sie sicher, dass Sie die Unterseiten zuerst verschieben oder löschen."
+            }
         },
         "MailerService": {
             "ErrFailedQuery": "Fehler beim Laden der E-Mail Daten!",

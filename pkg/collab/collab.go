@@ -80,24 +80,23 @@ func (s *CollabServer) HandleFirstMsg(ctx context.Context, clientId uint64, stre
 	}
 	hello := firstMsg.GetHello()
 	if hello == nil {
-		return 0, status.Error(codes.InvalidArgument, "first message must be CollabHello")
+		return 0, status.Error(codes.InvalidArgument, "first message must be CollabInit")
 	}
 	if hello.TargetId == 0 {
-		return 0, status.Error(codes.InvalidArgument, "zero target Id provided in first message")
-	}
-
-	if err := s.SendHelloResponse(clientId, stream); err != nil {
-		return 0, status.Error(codes.Internal, err.Error())
+		return 0, status.Error(codes.InvalidArgument, "zero target id provided in first message")
 	}
 
 	return hello.TargetId, nil
 }
 
-func (s *CollabServer) SendHelloResponse(clientId uint64, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
+func (s *CollabServer) sendHelloResponse(clientId uint64, first bool, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
 	if err := stream.Send(&collab.ServerPacket{
 		SenderId: clientId,
-		Msg: &collab.ServerPacket_ClientId{
-			ClientId: clientId,
+		Msg: &collab.ServerPacket_Handshake{
+			Handshake: &collab.CollabHandshake{
+				ClientId: clientId,
+				First:    first,
+			},
 		},
 	}); err != nil {
 		return status.Error(codes.Internal, fmt.Sprintf("failed to send client ID. %v", err))
@@ -106,7 +105,7 @@ func (s *CollabServer) SendHelloResponse(clientId uint64, stream grpc.BidiStream
 	return nil
 }
 
-func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, error) {
+func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -116,19 +115,25 @@ func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, error) {
 	if !exists {
 		room, err = NewCollabRoom(s.ctx, s.logger, targetId, s.js.JetStream, s.category)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 		s.rooms[targetId] = room
 		metricTotalCollabRooms.WithLabelValues(s.category).Inc()
+
+		return room, true, err
 	}
 
-	return room, nil
+	return room, false, nil
 }
 
 func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId int32, clientId uint64, role collab.ClientRole, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
-	room, err := s.getOrCreateRoom(targetId)
+	room, created, err := s.getOrCreateRoom(targetId)
 	if err != nil {
 		return fmt.Errorf("get or create room: %w", err)
+	}
+
+	if err := s.sendHelloResponse(clientId, created, stream); err != nil {
+		return status.Error(codes.Internal, err.Error())
 	}
 
 	client := NewClient(s.logger.Named("client"), clientId, targetId, userId, role, stream)
@@ -141,18 +146,6 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 			delete(s.rooms, targetId)
 			s.mu.Unlock()
 			metricTotalCollabRooms.WithLabelValues(s.category).Dec()
-		} else if aw := encodeAwarenessRemove(clientId); len(aw) > 0 {
-			// If not, send (valid) leave message to all clients left in the room
-			leave := &collab.ServerPacket{
-				SenderId: clientId,
-				Msg: &collab.ServerPacket_Awareness{
-					Awareness: &collab.AwarenessPing{
-						Data: aw,
-					},
-				},
-			}
-			// TODO in frontend yjs code: `Uncaught (in promise) RangeError: attempting to construct out-of-bounds Uint8Array on ArrayBuffer``
-			room.Broadcast(clientId, leave)
 		}
 	}()
 
@@ -170,11 +163,28 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 		}
 
 		switch m := msg.Msg.(type) {
+		case *collab.ClientPacket_SyncStep:
+			if m.SyncStep.Step == 1 {
+				if m.SyncStep.ReceiverId != nil {
+					return status.Error(codes.InvalidArgument, "sync step 1 must not have a receiver ID")
+				}
+				room.BroadcastSyncStep1(clientId, m.SyncStep.Data)
+			} else if m.SyncStep.Step == 2 {
+				if m.SyncStep.ReceiverId == nil {
+					return status.Error(codes.InvalidArgument, "sync step 2 must have a receiver ID")
+				}
+
+				room.ForwardSyncStep2ToClient(clientId, *m.SyncStep.ReceiverId, m.SyncStep.Data)
+			} else {
+				return status.Error(codes.InvalidArgument, fmt.Sprintf("invalid sync step: %d", m.SyncStep.Step))
+			}
+
 		case *collab.ClientPacket_YjsUpdate:
 			if client.Role < collab.ClientRole_CLIENT_ROLE_WRITER {
 				// Reader client updates are ignored
 				continue
 			}
+
 			room.BroadcastYjs(clientId, m.YjsUpdate.Data)
 
 		case *collab.ClientPacket_Awareness:

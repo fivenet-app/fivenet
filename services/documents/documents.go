@@ -100,6 +100,9 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 			tDocumentShort.ID.IN(ids...),
 		)
 	}
+	if req.OnlyDrafts != nil {
+		condition = condition.AND(tDocumentShort.Draft.EQ(jet.Bool(*req.OnlyDrafts)))
+	}
 
 	if logRequest {
 		defer s.aud.Log(&audit.AuditEntry{
