@@ -89,11 +89,29 @@ export function useYArray<T extends object | Primitive>(
     };
 
     const init = () => {
+        remoteApplying = true;
+
         if (yArray.length > 0) {
             syncFromY();
         } else if (provider && provider.isAuthoritative) {
             writeLocalToY();
         }
+
+        nextTick(() => {
+            remoteApplying = false;
+        });
+
+        yArray.observe(handleYArray);
+        if (getCurrentInstance()) onUnmounted(() => yArray.unobserve(handleYArray));
+
+        watch(
+            items,
+            () => {
+                if (remoteApplying) return;
+                writeLocalToY();
+            },
+            { deep: true, flush: 'post' },
+        );
     };
 
     if (provider) {
@@ -106,17 +124,6 @@ export function useYArray<T extends object | Primitive>(
         if (tr.origin === LOCAL_ORIGIN) return;
         syncFromY();
     };
-    yArray.observe(handleYArray);
-    if (getCurrentInstance()) onUnmounted(() => yArray.unobserve(handleYArray));
-
-    watch(
-        items,
-        () => {
-            if (remoteApplying) return;
-            writeLocalToY();
-        },
-        { deep: true, flush: 'post' },
-    );
 
     return items;
 }
@@ -171,12 +178,36 @@ export function useYArrayFiltered<T extends object>(
         }, LOCAL_ORIGIN);
     };
 
+    const handleYArr = (_evt: Y.YArrayEvent<Y.Map<unknown>>, tr: Y.Transaction) => {
+        if (tr.origin === LOCAL_ORIGIN) return;
+        syncFromY();
+    };
+
     const init = () => {
-        if (yArr.length > 0) {
-            syncFromY();
-        } else if (provider && provider.isAuthoritative) {
+        remoteApplying = true;
+
+        console.log('useYArrayFiltered init', yArr.length, items.value.length);
+        if (provider && provider.isAuthoritative) {
             writeLocalToY();
+        } else {
+            syncFromY();
         }
+
+        nextTick(() => {
+            remoteApplying = false;
+        });
+
+        (yArr as Y.Array<Y.Map<unknown>>).observe(handleYArr);
+        if (getCurrentInstance()) onUnmounted(() => (yArr as Y.Array<Y.Map<unknown>>).unobserve(handleYArr));
+
+        watch(
+            items,
+            () => {
+                if (remoteApplying) return;
+                writeLocalToY();
+            },
+            { deep: true, flush: 'post' },
+        );
     };
 
     if (provider) {
@@ -184,22 +215,6 @@ export function useYArrayFiltered<T extends object>(
     } else {
         init();
     }
-
-    const handleYArr = (_evt: Y.YArrayEvent<Y.Map<unknown>>, tr: Y.Transaction) => {
-        if (tr.origin === LOCAL_ORIGIN) return;
-        syncFromY();
-    };
-    (yArr as Y.Array<Y.Map<unknown>>).observe(handleYArr);
-    if (getCurrentInstance()) onUnmounted(() => (yArr as Y.Array<Y.Map<unknown>>).unobserve(handleYArr));
-
-    watch(
-        items,
-        () => {
-            if (remoteApplying) return;
-            writeLocalToY();
-        },
-        { deep: true, flush: 'post' },
-    );
 }
 
 // ---------------------------------------------------------------------------
@@ -229,6 +244,8 @@ export function useYMap<T extends Record<string, Primitive>>(
     };
 
     const init = () => {
+        remoteApplying = true;
+
         const hasRemote = keys.some((k) => yMap.get(k as string) !== undefined);
         if (hasRemote) {
             pullRemote();
@@ -237,6 +254,33 @@ export function useYMap<T extends Record<string, Primitive>>(
                 keys.forEach((k) => yMap.set(k as string, state[k]));
             }, LOCAL_ORIGIN);
         }
+
+        nextTick(() => {
+            remoteApplying = false;
+        });
+
+        // Observe remote map
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        yMap.observe(pullRemote as any);
+
+        // Watch local fields
+        keys.forEach((k) => {
+            const stop = watch(
+                () => state[k],
+                (v) => {
+                    if (remoteApplying) return;
+                    yMap.set(k as string, v);
+                },
+            );
+            stops.push(stop);
+        });
+
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                yMap.unobserve(pullRemote as any);
+                stops.forEach((s) => s());
+            });
     };
 
     if (provider) {
@@ -244,29 +288,6 @@ export function useYMap<T extends Record<string, Primitive>>(
     } else {
         init();
     }
-
-    // Observe remote map
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    yMap.observe(pullRemote as any);
-
-    // Watch local fields
-    keys.forEach((k) => {
-        const stop = watch(
-            () => state[k],
-            (v) => {
-                if (remoteApplying) return;
-                yMap.set(k as string, v);
-            },
-        );
-        stops.push(stop);
-    });
-
-    if (getCurrentInstance())
-        onUnmounted(() => {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            yMap.unobserve(pullRemote as any);
-            stops.forEach((s) => s());
-        });
 
     return state;
 }
@@ -311,24 +332,29 @@ const ensureMap = (c: Y.Doc | Y.Map<unknown>, key: string): Y.Map<unknown> => {
     return m;
 };
 
-function useYSyncStructure<T extends YStateMap>(ycontainer: Y.Doc | Y.Map<unknown>, state: T, fields?: Array<keyof T>): void {
+function useYSyncStructure<T extends YStateMap>(
+    ycontainer: Y.Doc | Y.Map<unknown>,
+    state: T,
+    fields?: Array<keyof T>,
+    opts: YjsSyncOptions = {},
+): void {
     const keys = (fields ?? Object.keys(state)) as Array<keyof T>;
     keys.forEach((k) => {
         const name = k as string;
         const val = state[k];
 
         if (typeof val === 'string') {
-            useYText(ensureText(ycontainer, name), toRef(state, name) as Ref<string>);
+            useYText(ensureText(ycontainer, name), toRef(state, name) as Ref<string>, opts);
             return;
         }
         if (typeof val === 'boolean') {
             const target = isDoc(ycontainer) ? ensureMap(ycontainer, 'primitives') : (ycontainer as Y.Map<unknown>);
-            useYBoolean(target, name, toRef(state, name) as Ref<boolean>);
+            useYBoolean(target, name, toRef(state, name) as Ref<boolean>, opts);
             return;
         }
         if (typeof val === 'number') {
             const target = isDoc(ycontainer) ? ensureMap(ycontainer, 'primitives') : (ycontainer as Y.Map<unknown>);
-            useYNumber(target, name, toRef(state, name) as Ref<number>);
+            useYNumber(target, name, toRef(state, name) as Ref<number>, opts);
             return;
         }
 
@@ -336,9 +362,9 @@ function useYSyncStructure<T extends YStateMap>(ycontainer: Y.Doc | Y.Map<unknow
             const yarr = ensureArray(ycontainer, name);
             const isObjs = val.every((v) => v && typeof v === 'object' && !Array.isArray(v));
             if (isObjs) {
-                useYArrayOfObjects(yarr as Y.Array<Y.Map<unknown>>, toRef(state, name) as Ref<YStateMap[]>);
+                useYArrayOfObjects(yarr as Y.Array<Y.Map<unknown>>, toRef(state, name) as Ref<YStateMap[]>, opts);
             } else {
-                useYArray<Primitive>(yarr as Y.Array<MaybeMap>, toRef(state, name) as Ref<Primitive[]>);
+                useYArray<Primitive>(yarr as Y.Array<MaybeMap>, toRef(state, name) as Ref<Primitive[]>, opts);
             }
             return;
         }
@@ -347,7 +373,12 @@ function useYSyncStructure<T extends YStateMap>(ycontainer: Y.Doc | Y.Map<unknow
             const nested = ensureMap(ycontainer, name);
             const isFlat = Object.values(val).every((v) => ['string', 'number', 'boolean'].includes(typeof v));
             if (isFlat) {
-                useYMap<Record<string, Primitive>>(nested as Y.Map<Primitive>, val as Record<string, Primitive>);
+                useYMap<Record<string, Primitive>>(
+                    nested as Y.Map<Primitive>,
+                    val as Record<string, Primitive>,
+                    undefined,
+                    opts,
+                );
             } else {
                 useYSyncStructure(nested, val as YStateMap);
             }
@@ -355,14 +386,15 @@ function useYSyncStructure<T extends YStateMap>(ycontainer: Y.Doc | Y.Map<unknow
     });
 }
 
-function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]>) {
+function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]>, opts: YjsSyncOptions = {}) {
+    const { provider } = opts;
     let remoteApplying = false;
 
     const syncFromY = () => {
         remoteApplying = true;
         while (list.value.length > yarr.length) list.value.pop();
         while (list.value.length < yarr.length) list.value.push({});
-        list.value.forEach((obj, i) => useYSyncStructure(yarr.get(i)!, obj));
+        list.value.forEach((obj, i) => useYSyncStructure(yarr.get(i)!, obj, undefined, opts));
         nextTick(() => {
             remoteApplying = false;
         });
@@ -373,22 +405,37 @@ function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]
             yarr.delete(0, yarr.length);
             const maps = list.value.map((o) => {
                 const m = new Y.Map(Object.entries(o));
-                useYSyncStructure(m, o);
+                useYSyncStructure(m, o, undefined, opts);
                 return m;
             });
             yarr.insert(0, maps);
         }, LOCAL_ORIGIN);
     };
 
-    syncFromY();
-    yarr.observe(syncFromY);
-    watch(
-        list,
-        () => {
-            if (remoteApplying) return;
-            writeLocal();
-        },
-        { deep: true, flush: 'post' },
-    );
-    if (getCurrentInstance()) onUnmounted(() => yarr.unobserve(syncFromY));
+    const init = () => {
+        remoteApplying = true;
+
+        syncFromY();
+        watch(
+            list,
+            () => {
+                if (remoteApplying) return;
+                writeLocal();
+            },
+            { deep: true, flush: 'post' },
+        );
+
+        nextTick(() => {
+            remoteApplying = false;
+        });
+
+        yarr.observe(syncFromY);
+        if (getCurrentInstance()) onUnmounted(() => yarr.unobserve(syncFromY));
+    };
+
+    if (provider) {
+        provider.once('sync', (s) => s && init());
+    } else {
+        init();
+    }
 }

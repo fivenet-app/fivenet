@@ -32,7 +32,7 @@ export interface YjsSyncOptions {
  *
  * The initial value is chosen as follows:
  *   1. Wait for the provider's `synced` event (if a provider is given).
- *   2. If the remote text already contains data → remote wins.
+ *   If the remote text already contains data → remote wins.
  *   3. Otherwise, if `authoritative === true` → seed the remote document with
  *      the local ref's current value.
  *
@@ -50,7 +50,17 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
     const text = (textRef ?? ref('')) as Ref<string>;
     let remoteApplying = false;
 
-    // 1. INITIAL SYNC
+    // REMOTE → LOCAL
+    const handleUpdate = (evt: Y.YTextEvent): void => {
+        if (evt.transaction.origin === LOCAL_ORIGIN) return; // ignore our own writes
+        remoteApplying = true;
+        text.value = applyDelta(text.value, evt.delta as DeltaOp[]);
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    // INITIAL SYNC
     const init = (): void => {
         const remote = yText.toString();
         remoteApplying = true;
@@ -72,7 +82,7 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
         yText.observe(handleUpdate);
         if (getCurrentInstance()) onUnmounted(() => yText.unobserve(handleUpdate));
 
-        // 3. LOCAL → REMOTE
+        // LOCAL → REMOTE
         watch(
             text,
             (val, oldVal) => {
@@ -102,16 +112,6 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
     } else {
         init();
     }
-
-    // 2. REMOTE → LOCAL
-    const handleUpdate = (evt: Y.YTextEvent): void => {
-        if (evt.transaction.origin === LOCAL_ORIGIN) return; // ignore our own writes
-        remoteApplying = true;
-        text.value = applyDelta(text.value, evt.delta as DeltaOp[]);
-        nextTick(() => {
-            remoteApplying = false;
-        });
-    };
 
     return text;
 }
@@ -161,7 +161,17 @@ export function useYBoolean(
     const bool = (boolRef ?? ref(false)) as Ref<boolean>;
     let remoteApplying = false;
 
-    // 1. INITIAL SYNC
+    const handleUpdate = (evt: Y.YMapEvent<unknown>): void => {
+        if (evt.transaction.origin === LOCAL_ORIGIN) return;
+        remoteApplying = true;
+        const v = yMap.get(key);
+        bool.value = typeof v === 'boolean' ? (v as boolean) : false;
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    // INITIAL SYNC
     const init = (): void => {
         const remote = yMap.get(key);
         const hasRemote = typeof remote === 'boolean';
@@ -173,6 +183,15 @@ export function useYBoolean(
 
         yMap.observe(handleUpdate);
         if (getCurrentInstance()) onUnmounted(() => yMap.unobserve(handleUpdate));
+
+        watch(
+            bool,
+            (val, oldVal) => {
+                if (remoteApplying || val === oldVal) return;
+                yMap.doc?.transact(() => yMap.set(key, val), LOCAL_ORIGIN);
+            },
+            { flush: 'sync' },
+        );
     };
 
     if (provider) {
@@ -180,25 +199,6 @@ export function useYBoolean(
     } else {
         init();
     }
-
-    const handleUpdate = (evt: Y.YMapEvent<unknown>): void => {
-        if (evt.transaction.origin === LOCAL_ORIGIN) return;
-        remoteApplying = true;
-        const v = yMap.get(key);
-        bool.value = typeof v === 'boolean' ? (v as boolean) : false;
-        nextTick(() => {
-            remoteApplying = false;
-        });
-    };
-
-    watch(
-        bool,
-        (val, oldVal) => {
-            if (remoteApplying || val === oldVal) return;
-            yMap.doc?.transact(() => yMap.set(key, val), LOCAL_ORIGIN);
-        },
-        { flush: 'sync' },
-    );
 
     return bool;
 }
@@ -220,7 +220,17 @@ export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<numbe
     const num = (numRef ?? ref(0)) as Ref<number>;
     let remoteApplying = false;
 
-    // 1. INITIAL SYNC
+    const handleUpdate = (evt: Y.YMapEvent<unknown>): void => {
+        if (evt.transaction.origin === LOCAL_ORIGIN) return;
+        remoteApplying = true;
+        const v = yMap.get(key);
+        num.value = typeof v === 'number' ? (v as number) : 0;
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    // INITIAL SYNC
     const init = (): void => {
         const remote = yMap.get(key);
         const hasRemote = typeof remote === 'number';
@@ -232,6 +242,15 @@ export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<numbe
 
         yMap.observe(handleUpdate);
         if (getCurrentInstance()) onUnmounted(() => yMap.unobserve(handleUpdate));
+
+        watch(
+            num,
+            (val, oldVal) => {
+                if (remoteApplying || val === oldVal) return;
+                yMap.doc?.transact(() => yMap.set(key, val), LOCAL_ORIGIN);
+            },
+            { flush: 'sync' },
+        );
     };
 
     if (provider) {
@@ -239,25 +258,6 @@ export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<numbe
     } else {
         init();
     }
-
-    const handleUpdate = (evt: Y.YMapEvent<unknown>): void => {
-        if (evt.transaction.origin === LOCAL_ORIGIN) return;
-        remoteApplying = true;
-        const v = yMap.get(key);
-        num.value = typeof v === 'number' ? (v as number) : 0;
-        nextTick(() => {
-            remoteApplying = false;
-        });
-    };
-
-    watch(
-        num,
-        (val, oldVal) => {
-            if (remoteApplying || val === oldVal) return;
-            yMap.doc?.transact(() => yMap.set(key, val), LOCAL_ORIGIN);
-        },
-        { flush: 'sync' },
-    );
 
     return num;
 }

@@ -145,7 +145,8 @@ function setFromProps(): void {
     state.meta.toc = page.value.meta?.toc ?? true;
     state.meta.draft = page.value.meta?.draft ?? true;
     if (page.value.access) {
-        state.access = page.value.access;
+        state.access.jobs = page.value.access.jobs;
+        state.access.users = page.value.access.users;
     }
     state.files = page.value.files;
 }
@@ -440,6 +441,7 @@ provide('yjsProvider', provider);
                                 rounded="rounded-none"
                                 :target-id="page?.id"
                                 :filestore-service="(opts) => $grpc.wiki.wiki.uploadFile(opts)"
+                                @file-uploaded="(file) => state.files.push(file)"
                             >
                                 <template #linkModal="{ state: linkState }">
                                     <UDivider class="mt-1" :label="$t('common.or')" orientation="horizontal" />

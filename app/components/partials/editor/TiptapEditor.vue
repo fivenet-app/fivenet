@@ -48,6 +48,7 @@ import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/imageUploadPlugin';
 import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
 import type GrpcProvider from '~/composables/yjs/yjs';
+import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import type { UploadPacket, UploadResponse } from '~~/gen/ts/resources/file/filestore';
 import { fontColors, highlightColors } from './helpers';
 import TiptapEditorImageModal from './TiptapEditorImageModal.vue';
@@ -80,6 +81,10 @@ const props = withDefaults(
         filestoreService: undefined,
     },
 );
+
+const emits = defineEmits<{
+    (e: 'file-uploaded', file: FileGrpc): void;
+}>();
 
 const { t } = useI18n();
 
@@ -280,6 +285,8 @@ if (props.filestoreService && props.targetId) {
                     .focus()
                     .setImage({ src: `${resp.url}` })
                     .run();
+
+                resp.file && emits('file-uploaded', resp.file);
             } catch (e) {
                 console.warn('Image resize failed, uploading original image', e);
             }
