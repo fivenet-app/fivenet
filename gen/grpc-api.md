@@ -6805,6 +6805,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `tags` | [string](#string) | repeated | @sanitize: method=StripTags |
 | `toc` | [bool](#bool) | optional |  |
 | `public` | [bool](#bool) |  |  |
+| `draft` | [bool](#bool) |  |  |
 
 
 
@@ -7240,7 +7241,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `props` | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
 | `licenses` | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
 | `avatar_file_id` | [uint64](#uint64) | optional |  |
-| `avatar` | [string](#string) | optional | @gotags: alias:"avatar" |
+| `avatar` | [string](#string) | optional |  |
 | `group` | [string](#string) | optional |  |
 
 
@@ -7267,7 +7268,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `dateofbirth` | [string](#string) |  |  |
 | `phone_number` | [string](#string) | optional |  |
 | `avatar_file_id` | [uint64](#uint64) | optional |  |
-| `avatar` | [string](#string) | optional | @gotags: alias:"avatar" |
+| `avatar` | [string](#string) | optional |  |
 
 
 

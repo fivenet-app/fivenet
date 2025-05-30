@@ -19,7 +19,7 @@ import {
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { Metadata } from '~/composables/grpc/grpcws/metadata';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
-import { errInternal, errTimeout, errUnavailable } from '../errors';
+import { errInternal, errTimeout } from '../errors';
 import type { Transport, TransportFactory } from '../transports/transport';
 import { WebsocketChannelTransport } from '../transports/websocket/websocketChannel';
 import { createGrpcStatus, createGrpcTrailers } from './utils';
@@ -69,7 +69,7 @@ export class GrpcWSTransport implements RpcTransport {
     }
 
     unary<I extends object, O extends object>(method: MethodInfo<I, O>, _input: I, _options: RpcOptions): UnaryCall<I, O> {
-        const e = new RpcError('Unary request is not supported by grpc-web', GrpcStatusCode[GrpcStatusCode.UNIMPLEMENTED]);
+        const e = new RpcError('Unary request is not supported by grpc-ws', GrpcStatusCode[GrpcStatusCode.UNIMPLEMENTED]);
         e.methodName = method.name;
         e.serviceName = method.service.typeName;
         throw e;
@@ -146,26 +146,8 @@ export class GrpcWSTransport implements RpcTransport {
             });
         }
 
-        // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
-        // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value === 'OPEN') {
-            transport.start(new Metadata());
-            transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
-        } else {
-            const stop = watch(this.webSocket.status, (status) => {
-                if (status !== 'OPEN') return;
-
-                clearTimeout(timeoutId);
-                stop();
-
-                transport.start(new Metadata());
-                transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
-            });
-            timeoutId = setTimeout(() => {
-                stop();
-                transport.cancel(errUnavailable);
-            }, 3000);
-        }
+        transport.start(new Metadata());
+        transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
 
         return call;
     }
@@ -235,24 +217,7 @@ export class GrpcWSTransport implements RpcTransport {
             });
         }
 
-        // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
-        // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value === 'OPEN') {
-            transport.start(new Metadata());
-        } else {
-            const stop = watch(this.webSocket.status, (status) => {
-                if (status !== 'OPEN') return;
-
-                clearTimeout(timeoutId);
-                stop();
-
-                transport.start(new Metadata());
-            });
-            timeoutId = setTimeout(() => {
-                stop();
-                transport.cancel(errUnavailable);
-            }, 3000);
-        }
+        transport.start(new Metadata());
 
         return call;
     }
@@ -320,24 +285,7 @@ export class GrpcWSTransport implements RpcTransport {
             });
         }
 
-        // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
-        // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value === 'OPEN') {
-            transport.start(new Metadata());
-        } else {
-            const stop = watch(this.webSocket.status, (status) => {
-                if (status !== 'OPEN') return;
-
-                clearTimeout(timeoutId);
-                stop();
-
-                transport.start(new Metadata());
-            });
-            timeoutId = setTimeout(() => {
-                stop();
-                transport.cancel(errUnavailable);
-            }, 3000);
-        }
+        transport.start(new Metadata());
 
         return call;
     }

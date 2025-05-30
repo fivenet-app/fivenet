@@ -14,6 +14,8 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
+const MaxFilesPerPage = 5
+
 func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
 	ctx := srv.Context()
 
@@ -39,6 +41,15 @@ func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadPacket, fi
 	}
 	if !check && !userInfo.Superuser {
 		return errorswiki.ErrPageDenied
+	}
+
+	count, err := s.fHandler.CountFilesForParentID(ctx, meta.ParentId)
+	if err != nil {
+		return errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	if count >= MaxFilesPerPage {
+		return errorswiki.ErrMaxFilesReached
 	}
 
 	_, err = s.fHandler.UploadFromMeta(ctx, meta, meta.ParentId, srv)

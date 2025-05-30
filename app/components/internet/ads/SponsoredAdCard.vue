@@ -13,7 +13,7 @@ defineProps<{
         </template>
 
         <template v-if="ad.image?.filePath" #icon>
-            <NuxtImg class="mx-auto h-40" :src="ad.image.url" :alt="$t('common.logo')" loading="lazy" />
+            <NuxtImg class="mx-auto h-40" :src="ad.image.filePath" :alt="$t('common.logo')" loading="lazy" />
         </template>
     </UPageCard>
 </template>

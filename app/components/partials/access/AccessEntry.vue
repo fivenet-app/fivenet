@@ -8,7 +8,6 @@ import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
 
 const props = withDefaults(
     defineProps<{
-        modelValue: MixedAccessEntry;
         disabled?: boolean;
         showRequired?: boolean;
         accessTypes: AccessType[];
@@ -23,14 +22,13 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: typeof props.modelValue): void;
+defineEmits<{
     (e: 'delete'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
 
-const entry = useVModel(props, 'modelValue', emit);
+const entry = defineModel<MixedAccessEntry>({ required: true });
 
 const completorStore = useCompletorStore();
 

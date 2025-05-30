@@ -423,3 +423,48 @@ func putToStorage(ctx context.Context, st storage.IStorage, key string, r io.Rea
 
 	return key, cr.n, nil
 }
+
+func (h *Handler[P]) CountFilesForParentID(ctx context.Context, parentID P) (int64, error) {
+	stmt := h.joinTable.
+		SELECT(jet.COUNT(h.fileCol).AS("count")).
+		FROM(h.joinTable).
+		WHERE(h.parentColBoolExp(parentID))
+
+	var count struct {
+		Count int64 `jet:"count"`
+	}
+	if err := stmt.QueryContext(ctx, h.db, &count); err != nil {
+		return 0, err
+	}
+
+	return count.Count, nil
+}
+
+func (h *Handler[P]) ListFilesForParentID(ctx context.Context, parentID P) ([]*file.File, error) {
+	stmt := h.joinTable.
+		SELECT(
+			h.fileCol.AS("id"),
+			h.parentCol.AS("parent_id"),
+			tFiles.FilePath.AS("file_path"),
+			tFiles.ByteSize.AS("byte_size"),
+			tFiles.ContentType.AS("content_type"),
+			tFiles.CreatedAt.AS("created_at"),
+		).
+		FROM(
+			h.joinTable.
+				INNER_JOIN(tFiles,
+					h.fileCol.EQ(tFiles.ID),
+				),
+		).
+		WHERE(h.parentColBoolExp(parentID)).
+		LIMIT(15)
+
+	var files []*file.File
+	if err := stmt.QueryContext(ctx, h.db, &files); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return files, nil
+}

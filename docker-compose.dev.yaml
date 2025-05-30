@@ -31,14 +31,10 @@ services:
       - --jetstream
       - --user=fivenet
       - --pass=fivenet_topsecret
-      - --config=/config/nats-server.conf
     ports:
       - "4222:4222"
       - "8222:8222"
       - "6222:6222"
-    volumes:
-      # Used to increase max_payload size
-      - ./nats-server.conf:/config/nats-server.conf
     network_mode: host
     restart: unless-stopped
 

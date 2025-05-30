@@ -201,6 +201,9 @@ func (s *Server) GetPage(ctx context.Context, req *pbwiki.GetPageRequest) (*pbwi
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
+	if page == nil || page.Id <= 0 {
+		return nil, errorswiki.ErrPageNotFound
+	}
 
 	if !check && !page.Meta.Public {
 		return nil, errorswiki.ErrPageDenied
@@ -210,17 +213,21 @@ func (s *Server) GetPage(ctx context.Context, req *pbwiki.GetPageRequest) (*pbwi
 		Page: page,
 	}
 
-	if resp.Page != nil {
-		s.enricher.EnrichJobName(resp.Page)
+	s.enricher.EnrichJobName(resp.Page)
 
-		access, err := s.getPageAccess(ctx, userInfo, req.Id)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-		}
-		resp.Page.Access = access
-
-		auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	access, err := s.getPageAccess(ctx, userInfo, req.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
+	resp.Page.Access = access
+
+	files, err := s.fHandler.ListFilesForParentID(ctx, resp.Page.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	resp.Page.Files = files
+
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 
 	return resp, nil
 }
@@ -275,6 +282,7 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		tPage.ContentType.AS("page_meta.content_Type"),
 		tPage.Toc.AS("page_meta.toc"),
 		tPage.Public.AS("page_meta.public"),
+		tPage.Draft.AS("page_meta.draft"),
 	}
 	if withContent {
 		columns = append(columns,
@@ -300,8 +308,8 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		)).
 		LIMIT(1)
 
-	var dest wiki.Page
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	dest := &wiki.Page{}
+	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -311,7 +319,7 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		return nil, nil
 	}
 
-	s.enricher.EnrichJobName(&dest)
+	s.enricher.EnrichJobName(dest)
 
 	if withAccess {
 		access, err := s.getPageAccess(ctx, userInfo, pageId)
@@ -321,7 +329,7 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		dest.Access = access
 	}
 
-	return &dest, nil
+	return dest, nil
 }
 
 func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) (*pbwiki.CreatePageResponse, error) {
@@ -420,6 +428,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 			tPage.ParentID,
 			tPage.ContentType,
 			tPage.Toc,
+			tPage.Draft,
 			tPage.Public,
 			tPage.Slug,
 			tPage.Title,
@@ -433,6 +442,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 			req.Page.ParentId,
 			req.Page.Meta.ContentType,
 			req.Page.Meta.Toc,
+			req.Page.Meta.Draft,
 			req.Page.Meta.Public,
 			slug.Make(utils.StringFirstN(req.Page.Meta.Title, 100)),
 			req.Page.Meta.Title,
@@ -590,6 +600,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 			tPage.ParentID,
 			tPage.ContentType,
 			tPage.Toc,
+			tPage.Draft,
 			tPage.Public,
 			tPage.Slug,
 			tPage.Title,
@@ -601,6 +612,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 			req.Page.ParentId,
 			req.Page.Meta.ContentType,
 			req.Page.Meta.Toc,
+			req.Page.Meta.Draft,
 			req.Page.Meta.Public,
 			slug.Make(utils.StringFirstN(req.Page.Meta.Title, 100)),
 			req.Page.Meta.Title,

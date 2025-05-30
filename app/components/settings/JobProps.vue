@@ -335,7 +335,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="jobProps.logoFile"
                                         :disabled="!canSubmit || !canEdit"
                                         :upload-fn="(opts) => $grpc.settings.settings.uploadJobLogo(opts)"
-                                        :delete-fn="(_) => $grpc.settings.settings.deleteJobLogo({})"
+                                        :delete-fn="() => $grpc.settings.settings.deleteJobLogo({})"
                                     />
                                 </UFormGroup>
 

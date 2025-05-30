@@ -78,138 +78,137 @@ if (props.accessTypes === undefined) {
 
 const access = ref<MixedAccessEntry[]>([]);
 
-watch(
-    access,
-    () => {
-        usersAccess.value.length = 0;
-        jobsAccess.value.length = 0;
-        qualificationsAccess.value.length = 0;
+function isEqualArray(a: MixedAccessEntry[], b: MixedAccessEntry[]): boolean {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        const entryA = a[i]!;
 
-        access.value.forEach((e) => {
-            if (e.type === 'user') {
-                if (e.userId === undefined) {
-                    return;
-                }
+        const entryB = b.find((item) => item.id === entryA.id);
+        if (!entryB) {
+            return false;
+        }
 
-                const idx = usersAccess.value.findIndex((a) => a.id === e.id);
-                if (idx === -1) {
-                    usersAccess.value.push({
-                        id: e.id,
-                        targetId: props.targetId,
-                        userId: e.userId,
-                        access: e.access,
-                        required: e.required,
-                    } as UsersT);
-                }
-            } else if (e.type === 'job') {
-                if (e.job === undefined || e.minimumGrade === undefined) {
-                    return;
-                }
+        if (
+            entryA.id !== entryB.id ||
+            entryA.type !== entryB.type ||
+            entryA.access !== entryB.access ||
+            entryA.required !== entryB.required ||
+            entryA.job !== entryB.job ||
+            entryA.minimumGrade !== entryB.minimumGrade ||
+            entryA.userId !== entryB.userId ||
+            entryA.qualificationId !== entryB.qualificationId ||
+            entryA.qualification !== entryB.qualification
+        ) {
+            return false;
+        }
+    }
+    return true;
+}
 
-                const idx = jobsAccess.value.findIndex((a) => a.id === e.id);
-                if (idx === -1) {
-                    jobsAccess.value.push({
-                        id: e.id,
-                        targetId: props.targetId,
-                        job: e.job,
-                        minimumGrade: e.minimumGrade,
-                        access: e.access,
-                        required: e.required,
-                    } as JobsT);
-                }
-            } else if (e.type === 'qualification') {
-                if (e.qualificationId === undefined) {
-                    return;
-                }
+function syncAccessFromProps() {
+    // Merge all entries from jobs, users, and qualifications into access
+    const merged: MixedAccessEntry[] = [];
 
-                const idx = qualificationsAccess.value.findIndex((a) => a.id === e.id);
-                if (idx === -1) {
-                    qualificationsAccess.value.push({
-                        id: e.id,
-                        targetId: props.targetId,
-                        qualificationId: e.qualificationId,
-                        access: e.access,
-                        required: e.required,
-                        qualification: e.qualification,
-                    } as QualiT);
+    jobsAccess.value.forEach((a) => {
+        merged.push({ ...a, type: 'job' });
+    });
+    usersAccess.value.forEach((a) => {
+        merged.push({ ...a, type: 'user' });
+    });
+    qualificationsAccess.value.forEach((a) => {
+        merged.push({ ...a, type: 'qualification' });
+    });
+
+    const newAccess = merged.map((entry) => ({
+        ...entry,
+        id: entry.id,
+    }));
+
+    if (!isEqualArray(access.value, newAccess)) {
+        access.value = newAccess;
+    }
+}
+
+// Helper to update a reactive array in-place (add, update, remove)
+function syncArray<T extends { id: number }>(source: T[], target: T[]) {
+    // Remove items not in target
+    for (let i = source.length - 1; i >= 0; i--) {
+        if (!target.find((t) => t.id === source[i]!.id)) {
+            source.splice(i, 1);
+        }
+    }
+    // Add or update items
+    target.forEach((t) => {
+        const idx = source.findIndex((s) => s.id === t.id);
+        if (idx === -1) {
+            source.push(t);
+        } else {
+            // Update properties
+            for (const key in t) {
+                if (Object.prototype.hasOwnProperty.call(t, key) && source[idx]![key] !== t[key]) {
+                    source[idx]![key] = t[key];
                 }
             }
-        });
-    },
-    {
-        deep: true,
-    },
-);
+        }
+    });
+}
+
+function syncPropsFromAccess() {
+    const newJobs = access.value
+        .filter((e) => e.type === 'job')
+        .map((e) => ({
+            id: e.id,
+            targetId: props.targetId,
+            job: e.job,
+            minimumGrade: e.minimumGrade,
+            access: e.access,
+            required: e.required,
+        })) as JobsT[];
+
+    const newUsers = access.value
+        .filter((e) => e.type === 'user')
+        .map((e) => ({
+            id: e.id,
+            targetId: props.targetId,
+            userId: e.userId,
+            access: e.access,
+            required: e.required,
+        })) as UsersT[];
+
+    const newQualis = access.value
+        .filter((e) => e.type === 'qualification')
+        .map((e) => ({
+            id: e.id,
+            targetId: props.targetId,
+            qualificationId: e.qualificationId,
+            access: e.access,
+            required: e.required,
+            qualification: e.qualification,
+        })) as QualiT[];
+
+    syncArray(jobsAccess.value, newJobs);
+    syncArray(usersAccess.value, newUsers);
+    syncArray(qualificationsAccess.value, newQualis);
+}
+
+// Sync from props on mount and when any prop changes
+onBeforeMount(syncAccessFromProps);
+watch([jobsAccess, usersAccess, qualificationsAccess], syncAccessFromProps, { deep: true });
+
+// Sync from access to props when access changes
+watch(access, syncPropsFromAccess, { deep: true });
 
 const lastId = ref(0);
 
-function setFromPropsJobs(): void {
-    access.value?.push(
-        ...jobsAccess.value
-            .filter((a) => !access.value.find((ac) => ac.id === a.id))
-            .map((a) => {
-                if (a.id === 0) {
-                    a.id = lastId.value;
-                    lastId.value++;
-                }
-                return a;
-            })
-            .map((a) => ({ ...a, type: 'job' }) as MixedAccessEntry),
-    );
-}
-
-function setFromPropsUsers(): void {
-    access.value?.push(
-        ...usersAccess.value
-            .filter((a) => !access.value.find((ac) => ac.id === a.id))
-            .map((a) => {
-                if (a.id === 0) {
-                    a.id = lastId.value;
-                    lastId.value++;
-                }
-                return a;
-            })
-            .map((a) => ({ ...a, type: 'user' }) as MixedAccessEntry),
-    );
-}
-
-function setFromPropsQualifications(): void {
-    access.value?.push(
-        ...usersAccess.value
-            .filter((a) => !access.value.find((ac) => ac.id === a.id))
-            .map((a) => {
-                if (a.id === 0) {
-                    a.id = lastId.value;
-                    lastId.value++;
-                }
-                return a;
-            })
-            .map((a) => ({ ...a, type: 'user' }) as MixedAccessEntry),
-    );
-}
-
-onBeforeMount(() => {
-    setFromPropsJobs();
-    setFromPropsUsers();
-    setFromPropsQualifications();
-});
-
-watch(jobsAccess, setFromPropsJobs);
-watch(usersAccess, setFromPropsUsers);
-watch(qualificationsAccess, setFromPropsQualifications);
-
 function addNewEntry(): void {
     let idx = aTypes.value.findIndex((at) => at.type === props.defaultAccessType);
-    if (idx === -1) {
-        idx = aTypes.value.length - 1;
-    }
+    if (idx === -1) idx = aTypes.value.length - 1;
 
     access.value.push({
-        id: lastId.value,
+        id: lastId.value--,
         type: aTypes.value[idx]?.type ?? 'job',
         access: props.defaultAccess,
     });
-    lastId.value++;
 }
 
 const completorStore = useCompletorStore();

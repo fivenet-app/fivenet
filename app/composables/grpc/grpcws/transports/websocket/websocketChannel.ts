@@ -175,7 +175,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
 
     async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame, usingBuffer: boolean = true): Promise<boolean> {
         if (!this.activeStreams.has(toSend.streamId)) {
-            opts.debug && this.logger.debug('Stream does not exist', toSend.streamId);
+            opts.debug && this.logger.debug('sendToWs: Stream does not exist', toSend.streamId);
             return false;
         }
 

@@ -36,15 +36,11 @@ services:
       # If you change the user/password, you must update the FiveNet's `config.yaml` (`.nats.url`) as well
       - --user=fivenet
       - --pass=fivenet_topsecret
-      - --config=/config/nats-server.conf
     # Only uncomment the ports section if you want to make NATS externally available
     #ports:
     #  - "4222:4222"
     #  - "8222:8222"
     #  - "6222:6222"
-    volumes:
-      # Used to increase max_payload size
-      - ./nats-server.conf:/config/nats-server.conf
     networks:
       - fivenet
     restart: on-failure

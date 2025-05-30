@@ -10,5 +10,7 @@ export function useCollabDoc(category: CollabCategory, targetId: number) {
         targetId: targetId,
     });
 
+    onBeforeUnmount(() => provider.destroy());
+
     return { ydoc, provider };
 }

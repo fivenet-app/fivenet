@@ -398,6 +398,8 @@ func (m *PageMeta) validate(all bool) error {
 
 	// no validation rules for Public
 
+	// no validation rules for Draft
+
 	if m.UpdatedAt != nil {
 
 		if all {

@@ -20,10 +20,10 @@ import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/do
 import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
-import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
+import type { UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
 
 const props = defineProps<{
-    documentId?: number;
+    documentId: number;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -149,6 +149,7 @@ onMounted(async () => {
                 state.content = document.content?.rawContent ?? '';
                 state.category = document.category ?? emptyCategory;
                 state.closed = document.closed;
+                state.draft = document.draft;
                 state.public = document.public;
                 state.access = response.access!;
 
@@ -233,14 +234,8 @@ const changed = ref(false);
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    let prom: Promise<void>;
-    if (props.documentId === undefined) {
-        prom = createDocument(event.data);
-    } else {
-        prom = updateDocument(props.documentId, event.data);
-    }
 
-    await prom.finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await updateDocument(props.documentId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 watchDebounced(
@@ -257,70 +252,6 @@ watchDebounced(
         maxWait: 2500,
     },
 );
-
-async function createDocument(values: Schema): Promise<void> {
-    // Prepare request
-    const req: CreateDocumentRequest = {
-        title: values.title,
-        content: {
-            rawContent: values.content,
-        },
-        contentType: ContentType.HTML,
-        state: values.state,
-        closed: values.closed,
-        draft: values.draft,
-        public: values.public,
-        templateId: templateId.value,
-        categoryId: values.category?.id !== 0 ? values.category?.id : undefined,
-        access: values.access,
-    };
-
-    // Try to submit to server
-    try {
-        const call = $grpc.documents.documents.createDocument(req);
-        const { response } = await call;
-
-        const promises: Promise<unknown>[] = [];
-        if (canDo.value.references) {
-            referenceManagerData.value.forEach((ref) => {
-                ref.sourceDocumentId = response.documentId;
-
-                const prom = $grpc.documents.documents.addDocumentReference({
-                    reference: ref,
-                });
-                promises.push(prom.response);
-            });
-        }
-
-        if (canDo.value.relations) {
-            relationManagerData.value.forEach((rel) => {
-                rel.documentId = response.documentId;
-
-                const prom = $grpc.documents.documents.addDocumentRelation({
-                    relation: rel,
-                });
-                promises.push(prom.response);
-            });
-        }
-        await Promise.all(promises);
-
-        notifications.add({
-            title: { key: 'notifications.document_created.title', parameters: {} },
-            description: { key: 'notifications.document_created.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
-        clipboardStore.clear();
-        documentStore.clear();
-
-        await navigateTo({
-            name: 'documents-id',
-            params: { id: response.documentId },
-        });
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
 
 async function updateDocument(id: number, values: Schema): Promise<void> {
     const req: UpdateDocumentRequest = {
@@ -468,11 +399,9 @@ logger.info(
         :state="state"
         @submit="onSubmitThrottle"
     >
-        <UDashboardNavbar :title="documentId ? $t('pages.documents.edit.title') : $t('pages.documents.create.title')">
+        <UDashboardNavbar :title="$t('pages.documents.edit.title')">
             <template #right>
-                <PartialsBackButton
-                    :fallback-to="documentId ? { name: 'documents-id', params: { id: documentId } } : `/documents`"
-                />
+                <PartialsBackButton :fallback-to="{ name: 'documents-id', params: { id: documentId } }" />
 
                 <UButtonGroup class="inline-flex">
                     <UButton
@@ -482,12 +411,7 @@ logger.info(
                         :loading="!canSubmit"
                     >
                         <span class="hidden truncate sm:block">
-                            <template v-if="!documentId">
-                                {{ $t('common.create') }}
-                            </template>
-                            <template v-else>
-                                {{ $t('common.save') }}
-                            </template>
+                            {{ $t('common.save') }}
                         </span>
                     </UButton>
 
@@ -498,7 +422,7 @@ logger.info(
                         :loading="!canSubmit"
                     >
                         <span class="hidden truncate sm:block">
-                            {{ $t('common.publish') }}
+                            {{ !state.draft ? $t('common.publish') : $t('common.unpublish') }}
                         </span>
                     </UButton>
                 </UButtonGroup>

@@ -21,6 +21,7 @@ interface GrpcProviderOpts {
 
 type Events = {
     loadContent(): void;
+    sync(synced: boolean, doc: Y.Doc): void;
 };
 
 export default class GrpcProvider extends ObservableV2<Events> {
@@ -31,8 +32,9 @@ export default class GrpcProvider extends ObservableV2<Events> {
     private clientId: number | undefined;
     private streamConnect: StreamConnectFn;
     private stream: DuplexStreamingCall<ClientPacket, ServerPacket> | undefined;
-    private connected = true;
+    private connected = false;
     private reconnectAttempt = 0;
+    private authorative = false;
     private synced = false;
     private destroyed = false;
 
@@ -45,20 +47,23 @@ export default class GrpcProvider extends ObservableV2<Events> {
 
         this.streamConnect = streamProvider;
 
-        /* Setup local listeners */
+        // Setup local listeners
         this.yDoc.on('update', this.handleDocUpdate);
 
         this.awareness.on('update', (changes: { added: number[]; updated: number[]; removed: number[] }, origin: unknown) =>
             this.handleAwarenessUpdate(changes, origin),
         );
+    }
 
-        // Kick off connection
-        this.connect();
+    public get isAuthoritative() {
+        return this.authorative;
     }
 
     // Public helpers
     override destroy() {
         if (this.destroyed) return;
+
+        super.destroy();
 
         this.destroyed = true;
         // Clear local user state
@@ -67,19 +72,18 @@ export default class GrpcProvider extends ObservableV2<Events> {
         setTimeout(() => {
             this.yDoc.off('update', this.handleDocUpdate);
             this.awareness.off('update', this.handleAwarenessUpdate);
+            this.stream?.requests.complete();
         }, 0);
 
-        super.destroy();
+        logger.debug('destroyed grpc provider');
     }
 
     // Internal
-    private connect() {
-        if (this.destroyed) return;
+    public connect() {
+        if (this.destroyed || this.connected) return;
 
         this.stream = this.streamConnect({});
         this.sendHello();
-
-        this.connected = true;
 
         this.stream.responses.onError((_) => {
             this.connected = false;
@@ -90,15 +94,19 @@ export default class GrpcProvider extends ObservableV2<Events> {
         this.stream.responses.onMessage((msg: ServerPacket) => {
             if (msg.msg.oneofKind === 'handshake' && !this.clientId) {
                 logger.info('Received handshake message from server', msg.msg.handshake);
-
                 this.clientId = msg.msg.handshake.clientId;
+                this.connected = true;
+
                 if (msg.msg.handshake.first) {
+                    this.authorative = true;
+                    this.synced = true;
                     this.emit('loadContent', []);
 
-                    this.synced = true;
                     this.yDoc.emit('sync', [true, this.yDoc]);
+                    this.emit('sync', [true, this.yDoc]);
                 } else {
                     const sv = Y.encodeStateVector(this.yDoc);
+                    this.authorative = false;
 
                     this.send(
                         ClientPacket.create({
@@ -159,6 +167,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                         if (!this.synced) {
                             this.synced = true;
                             this.yDoc.emit('sync', [true, this.yDoc]);
+                            this.emit('sync', [true, this.yDoc]);
                         }
                     }
 
@@ -180,6 +189,8 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 }
             }
         });
+
+        logger.debug('connect call completed, waiting for handshake');
     }
 
     private scheduleReconnect() {
@@ -203,7 +214,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
             },
         });
 
-        logger.debug('Send awareness update', update.length);
+        logger.debug('Send yjs update', update.length);
         this.send(msg);
     };
 
@@ -237,13 +248,14 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 },
             },
         });
+
+        logger.debug('Send hello message', this.opts.targetId);
         this.send(msg);
-        // Optionally: send encodeStateVector / encodeStateAsUpdate to prime server
     }
 
-    private send(msg: ClientPacket) {
+    private async send(msg: ClientPacket) {
         try {
-            this.stream?.requests.send(msg);
+            await this.stream?.requests.send(msg);
         } catch (_) {
             // swallow if stream closed mid-send
         }

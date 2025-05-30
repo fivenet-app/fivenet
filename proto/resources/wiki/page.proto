@@ -43,6 +43,7 @@ message PageMeta {
   repeated string tags = 10;
   optional bool toc = 11;
   bool public = 12;
+  bool draft = 13;
 }
 
 message PageShort {

@@ -35,7 +35,7 @@ type UserShort struct {
 	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
 	AvatarFileId  *uint64                `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
-	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty" alias:"avatar"` // @gotags: alias:"avatar"
+	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -173,8 +173,8 @@ type User struct {
 	Props         *UserProps             `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`       // @gotags: alias:"fivenet_user_props"
 	Licenses      []*License             `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"` // @gotags: alias:"user_licenses"
 	AvatarFileId  *uint64                `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
-	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty" alias:"avatar"` // @gotags: alias:"avatar"
-	Group         *string                `protobuf:"bytes,19,opt,name=group,proto3,oneof" json:"group,omitempty"`
+	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
+	Group         *string                `protobuf:"bytes,20,opt,name=group,proto3,oneof" json:"group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -393,7 +393,7 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\blicenses\x18\x10 \x03(\v2\x18.resources.users.LicenseR\blicenses\x12)\n" +
 	"\x0eavatar_file_id\x18\x11 \x01(\x04H\bR\favatarFileId\x88\x01\x01\x12\x1b\n" +
 	"\x06avatar\x18\x12 \x01(\tH\tR\x06avatar\x88\x01\x01\x12\"\n" +
-	"\x05group\x18\x13 \x01(\tB\a\xfaB\x04r\x02\x182H\n" +
+	"\x05group\x18\x14 \x01(\tB\a\xfaB\x04r\x02\x182H\n" +
 	"R\x05group\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +

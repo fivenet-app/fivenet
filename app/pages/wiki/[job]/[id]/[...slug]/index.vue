@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '#build/typed-router';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import PageEditor from '~/components/wiki/PageEditor.vue';
 import PagesList from '~/components/wiki/PagesList.vue';
 import PageView from '~/components/wiki/PageView.vue';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
@@ -77,22 +76,12 @@ async function getPage(id: number): Promise<Page | undefined> {
         throw e;
     }
 }
-
-const editing = ref(false);
 </script>
 
 <template>
     <UDashboardPage>
         <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
-            <PageView
-                v-if="!editing"
-                :loading="loading"
-                :error="error"
-                :refresh="refresh"
-                :page="page"
-                :pages="pages ?? []"
-                @edit="editing = !editing"
-            >
+            <PageView :loading="loading" :error="error" :refresh="refresh" :page="page" :pages="pages ?? []">
                 <template #left>
                     <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
                     <ClientOnly v-else>
@@ -104,8 +93,6 @@ const editing = ref(false);
                     </ClientOnly>
                 </template>
             </PageView>
-
-            <PageEditor v-else v-model="page" :pages="pages ?? []" @close="editing = !editing" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

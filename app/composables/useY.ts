@@ -1,341 +1,394 @@
-import { onMounted, onUnmounted, ref, type Ref, watch } from 'vue';
-import type { YTextEvent } from 'yjs';
+// Extended Vue ↔ Yjs array & object helpers – **complete file**
+// ---------------------------------------------------------------------------
+//  This module complements `useYPrimitives.ts` by adding higher‑level helpers
+//  that bind Vue arrays / nested objects to Yjs containers.  All helpers use
+//  the unified fallback‑to‑local initialisation controlled through
+//  `YjsSyncOptions` (authoritative client + provider with `synced` event).
+// ---------------------------------------------------------------------------
+
+import { getCurrentInstance, onUnmounted, ref, toRef, watch, type Ref } from 'vue';
 import * as Y from 'yjs';
+import { LOCAL_ORIGIN, useYBoolean, useYNumber, useYText, type YjsSyncOptions } from './useYPrimitives';
 
-/**
- * Only string, boolean or number are supported as “primitive” Y-Map values.
- */
-type Primitive = string | boolean | number;
+// ---------------------------------------------------------------------------
+//  Primitive helpers & types
+// ---------------------------------------------------------------------------
 
-/**
- * Recursive state type: can be a primitive, a nested map, or an array of nested maps
- */
-type YStateType = Primitive | YStateMap | YStateMap[];
+/** Only string, boolean or number are supported as “primitive” Y.Map values. */
+export type Primitive = string | boolean | number;
 
-/**
- * A flat record whose values are YStateType (for nested structures)
- */
-interface YStateMap {
-    [key: string]: YStateType;
+/** A flat record or nested structure that can be mirrored into Yjs. */
+export interface YStateMap {
+    [key: string]: Primitive | YStateMap | Array<Primitive | YStateMap>;
 }
 
-/**
- * Represents a Yjs delta operation for Text updates.
- */
-type DeltaOp = {
-    retain?: number;
-    delete?: number;
-    insert?: string;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    attributes?: Record<string, any>;
-};
+/** Union for arrays that may contain primitives or nested Y.Map objects. */
+export type MaybeMap = Primitive | Y.Map<unknown>;
+
+// ---------------------------------------------------------------------------
+//  useYArray  ⇄  Y.Array ⇄ Vue Ref<T[]>
+// ---------------------------------------------------------------------------
 
 /**
- * Composable to bind a Vue Ref<string> (or a ref to a reactive property) to a Yjs Y.Text instance.
- * Applies incremental deltas to avoid flicker and syncs local changes.
+ * Bind a Vue `Ref<T[]>` to a Yjs `Y.Array` that contains primitives or
+ * objects.  Deep objects are handled recursively via `useYSyncStructure`.
  *
- * @param yText   - The Y.Text instance to sync with.
- * @param textRef - Optional Vue Ref<string>. Pass e.g. `toRef(reactiveObj, 'title')` to bind a property.
- *                  If provided, this ref will be used directly (the returned ref === textRef), so you can continue using it.
- *                  If not provided, a new ref is created.
- * @returns A Vue Ref<string> that stays in sync with the Y.Text content (=== textRef if supplied).
+ * Fallback logic:
+ *   • If remote already contains items → remote wins.
+ *   • Otherwise, if `opts.authoritative === true` → local array is serialised
+ *     and pushed to the Yjs array.
  */
-export function useYText(yText: Y.Text, textRef: Ref<string>): Ref<string> {
-    const text = (textRef ?? ref('')) as Ref<string>;
-
-    let remoteApplying = false;
-    let initialSync = true;
-
-    /**
-     * Applies a Yjs delta to a string, returning the updated text.
-     */
-    function applyDelta(str: string, delta: DeltaOp[]): string {
-        let result = '';
-        let index = 0;
-
-        for (const op of delta) {
-            if (op.retain) {
-                result += str.slice(index, index + op.retain);
-                index += op.retain;
-            }
-            if (op.delete) {
-                index += op.delete;
-            }
-            if (op.insert) {
-                result += op.insert;
-            }
-        }
-        // append any trailing text
-        result += str.slice(index);
-        return result;
-    }
-
-    /**
-     * Yjs update handler: applies remote deltas to our ref value.
-     */
-    function handleUpdate(event: YTextEvent): void {
-        remoteApplying = true;
-        text.value = applyDelta(text.value, event.delta as DeltaOp[]);
-        remoteApplying = false;
-    }
-
-    onMounted(() => {
-        // initialize from current Y.Text state
-        text.value = yText.toString();
-        initialSync = false;
-
-        // subscribe to Yjs updates
-        yText.observe(handleUpdate);
-    });
-
-    // watch for local changes and push them into Yjs
-    watch(text, (newVal) => {
-        if (remoteApplying || initialSync) return;
-        // full replace strategy; for large docs consider diffing
-        yText.delete(0, yText.length);
-        yText.insert(0, newVal);
-    });
-
-    onUnmounted(() => {
-        yText.unobserve(handleUpdate);
-    });
-
-    return text;
-}
-
-/**
- * Composable to bind a Vue Ref<boolean> (or a ref to a reactive property) to a Yjs Y.Map entry.
- * Syncs boolean values without flicker and handles remote/local updates.
- *
- * @param yMap     - The Y.Map instance holding boolean values.
- * @param key      - The key within the Y.Map to bind.
- * @param boolRef  - Optional Vue Ref<boolean>. Pass `toRef(reactiveObj, 'flag')` to bind a property.
- *                   If provided, the returned ref === boolRef, so you can continue using it.
- *                   If not provided, a new ref is created.
- * @returns A Vue Ref<boolean> that stays in sync with the Y.Map entry (=== boolRef if supplied).
- */
-export function useYBoolean(yMap: Y.Map<unknown>, key: string, boolRef?: Ref<boolean>): Ref<boolean> {
-    const bool = (boolRef ?? ref(false)) as Ref<boolean>;
-    let remoteApplying = false;
-    let initialSync = true;
-
-    function handleMapUpdate(_: Y.YMapEvent<unknown>): void {
-        // Only update on remote changes or initial sync
-        remoteApplying = true;
-        const value = yMap.get(key);
-        bool.value = typeof value === 'boolean' ? value : false;
-        remoteApplying = false;
-    }
-
-    onMounted(() => {
-        const initial = yMap.get(key);
-        bool.value = typeof initial === 'boolean' ? initial : false;
-        initialSync = false;
-        yMap.observe(handleMapUpdate);
-    });
-
-    watch(bool, (newVal) => {
-        if (remoteApplying || initialSync) return;
-        yMap.set(key, newVal);
-    });
-
-    onUnmounted(() => {
-        yMap.unobserve(handleMapUpdate);
-    });
-
-    return bool;
-}
-
-/**
- * Composable to bind a Vue Ref<number> (or a ref to a reactive property) to a Yjs Y.Map entry.
- */
-export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<number>): Ref<number> {
-    const num = (numRef ?? ref(0)) as Ref<number>;
-    let remoteApplying = false;
-    let initialSync = true;
-
-    function handleMapUpdate(_: Y.YMapEvent<unknown>): void {
-        remoteApplying = true;
-        const value = yMap.get(key);
-        num.value = typeof value === 'number' ? value : 0;
-        remoteApplying = false;
-    }
-
-    onMounted(() => {
-        const initial = yMap.get(key);
-        num.value = typeof initial === 'number' ? initial : 0;
-        initialSync = false;
-        yMap.observe(handleMapUpdate);
-    });
-
-    watch(num, (newVal) => {
-        if (remoteApplying || initialSync) return;
-        yMap.set(key, newVal);
-    });
-
-    onUnmounted(() => {
-        yMap.unobserve(handleMapUpdate);
-    });
-
-    return num;
-}
-
-/**
- * Composable to bind a Vue Ref<T[]> (or a ref to a reactive property) to a Yjs Y.Array of Y.Map entries.
- * @param yArray   - The Y.Array instance holding Y.Map entries.
- * @param itemsRef - Optional Vue Ref<T[]> for existing reactive array. Returned ref === itemsRef if supplied.
- * @returns A Vue Ref<T[]> that stays in sync with the Y.Array content.
- */
-export function useYArray<T extends Record<string, unknown>>(yArray: Y.Array<Y.Map<unknown>>, itemsRef?: Ref<T[]>): Ref<T[]> {
+export function useYArray<T extends object | Primitive>(
+    yArray: Y.Array<MaybeMap>,
+    itemsRef?: Ref<T[]>,
+    opts: YjsSyncOptions = {},
+): Ref<T[]> {
+    const { provider } = opts;
     const items = (itemsRef ?? ref([])) as Ref<T[]>;
     let remoteApplying = false;
-    let initialSync = true;
 
-    function snapshot(): T[] {
-        return yArray.map((map) => map.toJSON() as T);
-    }
+    const isPrimitiveMode = () => {
+        const first = yArray.length ? yArray.get(0) : undefined;
+        return typeof first === 'string' || typeof first === 'number' || typeof first === 'boolean';
+    };
 
-    function handleArrayUpdate(_: Y.YArrayEvent<Y.Map<unknown>>): void {
+    const syncFromY = () => {
         remoteApplying = true;
-        items.value = snapshot();
-        remoteApplying = false;
+        if (isPrimitiveMode()) {
+            items.value = yArray.toArray() as T[];
+        } else {
+            while (items.value.length > yArray.length) items.value.pop();
+            while (items.value.length < yArray.length) items.value.push({} as T);
+            yArray.forEach((m, i) => {
+                if (m instanceof Y.Map) {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    useYSyncStructure(m, items.value[i]! as any);
+                }
+            });
+        }
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    const writeLocalToY = () => {
+        yArray.doc?.transact(() => {
+            yArray.delete(0, yArray.length);
+            if (isPrimitiveMode()) {
+                yArray.insert(0, items.value as unknown as MaybeMap[]);
+            } else {
+                const maps = (items.value as unknown as object[]).map((o) => {
+                    const m = new Y.Map(Object.entries(o));
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    useYSyncStructure(m, o as any);
+                    return m;
+                });
+                yArray.insert(0, maps as MaybeMap[]);
+            }
+        }, LOCAL_ORIGIN);
+    };
+
+    const init = () => {
+        if (yArray.length > 0) {
+            syncFromY();
+        } else if (provider && provider.isAuthoritative) {
+            writeLocalToY();
+        }
+    };
+
+    if (provider) {
+        provider.once('sync', (s) => s && init());
+    } else {
+        init();
     }
 
-    onMounted(() => {
-        items.value = snapshot();
-        initialSync = false;
-        yArray.observe(handleArrayUpdate);
-    });
+    const handleYArray = (_evt: Y.YArrayEvent<MaybeMap>, tr: Y.Transaction) => {
+        if (tr.origin === LOCAL_ORIGIN) return;
+        syncFromY();
+    };
+    yArray.observe(handleYArray);
+    if (getCurrentInstance()) onUnmounted(() => yArray.unobserve(handleYArray));
 
     watch(
         items,
-        (newArr) => {
-            if (remoteApplying || initialSync) return;
-            // overwrite entire array: for small lists this is simple
-            yArray.delete(0, yArray.length);
-            const maps = newArr.map((obj) => new Y.Map(Object.entries(obj)));
-            yArray.insert(0, maps);
+        () => {
+            if (remoteApplying) return;
+            writeLocalToY();
         },
-        { deep: true },
+        { deep: true, flush: 'post' },
     );
-
-    onUnmounted(() => {
-        yArray.unobserve(handleArrayUpdate);
-    });
 
     return items;
 }
 
-/**
- * Generic composable to bind a reactive object of primitive fields to a Yjs Y.Map.
- * Syncs string, boolean, and number fields.
- * @param yMap   - The Y.Map instance holding fields.
- * @param state  - A reactive object with primitive values.
- * @param fields - Optional list of keys to sync; defaults to all keys of state.
- * @returns The same state object, kept in sync with yMap.
- */
-export function useYMap<T extends Record<string, string | boolean | number>>(
-    yMap: Y.Map<string | boolean | number>,
+// ---------------------------------------------------------------------------
+//  useYArrayFiltered  ⇄  object array with key filtering
+// ---------------------------------------------------------------------------
+
+export type OptsKeyFilter = { omit?: string[]; only?: string[] };
+
+export function useYArrayFiltered<T extends object>(
+    yArr: Y.Array<unknown>,
+    items: Ref<T[]>,
+    filter: OptsKeyFilter,
+    opts: YjsSyncOptions = {},
+) {
+    const { provider } = opts;
+    let remoteApplying = false;
+
+    const serialize = (o: T): Record<string, unknown> => {
+        if (filter.only) return Object.fromEntries(Object.entries(o).filter(([k]) => filter.only!.includes(k)));
+        if (filter.omit) return Object.fromEntries(Object.entries(o).filter(([k]) => !filter.omit!.includes(k)));
+        return o as Record<string, unknown>;
+    };
+
+    const hydrate = (target: T, map: Y.Map<unknown>) => {
+        Object.entries(map.toJSON() as Record<string, unknown>).forEach(([k, v]) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (target as any)[k] = v;
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        useYSyncStructure(map, target as any);
+    };
+
+    const syncFromY = () => {
+        remoteApplying = true;
+        while (items.value.length > yArr.length) items.value.pop();
+        while (items.value.length < yArr.length) items.value.push({} as T);
+        (yArr as Y.Array<Y.Map<unknown>>).forEach((raw, i) => {
+            if (raw instanceof Y.Map) hydrate(items.value[i]!, raw);
+        });
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    const writeLocalToY = () => {
+        yArr.doc?.transact(() => {
+            yArr.delete(0, yArr.length);
+            const maps = items.value.map((o) => new Y.Map(Object.entries(serialize(o))));
+            yArr.insert(0, maps);
+        }, LOCAL_ORIGIN);
+    };
+
+    const init = () => {
+        if (yArr.length > 0) {
+            syncFromY();
+        } else if (provider && provider.isAuthoritative) {
+            writeLocalToY();
+        }
+    };
+
+    if (provider) {
+        provider.once('sync', (s) => s && init());
+    } else {
+        init();
+    }
+
+    const handleYArr = (_evt: Y.YArrayEvent<Y.Map<unknown>>, tr: Y.Transaction) => {
+        if (tr.origin === LOCAL_ORIGIN) return;
+        syncFromY();
+    };
+    (yArr as Y.Array<Y.Map<unknown>>).observe(handleYArr);
+    if (getCurrentInstance()) onUnmounted(() => (yArr as Y.Array<Y.Map<unknown>>).unobserve(handleYArr));
+
+    watch(
+        items,
+        () => {
+            if (remoteApplying) return;
+            writeLocalToY();
+        },
+        { deep: true, flush: 'post' },
+    );
+}
+
+// ---------------------------------------------------------------------------
+//  useYMap  ⇄  flat object ⇄ Y.Map
+// ---------------------------------------------------------------------------
+
+export function useYMap<T extends Record<string, Primitive>>(
+    yMap: Y.Map<Primitive>,
     state: T,
     fields?: Array<keyof T>,
+    opts: YjsSyncOptions = {},
 ): T {
-    // Determine which keys to sync
+    const { provider } = opts;
     const keys: Array<keyof T> = fields ?? (Object.keys(state) as Array<keyof T>);
     const stops: Array<() => void> = [];
     let remoteApplying = false;
-    let initialSync = true;
 
-    function handleMapUpdate(_: Y.YMapEvent<string | boolean | number>): void {
+    const pullRemote = () => {
         remoteApplying = true;
-        // Apply remote changes for all watched keys
-        for (const key of keys) {
-            const val = yMap.get(key as string);
-            if (val !== undefined) {
-                state[key] = val as T[typeof key];
-            }
+        keys.forEach((k) => {
+            const v = yMap.get(k as string);
+            if (v !== undefined) state[k] = v as T[typeof k];
+        });
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    const init = () => {
+        const hasRemote = keys.some((k) => yMap.get(k as string) !== undefined);
+        if (hasRemote) {
+            pullRemote();
+        } else if (provider && provider.isAuthoritative) {
+            yMap.doc?.transact(() => {
+                keys.forEach((k) => yMap.set(k as string, state[k]));
+            }, LOCAL_ORIGIN);
         }
-        remoteApplying = false;
+    };
+
+    if (provider) {
+        provider.once('sync', (s) => s && init());
+    } else {
+        init();
     }
 
-    onMounted(() => {
-        // Initial sync from Yjs to state
-        for (const key of keys) {
-            const val = yMap.get(key as string);
-            if (val !== undefined) {
-                state[key] = val as T[typeof key];
-            }
-        }
-        initialSync = false;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        yMap.observe(handleMapUpdate as any);
+    // Observe remote map
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    yMap.observe(pullRemote as any);
 
-        // Watch local state changes and propagate to Yjs
-        for (const key of keys) {
-            const stop = watch(
-                () => state[key],
-                (newVal) => {
-                    if (remoteApplying || initialSync) return;
-                    yMap.set(key as string, newVal);
-                },
-            );
-            stops.push(stop);
-        }
+    // Watch local fields
+    keys.forEach((k) => {
+        const stop = watch(
+            () => state[k],
+            (v) => {
+                if (remoteApplying) return;
+                yMap.set(k as string, v);
+            },
+        );
+        stops.push(stop);
     });
 
-    onUnmounted(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        yMap.unobserve(handleMapUpdate as any);
-        stops.forEach((stop) => stop());
-    });
+    if (getCurrentInstance())
+        onUnmounted(() => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            yMap.unobserve(pullRemote as any);
+            stops.forEach((s) => s());
+        });
 
     return state;
 }
 
-/**
- * Automatically sync a reactive state tree with Yjs types, recursing into nested objects.
- *
- * @param ydoc   - The Y.Doc or nested Y.Map (cast to Y.Doc for recursion)
- * @param state  - A reactive object of primitives, nested objects, or arrays of objects
- * @param fields - Optional subset of keys to sync (defaults to all keys)
- */
-export function useYSyncStructure<T extends YStateMap>(ydoc: Y.Doc, state: T, fields?: Array<keyof T>): void {
+// ---------------------------------------------------------------------------
+//  Internal utilities: container creators & recursive binder
+// ---------------------------------------------------------------------------
+
+const isDoc = (c: Y.Doc | Y.Map<unknown>): c is Y.Doc => (c as Y.Doc).clientID !== undefined;
+
+const ensureText = (c: Y.Doc | Y.Map<unknown>, key: string): Y.Text => {
+    // Always return a Y.Text. If a primitive was stored, upgrade in‑place.
+    const replace = (txt: Y.Text) => {
+        if (isDoc(c))
+            c.getMap('root')?.set?.(key, txt); // doc root edge‑case
+        else c.set(key, txt);
+        return txt;
+    };
+    if (isDoc(c)) return c.getText(key);
+    const cur = c.get(key);
+    if (cur instanceof Y.Text) return cur;
+    const t = new Y.Text();
+    if (typeof cur === 'string' && cur.length) t.insert(0, cur);
+    return replace(t);
+};
+
+const ensureArray = (c: Y.Doc | Y.Map<unknown>, key: string): Y.Array<unknown> => {
+    if (isDoc(c)) return c.getArray(key);
+    const cur = c.get(key);
+    if (cur instanceof Y.Array) return cur;
+    const arr = new Y.Array();
+    c.set(key, arr);
+    return arr;
+};
+
+const ensureMap = (c: Y.Doc | Y.Map<unknown>, key: string): Y.Map<unknown> => {
+    if (isDoc(c)) return c.getMap(key);
+    const cur = c.get(key);
+    if (cur instanceof Y.Map) return cur;
+    const m = new Y.Map();
+    c.set(key, m);
+    return m;
+};
+
+function useYSyncStructure<T extends YStateMap>(ycontainer: Y.Doc | Y.Map<unknown>, state: T, fields?: Array<keyof T>): void {
     const keys = (fields ?? Object.keys(state)) as Array<keyof T>;
+    keys.forEach((k) => {
+        const name = k as string;
+        const val = state[k];
 
-    for (const key of keys) {
-        const name = key as string;
-        const val = state[key];
-
-        // Primitive string
         if (typeof val === 'string') {
-            useYText(ydoc.getText(name), toRef(state, name) as Ref<string>);
+            useYText(ensureText(ycontainer, name), toRef(state, name) as Ref<string>);
+            return;
+        }
+        if (typeof val === 'boolean') {
+            const target = isDoc(ycontainer) ? ensureMap(ycontainer, 'primitives') : (ycontainer as Y.Map<unknown>);
+            useYBoolean(target, name, toRef(state, name) as Ref<boolean>);
+            return;
+        }
+        if (typeof val === 'number') {
+            const target = isDoc(ycontainer) ? ensureMap(ycontainer, 'primitives') : (ycontainer as Y.Map<unknown>);
+            useYNumber(target, name, toRef(state, name) as Ref<number>);
+            return;
+        }
 
-            // Primitive boolean
-        } else if (typeof val === 'boolean') {
-            useYBoolean(ydoc.getMap('primitives'), name, toRef(state, name) as Ref<boolean>);
-
-            // Primitive number
-        } else if (typeof val === 'number') {
-            useYNumber(ydoc.getMap('primitives'), name, toRef(state, name) as Ref<number>);
-
-            // Array of nested maps
-        } else if (Array.isArray(val)) {
-            useYArray<YStateMap>(ydoc.getArray(name), toRef(state, name) as Ref<YStateMap[]>);
-
-            // Nested object
-        } else if (val !== null && typeof val === 'object') {
-            const nestedMap = ydoc.getMap(name);
-            const values = Object.values(val);
-
-            // Check if all fields are primitives
-            const isFlat = values.every((v) => typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean');
-
-            if (isFlat) {
-                // Flat map: sync via useYMap
-                useYMap<Record<string, Primitive>>(nestedMap as Y.Map<Primitive>, val as Record<string, Primitive>);
+        if (Array.isArray(val)) {
+            const yarr = ensureArray(ycontainer, name);
+            const isObjs = val.every((v) => v && typeof v === 'object' && !Array.isArray(v));
+            if (isObjs) {
+                useYArrayOfObjects(yarr as Y.Array<Y.Map<unknown>>, toRef(state, name) as Ref<YStateMap[]>);
             } else {
-                // Deeper nesting: recurse with the nested Y.Map cast as Y.Doc
-                useYSyncStructure(nestedMap as unknown as Y.Doc, val as YStateMap);
+                useYArray<Primitive>(yarr as Y.Array<MaybeMap>, toRef(state, name) as Ref<Primitive[]>);
+            }
+            return;
+        }
+
+        if (val && typeof val === 'object') {
+            const nested = ensureMap(ycontainer, name);
+            const isFlat = Object.values(val).every((v) => ['string', 'number', 'boolean'].includes(typeof v));
+            if (isFlat) {
+                useYMap<Record<string, Primitive>>(nested as Y.Map<Primitive>, val as Record<string, Primitive>);
+            } else {
+                useYSyncStructure(nested, val as YStateMap);
             }
         }
-    }
+    });
+}
+
+function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]>) {
+    let remoteApplying = false;
+
+    const syncFromY = () => {
+        remoteApplying = true;
+        while (list.value.length > yarr.length) list.value.pop();
+        while (list.value.length < yarr.length) list.value.push({});
+        list.value.forEach((obj, i) => useYSyncStructure(yarr.get(i)!, obj));
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    const writeLocal = () => {
+        yarr.doc?.transact(() => {
+            yarr.delete(0, yarr.length);
+            const maps = list.value.map((o) => {
+                const m = new Y.Map(Object.entries(o));
+                useYSyncStructure(m, o);
+                return m;
+            });
+            yarr.insert(0, maps);
+        }, LOCAL_ORIGIN);
+    };
+
+    syncFromY();
+    yarr.observe(syncFromY);
+    watch(
+        list,
+        () => {
+            if (remoteApplying) return;
+            writeLocal();
+        },
+        { deep: true, flush: 'post' },
+    );
+    if (getCurrentInstance()) onUnmounted(() => yarr.unobserve(syncFromY));
 }

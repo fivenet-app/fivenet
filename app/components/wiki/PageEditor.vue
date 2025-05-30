@@ -6,20 +6,19 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
+import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { PageJobAccess, PageUserAccess } from '~~/gen/ts/resources/wiki/access';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
+import BackButton from '../partials/BackButton.vue';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import { pageToURL } from './helpers';
 
 const props = defineProps<{
-    modelValue?: Page | undefined;
-    pages: PageShort[];
-}>();
-
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: Page | undefined): void;
-    (e: 'close'): void;
+    pageId: number;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -28,67 +27,53 @@ const { t } = useI18n();
 
 const { attr, activeChar } = useAuth();
 
-const page = computed({
-    get() {
-        return props.modelValue
-            ? props.modelValue
-            : ({
-                  id: 0,
-                  job: activeChar.value?.job ?? '',
-                  path: '/wiki/' + (activeChar.value?.job ?? ''),
-                  meta: {
-                      contentType: ContentType.HTML,
-                      public: false,
-                      title: '',
-                      description: '',
-                      tags: [],
-                  },
-                  content: {
-                      version: '',
-                      rawContent: '',
-                  },
-                  access: {
-                      jobs: [
-                          {
-                              id: 0,
-                              targetId: 0,
-                              job: activeChar.value?.job ?? '',
-                              minimumGrade: 1,
-                              access: AccessLevel.VIEW,
-                          },
-                          {
-                              id: 0,
-                              targetId: 0,
-                              job: activeChar.value?.job ?? '',
-                              minimumGrade: -1,
-                              access: AccessLevel.EDIT,
-                          },
-                      ],
-                      users: [],
-                  },
-              } as Page);
-    },
-    set(value) {
-        emit('update:modelValue', value);
-    },
-});
+const route = useRoute<'wiki-job-id-slug-edit'>();
+
+const {
+    data: page,
+    pending: loading,
+    error,
+    refresh,
+} = useLazyAsyncData(`wiki-page:${route.path}`, () => getPage(parseInt(route.params.id)));
+
+async function getPage(id: number): Promise<Page | undefined> {
+    try {
+        const call = $grpc.wiki.wiki.getPage({
+            id: id,
+        });
+        const { response } = await call;
+
+        return response.page;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+
+        await navigateTo({
+            name: 'wiki-job-id-slug',
+            params: { job: route.params.job, id: route.params.id, slug: [route.params.slug] },
+        });
+        return;
+    }
+}
 
 const notifications = useNotificatorStore();
 
 const { maxAccessEntries } = useAppConfig();
 
-const { ydoc, provider } = useCollabDoc('wiki', page.value.id);
+const { ydoc, provider } = useCollabDoc('wiki', props.pageId);
+
+watchOnce(page, () => provider.connect());
 
 const canDo = computed(() => ({
     public: attr('wiki.WikiService.CreatePage', 'Fields', 'Public').value,
 }));
 
 const schema = z.object({
-    parentId: z.number().optional(),
+    parentId: z.number(),
     meta: z.object({
         title: z.string().min(3).max(255),
         description: z.string().max(255),
         public: z.boolean(),
+        draft: z.boolean(),
         toc: z.boolean(),
     }),
     content: z.string().min(3).max(1750000),
@@ -96,59 +81,92 @@ const schema = z.object({
         jobs: z.custom<PageJobAccess>().array().max(maxAccessEntries),
         users: z.custom<PageUserAccess>().array().max(maxAccessEntries),
     }),
+    files: z.custom<File>().array().max(5),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    parentId: undefined,
+    parentId: 0,
     meta: {
-        title: page.value?.meta?.title ?? '',
-        description: page.value?.meta?.description ?? '',
-        public: page.value?.meta?.public ?? false,
-        toc: page.value?.meta?.toc ?? true,
+        title: '',
+        description: '',
+        public: false,
+        draft: true,
+        toc: true,
     },
-    content: page.value?.content?.rawContent ?? '',
+    content: '',
     access: {
         jobs: [],
         users: [],
     },
+    files: [],
 });
 
-const createPage = computed(() => page.value.id === 0);
+const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages:${route.path}`, () => listPages(), {
+    default: () => [],
+});
+
+async function listPages(): Promise<PageShort[]> {
+    const job = route.params.job ?? activeChar.value?.job ?? '';
+    try {
+        const call = $grpc.wiki.wiki.listPages({
+            pagination: {
+                offset: 0,
+            },
+            job: job,
+            rootOnly: false,
+        });
+        const { response } = await call;
+
+        return response.pages;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
 
 function setFromProps(): void {
+    if (!page.value) return;
+
     state.parentId =
-        page.value?.meta?.createdAt !== undefined && page.value?.parentId === undefined
+        (page.value?.meta?.createdAt !== undefined && page.value?.parentId === undefined
             ? undefined
             : (page.value?.parentId ??
-              (props.pages.length === 0
+              (pages.value.length === 0
                   ? undefined
-                  : props.pages.at(0)?.job !== undefined && props.pages.at(0)?.job === activeChar.value?.job
-                    ? props.pages.at(0)?.id
-                    : undefined));
+                  : pages.value.at(0)?.job !== undefined && pages.value.at(0)?.job === activeChar.value?.job
+                    ? pages.value.at(0)?.id
+                    : undefined))) ?? 0;
 
     state.meta.title = page.value.meta?.title ?? '';
     state.meta.description = page.value.meta?.description ?? '';
     state.meta.public = page.value.meta?.public ?? false;
     state.meta.toc = page.value.meta?.toc ?? true;
-    state.content = page.value.content?.rawContent ?? '';
+    state.meta.draft = page.value.meta?.draft ?? true;
     if (page.value.access) {
         state.access = page.value.access;
     }
+    state.files = page.value.files;
 }
 
-setFromProps();
+watchOnce(page, () => {
+    if (page.value) {
+        state.content = page.value.content?.rawContent ?? '';
+    }
+});
+provider.once('loadContent', () => setFromProps());
 
-async function createOrUpdatePage(values: Schema): Promise<void> {
+async function updatePage(values: Schema): Promise<void> {
     const req: Page = {
-        id: props.modelValue?.id ?? 0,
-        job: props.modelValue?.job ?? '',
+        id: page.value?.id ?? 0,
+        job: page.value?.job ?? '',
         meta: {
             title: values.meta.title,
             description: values.meta.description,
             contentType: ContentType.HTML,
             public: values.meta.public,
+            draft: values.meta.draft,
             tags: [],
         },
         content: {
@@ -157,23 +175,16 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
         },
         parentId: values.parentId,
         access: values.access,
+        files: [],
     };
 
     try {
         let responsePage: Page | undefined = undefined;
-        if (createPage.value) {
-            const call = $grpc.wiki.wiki.createPage({
-                page: req,
-            });
-            const { response } = await call;
-            responsePage = response.page;
-        } else {
-            const call = $grpc.wiki.wiki.updatePage({
-                page: req,
-            });
-            const { response } = await call;
-            responsePage = response.page;
-        }
+        const call = $grpc.wiki.wiki.updatePage({
+            page: req,
+        });
+        const { response } = await call;
+        responsePage = response.page;
 
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
@@ -185,18 +196,14 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
             page.value = responsePage;
         }
 
-        if (createPage.value) {
-            await navigateTo({
-                name: 'wiki-job-id-slug',
-                params: {
-                    job: responsePage!.job,
-                    id: responsePage!.id,
-                    slug: [responsePage!.meta!.slug ?? ''],
-                },
-            });
-        } else {
-            emit('close');
-        }
+        await navigateTo({
+            name: 'wiki-job-id-slug',
+            params: {
+                job: responsePage!.job,
+                id: responsePage!.id,
+                slug: [responsePage!.meta!.slug ?? ''],
+            },
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -219,16 +226,25 @@ function pageChildrenToList(p: PageShort, prefix?: string): PageItem[] {
     return list;
 }
 
-const parentPages = computedAsync(() =>
-    props.pages
-        .filter((p) => !props.modelValue?.id || p.id === props.modelValue?.id)
+const parentPages = computedAsync(() => {
+    const pagesList = pages.value
         .flatMap((p) => pageChildrenToList(p))
-        .sort((a, b) => a.title.localeCompare(b.title)),
-);
+        .filter((p) => !page.value?.id || p.id !== page.value?.id)
+        .sort((a, b) => a.title.localeCompare(b.title));
+
+    if (page.value?.parentId && pagesList.find((p) => p.id === page.value?.parentId) === undefined) {
+        pagesList.unshift({
+            id: page.value.parentId,
+            title: `${t('common.parent_page')} - ${t('common.id')}: ${page.value.parentId}`,
+        });
+    }
+
+    return pagesList;
+});
 
 const items = [
     {
-        slot: 'edit',
+        slot: 'content',
         label: t('common.content'),
         icon: 'i-mdi-pencil',
     },
@@ -240,7 +256,6 @@ const items = [
 ];
 
 const router = useRouter();
-const route = useRoute();
 
 const selectedTab = computed({
     get() {
@@ -260,11 +275,40 @@ const selectedTab = computed({
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await createOrUpdatePage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await updatePage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-useYText(ydoc.getText('title'), toRef(state.meta.title));
-useYText(ydoc.getText('description'), toRef(state.meta.description));
+useYText(ydoc.getText('title'), toRef(state.meta, 'title'), { provider: provider });
+useYText(ydoc.getText('description'), toRef(state.meta, 'description'), { provider: provider });
+const detailsYdoc = ydoc.getMap('details');
+useYNumber(detailsYdoc, 'parentId', toRef(state, 'parentId'), { provider: provider });
+useYBoolean(detailsYdoc, 'public', toRef(state.meta, 'public'), { provider: provider });
+useYBoolean(detailsYdoc, 'toc', toRef(state.meta, 'toc'), { provider: provider });
+
+useYArrayFiltered<PageJobAccess>(
+    ydoc.getArray('access_jobs'),
+    toRef(state.access, 'jobs'),
+    { omit: ['createdAt', 'user'] },
+    { provider: provider },
+);
+
+useYArrayFiltered<PageUserAccess>(
+    ydoc.getArray('access_users'),
+    toRef(state.access, 'users'),
+    {
+        omit: ['createdAt', 'user'],
+    },
+    { provider: provider },
+);
+
+useYArrayFiltered<File>(
+    ydoc.getArray('files'),
+    toRef(state, 'files'),
+    {
+        omit: ['createdAt', 'meta'],
+    },
+    { provider: provider },
+);
 
 provide('yjsDoc', ydoc);
 provide('yjsProvider', provider);
@@ -279,30 +323,39 @@ provide('yjsProvider', provider);
     >
         <UDashboardNavbar :title="$t('common.wiki')">
             <template #right>
-                <UButton
-                    color="black"
-                    icon="i-mdi-arrow-left"
-                    :disabled="!canSubmit"
-                    @click="createPage ? navigateTo({ name: 'wiki' }) : $emit('close')"
-                >
-                    {{ $t('common.back') }}
-                </UButton>
+                <BackButton :disabled="!canSubmit" />
 
-                <UButton class="ml-2" type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
-                    <span class="hidden truncate sm:block">
-                        <template v-if="!page.id">
-                            {{ $t('common.create') }}
-                        </template>
-                        <template v-else>
+                <UButtonGroup v-if="page" class="inline-flex">
+                    <UButton class="ml-2" type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
+                        <span class="hidden truncate sm:block">
                             {{ $t('common.save') }}
-                        </template>
-                    </span>
-                </UButton>
+                        </span>
+                    </UButton>
+
+                    <UButton type="submit" trailing-icon="i-mdi-publish" :disabled="!canSubmit" :loading="!canSubmit">
+                        <span class="hidden truncate sm:block">
+                            {{ !page.meta?.draft ? $t('common.publish') : $t('common.unpublish') }}
+                        </span>
+                    </UButton>
+                </UButtonGroup>
             </template>
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page', 1)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.page', 1)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="!page"
+                icon="i-mdi-file-search"
+                :message="$t('common.not_found', [$t('common.document', 2)])"
+            />
             <UTabs
+                v-else
                 v-model="selectedTab"
                 class="flex flex-1 flex-col"
                 :items="items"
@@ -313,45 +366,54 @@ provide('yjsProvider', provider);
                     list: { rounded: '' },
                 }"
             >
-                <template #edit>
+                <template #content>
                     <UDashboardToolbar>
                         <template #default>
                             <div class="flex w-full flex-col gap-2">
                                 <UFormGroup
-                                    v-if="!(modelValue?.meta?.createdAt && modelValue?.parentId === undefined)"
+                                    v-if="!(page?.meta?.createdAt && page?.parentId === undefined)"
                                     class="w-full"
                                     name="meta.parentId"
                                     :label="$t('common.parent_page')"
                                 >
-                                    <ClientOnly>
-                                        <USelectMenu
-                                            v-model="state.parentId"
-                                            value-attribute="id"
-                                            searchable-lazy
-                                            :options="parentPages"
-                                        >
-                                            <template #label>
-                                                <span class="truncate">
-                                                    {{
-                                                        state.parentId
-                                                            ? (parentPages?.find((p) => p.id === state.parentId)?.title ??
-                                                              $t('common.na'))
-                                                            : $t('common.none_selected', [$t('common.parent_page')])
-                                                    }}
-                                                </span>
-                                            </template>
+                                    <div class="flex items-center gap-1">
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="state.parentId"
+                                                class="flex-1"
+                                                value-attribute="id"
+                                                searchable-lazy
+                                                :options="parentPages"
+                                            >
+                                                <template #label>
+                                                    <span class="truncate">
+                                                        {{
+                                                            state.parentId
+                                                                ? (parentPages?.find((p) => p.id === state.parentId)?.title ??
+                                                                  $t('common.na'))
+                                                                : $t('common.none_selected', [$t('common.parent_page')])
+                                                        }}
+                                                    </span>
+                                                </template>
 
-                                            <template #option="{ option: opt }">
-                                                {{ opt.title }}
-                                            </template>
+                                                <template #option="{ option: opt }">
+                                                    {{ opt.title }}
+                                                </template>
 
-                                            <template #option-empty="{ query: search }">
-                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                            </template>
+                                                <template #option-empty="{ query: search }">
+                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                </template>
 
-                                            <template #empty> {{ $t('common.not_found', [$t('common.page', 2)]) }} </template>
-                                        </USelectMenu>
-                                    </ClientOnly>
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.page', 2)]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
+
+                                        <UTooltip :text="$t('common.refresh')">
+                                            <UButton variant="link" icon="i-mdi-refresh" @click="pagesRefresh()" />
+                                        </UTooltip>
+                                    </div>
                                 </UFormGroup>
 
                                 <UFormGroup name="meta.title" :label="$t('common.title')">
@@ -359,7 +421,7 @@ provide('yjsProvider', provider);
                                 </UFormGroup>
 
                                 <UFormGroup name="meta.description" :label="$t('common.description')">
-                                    <UTextarea v-model="state.meta.description" />
+                                    <UTextarea v-model="state.meta.description" :rows="2" />
                                 </UFormGroup>
                             </div>
                         </template>
@@ -376,8 +438,8 @@ provide('yjsProvider', provider);
                                 v-model="state.content"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 rounded="rounded-none"
-                                :target-id="modelValue?.id"
-                                :filestore-service="$grpc.wiki.wiki"
+                                :target-id="page?.id"
+                                :filestore-service="(opts) => $grpc.wiki.wiki.uploadFile(opts)"
                             >
                                 <template #linkModal="{ state: linkState }">
                                     <UDivider class="mt-1" :label="$t('common.or')" orientation="horizontal" />

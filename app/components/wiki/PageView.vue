@@ -25,10 +25,6 @@ const props = defineProps<{
     error: Error | undefined;
 }>();
 
-defineEmits<{
-    (e: 'edit'): void;
-}>();
-
 const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
@@ -238,7 +234,11 @@ const scrollRef = useTemplateRef('scrollRef');
                             "
                             :text="$t('common.edit')"
                         >
-                            <UButton color="white" icon="i-mdi-pencil" @click="$emit('edit')" />
+                            <UButton
+                                color="white"
+                                icon="i-mdi-pencil"
+                                :to="`/wiki/${page.job}/${page.id}/${page.meta.slug ?? ''}/edit`"
+                            />
                         </UTooltip>
 
                         <UTooltip

@@ -63,7 +63,7 @@ export interface UserShort {
     /**
      * @generated from protobuf field: optional string avatar = 18
      */
-    avatar?: string; // @gotags: alias:"avatar"
+    avatar?: string;
 }
 /**
  * @generated from protobuf message resources.users.User
@@ -140,9 +140,9 @@ export interface User {
     /**
      * @generated from protobuf field: optional string avatar = 18
      */
-    avatar?: string; // @gotags: alias:"avatar"
+    avatar?: string;
     /**
-     * @generated from protobuf field: optional string group = 19
+     * @generated from protobuf field: optional string group = 20
      */
     group?: string;
 }
@@ -297,7 +297,7 @@ class User$Type extends MessageType<User> {
             { no: 16, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License },
             { no: 17, name: "avatar_file_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 18, name: "avatar", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 19, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+            { no: 20, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<User>): User {
@@ -372,7 +372,7 @@ class User$Type extends MessageType<User> {
                 case /* optional string avatar */ 18:
                     message.avatar = reader.string();
                     break;
-                case /* optional string group */ 19:
+                case /* optional string group */ 20:
                     message.group = reader.string();
                     break;
                 default:
@@ -441,9 +441,9 @@ class User$Type extends MessageType<User> {
         /* optional string avatar = 18; */
         if (message.avatar !== undefined)
             writer.tag(18, WireType.LengthDelimited).string(message.avatar);
-        /* optional string group = 19; */
+        /* optional string group = 20; */
         if (message.group !== undefined)
-            writer.tag(19, WireType.LengthDelimited).string(message.group);
+            writer.tag(20, WireType.LengthDelimited).string(message.group);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

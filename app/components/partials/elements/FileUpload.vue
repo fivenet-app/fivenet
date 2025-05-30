@@ -8,17 +8,20 @@ import ConfirmModal from '../ConfirmModal.vue';
 import NotSupportedTabletBlock from '../NotSupportedTabletBlock.vue';
 import GenericImg from './GenericImg.vue';
 
+type FileLike = string | FileGRPC;
+type MaybeFileLike = FileLike | undefined;
+
 const props = defineProps<{
-    modelValue: FileGRPC | undefined;
+    modelValue: MaybeFileLike;
     disabled?: boolean;
 
     uploadFn: (opts?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    deleteFn: (fileId: number, reason?: string) => UnaryCall<any, any>;
+    deleteFn: () => UnaryCall<any, any>;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', value: FileGRPC | undefined): void;
+    (e: 'update:modelValue', value: MaybeFileLike): void;
 }>();
 
 const modelValue = useVModel(props, 'modelValue', emit);
@@ -56,16 +59,18 @@ async function uploadFile(files: File[]): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        modelValue.value = resp.file;
+        if (modelValue.value === undefined || typeof modelValue.value === 'string') {
+            modelValue.value = resp.url;
+        } else {
+            modelValue.value = resp.file;
+        }
         return;
     }
 }
 
-async function deleteFile(fileId: number | undefined): Promise<void> {
-    if (fileId === undefined) return;
-
+async function deleteFile(): Promise<void> {
     try {
-        await props.deleteFn(fileId);
+        await props.deleteFn();
 
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
@@ -81,6 +86,15 @@ async function deleteFile(fileId: number | undefined): Promise<void> {
 function handleFileChanges(event: File[]) {
     state.fileUrl = event;
 }
+
+const filePath = computed(() => {
+    if (typeof modelValue.value === 'string') {
+        return modelValue.value;
+    } else if (modelValue.value) {
+        return modelValue.value.filePath;
+    }
+    return '';
+});
 </script>
 
 <template>
@@ -99,11 +113,7 @@ function handleFileChanges(event: File[]) {
                     @change="handleFileChanges"
                 />
 
-                <UTooltip
-                    v-if="!modelValue?.id || state.fileUrl.length > 0"
-                    :ui="{ placement: 'top' }"
-                    :text="$t('common.upload')"
-                >
+                <UTooltip v-if="!filePath || state.fileUrl.length > 0" :ui="{ placement: 'top' }" :text="$t('common.upload')">
                     <UButton
                         icon="i-mdi-upload"
                         color="primary"
@@ -118,7 +128,7 @@ function handleFileChanges(event: File[]) {
                         :disabled="disabled"
                         @click="
                             modal.open(ConfirmModal, {
-                                confirm: async () => deleteFile(modelValue?.id),
+                                confirm: async () => deleteFile(),
                             })
                         "
                     />
@@ -127,12 +137,7 @@ function handleFileChanges(event: File[]) {
         </div>
 
         <div class="flex w-full flex-col items-center justify-center gap-2">
-            <GenericImg
-                v-if="modelValue?.filePath"
-                size="3xl"
-                :src="`${modelValue.filePath}?date=${new Date().getTime()}`"
-                :no-blur="true"
-            />
+            <GenericImg v-if="filePath" size="3xl" :src="`${filePath}?date=${new Date().getTime()}`" :no-blur="true" />
 
             <UAlert icon="i-mdi-information-outline" :description="$t('common.image_caching')" />
         </div>

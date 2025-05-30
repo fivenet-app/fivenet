@@ -645,7 +645,8 @@
         "drafts": "Entwurf | Entwürfe",
         "all_documents": "Alle Dokumente",
         "only_published": "Nur veröffentlicht",
-        "only_drafts": "Nur Entwürfe"
+        "only_drafts": "Nur Entwürfe",
+        "unpublished": "Zurückziehen"
     },
     "components": {
         "partials": {
@@ -2683,6 +2684,14 @@
             "ErrPageHasChildren": {
                 "title": "Die Seite hat Unterseiten!",
                 "content": "Sie können diese Seite nicht löschen, da sie Unterseiten hat. Stellen Sie sicher, dass Sie die Unterseiten zuerst verschieben oder löschen."
+            },
+            "ErrMaxFilesReached": {
+                "title": "Maximale Anzahl an Dateien erreicht",
+                "content": "Sie haben die maximale Anzahl an Dateien für diese Wiki-Seite erreicht. Bitte löschen Sie einige Dateien, bevor Sie neue hochladen."
+            },
+            "ErrPageNotFound": {
+                "title": "Seite nicht gefunden",
+                "content": "Die angeforderte Wiki-Seite konnte nicht gefunden werden. Bitte überprüfen Sie die URL oder suchen Sie nach der Seite."
             }
         },
         "MailerService": {

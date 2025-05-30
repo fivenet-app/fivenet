@@ -11,7 +11,6 @@ export default withNuxt(
         rules: {
             'no-console': 0,
             'require-await': 0,
-            'no-restricted-syntax': ['error', 'IfStatement > ExpressionStatement > AssignmentExpression'],
             '@typescript-eslint/no-unused-vars': [
                 'warn',
                 {

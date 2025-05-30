@@ -115,6 +115,10 @@ export interface PageMeta {
      * @generated from protobuf field: bool public = 12
      */
     public: boolean;
+    /**
+     * @generated from protobuf field: bool draft = 13
+     */
+    draft: boolean;
 }
 /**
  * @generated from protobuf message resources.wiki.PageShort
@@ -289,7 +293,8 @@ class PageMeta$Type extends MessageType<PageMeta> {
             { no: 9, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 10, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "toc", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 12, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 12, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 13, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PageMeta>): PageMeta {
@@ -299,6 +304,7 @@ class PageMeta$Type extends MessageType<PageMeta> {
         message.contentType = 0;
         message.tags = [];
         message.public = false;
+        message.draft = false;
         if (value !== undefined)
             reflectionMergePartial<PageMeta>(this, message, value);
         return message;
@@ -343,6 +349,9 @@ class PageMeta$Type extends MessageType<PageMeta> {
                     break;
                 case /* bool public */ 12:
                     message.public = reader.bool();
+                    break;
+                case /* bool draft */ 13:
+                    message.draft = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -392,6 +401,9 @@ class PageMeta$Type extends MessageType<PageMeta> {
         /* bool public = 12; */
         if (message.public !== false)
             writer.tag(12, WireType.Varint).bool(message.public);
+        /* bool draft = 13; */
+        if (message.draft !== false)
+            writer.tag(13, WireType.Varint).bool(message.draft);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

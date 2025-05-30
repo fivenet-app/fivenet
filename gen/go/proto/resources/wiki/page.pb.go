@@ -145,6 +145,7 @@ type PageMeta struct {
 	Tags          []string `protobuf:"bytes,10,rep,name=tags,proto3" json:"tags,omitempty"`
 	Toc           *bool    `protobuf:"varint,11,opt,name=toc,proto3,oneof" json:"toc,omitempty"`
 	Public        bool     `protobuf:"varint,12,opt,name=public,proto3" json:"public,omitempty"`
+	Draft         bool     `protobuf:"varint,13,opt,name=draft,proto3" json:"draft,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -259,6 +260,13 @@ func (x *PageMeta) GetToc() bool {
 func (x *PageMeta) GetPublic() bool {
 	if x != nil {
 		return x.Public
+	}
+	return false
+}
+
+func (x *PageMeta) GetDraft() bool {
+	if x != nil {
+		return x.Draft
 	}
 	return false
 }
@@ -449,7 +457,7 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\n" +
 	"_job_labelB\f\n" +
 	"\n" +
-	"_parent_id\"\x8a\x05\n" +
+	"_parent_id\"\xa0\x05\n" +
 	"\bPageMeta\x12=\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
@@ -468,7 +476,8 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\x04tags\x18\n" +
 	" \x03(\tR\x04tags\x12\x15\n" +
 	"\x03toc\x18\v \x01(\bH\x05R\x03toc\x88\x01\x01\x12\x16\n" +
-	"\x06public\x18\f \x01(\bR\x06publicB\r\n" +
+	"\x06public\x18\f \x01(\bR\x06public\x12\x14\n" +
+	"\x05draft\x18\r \x01(\bR\x05draftB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\a\n" +
 	"\x05_slugB\r\n" +

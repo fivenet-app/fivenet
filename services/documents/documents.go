@@ -237,6 +237,12 @@ func (s *Server) GetDocument(ctx context.Context, req *pbdocuments.GetDocumentRe
 		if docAccess != nil {
 			resp.Access = docAccess.Access
 		}
+
+		files, err := s.fHandler.ListFilesForParentID(ctx, resp.Document.Id)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+		resp.Document.Files = files
 	}
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED

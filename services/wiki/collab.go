@@ -14,8 +14,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func (s *Server) JoinRoom(stream pbdocuments.CollabService_JoinRoomServer) error {
-	ctx := stream.Context()
+func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
+	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -24,7 +24,7 @@ func (s *Server) JoinRoom(stream pbdocuments.CollabService_JoinRoomServer) error
 	connId := meta.Get(grpcws.ConnectionIdHeader)
 	clientId := collab.MakeClientID(userInfo.UserId, connId)
 
-	pageId, err := s.collabServer.HandleFirstMsg(ctx, clientId, stream)
+	pageId, err := s.collabServer.HandleFirstMsg(ctx, clientId, srv)
 	if err != nil {
 		return err
 	}
@@ -39,5 +39,5 @@ func (s *Server) JoinRoom(stream pbdocuments.CollabService_JoinRoomServer) error
 		return errorsdocuments.ErrDocViewDenied
 	}
 
-	return s.collabServer.HandleClient(ctx, pageId, userInfo.UserId, clientId, pbcollab.ClientRole_CLIENT_ROLE_WRITER, stream)
+	return s.collabServer.HandleClient(ctx, pageId, userInfo.UserId, clientId, pbcollab.ClientRole_CLIENT_ROLE_WRITER, srv)
 }

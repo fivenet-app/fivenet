@@ -645,7 +645,8 @@
         "drafts": "Draft | Drafts",
         "all_documents": "All Documents",
         "only_published": "Only Published",
-        "only_drafts": "Only Drafts"
+        "only_drafts": "Only Drafts",
+        "unpublish": "Unpublish"
     },
     "components": {
         "partials": {
@@ -2684,6 +2685,14 @@
             "ErrPageHasChildren": {
                 "title": "Page has children",
                 "content": "You can't delete this page because it has child pages. Make sure to move or delete the child pages first."
+            },
+            "ErrMaxFilesReached": {
+                "title": "Maximum files reached",
+                "content": "You have reached the maximum number of files allowed in this wiki page. Please delete some files before uploading new ones."
+            },
+            "ErrPageNotFound": {
+                "title": "Page not found",
+                "content": "The page you are trying to access does not exist or has been deleted."
             }
         },
         "MailerService": {

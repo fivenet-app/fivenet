@@ -98,6 +98,13 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
             description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
+        if (modelValue.value.props) {
+            modelValue.value.props.mugshot = undefined;
+        } else {
+            modelValue.value.props = { userId: props.user.userId, mugshot: undefined };
+        }
+
+        isOpen.value = false;
     } catch (e) {
         handleGRPCError(e as Error);
         throw e;
@@ -121,7 +128,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle" @error="console.log($event)">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
