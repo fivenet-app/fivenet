@@ -89,7 +89,7 @@ ALTER TABLE `fivenet_documents_access` ADD CONSTRAINT `fk_fivenet_documents_acce
 ALTER TABLE `fivenet_internet_domains_access` DROP INDEX `idx_fivenet_internet_domain_access_unique_access`;
 ALTER TABLE `fivenet_internet_domains_access` DROP INDEX `fk_fivenet_internet_domains_access_job_grade`;
 ALTER TABLE `fivenet_internet_domains_access` DROP FOREIGN KEY `fk_fivenet_internet_domains_access_target_id`;
-ALTER TABLE `fivenet_internet_domains_access` DROP INDEX `idx_fivenet_internet_domains_access_unique`;
+ALTER TABLE `fivenet_internet_domains_access` DROP INDEX `idx_fivenet_internet_domain_access_unique`;
 
 ALTER TABLE `fivenet_internet_domains_access` ADD INDEX `idx_job_minimum_grade` (`job`, `minimum_grade`);
 ALTER TABLE `fivenet_internet_domains_access` ADD UNIQUE KEY `idx_user_id_access_unique` (`target_id`,`user_id`);

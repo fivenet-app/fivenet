@@ -17,10 +17,26 @@ import (
 type templateFile struct {
 	fs.File
 
-	data any
+	data map[string]any
 }
 
 func (t *templateFile) Read(p []byte) (int, error) {
+	st, err := t.File.Stat()
+	if err != nil {
+		return 0, err
+	}
+
+	fileName := filepath.Base(st.Name())
+	split := strings.Split(fileName, "_")
+	migrationNumber, err := strconv.ParseInt(split[0], 10, 64)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to parse migration number from file name %s: %v", fileName, err))
+	}
+
+	if migrationNumber < 1748173399 && !t.data["ESXCompat"].(bool) { // big_rename migration
+		t.data["UsersTableName"] = "fivenet_users"
+	}
+
 	out, err := io.ReadAll(t.File)
 	if err != nil {
 		return 0, err
@@ -54,19 +70,13 @@ func (t *templateFS) Open(name string) (fs.File, error) {
 		return nil, err
 	}
 
-	fileName := filepath.Base(name)
-	split := strings.Split(fileName, "_")
-	migrationNumber, err := strconv.ParseInt(split[0], 10, 64)
-	if err != nil {
-		panic(fmt.Sprintf("Failed to parse migration number from file name %s: %v", fileName, err))
-	}
-
-	if migrationNumber < 1748173399 && !t.data["ESXCompat"].(bool) { // big_rename migration
-		t.data["UsersTableName"] = "fivenet_users"
+	dataCopy := make(map[string]any)
+	for k, v := range t.data {
+		dataCopy[k] = v
 	}
 
 	return &templateFile{
 		File: file,
-		data: t.data,
+		data: dataCopy,
 	}, nil
 }
