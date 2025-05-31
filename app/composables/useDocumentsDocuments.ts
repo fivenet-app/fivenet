@@ -3,19 +3,20 @@ import type { CreateDocumentResponse } from '~~/gen/ts/services/documents/docume
 
 export function useDocumentsDocuments() {
     const { $grpc } = useNuxtApp();
+    const clipboardStore = useClipboardStore();
+    const { getTemplateData } = clipboardStore;
 
     async function createDocument(templateId?: number): Promise<CreateDocumentResponse> {
         const { activeChar } = useAuth();
-        const clipboardStore = useClipboardStore();
 
-        const data = clipboardStore.getTemplateData();
-        data.activeChar = activeChar.value!;
+        const templateData = getTemplateData();
+        templateData.activeChar = unref(activeChar.value!);
 
         try {
             const call = $grpc.documents.documents.createDocument({
                 contentType: ContentType.HTML,
                 templateId: templateId,
-                templateData: data,
+                templateData: templateData,
             });
             const { response } = await call;
 

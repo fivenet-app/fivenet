@@ -75,7 +75,7 @@ const { ydoc, provider } = useCollabDoc('documents', props.documentId);
 
 watchOnce(document, () => provider.connect());
 
-async function setFromProps(): Promise<void> {
+function setFromProps(): void {
     if (!document.value?.document) return;
 
     state.title = document.value.document.title;
@@ -90,17 +90,21 @@ async function setFromProps(): Promise<void> {
         state.access.users = document.value.access.users;
     }
     state.files = document.value.document.files ?? [];
-
-    const refs = await $grpc.documents.documents.getDocumentReferences({
-        documentId: props.documentId,
-    });
-    currentReferences.value = refs.response.references;
-    const rels = await $grpc.documents.documents.getDocumentRelations({
-        documentId: props.documentId,
-    });
-    currentRelations.value = rels.response.relations;
 }
-provider.once('loadContent', async () => await setFromProps());
+provider.once('loadContent', () => setFromProps());
+
+watch(document, async () => {
+    const [refs, rels] = await Promise.all([
+        $grpc.documents.documents.getDocumentReferences({
+            documentId: props.documentId,
+        }),
+        $grpc.documents.documents.getDocumentRelations({
+            documentId: props.documentId,
+        }),
+    ]);
+    references.value = refs.response.references;
+    relations.value = rels.response.relations;
+});
 
 const route = useRoute();
 
@@ -145,41 +149,13 @@ const state = reactive<Schema>({
 
 const openRelationManager = ref<boolean>(false);
 const relationManagerData = ref(new Map<number, DocumentRelation>());
-const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
-watch(currentRelations, () => currentRelations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
+const relations = ref<Readonly<DocumentRelation>[]>([]);
+watch(relations, () => relations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
 
 const openReferenceManager = ref<boolean>(false);
 const referenceManagerData = ref(new Map<number, DocumentReference>());
-const currentReferences = ref<Readonly<DocumentReference>[]>([]);
-watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
-
-onMounted(async () => {
-    clipboardStore.activeStack.documents.forEach((doc, idx) => {
-        referenceManagerData.value.set(idx, {
-            id: idx,
-            sourceDocumentId: props.documentId ?? 0,
-            targetDocumentId: doc.id!,
-            targetDocument: clipboardGetDocument(doc),
-            creatorId: activeChar.value!.userId,
-            creator: activeChar.value!,
-            reference: DocReference.SOLVES,
-        });
-    });
-
-    clipboardStore.activeStack.users.forEach((user, idx) => {
-        relationManagerData.value.set(idx, {
-            id: idx,
-            documentId: props.documentId ?? 0,
-            targetUserId: user.userId!,
-            targetUser: getUser(user),
-            sourceUserId: activeChar.value!.userId,
-            sourceUser: activeChar.value!,
-            relation: DocRelation.CAUSED,
-        });
-    });
-
-    canEdit.value = true;
-});
+const references = ref<Readonly<DocumentReference>[]>([]);
+watch(references, () => references.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
 const saving = ref(false);
 
@@ -249,7 +225,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
 
         if (canDo.value.references) {
             const referencesToRemove: number[] = [];
-            currentReferences.value.forEach((ref) => {
+            references.value.forEach((ref) => {
                 if (!referenceManagerData.value.has(ref.id!)) {
                     referencesToRemove.push(ref.id!);
                 }
@@ -260,7 +236,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 });
             });
             referenceManagerData.value.forEach((ref) => {
-                if (currentReferences.value.find((r) => r.id === ref.id!)) {
+                if (references.value.find((r) => r.id === ref.id!)) {
                     return;
                 }
                 ref.sourceDocumentId = response.document!.id!;
@@ -273,14 +249,14 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
 
         if (canDo.value.relations) {
             const relationsToRemove: number[] = [];
-            currentRelations.value.forEach((rel) => {
+            relations.value.forEach((rel) => {
                 if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
             });
             relationsToRemove.forEach((id) => {
                 $grpc.documents.documents.removeDocumentRelation({ id });
             });
             relationManagerData.value.forEach((rel) => {
-                if (currentRelations.value.find((r) => r.id === rel.id!)) {
+                if (relations.value.find((r) => r.id === rel.id!)) {
                     return;
                 }
                 rel.documentId = response.document!.id;
@@ -308,6 +284,34 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         throw e;
     }
 }
+
+onMounted(async () => {
+    clipboardStore.activeStack.documents.forEach((doc, idx) => {
+        referenceManagerData.value.set(idx, {
+            id: idx,
+            sourceDocumentId: props.documentId ?? 0,
+            targetDocumentId: doc.id!,
+            targetDocument: clipboardGetDocument(doc),
+            creatorId: activeChar.value!.userId,
+            creator: activeChar.value!,
+            reference: DocReference.SOLVES,
+        });
+    });
+
+    clipboardStore.activeStack.users.forEach((user, idx) => {
+        relationManagerData.value.set(idx, {
+            id: idx,
+            documentId: props.documentId ?? 0,
+            targetUserId: user.userId!,
+            targetUser: getUser(user),
+            sourceUserId: activeChar.value!.userId,
+            sourceUser: activeChar.value!,
+            relation: DocRelation.CAUSED,
+        });
+    });
+
+    canEdit.value = true;
+});
 
 const items = [
     {
@@ -436,44 +440,42 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
             <template #right>
                 <PartialsBackButton :fallback-to="{ name: 'documents-id', params: { id: documentId } }" />
 
-                <UButtonGroup class="inline-flex">
-                    <UButton
-                        type="submit"
-                        trailing-icon="i-mdi-content-save"
-                        :disabled="!canEdit || !canSubmit"
-                        :loading="!canSubmit"
-                    >
-                        <span class="hidden truncate sm:block">
-                            {{ $t('common.save') }}
-                        </span>
-                    </UButton>
+                <UButton
+                    type="submit"
+                    trailing-icon="i-mdi-content-save"
+                    :disabled="!canEdit || !canSubmit"
+                    :loading="!canSubmit"
+                >
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.save') }}
+                    </span>
+                </UButton>
 
-                    <UButton
-                        v-if="document?.document?.draft"
-                        type="submit"
-                        color="info"
-                        trailing-icon="i-mdi-publish"
-                        :disabled="!canEdit || !canSubmit"
-                        :loading="!canSubmit"
-                        @click.prevent="
-                            modal.open(ConfirmModal, {
-                                title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
-                                description: $t('common.publish_confirm.description'),
-                                color: 'info',
-                                iconClass: 'text-info-500 dark:text-info-400',
-                                icon: 'i-mdi-publish',
-                                confirm: () => {
-                                    state.draft = !state.draft;
-                                    formRef?.submit();
-                                },
-                            })
-                        "
-                    >
-                        <span class="hidden truncate sm:block">
-                            {{ $t('common.publish') }}
-                        </span>
-                    </UButton>
-                </UButtonGroup>
+                <UButton
+                    v-if="document?.document?.draft"
+                    type="submit"
+                    color="info"
+                    trailing-icon="i-mdi-publish"
+                    :disabled="!canEdit || !canSubmit"
+                    :loading="!canSubmit"
+                    @click.prevent="
+                        modal.open(ConfirmModal, {
+                            title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
+                            description: $t('common.publish_confirm.description'),
+                            color: 'info',
+                            iconClass: 'text-info-500 dark:text-info-400',
+                            icon: 'i-mdi-publish',
+                            confirm: () => {
+                                state.draft = false;
+                                formRef?.submit();
+                            },
+                        })
+                    "
+                >
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.publish') }}
+                    </span>
+                </UButton>
             </template>
         </UDashboardNavbar>
 
@@ -535,7 +537,9 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                             if (!categories.find((c) => c.id === state.category.id)) {
                                                                 categories.unshift(state.category);
                                                             }
-                                                            categories.unshift(emptyCategory);
+                                                            if (!categories.find((c) => c.id === emptyCategory.id)) {
+                                                                categories.unshift(emptyCategory);
+                                                            }
                                                             return categories;
                                                         } catch (e) {
                                                             handleGRPCError(e as RpcError);

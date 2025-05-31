@@ -11,11 +11,13 @@ const props = withDefaults(
         submit?: boolean;
         showSelect?: boolean;
         specs?: ObjectSpecs;
+        hideHeader?: boolean;
     }>(),
     {
         submit: undefined,
         showSelect: true,
         specs: undefined,
+        hideHeader: false,
     },
 );
 
@@ -74,11 +76,12 @@ async function remove(item: ClipboardDocument, notify: boolean): Promise<void> {
 }
 
 async function removeAll(): Promise<void> {
-    while (selected.value.length > 0) {
-        selected.value.forEach((v) => {
-            remove(v, false);
-        });
-    }
+    // Make a shallow copy to avoid mutation issues
+    const toRemove = [...selected.value];
+    toRemove.forEach((v) => {
+        remove(v, false);
+    });
+    selected.value = [];
 
     if (props.specs !== undefined) {
         emit('statisfied', false);
@@ -107,79 +110,81 @@ watch(props, async (newVal) => {
 </script>
 
 <template>
-    <h3 class="flex items-center justify-between text-lg font-medium">
-        <span>{{ $t('common.document', 2) }}</span>
-        <slot name="header" />
-    </h3>
+    <div>
+        <h3 v-if="!hideHeader" class="flex items-center justify-between text-lg font-medium">
+            <span>{{ $t('common.document', 2) }}</span>
+            <slot name="header" />
+        </h3>
 
-    <DataNoDataBlock
-        v-if="documents?.length === 0"
-        icon="i-mdi-file-document-multiple"
-        :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.document', 2)])"
-        :focus="
-            async () => {
-                navigateTo({ name: 'documents' });
-                $emit('close');
-            }
-        "
-    />
-    <table v-else class="min-w-full divide-y divide-gray-700">
-        <thead>
-            <tr>
-                <th v-if="showSelect" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
-                    {{ $t('common.select', 1) }}
-                </th>
-                <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
-                    {{ $t('common.title') }}
-                </th>
-                <th class="px-3 py-3.5 text-left text-sm font-semibold" scope="col">
-                    {{ $t('common.creator') }}
-                </th>
-                <th class="relative py-3.5 pl-3 pr-4 sm:pr-0" scope="col">
-                    <span class="sr-only">{{ $t('common.action', 2) }}</span>
-                    <UTooltip v-if="selected.length > 0" :text="$t('common.delete')">
-                        <UButton variant="link" icon="i-mdi-delete" color="error" @click="removeAll()" />
-                    </UTooltip>
-                </th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-800">
-            <tr v-for="item in documents" :key="item.id">
-                <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
-                    <UButton
-                        v-if="specs && specs.max === 1"
-                        block
-                        :color="selected.includes(item) ? 'gray' : 'primary'"
-                        @click="select(item)"
-                    >
-                        {{
-                            !selected.includes(item)
-                                ? $t('common.select', 1).toUpperCase()
-                                : $t('common.select', 2).toUpperCase()
-                        }}
-                    </UButton>
-                    <UCheckbox
-                        v-else
-                        :key="item.id"
-                        v-model="selected"
-                        name="selected"
-                        :checked="selected.includes(item)"
-                        :value="item"
-                        @click="select(item)"
-                    />
-                </td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
-                    {{ item.title }}
-                </td>
-                <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                    {{ item.creator.firstname }} {{ item.creator.lastname }}
-                </td>
-                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <UTooltip :text="$t('common.delete')">
-                        <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(item, true)" />
-                    </UTooltip>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+        <DataNoDataBlock
+            v-if="documents?.length === 0"
+            icon="i-mdi-file-document-multiple"
+            :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.document', 2)])"
+            :focus="
+                async () => {
+                    navigateTo({ name: 'documents' });
+                    $emit('close');
+                }
+            "
+        />
+        <table v-else class="min-w-full divide-y divide-gray-700">
+            <thead>
+                <tr>
+                    <th v-if="showSelect" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
+                        {{ $t('common.select', 1) }}
+                    </th>
+                    <th class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1" scope="col">
+                        {{ $t('common.title') }}
+                    </th>
+                    <th class="px-3 py-3.5 text-left text-sm font-semibold" scope="col">
+                        {{ $t('common.creator') }}
+                    </th>
+                    <th class="relative py-3.5 pl-3 pr-4 sm:pr-0" scope="col">
+                        <span class="sr-only">{{ $t('common.action', 2) }}</span>
+                        <UTooltip v-if="selected.length > 0" :text="$t('common.delete')">
+                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="removeAll()" />
+                        </UTooltip>
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-800">
+                <tr v-for="item in documents" :key="item.id">
+                    <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
+                        <UButton
+                            v-if="specs && specs.max === 1"
+                            block
+                            :color="selected.includes(item) ? 'gray' : 'primary'"
+                            @click="select(item)"
+                        >
+                            {{
+                                !selected.includes(item)
+                                    ? $t('common.select', 1).toUpperCase()
+                                    : $t('common.select', 2).toUpperCase()
+                            }}
+                        </UButton>
+                        <UCheckbox
+                            v-else
+                            :key="item.id"
+                            v-model="selected"
+                            name="selected"
+                            :checked="selected.includes(item)"
+                            :value="item"
+                            @click="select(item)"
+                        />
+                    </td>
+                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
+                        {{ item.title }}
+                    </td>
+                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
+                        {{ item.creator.firstname }} {{ item.creator.lastname }}
+                    </td>
+                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                        <UTooltip :text="$t('common.delete')">
+                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(item, true)" />
+                        </UTooltip>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>

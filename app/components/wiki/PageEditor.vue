@@ -145,6 +145,7 @@ function setFromProps(): void {
 
     state.meta.title = page.value.meta?.title ?? '';
     state.meta.description = page.value.meta?.description ?? '';
+    state.content = page.value.content?.rawContent ?? '';
     state.meta.public = page.value.meta?.public ?? false;
     state.meta.toc = page.value.meta?.toc ?? true;
     state.meta.draft = page.value.meta?.draft ?? true;
@@ -155,11 +156,6 @@ function setFromProps(): void {
     state.files = page.value.files;
 }
 
-watchOnce(page, () => {
-    if (page.value) {
-        state.content = page.value.content?.rawContent ?? '';
-    }
-});
 provider.once('loadContent', () => setFromProps());
 
 async function updatePage(values: Schema): Promise<void> {
@@ -336,41 +332,37 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
             <template #right>
                 <BackButton :disabled="!canSubmit" />
 
-                <UButtonGroup v-if="page" class="inline-flex">
-                    <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
-                        <span class="hidden truncate sm:block">
-                            {{ $t('common.save') }}
-                        </span>
-                    </UButton>
+                <UButton v-if="page" type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.save') }}
+                    </span>
+                </UButton>
 
-                    {{ state.meta.draft }}
-
-                    <UButton
-                        v-if="page.meta?.draft"
-                        type="submit"
-                        color="info"
-                        trailing-icon="i-mdi-publish"
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                        @click.prevent="
-                            modal.open(ConfirmModal, {
-                                title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
-                                description: $t('common.publish_confirm.description'),
-                                color: 'info',
-                                iconClass: 'text-info-500 dark:text-info-400',
-                                icon: 'i-mdi-publish',
-                                confirm: () => {
-                                    state.meta.draft = !state.meta.draft;
-                                    formRef?.submit();
-                                },
-                            })
-                        "
-                    >
-                        <span class="hidden truncate sm:block">
-                            {{ $t('common.publish') }}
-                        </span>
-                    </UButton>
-                </UButtonGroup>
+                <UButton
+                    v-if="page?.meta?.draft"
+                    type="submit"
+                    color="info"
+                    trailing-icon="i-mdi-publish"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    @click.prevent="
+                        modal.open(ConfirmModal, {
+                            title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
+                            description: $t('common.publish_confirm.description'),
+                            color: 'info',
+                            iconClass: 'text-info-500 dark:text-info-400',
+                            icon: 'i-mdi-publish',
+                            confirm: () => {
+                                state.meta.draft = false;
+                                formRef?.submit();
+                            },
+                        })
+                    "
+                >
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.publish') }}
+                    </span>
+                </UButton>
             </template>
         </UDashboardNavbar>
 

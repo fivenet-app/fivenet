@@ -204,13 +204,6 @@ if (ydoc && yjsProvider && !props.disableCollab) {
         loading.value = false;
     });
 
-    yjsProvider.once('loadContent', () => {
-        // When the Yjs provider is requesting us to seed the content,
-        // we can set the initial content.
-        // This is important for collaboration to work correctly.
-        unref(editor)?.commands.setContent(content.value);
-    });
-
     extensions.push(
         Collaboration.configure({
             document: ydoc,
@@ -367,22 +360,21 @@ const fonts = [
     },
 ];
 
-watch(content, (value) => {
+// If collaboration is enabled, we don't set the content directly
+// as it will be handled by the Yjs provider.
+const stopWatch = watch(content, (value) => {
     const isSame = unref(editor)?.getHTML() === value;
     // JSON
-    // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value)
+    // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value);
 
-    if (isSame) {
-        return;
-    }
+    if (isSame) return;
 
-    if (ydoc && yjsProvider && !props.disableCollab) {
-        // If collaboration is enabled, we don't set the content directly
-        // as it will be handled by the Yjs provider.
-        return;
-    }
+    if (!props.disableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
 
     unref(editor)?.commands.setContent(value, false);
+    if (!props.disableCollab && yjsProvider && yjsProvider.isAuthoritative) {
+        stopWatch();
+    }
 });
 
 watch(disabled, () => unref(editor)?.setEditable(!disabled.value));

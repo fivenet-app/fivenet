@@ -1,12 +1,37 @@
 <script lang="ts" setup>
+import type { TabItem } from '#ui/types';
 import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vue';
 import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
-import { useClipboardStore } from '~/stores/clipboard';
+
+const { t } = useI18n();
 
 const { isOpen } = useModal();
 
 const clipboardStore = useClipboardStore();
+
+const items: TabItem[] = [
+    {
+        key: 'citizens',
+        slot: 'citizens',
+        label: t('common.citizen', 2),
+        icon: 'i-mdi-account-multiple',
+    },
+    {
+        key: 'vehicles',
+        slot: 'vehicles',
+        label: t('common.vehicle', 2),
+        icon: 'i-mdi-car',
+    },
+    {
+        key: 'documents',
+        slot: 'documents',
+        label: t('common.document', 2),
+        icon: 'i-mdi-file-document-multiple',
+    },
+];
+
+const selectedTab = ref(0);
 </script>
 
 <template>
@@ -22,13 +47,17 @@ const clipboardStore = useClipboardStore();
                 </div>
             </template>
 
-            <div class="mx-auto">
-                <ClipboardCitizens @close="isOpen = false" />
-
-                <ClipboardVehicles @close="isOpen = false" />
-
-                <ClipboardDocuments @close="isOpen = false" />
-            </div>
+            <UTabs v-model="selectedTab" :items="items" :unmount="true">
+                <template #citizens>
+                    <ClipboardCitizens hide-header @close="isOpen = false" />
+                </template>
+                <template #vehicles>
+                    <ClipboardVehicles hide-header @close="isOpen = false" />
+                </template>
+                <template #documents>
+                    <ClipboardDocuments hide-header @close="isOpen = false" />
+                </template>
+            </UTabs>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
