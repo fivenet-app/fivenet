@@ -83,6 +83,8 @@ async function deletePage(id: number): Promise<void> {
     }
 }
 
+const wikiService = useWikiWiki();
+
 const tocLinks = computedAsync(async () => props.page?.content?.content && jsonNodeToTocLinks(props.page?.content?.content));
 
 const accordionItems = computed(() =>
@@ -167,8 +169,15 @@ const scrollRef = useTemplateRef('scrollRef');
         <template #right>
             <PartialsBackButton fallback-to="/wiki" />
 
-            <UButton v-if="can('wiki.WikiService.CreatePage').value" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
-                {{ $t('common.page') }}
+            <UButton
+                v-if="can('wiki.WikiService.CreatePage').value"
+                color="gray"
+                trailing-icon="i-mdi-plus"
+                @click="wikiService.createPage(page?.parentId ?? page?.id)"
+            >
+                <span class="hidden truncate sm:block">
+                    {{ $t('common.page') }}
+                </span>
             </UButton>
         </template>
     </UDashboardNavbar>
@@ -283,6 +292,13 @@ const scrollRef = useTemplateRef('scrollRef');
                                 <span>
                                     {{ $t('common.deleted') }}
                                     <GenericTime :value="page.meta.deletedAt" type="long" />
+                                </span>
+                            </UBadge>
+
+                            <UBadge v-if="page.meta.draft" class="inline-flex gap-1" color="info" size="md">
+                                <UIcon class="size-5" name="i-mdi-pencil" />
+                                <span>
+                                    {{ $t('common.draft') }}
                                 </span>
                             </UBadge>
 

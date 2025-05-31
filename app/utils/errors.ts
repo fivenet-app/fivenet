@@ -1,3 +1,4 @@
+import type { TranslateItem } from '~/types/i18n';
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 
 export function getErrorMessage(err: RpcError): TranslateItem {

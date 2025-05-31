@@ -151,7 +151,7 @@ func NewServer(p Params) (*Server, error) {
 	tDocFiles := table.FivenetDocumentsFiles
 
 	// 3 MiB limit
-	fHandler := filestore.NewHandler(p.Storage, p.DB, tDocFiles, tDocFiles.FileID, tDocFiles.DocumentID, 3<<20,
+	fHandler := filestore.NewHandler(p.Storage, p.DB, tDocFiles, tDocFiles.DocumentID, tDocFiles.FileID, 3<<20,
 		func(parentId uint64) jet.BoolExpression {
 			return tDocFiles.DocumentID.EQ(jet.Uint64(parentId))
 		}, filestore.InsertJoinRow, false,

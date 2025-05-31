@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = content.ContentType(0)
 )
 
 // Validate checks the field values on ListPagesRequest with the rules defined
@@ -671,10 +675,10 @@ func (m *CreatePageRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetPage() == nil {
+	if _, ok := content.ContentType_name[int32(m.GetContentType())]; !ok {
 		err := CreatePageRequestValidationError{
-			field:  "Page",
-			reason: "value is required",
+			field:  "ContentType",
+			reason: "value must be one of the defined enum values",
 		}
 		if !all {
 			return err
@@ -682,33 +686,19 @@ func (m *CreatePageRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreatePageRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.ParentId != nil {
+
+		if m.GetParentId() <= 0 {
+			err := CreatePageRequestValidationError{
+				field:  "ParentId",
+				reason: "value must be greater than 0",
 			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CreatePageRequestValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+			if !all {
+				return err
 			}
+			errors = append(errors, err)
 		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreatePageRequestValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {
@@ -813,34 +803,9 @@ func (m *CreatePageResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetPage()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreatePageResponseValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CreatePageResponseValidationError{
-					field:  "Page",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreatePageResponseValidationError{
-				field:  "Page",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Job
+
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return CreatePageResponseMultiError(errors)

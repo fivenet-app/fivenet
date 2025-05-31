@@ -543,7 +543,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         <UBadge class="inline-flex gap-1" color="black" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar" />
                             <span>
-                                {{ $t('common.created_at') }}
+                                {{ $t('common.created') }}
                                 <GenericTime :value="doc.createdAt" type="long" />
                             </span>
                         </UBadge>
@@ -551,7 +551,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         <UBadge v-if="doc.updatedAt" class="inline-flex gap-1" color="black" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar-edit" />
                             <span>
-                                {{ $t('common.updated_at') }}
+                                {{ $t('common.updated') }}
                                 <GenericTime :value="doc.updatedAt" type="long" />
                             </span>
                         </UBadge>
@@ -581,6 +581,13 @@ const scrollRef = useTemplateRef('scrollRef');
                             <span>
                                 {{ $t('common.reminder') }}
                                 <GenericTime :value="doc.workflowUser.manualReminderTime" type="short" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge v-if="doc.draft" class="inline-flex gap-1" color="info" size="md">
+                            <UIcon class="size-5" name="i-mdi-pencil" />
+                            <span>
+                                {{ $t('common.draft') }}
                             </span>
                         </UBadge>
 

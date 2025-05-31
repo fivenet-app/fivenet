@@ -40,7 +40,6 @@ func (s *Server) UploadAvatar(srv grpc.ClientStreamingServer[file.UploadPacket, 
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
-
 	meta.Namespace = "user_avatars"
 
 	_, err = s.avatarHandler.UploadFromMeta(ctx, meta, userInfo.UserId, srv)
@@ -122,6 +121,7 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadPacket,
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
+	meta.Namespace = "mugshot"
 
 	if meta.Reason == "" {
 		return errorscitizens.ErrReasonRequired

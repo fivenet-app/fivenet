@@ -143,7 +143,7 @@ const editing = ref(false);
                     v-for="(attribute, idx) in state.labels"
                     :key="attribute.name"
                     class="justify-between gap-2"
-                    :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                     :style="{ backgroundColor: attribute.color }"
                     size="lg"
                 >
@@ -154,7 +154,7 @@ const editing = ref(false);
                     <UTooltip v-if="editing" :text="$t('common.remove')">
                         <UButton
                             :class="
-                                isColourBright(hexToRgb(attribute.color, RGBBlack)!)
+                                isColorBright(hexToRgb(attribute.color, RGBBlack)!)
                                     ? '!bg-white/20 !text-black'
                                     : '!bg-black/20 !text-white'
                             "

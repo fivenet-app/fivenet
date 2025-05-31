@@ -60,6 +60,8 @@ watch(pages, async () => {
         });
     }
 });
+
+const wikiService = useWikiWiki();
 </script>
 
 <template>
@@ -75,7 +77,7 @@ watch(pages, async () => {
                         v-if="can('wiki.WikiService.CreatePage').value"
                         color="gray"
                         trailing-icon="i-mdi-plus"
-                        to="/wiki/create"
+                        @click="wikiService.createPage()"
                     >
                         {{ $t('common.page') }}
                     </UButton>

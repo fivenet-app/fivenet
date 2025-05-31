@@ -4499,7 +4499,34 @@ func (m *UpdateDocumentResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for DocumentId
+	if all {
+		switch v := interface{}(m.GetDocument()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateDocumentResponseValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateDocumentResponseValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateDocumentResponseValidationError{
+				field:  "Document",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return UpdateDocumentResponseMultiError(errors)
@@ -5243,46 +5270,6 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
-		err := CreateDocumentRequestValidationError{
-			field:  "Title",
-			reason: "value length must be between 3 and 255 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetContent()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateDocumentRequestValidationError{
-					field:  "Content",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateDocumentRequestValidationError{
-					field:  "Content",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetContent()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateDocumentRequestValidationError{
-				field:  "Content",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if _, ok := content.ContentType_name[int32(m.GetContentType())]; !ok {
 		err := CreateDocumentRequestValidationError{
 			field:  "ContentType",
@@ -5294,50 +5281,18 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetState()) > 32 {
-		err := CreateDocumentRequestValidationError{
-			field:  "State",
-			reason: "value length must be at most 32 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
+	if m.TemplateId != nil {
+		// no validation rules for TemplateId
 	}
 
-	// no validation rules for Closed
-
-	// no validation rules for Draft
-
-	// no validation rules for Public
-
-	if m.CategoryId != nil {
-		// no validation rules for CategoryId
-	}
-
-	if m.Data != nil {
-
-		if len(m.GetData()) > 1000000 {
-			err := CreateDocumentRequestValidationError{
-				field:  "Data",
-				reason: "value length must be at most 1000000 bytes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Access != nil {
+	if m.TemplateData != nil {
 
 		if all {
-			switch v := interface{}(m.GetAccess()).(type) {
+			switch v := interface{}(m.GetTemplateData()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, CreateDocumentRequestValidationError{
-						field:  "Access",
+						field:  "TemplateData",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -5345,26 +5300,22 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, CreateDocumentRequestValidationError{
-						field:  "Access",
+						field:  "TemplateData",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetTemplateData()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return CreateDocumentRequestValidationError{
-					field:  "Access",
+					field:  "TemplateData",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	}
-
-	if m.TemplateId != nil {
-		// no validation rules for TemplateId
 	}
 
 	if len(errors) > 0 {
@@ -5469,7 +5420,7 @@ func (m *CreateDocumentResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for DocumentId
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return CreateDocumentResponseMultiError(errors)
@@ -5642,6 +5593,40 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 	// no validation rules for Draft
 
 	// no validation rules for Public
+
+	for idx, item := range m.GetFiles() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateDocumentRequestValidationError{
+						field:  fmt.Sprintf("Files[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateDocumentRequestValidationError{
+						field:  fmt.Sprintf("Files[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateDocumentRequestValidationError{
+					field:  fmt.Sprintf("Files[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if m.CategoryId != nil {
 		// no validation rules for CategoryId

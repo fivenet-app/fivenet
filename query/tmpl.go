@@ -3,8 +3,12 @@ package query
 import (
 	"bytes"
 	"embed"
+	"fmt"
 	"io"
 	"io/fs"
+	"path/filepath"
+	"strconv"
+	"strings"
 	"text/template"
 )
 
@@ -41,13 +45,24 @@ func (t *templateFile) Read(p []byte) (int, error) {
 type templateFS struct {
 	embed.FS
 
-	data any
+	data map[string]any
 }
 
 func (t *templateFS) Open(name string) (fs.File, error) {
 	file, err := t.FS.Open(name)
 	if err != nil {
 		return nil, err
+	}
+
+	fileName := filepath.Base(name)
+	split := strings.Split(fileName, "_")
+	migrationNumber, err := strconv.ParseInt(split[0], 10, 64)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to parse migration number from file name %s: %v", fileName, err))
+	}
+
+	if migrationNumber < 1748173399 && !t.data["ESXCompat"].(bool) { // big_rename migration
+		t.data["UsersTableName"] = "fivenet_users"
 	}
 
 	return &templateFile{

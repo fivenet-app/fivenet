@@ -59,6 +59,7 @@ message PageShort {
   repeated PageShort children = 9;
   optional PageRootInfo root_info = 10;
   optional int32 level = 11 [(validate.rules).int32.gte = 0];
+  bool draft = 13;
 }
 
 message PageRootInfo {

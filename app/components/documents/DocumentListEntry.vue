@@ -63,6 +63,13 @@ defineProps<{
                         >
                             {{ document.title }}
                         </h2>
+
+                        <UBadge v-if="document.draft" class="inline-flex grow-0 gap-1 self-start" color="info" size="md">
+                            <UIcon class="size-5" name="i-mdi-pencil" />
+                            <span>
+                                {{ $t('common.draft') }}
+                            </span>
+                        </UBadge>
                     </div>
                 </div>
 

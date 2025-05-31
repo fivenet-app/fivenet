@@ -100,6 +100,23 @@ export interface PageUpdated {
      * @generated from protobuf field: optional string content_diff = 3
      */
     contentDiff?: string;
+    /**
+     * @generated from protobuf field: optional resources.wiki.PageFilesChange files_change = 4
+     */
+    filesChange?: PageFilesChange;
+}
+/**
+ * @generated from protobuf message resources.wiki.PageFilesChange
+ */
+export interface PageFilesChange {
+    /**
+     * @generated from protobuf field: int64 added = 1
+     */
+    added: number;
+    /**
+     * @generated from protobuf field: int64 deleted = 2
+     */
+    deleted: number;
 }
 /**
  * @generated from protobuf message resources.wiki.PageAccessUpdated
@@ -177,7 +194,11 @@ export enum PageActivityType {
     /**
      * @generated from protobuf enum value: PAGE_ACTIVITY_TYPE_DELETED = 5;
      */
-    DELETED = 5
+    DELETED = 5,
+    /**
+     * @generated from protobuf enum value: PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED = 6;
+     */
+    DRAFT_TOGGLED = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class PageActivity$Type extends MessageType<PageActivity> {
@@ -358,7 +379,8 @@ class PageUpdated$Type extends MessageType<PageUpdated> {
         super("resources.wiki.PageUpdated", [
             { no: 1, name: "title_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "description_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "content_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "content_diff", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "files_change", kind: "message", T: () => PageFilesChange }
         ]);
     }
     create(value?: PartialMessage<PageUpdated>): PageUpdated {
@@ -381,6 +403,9 @@ class PageUpdated$Type extends MessageType<PageUpdated> {
                 case /* optional string content_diff */ 3:
                     message.contentDiff = reader.string();
                     break;
+                case /* optional resources.wiki.PageFilesChange files_change */ 4:
+                    message.filesChange = PageFilesChange.internalBinaryRead(reader, reader.uint32(), options, message.filesChange);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -402,6 +427,9 @@ class PageUpdated$Type extends MessageType<PageUpdated> {
         /* optional string content_diff = 3; */
         if (message.contentDiff !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.contentDiff);
+        /* optional resources.wiki.PageFilesChange files_change = 4; */
+        if (message.filesChange)
+            PageFilesChange.internalBinaryWrite(message.filesChange, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -412,6 +440,61 @@ class PageUpdated$Type extends MessageType<PageUpdated> {
  * @generated MessageType for protobuf message resources.wiki.PageUpdated
  */
 export const PageUpdated = new PageUpdated$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PageFilesChange$Type extends MessageType<PageFilesChange> {
+    constructor() {
+        super("resources.wiki.PageFilesChange", [
+            { no: 1, name: "added", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "deleted", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<PageFilesChange>): PageFilesChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.added = 0;
+        message.deleted = 0;
+        if (value !== undefined)
+            reflectionMergePartial<PageFilesChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PageFilesChange): PageFilesChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 added */ 1:
+                    message.added = reader.int64().toNumber();
+                    break;
+                case /* int64 deleted */ 2:
+                    message.deleted = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PageFilesChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 added = 1; */
+        if (message.added !== 0)
+            writer.tag(1, WireType.Varint).int64(message.added);
+        /* int64 deleted = 2; */
+        if (message.deleted !== 0)
+            writer.tag(2, WireType.Varint).int64(message.deleted);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.wiki.PageFilesChange
+ */
+export const PageFilesChange = new PageFilesChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PageAccessUpdated$Type extends MessageType<PageAccessUpdated> {
     constructor() {

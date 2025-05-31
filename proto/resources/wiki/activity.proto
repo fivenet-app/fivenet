@@ -17,6 +17,7 @@ enum PageActivityType {
   PAGE_ACTIVITY_TYPE_ACCESS_UPDATED = 3;
   PAGE_ACTIVITY_TYPE_OWNER_CHANGED = 4;
   PAGE_ACTIVITY_TYPE_DELETED = 5;
+  PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED = 6;
 }
 
 message PageActivity {
@@ -46,6 +47,12 @@ message PageUpdated {
   optional string title_diff = 1;
   optional string description_diff = 2;
   optional string content_diff = 3;
+  optional PageFilesChange files_change = 4;
+}
+
+message PageFilesChange {
+  int64 added = 1;
+  int64 deleted = 2;
 }
 
 message PageAccessUpdated {

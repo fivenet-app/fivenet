@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { ButtonSize, ButtonVariant } from '#ui/types';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { TranslateItem } from '~/types/i18n';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(

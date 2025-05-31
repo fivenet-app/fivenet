@@ -34,6 +34,7 @@ const (
 	PageActivityType_PAGE_ACTIVITY_TYPE_ACCESS_UPDATED PageActivityType = 3
 	PageActivityType_PAGE_ACTIVITY_TYPE_OWNER_CHANGED  PageActivityType = 4
 	PageActivityType_PAGE_ACTIVITY_TYPE_DELETED        PageActivityType = 5
+	PageActivityType_PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED  PageActivityType = 6
 )
 
 // Enum value maps for PageActivityType.
@@ -45,6 +46,7 @@ var (
 		3: "PAGE_ACTIVITY_TYPE_ACCESS_UPDATED",
 		4: "PAGE_ACTIVITY_TYPE_OWNER_CHANGED",
 		5: "PAGE_ACTIVITY_TYPE_DELETED",
+		6: "PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED",
 	}
 	PageActivityType_value = map[string]int32{
 		"PAGE_ACTIVITY_TYPE_UNSPECIFIED":    0,
@@ -53,6 +55,7 @@ var (
 		"PAGE_ACTIVITY_TYPE_ACCESS_UPDATED": 3,
 		"PAGE_ACTIVITY_TYPE_OWNER_CHANGED":  4,
 		"PAGE_ACTIVITY_TYPE_DELETED":        5,
+		"PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED":  6,
 	}
 )
 
@@ -287,6 +290,7 @@ type PageUpdated struct {
 	TitleDiff       *string                `protobuf:"bytes,1,opt,name=title_diff,json=titleDiff,proto3,oneof" json:"title_diff,omitempty"`
 	DescriptionDiff *string                `protobuf:"bytes,2,opt,name=description_diff,json=descriptionDiff,proto3,oneof" json:"description_diff,omitempty"`
 	ContentDiff     *string                `protobuf:"bytes,3,opt,name=content_diff,json=contentDiff,proto3,oneof" json:"content_diff,omitempty"`
+	FilesChange     *PageFilesChange       `protobuf:"bytes,4,opt,name=files_change,json=filesChange,proto3,oneof" json:"files_change,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -342,6 +346,65 @@ func (x *PageUpdated) GetContentDiff() string {
 	return ""
 }
 
+func (x *PageUpdated) GetFilesChange() *PageFilesChange {
+	if x != nil {
+		return x.FilesChange
+	}
+	return nil
+}
+
+type PageFilesChange struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Added         int64                  `protobuf:"varint,1,opt,name=added,proto3" json:"added,omitempty"`
+	Deleted       int64                  `protobuf:"varint,2,opt,name=deleted,proto3" json:"deleted,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PageFilesChange) Reset() {
+	*x = PageFilesChange{}
+	mi := &file_resources_wiki_activity_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PageFilesChange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PageFilesChange) ProtoMessage() {}
+
+func (x *PageFilesChange) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_wiki_activity_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PageFilesChange.ProtoReflect.Descriptor instead.
+func (*PageFilesChange) Descriptor() ([]byte, []int) {
+	return file_resources_wiki_activity_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PageFilesChange) GetAdded() int64 {
+	if x != nil {
+		return x.Added
+	}
+	return 0
+}
+
+func (x *PageFilesChange) GetDeleted() int64 {
+	if x != nil {
+		return x.Deleted
+	}
+	return 0
+}
+
 type PageAccessUpdated struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Jobs          *PageAccessJobsDiff    `protobuf:"bytes,1,opt,name=jobs,proto3" json:"jobs,omitempty"`
@@ -352,7 +415,7 @@ type PageAccessUpdated struct {
 
 func (x *PageAccessUpdated) Reset() {
 	*x = PageAccessUpdated{}
-	mi := &file_resources_wiki_activity_proto_msgTypes[3]
+	mi := &file_resources_wiki_activity_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -364,7 +427,7 @@ func (x *PageAccessUpdated) String() string {
 func (*PageAccessUpdated) ProtoMessage() {}
 
 func (x *PageAccessUpdated) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_wiki_activity_proto_msgTypes[3]
+	mi := &file_resources_wiki_activity_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -377,7 +440,7 @@ func (x *PageAccessUpdated) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAccessUpdated.ProtoReflect.Descriptor instead.
 func (*PageAccessUpdated) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_proto_rawDescGZIP(), []int{3}
+	return file_resources_wiki_activity_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *PageAccessUpdated) GetJobs() *PageAccessJobsDiff {
@@ -405,7 +468,7 @@ type PageAccessJobsDiff struct {
 
 func (x *PageAccessJobsDiff) Reset() {
 	*x = PageAccessJobsDiff{}
-	mi := &file_resources_wiki_activity_proto_msgTypes[4]
+	mi := &file_resources_wiki_activity_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -417,7 +480,7 @@ func (x *PageAccessJobsDiff) String() string {
 func (*PageAccessJobsDiff) ProtoMessage() {}
 
 func (x *PageAccessJobsDiff) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_wiki_activity_proto_msgTypes[4]
+	mi := &file_resources_wiki_activity_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -430,7 +493,7 @@ func (x *PageAccessJobsDiff) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAccessJobsDiff.ProtoReflect.Descriptor instead.
 func (*PageAccessJobsDiff) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_proto_rawDescGZIP(), []int{4}
+	return file_resources_wiki_activity_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *PageAccessJobsDiff) GetToCreate() []*PageJobAccess {
@@ -465,7 +528,7 @@ type PageAccessUsersDiff struct {
 
 func (x *PageAccessUsersDiff) Reset() {
 	*x = PageAccessUsersDiff{}
-	mi := &file_resources_wiki_activity_proto_msgTypes[5]
+	mi := &file_resources_wiki_activity_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -477,7 +540,7 @@ func (x *PageAccessUsersDiff) String() string {
 func (*PageAccessUsersDiff) ProtoMessage() {}
 
 func (x *PageAccessUsersDiff) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_wiki_activity_proto_msgTypes[5]
+	mi := &file_resources_wiki_activity_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -490,7 +553,7 @@ func (x *PageAccessUsersDiff) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PageAccessUsersDiff.ProtoReflect.Descriptor instead.
 func (*PageAccessUsersDiff) Descriptor() ([]byte, []int) {
-	return file_resources_wiki_activity_proto_rawDescGZIP(), []int{5}
+	return file_resources_wiki_activity_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *PageAccessUsersDiff) GetToCreate() []*PageUserAccess {
@@ -542,15 +605,20 @@ const file_resources_wiki_activity_proto_rawDesc = "" +
 	"\x10PageActivityData\x127\n" +
 	"\aupdated\x18\x01 \x01(\v2\x1b.resources.wiki.PageUpdatedH\x00R\aupdated\x12J\n" +
 	"\x0eaccess_updated\x18\x02 \x01(\v2!.resources.wiki.PageAccessUpdatedH\x00R\raccessUpdatedB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"\xbe\x01\n" +
+	"\x04data\x12\x03\xf8B\x01\"\x98\x02\n" +
 	"\vPageUpdated\x12\"\n" +
 	"\n" +
 	"title_diff\x18\x01 \x01(\tH\x00R\ttitleDiff\x88\x01\x01\x12.\n" +
 	"\x10description_diff\x18\x02 \x01(\tH\x01R\x0fdescriptionDiff\x88\x01\x01\x12&\n" +
-	"\fcontent_diff\x18\x03 \x01(\tH\x02R\vcontentDiff\x88\x01\x01B\r\n" +
+	"\fcontent_diff\x18\x03 \x01(\tH\x02R\vcontentDiff\x88\x01\x01\x12G\n" +
+	"\ffiles_change\x18\x04 \x01(\v2\x1f.resources.wiki.PageFilesChangeH\x03R\vfilesChange\x88\x01\x01B\r\n" +
 	"\v_title_diffB\x13\n" +
 	"\x11_description_diffB\x0f\n" +
-	"\r_content_diff\"\x86\x01\n" +
+	"\r_content_diffB\x0f\n" +
+	"\r_files_change\"A\n" +
+	"\x0fPageFilesChange\x12\x14\n" +
+	"\x05added\x18\x01 \x01(\x03R\x05added\x12\x18\n" +
+	"\adeleted\x18\x02 \x01(\x03R\adeleted\"\x86\x01\n" +
 	"\x11PageAccessUpdated\x126\n" +
 	"\x04jobs\x18\x01 \x01(\v2\".resources.wiki.PageAccessJobsDiffR\x04jobs\x129\n" +
 	"\x05users\x18\x02 \x01(\v2#.resources.wiki.PageAccessUsersDiffR\x05users\"\xe6\x01\n" +
@@ -561,14 +629,15 @@ const file_resources_wiki_activity_proto_rawDesc = "" +
 	"\x13PageAccessUsersDiff\x12E\n" +
 	"\tto_create\x18\x01 \x03(\v2\x1e.resources.wiki.PageUserAccessB\b\xfaB\x05\x92\x01\x02\x10\x14R\btoCreate\x12E\n" +
 	"\tto_update\x18\x02 \x03(\v2\x1e.resources.wiki.PageUserAccessB\b\xfaB\x05\x92\x01\x02\x10\x14R\btoUpdate\x12E\n" +
-	"\tto_delete\x18\x03 \x03(\v2\x1e.resources.wiki.PageUserAccessB\b\xfaB\x05\x92\x01\x02\x10\x14R\btoDelete*\xe3\x01\n" +
+	"\tto_delete\x18\x03 \x03(\v2\x1e.resources.wiki.PageUserAccessB\b\xfaB\x05\x92\x01\x02\x10\x14R\btoDelete*\x89\x02\n" +
 	"\x10PageActivityType\x12\"\n" +
 	"\x1ePAGE_ACTIVITY_TYPE_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aPAGE_ACTIVITY_TYPE_CREATED\x10\x01\x12\x1e\n" +
 	"\x1aPAGE_ACTIVITY_TYPE_UPDATED\x10\x02\x12%\n" +
 	"!PAGE_ACTIVITY_TYPE_ACCESS_UPDATED\x10\x03\x12$\n" +
 	" PAGE_ACTIVITY_TYPE_OWNER_CHANGED\x10\x04\x12\x1e\n" +
-	"\x1aPAGE_ACTIVITY_TYPE_DELETED\x10\x05BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"
+	"\x1aPAGE_ACTIVITY_TYPE_DELETED\x10\x05\x12$\n" +
+	" PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED\x10\x06BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"
 
 var (
 	file_resources_wiki_activity_proto_rawDescOnce sync.Once
@@ -583,40 +652,42 @@ func file_resources_wiki_activity_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_wiki_activity_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_wiki_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_resources_wiki_activity_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_wiki_activity_proto_goTypes = []any{
 	(PageActivityType)(0),       // 0: resources.wiki.PageActivityType
 	(*PageActivity)(nil),        // 1: resources.wiki.PageActivity
 	(*PageActivityData)(nil),    // 2: resources.wiki.PageActivityData
 	(*PageUpdated)(nil),         // 3: resources.wiki.PageUpdated
-	(*PageAccessUpdated)(nil),   // 4: resources.wiki.PageAccessUpdated
-	(*PageAccessJobsDiff)(nil),  // 5: resources.wiki.PageAccessJobsDiff
-	(*PageAccessUsersDiff)(nil), // 6: resources.wiki.PageAccessUsersDiff
-	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 8: resources.users.UserShort
-	(*PageJobAccess)(nil),       // 9: resources.wiki.PageJobAccess
-	(*PageUserAccess)(nil),      // 10: resources.wiki.PageUserAccess
+	(*PageFilesChange)(nil),     // 4: resources.wiki.PageFilesChange
+	(*PageAccessUpdated)(nil),   // 5: resources.wiki.PageAccessUpdated
+	(*PageAccessJobsDiff)(nil),  // 6: resources.wiki.PageAccessJobsDiff
+	(*PageAccessUsersDiff)(nil), // 7: resources.wiki.PageAccessUsersDiff
+	(*timestamp.Timestamp)(nil), // 8: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),     // 9: resources.users.UserShort
+	(*PageJobAccess)(nil),       // 10: resources.wiki.PageJobAccess
+	(*PageUserAccess)(nil),      // 11: resources.wiki.PageUserAccess
 }
 var file_resources_wiki_activity_proto_depIdxs = []int32{
-	7,  // 0: resources.wiki.PageActivity.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 0: resources.wiki.PageActivity.created_at:type_name -> resources.timestamp.Timestamp
 	0,  // 1: resources.wiki.PageActivity.activity_type:type_name -> resources.wiki.PageActivityType
-	8,  // 2: resources.wiki.PageActivity.creator:type_name -> resources.users.UserShort
+	9,  // 2: resources.wiki.PageActivity.creator:type_name -> resources.users.UserShort
 	2,  // 3: resources.wiki.PageActivity.data:type_name -> resources.wiki.PageActivityData
 	3,  // 4: resources.wiki.PageActivityData.updated:type_name -> resources.wiki.PageUpdated
-	4,  // 5: resources.wiki.PageActivityData.access_updated:type_name -> resources.wiki.PageAccessUpdated
-	5,  // 6: resources.wiki.PageAccessUpdated.jobs:type_name -> resources.wiki.PageAccessJobsDiff
-	6,  // 7: resources.wiki.PageAccessUpdated.users:type_name -> resources.wiki.PageAccessUsersDiff
-	9,  // 8: resources.wiki.PageAccessJobsDiff.to_create:type_name -> resources.wiki.PageJobAccess
-	9,  // 9: resources.wiki.PageAccessJobsDiff.to_update:type_name -> resources.wiki.PageJobAccess
-	9,  // 10: resources.wiki.PageAccessJobsDiff.to_delete:type_name -> resources.wiki.PageJobAccess
-	10, // 11: resources.wiki.PageAccessUsersDiff.to_create:type_name -> resources.wiki.PageUserAccess
-	10, // 12: resources.wiki.PageAccessUsersDiff.to_update:type_name -> resources.wiki.PageUserAccess
-	10, // 13: resources.wiki.PageAccessUsersDiff.to_delete:type_name -> resources.wiki.PageUserAccess
-	14, // [14:14] is the sub-list for method output_type
-	14, // [14:14] is the sub-list for method input_type
-	14, // [14:14] is the sub-list for extension type_name
-	14, // [14:14] is the sub-list for extension extendee
-	0,  // [0:14] is the sub-list for field type_name
+	5,  // 5: resources.wiki.PageActivityData.access_updated:type_name -> resources.wiki.PageAccessUpdated
+	4,  // 6: resources.wiki.PageUpdated.files_change:type_name -> resources.wiki.PageFilesChange
+	6,  // 7: resources.wiki.PageAccessUpdated.jobs:type_name -> resources.wiki.PageAccessJobsDiff
+	7,  // 8: resources.wiki.PageAccessUpdated.users:type_name -> resources.wiki.PageAccessUsersDiff
+	10, // 9: resources.wiki.PageAccessJobsDiff.to_create:type_name -> resources.wiki.PageJobAccess
+	10, // 10: resources.wiki.PageAccessJobsDiff.to_update:type_name -> resources.wiki.PageJobAccess
+	10, // 11: resources.wiki.PageAccessJobsDiff.to_delete:type_name -> resources.wiki.PageJobAccess
+	11, // 12: resources.wiki.PageAccessUsersDiff.to_create:type_name -> resources.wiki.PageUserAccess
+	11, // 13: resources.wiki.PageAccessUsersDiff.to_update:type_name -> resources.wiki.PageUserAccess
+	11, // 14: resources.wiki.PageAccessUsersDiff.to_delete:type_name -> resources.wiki.PageUserAccess
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_resources_wiki_activity_proto_init() }
@@ -637,7 +708,7 @@ func file_resources_wiki_activity_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_wiki_activity_proto_rawDesc), len(file_resources_wiki_activity_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

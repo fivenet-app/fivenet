@@ -48,8 +48,8 @@ const src = computed(() => {
         return props.src;
     }
 
-    if (!props.src.startsWith('http') && !props.src.startsWith('/images')) {
-        return '/api/filestore/' + props.src;
+    if (!props.src.startsWith('http') && !props.src.startsWith('/images') && !props.src.startsWith('/api/filestore')) {
+        return `/api/filestore/${props.src}`;
     }
 
     return props.src;

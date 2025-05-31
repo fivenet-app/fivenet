@@ -14,6 +14,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { PageActivity } from "../../resources/wiki/activity";
+import { ContentType } from "../../resources/common/content/content";
 import { Page } from "../../resources/wiki/page";
 import { PageShort } from "../../resources/wiki/page";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -82,18 +83,26 @@ export interface GetPageResponse {
  */
 export interface CreatePageRequest {
     /**
-     * @generated from protobuf field: resources.wiki.Page page = 1
+     * @generated from protobuf field: optional uint64 parent_id = 1
      */
-    page?: Page;
+    parentId?: number;
+    /**
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 2
+     */
+    contentType: ContentType;
 }
 /**
  * @generated from protobuf message services.wiki.CreatePageResponse
  */
 export interface CreatePageResponse {
     /**
-     * @generated from protobuf field: resources.wiki.Page page = 1
+     * @generated from protobuf field: string job = 1
      */
-    page?: Page;
+    job: string;
+    /**
+     * @generated from protobuf field: uint64 id = 2
+     */
+    id: number;
 }
 /**
  * @generated from protobuf message services.wiki.UpdatePageRequest
@@ -378,11 +387,13 @@ export const GetPageResponse = new GetPageResponse$Type();
 class CreatePageRequest$Type extends MessageType<CreatePageRequest> {
     constructor() {
         super("services.wiki.CreatePageRequest", [
-            { no: 1, name: "page", kind: "message", T: () => Page, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<CreatePageRequest>): CreatePageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.contentType = 0;
         if (value !== undefined)
             reflectionMergePartial<CreatePageRequest>(this, message, value);
         return message;
@@ -392,8 +403,11 @@ class CreatePageRequest$Type extends MessageType<CreatePageRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.wiki.Page page */ 1:
-                    message.page = Page.internalBinaryRead(reader, reader.uint32(), options, message.page);
+                case /* optional uint64 parent_id */ 1:
+                    message.parentId = reader.uint64().toNumber();
+                    break;
+                case /* resources.common.content.ContentType content_type */ 2:
+                    message.contentType = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -407,9 +421,12 @@ class CreatePageRequest$Type extends MessageType<CreatePageRequest> {
         return message;
     }
     internalBinaryWrite(message: CreatePageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.wiki.Page page = 1; */
-        if (message.page)
-            Page.internalBinaryWrite(message.page, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint64 parent_id = 1; */
+        if (message.parentId !== undefined)
+            writer.tag(1, WireType.Varint).uint64(message.parentId);
+        /* resources.common.content.ContentType content_type = 2; */
+        if (message.contentType !== 0)
+            writer.tag(2, WireType.Varint).int32(message.contentType);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -424,11 +441,14 @@ export const CreatePageRequest = new CreatePageRequest$Type();
 class CreatePageResponse$Type extends MessageType<CreatePageResponse> {
     constructor() {
         super("services.wiki.CreatePageResponse", [
-            { no: 1, name: "page", kind: "message", T: () => Page }
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CreatePageResponse>): CreatePageResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.job = "";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<CreatePageResponse>(this, message, value);
         return message;
@@ -438,8 +458,11 @@ class CreatePageResponse$Type extends MessageType<CreatePageResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.wiki.Page page */ 1:
-                    message.page = Page.internalBinaryRead(reader, reader.uint32(), options, message.page);
+                case /* string job */ 1:
+                    message.job = reader.string();
+                    break;
+                case /* uint64 id */ 2:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -453,9 +476,12 @@ class CreatePageResponse$Type extends MessageType<CreatePageResponse> {
         return message;
     }
     internalBinaryWrite(message: CreatePageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.wiki.Page page = 1; */
-        if (message.page)
-            Page.internalBinaryWrite(message.page, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string job = 1; */
+        if (message.job !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        /* uint64 id = 2; */
+        if (message.id !== 0)
+            writer.tag(2, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

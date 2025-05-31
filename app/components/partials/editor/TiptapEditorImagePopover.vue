@@ -6,9 +6,24 @@ import { remoteImageURLToBase64Data } from './helpers';
 
 const { isOpen } = useModal();
 
-const props = defineProps<{
-    editor: Editor;
-    uploadHandler?: (file: File[]) => Promise<void>;
+const props = withDefaults(
+    defineProps<{
+        editor: Editor;
+        fileLimit?: number;
+        disabled?: boolean;
+        uploadHandler?: (file: File[]) => Promise<void>;
+        openFileList?: () => Promise<void>;
+    }>(),
+    {
+        fileLimit: 10,
+        disabled: false,
+        uploadHandler: undefined,
+        openFileList: undefined,
+    },
+);
+
+defineEmits<{
+    (e: 'openFileList'): void;
 }>();
 
 const { featureGates, fileUpload } = useAppConfig();
@@ -30,21 +45,20 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
     let dataUrl: string | undefined = undefined;
     if (typeof urlOrBlob === 'string') {
         // If Image Proxy is enabled use it to load the image
-        if (featureGates.imageProxy) {
+        if (featureGates.imageProxy && urlOrBlob.startsWith('http')) {
             const url = new URL(urlOrBlob);
-            dataUrl = await remoteImageURLToBase64Data('/api/image_proxy/' + url.toString());
+            dataUrl = await remoteImageURLToBase64Data(`/api/image_proxy/${url.toString()}`);
         } else {
             dataUrl = urlOrBlob;
         }
-    } else {
-        if (props.uploadHandler) {
-            await props.uploadHandler([urlOrBlob]);
-        } else {
-            dataUrl = await blobToBase64(urlOrBlob);
-        }
     }
 
-    setImage(dataUrl);
+    if (props.uploadHandler) {
+        await props.uploadHandler([urlOrBlob]);
+    } else {
+        dataUrl = await blobToBase64(urlOrBlob);
+        setImage(dataUrl);
+    }
 }
 
 function setImage(url: string | undefined): void {
@@ -54,8 +68,9 @@ function setImage(url: string | undefined): void {
 
     props.editor
         .chain()
-        .setImage({
+        .setEnhancedImage({
             src: url,
+            alt: url,
         })
         .run();
 
@@ -82,6 +97,8 @@ const { chooseFiles } = useFileSelection({
     multiple: false,
 });
 
+const open = ref(false);
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -91,26 +108,28 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :prevent-close="!canSubmit">
-        <UCard
-            :ui="{
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.image') }}
-                    </h3>
+    <UPopover v-model:open="open">
+        <UTooltip :text="$t('components.partials.TiptapEditor.image')" :popper="{ placement: 'top' }">
+            <UButton icon="i-mdi-image" color="white" variant="ghost" />
+        </UTooltip>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
-                </div>
-            </template>
+        <template #panel>
+            <div class="p-4">
+                <UButtonGroup class="w-full">
+                    <UButton
+                        class="flex-1"
+                        color="black"
+                        block
+                        icon="i-mdi-images"
+                        :label="$t('components.partials.TiptapEditor.file_list')"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        @click="$emit('openFileList')"
+                    />
+                </UButtonGroup>
 
-            <div>
+                <UDivider class="my-2" :label="$t('common.or')" orientation="horizontal" />
+
                 <UForm :schema="schema" :state="imageState" @submit="onSubmitThrottle">
                     <UFormGroup :label="$t('common.url')">
                         <UInput v-model="imageState.url" type="text" />
@@ -122,28 +141,28 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             type="submit"
                             icon="i-mdi-image"
                             :label="$t('common.insert')"
-                            :disabled="!canSubmit"
+                            :disabled="!canSubmit || !imageState.url"
                             :loading="!canSubmit"
                         />
                     </UButtonGroup>
                 </UForm>
 
-                <UDivider class="mb-2 mt-2" :label="$t('common.or')" orientation="horizontal" />
+                <UDivider class="my-2" :label="$t('common.or')" orientation="horizontal" />
 
                 <ULink class="w-full" @click="chooseFiles">
                     <div ref="dropZoneRef" class="flex w-full items-center justify-center">
                         <label
-                            class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+                            class="flex h-48 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
                             for="dropzone-file"
                         >
-                            <div class="flex flex-col items-center justify-center pb-6 pt-5">
+                            <div class="flex flex-col items-center justify-center pb-4 pt-3">
                                 <UIcon
                                     class="size-14"
                                     :class="!canSubmit && 'animate-spin'"
                                     :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
                                 />
 
-                                <p class="mb-2 text-base text-gray-500 dark:text-gray-400">
+                                <p class="mb-2 px-2 text-base text-gray-500 dark:text-gray-400">
                                     <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
                                     {{ $t('common.file_drag_n_drop') }}
                                 </p>
@@ -153,14 +172,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </ULink>
             </div>
-
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" block color="black" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
-    </UModal>
+        </template>
+    </UPopover>
 </template>

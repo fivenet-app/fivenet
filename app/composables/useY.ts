@@ -186,7 +186,6 @@ export function useYArrayFiltered<T extends object>(
     const init = () => {
         remoteApplying = true;
 
-        console.log('useYArrayFiltered init', yArr.length, items.value.length);
         if (provider && provider.isAuthoritative) {
             writeLocalToY();
         } else {
@@ -221,31 +220,85 @@ export function useYArrayFiltered<T extends object>(
 //  useYMap  ⇄  flat object ⇄ Y.Map
 // ---------------------------------------------------------------------------
 
-export function useYMap<T extends Record<string, Primitive>>(
+/**
+ * Binds a subset of fields in a Vue reactive object to a Yjs Y.Map<Primitive>, synchronizing only primitive values.
+ *
+ * @param yMap    - The Y.Map<Primitive> instance to bind to.
+ * @param state   - A Vue‐reactive object whose primitive fields should be synced.
+ * @param filter  - Optional {@link OptsKeyFilter} specifying which keys to include or exclude.
+ *                  If neither `only` nor `omit` is provided, all keys of `state` are synced.
+ * @param opts    - {@link YjsSyncOptions} controlling authoritative seeding and provider handling.
+ *                  `opts.authoritative` (boolean) means “seed this map on empty.”
+ *                  `opts.provider` should be a Yjs provider that emits a `"sync"` event.
+ * @returns       The same `state` object, now kept in sync with `yMap`.
+ */
+/**
+ * Bind a plain object (or Ref to an object) whose values are primitives to a Yjs Y.Map.
+ * Synchronizes only the keys allowed by the filter.
+ *
+ * @typeParam T - The shape of the local object.
+ * @param yMap        - The Y.Map instance to bind.
+ * @param stateOrRef  - The local object or a Ref to it. Its primitive fields will stay in sync.
+ * @param filter      - Optional keys filter (whitelist or blacklist).
+ * @param opts        - Yjs synchronization options (authoritative seed + provider).
+ * @returns The unwrapped state object, kept in sync with Yjs.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useYMap<T extends Record<string, any>>(
     yMap: Y.Map<Primitive>,
-    state: T,
-    fields?: Array<keyof T>,
+    stateOrRef: T | Ref<T>,
+    filter?: OptsKeyFilter,
     opts: YjsSyncOptions = {},
 ): T {
     const { provider } = opts;
-    const keys: Array<keyof T> = fields ?? (Object.keys(state) as Array<keyof T>);
+
+    // Unwrap a Ref<T> or use the raw object
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const isStateRef = (val: any): val is Ref<T> => val && typeof val === 'object' && 'value' in val;
+    const state: T = isStateRef(stateOrRef) ? stateOrRef.value : stateOrRef;
+
+    // Compute which keys to synchronize
+    const allKeys = Object.keys(state) as (keyof T)[];
+    const keys: (keyof T)[] = filter?.only
+        ? (filter.only as (keyof T)[])
+        : filter?.omit
+          ? allKeys.filter((k) => !filter.omit!.includes(k as string))
+          : allKeys;
+
     const stops: Array<() => void> = [];
     let remoteApplying = false;
+    let observerAttached = false;
 
+    /** Pull remote Yjs values into the local state. */
     const pullRemote = () => {
         remoteApplying = true;
         keys.forEach((k) => {
             const v = yMap.get(k as string);
-            if (v !== undefined) state[k] = v as T[typeof k];
+            if (v !== undefined) {
+                state[k] = v as T[typeof k];
+            }
         });
         nextTick(() => {
             remoteApplying = false;
         });
     };
 
-    const init = () => {
-        remoteApplying = true;
+    /** Attach a Yjs observer to handle remote-to-local updates. */
+    const attachObserver = () => {
+        if (observerAttached) return;
+        const handle = (_evt: Y.YMapEvent<Primitive>, tr: Y.Transaction) => {
+            if (tr.origin === LOCAL_ORIGIN) return;
+            pullRemote();
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        yMap.observe(handle as any);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (getCurrentInstance()) onUnmounted(() => yMap.unobserve(handle as any));
+        observerAttached = true;
+    };
 
+    /** Initialize: pull existing remote data or seed if authoritative, then set up watchers. */
+    const init = () => {
         const hasRemote = keys.some((k) => yMap.get(k as string) !== undefined);
         if (hasRemote) {
             pullRemote();
@@ -256,35 +309,26 @@ export function useYMap<T extends Record<string, Primitive>>(
         }
 
         nextTick(() => {
-            remoteApplying = false;
-        });
-
-        // Observe remote map
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        yMap.observe(pullRemote as any);
-
-        // Watch local fields
-        keys.forEach((k) => {
-            const stop = watch(
-                () => state[k],
-                (v) => {
-                    if (remoteApplying) return;
-                    yMap.set(k as string, v);
-                },
-            );
-            stops.push(stop);
-        });
-
-        if (getCurrentInstance())
-            onUnmounted(() => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                yMap.unobserve(pullRemote as any);
-                stops.forEach((s) => s());
+            attachObserver();
+            // Local-to-remote: watch each key and write to Yjs when it changes
+            keys.forEach((k) => {
+                const stop = watch(
+                    () => state[k],
+                    (newVal) => {
+                        if (remoteApplying) return;
+                        yMap.doc?.transact(() => yMap.set(k as string, newVal), LOCAL_ORIGIN);
+                    },
+                    { flush: 'post' },
+                );
+                stops.push(stop);
             });
+        });
     };
 
     if (provider) {
-        provider.once('sync', (s) => s && init());
+        provider.once('sync', (s) => {
+            if (s) init();
+        });
     } else {
         init();
     }
@@ -332,7 +376,7 @@ const ensureMap = (c: Y.Doc | Y.Map<unknown>, key: string): Y.Map<unknown> => {
     return m;
 };
 
-function useYSyncStructure<T extends YStateMap>(
+export function useYSyncStructure<T extends YStateMap>(
     ycontainer: Y.Doc | Y.Map<unknown>,
     state: T,
     fields?: Array<keyof T>,
@@ -438,4 +482,153 @@ function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]
     } else {
         init();
     }
+}
+
+/**
+ * Composable to sync a Vue Ref whose entire object is replaced (not updated field-by-field)
+ * against a Yjs Y.Map<Primitive>. On remote changes, the local ref is replaced with the new object.
+ * On local replacement of the object (ref.value = newObj), Yjs map is cleared and re-seeded.
+ *
+ * @param yMap       - The Y.Map<Primitive> instance to bind.
+ * @param objRef     - Ref to the object; assigning a new object to `objRef.value` triggers a full replace.
+ * @param filter     - Optional {@link OptsKeyFilter} to whitelist/blacklist keys to sync.
+ * @param opts       - {@link YjsSyncOptions} controlling authoritative seed + provider.
+ * @returns The same object ref, kept in sync.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useYObject<T extends Record<string, any>>(
+    yMap: Y.Map<Primitive>,
+    objRef: Ref<T>,
+    filter?: OptsKeyFilter,
+    opts: YjsSyncOptions = {},
+): Ref<T> {
+    const { provider } = opts;
+    let remoteApplying = false;
+    let observerAttached = false;
+
+    /**
+     * Apply filter to a plain object, returning a new object with allowed keys only.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const applyFilter = (obj: Record<string, any>): Record<string, any> => {
+        const allKeys = Object.keys(obj);
+        const keysToSync = filter?.only
+            ? filter.only
+            : filter?.omit
+              ? allKeys.filter((k) => !filter.omit!.includes(k))
+              : allKeys;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const result: Record<string, any> = {};
+        keysToSync.forEach((k) => {
+            if (obj[k] !== undefined) result[k] = obj[k];
+        });
+        return result;
+    };
+
+    /**
+     * Pull entire Y.Map into local object ref, replacing objRef.value.
+     */
+    const pullRemote = () => {
+        remoteApplying = true;
+        // Get all primitive key-values from Yjs
+        const remoteObj = yMap.toJSON() as Record<string, Primitive>;
+        // Merge primitives into the existing local object, removing any primitive keys not present remotely
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const updated: Record<string, any> = { ...objRef.value };
+        // First, clear out all keys that are in the filter set
+        const allKeys = filter?.only
+            ? filter.only
+            : filter?.omit
+              ? Object.keys(objRef.value).filter((k) => !filter.omit!.includes(k))
+              : Object.keys(objRef.value);
+        allKeys.forEach((k) => {
+            // eslint-disable-next-line no-prototype-builtins
+            if (remoteObj.hasOwnProperty(k)) {
+                updated[k] = remoteObj[k];
+            } else {
+                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                delete updated[k];
+            }
+        });
+        objRef.value = updated as T;
+        nextTick(() => {
+            remoteApplying = false;
+        });
+    };
+
+    /**
+     * Attach a Yjs observer so remote changes call pullRemote().
+     */
+    const attachObserver = () => {
+        if (observerAttached) return;
+        const handle = (_evt: Y.YMapEvent<Primitive>, tr: Y.Transaction) => {
+            if (tr.origin === LOCAL_ORIGIN) return;
+            pullRemote();
+        };
+        yMap.observe(handle);
+        if (getCurrentInstance()) {
+            onUnmounted(() => {
+                yMap.unobserve(handle);
+            });
+        }
+        observerAttached = true;
+    };
+
+    /**
+     * Initialize: if remote has any keys, pull them; otherwise if authoritative, seed from objRef.value.
+     */
+    const init = () => {
+        if (provider && provider.isAuthoritative) {
+            remoteApplying = true;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const filtered = applyFilter(objRef.value as Record<string, any>);
+            yMap.doc?.transact(() => {
+                Object.entries(filtered).forEach(([k, v]) => {
+                    if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
+                        yMap.set(k, v as Primitive);
+                    }
+                });
+            }, LOCAL_ORIGIN);
+        } else {
+            pullRemote();
+        }
+        nextTick(() => {
+            remoteApplying = false;
+        });
+
+        attachObserver();
+
+        // Watch local ref replacement: when objRef.value is replaced, push full object to Yjs
+        watch(
+            objRef,
+            (newObj) => {
+                if (remoteApplying) return;
+                // Clear Yjs map and re-seed
+                yMap.doc?.transact(() => {
+                    // Delete all existing keys
+                    yMap.clear();
+                    // Insert filtered new object entries
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const filtered = applyFilter(newObj as Record<string, any>);
+                    Object.entries(filtered).forEach(([k, v]) => {
+                        if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
+                            yMap.set(k, v as Primitive);
+                        }
+                    });
+                }, LOCAL_ORIGIN);
+            },
+            { flush: 'post' },
+        );
+    };
+
+    // Wait for provider "sync" event before init, or init immediately if no provider
+    if (provider) {
+        provider.once('sync', (synced: boolean) => {
+            if (synced) init();
+        });
+    } else {
+        init();
+    }
+
+    return objRef;
 }

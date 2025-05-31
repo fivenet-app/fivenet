@@ -298,7 +298,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
 
 const items = [
     {
-        slot: 'edit',
+        slot: 'content',
         label: t('common.edit'),
         icon: 'i-mdi-pencil',
     },
@@ -380,7 +380,7 @@ const selectedTab = computed({
                     list: { rounded: '' },
                 }"
             >
-                <template #edit>
+                <template #content>
                     <div v-if="loading" class="flex flex-col gap-2">
                         <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
                     </div>

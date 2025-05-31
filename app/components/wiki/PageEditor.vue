@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { UForm } from '#components';
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
@@ -12,6 +13,7 @@ import type { PageJobAccess, PageUserAccess } from '~~/gen/ts/resources/wiki/acc
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import BackButton from '../partials/BackButton.vue';
+import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
@@ -24,6 +26,8 @@ const props = defineProps<{
 const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
+
+const modal = useModal();
 
 const { attr, activeChar } = useAuth();
 
@@ -167,6 +171,7 @@ async function updatePage(values: Schema): Promise<void> {
             description: values.meta.description,
             contentType: ContentType.HTML,
             public: values.meta.public,
+            toc: values.meta.toc,
             draft: values.meta.draft,
             tags: [],
         },
@@ -196,22 +201,13 @@ async function updatePage(values: Schema): Promise<void> {
         if (responsePage) {
             page.value = responsePage;
         }
-
-        await navigateTo({
-            name: 'wiki-job-id-slug',
-            params: {
-                job: responsePage!.job,
-                id: responsePage!.id,
-                slug: [responsePage!.meta!.slug ?? ''],
-            },
-        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
-type PageItem = { id: number; title: string };
+type PageItem = { id: number; title: string; draft: boolean };
 
 function pageChildrenToList(p: PageShort, prefix?: string): PageItem[] {
     const list = [];
@@ -219,6 +215,7 @@ function pageChildrenToList(p: PageShort, prefix?: string): PageItem[] {
     list.push({
         id: p.id,
         title: (prefix !== undefined ? `${prefix} > ` : '') + p.title,
+        draft: p.draft,
     });
     if (p.children.length > 0) {
         p.children.filter((c) => c.id !== p.id).forEach((c) => list.push(...pageChildrenToList(c, p.title)));
@@ -231,12 +228,22 @@ const parentPages = computedAsync(() => {
     const pagesList = pages.value
         .flatMap((p) => pageChildrenToList(p))
         .filter((p) => !page.value?.id || p.id !== page.value?.id)
-        .sort((a, b) => a.title.localeCompare(b.title));
+        .sort((a, b) => {
+            const aDraft = a?.draft ?? false;
+            const bDraft = b?.draft ?? false;
+
+            if (aDraft !== bDraft) {
+                // Drafts go last
+                return aDraft ? 1 : -1;
+            }
+            return a.title.localeCompare(b.title);
+        });
 
     if (page.value?.parentId && pagesList.find((p) => p.id === page.value?.parentId) === undefined) {
         pagesList.unshift({
             id: page.value.parentId,
             title: `${t('common.parent_page')} - ${t('common.id')}: ${page.value.parentId}`,
+            draft: page.value.meta?.draft ?? false,
         });
     }
 
@@ -313,10 +320,13 @@ useYArrayFiltered<File>(
 
 provide('yjsDoc', ydoc);
 provide('yjsProvider', provider);
+
+const formRef = useTemplateRef<typeof UForm>('formRef');
 </script>
 
 <template>
     <UForm
+        ref="formRef"
         class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
@@ -327,15 +337,37 @@ provide('yjsProvider', provider);
                 <BackButton :disabled="!canSubmit" />
 
                 <UButtonGroup v-if="page" class="inline-flex">
-                    <UButton class="ml-2" type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
+                    <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
                         <span class="hidden truncate sm:block">
                             {{ $t('common.save') }}
                         </span>
                     </UButton>
 
-                    <UButton type="submit" trailing-icon="i-mdi-publish" :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ state.meta.draft }}
+
+                    <UButton
+                        v-if="page.meta?.draft"
+                        type="submit"
+                        color="info"
+                        trailing-icon="i-mdi-publish"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                        @click.prevent="
+                            modal.open(ConfirmModal, {
+                                title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
+                                description: $t('common.publish_confirm.description'),
+                                color: 'info',
+                                iconClass: 'text-info-500 dark:text-info-400',
+                                icon: 'i-mdi-publish',
+                                confirm: () => {
+                                    state.meta.draft = !state.meta.draft;
+                                    formRef?.submit();
+                                },
+                            })
+                        "
+                    >
                         <span class="hidden truncate sm:block">
-                            {{ !page.meta?.draft ? $t('common.publish') : $t('common.unpublish') }}
+                            {{ $t('common.publish') }}
                         </span>
                     </UButton>
                 </UButtonGroup>
@@ -353,7 +385,7 @@ provide('yjsProvider', provider);
             <DataNoDataBlock
                 v-else-if="!page"
                 icon="i-mdi-file-search"
-                :message="$t('common.not_found', [$t('common.document', 2)])"
+                :message="$t('common.not_found', [$t('common.page', 1)])"
             />
             <UTabs
                 v-else
@@ -440,6 +472,7 @@ provide('yjsProvider', provider);
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 rounded="rounded-none"
                                 :target-id="page?.id"
+                                filestore-namespace="wiki"
                                 :filestore-service="(opts) => $grpc.wiki.wiki.uploadFile(opts)"
                                 @file-uploaded="(file) => state.files.push(file)"
                             >

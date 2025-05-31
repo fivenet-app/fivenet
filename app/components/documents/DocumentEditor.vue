@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { UForm } from '#components';
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
@@ -8,7 +9,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
-import { getDocument, getUser, useClipboardStore } from '~/stores/clipboard';
+import { getDocument as clipboardGetDocument, getUser, useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import { useDocumentEditorStore } from '~/stores/documenteditor';
 import { useNotificatorStore } from '~/stores/notificator';
@@ -18,9 +19,13 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
+import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
-import type { UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
+import type { GetDocumentResponse, UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
+import ConfirmModal from '../partials/ConfirmModal.vue';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 
 const props = defineProps<{
     documentId: number;
@@ -32,7 +37,7 @@ const { t } = useI18n();
 
 const { can, activeChar } = useAuth();
 
-const { game } = useAppConfig();
+const modal = useModal();
 
 const clipboardStore = useClipboardStore();
 
@@ -42,11 +47,69 @@ const documentStore = useDocumentEditorStore();
 
 const notifications = useNotificatorStore();
 
+const {
+    data: document,
+    pending: loading,
+    error,
+    refresh,
+} = useLazyAsyncData(`documents-${props.documentId}`, () => getDocument(props.documentId));
+
+async function getDocument(id: number): Promise<GetDocumentResponse> {
+    try {
+        const req = { documentId: id };
+        const call = $grpc.documents.documents.getDocument(req);
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+
+        await navigateTo({ name: 'documents' });
+        throw e;
+    }
+}
+
 const { maxAccessEntries } = useAppConfig();
+
+const { ydoc, provider } = useCollabDoc('documents', props.documentId);
+
+watchOnce(document, () => provider.connect());
+
+async function setFromProps(): Promise<void> {
+    if (!document.value?.document) return;
+
+    state.title = document.value.document.title;
+    state.state = document.value.document.state;
+    state.content = document.value.document.content?.rawContent ?? '';
+    state.category = document.value.document.category ?? emptyCategory;
+    state.closed = document.value.document.closed;
+    state.draft = document.value.document.draft;
+    state.public = document.value.document.public;
+    if (document.value.access) {
+        state.access.jobs = document.value.access.jobs;
+        state.access.users = document.value.access.users;
+    }
+    state.files = document.value.document.files ?? [];
+
+    const refs = await $grpc.documents.documents.getDocumentReferences({
+        documentId: props.documentId,
+    });
+    currentReferences.value = refs.response.references;
+    const rels = await $grpc.documents.documents.getDocumentRelations({
+        documentId: props.documentId,
+    });
+    currentRelations.value = rels.response.relations;
+}
+provider.once('loadContent', async () => await setFromProps());
 
 const route = useRoute();
 
 const canEdit = ref(false);
+
+const emptyCategory: Category = {
+    id: 0,
+    name: t('common.categories', 0),
+};
 
 const schema = z.object({
     title: z.string().min(3).max(255),
@@ -55,11 +118,12 @@ const schema = z.object({
     closed: z.boolean(),
     draft: z.boolean(),
     public: z.boolean(),
-    category: z.custom<Category>().optional(),
+    category: z.custom<Category>(),
     access: z.object({
         jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries),
         users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries),
     }),
+    files: z.custom<File>().array().max(5),
 });
 
 type Schema = z.output<typeof schema>;
@@ -71,14 +135,13 @@ const state = reactive<Schema>({
     closed: false,
     draft: false,
     public: false,
-    category: undefined,
+    category: emptyCategory,
     access: {
         jobs: [],
         users: [],
     },
+    files: [],
 });
-
-const docCreator = ref<UserShort | undefined>();
 
 const openRelationManager = ref<boolean>(false);
 const relationManagerData = ref(new Map<number, DocumentRelation>());
@@ -90,103 +153,13 @@ const referenceManagerData = ref(new Map<number, DocumentReference>());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
-const emptyCategory: Category = {
-    id: 0,
-    name: t('common.categories', 0),
-};
-const templateId = ref<undefined | number>();
-
 onMounted(async () => {
-    if (route.query.templateId) {
-        const data = clipboardStore.getTemplateData();
-        data.activeChar = activeChar.value!;
-        logger.debug('Editor - Clipboard Template Data', data);
-
-        templateId.value = parseInt(route.query.templateId as string);
-
-        try {
-            const call = $grpc.documents.documents.getTemplate({
-                templateId: templateId.value,
-                data,
-                render: true,
-            });
-            const { response } = await call;
-
-            if (response.template === undefined) {
-                throw new Error('failed to get template from server response');
-            }
-
-            const template = response.template;
-            state.title = template.contentTitle;
-            state.state = template.state;
-            state.content = template.content;
-            state.category = template.category ?? emptyCategory;
-            if (template?.contentAccess) {
-                state.access = template.contentAccess;
-            }
-            if (activeChar.value !== null) {
-                docCreator.value = activeChar.value;
-            }
-        } catch (e) {
-            handleGRPCError(e as RpcError);
-            logger.error('Editor - Template Error', e);
-
-            await navigateTo({ name: 'documents' });
-
-            return;
-        }
-    } else if (props.documentId) {
-        try {
-            const req = { documentId: props.documentId };
-            const call = $grpc.documents.documents.getDocument(req);
-            const { response } = await call;
-
-            const document = response.document;
-            docCreator.value = document?.creator;
-            if (document) {
-                state.title = document.title;
-                state.state = document.state;
-                state.content = document.content?.rawContent ?? '';
-                state.category = document.category ?? emptyCategory;
-                state.closed = document.closed;
-                state.draft = document.draft;
-                state.public = document.public;
-                state.access = response.access!;
-
-                const refs = await $grpc.documents.documents.getDocumentReferences(req);
-                currentReferences.value = refs.response.references;
-                const rels = await $grpc.documents.documents.getDocumentRelations(req);
-                currentRelations.value = rels.response.relations;
-            }
-        } catch (e) {
-            handleGRPCError(e as RpcError);
-
-            await navigateTo({ name: 'documents' });
-
-            return;
-        }
-    } else {
-        state.title = documentStore.$state.title;
-        state.state = documentStore.$state.state;
-        state.content = documentStore.$state.content;
-        state.category = documentStore.$state.category;
-        state.closed = documentStore.$state.closed;
-
-        state.access.jobs.push({
-            id: 0,
-            targetId: props.documentId ?? 0,
-            job: activeChar.value!.job,
-            minimumGrade: game.startJobGrade,
-            access: AccessLevel.EDIT,
-        });
-    }
-
     clipboardStore.activeStack.documents.forEach((doc, idx) => {
         referenceManagerData.value.set(idx, {
             id: idx,
             sourceDocumentId: props.documentId ?? 0,
             targetDocumentId: doc.id!,
-            targetDocument: getDocument(doc),
+            targetDocument: clipboardGetDocument(doc),
             creatorId: activeChar.value!.userId,
             creator: activeChar.value!,
             reference: DocReference.SOLVES,
@@ -267,6 +240,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         public: values.public,
         categoryId: values.category?.id !== 0 ? values.category?.id : undefined,
         access: values.access,
+        files: values.files,
     };
 
     try {
@@ -289,7 +263,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 if (currentReferences.value.find((r) => r.id === ref.id!)) {
                     return;
                 }
-                ref.sourceDocumentId = response.documentId;
+                ref.sourceDocumentId = response.document!.id!;
 
                 $grpc.documents.documents.addDocumentReference({
                     reference: ref,
@@ -309,7 +283,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 if (currentRelations.value.find((r) => r.id === rel.id!)) {
                     return;
                 }
-                rel.documentId = response.documentId;
+                rel.documentId = response.document!.id;
 
                 $grpc.documents.documents.addDocumentRelation({
                     relation: rel,
@@ -327,7 +301,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
 
         await navigateTo({
             name: 'documents-id',
-            params: { id: response.documentId },
+            params: { id: response.document!.id },
         });
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -337,7 +311,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
 
 const items = [
     {
-        slot: 'edit',
+        slot: 'content',
         label: t('common.content'),
         icon: 'i-mdi-pencil',
     },
@@ -371,11 +345,21 @@ const canDo = computed(() => ({
     edit:
         props.documentId === undefined
             ? true
-            : checkDocAccess(state.access, docCreator.value, AccessLevel.EDIT, 'documents.DocumentsService.UpdateDocument'),
+            : checkDocAccess(
+                  state.access,
+                  document.value?.document?.creator,
+                  AccessLevel.EDIT,
+                  'documents.DocumentsService.UpdateDocument',
+              ),
     access:
         props.documentId === undefined
             ? true
-            : checkDocAccess(state.access, docCreator.value, AccessLevel.ACCESS, 'documents.DocumentsService.UpdateDocument'),
+            : checkDocAccess(
+                  state.access,
+                  document.value?.document?.creator,
+                  AccessLevel.ACCESS,
+                  'documents.DocumentsService.UpdateDocument',
+              ),
     references: can('documents.DocumentsService.AddDocumentReference').value,
     relations: can('documents.DocumentsService.AddDocumentRelation').value,
 }));
@@ -390,10 +374,59 @@ logger.info(
     'Relations',
     canDo.value.relations,
 );
+
+useYText(ydoc.getText('title'), toRef(state, 'title'), { provider: provider });
+useYText(ydoc.getText('state'), toRef(state, 'state'), { provider: provider });
+const detailsYdoc = ydoc.getMap('details');
+useYBoolean(detailsYdoc, 'closed', toRef(state, 'closed'), { provider: provider });
+useYBoolean(detailsYdoc, 'draft', toRef(state, 'draft'), { provider: provider });
+useYBoolean(detailsYdoc, 'public', toRef(state, 'public'), { provider: provider });
+const categoryYdoc = ydoc.getMap<Primitive>('category');
+useYObject<Category>(
+    categoryYdoc,
+    toRef(state, 'category'),
+    {
+        omit: ['createdAt', 'deletedAt'],
+    },
+    {
+        provider: provider,
+    },
+);
+
+useYArrayFiltered<DocumentJobAccess>(
+    ydoc.getArray('access_jobs'),
+    toRef(state.access, 'jobs'),
+    { omit: ['createdAt', 'user'] },
+    { provider: provider },
+);
+
+useYArrayFiltered<DocumentUserAccess>(
+    ydoc.getArray('access_users'),
+    toRef(state.access, 'users'),
+    {
+        omit: ['createdAt', 'user'],
+    },
+    { provider: provider },
+);
+
+useYArrayFiltered<File>(
+    ydoc.getArray('files'),
+    toRef(state, 'files'),
+    {
+        omit: ['createdAt', 'meta'],
+    },
+    { provider: provider },
+);
+
+provide('yjsDoc', ydoc);
+provide('yjsProvider', provider);
+
+const formRef = useTemplateRef<typeof UForm>('formRef');
 </script>
 
 <template>
     <UForm
+        ref="formRef"
         class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
@@ -416,13 +449,28 @@ logger.info(
                     </UButton>
 
                     <UButton
+                        v-if="document?.document?.draft"
                         type="submit"
+                        color="info"
                         trailing-icon="i-mdi-publish"
                         :disabled="!canEdit || !canSubmit"
                         :loading="!canSubmit"
+                        @click.prevent="
+                            modal.open(ConfirmModal, {
+                                title: $t('common.publish_confirm.title', { type: $t('common.document', 1) }),
+                                description: $t('common.publish_confirm.description'),
+                                color: 'info',
+                                iconClass: 'text-info-500 dark:text-info-400',
+                                icon: 'i-mdi-publish',
+                                confirm: () => {
+                                    state.draft = !state.draft;
+                                    formRef?.submit();
+                                },
+                            })
+                        "
                     >
                         <span class="hidden truncate sm:block">
-                            {{ !state.draft ? $t('common.publish') : $t('common.unpublish') }}
+                            {{ $t('common.publish') }}
                         </span>
                     </UButton>
                 </UButtonGroup>
@@ -430,7 +478,20 @@ logger.info(
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page', 1)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.page', 1)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="!document"
+                icon="i-mdi-file-search"
+                :message="$t('common.not_found', [$t('common.page', 1)])"
+            />
             <UTabs
+                v-else
                 v-model="selectedTab"
                 class="flex flex-1 flex-col"
                 :items="items"
@@ -441,7 +502,7 @@ logger.info(
                     list: { rounded: '' },
                 }"
             >
-                <template #edit>
+                <template #content>
                     <UDashboardToolbar>
                         <template #default>
                             <div class="flex w-full flex-col gap-2">
@@ -471,6 +532,9 @@ logger.info(
                                                             const categories =
                                                                 await completorStore.completeDocumentCategories(search);
                                                             categoriesLoading = false;
+                                                            if (!categories.find((c) => c.id === state.category.id)) {
+                                                                categories.unshift(state.category);
+                                                            }
                                                             categories.unshift(emptyCategory);
                                                             return categories;
                                                         } catch (e) {
@@ -569,9 +633,14 @@ logger.info(
                         <ClientOnly>
                             <TiptapEditor
                                 v-model="state.content"
+                                v-model:files="state.files"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 :disabled="!canEdit || !canDo.edit"
                                 rounded="rounded-none"
+                                :target-id="document.document?.id"
+                                filestore-namespace="documents"
+                                :filestore-service="(opts) => $grpc.documents.documents.uploadFile(opts)"
+                                @file-uploaded="(file) => state.files.push(file)"
                             >
                                 <template #footer>
                                     <div v-if="saving" class="place-self-start">

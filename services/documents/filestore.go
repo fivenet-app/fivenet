@@ -32,6 +32,7 @@ func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadPacket, fi
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
+	meta.Namespace = "documents"
 
 	check, err := s.access.CanUserAccessTarget(ctx, meta.ParentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {

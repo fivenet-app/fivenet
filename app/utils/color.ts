@@ -1,10 +1,6 @@
-export type Color = {
-    label: string;
-    chip: string;
-    class: string;
-};
+import type { Color, RGB } from '~/types/color';
 
-export const primaryColors = [
+export const primaryColors: Color[] = [
     // Primary - Default
     { label: 'green', chip: 'green', class: 'bg-green-500 dark:bg-green-400' },
     { label: 'teal', chip: 'teal', class: 'bg-teal-500 dark:bg-teal-400' },
@@ -26,7 +22,7 @@ export const primaryColors = [
     { label: 'purple', chip: 'purple', class: 'bg-purple-500 dark:bg-purple-400' },
 ] as const;
 
-export const backgroundColors = [
+export const backgroundColors: Color[] = [
     // Gray Colors
     { label: 'slate', chip: 'slate', class: 'bg-slate-500 dark:bg-slate-400' },
     { label: 'cool', chip: 'cool', class: 'bg-cool-500 dark:bg-cool-400' },
@@ -34,3 +30,40 @@ export const backgroundColors = [
     { label: 'neutral', chip: 'neutral', class: 'bg-neutral-500 dark:bg-neutral-400' },
     { label: 'stone', chip: 'stone', class: 'bg-stone-500 dark:bg-stone-400' },
 ] as const;
+
+// Taken from https://stackoverflow.com/a/16348977
+export function stringToColor(str: string): string {
+    let hash = 0;
+    str.split('').forEach((char) => {
+        hash = char.charCodeAt(0) + ((hash << 5) - hash);
+    });
+    let colour = '#';
+    for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xff;
+        colour += value.toString(16).padStart(2, '0');
+    }
+    return colour;
+}
+
+export const RGBBlack = { r: 0, g: 0, b: 0 };
+
+// Taken from https://stackoverflow.com/a/5624139
+export function hexToRgb(hex: string, def: RGB | undefined = undefined): RGB | undefined {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+    return result
+        ? {
+              r: result[1] ? parseInt(result[1], 16) : 0,
+              g: result[2] ? parseInt(result[2], 16) : 0,
+              b: result[3] ? parseInt(result[3], 16) : 0,
+          }
+        : def;
+}
+
+export function isColorBright(input: RGB | string): boolean {
+    const rgb = typeof input === 'string' ? hexToRgb(input, RGBBlack)! : input;
+
+    // http://www.w3.org/TR/AERT#color-contrast
+    const brightness = Math.round((rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000);
+    return brightness > 125;
+}

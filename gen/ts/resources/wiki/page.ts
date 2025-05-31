@@ -170,6 +170,10 @@ export interface PageShort {
      * @generated from protobuf field: optional int32 level = 11
      */
     level?: number;
+    /**
+     * @generated from protobuf field: bool draft = 13
+     */
+    draft: boolean;
 }
 /**
  * @generated from protobuf message resources.wiki.PageRootInfo
@@ -428,7 +432,8 @@ class PageShort$Type extends MessageType<PageShort> {
             { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 9, name: "children", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => PageShort },
             { no: 10, name: "root_info", kind: "message", T: () => PageRootInfo },
-            { no: 11, name: "level", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
+            { no: 11, name: "level", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
+            { no: 13, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PageShort>): PageShort {
@@ -438,6 +443,7 @@ class PageShort$Type extends MessageType<PageShort> {
         message.title = "";
         message.description = "";
         message.children = [];
+        message.draft = false;
         if (value !== undefined)
             reflectionMergePartial<PageShort>(this, message, value);
         return message;
@@ -479,6 +485,9 @@ class PageShort$Type extends MessageType<PageShort> {
                     break;
                 case /* optional int32 level */ 11:
                     message.level = reader.int32();
+                    break;
+                case /* bool draft */ 13:
+                    message.draft = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -525,6 +534,9 @@ class PageShort$Type extends MessageType<PageShort> {
         /* optional int32 level = 11; */
         if (message.level !== undefined)
             writer.tag(11, WireType.Varint).int32(message.level);
+        /* bool draft = 13; */
+        if (message.draft !== false)
+            writer.tag(13, WireType.Varint).bool(message.draft);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

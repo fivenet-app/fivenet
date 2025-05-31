@@ -5,7 +5,7 @@ import type { ParsedURL } from 'ufo';
 import { hasTrailingSlash, parseURL, stringifyParsedURL, withBase, withTrailingSlash, withoutTrailingSlash } from 'ufo';
 import type { RouteRecord } from 'vue-router';
 
-export function createInternalLinkResolver(absolute?: boolean) {
+function createInternalLinkResolver(absolute?: boolean) {
     return (path: string) => {
         const fixedSlash = withTrailingSlash(path);
         if (absolute) return withBase(fixedSlash, '/');

@@ -221,6 +221,35 @@ func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (uint64, st
 	return f.ID, f.FilePath, nil
 }
 
+func (h *Handler[P]) deleteJoinRow(ctx context.Context, tx *sql.Tx, parentID P, fileID uint64) error {
+	if h.nullOnlyParentRow {
+		_, err := h.joinTable.
+			UPDATE(
+				h.parentCol,
+				h.fileCol,
+			).
+			SET(
+				parentID,
+				jet.NULL,
+			).
+			WHERE(jet.AND(
+				h.parentColBoolExp(parentID),
+				h.fileCol.EQ(jet.Uint64(fileID)),
+			)).
+			ExecContext(ctx, tx)
+		return err
+	}
+
+	_, err := h.joinTable.
+		DELETE().
+		WHERE(jet.AND(
+			h.parentColBoolExp(parentID),
+			h.fileCol.EQ(jet.Uint64(fileID)),
+		)).
+		ExecContext(ctx, tx)
+	return err
+}
+
 // Delete (unary)
 func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) error {
 	tx, err := h.db.BeginTx(ctx, nil)
@@ -232,35 +261,8 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) erro
 	var zeroVal P
 	if parentID != zeroVal {
 		// 1. Remove or empty join row
-		if h.nullOnlyParentRow {
-			_, err = h.joinTable.
-				UPDATE(
-					h.parentCol,
-					h.fileCol,
-				).
-				SET(
-					parentID,
-					jet.NULL,
-				).
-				WHERE(jet.AND(
-					h.parentColBoolExp(parentID),
-					h.fileCol.EQ(jet.Uint64(fileID)),
-				)).
-				ExecContext(ctx, tx)
-			if err != nil {
-				return err
-			}
-		} else {
-			_, err = h.joinTable.
-				DELETE().
-				WHERE(jet.AND(
-					h.parentColBoolExp(parentID),
-					h.fileCol.EQ(jet.Uint64(fileID)),
-				)).
-				ExecContext(ctx, tx)
-			if err != nil {
-				return err
-			}
+		if err := h.deleteJoinRow(ctx, tx, parentID, fileID); err != nil {
+			return err
 		}
 	}
 
@@ -443,12 +445,12 @@ func (h *Handler[P]) CountFilesForParentID(ctx context.Context, parentID P) (int
 func (h *Handler[P]) ListFilesForParentID(ctx context.Context, parentID P) ([]*file.File, error) {
 	stmt := h.joinTable.
 		SELECT(
-			h.fileCol.AS("id"),
-			h.parentCol.AS("parent_id"),
-			tFiles.FilePath.AS("file_path"),
-			tFiles.ByteSize.AS("byte_size"),
-			tFiles.ContentType.AS("content_type"),
-			tFiles.CreatedAt.AS("created_at"),
+			h.fileCol.AS("file.id"),
+			h.parentCol.AS("file.parent_id"),
+			tFiles.FilePath.AS("file.file_path"),
+			tFiles.ByteSize.AS("file.byte_size"),
+			tFiles.ContentType.AS("file.content_type"),
+			tFiles.CreatedAt.AS("file.created_at"),
 		).
 		FROM(
 			h.joinTable.
@@ -467,4 +469,50 @@ func (h *Handler[P]) ListFilesForParentID(ctx context.Context, parentID P) ([]*f
 	}
 
 	return files, nil
+}
+
+func (h *Handler[P]) HandleFileChangesForParent(ctx context.Context, tx *sql.Tx, parentID P, updatedFiles []*file.File) (int64, int64, error) {
+	current, err := h.ListFilesForParentID(ctx, parentID)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	currentMap := make(map[uint64]*file.File)
+	for _, f := range current {
+		currentMap[f.Id] = f
+	}
+
+	updatedMap := make(map[uint64]*file.File)
+	for _, f := range updatedFiles {
+		updatedMap[f.Id] = f
+	}
+
+	var added []*file.File
+	var deleted []*file.File
+
+	for id, f := range updatedMap {
+		if _, exists := currentMap[id]; !exists {
+			added = append(added, f)
+		}
+	}
+
+	for id, f := range currentMap {
+		if _, exists := updatedMap[id]; !exists {
+			deleted = append(deleted, f)
+		}
+	}
+
+	if len(added) == 0 && len(deleted) == 0 {
+		return 0, 0, nil // No changes
+	}
+
+	for _, f := range deleted {
+		if err := h.deleteJoinRow(ctx, tx, parentID, f.Id); err != nil {
+			return 0, 0, err
+		}
+	}
+
+	// No need to add files as they are already present in the filestore and join table (mapping)
+
+	return int64(len(added)), int64(len(deleted)), nil
 }

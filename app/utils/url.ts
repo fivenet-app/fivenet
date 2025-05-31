@@ -1,4 +1,4 @@
-export function generateDerefedURL(target: string): string {
+export function generateDerefURL(target: string): string {
     return (
         '/dereferer?' +
         new URLSearchParams({

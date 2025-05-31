@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { backgroundColors, primaryColors } from '~/composables/colors';
+import { backgroundColors, primaryColors } from '~/utils/color';
 
 const props = withDefaults(
     defineProps<{

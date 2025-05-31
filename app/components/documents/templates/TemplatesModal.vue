@@ -46,6 +46,8 @@ watch(reqStatus.value, () => {
     }
 });
 
+const documentsDocuments = useDocumentsDocuments();
+
 function closeDialog(): void {
     isOpen.value = false;
 }
@@ -98,10 +100,7 @@ async function templateSelected(t: TemplateShort | undefined): Promise<void> {
             steps.value.selectTemplate = false;
             steps.value.selectClipboard = true;
         } else {
-            await navigateTo({
-                name: 'documents-create',
-                query: { templateId: template.value?.id },
-            });
+            await documentsDocuments.createDocument(template.value.id);
             isOpen.value = false;
         }
     } else {
@@ -123,19 +122,14 @@ const submit = ref(false);
 
 async function clipboardDialog(): Promise<void> {
     submit.value = true;
-    await navigateTo({
-        name: 'documents-create',
-        query: { templateId: template.value?.id },
-    });
+    await documentsDocuments.createDocument(template.value?.id);
 
     isOpen.value = false;
 }
 
 onBeforeMount(async () => {
     if (!can('documents.DocumentsService.CreateDocument').value) {
-        await navigateTo({
-            name: 'documents-create',
-        });
+        await documentsDocuments.createDocument();
     }
 });
 </script>
@@ -160,7 +154,7 @@ onBeforeMount(async () => {
                 </UButton>
 
                 <div class="pt-6">
-                    <TemplatesList hide-icon @selected="templateSelected($event)" />
+                    <TemplatesList @selected="templateSelected($event)" />
                 </div>
             </template>
             <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">

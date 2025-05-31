@@ -34,6 +34,7 @@ func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadPacket, fi
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
 	}
+	meta.Namespace = "wiki"
 
 	check, err := s.access.CanUserAccessTarget(ctx, meta.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {

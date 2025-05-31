@@ -1,13 +1,6 @@
 import type { NotificationAction } from '#ui/types';
-import type { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
-export const NotificationTypes: NotificationType[] = [
-    NotificationType.ERROR,
-    NotificationType.WARNING,
-    NotificationType.INFO,
-    NotificationType.SUCCESS,
-];
+import type { TranslateItem } from '~/types/i18n';
+import type { Data, NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export interface NotificationActionI18n extends Omit<NotificationAction, 'label'> {
     label: TranslateItem;

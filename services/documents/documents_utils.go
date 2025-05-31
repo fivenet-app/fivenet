@@ -77,6 +77,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			tDocumentShort.CreatorJob,
 			tDocumentShort.State,
 			tDocumentShort.Closed,
+			tDocumentShort.Draft,
 			tDocumentShort.Public,
 			tDocumentShort.TemplateID,
 			tWorkflow.DocumentID,

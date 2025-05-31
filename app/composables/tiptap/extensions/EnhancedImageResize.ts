@@ -1,7 +1,18 @@
+// EnhancedImageResize.ts
+//
+// Combines:
+//   • Tiptap's <img> node behaviour
+//   • Resize handles + alignment toolbar (left / center / right)
+//   • Extra `fileId` attribute for your upload / meta.files workflow
+//
+// Drop this file into `extensions/` and register it in the editor
+// instead of the default Image extension.
+//
+// ---------------------------------------------------------------------
+
 // Modified version of [GitHub bae-sh/tiptap-extension-resize-image](https://github.com/bae-sh/tiptap-extension-resize-image/blob/main/lib/imageResize.ts),
 // which is licensed under the [MIT License](https://github.com/bae-sh/tiptap-extension-resize-image/blob/main/LICENSE).
-
-import Image from '@tiptap/extension-image';
+import { EnhancedImage } from './EnhancedImage';
 
 // From https://icon-sets.iconify.design/mdi/?icon-filter=format+align
 const alignLeftIcon =
@@ -11,7 +22,7 @@ const alignCenterIcon =
 const alignRightIcon =
     '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M3 3h18v2H3zm6 4h12v2H9zm-6 4h18v2H3zm6 4h12v2H9zm-6 4h18v2H3z"/></svg>';
 
-export const ImageResize = Image.extend({
+export const EnhancedImageResize = EnhancedImage.extend({
     addAttributes() {
         return {
             ...this.parent?.(),

@@ -118,29 +118,14 @@ func (m *CreateDocumentRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Access
-	if m.Access != nil {
-		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+	// Field: TemplateData
+	if m.TemplateData != nil {
+		if v, ok := any(m.GetTemplateData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
 	}
-
-	// Field: Content
-	if m.Content != nil {
-		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: State
-	m.State = htmlsanitizer.Sanitize(m.State)
-
-	// Field: Title
-	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	return nil
 }
@@ -1087,6 +1072,18 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Files
+	for idx, item := range m.Files {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: State
 	m.State = htmlsanitizer.Sanitize(m.State)
 
@@ -1099,6 +1096,15 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 func (m *UpdateDocumentResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Document
+	if m.Document != nil {
+		if v, ok := any(m.GetDocument()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

@@ -20,8 +20,9 @@ import { DocActivityData } from "../../resources/documents/activity";
 import { DocRequest } from "../../resources/documents/requests";
 import { DocActivity } from "../../resources/documents/activity";
 import { DocActivityType } from "../../resources/documents/activity";
-import { ContentType } from "../../resources/common/content/content";
+import { File } from "../../resources/file/file";
 import { Content } from "../../resources/common/content/content";
+import { ContentType } from "../../resources/common/content/content";
 import { Comment } from "../../resources/documents/comment";
 import { DocumentRelation } from "../../resources/documents/documents";
 import { DocumentReference } from "../../resources/documents/documents";
@@ -407,9 +408,9 @@ export interface DeleteCommentResponse {
  */
 export interface UpdateDocumentResponse {
     /**
-     * @generated from protobuf field: uint64 document_id = 1
+     * @generated from protobuf field: resources.documents.Document document = 1
      */
-    documentId: number; // @gotags: alias:"id"
+    document?: Document;
 }
 /**
  * @generated from protobuf message services.documents.DeleteDocumentRequest
@@ -472,64 +473,26 @@ export interface ChangeDocumentOwnerResponse {
  */
 export interface CreateDocumentRequest {
     /**
-     * @generated from protobuf field: optional uint64 category_id = 1
-     */
-    categoryId?: number;
-    /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: string title = 2
-     */
-    title: string;
-    /**
-     * @sanitize
-     *
-     * @generated from protobuf field: resources.common.content.Content content = 3
-     */
-    content?: Content;
-    /**
-     * @generated from protobuf field: resources.common.content.ContentType content_type = 4
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 1
      */
     contentType: ContentType;
     /**
-     * @generated from protobuf field: optional string data = 5
-     */
-    data?: string;
-    /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string state = 6
-     */
-    state: string;
-    /**
-     * @generated from protobuf field: bool closed = 7
-     */
-    closed: boolean;
-    /**
-     * @generated from protobuf field: bool draft = 8
-     */
-    draft: boolean;
-    /**
-     * @generated from protobuf field: bool public = 9
-     */
-    public: boolean;
-    /**
-     * @generated from protobuf field: optional resources.documents.DocumentAccess access = 10
-     */
-    access?: DocumentAccess;
-    /**
-     * @generated from protobuf field: optional uint64 template_id = 11
+     * @generated from protobuf field: optional uint64 template_id = 2
      */
     templateId?: number;
+    /**
+     * @generated from protobuf field: optional resources.documents.TemplateData template_data = 3
+     */
+    templateData?: TemplateData;
 }
 /**
  * @generated from protobuf message services.documents.CreateDocumentResponse
  */
 export interface CreateDocumentResponse {
     /**
-     * @generated from protobuf field: uint64 document_id = 1
+     * @generated from protobuf field: uint64 id = 1
      */
-    documentId: number; // @gotags: alias:"id"
+    id: number;
 }
 /**
  * @generated from protobuf message services.documents.UpdateDocumentRequest
@@ -585,6 +548,10 @@ export interface UpdateDocumentRequest {
      * @generated from protobuf field: optional resources.documents.DocumentAccess access = 11
      */
     access?: DocumentAccess;
+    /**
+     * @generated from protobuf field: repeated resources.file.File files = 12
+     */
+    files: File[]; // @gotags: alias:"files"
 }
 // Document Activity and Requests =============================================
 
@@ -2629,12 +2596,11 @@ export const DeleteCommentResponse = new DeleteCommentResponse$Type();
 class UpdateDocumentResponse$Type extends MessageType<UpdateDocumentResponse> {
     constructor() {
         super("services.documents.UpdateDocumentResponse", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "document", kind: "message", T: () => Document }
         ]);
     }
     create(value?: PartialMessage<UpdateDocumentResponse>): UpdateDocumentResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
         if (value !== undefined)
             reflectionMergePartial<UpdateDocumentResponse>(this, message, value);
         return message;
@@ -2644,8 +2610,8 @@ class UpdateDocumentResponse$Type extends MessageType<UpdateDocumentResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 document_id */ 1:
-                    message.documentId = reader.uint64().toNumber();
+                case /* resources.documents.Document document */ 1:
+                    message.document = Document.internalBinaryRead(reader, reader.uint32(), options, message.document);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2659,9 +2625,9 @@ class UpdateDocumentResponse$Type extends MessageType<UpdateDocumentResponse> {
         return message;
     }
     internalBinaryWrite(message: UpdateDocumentResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 document_id = 1; */
-        if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* resources.documents.Document document = 1; */
+        if (message.document)
+            Document.internalBinaryWrite(message.document, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2953,27 +2919,14 @@ export const ChangeDocumentOwnerResponse = new ChangeDocumentOwnerResponse$Type(
 class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
     constructor() {
         super("services.documents.CreateDocumentRequest", [
-            { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 3, name: "content", kind: "message", T: () => Content },
-            { no: 4, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
-            { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
-            { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "access", kind: "message", T: () => DocumentAccess },
-            { no: 11, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "template_data", kind: "message", T: () => TemplateData }
         ]);
     }
     create(value?: PartialMessage<CreateDocumentRequest>): CreateDocumentRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.title = "";
         message.contentType = 0;
-        message.state = "";
-        message.closed = false;
-        message.draft = false;
-        message.public = false;
         if (value !== undefined)
             reflectionMergePartial<CreateDocumentRequest>(this, message, value);
         return message;
@@ -2983,38 +2936,14 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional uint64 category_id */ 1:
-                    message.categoryId = reader.uint64().toNumber();
-                    break;
-                case /* string title */ 2:
-                    message.title = reader.string();
-                    break;
-                case /* resources.common.content.Content content */ 3:
-                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
-                    break;
-                case /* resources.common.content.ContentType content_type */ 4:
+                case /* resources.common.content.ContentType content_type */ 1:
                     message.contentType = reader.int32();
                     break;
-                case /* optional string data */ 5:
-                    message.data = reader.string();
-                    break;
-                case /* string state */ 6:
-                    message.state = reader.string();
-                    break;
-                case /* bool closed */ 7:
-                    message.closed = reader.bool();
-                    break;
-                case /* bool draft */ 8:
-                    message.draft = reader.bool();
-                    break;
-                case /* bool public */ 9:
-                    message.public = reader.bool();
-                    break;
-                case /* optional resources.documents.DocumentAccess access */ 10:
-                    message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
-                    break;
-                case /* optional uint64 template_id */ 11:
+                case /* optional uint64 template_id */ 2:
                     message.templateId = reader.uint64().toNumber();
+                    break;
+                case /* optional resources.documents.TemplateData template_data */ 3:
+                    message.templateData = TemplateData.internalBinaryRead(reader, reader.uint32(), options, message.templateData);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3028,39 +2957,15 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         return message;
     }
     internalBinaryWrite(message: CreateDocumentRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional uint64 category_id = 1; */
-        if (message.categoryId !== undefined)
-            writer.tag(1, WireType.Varint).uint64(message.categoryId);
-        /* string title = 2; */
-        if (message.title !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.title);
-        /* resources.common.content.Content content = 3; */
-        if (message.content)
-            Content.internalBinaryWrite(message.content, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.common.content.ContentType content_type = 4; */
+        /* resources.common.content.ContentType content_type = 1; */
         if (message.contentType !== 0)
-            writer.tag(4, WireType.Varint).int32(message.contentType);
-        /* optional string data = 5; */
-        if (message.data !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.data);
-        /* string state = 6; */
-        if (message.state !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 7; */
-        if (message.closed !== false)
-            writer.tag(7, WireType.Varint).bool(message.closed);
-        /* bool draft = 8; */
-        if (message.draft !== false)
-            writer.tag(8, WireType.Varint).bool(message.draft);
-        /* bool public = 9; */
-        if (message.public !== false)
-            writer.tag(9, WireType.Varint).bool(message.public);
-        /* optional resources.documents.DocumentAccess access = 10; */
-        if (message.access)
-            DocumentAccess.internalBinaryWrite(message.access, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 template_id = 11; */
+            writer.tag(1, WireType.Varint).int32(message.contentType);
+        /* optional uint64 template_id = 2; */
         if (message.templateId !== undefined)
-            writer.tag(11, WireType.Varint).uint64(message.templateId);
+            writer.tag(2, WireType.Varint).uint64(message.templateId);
+        /* optional resources.documents.TemplateData template_data = 3; */
+        if (message.templateData)
+            TemplateData.internalBinaryWrite(message.templateData, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3075,12 +2980,12 @@ export const CreateDocumentRequest = new CreateDocumentRequest$Type();
 class CreateDocumentResponse$Type extends MessageType<CreateDocumentResponse> {
     constructor() {
         super("services.documents.CreateDocumentResponse", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CreateDocumentResponse>): CreateDocumentResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.documentId = 0;
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<CreateDocumentResponse>(this, message, value);
         return message;
@@ -3090,8 +2995,8 @@ class CreateDocumentResponse$Type extends MessageType<CreateDocumentResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 document_id */ 1:
-                    message.documentId = reader.uint64().toNumber();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3105,9 +3010,9 @@ class CreateDocumentResponse$Type extends MessageType<CreateDocumentResponse> {
         return message;
     }
     internalBinaryWrite(message: CreateDocumentResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 document_id = 1; */
-        if (message.documentId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* uint64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3132,7 +3037,8 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "draft", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 10, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 11, name: "access", kind: "message", T: () => DocumentAccess }
+            { no: 11, name: "access", kind: "message", T: () => DocumentAccess },
+            { no: 12, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File }
         ]);
     }
     create(value?: PartialMessage<UpdateDocumentRequest>): UpdateDocumentRequest {
@@ -3144,6 +3050,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         message.closed = false;
         message.draft = false;
         message.public = false;
+        message.files = [];
         if (value !== undefined)
             reflectionMergePartial<UpdateDocumentRequest>(this, message, value);
         return message;
@@ -3185,6 +3092,9 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
                     break;
                 case /* optional resources.documents.DocumentAccess access */ 11:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                case /* repeated resources.file.File files */ 12:
+                    message.files.push(File.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3231,6 +3141,9 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         /* optional resources.documents.DocumentAccess access = 11; */
         if (message.access)
             DocumentAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.file.File files = 12; */
+        for (let i = 0; i < message.files.length; i++)
+            File.internalBinaryWrite(message.files[i], writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

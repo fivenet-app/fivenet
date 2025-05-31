@@ -116,6 +116,7 @@
     - [DocAccessUsersDiff](#resources-documents-DocAccessUsersDiff)
     - [DocActivity](#resources-documents-DocActivity)
     - [DocActivityData](#resources-documents-DocActivityData)
+    - [DocFilesChange](#resources-documents-DocFilesChange)
     - [DocOwnerChanged](#resources-documents-DocOwnerChanged)
     - [DocUpdated](#resources-documents-DocUpdated)
   
@@ -405,6 +406,7 @@
     - [PageAccessUsersDiff](#resources-wiki-PageAccessUsersDiff)
     - [PageActivity](#resources-wiki-PageActivity)
     - [PageActivityData](#resources-wiki-PageActivityData)
+    - [PageFilesChange](#resources-wiki-PageFilesChange)
     - [PageUpdated](#resources-wiki-PageUpdated)
   
     - [PageActivityType](#resources-wiki-PageActivityType)
@@ -2562,6 +2564,22 @@ Wrapped translated message for the client @dbscanner: json
 
 
 
+<a name="resources-documents-DocFilesChange"></a>
+
+### DocFilesChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [int64](#int64) |  |  |
+| `deleted` | [int64](#int64) |  |  |
+
+
+
+
+
+
 <a name="resources-documents-DocOwnerChanged"></a>
 
 ### DocOwnerChanged
@@ -2589,6 +2607,7 @@ Wrapped translated message for the client @dbscanner: json
 | `title_diff` | [string](#string) | optional |  |
 | `content_diff` | [string](#string) | optional |  |
 | `state_diff` | [string](#string) | optional |  |
+| `files_change` | [DocFilesChange](#resources-documents-DocFilesChange) | optional |  |
 
 
 
@@ -2614,6 +2633,7 @@ Wrapped translated message for the client @dbscanner: json
 | `DOC_ACTIVITY_TYPE_ACCESS_UPDATED` | 7 |  |
 | `DOC_ACTIVITY_TYPE_OWNER_CHANGED` | 8 |  |
 | `DOC_ACTIVITY_TYPE_DELETED` | 9 |  |
+| `DOC_ACTIVITY_TYPE_DRAFT_TOGGLED` | 19 |  |
 | `DOC_ACTIVITY_TYPE_COMMENT_ADDED` | 10 | Comments |
 | `DOC_ACTIVITY_TYPE_COMMENT_UPDATED` | 11 |  |
 | `DOC_ACTIVITY_TYPE_COMMENT_DELETED` | 12 |  |
@@ -6714,6 +6734,22 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+<a name="resources-wiki-PageFilesChange"></a>
+
+### PageFilesChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [int64](#int64) |  |  |
+| `deleted` | [int64](#int64) |  |  |
+
+
+
+
+
+
 <a name="resources-wiki-PageUpdated"></a>
 
 ### PageUpdated
@@ -6725,6 +6761,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `title_diff` | [string](#string) | optional |  |
 | `description_diff` | [string](#string) | optional |  |
 | `content_diff` | [string](#string) | optional |  |
+| `files_change` | [PageFilesChange](#resources-wiki-PageFilesChange) | optional |  |
 
 
 
@@ -6746,6 +6783,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `PAGE_ACTIVITY_TYPE_ACCESS_UPDATED` | 3 |  |
 | `PAGE_ACTIVITY_TYPE_OWNER_CHANGED` | 4 |  |
 | `PAGE_ACTIVITY_TYPE_DELETED` | 5 |  |
+| `PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED` | 6 |  |
 
 
  <!-- end enums -->
@@ -6846,6 +6884,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `children` | [PageShort](#resources-wiki-PageShort) | repeated |  |
 | `root_info` | [PageRootInfo](#resources-wiki-PageRootInfo) | optional |  |
 | `level` | [int32](#int32) | optional |  |
+| `draft` | [bool](#bool) |  |  |
 
 
 
@@ -12467,7 +12506,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `page` | [resources.wiki.Page](#resources-wiki-Page) |  |  |
+| `parent_id` | [uint64](#uint64) | optional |  |
+| `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  |  |
 
 
 
@@ -12482,7 +12522,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `page` | [resources.wiki.Page](#resources-wiki-Page) |  |  |
+| `job` | [string](#string) |  |  |
+| `id` | [uint64](#uint64) |  |  |
 
 
 
@@ -13312,17 +13353,9 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `category_id` | [uint64](#uint64) | optional |  |
-| `title` | [string](#string) |  | @sanitize: method=StripTags |
-| `content` | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
 | `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  |  |
-| `data` | [string](#string) | optional |  |
-| `state` | [string](#string) |  | @sanitize |
-| `closed` | [bool](#bool) |  |  |
-| `draft` | [bool](#bool) |  |  |
-| `public` | [bool](#bool) |  |  |
-| `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) | optional |  |
 | `template_id` | [uint64](#uint64) | optional |  |
+| `template_data` | [resources.documents.TemplateData](#resources-documents-TemplateData) | optional |  |
 
 
 
@@ -13337,7 +13370,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `id` | [uint64](#uint64) |  |  |
 
 
 
@@ -14215,6 +14248,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
 | `access` | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) | optional |  |
+| `files` | [resources.file.File](#resources-file-File) | repeated | @gotags: alias:"files" |
 
 
 
@@ -14229,7 +14263,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `document_id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `document` | [resources.documents.Document](#resources-documents-Document) |  |  |
 
 
 

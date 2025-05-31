@@ -285,6 +285,7 @@ type PageShort struct {
 	Children      []*PageShort  `protobuf:"bytes,9,rep,name=children,proto3" json:"children,omitempty"`
 	RootInfo      *PageRootInfo `protobuf:"bytes,10,opt,name=root_info,json=rootInfo,proto3,oneof" json:"root_info,omitempty"`
 	Level         *int32        `protobuf:"varint,11,opt,name=level,proto3,oneof" json:"level,omitempty"`
+	Draft         bool          `protobuf:"varint,13,opt,name=draft,proto3" json:"draft,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -396,6 +397,13 @@ func (x *PageShort) GetLevel() int32 {
 	return 0
 }
 
+func (x *PageShort) GetDraft() bool {
+	if x != nil {
+		return x.Draft
+	}
+	return false
+}
+
 type PageRootInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Logo          *file.File             `protobuf:"bytes,1,opt,name=logo,proto3,oneof" json:"logo,omitempty"`
@@ -484,7 +492,7 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\v_creator_idB\n" +
 	"\n" +
 	"\b_creatorB\x06\n" +
-	"\x04_toc\"\x88\x04\n" +
+	"\x04_toc\"\x9e\x04\n" +
 	"\tPageShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x182R\x03job\x12)\n" +
@@ -498,7 +506,8 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\bchildren\x18\t \x03(\v2\x19.resources.wiki.PageShortR\bchildren\x12>\n" +
 	"\troot_info\x18\n" +
 	" \x01(\v2\x1c.resources.wiki.PageRootInfoH\x04R\brootInfo\x88\x01\x01\x12\"\n" +
-	"\x05level\x18\v \x01(\x05B\a\xfaB\x04\x1a\x02(\x00H\x05R\x05level\x88\x01\x01B\f\n" +
+	"\x05level\x18\v \x01(\x05B\a\xfaB\x04\x1a\x02(\x00H\x05R\x05level\x88\x01\x01\x12\x14\n" +
+	"\x05draft\x18\r \x01(\bR\x05draftB\f\n" +
 	"\n" +
 	"_job_labelB\f\n" +
 	"\n" +

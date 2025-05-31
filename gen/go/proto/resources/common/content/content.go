@@ -386,5 +386,13 @@ func (c *Content) GetSummary(length int) string {
 		return ""
 	}
 
-	return utils.StringFirstN(htmlsanitizer.StripTags(*c.RawContent), length)
+	return GetSummary(*c.RawContent, length)
+}
+
+func GetSummary(in string, length int) string {
+	if in == "" {
+		return ""
+	}
+
+	return utils.StringFirstN(htmlsanitizer.StripTags(in), length)
 }

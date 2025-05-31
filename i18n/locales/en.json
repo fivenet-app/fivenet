@@ -45,46 +45,6 @@
                 "title": "Document Categories"
             }
         },
-        "settings": {
-            "features": {
-                "properties": "Set your job properties (e.g., employee marker color).",
-                "jobs": "Setup your factions roles job rank permissions.",
-                "audit_log": "An audit trail of everything your colleagues have done.",
-                "limiter": "Limit what factions can see each other.",
-                "laws": "Set the law books and laws for the state.",
-                "units": "List, create and update units for the dispatch center.",
-                "filestore": "List and manage all files.",
-                "settings": "Manage FiveNet settings.",
-                "cron": "View status of background tasks.",
-                "accounts": "List and manage FiveNet accounts."
-            },
-            "roles": {
-                "title": "Roles",
-                "id": {
-                    "title": "View Role"
-                }
-            },
-            "limiter": {
-                "title": "Limiter"
-            },
-            "laws": {
-                "title": "Laws",
-                "add_new_law": "Add new Law",
-                "add_new_law_book": "Add new Law Book"
-            },
-            "filestore": {
-                "title": "Filestore"
-            },
-            "settings": {
-                "title": "FiveNet Settings"
-            },
-            "cron": {
-                "title": "Background Tasks"
-            },
-            "accounts": {
-                "title": "Accounts"
-            }
-        },
         "notfound": {
             "title": "404 Not Found",
             "page_not_found": "Page Not Found",
@@ -174,7 +134,6 @@
             }
         },
         "about": {
-            "title": "About FiveNet",
             "introduction": {
                 "pre_title": "More time for FiveM RolePlay.",
                 "title": "A better workflow",
@@ -220,6 +179,47 @@
             "subtitle": "About FiveNet and its creators.",
             "licenses": {
                 "subtitle": "List and information about the Licenses of code, libraries and software, used by FiveNet."
+            },
+            "title": "About FiveNet"
+        },
+        "settings": {
+            "features": {
+                "properties": "Set your job properties (e.g., employee marker color).",
+                "jobs": "Setup your factions roles job rank permissions.",
+                "audit_log": "An audit trail of everything your colleagues have done.",
+                "limiter": "Limit what factions can see each other.",
+                "laws": "Set the law books and laws for the state.",
+                "units": "List, create and update units for the dispatch center.",
+                "filestore": "List and manage all files.",
+                "settings": "Manage FiveNet settings.",
+                "cron": "View status of background tasks.",
+                "accounts": "List and manage FiveNet accounts."
+            },
+            "roles": {
+                "title": "Roles",
+                "id": {
+                    "title": "View Role"
+                }
+            },
+            "limiter": {
+                "title": "Limiter"
+            },
+            "laws": {
+                "title": "Laws",
+                "add_new_law": "Add new Law",
+                "add_new_law_book": "Add new Law Book"
+            },
+            "filestore": {
+                "title": "Filestore"
+            },
+            "settings": {
+                "title": "FiveNet Settings"
+            },
+            "cron": {
+                "title": "Background Tasks"
+            },
+            "accounts": {
+                "title": "Accounts"
             }
         }
     },
@@ -474,7 +474,6 @@
         "image": "Image",
         "logo": "Logo",
         "absence_date": "Absence Date",
-        "mugshot": "Mugshot",
         "file_size": "File Size",
         "predefined": "Predefined",
         "discord": "Discord",
@@ -640,13 +639,19 @@
         "no_access_to_document": "No access to document",
         "you": "You",
         "scroll_to_top": "Scroll to Top",
+        "mugshot": "Mugshot",
         "publish": "Publish",
         "draft": "Draft",
         "drafts": "Draft | Drafts",
         "all_documents": "All Documents",
         "only_published": "Only Published",
         "only_drafts": "Only Drafts",
-        "unpublish": "Unpublish"
+        "unpublish": "Unpublish",
+        "publish_confirm": {
+            "title": "Publish {type}?",
+            "description": "Are you sure you want to publish this document? Once published, the draft status will be removed. This action cannot be undone."
+        },
+        "insert_file": "Insert File"
     },
     "components": {
         "partials": {
@@ -666,7 +671,7 @@
                 "page_count": "Page {current} à {size} records",
                 "page_count_with_total": "Page {current} of {maxPage} à {size} records (Total {total})"
             },
-            "TipTapEditor": {
+            "TiptapEditor": {
                 "clear": "Clear",
                 "previous": "Previous",
                 "next": "Next",
@@ -707,7 +712,16 @@
                 "undo": "Undo",
                 "redo": "Redo",
                 "source_code": "Source Code",
-                "checkbox": "Checkbox"
+                "checkbox": "Checkbox",
+                "notifications": {
+                    "file_limit_reached": {
+                        "title": "File limit reached, cannot upload more files.",
+                        "content": "You have reached the maximum number of files that can be uploaded. Please remove some files before uploading new ones."
+                    }
+                },
+                "file_list": "File List",
+                "file_list_empty": "No files uploaded yet.",
+                "file_list_hint": "You can upload files by dragging and dropping them into the editor or by using the 'Insert File' button."
             }
         },
         "clipboard": {
@@ -807,142 +821,6 @@
             "show_unit_status": "Show Unit Status Color",
             "show_all_dispatches": "Show all Dispatches (only affects Map)",
             "restarting_datastream": "Reconnecting data stream..."
-        },
-        "settings": {
-            "job_props": {
-                "job_properties": "Job Properties",
-                "your_job_properties": "Your job's FiveNet properties.",
-                "livemap_marker_color": "Map Marker Color",
-                "quick_buttons": "Quick Access Buttons",
-                "discord_sync_settings": {
-                    "title": "Discord Bot Settings",
-                    "subtitle": "Manage the basic Discord Bot settings. To get started with the Discord bot, invite the bot, set your Discord server ID below, and configure the settings as you want.",
-                    "discord_guild_id": "Discord Guild/ Server ID",
-                    "invite_bot": "Invite Bot",
-                    "last_sync": "Last Sync",
-                    "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
-                    "user_info_sync_settings": {
-                        "employee_role_enabled": "Create and manage Employee Role",
-                        "employee_role_format": "Employee Role format (%s will be replaced by your job's name)",
-                        "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)",
-                        "unemployed_enabled": "Manage the unemployed role",
-                        "unemployed_mode": "Mode for handling unemployed users",
-                        "unemployed_role_name": "Unemployed Role Name",
-                        "sync_nicknames": "Sync Nicknames",
-                        "group_mapping": {
-                            "title": "Group role mapping",
-                            "description": "Map one or more grades to a \"group\" role.",
-                            "name": "Role name",
-                            "from_grade": "From Grade",
-                            "to_grade": "To Grade"
-                        }
-                    },
-                    "status_log": "Status Log",
-                    "status_log_settings": {
-                        "channel_id": "Channel ID"
-                    },
-                    "jobs_absence_settings": {
-                        "jobs_absence_role_enabled": "Manage the absence role",
-                        "jobs_absence_role_name": "Absence Role"
-                    },
-                    "group_sync_settings": {
-                        "title": "Group Sync Settings",
-                        "subtitle": "Options for the group sync bot.",
-                        "ignored_role_ids": {
-                            "title": "Ignored Role ID",
-                            "description": "Users with one of these roles are not going to get groups synced (only affects the group sync and not the user info sync.)",
-                            "field": "Ignored Role ID"
-                        }
-                    },
-                    "dry_run": "Dry run mode",
-                    "qualifications_role_format": {
-                        "title": "Qualifications Role Format",
-                        "description": "Format of the Discord role. Use %abbr% for the abbreviation and %name% for the role name of the qualification."
-                    },
-                    "discord_sync_command_info": {
-                        "description": "The /sync Discord bot command can be used to trigger a sync. By default Discord admins can use the command."
-                    }
-                },
-                "settings": {
-                    "absence": {
-                        "title": "Absence",
-                        "past_days": "Maximum backdating of an absence in days",
-                        "future_days": "Maximum days in the future an absence can be dated"
-                    }
-                },
-                "discord_sync_features": {
-                    "title": "Discord Bot Sync Features",
-                    "subtitle": "Manage the synchronisation features of the Discord bot (e.g., job grade roles.)"
-                }
-            },
-            "role_view": {
-                "add_permission": "Add Permission",
-                "fine_grained_toggle": {
-                    "title": "Enable fine grained job grades selection",
-                    "description": "Allows you to select specific job grades instead of a first to selected grade range. Enabling this option, requires the accessible ranks to be set again for the edited role."
-                },
-                "effective_permissions": {
-                    "description": "List of effective permissions for the selected role (please note to see the effects of your changes, you must save your current changes to the role first). The effective permissions are the permissions that are actually granted to the user that has the role. The effective permissions are calculated by combining the role's permissions with the user's job grade permissions."
-                }
-            },
-            "app_config": {
-                "auth": {
-                    "title": "Auth",
-                    "description": "Authentication settings",
-                    "sign_up": "Sign-up",
-                    "last_char_lock": "Lock players into their last active character"
-                },
-                "perms": {
-                    "title": "Permissions",
-                    "description": "Permissions system options.",
-                    "default_perms": "Default Permissions"
-                },
-                "website": {
-                    "title": "Website",
-                    "description": "Website settings, such as the footer links.",
-                    "links": {
-                        "title": "Links"
-                    }
-                },
-                "job_info": {
-                    "title": "Job Info",
-                    "description": "Unemployed job info for the system to fill in and list of public and hidden jobs.",
-                    "unemployed_job": "Unemployed Job",
-                    "public_jobs": "Public Jobs",
-                    "hidden_jobs": "Hidden Jobs"
-                },
-                "user_tracker": {
-                    "title": "User Tracker",
-                    "description": "List of jobs to track on the livemap and to maintain timeclock updates for.",
-                    "refresh_time": "Refresh Time",
-                    "db_refresh_time": "DB Refresh Time"
-                },
-                "discord": {
-                    "description": "FiveNet Discord Bot settings.",
-                    "bot_invite_url": "Bot Invite URL",
-                    "sync_interval": "Sync Interval",
-                    "ignored_jobs": "Ignored Jobs (e.g., Prisoner job)",
-                    "bot_presence": {
-                        "title": "Bot Presence Status",
-                        "description": "Set the FiveNet Discord's bot status presence.",
-                        "type": "Type",
-                        "status": "Status",
-                        "url": "URL"
-                    }
-                },
-                "save": {
-                    "description": "Make sure to double check any config options before saving the config."
-                },
-                "system": {
-                    "banner_message": {
-                        "title": "Banner Message",
-                        "subtitle": "Globally displayed banner message (the message should be kept short)."
-                    }
-                }
-            },
-            "accounts": {
-                "edit_account": "Edit Account"
-            }
         },
         "debug_info": {
             "title": "Debug Info",
@@ -1099,10 +977,6 @@
             "documenteditor": {
                 "content": "You can enable a dark mode for the document editor."
             },
-            "settings_roles_list": {
-                "content": "Permissions are inherited from low to high grades. If grade 1 can view documents, all grades including grade 1 can do so too. If grade 4 is denied to view documents, grade 4 and higher can not view documents.",
-                "title": "Information about Permission Inheritance"
-            },
             "template_editor_templating": {
                 "content": "You can use Golang HTML templating in the above field. For template snippets follow the link."
             },
@@ -1110,11 +984,15 @@
                 "content": "FiveNet has a command palette for power users, you can open it using:",
                 "keyboard": "CTRL+K"
             },
-            "settings_roles_superuser": {
-                "content": "If you are missing permissions to assign or the list is empty, a FiveNet superuser must configure the available permissions for your faction."
-            },
             "sociallogin_discord": {
                 "content": "If your faction uses the FiveNet Discord bot, make sure to have connected your Discord account via the Account information. The bot automatically syncs your rank's roles."
+            },
+            "settings_roles_list": {
+                "content": "Permissions are inherited from low to high grades. If grade 1 can view documents, all grades including grade 1 can do so too. If grade 4 is denied to view documents, grade 4 and higher can not view documents.",
+                "title": "Information about Permission Inheritance"
+            },
+            "settings_roles_superuser": {
+                "content": "If you are missing permissions to assign or the list is empty, a FiveNet superuser must configure the available permissions for your faction."
             }
         },
         "notifications": {
@@ -1279,8 +1157,8 @@
                 "set_wanted": "Set Person Wanted",
                 "set_job": "Set Person's Job",
                 "set_traffic_points": "Set Traffic Infraction Points",
-                "set_mugshot": "Set Mugshot Photo",
-                "go_to_colleague_info": "Go to Colleague Info"
+                "go_to_colleague_info": "Go to Colleague Info",
+                "set_mugshot": "Set Mugshot Photo"
             },
             "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {
@@ -1291,7 +1169,6 @@
                     "added": "Related the citizen in a",
                     "removed": "Removed citizen document relation in"
                 },
-                "user_props_job_set": "Set the citizen's job to ",
                 "plugin_license": {
                     "added": "License added",
                     "removed": "License removed"
@@ -1306,9 +1183,10 @@
                     "removed": "Fine removed",
                     "created": "Fine created"
                 },
-                "user_props_mugshot_set": "Set the citizen's mug shot picture",
-                "user_props_labels_updated": "Updated the citizen's labels",
                 "name_change": "Citizen's name changed from {old} to {new}",
+                "user_props_job_set": "Set the citizen's job to ",
+                "user_props_labels_updated": "Updated the citizen's labels",
+                "user_props_mugshot_set": "Set the citizen's mug shot picture",
                 "user_props_mugshot_removed": "Removed citizen's mug shot picture"
             },
             "CitizenInfoActivityFeed": {
@@ -1450,6 +1328,142 @@
         "access": {
             "add_entry": "Add Access",
             "remove_entry": "Remove Access"
+        },
+        "settings": {
+            "job_props": {
+                "job_properties": "Job Properties",
+                "your_job_properties": "Your job's FiveNet properties.",
+                "livemap_marker_color": "Map Marker Color",
+                "quick_buttons": "Quick Access Buttons",
+                "discord_sync_settings": {
+                    "title": "Discord Bot Settings",
+                    "subtitle": "Manage the basic Discord Bot settings. To get started with the Discord bot, invite the bot, set your Discord server ID below, and configure the settings as you want.",
+                    "discord_guild_id": "Discord Guild/ Server ID",
+                    "invite_bot": "Invite Bot",
+                    "last_sync": "Last Sync",
+                    "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
+                    "user_info_sync_settings": {
+                        "employee_role_enabled": "Create and manage Employee Role",
+                        "employee_role_format": "Employee Role format (%s will be replaced by your job's name)",
+                        "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)",
+                        "unemployed_enabled": "Manage the unemployed role",
+                        "unemployed_mode": "Mode for handling unemployed users",
+                        "unemployed_role_name": "Unemployed Role Name",
+                        "sync_nicknames": "Sync Nicknames",
+                        "group_mapping": {
+                            "title": "Group role mapping",
+                            "description": "Map one or more grades to a \"group\" role.",
+                            "name": "Role name",
+                            "from_grade": "From Grade",
+                            "to_grade": "To Grade"
+                        }
+                    },
+                    "status_log": "Status Log",
+                    "status_log_settings": {
+                        "channel_id": "Channel ID"
+                    },
+                    "jobs_absence_settings": {
+                        "jobs_absence_role_enabled": "Manage the absence role",
+                        "jobs_absence_role_name": "Absence Role"
+                    },
+                    "group_sync_settings": {
+                        "title": "Group Sync Settings",
+                        "subtitle": "Options for the group sync bot.",
+                        "ignored_role_ids": {
+                            "title": "Ignored Role ID",
+                            "description": "Users with one of these roles are not going to get groups synced (only affects the group sync and not the user info sync.)",
+                            "field": "Ignored Role ID"
+                        }
+                    },
+                    "dry_run": "Dry run mode",
+                    "qualifications_role_format": {
+                        "title": "Qualifications Role Format",
+                        "description": "Format of the Discord role. Use %abbr% for the abbreviation and %name% for the role name of the qualification."
+                    },
+                    "discord_sync_command_info": {
+                        "description": "The /sync Discord bot command can be used to trigger a sync. By default Discord admins can use the command."
+                    }
+                },
+                "settings": {
+                    "absence": {
+                        "title": "Absence",
+                        "past_days": "Maximum backdating of an absence in days",
+                        "future_days": "Maximum days in the future an absence can be dated"
+                    }
+                },
+                "discord_sync_features": {
+                    "title": "Discord Bot Sync Features",
+                    "subtitle": "Manage the synchronisation features of the Discord bot (e.g., job grade roles.)"
+                }
+            },
+            "role_view": {
+                "add_permission": "Add Permission",
+                "fine_grained_toggle": {
+                    "title": "Enable fine grained job grades selection",
+                    "description": "Allows you to select specific job grades instead of a first to selected grade range. Enabling this option, requires the accessible ranks to be set again for the edited role."
+                },
+                "effective_permissions": {
+                    "description": "List of effective permissions for the selected role (please note to see the effects of your changes, you must save your current changes to the role first). The effective permissions are the permissions that are actually granted to the user that has the role. The effective permissions are calculated by combining the role's permissions with the user's job grade permissions."
+                }
+            },
+            "app_config": {
+                "auth": {
+                    "title": "Auth",
+                    "description": "Authentication settings",
+                    "sign_up": "Sign-up",
+                    "last_char_lock": "Lock players into their last active character"
+                },
+                "perms": {
+                    "title": "Permissions",
+                    "description": "Permissions system options.",
+                    "default_perms": "Default Permissions"
+                },
+                "website": {
+                    "title": "Website",
+                    "description": "Website settings, such as the footer links.",
+                    "links": {
+                        "title": "Links"
+                    }
+                },
+                "job_info": {
+                    "title": "Job Info",
+                    "description": "Unemployed job info for the system to fill in and list of public and hidden jobs.",
+                    "unemployed_job": "Unemployed Job",
+                    "public_jobs": "Public Jobs",
+                    "hidden_jobs": "Hidden Jobs"
+                },
+                "user_tracker": {
+                    "title": "User Tracker",
+                    "description": "List of jobs to track on the livemap and to maintain timeclock updates for.",
+                    "refresh_time": "Refresh Time",
+                    "db_refresh_time": "DB Refresh Time"
+                },
+                "discord": {
+                    "description": "FiveNet Discord Bot settings.",
+                    "bot_invite_url": "Bot Invite URL",
+                    "sync_interval": "Sync Interval",
+                    "ignored_jobs": "Ignored Jobs (e.g., Prisoner job)",
+                    "bot_presence": {
+                        "title": "Bot Presence Status",
+                        "description": "Set the FiveNet Discord's bot status presence.",
+                        "type": "Type",
+                        "status": "Status",
+                        "url": "URL"
+                    }
+                },
+                "save": {
+                    "description": "Make sure to double check any config options before saving the config."
+                },
+                "system": {
+                    "banner_message": {
+                        "title": "Banner Message",
+                        "subtitle": "Globally displayed banner message (the message should be kept short)."
+                    }
+                }
+            },
+            "accounts": {
+                "edit_account": "Edit Account"
+            }
         }
     },
     "notifications": {
@@ -1562,32 +1576,6 @@
             "cancelled": {
                 "title": "Request was cancelled",
                 "content": "Please wait a moment and try again."
-            }
-        },
-        "settings": {
-            "role_created": {
-                "title": "Role: Created",
-                "content": "Role has been created."
-            },
-            "role_deleted": {
-                "title": "Role: Deleted",
-                "content": "Role has been deleted."
-            },
-            "role_updated": {
-                "title": "Role: Permissions Saved",
-                "content": "Permissions have been saved."
-            },
-            "job_props": {
-                "title": "Updated Job Props",
-                "content": "Your job properties have been updated."
-            },
-            "audit_log": {
-                "title": "Audit Log: Copied to clipboard",
-                "content": "Entry copied to clipboard."
-            },
-            "app_config": {
-                "title": "Updated App Config",
-                "content": "FiveNet app config have been updated."
             }
         },
         "document_deleted": {
@@ -1759,60 +1747,6 @@
                 "content": "Postal codes couldn't be loaded"
             }
         },
-        "documents": {
-            "requests": {
-                "created": {
-                    "title": "Document Request created!",
-                    "content": "The document request has been successfully created."
-                },
-                "deleted": {
-                    "title": "Document Request deleted!",
-                    "content": "The document request has been successfully deleted."
-                },
-                "updated": {
-                    "title": "Document Request updated!",
-                    "content": "The document request has been successfully updated."
-                }
-            },
-            "document_relation_mentioned": {
-                "title": "Document: You have been mentioned",
-                "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
-            },
-            "document_request_added": {
-                "title": "Document: Request has been created",
-                "content": "A request against your \"{title}\" document has been added."
-            },
-            "document_comment_added": {
-                "title": "Document: New comment",
-                "content": "A new comment has been posted on \"{title}\" document."
-            },
-            "document_take_ownership": {
-                "title": "Document Owner changed",
-                "content": "Document has been transferred to you."
-            },
-            "document_reminder": {
-                "title": "Document: Reminder for DOC-{id}",
-                "content": "Reminder for document \"{title}\"."
-            },
-            "document_reminder_with_message": {
-                "title": "Document: Own Reminder for DOC-{id}",
-                "content": "Reminder for document \"{title}\", with message: \"{message}\"."
-            },
-            "document_auto_closed": {
-                "title": "Document: DOC-{id} automatically closed",
-                "content": "Document \"{title}\" has been automatically closed, with message: \"{message}\"."
-            },
-            "document_toggled": {
-                "open": {
-                    "title": "Document opened!",
-                    "content": "Document has been opened."
-                },
-                "closed": {
-                    "title": "Document closed!",
-                    "content": "Document has been closed."
-                }
-            }
-        },
         "superuser_menu": {
             "setsuperusermode": {
                 "title": "Superuser Mode",
@@ -1871,9 +1805,838 @@
             "title": "Category restored!",
             "content": "Category has been restored."
         },
+        "settings": {
+            "role_created": {
+                "title": "Role: Created",
+                "content": "Role has been created."
+            },
+            "role_deleted": {
+                "title": "Role: Deleted",
+                "content": "Role has been deleted."
+            },
+            "role_updated": {
+                "title": "Role: Permissions Saved",
+                "content": "Permissions have been saved."
+            },
+            "job_props": {
+                "title": "Updated Job Props",
+                "content": "Your job properties have been updated."
+            },
+            "audit_log": {
+                "title": "Audit Log: Copied to clipboard",
+                "content": "Entry copied to clipboard."
+            },
+            "app_config": {
+                "title": "Updated App Config",
+                "content": "FiveNet app config have been updated."
+            }
+        },
+        "documents": {
+            "requests": {
+                "created": {
+                    "title": "Document Request created!",
+                    "content": "The document request has been successfully created."
+                },
+                "deleted": {
+                    "title": "Document Request deleted!",
+                    "content": "The document request has been successfully deleted."
+                },
+                "updated": {
+                    "title": "Document Request updated!",
+                    "content": "The document request has been successfully updated."
+                }
+            },
+            "document_relation_mentioned": {
+                "title": "Document: You have been mentioned",
+                "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
+            },
+            "document_request_added": {
+                "title": "Document: Request has been created",
+                "content": "A request against your \"{title}\" document has been added."
+            },
+            "document_comment_added": {
+                "title": "Document: New comment",
+                "content": "A new comment has been posted on \"{title}\" document."
+            },
+            "document_take_ownership": {
+                "title": "Document Owner changed",
+                "content": "Document has been transferred to you."
+            },
+            "document_reminder": {
+                "title": "Document: Reminder for DOC-{id}",
+                "content": "Reminder for document \"{title}\"."
+            },
+            "document_reminder_with_message": {
+                "title": "Document: Own Reminder for DOC-{id}",
+                "content": "Reminder for document \"{title}\", with message: \"{message}\"."
+            },
+            "document_auto_closed": {
+                "title": "Document: DOC-{id} automatically closed",
+                "content": "Document \"{title}\" has been automatically closed, with message: \"{message}\"."
+            },
+            "document_toggled": {
+                "open": {
+                    "title": "Document opened!",
+                    "content": "Document has been opened."
+                },
+                "closed": {
+                    "title": "Document closed!",
+                    "content": "Document has been closed."
+                }
+            }
+        },
         "action_failed": {
             "title": "Failed!",
             "content": "Your action has failed, please try again."
+        }
+    },
+    "errors": {
+        "pkg-auth": {
+            "ErrNoToken": "\"Authorization\" header must not be empty! Please login again.",
+            "ErrInvalidToken": "Token invalid/ expired!",
+            "ErrCheckToken": "Token check failed!",
+            "ErrUserNoPerms": "No permissions associated with your user!",
+            "ErrNoUserInfo": "Something went wrong, please logout and login again!",
+            "ErrPermissionDenied": "You don't have permission to do that!"
+        },
+        "AuthService": {
+            "ErrGenericAccount": "Failed to get/ update your account, please try again.",
+            "ErrAccountCreateFailed": "Please check the token you have typed in!",
+            "ErrInvalidLogin": "Wrong username or password!",
+            "ErrNoAccount": "You need to use your registration token to create an account first.",
+            "ErrNoCharFound": "No character(s) found for your account.",
+            "ErrGenericLogin": "Failed to login you in, please try again.",
+            "ErrUnableToChooseChar": "You don't have permission to select this character!",
+            "ErrUpdateAccount": "Failed to update your account!",
+            "ErrChangePassword": "Failed to change your password!",
+            "ErrForgotPassword": "Failed to reset password!",
+            "ErrAccountExistsFailed": "Please use use the forgot password function!",
+            "ErrSignupDisabled": "Account signup is disabled!",
+            "ErrAccountDuplicate": "Username already taken, please use a different username.",
+            "ErrChangeUsername": "Failed to change your username!",
+            "ErrBadUsername": "Please verify the usernames correctness! Please try with a different username.",
+            "ErrCharLock": {
+                "title": "Char lock is active!",
+                "content": "Please select an available character and try again."
+            }
+        },
+        "CompletorService": {
+            "ErrFailedSearch": "Failed to search the data!"
+        },
+        "NotificatorService": {
+            "ErrFailedRequest": "Failed to load notifications data!",
+            "ErrFailedStream": "Failed to stream notifications!"
+        },
+        "CentrumService": {
+            "ErrFailedQuery": "Failed to get/update dispatch center data!",
+            "ErrNotPartOfDispatch": "You are not part of this dispatch!",
+            "ErrNotOnDuty": {
+                "title": "You are not on duty!",
+                "content": "Make sure you are on duty and fullfil any other requirements to be visible on the livemap."
+            },
+            "ErrModeForbidsAction": {
+                "title": "Dispatch center forbids this!",
+                "content": "Please contact the dispatch center."
+            },
+            "ErrDispatchAlreadyCompleted": {
+                "title": "Dispatch already in completed state!",
+                "content": "You can't accept/decline completed dispatches."
+            },
+            "ErrNotPartOfUnit": "You are not part of this unit!",
+            "ErrStaticUnit": "Can't update a static unit's status to be available!",
+            "ErrUnitPermDenied": "You can't access this unit!",
+            "ErrDisabled": {
+                "title": "Dispatch Center is disabled!",
+                "content": "Please contact your leader to enable the dispatch center."
+            }
+        },
+        "general": {
+            "internal_error": {
+                "title": "Internal server error",
+                "content": "An internal server error has occured. Please try again."
+            }
+        },
+        "JobsService": {
+            "ErrFailedQuery": "Failed to get job data!",
+            "ErrReasonRequired": "A reason must be provided!",
+            "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
+            "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
+            "ErrNotFoundOrNoPerms": "Colleague not found!",
+            "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!",
+            "ErrPropsNameDenied": "You are not allowed to set your colleague's name!",
+            "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!",
+            "ErrAbsenceBeginOutOfRange": "Absence begin date is outside the allowed range.",
+            "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range.",
+            "ErrLabelsNoPerms": "You don't have permissions to list the colleagues labels!"
+        },
+        "QualificationsService": {
+            "ErrFailedQuery": "Failed to get qualifcation data!",
+            "ErrRequirementsMissing": {
+                "title": "Missing required Qualifications",
+                "content": "You are missing required qualifications."
+            },
+            "ErrQualificationClosed": "Can't request or take a closed qualification!",
+            "ErrExamDisabled": "The qualification's exam is disabled!",
+            "ErrRequirementSelfRef": "Please remove any qualification requirements that reference the qualification you are editing!",
+            "ErrQualiAccessDenied": "You can't access this qualifcation!"
+        },
+        "CalendarService": {
+            "ErrFailedQuery": "Failed to load calendar data!",
+            "ErrNoPerms": "You don't have permissions to access this calendar data!",
+            "ErrOnePrivateCal": "You can only have one private calendar!",
+            "ErrCalendarClosed": {
+                "title": "Calendar is closed",
+                "content": "The calendar is closed and can't be used anymore."
+            },
+            "ErrEntryClosed": {
+                "title": "Calendar Entry is closed",
+                "content": "The calendar entry is closed and can't be RSVPed to anymore."
+            }
+        },
+        "WikiService": {
+            "ErrFailedQuery": "Failed to load wiki data!",
+            "ErrPageDenied": "You don't have access to this page!",
+            "ErrPageHasChildren": {
+                "title": "Page has children",
+                "content": "You can't delete this page because it has child pages. Make sure to move or delete the child pages first."
+            },
+            "ErrMaxFilesReached": {
+                "title": "Maximum files reached",
+                "content": "You have reached the maximum number of files allowed in this wiki page. Please delete some files before uploading new ones."
+            },
+            "ErrPageNotFound": {
+                "title": "Page not found",
+                "content": "The page you are trying to access does not exist or has been deleted."
+            }
+        },
+        "MailerService": {
+            "ErrFailedQuery": "Failed to load mail data!",
+            "ErrAddresseAlreadyTaken": {
+                "title": "E-Mail address already taken!",
+                "content": "Please try again with another e-mail address."
+            },
+            "ErrTemplateLimitReached": "You can't have more templates (limit: 5)!",
+            "ErrEmailAccessDenied": "You must have access to the e-mail address!",
+            "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
+            "ErrInvalidRecipients": "One or more e-mail addresses are wrong.",
+            "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!",
+            "ErrCantDeleteOwnEmail": "You can't delete your own email!",
+            "ErrEmailAccessRequired": "A job's email requires at least one access",
+            "ErrAddresseInvalid": "Invalid e-mail address, please choose another one.",
+            "ErrThreadAccessDenied": {
+                "title": "You don't have access to this thread!",
+                "content": "You might have been removed from the thread."
+            },
+            "ErrEmailChangeTooEarly": {
+                "title": "The e-mail has already been changed!",
+                "content": "E-mail addresses can only be changed every two weeks."
+            },
+            "ErrEmailDisabled": {
+                "title": "This e-mail address has been disabled!",
+                "content": "Please contact the FiveNet administration for help on this."
+            }
+        },
+        "InternetService": {
+            "ErrFailedQuery": "Failed to get internet data!",
+            "ErrFailedSearch": "Failed to search internet!",
+            "ErrDomainNotTransferable": {
+                "title": "NIC Service - Domain Registration",
+                "content": "Domain not transferable, please choose another domain."
+            },
+            "ErrDomainWrongTransferCode": {
+                "title": "NIC Service - Domain Registration",
+                "content": "Domain transfer code wrong or transfer not enabled."
+            }
+        },
+        "CitizensService": {
+            "ErrFailedQuery": "Failed to list/ get citizens data!",
+            "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)",
+            "ErrReasonRequired": "A reason must be provided!",
+            "ErrPropsWantedDenied": "You are not allowed to set a citizen's wanted status!",
+            "ErrPropsJobDenied": "You are not allowed to set a citizen's job!",
+            "ErrPropsJobPublic": "You can't set a state job!",
+            "ErrPropsJobInvalid": "Invalid job or job rank set!",
+            "ErrPropsTrafficPointsDenied": "You are not allowed to set a citizen's traffic infraction points!",
+            "ErrPropsLabelsDenied": "You are not allowed to set a citizen's labels!",
+            "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!"
+        },
+        "VehiclesService": {
+            "ErrFailedQuery": "Failed to search vehicles data!"
+        },
+        "DocumentsService": {
+            "ErrFailedQuery": "Failed to get/ create/ update documents!",
+            "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
+            "ErrTemplateNoPerms": "You don't have permission to view/ update/ delete this template!",
+            "ErrPermissionDenied": "You don't have permission to do this!",
+            "ErrClosedDoc": "Document is closed and can't be edited!",
+            "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
+            "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
+            "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader.",
+            "ErrDocViewDenied": "You don't have permission to view this document!",
+            "ErrDocUpdateDenied": "You don't have permission to edit this document!",
+            "ErrDocDeleteDenied": "You don't have permission to delete this document!",
+            "ErrDocToggleDenied": "You don't have permission to close/open this document!",
+            "ErrCommentViewDenied": "You don't have permission to view document comments!",
+            "ErrCommentPostDenied": "You don't have permission to post a comment on this document!",
+            "ErrCommentEditDenied": "You don't have permission to edit this comment!",
+            "ErrCommentDeleteDenied": "You can't delete this comment!",
+            "ErrFeedRefsViewDenied": "You don't have permission to view this document's references!",
+            "ErrFeedRelsViewDenied": "You don't have permission to view this document's relations!",
+            "ErrFeedRefSelf": "You can't reference a document with itself!",
+            "ErrFeedRefAddDenied": "You don't have permission to add references from/to this document!",
+            "ErrFeedRefRemoveDenied": "You don't have permission to remove references from this document!",
+            "ErrFeedRelAddDenied": "You don't have permission to add relation from/to this document!",
+            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
+            "ErrDocReqAlreadyCreated": {
+                "title": "Document Request already exists!",
+                "content": "A document request of the same type already exists or one has been created in the last 24 hours."
+            },
+            "ErrDocSameOwner": "You are already the creator of this document!",
+            "ErrDocOwnerWrongJob": "New document owner must be part of your job!",
+            "ErrDocReqOwnDoc": "You can't create requests against your own document!",
+            "ErrDocReqAlreadyCompleted": {
+                "title": "Document Request has already been accepted/declined!",
+                "content": "The document request you are trying to accept/decline has already been processed."
+            },
+            "ErrDocRequiredAccessTemplate": {
+                "title": "Required document access missing!",
+                "content": "Make sure you have not edited or removed any required document access."
+            },
+            "ErrDocOwnerFailed": "You need to have edit access to the document!",
+            "ErrDocAccessDuplicate": "Document access: A job rank/citizen can only have one access and not multiple!",
+            "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!"
+        },
+        "LivemapService": {
+            "ErrStreamFailed": "Failed to stream Map data!",
+            "ErrMarkerFailed": "Failed to create/ update/ delete marker!"
+        },
+        "SettingsService": {
+            "ErrFailedQuery": "Failed to get/ update control panel data!",
+            "ErrInvalidRequest": "Invalid role action requested!",
+            "ErrNoPermission": "No permission to create/ change/ delete role!",
+            "ErrRoleAlreadyExists": "Role already exists!",
+            "ErrOwnRoleDeletion": "Can't delete your own role!",
+            "ErrInvalidPerms": "Failed to update role permissions!",
+            "ErrInvalidAttrs": "Failed to update role attributes!",
+            "ErrInvalidJPQuickButton": "Invalid quick access button found!"
+        },
+        "Filestore": {
+            "ErrInvalidUploadMeta": "Invalid upload meta data!",
+            "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB."
+        }
+    },
+    "system": {
+        "update_available": {
+            "title": "New FiveNet version available ({version})!",
+            "content": "Please reload the page to continue using FiveNet."
+        },
+        "streamer_mode": {
+            "title": "Streamer mode enabled!",
+            "description": "To view this, you must disable streamer mode in your user settings."
+        },
+        "not_supported_on_tablet": {
+            "title": "This function isn't supported when using the tablet.",
+            "description": "Please use your browser to use this function.",
+            "button": "Open in Browser"
+        }
+    },
+    "enums": {
+        "centrum": {
+            "CentrumMode": {
+                "UNSPECIFIED": "Unspecified Mode",
+                "MANUAL": "Manual Mode",
+                "CENTRAL_COMMAND": "Central Command Mode",
+                "AUTO_ROUND_ROBIN": "Automatic Mode: Round Robin",
+                "SIMPLIFIED": "Simplified Mode"
+            },
+            "StatusDispatch": {
+                "UNSPECIFIED": "Unspecified",
+                "NEW": "New",
+                "UNASSIGNED": "Unassigned",
+                "UPDATED": "Updated",
+                "UNIT_ASSIGNED": "Unit assigned",
+                "UNIT_UNASSIGNED": "Unit unassigned",
+                "EN_ROUTE": "En Route",
+                "ON_SCENE": "On Scene",
+                "NEED_ASSISTANCE": "Need Assistance",
+                "COMPLETED": "Abgeschlossen",
+                "CANCELLED": "Abgebrochen",
+                "ARCHIVED": "Archived",
+                "UNIT_ACCEPTED": "Unit accepted Dispatch",
+                "UNIT_DECLINED": "Unit declined Dispatch"
+            },
+            "StatusUnit": {
+                "UNSPECIFIED": "Unspecified",
+                "USER_ADDED": "Member added",
+                "USER_REMOVED": "Member removed",
+                "UNAVAILABLE": "Unavailable",
+                "AVAILABLE": "Available",
+                "ON_BREAK": "On Break",
+                "BUSY": "Busy",
+                "UNKNOWN": "Unknown"
+            },
+            "DispatchReferenceType": {
+                "UNSPECIFIED": "Unspecified",
+                "REFERENCED": "Referenced",
+                "DUPLICATED_BY": "Duplicated by",
+                "DUPLICATE_OF": "Duplicates"
+            },
+            "UnitAccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "JOIN": "Join"
+            },
+            "DispatchAttribute": {
+                "MULTIPLE": "Multiple Dispatches",
+                "TOO_OLD": "Cancelled due to Age",
+                "DUPLICATE": "Duplicate",
+                "AUTOMATIC": "Automatic Dispatch"
+            },
+            "UnitAttribute": {
+                "STATIC": "Static",
+                "NO_DISPATCH_AUTO_ASSIGN": "No Dispatch Auto Assign"
+            }
+        },
+        "livemap": {
+            "MarkerType": {
+                "UNSPECIFIED": "Unspecified",
+                "DOT": "Dot",
+                "CIRCLE": "Circle",
+                "ICON": "Icon"
+            }
+        },
+        "jobs": {
+            "ConductType": {
+                "UNSPECIFIED": "Unspecified",
+                "NEUTRAL": "Neutral",
+                "POSITIVE": "Positive",
+                "NEGATIVE": "Negative",
+                "WARNING": "Warning",
+                "SUSPENSION": "Suspension",
+                "NOTE": "Note"
+            },
+            "ColleagueActivityType": {
+                "UNSPECIFIED": "Unspecified",
+                "ABSENCE_DATE": "Absence Date",
+                "FIRED": "Fired",
+                "HIRED": "Hired",
+                "PROMOTED": "Promoted",
+                "DEMOTED": "Demoted",
+                "NOTE": "Note updated",
+                "LABELS": "Labels updated",
+                "NAME": "Name Prefix/Suffix updated"
+            }
+        },
+        "qualifications": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "REQUEST": "Request",
+                "TAKE": "Take",
+                "GRADE": "Grade",
+                "MANAGE": "Manage",
+                "EDIT": "Edit"
+            },
+            "ResultStatus": {
+                "UNSPECIFIED": "Unspecified",
+                "PENDING": "Pending",
+                "FAILED": "Failed",
+                "SUCCESSFUL": "Successful"
+            },
+            "RequestStatus": {
+                "UNSPECIFIED": "Unspecified",
+                "PENDING": "Pending",
+                "DENIED": "Denied",
+                "ACCEPTED": "Accepted",
+                "COMPLETED": "Completed",
+                "EXAM_STARTED": "Exam started",
+                "EXAM_GRADING": "Exam grading"
+            },
+            "QualificationExamMode": {
+                "UNSPECIFIED": "Unspecified",
+                "DISABLED": "Disabled",
+                "ENABLED": "Enabled",
+                "REQUEST_NEEDED": "Require Request"
+            }
+        },
+        "calendar": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "SHARE": "Share",
+                "EDIT": "Edit",
+                "MANAGE": "Manage"
+            }
+        },
+        "notifications": {
+            "NotificationCategory": {
+                "UNSPECIFIED": "Unspecified",
+                "GENERAL": "General",
+                "DOCUMENT": "Documents",
+                "CALENDAR": "Calendar"
+            }
+        },
+        "wiki": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "ACCESS": "Access",
+                "EDIT": "Edit",
+                "OWNER": "Owner"
+            },
+            "PageActivityType": {
+                "UNSPECIFIED": "Unspecified",
+                "CREATED": "Page Created",
+                "UPDATED": "Page updated",
+                "ACCESS_UPDATED": "Page Access updated",
+                "OWNER_CHANGED": "Page Owner changed",
+                "DELETED": "Page deleted"
+            }
+        },
+        "mailer": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "MANAGE": "Manage",
+                "READ": "Read",
+                "WRITE": "Write"
+            }
+        },
+        "users": {
+            "UserActivityType": {
+                "UNSPECIFIED": "Unspecified",
+                "NAME": "Name",
+                "LICENSES": "Licenses",
+                "WANTED": "Wanted",
+                "TRAFFIC_INFRACTION_POINTS": "Traffic Infraction Points",
+                "MUGSHOT": "Mugshot",
+                "LABELS": "Labels",
+                "JOB": "Job",
+                "DOCUMENT": "Documents",
+                "JAIL": "Jail",
+                "FINE": "Fines"
+            }
+        },
+        "documents": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "COMMENT": "Comment",
+                "ACCESS": "Access",
+                "EDIT": "Edit",
+                "STATUS": "Status"
+            },
+            "DocReference": {
+                "UNSPECIFIED": "Unspecified",
+                "LINKED": "links",
+                "SOLVES": "solves",
+                "CLOSES": "closes",
+                "DEPRECATES": "deprecates"
+            },
+            "DocRelation": {
+                "UNSPECIFIED": "Unspecified",
+                "MENTIONED": "mentioned",
+                "TARGETS": "targets",
+                "CAUSED": "caused"
+            },
+            "DocActivityType": {
+                "CREATED": "Document Created",
+                "STATUS_OPEN": "Document opened",
+                "STATUS_CLOSED": "Document closed",
+                "UPDATED": "Document updated",
+                "RELATIONS_UPDATED": "Document Relations updated",
+                "REFERENCES_UPDATED": "Document References updated",
+                "ACCESS_UPDATED": "Document Access updated",
+                "OWNER_CHANGED": "Document Owner changed",
+                "DELETED": "Document deleted",
+                "REQUESTED_ACCESS": "Document access requested",
+                "REQUESTED_CLOSURE": "Document closure requested",
+                "REQUESTED_UPDATE": "Document update requested",
+                "REQUESTED_DELETION": "Document deletion requested",
+                "COMMENT_ADDED": "Comment added",
+                "COMMENT_UPDATED": "Comment updated",
+                "COMMENT_DELETED": "Comment deleted",
+                "UNSPECIFIED": "Unspecified",
+                "REQUESTED_OWNER_CHANGE": "Document owner change requested",
+                "REQUESTED_OPENING": "Document open requested"
+            }
+        },
+        "settings": {
+            "UserInfoSyncUnemployedMode": {
+                "GIVE_ROLE": "Give Role",
+                "KICK": "Kick",
+                "UNSPECIFIED": "Unspecified"
+            },
+            "AppConfig": {
+                "DiscordBotPresenceType": {
+                    "GAME": "Game",
+                    "LISTENING": "Listening",
+                    "STREAMING": "Streaming",
+                    "WATCH": "Watch",
+                    "UNSPECIFIED": "Unspecified"
+                }
+            },
+            "AuditLog": {
+                "EventType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "ERRORED": "Failed",
+                    "VIEWED": "Viewed",
+                    "CREATED": "Created",
+                    "UPDATED": "Updated",
+                    "DELETED": "Deleted"
+                }
+            },
+            "CronjobState": {
+                "UNSPECIFIED": "Unspecified",
+                "WAITING": "Waiting",
+                "PENDING": "Pending",
+                "RUNNING": "Running"
+            }
+        }
+    },
+    "commandpalette": {
+        "empty": {
+            "title": "No results found.",
+            "content": "No results found for that term. Please try again."
+        },
+        "categories": {
+            "general": "General",
+            "navigation": "Navigation"
+        },
+        "footer": "Type {key1} for citizens, {key2} for documents search."
+    },
+    "zodI18n": {
+        "errors": {
+            "custom_types": {
+                "duration": {
+                    "invalid": "Invalid duration format, must be in format of \"1.23s\" and be at least \"0.01s\""
+                },
+                "filelist": {
+                    "required": "File must be provided",
+                    "wrong_file_type": "File must be one of the valid file types: {types}",
+                    "size_too_big": "File must be less than {size}MB"
+                }
+            },
+            "invalid_type": "Expected {expected}, received {received}",
+            "invalid_type_received_undefined": "Required",
+            "invalid_type_received_null": "Required",
+            "invalid_literal": "Invalid literal value. Expected {expected}",
+            "unrecognized_keys": "Unrecognized key(s) in the object: {keys}",
+            "invalid_union": "Invalid input for union type",
+            "invalid_union_discriminator": "Invalid union discriminator value. Expected {options}",
+            "invalid_enum_value": "Invalid enum value. Expected one of {options}, but received '{received}'",
+            "invalid_arguments": "Invalid function arguments",
+            "invalid_return_type": "Invalid function return type",
+            "invalid_date": "Invalid date",
+            "custom": "Invalid input",
+            "invalid_intersection_types": "Intersection types could not be merged",
+            "not_multiple_of": "The number must be a multiple of {multipleOf}",
+            "not_finite": "The number must be finite",
+            "invalid_string": {
+                "email": "Invalid {validation}",
+                "url": "Invalid {validation}",
+                "uuid": "Invalid {validation}",
+                "cuid": "Invalid {validation}",
+                "regex": "Invalid string format",
+                "datetime": "Invalid {validation}",
+                "startsWith": "Invalid input: must start with \"{startsWith}\"",
+                "endsWith": "Invalid input: must end with \"{endsWith}\""
+            },
+            "too_small": {
+                "array": {
+                    "exact": "The list must contain exactly {minimum} element(s)",
+                    "inclusive": "List must contain at least {minimum} element(s)",
+                    "not_inclusive": "List must contain more than {minimum} element(s)"
+                },
+                "string": {
+                    "exact": "The field must contain exactly {minimum} character(s)",
+                    "inclusive": "Field must contain at least {minimum} character(s)",
+                    "not_inclusive": "Field must contain over {minimum} character(s)"
+                },
+                "number": {
+                    "exact": "The number must be exactly {minimum}",
+                    "inclusive": "Number must be greater than or equal to {minimum}",
+                    "not_inclusive": "Number must be greater than {minimum}"
+                },
+                "set": {
+                    "exact": "Invalid input",
+                    "inclusive": "Invalid input",
+                    "not_inclusive": "Invalid input"
+                },
+                "date": {
+                    "exact": "Date must be exactly {minimum}",
+                    "inclusive": "Date must be greater than or equal to {minimum}",
+                    "not_inclusive": "Date must be greater than {minimum}"
+                }
+            },
+            "too_big": {
+                "array": {
+                    "exact": "The list must contain exactly {maximum} element(s)",
+                    "inclusive": "List must contain at most {maximum} element(s)",
+                    "not_inclusive": "List must contain less than {maximum} element(s)"
+                },
+                "string": {
+                    "exact": "The field must contain exactly {maximum} character(s)",
+                    "inclusive": "Field must contain at most {maximum} character(s)",
+                    "not_inclusive": "Field must contain under {maximum} character(s)"
+                },
+                "number": {
+                    "exact": "The number must be exactly {maximum}",
+                    "inclusive": "Number must be less than or equal to {maximum}",
+                    "not_inclusive": "Number must be less than {maximum}"
+                },
+                "set": {
+                    "exact": "Invalid input",
+                    "inclusive": "Invalid input",
+                    "not_inclusive": "Invalid input"
+                },
+                "date": {
+                    "exact": "Date must be exactly {maximum}",
+                    "inclusive": "Date must be smaller than or equal to {maximum}",
+                    "not_inclusive": "Date must be smaller than {maximum}"
+                }
+            }
+        },
+        "validations": {
+            "email": "email",
+            "url": "url",
+            "uuid": "uuid",
+            "cuid": "cuid",
+            "regex": "regex",
+            "datetime": "datetime"
+        },
+        "types": {
+            "function": "function",
+            "number": "number",
+            "string": "field",
+            "nan": "nan",
+            "integer": "integer",
+            "float": "float",
+            "boolean": "boolean",
+            "date": "date",
+            "bigint": "bigint",
+            "undefined": "undefined",
+            "symbol": "symbol",
+            "null": "null",
+            "array": "list",
+            "object": "object",
+            "unknown": "unknown",
+            "promise": "promise",
+            "void": "void",
+            "never": "never",
+            "map": "map",
+            "set": "set"
+        }
+    },
+    "discord": {
+        "commands": {
+            "fivenet": {
+                "desc": "Link to the FiveNet web app.",
+                "summary": "FiveNet is also available in your browser! Link to the FiveNet web app."
+            },
+            "help": {
+                "name": "help",
+                "desc": "Help topics for FiveNet.",
+                "topic": {
+                    "name": "help-topic",
+                    "desc": "List of available help topics."
+                },
+                "empty": {
+                    "title": "No help topic chosen!",
+                    "msg": "Available topics:\n* discord\n* registration"
+                },
+                "discord": {
+                    "name": "discord",
+                    "desc": "Steps to connect Discord with FiveNet.",
+                    "title": "Connecting Discord with FiveNet",
+                    "msg": "1. Navigate to [your FiveNet account information]({url}/auth/account-info?tab=oauth2Connections#).\n2. If the \"Social Login Connections\" tab isn't already selected, select it.\n3. Click on the \"Connect\"-button for Discord.\n4. You might need to login to your Discord account, before Discord asks for confirmation that you want to connect Discord with FiveNet, the \"Connect\"-button should have changed to a \"Disconnect\"-button.\n5. Congrats, you are done! If you have connected the correct Discord account, the FiveNet Discord sync should give set your roles in a few minutes.\n\n(If you have connected the wrong Discord account, use the \"Disconnect\"-button to disconnect the Discord account from FiveNet, and continue with step 3)"
+                },
+                "registration": {
+                    "name": "registration",
+                    "desc": "Info regarding FiveNet Account registration.",
+                    "title": "FiveNet Account Registration",
+                    "msg": "1. Join the gameserver.\n2. When connected and in-game, use the `/fivenet` command to retrieve your **registration token**.\n3. Click on the registration token and your browser will open the FiveNet registration page automatically.\n4. Now fill in the registration form, with an username and password, and you should be ready to create your account.\n5. You should now be able to login with the chosen username and password.\n\n(In case your browser doesn't automatically, [click me]({url}/auth/registration/) to get to the FiveNet registration page)"
+                }
+            },
+            "absent": {
+                "name": "absent",
+                "desc": "Create absence in FiveNet.",
+                "options": {
+                    "start-date": {
+                        "name": "start-date",
+                        "desc": "Absence start date in form of either `today` or `YYYY-MM-DD` format (e.g., 2024-10-12)."
+                    },
+                    "days": {
+                        "name": "days",
+                        "desc": "How many days will you be absent?"
+                    },
+                    "reason": {
+                        "name": "reason",
+                        "desc": "Reason for absence"
+                    }
+                },
+                "results": {
+                    "wrong_discord": {
+                        "title": "Discord not associated with a job!",
+                        "desc": "This Discord isn't FiveNet enabled. Please contact the Discord server administrator."
+                    },
+                    "no_user_found": {
+                        "title": "Unable to find your char!",
+                        "desc": "FiveNet Bot was unable to find a character that is connected with your Discord ID.\nMake sure to connect your Discord account with your FiveNet account and try again."
+                    },
+                    "no_perms": {
+                        "title": "No permissions!",
+                        "desc": "You don't have enough permissions to submit an absence (Code: {code})."
+                    },
+                    "invalid_date": {
+                        "title": "Invalid date",
+                        "desc": "Please make sure that the date is in the correct format, and is not in the past."
+                    },
+                    "failed": {
+                        "title": "Error creating your Absence",
+                        "desc": "Failed to create your absence entry. Make sure that all input fields are filled out correctly (Reason: {code})"
+                    },
+                    "success": {
+                        "title": "Successfully submitted your Absence",
+                        "desc": "Your absence has been submitted successfully.\n({absenceBegin} - {absenceEnd})"
+                    },
+                    "already_absent": {
+                        "title": "An Absence already been subbmited!",
+                        "desc": "You already have an absence for the same dates.\n({absenceBegin} - {absenceEnd})"
+                    }
+                }
+            },
+            "sync": {
+                "name": "sync",
+                "desc": "Trigger a FiveNet Discord sync.",
+                "results": {
+                    "wrong_discord": {
+                        "title": "Sync command must be run on a FiveNet enabled Discord server!",
+                        "desc": "Either you are sending a DM or this Discord isn't FiveNet enabled. Please contact the Discord server administrator."
+                    },
+                    "permission_denied": {
+                        "title": "Discord admin permission required",
+                        "desc": "Discord admin permission is required to run the sync command."
+                    },
+                    "start_error": {
+                        "title": "Failed to start manual sync",
+                        "desc": "There was an error to start the manual sync."
+                    },
+                    "already_running": {
+                        "title": "Sync is already running",
+                        "desc": "Please wait for the current sync to finish before trying to start the sync manually."
+                    },
+                    "started": {
+                        "title": "Sync successfully requested!",
+                        "desc": "The sync should start in a moment."
+                    }
+                }
+            }
         }
     },
     "perms": {
@@ -1900,9 +2663,9 @@
                         "UserProps_TrafficInfractionPoints": "Traffic Points",
                         "UserProps_OpenFines": "Open Fines",
                         "UserProps_BloodType": "Blood Type",
-                        "UserProps_Mugshot": "Mugshot",
                         "UserProps_Email": "E-Mail",
-                        "UserProps_Labels": "Labels"
+                        "UserProps_Labels": "Labels",
+                        "UserProps_Mugshot": "Mugshot"
                     },
                     "attrs_types": {
                         "Fields": "Fields"
@@ -1926,8 +2689,8 @@
                         "Wanted": "Wanted Status",
                         "Job": "Job",
                         "TrafficInfractionPoints": "Traffic Points",
-                        "Mugshot": "Mugshot",
-                        "Labels": "Labels"
+                        "Labels": "Labels",
+                        "Mugshot": "Mugshot"
                     },
                     "attrs_types": {
                         "Fields": "User Properties Fields"
@@ -2436,29 +3199,6 @@
                 }
             }
         },
-        "mailer": {
-            "MailerService": {
-                "category": "E-Mail",
-                "DeleteEmail": {
-                    "key": "Delete E-Mail addresses",
-                    "description": "Requires manage access to the E-Mail address."
-                },
-                "ListEmails": {
-                    "key": "List E-Mail threads",
-                    "description": "Minimum permission to see E-Mails."
-                },
-                "CreateOrUpdateEmail": {
-                    "key": "Create or update E-Mails",
-                    "description": "Updating E-Mails requires manage or higher access to a E-Mail thread.",
-                    "attrs": {
-                        "Job": "E-Mail addresses for your job (+ internal option)"
-                    },
-                    "attrs_types": {
-                        "Fields": "Access to create special E-Mail addresses"
-                    }
-                }
-            }
-        },
         "settings": {
             "LawsService": {
                 "category": "Law Books",
@@ -2502,752 +3242,26 @@
                     "description": "Add/ Delete permissions to FiveNet job roles."
                 }
             }
-        }
-    },
-    "errors": {
-        "pkg-auth": {
-            "ErrNoToken": "\"Authorization\" header must not be empty! Please login again.",
-            "ErrInvalidToken": "Token invalid/ expired!",
-            "ErrCheckToken": "Token check failed!",
-            "ErrUserNoPerms": "No permissions associated with your user!",
-            "ErrNoUserInfo": "Something went wrong, please logout and login again!",
-            "ErrPermissionDenied": "You don't have permission to do that!"
-        },
-        "AuthService": {
-            "ErrGenericAccount": "Failed to get/ update your account, please try again.",
-            "ErrAccountCreateFailed": "Please check the token you have typed in!",
-            "ErrInvalidLogin": "Wrong username or password!",
-            "ErrNoAccount": "You need to use your registration token to create an account first.",
-            "ErrNoCharFound": "No character(s) found for your account.",
-            "ErrGenericLogin": "Failed to login you in, please try again.",
-            "ErrUnableToChooseChar": "You don't have permission to select this character!",
-            "ErrUpdateAccount": "Failed to update your account!",
-            "ErrChangePassword": "Failed to change your password!",
-            "ErrForgotPassword": "Failed to reset password!",
-            "ErrAccountExistsFailed": "Please use use the forgot password function!",
-            "ErrSignupDisabled": "Account signup is disabled!",
-            "ErrAccountDuplicate": "Username already taken, please use a different username.",
-            "ErrChangeUsername": "Failed to change your username!",
-            "ErrBadUsername": "Please verify the usernames correctness! Please try with a different username.",
-            "ErrCharLock": {
-                "title": "Char lock is active!",
-                "content": "Please select an available character and try again."
-            }
-        },
-        "CitizensService": {
-            "ErrFailedQuery": "Failed to list/ get citizens data!",
-            "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)",
-            "ErrReasonRequired": "A reason must be provided!",
-            "ErrPropsWantedDenied": "You are not allowed to set a citizen's wanted status!",
-            "ErrPropsJobDenied": "You are not allowed to set a citizen's job!",
-            "ErrPropsJobPublic": "You can't set a state job!",
-            "ErrPropsJobInvalid": "Invalid job or job rank set!",
-            "ErrPropsTrafficPointsDenied": "You are not allowed to set a citizen's traffic infraction points!",
-            "ErrPropsMugshotDenied": "You are not allowed to set a citizen's mug shot!",
-            "ErrPropsLabelsDenied": "You are not allowed to set a citizen's labels!"
-        },
-        "CompletorService": {
-            "ErrFailedSearch": "Failed to search the data!"
-        },
-        "VehiclesService": {
-            "ErrFailedQuery": "Failed to search vehicles data!"
-        },
-        "DocumentsService": {
-            "ErrFailedQuery": "Failed to get/ create/ update documents!",
-            "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
-            "ErrTemplateNoPerms": "You don't have permission to view/ update/ delete this template!",
-            "ErrPermissionDenied": "You don't have permission to do this!",
-            "ErrClosedDoc": "Document is closed and can't be edited!",
-            "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
-            "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
-            "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader.",
-            "ErrDocViewDenied": "You don't have permission to view this document!",
-            "ErrDocUpdateDenied": "You don't have permission to edit this document!",
-            "ErrDocDeleteDenied": "You don't have permission to delete this document!",
-            "ErrDocToggleDenied": "You don't have permission to close/open this document!",
-            "ErrCommentViewDenied": "You don't have permission to view document comments!",
-            "ErrCommentPostDenied": "You don't have permission to post a comment on this document!",
-            "ErrCommentEditDenied": "You don't have permission to edit this comment!",
-            "ErrCommentDeleteDenied": "You can't delete this comment!",
-            "ErrFeedRefsViewDenied": "You don't have permission to view this document's references!",
-            "ErrFeedRelsViewDenied": "You don't have permission to view this document's relations!",
-            "ErrFeedRefSelf": "You can't reference a document with itself!",
-            "ErrFeedRefAddDenied": "You don't have permission to add references from/to this document!",
-            "ErrFeedRefRemoveDenied": "You don't have permission to remove references from this document!",
-            "ErrFeedRelAddDenied": "You don't have permission to add relation from/to this document!",
-            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
-            "ErrDocReqAlreadyCreated": {
-                "title": "Document Request already exists!",
-                "content": "A document request of the same type already exists or one has been created in the last 24 hours."
-            },
-            "ErrDocSameOwner": "You are already the creator of this document!",
-            "ErrDocOwnerWrongJob": "New document owner must be part of your job!",
-            "ErrDocReqOwnDoc": "You can't create requests against your own document!",
-            "ErrDocReqAlreadyCompleted": {
-                "title": "Document Request has already been accepted/declined!",
-                "content": "The document request you are trying to accept/decline has already been processed."
-            },
-            "ErrDocRequiredAccessTemplate": {
-                "title": "Required document access missing!",
-                "content": "Make sure you have not edited or removed any required document access."
-            },
-            "ErrDocOwnerFailed": "You need to have edit access to the document!",
-            "ErrDocAccessDuplicate": "Document access: A job rank/citizen can only have one access and not multiple!",
-            "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!"
-        },
-        "LivemapService": {
-            "ErrStreamFailed": "Failed to stream Map data!",
-            "ErrMarkerFailed": "Failed to create/ update/ delete marker!"
-        },
-        "NotificatorService": {
-            "ErrFailedRequest": "Failed to load notifications data!",
-            "ErrFailedStream": "Failed to stream notifications!"
-        },
-        "SettingsService": {
-            "ErrFailedQuery": "Failed to get/ update control panel data!",
-            "ErrInvalidRequest": "Invalid role action requested!",
-            "ErrNoPermission": "No permission to create/ change/ delete role!",
-            "ErrRoleAlreadyExists": "Role already exists!",
-            "ErrOwnRoleDeletion": "Can't delete your own role!",
-            "ErrInvalidPerms": "Failed to update role permissions!",
-            "ErrInvalidAttrs": "Failed to update role attributes!",
-            "ErrInvalidJPQuickButton": "Invalid quick access button found!"
-        },
-        "CentrumService": {
-            "ErrFailedQuery": "Failed to get/update dispatch center data!",
-            "ErrNotPartOfDispatch": "You are not part of this dispatch!",
-            "ErrNotOnDuty": {
-                "title": "You are not on duty!",
-                "content": "Make sure you are on duty and fullfil any other requirements to be visible on the livemap."
-            },
-            "ErrModeForbidsAction": {
-                "title": "Dispatch center forbids this!",
-                "content": "Please contact the dispatch center."
-            },
-            "ErrDispatchAlreadyCompleted": {
-                "title": "Dispatch already in completed state!",
-                "content": "You can't accept/decline completed dispatches."
-            },
-            "ErrNotPartOfUnit": "You are not part of this unit!",
-            "ErrStaticUnit": "Can't update a static unit's status to be available!",
-            "ErrUnitPermDenied": "You can't access this unit!",
-            "ErrDisabled": {
-                "title": "Dispatch Center is disabled!",
-                "content": "Please contact your leader to enable the dispatch center."
-            }
-        },
-        "general": {
-            "internal_error": {
-                "title": "Internal server error",
-                "content": "An internal server error has occured. Please try again."
-            }
-        },
-        "JobsService": {
-            "ErrFailedQuery": "Failed to get job data!",
-            "ErrReasonRequired": "A reason must be provided!",
-            "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
-            "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
-            "ErrNotFoundOrNoPerms": "Colleague not found!",
-            "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!",
-            "ErrPropsNameDenied": "You are not allowed to set your colleague's name!",
-            "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!",
-            "ErrAbsenceBeginOutOfRange": "Absence begin date is outside the allowed range.",
-            "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range.",
-            "ErrLabelsNoPerms": "You don't have permissions to list the colleagues labels!"
-        },
-        "QualificationsService": {
-            "ErrFailedQuery": "Failed to get qualifcation data!",
-            "ErrRequirementsMissing": {
-                "title": "Missing required Qualifications",
-                "content": "You are missing required qualifications."
-            },
-            "ErrQualificationClosed": "Can't request or take a closed qualification!",
-            "ErrExamDisabled": "The qualification's exam is disabled!",
-            "ErrRequirementSelfRef": "Please remove any qualification requirements that reference the qualification you are editing!",
-            "ErrQualiAccessDenied": "You can't access this qualifcation!"
-        },
-        "CalendarService": {
-            "ErrFailedQuery": "Failed to load calendar data!",
-            "ErrNoPerms": "You don't have permissions to access this calendar data!",
-            "ErrOnePrivateCal": "You can only have one private calendar!",
-            "ErrCalendarClosed": {
-                "title": "Calendar is closed",
-                "content": "The calendar is closed and can't be used anymore."
-            },
-            "ErrEntryClosed": {
-                "title": "Calendar Entry is closed",
-                "content": "The calendar entry is closed and can't be RSVPed to anymore."
-            }
-        },
-        "WikiService": {
-            "ErrFailedQuery": "Failed to load wiki data!",
-            "ErrPageDenied": "You don't have access to this page!",
-            "ErrPageHasChildren": {
-                "title": "Page has children",
-                "content": "You can't delete this page because it has child pages. Make sure to move or delete the child pages first."
-            },
-            "ErrMaxFilesReached": {
-                "title": "Maximum files reached",
-                "content": "You have reached the maximum number of files allowed in this wiki page. Please delete some files before uploading new ones."
-            },
-            "ErrPageNotFound": {
-                "title": "Page not found",
-                "content": "The page you are trying to access does not exist or has been deleted."
-            }
-        },
-        "MailerService": {
-            "ErrFailedQuery": "Failed to load mail data!",
-            "ErrAddresseAlreadyTaken": {
-                "title": "E-Mail address already taken!",
-                "content": "Please try again with another e-mail address."
-            },
-            "ErrTemplateLimitReached": "You can't have more templates (limit: 5)!",
-            "ErrEmailAccessDenied": "You must have access to the e-mail address!",
-            "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
-            "ErrInvalidRecipients": "One or more e-mail addresses are wrong.",
-            "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!",
-            "ErrCantDeleteOwnEmail": "You can't delete your own email!",
-            "ErrEmailAccessRequired": "A job's email requires at least one access",
-            "ErrAddresseInvalid": "Invalid e-mail address, please choose another one.",
-            "ErrThreadAccessDenied": {
-                "title": "You don't have access to this thread!",
-                "content": "You might have been removed from the thread."
-            },
-            "ErrEmailChangeTooEarly": {
-                "title": "The e-mail has already been changed!",
-                "content": "E-mail addresses can only be changed every two weeks."
-            },
-            "ErrEmailDisabled": {
-                "title": "This e-mail address has been disabled!",
-                "content": "Please contact the FiveNet administration for help on this."
-            }
-        },
-        "InternetService": {
-            "ErrFailedQuery": "Failed to get internet data!",
-            "ErrFailedSearch": "Failed to search internet!",
-            "ErrDomainNotTransferable": {
-                "title": "NIC Service - Domain Registration",
-                "content": "Domain not transferable, please choose another domain."
-            },
-            "ErrDomainWrongTransferCode": {
-                "title": "NIC Service - Domain Registration",
-                "content": "Domain transfer code wrong or transfer not enabled."
-            }
-        },
-        "Filestore": {
-            "ErrInvalidUploadMeta": "Invalid upload meta data!",
-            "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB."
-        }
-    },
-    "system": {
-        "update_available": {
-            "title": "New FiveNet version available ({version})!",
-            "content": "Please reload the page to continue using FiveNet."
-        },
-        "streamer_mode": {
-            "title": "Streamer mode enabled!",
-            "description": "To view this, you must disable streamer mode in your user settings."
-        },
-        "not_supported_on_tablet": {
-            "title": "This function isn't supported when using the tablet.",
-            "description": "Please use your browser to use this function.",
-            "button": "Open in Browser"
-        }
-    },
-    "enums": {
-        "documents": {
-            "AccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "VIEW": "View",
-                "COMMENT": "Comment",
-                "ACCESS": "Access",
-                "EDIT": "Edit",
-                "STATUS": "Status"
-            },
-            "DocReference": {
-                "UNSPECIFIED": "Unspecified",
-                "LINKED": "links",
-                "SOLVES": "solves",
-                "CLOSES": "closes",
-                "DEPRECATES": "deprecates"
-            },
-            "DocRelation": {
-                "UNSPECIFIED": "Unspecified",
-                "MENTIONED": "mentioned",
-                "TARGETS": "targets",
-                "CAUSED": "caused"
-            },
-            "DocActivityType": {
-                "CREATED": "Document Created",
-                "STATUS_OPEN": "Document opened",
-                "STATUS_CLOSED": "Document closed",
-                "UPDATED": "Document updated",
-                "RELATIONS_UPDATED": "Document Relations updated",
-                "REFERENCES_UPDATED": "Document References updated",
-                "ACCESS_UPDATED": "Document Access updated",
-                "OWNER_CHANGED": "Document Owner changed",
-                "DELETED": "Document deleted",
-                "REQUESTED_ACCESS": "Document access requested",
-                "REQUESTED_CLOSURE": "Document closure requested",
-                "REQUESTED_UPDATE": "Document update requested",
-                "REQUESTED_DELETION": "Document deletion requested",
-                "COMMENT_ADDED": "Comment added",
-                "COMMENT_UPDATED": "Comment updated",
-                "COMMENT_DELETED": "Comment deleted",
-                "UNSPECIFIED": "Unspecified",
-                "REQUESTED_OWNER_CHANGE": "Document owner change requested",
-                "REQUESTED_OPENING": "Document open requested"
-            }
-        },
-        "centrum": {
-            "CentrumMode": {
-                "UNSPECIFIED": "Unspecified Mode",
-                "MANUAL": "Manual Mode",
-                "CENTRAL_COMMAND": "Central Command Mode",
-                "AUTO_ROUND_ROBIN": "Automatic Mode: Round Robin",
-                "SIMPLIFIED": "Simplified Mode"
-            },
-            "StatusDispatch": {
-                "UNSPECIFIED": "Unspecified",
-                "NEW": "New",
-                "UNASSIGNED": "Unassigned",
-                "UPDATED": "Updated",
-                "UNIT_ASSIGNED": "Unit assigned",
-                "UNIT_UNASSIGNED": "Unit unassigned",
-                "EN_ROUTE": "En Route",
-                "ON_SCENE": "On Scene",
-                "NEED_ASSISTANCE": "Need Assistance",
-                "COMPLETED": "Abgeschlossen",
-                "CANCELLED": "Abgebrochen",
-                "ARCHIVED": "Archived",
-                "UNIT_ACCEPTED": "Unit accepted Dispatch",
-                "UNIT_DECLINED": "Unit declined Dispatch"
-            },
-            "StatusUnit": {
-                "UNSPECIFIED": "Unspecified",
-                "USER_ADDED": "Member added",
-                "USER_REMOVED": "Member removed",
-                "UNAVAILABLE": "Unavailable",
-                "AVAILABLE": "Available",
-                "ON_BREAK": "On Break",
-                "BUSY": "Busy",
-                "UNKNOWN": "Unknown"
-            },
-            "DispatchReferenceType": {
-                "UNSPECIFIED": "Unspecified",
-                "REFERENCED": "Referenced",
-                "DUPLICATED_BY": "Duplicated by",
-                "DUPLICATE_OF": "Duplicates"
-            },
-            "UnitAccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "VIEW": "View",
-                "JOIN": "Join"
-            },
-            "DispatchAttribute": {
-                "MULTIPLE": "Multiple Dispatches",
-                "TOO_OLD": "Cancelled due to Age",
-                "DUPLICATE": "Duplicate",
-                "AUTOMATIC": "Automatic Dispatch"
-            },
-            "UnitAttribute": {
-                "STATIC": "Static",
-                "NO_DISPATCH_AUTO_ASSIGN": "No Dispatch Auto Assign"
-            }
-        },
-        "livemap": {
-            "MarkerType": {
-                "UNSPECIFIED": "Unspecified",
-                "DOT": "Dot",
-                "CIRCLE": "Circle",
-                "ICON": "Icon"
-            }
-        },
-        "jobs": {
-            "ConductType": {
-                "UNSPECIFIED": "Unspecified",
-                "NEUTRAL": "Neutral",
-                "POSITIVE": "Positive",
-                "NEGATIVE": "Negative",
-                "WARNING": "Warning",
-                "SUSPENSION": "Suspension",
-                "NOTE": "Note"
-            },
-            "ColleagueActivityType": {
-                "UNSPECIFIED": "Unspecified",
-                "ABSENCE_DATE": "Absence Date",
-                "FIRED": "Fired",
-                "HIRED": "Hired",
-                "PROMOTED": "Promoted",
-                "DEMOTED": "Demoted",
-                "NOTE": "Note updated",
-                "LABELS": "Labels updated",
-                "NAME": "Name Prefix/Suffix updated"
-            }
-        },
-        "qualifications": {
-            "AccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "VIEW": "View",
-                "REQUEST": "Request",
-                "TAKE": "Take",
-                "GRADE": "Grade",
-                "MANAGE": "Manage",
-                "EDIT": "Edit"
-            },
-            "ResultStatus": {
-                "UNSPECIFIED": "Unspecified",
-                "PENDING": "Pending",
-                "FAILED": "Failed",
-                "SUCCESSFUL": "Successful"
-            },
-            "RequestStatus": {
-                "UNSPECIFIED": "Unspecified",
-                "PENDING": "Pending",
-                "DENIED": "Denied",
-                "ACCEPTED": "Accepted",
-                "COMPLETED": "Completed",
-                "EXAM_STARTED": "Exam started",
-                "EXAM_GRADING": "Exam grading"
-            },
-            "QualificationExamMode": {
-                "UNSPECIFIED": "Unspecified",
-                "DISABLED": "Disabled",
-                "ENABLED": "Enabled",
-                "REQUEST_NEEDED": "Require Request"
-            }
-        },
-        "settings": {
-            "UserInfoSyncUnemployedMode": {
-                "GIVE_ROLE": "Give Role",
-                "KICK": "Kick",
-                "UNSPECIFIED": "Unspecified"
-            },
-            "AppConfig": {
-                "DiscordBotPresenceType": {
-                    "GAME": "Game",
-                    "LISTENING": "Listening",
-                    "STREAMING": "Streaming",
-                    "WATCH": "Watch",
-                    "UNSPECIFIED": "Unspecified"
-                }
-            },
-            "AuditLog": {
-                "EventType": {
-                    "UNSPECIFIED": "Unspecified",
-                    "ERRORED": "Failed",
-                    "VIEWED": "Viewed",
-                    "CREATED": "Created",
-                    "UPDATED": "Updated",
-                    "DELETED": "Deleted"
-                }
-            },
-            "CronjobState": {
-                "UNSPECIFIED": "Unspecified",
-                "WAITING": "Waiting",
-                "PENDING": "Pending",
-                "RUNNING": "Running"
-            }
-        },
-        "calendar": {
-            "AccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "VIEW": "View",
-                "SHARE": "Share",
-                "EDIT": "Edit",
-                "MANAGE": "Manage"
-            }
-        },
-        "notifications": {
-            "NotificationCategory": {
-                "UNSPECIFIED": "Unspecified",
-                "GENERAL": "General",
-                "DOCUMENT": "Documents",
-                "CALENDAR": "Calendar"
-            }
-        },
-        "wiki": {
-            "AccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "VIEW": "View",
-                "ACCESS": "Access",
-                "EDIT": "Edit",
-                "OWNER": "Owner"
-            },
-            "PageActivityType": {
-                "UNSPECIFIED": "Unspecified",
-                "CREATED": "Page Created",
-                "UPDATED": "Page updated",
-                "ACCESS_UPDATED": "Page Access updated",
-                "OWNER_CHANGED": "Page Owner changed",
-                "DELETED": "Page deleted"
-            }
         },
         "mailer": {
-            "AccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "MANAGE": "Manage",
-                "READ": "Read",
-                "WRITE": "Write"
-            }
-        },
-        "users": {
-            "UserActivityType": {
-                "UNSPECIFIED": "Unspecified",
-                "NAME": "Name",
-                "LICENSES": "Licenses",
-                "WANTED": "Wanted",
-                "TRAFFIC_INFRACTION_POINTS": "Traffic Infraction Points",
-                "MUGSHOT": "Mugshot",
-                "LABELS": "Labels",
-                "JOB": "Job",
-                "DOCUMENT": "Documents",
-                "JAIL": "Jail",
-                "FINE": "Fines"
-            }
-        }
-    },
-    "commandpalette": {
-        "empty": {
-            "title": "No results found.",
-            "content": "No results found for that term. Please try again."
-        },
-        "categories": {
-            "general": "General",
-            "navigation": "Navigation"
-        },
-        "footer": "Type {key1} for citizens, {key2} for documents search."
-    },
-    "zodI18n": {
-        "errors": {
-            "custom_types": {
-                "duration": {
-                    "invalid": "Invalid duration format, must be in format of \"1.23s\" and be at least \"0.01s\""
+            "MailerService": {
+                "category": "E-Mail",
+                "DeleteEmail": {
+                    "key": "Delete E-Mail addresses",
+                    "description": "Requires manage access to the E-Mail address."
                 },
-                "filelist": {
-                    "required": "File must be provided",
-                    "wrong_file_type": "File must be one of the valid file types: {types}",
-                    "size_too_big": "File must be less than {size}MB"
-                }
-            },
-            "invalid_type": "Expected {expected}, received {received}",
-            "invalid_type_received_undefined": "Required",
-            "invalid_type_received_null": "Required",
-            "invalid_literal": "Invalid literal value. Expected {expected}",
-            "unrecognized_keys": "Unrecognized key(s) in the object: {keys}",
-            "invalid_union": "Invalid input for union type",
-            "invalid_union_discriminator": "Invalid union discriminator value. Expected {options}",
-            "invalid_enum_value": "Invalid enum value. Expected one of {options}, but received '{received}'",
-            "invalid_arguments": "Invalid function arguments",
-            "invalid_return_type": "Invalid function return type",
-            "invalid_date": "Invalid date",
-            "custom": "Invalid input",
-            "invalid_intersection_types": "Intersection types could not be merged",
-            "not_multiple_of": "The number must be a multiple of {multipleOf}",
-            "not_finite": "The number must be finite",
-            "invalid_string": {
-                "email": "Invalid {validation}",
-                "url": "Invalid {validation}",
-                "uuid": "Invalid {validation}",
-                "cuid": "Invalid {validation}",
-                "regex": "Invalid string format",
-                "datetime": "Invalid {validation}",
-                "startsWith": "Invalid input: must start with \"{startsWith}\"",
-                "endsWith": "Invalid input: must end with \"{endsWith}\""
-            },
-            "too_small": {
-                "array": {
-                    "exact": "The list must contain exactly {minimum} element(s)",
-                    "inclusive": "List must contain at least {minimum} element(s)",
-                    "not_inclusive": "List must contain more than {minimum} element(s)"
+                "ListEmails": {
+                    "key": "List E-Mail threads",
+                    "description": "Minimum permission to see E-Mails."
                 },
-                "string": {
-                    "exact": "The field must contain exactly {minimum} character(s)",
-                    "inclusive": "Field must contain at least {minimum} character(s)",
-                    "not_inclusive": "Field must contain over {minimum} character(s)"
-                },
-                "number": {
-                    "exact": "The number must be exactly {minimum}",
-                    "inclusive": "Number must be greater than or equal to {minimum}",
-                    "not_inclusive": "Number must be greater than {minimum}"
-                },
-                "set": {
-                    "exact": "Invalid input",
-                    "inclusive": "Invalid input",
-                    "not_inclusive": "Invalid input"
-                },
-                "date": {
-                    "exact": "Date must be exactly {minimum}",
-                    "inclusive": "Date must be greater than or equal to {minimum}",
-                    "not_inclusive": "Date must be greater than {minimum}"
-                }
-            },
-            "too_big": {
-                "array": {
-                    "exact": "The list must contain exactly {maximum} element(s)",
-                    "inclusive": "List must contain at most {maximum} element(s)",
-                    "not_inclusive": "List must contain less than {maximum} element(s)"
-                },
-                "string": {
-                    "exact": "The field must contain exactly {maximum} character(s)",
-                    "inclusive": "Field must contain at most {maximum} character(s)",
-                    "not_inclusive": "Field must contain under {maximum} character(s)"
-                },
-                "number": {
-                    "exact": "The number must be exactly {maximum}",
-                    "inclusive": "Number must be less than or equal to {maximum}",
-                    "not_inclusive": "Number must be less than {maximum}"
-                },
-                "set": {
-                    "exact": "Invalid input",
-                    "inclusive": "Invalid input",
-                    "not_inclusive": "Invalid input"
-                },
-                "date": {
-                    "exact": "Date must be exactly {maximum}",
-                    "inclusive": "Date must be smaller than or equal to {maximum}",
-                    "not_inclusive": "Date must be smaller than {maximum}"
-                }
-            }
-        },
-        "validations": {
-            "email": "email",
-            "url": "url",
-            "uuid": "uuid",
-            "cuid": "cuid",
-            "regex": "regex",
-            "datetime": "datetime"
-        },
-        "types": {
-            "function": "function",
-            "number": "number",
-            "string": "field",
-            "nan": "nan",
-            "integer": "integer",
-            "float": "float",
-            "boolean": "boolean",
-            "date": "date",
-            "bigint": "bigint",
-            "undefined": "undefined",
-            "symbol": "symbol",
-            "null": "null",
-            "array": "list",
-            "object": "object",
-            "unknown": "unknown",
-            "promise": "promise",
-            "void": "void",
-            "never": "never",
-            "map": "map",
-            "set": "set"
-        }
-    },
-    "discord": {
-        "commands": {
-            "fivenet": {
-                "desc": "Link to the FiveNet web app.",
-                "summary": "FiveNet is also available in your browser! Link to the FiveNet web app."
-            },
-            "help": {
-                "name": "help",
-                "desc": "Help topics for FiveNet.",
-                "topic": {
-                    "name": "help-topic",
-                    "desc": "List of available help topics."
-                },
-                "empty": {
-                    "title": "No help topic chosen!",
-                    "msg": "Available topics:\n* discord\n* registration"
-                },
-                "discord": {
-                    "name": "discord",
-                    "desc": "Steps to connect Discord with FiveNet.",
-                    "title": "Connecting Discord with FiveNet",
-                    "msg": "1. Navigate to [your FiveNet account information]({url}/auth/account-info?tab=oauth2Connections#).\n2. If the \"Social Login Connections\" tab isn't already selected, select it.\n3. Click on the \"Connect\"-button for Discord.\n4. You might need to login to your Discord account, before Discord asks for confirmation that you want to connect Discord with FiveNet, the \"Connect\"-button should have changed to a \"Disconnect\"-button.\n5. Congrats, you are done! If you have connected the correct Discord account, the FiveNet Discord sync should give set your roles in a few minutes.\n\n(If you have connected the wrong Discord account, use the \"Disconnect\"-button to disconnect the Discord account from FiveNet, and continue with step 3)"
-                },
-                "registration": {
-                    "name": "registration",
-                    "desc": "Info regarding FiveNet Account registration.",
-                    "title": "FiveNet Account Registration",
-                    "msg": "1. Join the gameserver.\n2. When connected and in-game, use the `/fivenet` command to retrieve your **registration token**.\n3. Click on the registration token and your browser will open the FiveNet registration page automatically.\n4. Now fill in the registration form, with an username and password, and you should be ready to create your account.\n5. You should now be able to login with the chosen username and password.\n\n(In case your browser doesn't automatically, [click me]({url}/auth/registration/) to get to the FiveNet registration page)"
-                }
-            },
-            "absent": {
-                "name": "absent",
-                "desc": "Create absence in FiveNet.",
-                "options": {
-                    "start-date": {
-                        "name": "start-date",
-                        "desc": "Absence start date in form of either `today` or `YYYY-MM-DD` format (e.g., 2024-10-12)."
+                "CreateOrUpdateEmail": {
+                    "key": "Create or update E-Mails",
+                    "description": "Updating E-Mails requires manage or higher access to a E-Mail thread.",
+                    "attrs": {
+                        "Job": "E-Mail addresses for your job (+ internal option)"
                     },
-                    "days": {
-                        "name": "days",
-                        "desc": "How many days will you be absent?"
-                    },
-                    "reason": {
-                        "name": "reason",
-                        "desc": "Reason for absence"
-                    }
-                },
-                "results": {
-                    "wrong_discord": {
-                        "title": "Discord not associated with a job!",
-                        "desc": "This Discord isn't FiveNet enabled. Please contact the Discord server administrator."
-                    },
-                    "no_user_found": {
-                        "title": "Unable to find your char!",
-                        "desc": "FiveNet Bot was unable to find a character that is connected with your Discord ID.\nMake sure to connect your Discord account with your FiveNet account and try again."
-                    },
-                    "no_perms": {
-                        "title": "No permissions!",
-                        "desc": "You don't have enough permissions to submit an absence (Code: {code})."
-                    },
-                    "invalid_date": {
-                        "title": "Invalid date",
-                        "desc": "Please make sure that the date is in the correct format, and is not in the past."
-                    },
-                    "failed": {
-                        "title": "Error creating your Absence",
-                        "desc": "Failed to create your absence entry. Make sure that all input fields are filled out correctly (Reason: {code})"
-                    },
-                    "success": {
-                        "title": "Successfully submitted your Absence",
-                        "desc": "Your absence has been submitted successfully.\n({absenceBegin} - {absenceEnd})"
-                    },
-                    "already_absent": {
-                        "title": "An Absence already been subbmited!",
-                        "desc": "You already have an absence for the same dates.\n({absenceBegin} - {absenceEnd})"
-                    }
-                }
-            },
-            "sync": {
-                "name": "sync",
-                "desc": "Trigger a FiveNet Discord sync.",
-                "results": {
-                    "wrong_discord": {
-                        "title": "Sync command must be run on a FiveNet enabled Discord server!",
-                        "desc": "Either you are sending a DM or this Discord isn't FiveNet enabled. Please contact the Discord server administrator."
-                    },
-                    "permission_denied": {
-                        "title": "Discord admin permission required",
-                        "desc": "Discord admin permission is required to run the sync command."
-                    },
-                    "start_error": {
-                        "title": "Failed to start manual sync",
-                        "desc": "There was an error to start the manual sync."
-                    },
-                    "already_running": {
-                        "title": "Sync is already running",
-                        "desc": "Please wait for the current sync to finish before trying to start the sync manually."
-                    },
-                    "started": {
-                        "title": "Sync successfully requested!",
-                        "desc": "The sync should start in a moment."
+                    "attrs_types": {
+                        "Fields": "Access to create special E-Mail addresses"
                     }
                 }
             }

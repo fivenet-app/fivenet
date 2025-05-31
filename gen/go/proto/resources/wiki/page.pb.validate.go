@@ -683,6 +683,8 @@ func (m *PageShort) validate(all bool) error {
 
 	}
 
+	// no validation rules for Draft
+
 	if m.JobLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {

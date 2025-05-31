@@ -180,9 +180,26 @@ func (m *PageActivityData) Sanitize() error {
 	return nil
 }
 
+func (m *PageFilesChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *PageUpdated) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: FilesChange
+	if m.FilesChange != nil {
+		if v, ok := any(m.GetFilesChange()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

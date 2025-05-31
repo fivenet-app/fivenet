@@ -160,6 +160,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         wrapper-class="min-h-44"
                                         comment-mode
                                         :limit="1250"
+                                        disable-collab
                                     />
                                 </ClientOnly>
                             </UFormGroup>

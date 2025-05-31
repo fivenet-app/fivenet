@@ -1,8 +1,8 @@
 import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
-import type { NotificationActionI18n } from '~/composables/notifications';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { NotificationActionI18n } from '~/utils/notifications';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';

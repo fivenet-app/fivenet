@@ -281,6 +281,12 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	var docContent string
+	var docTitle string
+	var docState string
+
+	docAccess := &documents.DocumentAccess{}
+
 	var tmpl *documents.Template
 	if req.TemplateId != nil {
 		var err error
@@ -289,9 +295,23 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		if !s.checkAccessAgainstTemplate(tmpl, req.Access) {
-			return nil, errorsdocuments.ErrDocRequiredAccessTemplate
+		docTitle, docState, docContent, err = s.renderTemplate(tmpl, req.TemplateData)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
+
+		// Set access based on template
+		docAccess = &documents.DocumentAccess{
+			Jobs:  tmpl.ContentAccess.Jobs,
+			Users: tmpl.ContentAccess.Users,
+		}
+	} else {
+		// Add minimum access for the creator's job
+		docAccess.Jobs = append(docAccess.Jobs, &documents.DocumentJobAccess{
+			Job:          userInfo.Job,
+			MinimumGrade: userInfo.JobGrade,
+			Access:       documents.AccessLevel_ACCESS_LEVEL_EDIT,
+		})
 	}
 
 	// Begin transaction
@@ -305,34 +325,32 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 	tDocument := table.FivenetDocuments
 	stmt := tDocument.
 		INSERT(
-			tDocument.CategoryID,
 			tDocument.Title,
 			tDocument.Summary,
 			tDocument.Content,
 			tDocument.ContentType,
-			tDocument.Data,
-			tDocument.CreatorID,
-			tDocument.CreatorJob,
 			tDocument.State,
+			tDocument.Data,
 			tDocument.Closed,
 			tDocument.Draft,
 			tDocument.Public,
 			tDocument.TemplateID,
+			tDocument.CreatorID,
+			tDocument.CreatorJob,
 		).
 		VALUES(
-			req.CategoryId,
-			req.Title,
-			req.Content.GetSummary(DocSummaryLength),
-			req.Content,
-			content.ContentType_CONTENT_TYPE_HTML,
-			req.Data,
+			docTitle,
+			content.GetSummary(docContent, DocSummaryLength),
+			docContent,
+			req.ContentType,
+			docState,
+			jet.NULL,
+			false,
+			true,
+			false,
+			req.TemplateId,
 			userInfo.UserId,
 			userInfo.Job,
-			req.State,
-			req.Closed,
-			req.Public,
-			req.Draft,
-			req.TemplateId,
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -354,7 +372,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
-	if err := s.handleDocumentAccessChange(ctx, tx, uint64(lastId), userInfo, req.Access, false); err != nil {
+	if err := s.handleDocumentAccessChange(ctx, tx, uint64(lastId), userInfo, docAccess, false); err != nil {
 		return nil, err
 	}
 
@@ -372,7 +390,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
 	return &pbdocuments.CreateDocumentResponse{
-		DocumentId: uint64(lastId),
+		Id: uint64(lastId),
 	}, nil
 }
 
@@ -405,7 +423,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 		}
 	}
 
-	doc, err := s.getDocument(ctx,
+	oldDoc, err := s.getDocument(ctx,
 		tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
 		userInfo, true)
 	if err != nil {
@@ -413,8 +431,16 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 	}
 
 	// Either the document is closed and the update request isn't re-opening the document
-	if doc.Closed && req.Closed && !userInfo.Superuser {
+	if oldDoc.Closed && req.Closed && !userInfo.Superuser {
 		return nil, errorsdocuments.ErrClosedDoc
+	}
+
+	// A document can only be switched to published once
+	if !oldDoc.Draft && oldDoc.Draft != req.Draft {
+		// Allow a super user to change the draft state
+		if !userInfo.Superuser {
+			req.Draft = oldDoc.Draft
+		}
 	}
 
 	// Field Permission Check
@@ -422,14 +448,14 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasAccess(fields, userInfo, oldDoc.CreatorJob, oldDoc.Creator) {
 		return nil, errorsdocuments.ErrDocUpdateDenied
 	}
 
 	var tmpl *documents.Template
-	if doc.TemplateId != nil {
+	if oldDoc.TemplateId != nil {
 		var err error
-		tmpl, err = s.getTemplate(ctx, *doc.TemplateId)
+		tmpl, err = s.getTemplate(ctx, *oldDoc.TemplateId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
@@ -471,14 +497,14 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 				req.Public,
 			).
 			WHERE(
-				tDocument.ID.EQ(jet.Uint64(doc.Id)),
+				tDocument.ID.EQ(jet.Uint64(oldDoc.Id)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		diff, err := s.generateDocumentDiff(doc, &documents.Document{
+		diff, err := s.generateDocumentDiff(oldDoc, &documents.Document{
 			Title:   req.Title,
 			Content: req.Content,
 			State:   req.State,
@@ -487,8 +513,19 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
+		added, deleted, err := s.fHandler.HandleFileChangesForParent(ctx, tx, oldDoc.Id, req.Files)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+		if added > 0 || deleted > 0 {
+			diff.FilesChange = &documents.DocFilesChange{
+				Added:   added,
+				Deleted: deleted,
+			}
+		}
+
 		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-			DocumentId:   doc.Id,
+			DocumentId:   oldDoc.Id,
 			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
 			CreatorId:    &userInfo.UserId,
 			CreatorJob:   userInfo.Job,
@@ -502,14 +539,28 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 		}
 
 		if tmpl != nil {
-			if err := s.createOrUpdateWorkflowState(ctx, tx, doc.Id, tmpl.Workflow); err != nil {
+			if err := s.createOrUpdateWorkflowState(ctx, tx, oldDoc.Id, tmpl.Workflow); err != nil {
 				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
+
 	}
 
-	if err := s.handleDocumentAccessChange(ctx, tx, doc.Id, userInfo, req.Access, true); err != nil {
+	if err := s.handleDocumentAccessChange(ctx, tx, oldDoc.Id, userInfo, req.Access, true); err != nil {
 		return nil, err
+	}
+
+	if !onlyUpdateAccess {
+		if oldDoc.Draft != req.Draft {
+			if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+				DocumentId:   oldDoc.Id,
+				ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DRAFT_TOGGLED,
+				CreatorId:    &userInfo.UserId,
+				CreatorJob:   userInfo.Job,
+			}); err != nil {
+				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			}
+		}
 	}
 
 	// Commit the transaction
@@ -519,8 +570,15 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
+	doc, err := s.getDocument(ctx,
+		tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
+		userInfo, true)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
 	return &pbdocuments.UpdateDocumentResponse{
-		DocumentId: doc.Id,
+		Document: doc,
 	}, nil
 }
 

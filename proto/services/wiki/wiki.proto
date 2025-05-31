@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.wiki;
 
+import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/wiki/activity.proto";
 import "resources/wiki/page.proto";
@@ -33,11 +34,13 @@ message GetPageResponse {
 }
 
 message CreatePageRequest {
-  resources.wiki.Page page = 1 [(validate.rules).message.required = true];
+  optional uint64 parent_id = 1 [(validate.rules).uint64.gt = 0];
+  resources.common.content.ContentType content_type = 2 [(validate.rules).enum.defined_only = true];
 }
 
 message CreatePageResponse {
-  resources.wiki.Page page = 1;
+  string job = 1;
+  uint64 id = 2;
 }
 
 message UpdatePageRequest {
