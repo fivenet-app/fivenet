@@ -644,6 +644,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                         v-model:questions="state.exam"
                         class="overflow-y-auto"
                         :qualification-id="props.qualificationId"
+                        @file-uploaded="(file) => state.files.push(file)"
                     />
                 </template>
             </UTabs>

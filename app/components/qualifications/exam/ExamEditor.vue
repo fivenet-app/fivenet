@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
+import type { File } from '~~/gen/ts/resources/file/file';
 import type { ExamQuestion, ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
 import type { QualificationExamSettings } from '~~/gen/ts/resources/qualifications/qualifications';
 import ExamEditorQuestion from './ExamEditorQuestion.vue';
@@ -14,6 +15,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'update:settings', value: ExamQuestions): void;
     (e: 'update:questions', value: ExamQuestions): void;
+    (e: 'fileUploaded', file: File): void;
 }>();
 
 const { settings, questions } = useVModels(props, emit);
@@ -62,6 +64,7 @@ if (!settings.value.time) {
                         :qualification-id="props.qualificationId"
                         :question="question"
                         @delete="questions.questions.splice(idx, 1)"
+                        @file-uploaded="(file) => $emit('fileUploaded', file)"
                     />
                 </VueDraggable>
 

@@ -4,6 +4,7 @@ import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
+import type { File } from '~~/gen/ts/resources/file/file';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = defineProps<{
@@ -14,6 +15,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'update:modelValue', value: ExamQuestion): void;
     (e: 'delete'): void;
+    (e: 'fileUploaded', file: File): void;
 }>();
 
 const question = useVModel(props, 'modelValue', emit);
@@ -105,6 +107,8 @@ async function handleImage(files: FileList): Promise<void> {
     if (question.value?.data?.data.oneofKind === 'image') {
         question.value.data.data.image.image = resp.file;
     }
+
+    emit('fileUploaded', resp.file!);
 }
 
 const questionTypes = ['separator', 'image', 'yesno', 'freeText', 'singleChoice', 'multipleChoice'];
