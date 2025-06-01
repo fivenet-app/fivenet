@@ -30,7 +30,7 @@ RUN apt-get update && \
     make build-go
 
 # Final Image
-FROM docker.io/library/alpine:3.21.3
+FROM docker.io/library/alpine:3.22.0
 
 WORKDIR /app
 
