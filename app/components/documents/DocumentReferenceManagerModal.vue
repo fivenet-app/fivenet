@@ -10,17 +10,17 @@ import type { DocumentReference, DocumentShort } from '~~/gen/ts/resources/docum
 import { DocReference } from '~~/gen/ts/resources/documents/documents';
 
 const props = defineProps<{
-    open: boolean;
     documentId?: number;
-    modelValue: Map<number, DocumentReference>;
 }>();
 
-defineEmits<{
-    (e: 'close'): void;
-    (e: 'update:modelValue', payload: Map<number, DocumentReference>): void;
-}>();
+const modelValue = defineModel<DocumentReference[]>('references', {
+    type: Array,
+    required: true,
+});
 
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
 
 const { t } = useI18n();
 
@@ -73,10 +73,7 @@ async function listDocuments(): Promise<DocumentShort[]> {
         const { response } = await call;
 
         return response.documents.filter(
-            (doc) =>
-                !Array.from(props.modelValue.values()).find(
-                    (r) => r.targetDocumentId === doc.id || doc.id === props.documentId,
-                ),
+            (doc) => !modelValue.value.find((r) => r.targetDocumentId === doc.id || doc.id === props.documentId),
         );
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -85,11 +82,12 @@ async function listDocuments(): Promise<DocumentShort[]> {
 }
 
 async function addReference(doc: DocumentShort, reference: DocReference): Promise<void> {
-    const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? 1 : keys[keys.length - 1]! + 1;
+    // Generate a new id for the reference
+    const ids = modelValue.value.map((r) => r.id ?? 0);
+    const newId = ids.length === 0 ? 1 : Math.max(...ids) + 1;
 
-    props.modelValue.set(key, {
-        id: key,
+    modelValue.value.push({
+        id: newId,
         sourceDocumentId: props.documentId ?? 0,
         reference,
         targetDocumentId: doc.id,
@@ -104,8 +102,12 @@ function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference):
 }
 
 function removeReference(id: number): void {
-    props.modelValue.delete(id);
-    listDocuments();
+    const idx = modelValue.value.findIndex((r) => r.id === id);
+    if (idx !== -1) {
+        modelValue.value.splice(idx, 1);
+    }
+
+    refresh();
 }
 
 const columnsCurrent = [
@@ -170,7 +172,7 @@ const columnsNew = [
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :model-value="open" @update:model-value="$emit('close')">
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" @update:model-value="isOpen = false">
         <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -179,7 +181,7 @@ const columnsNew = [
                         {{ $t('common.reference', 2) }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -188,7 +190,7 @@ const columnsNew = [
                     <template #current>
                         <UTable
                             :columns="columnsCurrent"
-                            :rows="[...modelValue.values()]"
+                            :rows="modelValue"
                             :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.reference', 2)]) }"
                         >
                             <template #title-data="{ row }">
@@ -375,7 +377,7 @@ const columnsNew = [
             </div>
 
             <template #footer>
-                <UButton class="flex-1" block color="black" @click="$emit('close')">
+                <UButton class="flex-1" block color="black" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

@@ -230,7 +230,11 @@ const scrollRef = useTemplateRef('scrollRef');
             </template>
 
             <template v-else>
-                <UPageHeader v-if="page?.meta" :title="page.meta.title" :ui="{ wrapper: 'py-4' }">
+                <UPageHeader
+                    v-if="page?.meta"
+                    :title="!page.meta.title ? $t('common.untitled') : page.meta.title"
+                    :ui="{ wrapper: 'py-4', title: 'italic' }"
+                >
                     <template #links>
                         <UTooltip :text="$t('common.refresh')">
                             <UButton variant="link" icon="i-mdi-refresh" @click="refresh()" />

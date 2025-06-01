@@ -9,17 +9,17 @@ import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { User } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
-    open: boolean;
     documentId?: number;
-    modelValue: Map<number, DocumentRelation>;
 }>();
 
-defineEmits<{
-    (e: 'close'): void;
-    (e: 'update:modelValue', payload: Map<number, DocumentRelation>): void;
-}>();
+const modelValue = defineModel<DocumentRelation[]>('relations', {
+    type: Array,
+    required: true,
+});
 
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
 
 const { t } = useI18n();
 
@@ -72,9 +72,7 @@ async function listCitizens(): Promise<User[]> {
         });
         const { response } = await call;
 
-        return response.users.filter(
-            (user) => !Array.from(props.modelValue.values()).find((r) => r.targetUserId === user.userId),
-        );
+        return response.users.filter((user) => !modelValue.value.find((r) => r.targetUserId === user.userId));
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -82,11 +80,12 @@ async function listCitizens(): Promise<User[]> {
 }
 
 async function addRelation(user: User, relation: DocRelation): Promise<void> {
-    const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? 1 : keys[keys.length - 1]! + 1;
+    // Generate a unique id for the new relation
+    const ids = modelValue.value.map((r) => r.id ?? 0);
+    const newId = ids.length === 0 ? 1 : Math.max(...ids) + 1;
 
-    props.modelValue.set(key, {
-        id: key,
+    modelValue.value.push({
+        id: newId,
         documentId: props.documentId ?? 0,
         sourceUserId: activeChar.value!.userId,
         sourceUser: activeChar.value!,
@@ -99,7 +98,10 @@ async function addRelation(user: User, relation: DocRelation): Promise<void> {
 }
 
 async function removeRelation(id: number): Promise<void> {
-    props.modelValue.delete(id);
+    const idx = modelValue.value.findIndex((r) => r.id === id);
+    if (idx !== -1) {
+        modelValue.value.splice(idx, 1);
+    }
     refresh();
 }
 
@@ -157,7 +159,7 @@ const columnsNew = [
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :model-value="open" @update:model-value="$emit('close')">
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -166,7 +168,7 @@ const columnsNew = [
                         {{ $t('common.relation', 2) }}
                     </h3>
 
-                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="$emit('close')" />
+                    <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -176,7 +178,7 @@ const columnsNew = [
                         <div>
                             <UTable
                                 :columns="columnsCurrent"
-                                :rows="[...modelValue.values()]"
+                                :rows="modelValue"
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.relation', 2)]) }"
                             >
                                 <template #name-data="{ row }">
@@ -335,7 +337,7 @@ const columnsNew = [
             </div>
 
             <template #footer>
-                <UButton class="flex-1" block color="black" @click="$emit('close')">
+                <UButton class="flex-1" block color="black" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

@@ -2,14 +2,14 @@
 import type { UForm } from '#components';
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
-import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
+import DocumentReferenceManagerModal from '~/components/documents/DocumentReferenceManagerModal.vue';
+import DocumentRelationManagerModal from '~/components/documents/DocumentRelationManagerModal.vue';
 import { checkDocAccess, logger } from '~/components/documents/helpers';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
-import { getDocument as clipboardGetDocument, getUser, useClipboardStore } from '~/stores/clipboard';
+import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import { useDocumentEditorStore } from '~/stores/documenteditor';
 import { useNotificatorStore } from '~/stores/notificator';
@@ -18,7 +18,6 @@ import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
-import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetDocumentResponse, UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
@@ -35,7 +34,7 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
-const { can, activeChar } = useAuth();
+const { can } = useAuth();
 
 const modal = useModal();
 
@@ -108,8 +107,6 @@ watch(document, async () => {
 
 const route = useRoute();
 
-const canEdit = ref(false);
-
 const emptyCategory: Category = {
     id: 0,
     name: t('common.categories', 0),
@@ -147,15 +144,8 @@ const state = reactive<Schema>({
     files: [],
 });
 
-const openRelationManager = ref<boolean>(false);
-const relationManagerData = ref(new Map<number, DocumentRelation>());
-const relations = ref<Readonly<DocumentRelation>[]>([]);
-watch(relations, () => relations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
-
-const openReferenceManager = ref<boolean>(false);
-const referenceManagerData = ref(new Map<number, DocumentReference>());
-const references = ref<Readonly<DocumentReference>[]>([]);
-watch(references, () => references.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
+const relations = ref<DocumentRelation[]>([]);
+const references = ref<DocumentReference[]>([]);
 
 const saving = ref(false);
 
@@ -224,9 +214,10 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         const { response } = await call;
 
         if (canDo.value.references) {
+            // Remove references that are no longer present
             const referencesToRemove: number[] = [];
             references.value.forEach((ref) => {
-                if (!referenceManagerData.value.has(ref.id!)) {
+                if (!references.value.some((r) => r.id === ref.id)) {
                     referencesToRemove.push(ref.id!);
                 }
             });
@@ -235,12 +226,12 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                     id: id,
                 });
             });
-            referenceManagerData.value.forEach((ref) => {
-                if (references.value.find((r) => r.id === ref.id!)) {
+            // Add new references
+            references.value.forEach((ref) => {
+                if (references.value.some((r) => r.id === ref.id)) {
                     return;
                 }
                 ref.sourceDocumentId = response.document!.id!;
-
                 $grpc.documents.documents.addDocumentReference({
                     reference: ref,
                 });
@@ -248,19 +239,22 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         }
 
         if (canDo.value.relations) {
+            // Remove relations that are no longer present
             const relationsToRemove: number[] = [];
             relations.value.forEach((rel) => {
-                if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
+                if (!relations.value.some((r) => r.id === rel.id)) {
+                    relationsToRemove.push(rel.id!);
+                }
             });
             relationsToRemove.forEach((id) => {
                 $grpc.documents.documents.removeDocumentRelation({ id });
             });
-            relationManagerData.value.forEach((rel) => {
-                if (relations.value.find((r) => r.id === rel.id!)) {
+            // Add new relations
+            relations.value.forEach((rel) => {
+                if (relations.value.some((r) => r.id === rel.id)) {
                     return;
                 }
                 rel.documentId = response.document!.id;
-
                 $grpc.documents.documents.addDocumentRelation({
                     relation: rel,
                 });
@@ -284,34 +278,6 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         throw e;
     }
 }
-
-onMounted(async () => {
-    clipboardStore.activeStack.documents.forEach((doc, idx) => {
-        referenceManagerData.value.set(idx, {
-            id: idx,
-            sourceDocumentId: props.documentId ?? 0,
-            targetDocumentId: doc.id!,
-            targetDocument: clipboardGetDocument(doc),
-            creatorId: activeChar.value!.userId,
-            creator: activeChar.value!,
-            reference: DocReference.SOLVES,
-        });
-    });
-
-    clipboardStore.activeStack.users.forEach((user, idx) => {
-        relationManagerData.value.set(idx, {
-            id: idx,
-            documentId: props.documentId ?? 0,
-            targetUserId: user.userId!,
-            targetUser: getUser(user),
-            sourceUserId: activeChar.value!.userId,
-            sourceUser: activeChar.value!,
-            relation: DocRelation.CAUSED,
-        });
-    });
-
-    canEdit.value = true;
-});
 
 const items = [
     {
@@ -440,12 +406,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
             <template #right>
                 <PartialsBackButton :fallback-to="{ name: 'documents-id', params: { id: documentId } }" />
 
-                <UButton
-                    type="submit"
-                    trailing-icon="i-mdi-content-save"
-                    :disabled="!canEdit || !canSubmit"
-                    :loading="!canSubmit"
-                >
+                <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
                     <span class="hidden truncate sm:block">
                         {{ $t('common.save') }}
                     </span>
@@ -456,7 +417,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     type="submit"
                     color="info"
                     trailing-icon="i-mdi-publish"
-                    :disabled="!canEdit || !canSubmit"
+                    :disabled="!canSubmit"
                     :loading="!canSubmit"
                     @click.prevent="
                         modal.open(ConfirmModal, {
@@ -514,7 +475,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                         type="text"
                                         size="xl"
                                         :placeholder="$t('common.title')"
-                                        :disabled="!canEdit || !canDo.edit"
+                                        :disabled="!canDo.edit"
                                     />
                                 </UFormGroup>
 
@@ -602,7 +563,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                             v-model="state.state"
                                             type="text"
                                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
-                                            :disabled="!canEdit || !canDo.edit"
+                                            :disabled="!canDo.edit"
                                         />
                                     </UFormGroup>
 
@@ -613,19 +574,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             </div>
                         </template>
                     </UDashboardToolbar>
-
-                    <DocumentRelationManager
-                        v-model="relationManagerData"
-                        :open="openRelationManager"
-                        :document-id="documentId"
-                        @close="openRelationManager = false"
-                    />
-                    <DocumentReferenceManager
-                        v-model="referenceManagerData"
-                        :open="openReferenceManager"
-                        :document-id="documentId"
-                        @close="openReferenceManager = false"
-                    />
 
                     <UFormGroup
                         v-if="canDo.edit"
@@ -639,7 +587,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 v-model="state.content"
                                 v-model:files="state.files"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
-                                :disabled="!canEdit || !canDo.edit"
+                                :disabled="!canDo.edit"
                                 rounded="rounded-none"
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"
@@ -664,19 +612,32 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 v-if="canDo.relations"
                                 class="flex-1"
                                 block
-                                :disabled="!canEdit || !canDo.edit"
+                                :disabled="!canDo.edit"
                                 icon="i-mdi-account-multiple"
-                                @click="openRelationManager = true"
+                                @click="
+                                    modal.open(DocumentRelationManagerModal, {
+                                        relations: relations,
+                                        documentId: documentId,
+                                        'onUpdate:relations': (value) => (relations = value),
+                                    })
+                                "
                             >
                                 {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
                             </UButton>
+
                             <UButton
                                 v-if="canDo.references"
                                 class="flex-1"
                                 block
-                                :disabled="!canEdit || !canDo.edit"
+                                :disabled="!canDo.edit"
                                 icon="i-mdi-file-document"
-                                @click="openReferenceManager = true"
+                                @click="
+                                    modal.open(DocumentReferenceManagerModal, {
+                                        references: references,
+                                        documentId: documentId,
+                                        'onUpdate:references': (value) => (references = value),
+                                    })
+                                "
                             >
                                 {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
                             </UButton>
@@ -695,7 +656,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             v-model:users="state.access.users"
                             :target-id="documentId ?? 0"
                             :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                            :disabled="!canEdit || !canDo.access"
+                            :disabled="!canDo.access"
                         />
                     </div>
                 </template>

@@ -354,16 +354,18 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 
 	// No parent ID?
 	// If so, check if there are any existing pages for the user's job and use one as the parent.
+	// TODO a nil error occurs when no pages exist at all (root page creation)
 	if req.ParentId == nil || *req.ParentId <= 0 {
-		parentStmt := tPage.
+		parentStmt := tPageShort.
 			SELECT(
-				tPage.ID.AS("id"),
+				tPageShort.ID.AS("id"),
 			).
-			FROM(tPage).
+			FROM(tPageShort).
 			WHERE(jet.AND(
-				tPage.Job.EQ(jet.String(userInfo.Job)),
-				tPage.DeletedAt.IS_NULL(),
+				tPageShort.Job.EQ(jet.String(userInfo.Job)),
+				tPageShort.DeletedAt.IS_NULL(),
 			)).
+			ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
 			LIMIT(1)
 
 		ids := struct{ ID uint64 }{}
@@ -376,6 +378,9 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 		// Found a potential parent page
 		if ids.ID > 0 {
 			req.ParentId = &ids.ID
+			trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.parent_id", int64(*req.ParentId)))
+		} else {
+			req.ParentId = nil
 		}
 	} else {
 		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.parent_id", int64(*req.ParentId)))

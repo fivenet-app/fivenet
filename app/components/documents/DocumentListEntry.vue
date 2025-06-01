@@ -61,7 +61,12 @@ defineProps<{
                         <h2
                             class="line-clamp-2 flex-1 break-all text-lg font-medium hover:line-clamp-3 sm:text-xl md:line-clamp-1"
                         >
-                            {{ document.title }}
+                            <span v-if="!document.title" class="italic">
+                                {{ $t('common.untitled') }}
+                            </span>
+                            <span v-else>
+                                {{ document.title }}
+                            </span>
                         </h2>
 
                         <UBadge v-if="document.draft" class="inline-flex grow-0 gap-1 self-start" color="info" size="md">

@@ -651,7 +651,8 @@
             "title": "Publish {type}?",
             "description": "Are you sure you want to publish this document? Once published, the draft status will be removed. This action cannot be undone."
         },
-        "insert_file": "Insert File"
+        "insert_file": "Insert File",
+        "untitled": "(Untitled)"
     },
     "components": {
         "partials": {

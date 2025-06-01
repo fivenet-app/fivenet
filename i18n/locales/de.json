@@ -651,7 +651,8 @@
             "title": "{type} veröffentlichen?",
             "description": "Sind Sie sicher, dass Sie dieses Dokument veröffentlichen möchten? Nach der Veröffentlichung wird der Entwurfsstatus entfernt. Diese Aktion kann nicht rückgängig gemacht werden."
         },
-        "insert_file": "Datei einfügen"
+        "insert_file": "Datei einfügen",
+        "untitled": "(Unbenannt)"
     },
     "components": {
         "partials": {

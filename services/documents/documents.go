@@ -284,8 +284,10 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 	var docContent string
 	var docTitle string
 	var docState string
-
+	var categoryId *uint64
 	docAccess := &documents.DocumentAccess{}
+	docReferences := []*documents.DocumentReference{}
+	docRelations := []*documents.DocumentRelation{}
 
 	var tmpl *documents.Template
 	if req.TemplateId != nil {
@@ -304,6 +306,62 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 		docAccess = &documents.DocumentAccess{
 			Jobs:  tmpl.ContentAccess.Jobs,
 			Users: tmpl.ContentAccess.Users,
+		}
+
+		if tmpl.Category != nil {
+			categoryId = &tmpl.Category.Id
+		}
+
+		// Add references from template data documents if not already present
+		if tmpl != nil && req.TemplateData != nil {
+			if len(req.TemplateData.Documents) > 0 {
+				for _, doc := range req.TemplateData.Documents {
+					exists := false
+					for _, reference := range docReferences {
+						if reference.TargetDocumentId == doc.Id {
+							exists = true
+							break
+						}
+					}
+
+					if !exists {
+						docReferences = append(docReferences, &documents.DocumentReference{
+							// Id will be assigned by backend or can be zero for new
+							SourceDocumentId: 0, // will be set after insert
+							TargetDocumentId: doc.Id,
+							// TargetDocument can be set if needed, or left nil
+							CreatorId: &userInfo.UserId,
+							// Creator can be set if needed, or left nil
+							Reference: documents.DocReference_DOC_REFERENCE_SOLVES,
+						})
+					}
+				}
+			}
+
+			// Add relations from template data users if not already present
+			if len(req.TemplateData.Users) > 0 {
+				for _, user := range req.TemplateData.Users {
+					exists := false
+					for _, relation := range docRelations {
+						if relation.TargetUserId == user.UserId {
+							exists = true
+							break
+						}
+					}
+
+					if !exists {
+						docRelations = append(docRelations, &documents.DocumentRelation{
+							// Id will be assigned by backend or can be zero for new
+							DocumentId:   0, // will be set after insert
+							TargetUserId: user.UserId,
+							// TargetUser can be set if needed, or left nil
+							SourceUserId: userInfo.UserId,
+							// SourceUser can be set if needed, or left nil
+							Relation: documents.DocRelation_DOC_RELATION_CAUSED,
+						})
+					}
+				}
+			}
 		}
 	} else {
 		// Add minimum access for the creator's job
@@ -327,6 +385,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 		INSERT(
 			tDocument.Title,
 			tDocument.Summary,
+			tDocument.CategoryID,
 			tDocument.Content,
 			tDocument.ContentType,
 			tDocument.State,
@@ -341,6 +400,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 		VALUES(
 			docTitle,
 			content.GetSummary(docContent, DocSummaryLength),
+			categoryId,
 			docContent,
 			req.ContentType,
 			docState,
@@ -378,6 +438,19 @@ func (s *Server) CreateDocument(ctx context.Context, req *pbdocuments.CreateDocu
 
 	if tmpl != nil {
 		if err := s.createOrUpdateWorkflowState(ctx, tx, uint64(lastId), tmpl.Workflow); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+
+	for _, ref := range docReferences {
+		ref.SourceDocumentId = uint64(lastId)
+		if _, err := s.addDocumentReference(ctx, tx, ref); err != nil {
+			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		}
+	}
+	for _, rel := range docRelations {
+		rel.DocumentId = uint64(lastId)
+		if _, err := s.addDocumentRelation(ctx, tx, userInfo, rel); err != nil {
 			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 	}

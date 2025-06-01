@@ -503,7 +503,12 @@ const scrollRef = useTemplateRef('scrollRef');
                 <template #header>
                     <div class="mb-4">
                         <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                            {{ doc.title }}
+                            <span v-if="!doc.title" class="italic">
+                                {{ $t('common.untitled') }}
+                            </span>
+                            <span v-else>
+                                {{ doc.title }}
+                            </span>
                         </h1>
                     </div>
 
