@@ -251,12 +251,16 @@ function changeQuestionType(qt: string): void {
                             />
                         </template>
 
-                        <GenericImg
-                            v-if="question.data?.data.image.image"
-                            class="min-h-4 min-w-4"
-                            :src="question.data?.data.image.image.filePath"
-                            :alt="question.data?.data.image.alt"
-                        />
+                        <div v-if="question.data?.data.image.image" class="flex flex-1 items-center justify-center">
+                            <GenericImg
+                                class="min-h-12 min-w-12"
+                                img-class="h-96 w-full object-cover"
+                                :enable-popup="true"
+                                :rounded="false"
+                                :src="question.data?.data.image.image.filePath"
+                                :alt="question.data?.data.image.alt"
+                            />
+                        </div>
                     </div>
                 </template>
 

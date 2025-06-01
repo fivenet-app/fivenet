@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import type { ExamResponse } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = withDefaults(
@@ -38,11 +39,13 @@ const response = useVModel(props, 'modelValue', emit);
                 <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
             </div>
 
-            <NuxtImg
-                class="min-h-4 min-w-4"
+            <GenericImg
+                class="min-h-12 min-w-12"
+                img-class="h-96 w-full object-cover"
+                :enable-popup="true"
+                :rounded="false"
                 :src="modelValue?.question!.data?.data.image?.image?.filePath"
                 :alt="modelValue?.question!.data?.data.image?.alt ?? $t('common.image')"
-                loading="lazy"
             />
         </div>
 
