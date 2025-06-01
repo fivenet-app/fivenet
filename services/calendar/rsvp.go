@@ -38,6 +38,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 	}
 
 	tUser := tables.User().AS("user_short")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	condition := tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)).
 		AND(tCalendarRSVP.Response.GT(jet.Int16(int16(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
@@ -82,7 +83,8 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 			tUser.Lastname,
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
-			tUserProps.Avatar.AS("user_short.avatar"),
+			tUserProps.AvatarFileID.AS("user_short.avatar_file_id"),
+			tAvatar.FilePath.AS("user_short.avatar"),
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUser,
@@ -191,6 +193,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *pbcalendar.RSVPCale
 
 func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userId int32) (*calendar.CalendarEntryRSVP, error) {
 	tUser := tables.User().AS("user_short")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tCalendarRSVP.
 		SELECT(
@@ -205,7 +208,8 @@ func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userI
 			tUser.Lastname,
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
-			tUserProps.Avatar.AS("user_short.avatar"),
+			tUserProps.AvatarFileID.AS("user_short.avatar_file_id"),
+			tAvatar.FilePath.AS("user_short.avatar"),
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUser,
@@ -213,6 +217,9 @@ func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userI
 			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUser.ID),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		WHERE(jet.AND(

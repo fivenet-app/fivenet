@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	permsqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications/perms"
@@ -65,7 +67,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *pbqualifications.L
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
+	orderBys := []jet.OrderByClause{tQuali.Draft.ASC()}
 	if req.Sort != nil {
 		var column jet.Column
 		switch req.Sort.Column {
@@ -227,15 +229,6 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// Field Permission Check
-	fields, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceCreateQualificationPerm, permsqualifications.QualificationsServiceCreateQualificationFieldsPermField)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-	if !fields.Contains("Public") {
-		req.Qualification.Public = false
-	}
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -248,33 +241,27 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 	stmt := tQuali.
 		INSERT(
 			tQuali.Job,
-			tQuali.Weight,
 			tQuali.Closed,
+			tQuali.Draft,
 			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
+			tQuali.ContentType,
 			tQuali.Content,
-			tQuali.DiscordSyncEnabled,
-			tQuali.DiscordSettings,
-			tQuali.ExamMode,
-			tQuali.ExamSettings,
 			tQuali.CreatorID,
 			tQuali.CreatorJob,
 		).
 		VALUES(
 			userInfo.Job,
-			req.Qualification.Weight,
-			req.Qualification.Closed,
-			req.Qualification.Public,
-			req.Qualification.Abbreviation,
-			req.Qualification.Title,
-			req.Qualification.Description,
-			req.Qualification.Content,
-			req.Qualification.DiscordSyncEnabled,
-			req.Qualification.DiscordSettings,
-			req.Qualification.ExamMode,
-			req.Qualification.ExamSettings,
+			false,
+			true,
+			false,
+			"",
+			"",
+			"",
+			content.ContentType_CONTENT_TYPE_HTML,
+			"",
 			userInfo.UserId,
 			userInfo.Job,
 		)
@@ -289,20 +276,25 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if req.Qualification.Access != nil {
-		if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), req.Qualification.Access.Jobs, nil, nil); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	jobAccess := []*qualifications.QualificationJobAccess{}
+
+	job := s.enricher.GetJobByName(userInfo.Job)
+	if job != nil {
+		highestGrade := int32(-1)
+		if len(job.Grades) > 0 {
+			highestGrade = job.Grades[len(job.Grades)-1].Grade
 		}
+
+		jobAccess = append(jobAccess, &qualifications.QualificationJobAccess{
+			TargetId:     uint64(lastId),
+			Job:          job.Name,
+			MinimumGrade: highestGrade,
+			Access:       qualifications.AccessLevel_ACCESS_LEVEL_EDIT,
+		})
 	}
 
-	if err := s.handleQualificationRequirementsChanges(ctx, tx, uint64(lastId), req.Qualification.Requirements); err != nil {
+	if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), jobAccess, nil, nil); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-
-	if req.Qualification.Exam != nil && req.Qualification.Exam.Questions != nil {
-		if err := s.handleExamQuestionsChanges(ctx, tx, uint64(lastId), req.Qualification.Exam); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
 	}
 
 	// Commit the transaction
@@ -339,7 +331,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualification(ctx, req.Qualification.Id,
+	oldQuali, err := s.getQualification(ctx, req.Qualification.Id,
 		tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
 		userInfo, true)
 	if err != nil {
@@ -351,24 +343,32 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(ownAccess, userInfo, quali.CreatorJob, quali.Creator) {
+	if !access.CheckIfHasAccess(ownAccess, userInfo, oldQuali.CreatorJob, oldQuali.Creator) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	fields, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceCreateQualificationPerm, permsqualifications.QualificationsServiceCreateQualificationFieldsPermField)
+	fields, err := s.perms.AttrStringList(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceUpdateQualificationPerm, permsqualifications.QualificationsServiceUpdateQualificationFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !fields.Contains("Public") {
-		req.Qualification.Public = quali.Public
+		req.Qualification.Public = oldQuali.Public
 	}
 
 	// Make sure that the qualification doesn't require itself
 	if len(req.Qualification.Requirements) > 0 {
 		for _, req := range req.Qualification.Requirements {
-			if req.TargetQualificationId == quali.Id {
+			if req.TargetQualificationId == oldQuali.Id {
 				return nil, errorsqualifications.ErrRequirementSelfRef
 			}
+		}
+	}
+
+	// A qualification can only be switched to published once
+	if !oldQuali.Draft && oldQuali.Draft != req.Qualification.Draft {
+		// Allow a super user to change the draft state
+		if !userInfo.Superuser {
+			req.Qualification.Draft = oldQuali.Draft
 		}
 	}
 
@@ -387,10 +387,12 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		UPDATE(
 			tQuali.Weight,
 			tQuali.Closed,
+			tQuali.Draft,
 			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
+			tQuali.ContentType,
 			tQuali.Content,
 			tQuali.DiscordSyncEnabled,
 			tQuali.DiscordSettings,
@@ -402,10 +404,12 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		SET(
 			req.Qualification.Weight,
 			req.Qualification.Closed,
+			req.Qualification.Draft,
 			req.Qualification.Public,
 			req.Qualification.Abbreviation,
 			req.Qualification.Title,
 			req.Qualification.Description,
+			content.ContentType_CONTENT_TYPE_HTML,
 			req.Qualification.Content,
 			req.Qualification.DiscordSyncEnabled,
 			req.Qualification.DiscordSettings,
@@ -428,14 +432,25 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		}
 	}
 
+	files := []*file.File{}
+	if req.Qualification.Files != nil {
+		files = append(files, req.Qualification.Files...)
+	}
+
 	if err := s.handleQualificationRequirementsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Requirements); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if req.Qualification.Exam != nil {
-		if err := s.handleExamQuestionsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Exam); err != nil {
+		questFiles, err := s.handleExamQuestionsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Exam)
+		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+		files = append(files, questFiles...)
+	}
+
+	if _, _, err := s.fHandler.HandleFileChangesForParent(ctx, tx, req.Qualification.Id, files); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	// Commit the transaction

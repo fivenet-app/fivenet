@@ -83,7 +83,7 @@ export type BannerMessage = {
     expiresAt?: Timestamp;
 };
 
-export type OpenClose = { id: number; label: string; closed?: boolean };
+export type ToggleItem = { id: number; label: string; value?: boolean };
 
 export type ClassProp = undefined | string | Record<string, boolean> | (string | Record<string, boolean>)[];
 

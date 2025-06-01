@@ -1,6 +1,6 @@
-import type { Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/stores/auth';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { Notification } from '~/utils/notifications';
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 

@@ -5,15 +5,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import type { CardElements } from '~/utils/types';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
-const props = withDefaults(
-    defineProps<{
-        hideIcon?: boolean;
-    }>(),
-    {
-        hideIcon: false,
-    },
-);
-
 defineEmits<{
     (e: 'selected', t: TemplateShort | undefined): void;
 }>();
@@ -43,7 +34,7 @@ const items = computed<CardElements>(
         templates.value?.map((v) => ({
             title: v?.title,
             description: v?.description,
-            icon: v.icon ?? (!props.hideIcon ? 'i-mdi-file-outline' : undefined),
+            icon: v.icon ?? 'i-mdi-file-outline',
             color: v.color ?? 'primary',
         })) ?? [],
 );

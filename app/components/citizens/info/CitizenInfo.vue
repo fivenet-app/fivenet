@@ -157,9 +157,9 @@ const isOpen = ref(false);
                 <div v-else>
                     <div class="mb-4 flex items-center gap-2 px-4">
                         <ProfilePictureImg
-                            :src="user?.props?.mugShot?.url"
+                            :src="user?.props?.mugshot?.filePath"
                             :name="`${user.firstname} ${user.lastname}`"
-                            :alt="$t('common.mug_shot')"
+                            :alt="$t('common.mugshot')"
                             :enable-popup="true"
                             size="3xl"
                         />
@@ -257,7 +257,7 @@ const isOpen = ref(false);
                                     user.jobGradeLabel = $event.grade.label;
                                 "
                                 @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-                                @update:mug-shot="user.props!.mugShot = $event"
+                                @update:mug-shot="user.props!.mugshot = $event"
                             />
                         </UDashboardSection>
 

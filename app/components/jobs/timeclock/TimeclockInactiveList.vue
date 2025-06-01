@@ -163,7 +163,7 @@ const { game } = useAppConfig();
         <template #name-data="{ row: colleague }">
             <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">
                 <ProfilePictureImg
-                    :src="colleague.avatar?.url"
+                    :src="colleague.avatar"
                     :name="`${colleague.firstname} ${colleague.lastname}`"
                     size="sm"
                     :enable-popup="true"

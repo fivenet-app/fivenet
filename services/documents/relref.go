@@ -247,27 +247,12 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *pbdocuments.AddD
 
 	req.Reference.CreatorId = &userInfo.UserId
 
-	docRef := table.FivenetDocumentsReferences
-	stmt := docRef.
-		INSERT(
-			docRef.SourceDocumentID,
-			docRef.Reference,
-			docRef.TargetDocumentID,
-			docRef.CreatorID,
-		).
-		VALUES(
-			req.Reference.SourceDocumentId,
-			req.Reference.Reference,
-			req.Reference.TargetDocumentId,
-			req.Reference.CreatorId,
-		)
-
-	result, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	lastId, err := result.LastInsertId()
+	lastId, err := s.addDocumentReference(ctx, s.db, &documents.DocumentReference{
+		SourceDocumentId: req.Reference.SourceDocumentId,
+		TargetDocumentId: req.Reference.TargetDocumentId,
+		Reference:        req.Reference.Reference,
+		CreatorId:        req.Reference.CreatorId,
+	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
@@ -277,6 +262,35 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *pbdocuments.AddD
 	return &pbdocuments.AddDocumentReferenceResponse{
 		Id: uint64(lastId),
 	}, nil
+}
+
+func (s *Server) addDocumentReference(ctx context.Context, db qrm.DB, ref *documents.DocumentReference) (int64, error) {
+	docRef := table.FivenetDocumentsReferences
+	stmt := docRef.
+		INSERT(
+			docRef.SourceDocumentID,
+			docRef.Reference,
+			docRef.TargetDocumentID,
+			docRef.CreatorID,
+		).
+		VALUES(
+			ref.SourceDocumentId,
+			ref.Reference,
+			ref.TargetDocumentId,
+			ref.CreatorId,
+		)
+
+	result, err := stmt.ExecContext(ctx, db)
+	if err != nil {
+		return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	lastId, err := result.LastInsertId()
+	if err != nil {
+		return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+	}
+
+	return lastId, nil
 }
 
 func (s *Server) RemoveDocumentReference(ctx context.Context, req *pbdocuments.RemoveDocumentReferenceRequest) (*pbdocuments.RemoveDocumentReferenceResponse, error) {
@@ -366,14 +380,24 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *pbdocuments.AddDo
 
 	req.Relation.SourceUserId = userInfo.UserId
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
+	lastId, err := s.addDocumentRelation(ctx, s.db, userInfo, &documents.DocumentRelation{
+		DocumentId:   req.Relation.DocumentId,
+		SourceUserId: req.Relation.SourceUserId,
+		Relation:     req.Relation.Relation,
+		TargetUserId: req.Relation.TargetUserId,
+	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
 
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+
+	return &pbdocuments.AddDocumentRelationResponse{
+		Id: lastId,
+	}, nil
+}
+
+func (s *Server) addDocumentRelation(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, rel *documents.DocumentRelation) (uint64, error) {
 	tDocRel := table.FivenetDocumentsRelations
 	stmt := tDocRel.
 		INSERT(
@@ -383,10 +407,10 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *pbdocuments.AddDo
 			tDocRel.TargetUserID,
 		).
 		VALUES(
-			req.Relation.DocumentId,
-			req.Relation.SourceUserId,
-			req.Relation.Relation,
-			req.Relation.TargetUserId,
+			rel.DocumentId,
+			rel.SourceUserId,
+			rel.Relation,
+			rel.TargetUserId,
 		)
 
 	var lastId int64
@@ -394,7 +418,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *pbdocuments.AddDo
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
 		stmt := tDocRel.
@@ -403,9 +427,9 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *pbdocuments.AddDo
 			).
 			FROM(tDocRel).
 			WHERE(jet.AND(
-				tDocRel.DocumentID.EQ(jet.Uint64(req.Relation.DocumentId)),
-				tDocRel.Relation.EQ(jet.Int16(int16(req.Relation.Relation))),
-				tDocRel.TargetUserID.EQ(jet.Int32(req.Relation.TargetUserId)),
+				tDocRel.DocumentID.EQ(jet.Uint64(rel.DocumentId)),
+				tDocRel.Relation.EQ(jet.Int16(int16(rel.Relation))),
+				tDocRel.TargetUserID.EQ(jet.Int32(rel.TargetUserId)),
 			)).
 			LIMIT(1)
 
@@ -413,47 +437,38 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *pbdocuments.AddDo
 			ID int64
 		}
 		if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
 		lastId = dest.ID
 	} else {
 		lastId, err = result.LastInsertId()
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
 		// Only mention users when the relation has been created and not been "duplicated"
 		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Relation.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT, "", &users.UserActivityData{
+			userInfo.UserId, rel.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_DOCUMENT, "", &users.UserActivityData{
 				Data: &users.UserActivityData_DocumentRelation{
 					DocumentRelation: &users.CitizenDocumentRelation{
 						Added:      true,
-						DocumentId: req.Relation.DocumentId,
-						// Relation:   req.Relation.Relation,
+						DocumentId: rel.DocumentId,
+						Relation:   int32(rel.Relation),
 					},
 				},
 			}); err != nil {
-			return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+			return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 		}
 
-		if req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
-			if err := s.notifyMentionedUser(ctx, req.Relation.DocumentId, userInfo.UserId, req.Relation.TargetUserId); err != nil {
-				return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
+		if rel.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
+			if err := s.notifyMentionedUser(ctx, rel.DocumentId, userInfo.UserId, rel.TargetUserId); err != nil {
+				return 0, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 			}
 		}
 	}
 
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
-	}
-
-	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
-
-	return &pbdocuments.AddDocumentRelationResponse{
-		Id: uint64(lastId),
-	}, nil
+	return uint64(lastId), nil
 }
 
 func (s *Server) RemoveDocumentRelation(ctx context.Context, req *pbdocuments.RemoveDocumentRelationRequest) (*pbdocuments.RemoveDocumentRelationResponse, error) {
@@ -595,6 +610,7 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 			tDocument.State,
 			tDocument.Closed,
 			tDocument.Draft,
+			tDocument.Public,
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,

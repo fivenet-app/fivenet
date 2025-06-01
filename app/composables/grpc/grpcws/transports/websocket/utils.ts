@@ -20,3 +20,14 @@ export function createRpcError(metaData: Metadata, methodDefinition: MethodInfo<
 
     return err;
 }
+
+const retryableCodes = ['UNAVAILABLE', 'DEADLINE_EXCEEDED', 'INTERNAL', 'RESOURCE_EXHAUSTED'];
+
+export function isRetryableError(err: unknown): boolean {
+    if (err instanceof RpcError) {
+        // Check if the error is retryable
+        return retryableCodes.includes(err.code);
+    }
+    // If not an RpcError, we assume it's not retryable
+    return false;
+}

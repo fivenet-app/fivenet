@@ -21,6 +21,7 @@ enum DocActivityType {
   DOC_ACTIVITY_TYPE_ACCESS_UPDATED = 7;
   DOC_ACTIVITY_TYPE_OWNER_CHANGED = 8;
   DOC_ACTIVITY_TYPE_DELETED = 9;
+  DOC_ACTIVITY_TYPE_DRAFT_TOGGLED = 19;
   // Comments
   DOC_ACTIVITY_TYPE_COMMENT_ADDED = 10;
   DOC_ACTIVITY_TYPE_COMMENT_UPDATED = 11;
@@ -63,6 +64,12 @@ message DocUpdated {
   optional string title_diff = 1;
   optional string content_diff = 2;
   optional string state_diff = 3;
+  optional DocFilesChange files_change = 4;
+}
+
+message DocFilesChange {
+  int64 added = 1;
+  int64 deleted = 2;
 }
 
 message DocOwnerChanged {

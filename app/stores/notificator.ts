@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
-import type { Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/stores/auth';
+import type { Notification } from '~/utils/notifications';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 import { useCalendarStore } from './calendar';
@@ -122,19 +122,23 @@ export const useNotificatorStore = defineStore(
 
                             add(not);
                         } else {
-                            logger.warn('Unknown userEvent data received - Kind: ', resp.data.oneofKind, resp.data);
+                            logger.warn('Unknown userEvent data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'jobEvent') {
                         if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
                             authStore.setJobProps(resp.data.jobEvent.data.jobProps);
                         } else {
-                            logger.warn('Unknown jobEvent data received - Kind: ', resp.data.oneofKind, resp.data);
+                            logger.warn('Unknown jobEvent data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'jobGradeEvent') {
                         if (resp.data.jobGradeEvent.data.oneofKind === 'refreshToken') {
                             await authStore.chooseCharacter(undefined);
                         } else {
-                            logger.warn('Unknown jobGradeEvent event data received - Kind: ', resp.data.oneofKind, resp.data);
+                            logger.warn(
+                                'Unknown jobGradeEvent event data received - oneofKind:',
+                                resp.data.oneofKind,
+                                resp.data,
+                            );
                         }
                     } else if (resp.data.oneofKind === 'systemEvent') {
                         if (resp.data.systemEvent.data.oneofKind === 'ping') {
@@ -154,7 +158,7 @@ export const useNotificatorStore = defineStore(
 
                             system.bannerMessage = resp.data.systemEvent.data.bannerMessage.bannerMessage;
                         } else {
-                            logger.warn('Unknown systemEvent event data received - Kind: ', resp.data.oneofKind, resp.data);
+                            logger.warn('Unknown systemEvent event data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'mailerEvent') {
                         if (can('mailer.MailerService.ListEmails').value) {
@@ -165,7 +169,7 @@ export const useNotificatorStore = defineStore(
                     if (resp.restart) {
                         logger.debug('Server requested stream to be restarted');
                         reconnectBackoffTime.value = 0;
-                        stopStream();
+                        await stopStream();
                         useGRPCWebsocketTransport().close();
                         restartStream();
                         return;

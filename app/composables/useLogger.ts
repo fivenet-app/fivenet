@@ -6,5 +6,6 @@ export function useLogger(prefix?: string): ILogger {
     if (prefix === '') {
         return logger;
     }
+
     return new Logger(prefix);
 }

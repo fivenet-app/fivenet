@@ -18,6 +18,8 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
+	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+
 	qualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 )
 
@@ -35,6 +37,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = content.ContentType(0)
 
 	_ = qualifications.RequestStatus(0)
 )
@@ -670,44 +674,15 @@ func (m *CreateQualificationRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetQualification() == nil {
+	if _, ok := content.ContentType_name[int32(m.GetContentType())]; !ok {
 		err := CreateQualificationRequestValidationError{
-			field:  "Qualification",
-			reason: "value is required",
+			field:  "ContentType",
+			reason: "value must be one of the defined enum values",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetQualification()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateQualificationRequestValidationError{
-					field:  "Qualification",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateQualificationRequestValidationError{
-					field:  "Qualification",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateQualificationRequestValidationError{
-				field:  "Qualification",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
 	}
 
 	if len(errors) > 0 {

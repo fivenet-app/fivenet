@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resources.internet;
 
-import "resources/filestore/file.proto";
+import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -29,7 +29,7 @@ message Ad {
   string title = 9 [(validate.rules).string = {min_len: 3, max_len: 255}];
   // @sanitize: method=StripTags
   string description = 10 [(validate.rules).string = {min_len: 3, max_len: 1024}];
-  optional resources.filestore.File image = 11;
+  optional resources.file.File image = 11;
   optional int32 approver_id = 12;
   optional string approver_job = 13;
   optional int32 creator_id = 14;

@@ -3982,6 +3982,210 @@ var _ interface {
 	ErrorName() string
 } = UpdateJobLimitsResponseValidationError{}
 
+// Validate checks the field values on DeleteJobLogoRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteJobLogoRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteJobLogoRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteJobLogoRequestMultiError, or nil if none found.
+func (m *DeleteJobLogoRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteJobLogoRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteJobLogoRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteJobLogoRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteJobLogoRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteJobLogoRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteJobLogoRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteJobLogoRequestMultiError) AllErrors() []error { return m }
+
+// DeleteJobLogoRequestValidationError is the validation error returned by
+// DeleteJobLogoRequest.Validate if the designated constraints aren't met.
+type DeleteJobLogoRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteJobLogoRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteJobLogoRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteJobLogoRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteJobLogoRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteJobLogoRequestValidationError) ErrorName() string {
+	return "DeleteJobLogoRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteJobLogoRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteJobLogoRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteJobLogoRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteJobLogoRequestValidationError{}
+
+// Validate checks the field values on DeleteJobLogoResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteJobLogoResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteJobLogoResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteJobLogoResponseMultiError, or nil if none found.
+func (m *DeleteJobLogoResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteJobLogoResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteJobLogoResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteJobLogoResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteJobLogoResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteJobLogoResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteJobLogoResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteJobLogoResponseMultiError) AllErrors() []error { return m }
+
+// DeleteJobLogoResponseValidationError is the validation error returned by
+// DeleteJobLogoResponse.Validate if the designated constraints aren't met.
+type DeleteJobLogoResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteJobLogoResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteJobLogoResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteJobLogoResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteJobLogoResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteJobLogoResponseValidationError) ErrorName() string {
+	return "DeleteJobLogoResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteJobLogoResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteJobLogoResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteJobLogoResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteJobLogoResponseValidationError{}
+
 // Validate checks the field values on DeleteFactionRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

@@ -29,7 +29,7 @@ const links = computed(() =>
                   label: t('common.help'),
                   icon: 'i-mdi-book-open-blank-variant-outline',
                   trailingIcon: 'i-mdi-external-link',
-                  to: generateDerefedURL('https://fivenet.app/getting-started'),
+                  to: generateDerefURL('https://fivenet.app/getting-started'),
                   external: true,
               }
             : undefined,
@@ -78,7 +78,7 @@ const categories = computed(() => [
             },
             {
                 shortcuts: ['C', 'M'],
-                name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.set_mug_shot')}`,
+                name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.set_mugshot')}`,
             },
             {
                 shortcuts: ['C', 'D'],

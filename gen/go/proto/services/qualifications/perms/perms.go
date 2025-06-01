@@ -10,11 +10,10 @@ import (
 const (
 	QualificationsServicePerm perms.Category = "qualifications.QualificationsService"
 
-	QualificationsServiceCreateQualificationPerm            perms.Name = "CreateQualification"
-	QualificationsServiceCreateQualificationFieldsPermField perms.Key  = "Fields"
 	QualificationsServiceDeleteQualificationPerm            perms.Name = "DeleteQualification"
 	QualificationsServiceDeleteQualificationAccessPermField perms.Key  = "Access"
 	QualificationsServiceListQualificationsPerm             perms.Name = "ListQualifications"
 	QualificationsServiceUpdateQualificationPerm            perms.Name = "UpdateQualification"
 	QualificationsServiceUpdateQualificationAccessPermField perms.Key  = "Access"
+	QualificationsServiceUpdateQualificationFieldsPermField perms.Key  = "Fields"
 )

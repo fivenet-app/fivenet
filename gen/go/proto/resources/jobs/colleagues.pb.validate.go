@@ -213,37 +213,12 @@ func (m *Colleague) validate(all bool) error {
 
 	}
 
+	if m.AvatarFileId != nil {
+		// no validation rules for AvatarFileId
+	}
+
 	if m.Avatar != nil {
-
-		if all {
-			switch v := interface{}(m.GetAvatar()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ColleagueValidationError{
-						field:  "Avatar",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ColleagueValidationError{
-						field:  "Avatar",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAvatar()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ColleagueValidationError{
-					field:  "Avatar",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for Avatar
 	}
 
 	if m.Email != nil {

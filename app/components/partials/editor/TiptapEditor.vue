@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import type { Extensions, Range } from '@tiptap/core';
 import { Blockquote } from '@tiptap/extension-blockquote';
 import { Bold } from '@tiptap/extension-bold';
@@ -6,6 +7,8 @@ import { BulletList } from '@tiptap/extension-bullet-list';
 import CharacterCount from '@tiptap/extension-character-count';
 import { Code } from '@tiptap/extension-code';
 import { CodeBlock } from '@tiptap/extension-code-block';
+import Collaboration from '@tiptap/extension-collaboration';
+import CollaborationCursor from '@tiptap/extension-collaboration-cursor';
 import { Color } from '@tiptap/extension-color';
 import { Document } from '@tiptap/extension-document';
 import { Dropcursor } from '@tiptap/extension-dropcursor';
@@ -39,44 +42,70 @@ import Underline from '@tiptap/extension-underline';
 import FontSize from 'tiptap-extension-font-size';
 // @ts-expect-error doesn't have types
 import UniqueId from 'tiptap-unique-id';
-import { CheckboxStandalone } from '~/composables/tiptap/extensions/checkboxStandalone';
-import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
-import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
-import TiptapEditorImageModal from './TiptapEditorImageModal.vue';
+import type * as Y from 'yjs';
+import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
+import { DeleteImageTrackerExt } from '~/composables/tiptap/extensions/DeleteImageTrackerExt';
+import { EnhancedImageResize } from '~/composables/tiptap/extensions/EnhancedImageResize';
+import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
+import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
+import type { UploadNamespaces } from '~/composables/useFileUploader';
+import type GrpcProvider from '~/composables/yjs/yjs';
+import { fontColors, highlightColors } from '~/types/editor';
+import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
+import type { UploadPacket, UploadResponse } from '~~/gen/ts/resources/file/filestore';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import FileListModal from './FileListModal.vue';
+import TiptapEditorImagePopover from './TiptapEditorImagePopover.vue';
 import TiptapEditorSourceCodeModal from './TiptapEditorSourceCodeModal.vue';
-import { fontColors, highlightColors } from './helpers';
+import YJSUserPopover from './YJSUserPopover.vue';
 
 const props = withDefaults(
     defineProps<{
-        modelValue: string;
         wrapperClass?: string;
         limit?: number;
+        fileLimit?: number;
         disabled?: boolean;
         placeholder?: string;
         hideToolbar?: boolean;
-        commentMode?: boolean;
         rounded?: string;
+        commentMode?: boolean;
+
+        disableCollab?: boolean;
+        targetId?: number;
+        filestoreNamespace?: UploadNamespaces;
+        filestoreService?: (options?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>;
     }>(),
     {
         wrapperClass: '',
         limit: undefined,
+        fileLimit: 10,
         disabled: false,
         placeholder: undefined,
         hideToolbar: false,
-        commentMode: false,
         rounded: 'rounded',
+        commentMode: false,
+
+        disableCollab: false,
+        targetId: undefined,
+        filestoreNamespace: undefined,
+        filestoreService: undefined,
     },
 );
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', value: string): void;
+const emits = defineEmits<{
+    (e: 'file-uploaded', file: FileGrpc): void;
 }>();
 
 const { t } = useI18n();
 
+const { activeChar } = useAuth();
+
+const notifications = useNotificatorStore();
+
 const modal = useModal();
 
-const content = useVModel(props, 'modelValue', emit);
+const content = defineModel<string>({ required: true });
+const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
 const extensions: Extensions = [
     UniqueId.configure({
@@ -101,7 +130,6 @@ const extensions: Extensions = [
     Highlight.configure({
         multicolor: true,
     }),
-    History,
     HorizontalRule,
     Italic,
     Link.configure({
@@ -158,28 +186,154 @@ const extensions: Extensions = [
     }),
 ];
 
+const ydoc = inject<Y.Doc | undefined>('yjsDoc', undefined);
+const yjsProvider = inject<GrpcProvider | undefined>('yjsProvider', undefined);
+
+const loading = ref(ydoc && yjsProvider && !props.disableCollab);
+
+if (ydoc && yjsProvider && !props.disableCollab) {
+    const ourName = `${activeChar.value?.firstname} ${activeChar.value?.lastname}`;
+    const user = {
+        id: activeChar.value!.userId,
+        name: ourName,
+        color: stringToColor(ourName),
+    };
+    ydoc.once('sync', (isSynced: boolean) => {
+        if (isSynced === false) {
+            return;
+        }
+
+        loading.value = false;
+    });
+
+    extensions.push(
+        Collaboration.configure({
+            document: ydoc,
+            field: 'content',
+        }),
+        CollaborationCursor.configure({
+            provider: yjsProvider,
+            user: user,
+            // Skip rendering if it's your own cursor
+            render: (user): HTMLElement => {
+                if (user.id === yjsProvider.yDoc.clientID) {
+                    // returns nothing → no widget for your own cursor
+                    return new HTMLElement();
+                }
+                // Otherwise build the “remote” cursor as normal:
+                const cursor = document.createElement('span');
+                cursor.classList.add('collaboration-cursor__caret');
+                cursor.setAttribute('style', `border-color: ${user.color}`);
+
+                const label = document.createElement('div');
+                label.classList.add('collaboration-cursor__label');
+                label.setAttribute('style', `background-color: ${user.color}`);
+                label.insertBefore(document.createTextNode(user.name), null);
+
+                cursor.insertBefore(label, null);
+                return cursor;
+            },
+            // Same for text selections
+            selectionRender: (user) => {
+                if (user.id === yjsProvider.yDoc.clientID) {
+                    return {};
+                }
+                return {
+                    nodeName: 'span',
+                    class: 'collaboration-cursor__selection',
+                    style: `background-color: ${user.color}`,
+                    'data-user': user.name,
+                };
+            },
+        }),
+    );
+} else {
+    extensions.push(History);
+}
+
+function hasFileById(files: FileGrpc[] | undefined | null, id: number): boolean {
+    if (!files || !id) return false;
+    return files.some((f) => f.id === id);
+}
+
 if (!props.commentMode) {
     extensions.push(
-        ImageResize.configure({
-            inline: true,
+        EnhancedImageResize.configure({
+            inline: false,
             allowBase64: true,
+        }),
+        DeleteImageTrackerExt.configure({
+            onRemoved: (ids) =>
+                ids.forEach((id) => {
+                    if (hasFileById(files.value, id)) {
+                        const idx = files.value.findIndex((f) => f.id === id);
+                        if (idx !== -1) files.value.splice(idx, 1);
+                    }
+                }),
         }),
     );
 }
 
+const disabled = computed(() => props.disabled || loading.value);
+
 const editor = useEditor({
     content: '',
+    editable: !disabled.value,
+    extensions: extensions,
+    onFocus: () => focusTablet(true),
+    onBlur: () => focusTablet(false),
+    onUpdate: () => (content.value = unref(editor)?.getHTML() ?? ''),
     editorProps: {
         attributes: {
             class: 'prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-none dark:prose-invert max-w-full break-words',
         },
     },
-    editable: !props.disabled,
-    extensions: extensions,
-    onFocus: () => focusTablet(true),
-    onBlur: () => focusTablet(false),
-    onUpdate: () => emit('update:modelValue', unref(editor)?.getHTML() ?? ''),
 });
+
+let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefined;
+if (props.filestoreService && props.filestoreNamespace && props.targetId) {
+    const { resizeAndUpload } = useFileUploader(props.filestoreService, props.filestoreNamespace, props.targetId);
+
+    async function handleFiles(fs: File[]): Promise<void> {
+        for (const f of fs) {
+            if (!f.type.startsWith('image/')) continue;
+
+            if (files.value && files.value.length >= props.fileLimit) {
+                console.warn('File limit reached, cannot upload more files');
+                notifications.add({
+                    title: { key: 'components.partials.TiptapEditor.file_limit_reached.title', parameters: {} },
+                    description: { key: 'components.partials.TiptapEditor.file_limit_reached.content', parameters: {} },
+                    type: NotificationType.ERROR,
+                });
+
+                return;
+            }
+
+            try {
+                const resp = await resizeAndUpload(f);
+
+                unref(editor)!
+                    .chain()
+                    .focus()
+                    .setEnhancedImage({ src: resp.url, alt: resp.file?.filePath, fileId: resp.file?.id })
+                    .run();
+
+                resp.file && emits('file-uploaded', resp.file);
+
+                files.value.push(resp.file!);
+            } catch (e) {
+                console.warn('Image resize failed, uploading original image', e);
+            }
+        }
+    }
+    fileUploadHandler = handleFiles;
+
+    unref(editor)?.on('create', () => {
+        if (props.filestoreService) {
+            unref(editor)?.registerPlugin(imageUploadPlugin(unref(editor)!, handleFiles));
+        }
+    });
+}
 
 const fonts = [
     {
@@ -208,22 +362,24 @@ const fonts = [
     },
 ];
 
-watch(content, (value) => {
+// If collaboration is enabled, we don't set the content directly
+// as it will be handled by the Yjs provider.
+const stopWatch = watch(content, (value) => {
     const isSame = unref(editor)?.getHTML() === value;
     // JSON
-    // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value)
+    // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value);
 
-    if (isSame) {
-        return;
-    }
+    if (isSame) return;
+
+    if (!props.disableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
 
     unref(editor)?.commands.setContent(value, false);
+    if (!props.disableCollab && yjsProvider && yjsProvider.isAuthoritative) {
+        stopWatch();
+    }
 });
 
-watch(
-    () => props.disabled,
-    () => unref(editor)?.setEditable(!props.disabled),
-);
+watch(disabled, () => unref(editor)?.setEditable(!disabled.value));
 
 const linkState = reactive({
     url: '',
@@ -326,6 +482,7 @@ const goToSelection = () => {
     node instanceof HTMLElement && node.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
 
+// Search And Replace Modal
 watch(
     () => searchAndReplace.search.trim(),
     (val, oldVal) => {
@@ -367,7 +524,6 @@ const clear = () => {
 const replaceAll = () => editor.value?.commands.replaceAll();
 
 const contentRef = useTemplateRef('contentRef');
-
 watch(contentRef, () => {
     if (!contentRef.value || !contentRef.value.$el) {
         return;
@@ -385,14 +541,12 @@ watch(contentRef, () => {
 });
 
 onMounted(() => {
-    if (unref(editor)) {
-        unref(editor)?.commands.setContent(props.modelValue);
+    if (!ydoc) {
+        unref(editor)?.commands.setContent(content.value);
     }
 });
 
-onBeforeUnmount(() => {
-    unref(editor)?.destroy();
-});
+onBeforeUnmount(() => unref(editor)?.destroy());
 </script>
 
 <template>
@@ -400,75 +554,79 @@ onBeforeUnmount(() => {
         <div v-if="editor && !hideToolbar" class="shrink-0 bg-gray-100 p-0.5 dark:bg-gray-800">
             <div class="flex snap-x flex-wrap gap-1">
                 <UButtonGroup>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.bold')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.bold')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('bold') }"
-                            :disabled="!editor.can().chain().focus().toggleBold().run()"
+                            :disabled="!editor.can().chain().focus().toggleBold().run() || disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-bold"
                             @click="editor.chain().focus().toggleBold().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.italic')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.italic')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('italic') }"
-                            :disabled="!editor.can().chain().focus().toggleItalic().run()"
+                            :disabled="!editor.can().chain().focus().toggleItalic().run() || disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-italic"
                             @click="editor.chain().focus().toggleItalic().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.underline')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.underline')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('underline') }"
+                            :disabled="disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-underline"
                             @click="editor.chain().focus().toggleUnderline().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.strike')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.strike')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('strike') }"
-                            :disabled="!editor.can().chain().focus().toggleStrike().run()"
+                            :disabled="!editor.can().chain().focus().toggleStrike().run() || disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-strikethrough"
                             @click="editor.chain().focus().toggleStrike().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.clear')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.clear')" :popper="{ placement: 'top' }">
                         <UButton
+                            :disabled="disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-clear"
                             @click="editor.chain().focus().unsetAllMarks().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.superscript')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.superscript')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('superscript') }"
+                            :disabled="disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-superscript"
                             @click="editor.chain().focus().toggleSuperscript().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.subscript')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.subscript')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('subscript') }"
+                            :disabled="disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-subscript"
                             @click="editor.chain().focus().toggleSubscript().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.code')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.code')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('code') }"
-                            :disabled="!editor.can().chain().focus().toggleCode().run()"
+                            :disabled="!editor.can().chain().focus().toggleCode().run() || disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-code-braces"
@@ -485,39 +643,43 @@ onBeforeUnmount(() => {
 
                 <!-- Text Align -->
                 <UButtonGroup v-if="!commentMode">
-                    <UTooltip :text="$t('components.partials.TipTapEditor.align_left')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.align_left')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-align-left"
+                            :disabled="disabled"
                             @click="editor.chain().focus().setTextAlign('left').run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.align_center')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.align_center')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-align-center"
+                            :disabled="disabled"
                             @click="editor.chain().focus().setTextAlign('center').run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.align_right')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.align_right')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-align-right"
+                            :disabled="disabled"
                             @click="editor.chain().focus().setTextAlign('right').run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.align_justify')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.align_justify')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-align-justify"
+                            :disabled="disabled"
                             @click="editor.chain().focus().setTextAlign('justify').run()"
                         />
                     </UTooltip>
@@ -526,7 +688,7 @@ onBeforeUnmount(() => {
                 <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <!-- Font Family -->
-                <UTooltip :text="$t('components.partials.TipTapEditor.font_family')" :popper="{ placement: 'top' }">
+                <UTooltip :text="$t('components.partials.TiptapEditor.font_family')" :popper="{ placement: 'top' }">
                     <UInputMenu
                         v-model="selectedFont"
                         class="max-w-40"
@@ -537,6 +699,7 @@ onBeforeUnmount(() => {
                         :placeholder="$t('common.font', 1)"
                         search-lazy
                         :search-placeholder="$t('common.search_field')"
+                        :disabled="disabled"
                     >
                         <template #label>
                             <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{ selectedFont.label }}</span>
@@ -556,13 +719,14 @@ onBeforeUnmount(() => {
 
                 <UButtonGroup>
                     <UPopover>
-                        <UTooltip :text="$t('components.partials.TipTapEditor.font_color')" :popper="{ placement: 'top' }">
+                        <UTooltip :text="$t('components.partials.TiptapEditor.font_color')" :popper="{ placement: 'top' }">
                             <UButton
                                 :class="{ 'is-active': editor.isActive('color', { color: selectedFontColor }) }"
                                 color="white"
                                 variant="ghost"
                                 :style="{ color: selectedFontColor }"
                                 icon="i-mdi-format-color-text"
+                                :disabled="disabled"
                             />
                         </UTooltip>
 
@@ -574,6 +738,7 @@ onBeforeUnmount(() => {
                                     variant="outline"
                                     icon="i-mdi-water-off"
                                     :label="$t('common.default')"
+                                    :disabled="disabled"
                                     @click="
                                         editor.chain().focus().unsetColor().run();
                                         close();
@@ -583,11 +748,12 @@ onBeforeUnmount(() => {
                                 <div v-for="(colors, idx) in fontColors" :key="idx">
                                     <div class="grid grid-cols-10 gap-0.5">
                                         <UButton
-                                            v-for="(color, cIdx) in colors"
+                                            v-for="(col, cIdx) in colors"
                                             :key="cIdx"
                                             class="size-6 rounded-none border-0"
-                                            :style="{ backgroundColor: color }"
-                                            @click="selectedFontColor = color"
+                                            :style="{ backgroundColor: col }"
+                                            :disabled="disabled"
+                                            @click="selectedFontColor = col"
                                         />
                                     </div>
                                 </div>
@@ -596,67 +762,74 @@ onBeforeUnmount(() => {
                     </UPopover>
 
                     <!-- Paragraph + Headers -->
-                    <UTooltip :text="$t('components.partials.TipTapEditor.paragraph')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.paragraph')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('paragraph') }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-paragraph"
+                            :disabled="disabled"
                             @click="editor.chain().focus().setParagraph().run()"
                         />
                     </UTooltip>
 
-                    <UTooltip :text="$t('components.partials.TipTapEditor.header_1')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.header_1')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-header-1"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.header_2')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.header_2')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-header-2"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.header_3')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.header_3')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-header-3"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.header_4')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.header_4')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-header-4"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleHeading({ level: 4 }).run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.header_5')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.header_5')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-header-5"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleHeading({ level: 5 }).run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.header_6')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.header_6')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-header-6"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleHeading({ level: 6 }).run()"
                         />
                     </UTooltip>
@@ -665,24 +838,26 @@ onBeforeUnmount(() => {
 
             <div class="flex snap-x flex-wrap gap-1">
                 <UButtonGroup v-if="!commentMode">
-                    <UTooltip :text="$t('components.partials.TipTapEditor.highlight')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.highlight')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('highlight') }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-color-highlight"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleHighlight().run()"
                         />
                     </UTooltip>
 
                     <UPopover>
-                        <UTooltip :text="$t('components.partials.TipTapEditor.highlight_color')" :popper="{ placement: 'top' }">
+                        <UTooltip :text="$t('components.partials.TiptapEditor.highlight_color')" :popper="{ placement: 'top' }">
                             <UButton
                                 :class="{ 'is-active': editor.isActive('highlight', { color: selectedHighlightColor.value }) }"
                                 color="white"
                                 variant="ghost"
                                 :style="{ color: selectedHighlightColor.value }"
                                 icon="i-mdi-format-color-fill"
+                                :disabled="disabled"
                             />
                         </UTooltip>
 
@@ -694,6 +869,7 @@ onBeforeUnmount(() => {
                                     variant="outline"
                                     icon="i-mdi-water-off"
                                     :label="$t('common.reset')"
+                                    :disabled="disabled"
                                     @click="
                                         editor.chain().focus().unsetHighlight().run();
                                         close();
@@ -702,11 +878,12 @@ onBeforeUnmount(() => {
 
                                 <div class="grid grid-cols-6 gap-0.5">
                                     <UButton
-                                        v-for="(color, idx) in highlightColors"
+                                        v-for="(col, idx) in highlightColors"
                                         :key="idx"
                                         class="size-6 rounded-none border-0"
-                                        :style="{ backgroundColor: color.value }"
-                                        @click="selectedHighlightColor = color"
+                                        :style="{ backgroundColor: col.value }"
+                                        :disabled="disabled"
+                                        @click="selectedHighlightColor = col"
                                     />
                                 </div>
                             </div>
@@ -721,40 +898,44 @@ onBeforeUnmount(() => {
                 />
 
                 <UButtonGroup>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.bullet_list')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.bullet_list')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('bulletList') }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-list-bulleted"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleBulletList().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.ordered_list')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.ordered_list')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('orderedList') }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-list-numbered"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleOrderedList().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.task_list')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.task_list')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('taskList') }"
                             icon="i-mdi-format-list-checks"
                             color="white"
                             variant="ghost"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleTaskList().run()"
                         />
                     </UTooltip>
 
-                    <UTooltip :text="$t('components.partials.TipTapEditor.checkbox')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.checkbox')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('checkboxStandalone') }"
                             icon="i-mdi-checkbox-marked-outline"
                             color="white"
                             variant="ghost"
+                            :disabled="disabled"
                             @click="editor.chain().focus().addCheckboxStandalone().run()"
                         />
                     </UTooltip>
@@ -762,30 +943,28 @@ onBeforeUnmount(() => {
 
                 <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
-                <UTooltip
+                <TiptapEditorImagePopover
                     v-if="!commentMode"
-                    :text="$t('components.partials.TipTapEditor.image')"
-                    :popper="{ placement: 'top' }"
-                >
-                    <UButton
-                        icon="i-mdi-image-plus"
-                        color="white"
-                        variant="ghost"
-                        @click="
-                            modal.open(TiptapEditorImageModal, {
-                                editor: editor,
-                            })
-                        "
-                    />
-                </UTooltip>
+                    :editor="unref(editor)"
+                    :file-limit="fileLimit"
+                    :disabled="disabled"
+                    :upload-handler="fileUploadHandler"
+                    @open-file-list="
+                        modal.open(FileListModal, {
+                            editor: unref(editor),
+                            files: files,
+                        })
+                    "
+                />
 
                 <UPopover v-if="!commentMode">
-                    <UTooltip :text="$t('components.partials.TipTapEditor.table')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.table')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('table') }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-table"
+                            :disabled="disabled"
                         />
                     </UTooltip>
 
@@ -793,19 +972,19 @@ onBeforeUnmount(() => {
                         <div class="p-4">
                             <UForm :state="{}" @submit="createTable">
                                 <UFormGroup :label="$t('common.rows')">
-                                    <UInput v-model="tableCreation.rows" type="text" />
+                                    <UInput v-model="tableCreation.rows" type="text" :disabled="disabled" />
                                 </UFormGroup>
 
                                 <UFormGroup :label="$t('common.cols')">
-                                    <UInput v-model="tableCreation.cols" type="text" />
+                                    <UInput v-model="tableCreation.cols" type="text" :disabled="disabled" />
                                 </UFormGroup>
 
                                 <UFormGroup :label="$t('common.with_header_row')">
-                                    <UToggle v-model="tableCreation.withHeaderRow" type="text" />
+                                    <UToggle v-model="tableCreation.withHeaderRow" type="text" :disabled="disabled" />
                                 </UFormGroup>
 
                                 <UFormGroup>
-                                    <UButton type="submit" :label="$t('common.create')" />
+                                    <UButton type="submit" :label="$t('common.create')" :disabled="disabled" />
                                 </UFormGroup>
                             </UForm>
                         </div>
@@ -813,12 +992,13 @@ onBeforeUnmount(() => {
                 </UPopover>
 
                 <UPopover>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.link')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.link')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('link') }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-link"
+                            :disabled="disabled"
                         />
                     </UTooltip>
 
@@ -826,16 +1006,22 @@ onBeforeUnmount(() => {
                         <div class="p-4">
                             <UForm :state="linkState" @submit="($event) => setLink($event.data)">
                                 <UFormGroup :label="$t('common.url')">
-                                    <UInput v-model="linkState.url" type="text" />
+                                    <UInput v-model="linkState.url" type="text" :disabled="disabled" />
                                 </UFormGroup>
 
                                 <slot name="linkModal" :editor="editor" :state="linkState" />
 
                                 <UButtonGroup class="mt-2 w-full">
-                                    <UButton class="flex-1" type="submit" icon="i-mdi-link" :label="$t('common.link')" />
+                                    <UButton
+                                        class="flex-1"
+                                        type="submit"
+                                        icon="i-mdi-link"
+                                        :label="$t('common.link')"
+                                        :disabled="disabled"
+                                    />
 
                                     <UButton
-                                        :disabled="!editor.isActive('link')"
+                                        :disabled="!editor.isActive('link') || disabled"
                                         color="error"
                                         variant="outline"
                                         icon="i-mdi-link-off"
@@ -853,38 +1039,42 @@ onBeforeUnmount(() => {
                 </UPopover>
 
                 <UButtonGroup>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.code_block')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.code_block')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('codeBlock') }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-code-block-braces"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleCodeBlock().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.block_quote')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.block_quote')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('blockquote') }"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-format-quote-open"
+                            :disabled="disabled"
                             @click="editor.chain().focus().toggleBlockquote().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.horizontal_rule')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.horizontal_rule')" :popper="{ placement: 'top' }">
                         <UButton
                             color="white"
                             variant="ghost"
                             icon="i-mdi-minus"
+                            :disabled="disabled"
                             @click="editor.chain().focus().setHorizontalRule().run()"
                         />
                     </UTooltip>
                     <!--
                     <UButton
-                        color="white"
-                        variant="ghost"
-                        icon="i-mdi-format-page-break"
-                        @click="editor.chain().focus().setHardBreak().run()"
+                    color="white"
+                    variant="ghost"
+                    icon="i-mdi-format-page-break"
+                    @click="editor.chain().focus().setHardBreak().run()"
+                    :disabled="disabled"
                     />
                     -->
                 </UButtonGroup>
@@ -896,25 +1086,25 @@ onBeforeUnmount(() => {
                 <UButtonGroup>
                     <UPopover>
                         <UTooltip
-                            :text="$t('components.partials.TipTapEditor.search_and_replace')"
+                            :text="$t('components.partials.TiptapEditor.search_and_replace')"
                             :popper="{ placement: 'top' }"
                         >
-                            <UButton color="white" variant="ghost" icon="i-mdi-text-search" />
+                            <UButton color="white" variant="ghost" icon="i-mdi-text-search" :disabled="disabled" />
                         </UTooltip>
 
                         <template #panel>
                             <div class="flex flex-1 gap-0.5 p-4">
                                 <UForm :state="searchAndReplace">
                                     <UFormGroup name="search" :label="$t('common.search')">
-                                        <UInput v-model="searchAndReplace.search" />
+                                        <UInput v-model="searchAndReplace.search" :disabled="disabled" />
                                     </UFormGroup>
 
-                                    <UFormGroup name="replace" :label="$t('components.partials.TipTapEditor.replace')">
-                                        <UInput v-model="searchAndReplace.replace" />
+                                    <UFormGroup name="replace" :label="$t('components.partials.TiptapEditor.replace')">
+                                        <UInput v-model="searchAndReplace.replace" :disabled="disabled" />
                                     </UFormGroup>
 
                                     <UFormGroup name="caseSensitive" :label="$t('common.case_sensitive')">
-                                        <UToggle v-model="searchAndReplace.caseSensitive" />
+                                        <UToggle v-model="searchAndReplace.caseSensitive" :disabled="disabled" />
                                     </UFormGroup>
 
                                     <UFormGroup class="flex flex-col lg:flex-row">
@@ -922,31 +1112,36 @@ onBeforeUnmount(() => {
                                             <UButton
                                                 color="error"
                                                 variant="outline"
-                                                :label="$t('components.partials.TipTapEditor.clear')"
+                                                :label="$t('components.partials.TiptapEditor.clear')"
+                                                :disabled="disabled"
                                                 @click="clear"
                                             />
                                             <UButton
                                                 color="white"
                                                 variant="outline"
-                                                :label="$t('components.partials.TipTapEditor.previous')"
+                                                :label="$t('components.partials.TiptapEditor.previous')"
+                                                :disabled="disabled"
                                                 @click="previous"
                                             />
                                             <UButton
                                                 color="white"
                                                 variant="outline"
-                                                :label="$t('components.partials.TipTapEditor.next')"
+                                                :label="$t('components.partials.TiptapEditor.next')"
+                                                :disabled="disabled"
                                                 @click="next"
                                             />
                                             <UButton
                                                 color="white"
                                                 variant="outline"
-                                                :label="$t('components.partials.TipTapEditor.replace')"
+                                                :label="$t('components.partials.TiptapEditor.replace')"
+                                                :disabled="disabled"
                                                 @click="replace"
                                             />
                                             <UButton
                                                 color="white"
                                                 variant="outline"
-                                                :label="$t('components.partials.TipTapEditor.replace_all')"
+                                                :label="$t('components.partials.TiptapEditor.replace_all')"
+                                                :disabled="disabled"
                                                 @click="replaceAll"
                                             />
                                         </UButtonGroup>
@@ -967,18 +1162,18 @@ onBeforeUnmount(() => {
                         </template>
                     </UPopover>
 
-                    <UTooltip :text="$t('components.partials.TipTapEditor.undo')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.undo')" :popper="{ placement: 'top' }">
                         <UButton
-                            :disabled="!editor.can().chain().focus().undo().run()"
+                            :disabled="!editor.can().chain().focus().undo().run() || disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-undo"
                             @click="editor.chain().focus().undo().run()"
                         />
                     </UTooltip>
-                    <UTooltip :text="$t('components.partials.TipTapEditor.redo')" :popper="{ placement: 'top' }">
+                    <UTooltip :text="$t('components.partials.TiptapEditor.redo')" :popper="{ placement: 'top' }">
                         <UButton
-                            :disabled="!editor.can().chain().focus().redo().run()"
+                            :disabled="!editor.can().chain().focus().redo().run() || disabled"
                             color="white"
                             variant="ghost"
                             icon="i-mdi-redo"
@@ -990,19 +1185,41 @@ onBeforeUnmount(() => {
                 <template v-if="!commentMode">
                     <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
-                    <UTooltip :text="$t('components.partials.TipTapEditor.source_code')" :popper="{ placement: 'top' }">
-                        <UButton
-                            color="white"
-                            variant="ghost"
-                            icon="i-mdi-file-code"
-                            @click="
-                                modal.open(TiptapEditorSourceCodeModal, {
-                                    content: content,
-                                    'onUpdate:content': ($event) => (content = $event),
-                                })
-                            "
-                        />
-                    </UTooltip>
+                    <UButtonGroup>
+                        <UTooltip :text="$t('components.partials.TiptapEditor.source_code')" :popper="{ placement: 'top' }">
+                            <UButton
+                                color="white"
+                                variant="ghost"
+                                icon="i-mdi-file-code"
+                                :disabled="disabled"
+                                @click="
+                                    modal.open(TiptapEditorSourceCodeModal, {
+                                        content: content,
+                                        'onUpdate:content': ($event) => (content = $event),
+                                    })
+                                "
+                            />
+                        </UTooltip>
+
+                        <UTooltip
+                            v-if="filestoreService"
+                            :text="$t('components.partials.TiptapEditor.file_list')"
+                            :popper="{ placement: 'top' }"
+                        >
+                            <UButton
+                                color="white"
+                                variant="ghost"
+                                icon="i-mdi-file-multiple"
+                                :disabled="disabled"
+                                @click="
+                                    modal.open(FileListModal, {
+                                        editor: unref(editor)!,
+                                        files: files,
+                                    })
+                                "
+                            />
+                        </UTooltip>
+                    </UButtonGroup>
                 </template>
             </div>
         </div>
@@ -1046,11 +1263,20 @@ onBeforeUnmount(() => {
         />
 
         <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
-            <div class="flex flex-1">
+            <div class="flex" :class="{ 'flex-1': targetId }">
                 <slot name="footer" />
+
+                <div v-if="loading" class="inline-flex items-center gap-1">
+                    <UIcon class="size-5 animate-spin" name="i-mdi-refresh" />
+                    {{ $t('common.loading') }}
+                </div>
             </div>
 
-            <div>
+            <div v-if="targetId" class="inline-flex flex-1 items-center justify-center">
+                <YJSUserPopover />
+            </div>
+
+            <div class="inline-flex flex-1 items-center justify-end">
                 {{ editor.storage.characterCount.characters() }}<template v-if="limit && limit > 0"> / {{ limit }}</template>
                 {{ $t('common.chars', editor.storage.characterCount.characters()) }}
                 |

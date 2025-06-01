@@ -4,12 +4,12 @@ import { z } from 'zod';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
-import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
+import type { File } from '~~/gen/ts/resources/file/file';
+import type { UploadResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { UploadFileResponse } from '~~/gen/ts/services/settings/filestore';
 
 const emit = defineEmits<{
-    (e: 'uploaded', file: FileInfo): void;
+    (e: 'uploaded', file: File): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -39,20 +39,17 @@ const state = reactive({
 
 const categories = ['jobassets'];
 
-async function uploadFile(values: Schema): Promise<UploadFileResponse | undefined> {
-    const file = {} as File;
-
+async function upload(values: Schema): Promise<UploadResponse | undefined> {
     if (!values.file[0]) {
         return;
     }
 
-    file.data = new Uint8Array(await values.file[0].arrayBuffer());
+    // TODO
 
     try {
-        const call = $grpc.settings.filestore.uploadFile({
+        const call = $grpc.filestore.filestore.upload({
             prefix: values.category,
             name: values.name,
-            file: file,
         });
         const { response } = await call;
 
@@ -78,7 +75,7 @@ async function uploadFile(values: Schema): Promise<UploadFileResponse | undefine
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await uploadFile(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await upload(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 

@@ -4,11 +4,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo *userinfo.UserInfo, access calendar.AccessLevel) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tCalendarEntry.
 		SELECT(
@@ -38,7 +40,8 @@ func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
+			tAvatar.FilePath.AS("creator.avatar"),
 			tCalendarEntry.Recurring,
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.CreatedAt,
@@ -63,6 +66,9 @@ func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo
 			LEFT_JOIN(tCalendarRSVP,
 				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)).
 					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		GROUP_BY(tCalendarEntry.ID).

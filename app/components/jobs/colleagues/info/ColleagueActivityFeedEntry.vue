@@ -56,7 +56,7 @@ withDefaults(
                                     v-for="label in activity.data.data.labelsChange?.removed"
                                     :key="label.name"
                                     class="justify-between gap-2 line-through"
-                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                                     :style="{ backgroundColor: label.color }"
                                     size="xs"
                                 >
@@ -67,7 +67,7 @@ withDefaults(
                                     v-for="label in activity.data.data.labelsChange?.added"
                                     :key="label.name"
                                     class="justify-between gap-2"
-                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    :class="isColorBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                                     :style="{ backgroundColor: label.color }"
                                     size="xs"
                                 >

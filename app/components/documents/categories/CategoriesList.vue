@@ -54,18 +54,21 @@ const modal = useModal();
         <template #right>
             <PartialsBackButton fallback-to="/documents" />
 
-            <UButton
-                v-if="can('documents.DocumentsService.CreateOrUpdateCategory').value"
-                color="gray"
-                trailing-icon="i-mdi-plus"
-                @click="
-                    modal.open(CategoriesModal, {
-                        onUpdate: () => refresh(),
-                    })
-                "
-            >
-                {{ $t('components.documents.categories.modal.create_category') }}
-            </UButton>
+            <UTooltip v-if="can('documents.DocumentsService.CreateOrUpdateCategory').value" :text="$t('common.create')">
+                <UButton
+                    color="gray"
+                    trailing-icon="i-mdi-plus"
+                    @click="
+                        modal.open(CategoriesModal, {
+                            onUpdate: () => refresh(),
+                        })
+                    "
+                >
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.category', 1) }}
+                    </span>
+                </UButton>
+            </UTooltip>
         </template>
     </UDashboardNavbar>
 

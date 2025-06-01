@@ -204,6 +204,14 @@ func (m *DocActivityData) Sanitize() error {
 	return nil
 }
 
+func (m *DocFilesChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *DocOwnerChanged) Sanitize() error {
 	if m == nil {
 		return nil
@@ -224,6 +232,15 @@ func (m *DocOwnerChanged) Sanitize() error {
 func (m *DocUpdated) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: FilesChange
+	if m.FilesChange != nil {
+		if v, ok := any(m.GetFilesChange()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

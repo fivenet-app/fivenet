@@ -76,7 +76,10 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                     </template>
 
                     <template #option="{ option: quali }">
-                        <span class="truncate"> {{ quali.abbreviation }}: {{ quali.title }} </span>
+                        <span class="truncate">
+                            <template v-if="quali.abbreviation">{{ quali.abbreviation }}: </template
+                            >{{ !quali.title ? $t('common.untitled') : quali.title }}
+                        </span>
                     </template>
 
                     <template #option-empty="{ query: search }">

@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package resources.file;
+
+import "resources/file/meta.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;file";
+
+message File {
+  optional uint64 parent_id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 id = 2 [(validate.rules).uint64.gt = 0];
+  string file_path = 3;
+  optional resources.timestamp.Timestamp created_at = 4;
+  int64 byte_size = 5; // Bytes stored
+  string content_type = 6;
+
+  optional FileMeta meta = 7;
+}

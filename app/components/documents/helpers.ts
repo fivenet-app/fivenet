@@ -183,6 +183,8 @@ export function getDocAtivityIcon(activityType: DocActivityType): string {
             return 'i-mdi-file-account';
         case DocActivityType.DELETED:
             return 'i-mdi-delete-circle';
+        case DocActivityType.DRAFT_TOGGLED:
+            return 'i-mdi-file-document-edit-outline';
 
         // Requests
         case DocActivityType.REQUESTED_ACCESS:

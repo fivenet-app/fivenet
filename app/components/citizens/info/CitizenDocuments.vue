@@ -8,7 +8,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { OpenClose } from '~/typings';
+import type { ToggleItem } from '~/typings';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { ListUserDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 
@@ -20,10 +20,10 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
-const openclose: OpenClose[] = [
-    { id: 0, label: t('common.not_selected'), closed: undefined },
-    { id: 1, label: t('common.open', 2), closed: false },
-    { id: 2, label: t('common.close', 2), closed: true },
+const openclose: ToggleItem[] = [
+    { id: 0, label: t('common.not_selected'), value: undefined },
+    { id: 1, label: t('common.open', 2), value: false },
+    { id: 2, label: t('common.close', 2), value: true },
 ];
 
 const docRelationsEnum = listEnumValues(DocRelation).filter((r) => r.number !== 0);
@@ -124,7 +124,7 @@ const columns = [
                                 {{
                                     query.closed === undefined
                                         ? openclose[0]!.label
-                                        : (openclose.findLast((o) => o.closed === query.closed)?.label ?? $t('common.na'))
+                                        : (openclose.findLast((o) => o.value === query.closed)?.label ?? $t('common.na'))
                                 }}
                             </template>
                         </USelectMenu>

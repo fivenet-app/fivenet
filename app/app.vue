@@ -4,7 +4,6 @@ import CookieControl from '~/components/partials/CookieControl.vue';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
-import { useDocumentEditorStore } from '~/stores/documenteditor';
 import { useSettingsStore } from '~/stores/settings';
 import BannerMessage from './components/partials/BannerMessage.vue';
 
@@ -44,7 +43,6 @@ if (APP_VERSION !== settings.version) {
     logger.info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
 
     useClipboardStore().clear();
-    useDocumentEditorStore().clear();
     settings.setVersion(APP_VERSION);
 }
 

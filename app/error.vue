@@ -89,7 +89,7 @@ const isDev = import.meta.dev;
                             >
                         </p>
 
-                        <pre :class="kbdBlockClasses">{{ version }}</pre>
+                        <pre class="text-wrap" :class="kbdBlockClasses">{{ version }}</pre>
                     </div>
 
                     <p class="font-semibold">

@@ -9,6 +9,7 @@ package qualifications
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -200,29 +201,31 @@ type Qualification struct {
 	Job       string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
 	Weight    uint32                 `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
 	Closed    bool                   `protobuf:"varint,7,opt,name=closed,proto3" json:"closed,omitempty"`
-	Public    bool                   `protobuf:"varint,26,opt,name=public,proto3" json:"public,omitempty"`
+	Draft     bool                   `protobuf:"varint,8,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public    bool                   `protobuf:"varint,9,opt,name=public,proto3" json:"public,omitempty"`
 	// @sanitize: method=StripTags
-	Abbreviation string `protobuf:"bytes,8,opt,name=abbreviation,proto3" json:"abbreviation,omitempty"`
+	Abbreviation string `protobuf:"bytes,10,opt,name=abbreviation,proto3" json:"abbreviation,omitempty"`
 	// @sanitize
-	Title string `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`
+	Title string `protobuf:"bytes,11,opt,name=title,proto3" json:"title,omitempty"`
 	// @sanitize: method=StripTags
-	Description        *string                       `protobuf:"bytes,10,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Content            *content.Content              `protobuf:"bytes,11,opt,name=content,proto3" json:"content,omitempty"`
-	CreatorId          *int32                        `protobuf:"varint,12,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator            *users.UserShort              `protobuf:"bytes,13,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
-	CreatorJob         string                        `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	Access             *QualificationAccess          `protobuf:"bytes,15,opt,name=access,proto3" json:"access,omitempty"`
-	Requirements       []*QualificationRequirement   `protobuf:"bytes,16,rep,name=requirements,proto3" json:"requirements,omitempty"`
-	DiscordSyncEnabled bool                          `protobuf:"varint,17,opt,name=discord_sync_enabled,json=discordSyncEnabled,proto3" json:"discord_sync_enabled,omitempty"`
-	DiscordSettings    *QualificationDiscordSettings `protobuf:"bytes,18,opt,name=discord_settings,json=discordSettings,proto3,oneof" json:"discord_settings,omitempty"`
-	ExamMode           QualificationExamMode         `protobuf:"varint,19,opt,name=exam_mode,json=examMode,proto3,enum=resources.qualifications.QualificationExamMode" json:"exam_mode,omitempty"`
-	ExamSettings       *QualificationExamSettings    `protobuf:"bytes,20,opt,name=exam_settings,json=examSettings,proto3,oneof" json:"exam_settings,omitempty"`
-	Exam               *ExamQuestions                `protobuf:"bytes,21,opt,name=exam,proto3,oneof" json:"exam,omitempty"`
-	Result             *QualificationResult          `protobuf:"bytes,22,opt,name=result,proto3,oneof" json:"result,omitempty"`
-	Request            *QualificationRequest         `protobuf:"bytes,23,opt,name=request,proto3,oneof" json:"request,omitempty"`
-	LabelSyncEnabled   bool                          `protobuf:"varint,24,opt,name=label_sync_enabled,json=labelSyncEnabled,proto3" json:"label_sync_enabled,omitempty"`
+	Description        *string                       `protobuf:"bytes,12,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Content            *content.Content              `protobuf:"bytes,13,opt,name=content,proto3" json:"content,omitempty"`
+	CreatorId          *int32                        `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator            *users.UserShort              `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
+	CreatorJob         string                        `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	Access             *QualificationAccess          `protobuf:"bytes,17,opt,name=access,proto3" json:"access,omitempty"`
+	Requirements       []*QualificationRequirement   `protobuf:"bytes,18,rep,name=requirements,proto3" json:"requirements,omitempty"`
+	DiscordSyncEnabled bool                          `protobuf:"varint,19,opt,name=discord_sync_enabled,json=discordSyncEnabled,proto3" json:"discord_sync_enabled,omitempty"`
+	DiscordSettings    *QualificationDiscordSettings `protobuf:"bytes,20,opt,name=discord_settings,json=discordSettings,proto3,oneof" json:"discord_settings,omitempty"`
+	ExamMode           QualificationExamMode         `protobuf:"varint,21,opt,name=exam_mode,json=examMode,proto3,enum=resources.qualifications.QualificationExamMode" json:"exam_mode,omitempty"`
+	ExamSettings       *QualificationExamSettings    `protobuf:"bytes,22,opt,name=exam_settings,json=examSettings,proto3,oneof" json:"exam_settings,omitempty"`
+	Exam               *ExamQuestions                `protobuf:"bytes,23,opt,name=exam,proto3,oneof" json:"exam,omitempty"`
+	Result             *QualificationResult          `protobuf:"bytes,24,opt,name=result,proto3,oneof" json:"result,omitempty"`
+	Request            *QualificationRequest         `protobuf:"bytes,25,opt,name=request,proto3,oneof" json:"request,omitempty"`
+	LabelSyncEnabled   bool                          `protobuf:"varint,26,opt,name=label_sync_enabled,json=labelSyncEnabled,proto3" json:"label_sync_enabled,omitempty"`
 	// @sanitize: method=StripTags
-	LabelSyncFormat *string `protobuf:"bytes,25,opt,name=label_sync_format,json=labelSyncFormat,proto3,oneof" json:"label_sync_format,omitempty"`
+	LabelSyncFormat *string      `protobuf:"bytes,27,opt,name=label_sync_format,json=labelSyncFormat,proto3,oneof" json:"label_sync_format,omitempty"`
+	Files           []*file.File `protobuf:"bytes,28,rep,name=files,proto3" json:"files,omitempty" alias:"files"` // @gotags: alias:"files"
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -302,6 +305,13 @@ func (x *Qualification) GetWeight() uint32 {
 func (x *Qualification) GetClosed() bool {
 	if x != nil {
 		return x.Closed
+	}
+	return false
+}
+
+func (x *Qualification) GetDraft() bool {
+	if x != nil {
+		return x.Draft
 	}
 	return false
 }
@@ -439,6 +449,13 @@ func (x *Qualification) GetLabelSyncFormat() string {
 	return ""
 }
 
+func (x *Qualification) GetFiles() []*file.File {
+	if x != nil {
+		return x.Files
+	}
+	return nil
+}
+
 type QualificationShort struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
@@ -448,20 +465,21 @@ type QualificationShort struct {
 	Job       string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
 	Weight    uint32                 `protobuf:"varint,6,opt,name=weight,proto3" json:"weight,omitempty"`
 	Closed    bool                   `protobuf:"varint,7,opt,name=closed,proto3" json:"closed,omitempty"`
-	Public    bool                   `protobuf:"varint,22,opt,name=public,proto3" json:"public,omitempty"`
+	Draft     bool                   `protobuf:"varint,8,opt,name=draft,proto3" json:"draft,omitempty"`
+	Public    bool                   `protobuf:"varint,9,opt,name=public,proto3" json:"public,omitempty"`
 	// @sanitize: method=StripTags
-	Abbreviation string `protobuf:"bytes,8,opt,name=abbreviation,proto3" json:"abbreviation,omitempty"`
+	Abbreviation string `protobuf:"bytes,10,opt,name=abbreviation,proto3" json:"abbreviation,omitempty"`
 	// @sanitize
-	Title string `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`
+	Title string `protobuf:"bytes,11,opt,name=title,proto3" json:"title,omitempty"`
 	// @sanitize: method=StripTags
-	Description   *string                     `protobuf:"bytes,10,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	CreatorId     *int32                      `protobuf:"varint,12,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator       *users.UserShort            `protobuf:"bytes,13,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
-	CreatorJob    string                      `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	Requirements  []*QualificationRequirement `protobuf:"bytes,16,rep,name=requirements,proto3" json:"requirements,omitempty"`
-	ExamMode      QualificationExamMode       `protobuf:"varint,18,opt,name=exam_mode,json=examMode,proto3,enum=resources.qualifications.QualificationExamMode" json:"exam_mode,omitempty"`
-	ExamSettings  *QualificationExamSettings  `protobuf:"bytes,19,opt,name=exam_settings,json=examSettings,proto3,oneof" json:"exam_settings,omitempty"`
-	Result        *QualificationResult        `protobuf:"bytes,21,opt,name=result,proto3,oneof" json:"result,omitempty"`
+	Description   *string                     `protobuf:"bytes,12,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	CreatorId     *int32                      `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator       *users.UserShort            `protobuf:"bytes,15,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
+	CreatorJob    string                      `protobuf:"bytes,16,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	Requirements  []*QualificationRequirement `protobuf:"bytes,18,rep,name=requirements,proto3" json:"requirements,omitempty"`
+	ExamMode      QualificationExamMode       `protobuf:"varint,21,opt,name=exam_mode,json=examMode,proto3,enum=resources.qualifications.QualificationExamMode" json:"exam_mode,omitempty"`
+	ExamSettings  *QualificationExamSettings  `protobuf:"bytes,22,opt,name=exam_settings,json=examSettings,proto3,oneof" json:"exam_settings,omitempty"`
+	Result        *QualificationResult        `protobuf:"bytes,24,opt,name=result,proto3,oneof" json:"result,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -541,6 +559,13 @@ func (x *QualificationShort) GetWeight() uint32 {
 func (x *QualificationShort) GetClosed() bool {
 	if x != nil {
 		return x.Closed
+	}
+	return false
+}
+
+func (x *QualificationShort) GetDraft() bool {
+	if x != nil {
+		return x.Draft
 	}
 	return false
 }
@@ -1083,7 +1108,7 @@ var File_resources_qualifications_qualifications_proto protoreflect.FileDescript
 
 const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\n" +
-	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/common/content/content.proto\x1a%resources/qualifications/access.proto\x1a#resources/qualifications/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x95\r\n" +
+	"-resources/qualifications/qualifications.proto\x12\x18resources.qualifications\x1a\x1egoogle/protobuf/duration.proto\x1a&resources/common/content/content.proto\x1a\x19resources/file/file.proto\x1a%resources/qualifications/access.proto\x1a#resources/qualifications/exam.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xd7\r\n" +
 	"\rQualification\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
@@ -1094,31 +1119,33 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12#\n" +
 	"\x06weight\x18\x06 \x01(\rB\v\xfaB\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12\x16\n" +
-	"\x06closed\x18\a \x01(\bR\x06closed\x12\x16\n" +
-	"\x06public\x18\x1a \x01(\bR\x06public\x12+\n" +
-	"\fabbreviation\x18\b \x01(\tB\a\xfaB\x04r\x02\x18\x14R\fabbreviation\x12 \n" +
-	"\x05title\x18\t \x01(\tB\n" +
+	"\x06closed\x18\a \x01(\bR\x06closed\x12\x14\n" +
+	"\x05draft\x18\b \x01(\bR\x05draft\x12\x16\n" +
+	"\x06public\x18\t \x01(\bR\x06public\x12+\n" +
+	"\fabbreviation\x18\n" +
+	" \x01(\tB\a\xfaB\x04r\x02\x18\x14R\fabbreviation\x12 \n" +
+	"\x05title\x18\v \x01(\tB\n" +
 	"\xfaB\ar\x05\x10\x03\x18\x80\bR\x05title\x12/\n" +
-	"\vdescription\x18\n" +
-	" \x01(\tB\b\xfaB\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12;\n" +
-	"\acontent\x18\v \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
+	"\vdescription\x18\f \x01(\tB\b\xfaB\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12;\n" +
+	"\acontent\x18\r \x01(\v2!.resources.common.content.ContentR\acontent\x12+\n" +
 	"\n" +
-	"creator_id\x18\f \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x129\n" +
-	"\acreator\x18\r \x01(\v2\x1a.resources.users.UserShortH\x05R\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\x0e \x01(\tB\a\xfaB\x04r\x02\x18\x14R\n" +
+	"creator_id\x18\x0e \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x129\n" +
+	"\acreator\x18\x0f \x01(\v2\x1a.resources.users.UserShortH\x05R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x10 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12E\n" +
-	"\x06access\x18\x0f \x01(\v2-.resources.qualifications.QualificationAccessR\x06access\x12V\n" +
-	"\frequirements\x18\x10 \x03(\v22.resources.qualifications.QualificationRequirementR\frequirements\x120\n" +
-	"\x14discord_sync_enabled\x18\x11 \x01(\bR\x12discordSyncEnabled\x12f\n" +
-	"\x10discord_settings\x18\x12 \x01(\v26.resources.qualifications.QualificationDiscordSettingsH\x06R\x0fdiscordSettings\x88\x01\x01\x12V\n" +
-	"\texam_mode\x18\x13 \x01(\x0e2/.resources.qualifications.QualificationExamModeB\b\xfaB\x05\x82\x01\x02\x10\x01R\bexamMode\x12]\n" +
-	"\rexam_settings\x18\x14 \x01(\v23.resources.qualifications.QualificationExamSettingsH\aR\fexamSettings\x88\x01\x01\x12@\n" +
-	"\x04exam\x18\x15 \x01(\v2'.resources.qualifications.ExamQuestionsH\bR\x04exam\x88\x01\x01\x12J\n" +
-	"\x06result\x18\x16 \x01(\v2-.resources.qualifications.QualificationResultH\tR\x06result\x88\x01\x01\x12M\n" +
-	"\arequest\x18\x17 \x01(\v2..resources.qualifications.QualificationRequestH\n" +
+	"\x06access\x18\x11 \x01(\v2-.resources.qualifications.QualificationAccessR\x06access\x12V\n" +
+	"\frequirements\x18\x12 \x03(\v22.resources.qualifications.QualificationRequirementR\frequirements\x120\n" +
+	"\x14discord_sync_enabled\x18\x13 \x01(\bR\x12discordSyncEnabled\x12f\n" +
+	"\x10discord_settings\x18\x14 \x01(\v26.resources.qualifications.QualificationDiscordSettingsH\x06R\x0fdiscordSettings\x88\x01\x01\x12V\n" +
+	"\texam_mode\x18\x15 \x01(\x0e2/.resources.qualifications.QualificationExamModeB\b\xfaB\x05\x82\x01\x02\x10\x01R\bexamMode\x12]\n" +
+	"\rexam_settings\x18\x16 \x01(\v23.resources.qualifications.QualificationExamSettingsH\aR\fexamSettings\x88\x01\x01\x12@\n" +
+	"\x04exam\x18\x17 \x01(\v2'.resources.qualifications.ExamQuestionsH\bR\x04exam\x88\x01\x01\x12J\n" +
+	"\x06result\x18\x18 \x01(\v2-.resources.qualifications.QualificationResultH\tR\x06result\x88\x01\x01\x12M\n" +
+	"\arequest\x18\x19 \x01(\v2..resources.qualifications.QualificationRequestH\n" +
 	"R\arequest\x88\x01\x01\x12,\n" +
-	"\x12label_sync_enabled\x18\x18 \x01(\bR\x10labelSyncEnabled\x129\n" +
-	"\x11label_sync_format\x18\x19 \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01H\vR\x0flabelSyncFormat\x88\x01\x01B\r\n" +
+	"\x12label_sync_enabled\x18\x1a \x01(\bR\x10labelSyncEnabled\x129\n" +
+	"\x11label_sync_format\x18\x1b \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01H\vR\x0flabelSyncFormat\x88\x01\x01\x12*\n" +
+	"\x05files\x18\x1c \x03(\v2\x14.resources.file.FileR\x05filesB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
@@ -1132,7 +1159,7 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"\a_resultB\n" +
 	"\n" +
 	"\b_requestB\x14\n" +
-	"\x12_label_sync_format\"\xc2\b\n" +
+	"\x12_label_sync_format\"\xd8\b\n" +
 	"\x12QualificationShort\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
@@ -1143,22 +1170,23 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"deleted_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\tdeletedAt\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12#\n" +
 	"\x06weight\x18\x06 \x01(\rB\v\xfaB\b*\x06\x10\xff\xff\xff\xff\x0fR\x06weight\x12\x16\n" +
-	"\x06closed\x18\a \x01(\bR\x06closed\x12\x16\n" +
-	"\x06public\x18\x16 \x01(\bR\x06public\x12+\n" +
-	"\fabbreviation\x18\b \x01(\tB\a\xfaB\x04r\x02\x18\x14R\fabbreviation\x12 \n" +
-	"\x05title\x18\t \x01(\tB\n" +
+	"\x06closed\x18\a \x01(\bR\x06closed\x12\x14\n" +
+	"\x05draft\x18\b \x01(\bR\x05draft\x12\x16\n" +
+	"\x06public\x18\t \x01(\bR\x06public\x12+\n" +
+	"\fabbreviation\x18\n" +
+	" \x01(\tB\a\xfaB\x04r\x02\x18\x14R\fabbreviation\x12 \n" +
+	"\x05title\x18\v \x01(\tB\n" +
 	"\xfaB\ar\x05\x10\x03\x18\x80\bR\x05title\x12/\n" +
-	"\vdescription\x18\n" +
-	" \x01(\tB\b\xfaB\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12+\n" +
+	"\vdescription\x18\f \x01(\tB\b\xfaB\x05r\x03\x18\x80\x04H\x03R\vdescription\x88\x01\x01\x12+\n" +
 	"\n" +
-	"creator_id\x18\f \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x129\n" +
-	"\acreator\x18\r \x01(\v2\x1a.resources.users.UserShortH\x05R\acreator\x88\x01\x01\x12(\n" +
-	"\vcreator_job\x18\x0e \x01(\tB\a\xfaB\x04r\x02\x18\x14R\n" +
+	"creator_id\x18\x0e \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x04R\tcreatorId\x88\x01\x01\x129\n" +
+	"\acreator\x18\x0f \x01(\v2\x1a.resources.users.UserShortH\x05R\acreator\x88\x01\x01\x12(\n" +
+	"\vcreator_job\x18\x10 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\n" +
 	"creatorJob\x12V\n" +
-	"\frequirements\x18\x10 \x03(\v22.resources.qualifications.QualificationRequirementR\frequirements\x12V\n" +
-	"\texam_mode\x18\x12 \x01(\x0e2/.resources.qualifications.QualificationExamModeB\b\xfaB\x05\x82\x01\x02\x10\x01R\bexamMode\x12]\n" +
-	"\rexam_settings\x18\x13 \x01(\v23.resources.qualifications.QualificationExamSettingsH\x06R\fexamSettings\x88\x01\x01\x12J\n" +
-	"\x06result\x18\x15 \x01(\v2-.resources.qualifications.QualificationResultH\aR\x06result\x88\x01\x01B\r\n" +
+	"\frequirements\x18\x12 \x03(\v22.resources.qualifications.QualificationRequirementR\frequirements\x12V\n" +
+	"\texam_mode\x18\x15 \x01(\x0e2/.resources.qualifications.QualificationExamModeB\b\xfaB\x05\x82\x01\x02\x10\x01R\bexamMode\x12]\n" +
+	"\rexam_settings\x18\x16 \x01(\v23.resources.qualifications.QualificationExamSettingsH\x06R\fexamSettings\x88\x01\x01\x12J\n" +
+	"\x06result\x18\x18 \x01(\v2-.resources.qualifications.QualificationResultH\aR\x06result\x88\x01\x01B\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
@@ -1289,7 +1317,8 @@ var file_resources_qualifications_qualifications_proto_goTypes = []any{
 	(*users.UserShort)(nil),              // 12: resources.users.UserShort
 	(*QualificationAccess)(nil),          // 13: resources.qualifications.QualificationAccess
 	(*ExamQuestions)(nil),                // 14: resources.qualifications.ExamQuestions
-	(*durationpb.Duration)(nil),          // 15: google.protobuf.Duration
+	(*file.File)(nil),                    // 15: resources.file.File
+	(*durationpb.Duration)(nil),          // 16: google.protobuf.Duration
 }
 var file_resources_qualifications_qualifications_proto_depIdxs = []int32{
 	10, // 0: resources.qualifications.Qualification.created_at:type_name -> resources.timestamp.Timestamp
@@ -1305,35 +1334,36 @@ var file_resources_qualifications_qualifications_proto_depIdxs = []int32{
 	14, // 10: resources.qualifications.Qualification.exam:type_name -> resources.qualifications.ExamQuestions
 	9,  // 11: resources.qualifications.Qualification.result:type_name -> resources.qualifications.QualificationResult
 	8,  // 12: resources.qualifications.Qualification.request:type_name -> resources.qualifications.QualificationRequest
-	10, // 13: resources.qualifications.QualificationShort.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 14: resources.qualifications.QualificationShort.updated_at:type_name -> resources.timestamp.Timestamp
-	10, // 15: resources.qualifications.QualificationShort.deleted_at:type_name -> resources.timestamp.Timestamp
-	12, // 16: resources.qualifications.QualificationShort.creator:type_name -> resources.users.UserShort
-	5,  // 17: resources.qualifications.QualificationShort.requirements:type_name -> resources.qualifications.QualificationRequirement
-	0,  // 18: resources.qualifications.QualificationShort.exam_mode:type_name -> resources.qualifications.QualificationExamMode
-	7,  // 19: resources.qualifications.QualificationShort.exam_settings:type_name -> resources.qualifications.QualificationExamSettings
-	9,  // 20: resources.qualifications.QualificationShort.result:type_name -> resources.qualifications.QualificationResult
-	10, // 21: resources.qualifications.QualificationRequirement.created_at:type_name -> resources.timestamp.Timestamp
-	4,  // 22: resources.qualifications.QualificationRequirement.target_qualification:type_name -> resources.qualifications.QualificationShort
-	15, // 23: resources.qualifications.QualificationExamSettings.time:type_name -> google.protobuf.Duration
-	10, // 24: resources.qualifications.QualificationRequest.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 25: resources.qualifications.QualificationRequest.deleted_at:type_name -> resources.timestamp.Timestamp
-	4,  // 26: resources.qualifications.QualificationRequest.qualification:type_name -> resources.qualifications.QualificationShort
-	12, // 27: resources.qualifications.QualificationRequest.user:type_name -> resources.users.UserShort
-	1,  // 28: resources.qualifications.QualificationRequest.status:type_name -> resources.qualifications.RequestStatus
-	10, // 29: resources.qualifications.QualificationRequest.approved_at:type_name -> resources.timestamp.Timestamp
-	12, // 30: resources.qualifications.QualificationRequest.approver:type_name -> resources.users.UserShort
-	10, // 31: resources.qualifications.QualificationResult.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 32: resources.qualifications.QualificationResult.deleted_at:type_name -> resources.timestamp.Timestamp
-	4,  // 33: resources.qualifications.QualificationResult.qualification:type_name -> resources.qualifications.QualificationShort
-	12, // 34: resources.qualifications.QualificationResult.user:type_name -> resources.users.UserShort
-	2,  // 35: resources.qualifications.QualificationResult.status:type_name -> resources.qualifications.ResultStatus
-	12, // 36: resources.qualifications.QualificationResult.creator:type_name -> resources.users.UserShort
-	37, // [37:37] is the sub-list for method output_type
-	37, // [37:37] is the sub-list for method input_type
-	37, // [37:37] is the sub-list for extension type_name
-	37, // [37:37] is the sub-list for extension extendee
-	0,  // [0:37] is the sub-list for field type_name
+	15, // 13: resources.qualifications.Qualification.files:type_name -> resources.file.File
+	10, // 14: resources.qualifications.QualificationShort.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 15: resources.qualifications.QualificationShort.updated_at:type_name -> resources.timestamp.Timestamp
+	10, // 16: resources.qualifications.QualificationShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	12, // 17: resources.qualifications.QualificationShort.creator:type_name -> resources.users.UserShort
+	5,  // 18: resources.qualifications.QualificationShort.requirements:type_name -> resources.qualifications.QualificationRequirement
+	0,  // 19: resources.qualifications.QualificationShort.exam_mode:type_name -> resources.qualifications.QualificationExamMode
+	7,  // 20: resources.qualifications.QualificationShort.exam_settings:type_name -> resources.qualifications.QualificationExamSettings
+	9,  // 21: resources.qualifications.QualificationShort.result:type_name -> resources.qualifications.QualificationResult
+	10, // 22: resources.qualifications.QualificationRequirement.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 23: resources.qualifications.QualificationRequirement.target_qualification:type_name -> resources.qualifications.QualificationShort
+	16, // 24: resources.qualifications.QualificationExamSettings.time:type_name -> google.protobuf.Duration
+	10, // 25: resources.qualifications.QualificationRequest.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 26: resources.qualifications.QualificationRequest.deleted_at:type_name -> resources.timestamp.Timestamp
+	4,  // 27: resources.qualifications.QualificationRequest.qualification:type_name -> resources.qualifications.QualificationShort
+	12, // 28: resources.qualifications.QualificationRequest.user:type_name -> resources.users.UserShort
+	1,  // 29: resources.qualifications.QualificationRequest.status:type_name -> resources.qualifications.RequestStatus
+	10, // 30: resources.qualifications.QualificationRequest.approved_at:type_name -> resources.timestamp.Timestamp
+	12, // 31: resources.qualifications.QualificationRequest.approver:type_name -> resources.users.UserShort
+	10, // 32: resources.qualifications.QualificationResult.created_at:type_name -> resources.timestamp.Timestamp
+	10, // 33: resources.qualifications.QualificationResult.deleted_at:type_name -> resources.timestamp.Timestamp
+	4,  // 34: resources.qualifications.QualificationResult.qualification:type_name -> resources.qualifications.QualificationShort
+	12, // 35: resources.qualifications.QualificationResult.user:type_name -> resources.users.UserShort
+	2,  // 36: resources.qualifications.QualificationResult.status:type_name -> resources.qualifications.ResultStatus
+	12, // 37: resources.qualifications.QualificationResult.creator:type_name -> resources.users.UserShort
+	38, // [38:38] is the sub-list for method output_type
+	38, // [38:38] is the sub-list for method input_type
+	38, // [38:38] is the sub-list for extension type_name
+	38, // [38:38] is the sub-list for extension extendee
+	0,  // [0:38] is the sub-list for field type_name
 }
 
 func init() { file_resources_qualifications_qualifications_proto_init() }

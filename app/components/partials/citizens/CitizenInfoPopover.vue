@@ -94,7 +94,7 @@ watchOnce(opened, async () => {
         >
             <template v-if="showAvatarInName" #leading>
                 <USkeleton v-if="!user && loading" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
-                <ProfilePictureImg v-else :src="user?.avatar?.url" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
+                <ProfilePictureImg v-else :src="user?.avatar" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
             </template>
 
             <USkeleton v-if="!user && loading" class="h-8 w-[125px]" />
@@ -168,7 +168,7 @@ watchOnce(opened, async () => {
                     <div class="inline-flex flex-row gap-2">
                         <ProfilePictureImg
                             v-if="showAvatar === undefined || showAvatar"
-                            :src="user.avatar?.url"
+                            :src="user.avatar"
                             :name="`${user.firstname} ${user.lastname}`"
                         />
 

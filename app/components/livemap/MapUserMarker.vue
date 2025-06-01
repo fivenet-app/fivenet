@@ -72,7 +72,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                 <span
                     v-if="showUnitNames && unit"
                     class="inset-0 whitespace-nowrap rounded-md border border-black/20 bg-clip-padding"
-                    :class="isColourBright(unitInverseColor) ? 'text-black' : 'text-neutral'"
+                    :class="isColorBright(unitInverseColor) ? 'text-black' : 'text-neutral'"
                     :style="{ backgroundColor: unit?.color ?? livemap.userMarkers.fallbackColor }"
                 >
                     {{ unit?.initials }}

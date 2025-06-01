@@ -36,6 +36,8 @@ const (
 var (
 	tColleagueProps    = table.FivenetJobColleagueProps.AS("colleague_props")
 	tColleagueActivity = table.FivenetJobColleagueActivity
+
+	tAvatar = table.FivenetFiles.AS("avatar")
 )
 
 func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesRequest) (*pbjobs.ListColleaguesResponse, error) {
@@ -47,13 +49,13 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	tUser := tables.User().AS("colleague")
+	tColleague := tables.User().AS("colleague")
 
-	condition := tUser.Job.EQ(jet.String(userInfo.Job)).
-		AND(s.customDB.Conditions.User.GetFilter(tUser.Alias()))
+	condition := tColleague.Job.EQ(jet.String(userInfo.Job)).
+		AND(s.customDB.Conditions.User.GetFilter(tColleague.Alias()))
 
 	if req.UserId != nil && *req.UserId > 0 {
-		condition = condition.AND(tUser.ID.EQ(jet.Int32(*req.UserId)))
+		condition = condition.AND(tColleague.ID.EQ(jet.Int32(*req.UserId)))
 	} else {
 		req.Search = strings.TrimSpace(req.Search)
 		req.Search = strings.ReplaceAll(req.Search, "%", "")
@@ -61,7 +63,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		if req.Search != "" {
 			req.Search = "%" + req.Search + "%"
 			condition = condition.AND(
-				jet.CONCAT(tUser.Firstname, jet.String(" "), tUser.Lastname).
+				jet.CONCAT(tColleague.Firstname, jet.String(" "), tColleague.Lastname).
 					LIKE(jet.String(req.Search)),
 			)
 		}
@@ -117,22 +119,22 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 	}
 
 	// Get total count of values
-	countStmt := tUser.
+	countStmt := tColleague.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tUser.ID)).AS("data_count.total"),
+			jet.COUNT(jet.DISTINCT(tColleague.ID)).AS("data_count.total"),
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
 
 	if len(req.LabelIds) > 0 && (types.Contains("Labels") || userInfo.Superuser) {
 		countStmt = countStmt.
 			FROM(
-				tUser.
+				tColleague.
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tUser.ID).
+						tColleagueProps.UserID.EQ(tColleague.ID).
 							AND(tColleagueProps.Job.EQ(jet.String(userInfo.Job))),
 					).
 					INNER_JOIN(tColleagueLabels,
-						tColleagueLabels.UserID.EQ(tUser.ID).
+						tColleagueLabels.UserID.EQ(tColleague.ID).
 							AND(tColleagueLabels.Job.EQ(jet.String(userInfo.Job))),
 					).
 					LEFT_JOIN(tJobLabels,
@@ -142,9 +144,9 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 	} else {
 		countStmt = countStmt.
 			FROM(
-				tUser.
+				tColleague.
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tUser.ID).
+						tColleagueProps.UserID.EQ(tColleague.ID).
 							AND(tColleagueProps.Job.EQ(jet.String(userInfo.Job))),
 					),
 			)
@@ -174,11 +176,11 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		var columns []jet.Column
 		switch req.Sort.Column {
 		case "name":
-			columns = append(columns, tUser.Firstname, tUser.Lastname)
+			columns = append(columns, tColleague.Firstname, tColleague.Lastname)
 		case "rank":
 			fallthrough
 		default:
-			columns = append(columns, tUser.JobGrade)
+			columns = append(columns, tColleague.JobGrade)
 		}
 
 		for _, column := range columns {
@@ -190,22 +192,23 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 		}
 	} else {
 		orderBys = append(orderBys,
-			tUser.JobGrade.ASC(),
-			tUser.Firstname.ASC(),
-			tUser.Lastname.ASC(),
+			tColleague.JobGrade.ASC(),
+			tColleague.Firstname.ASC(),
+			tColleague.Lastname.ASC(),
 		)
 	}
 
-	stmt := tUser.
+	stmt := tColleague.
 		SELECT(
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tColleague.ID,
+			tColleague.Job,
+			tColleague.JobGrade,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 			tUserProps.Email.AS("colleague.email"),
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
@@ -219,32 +222,38 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 	if len(req.LabelIds) > 0 && (types.Contains("Labels") || userInfo.Superuser) {
 		stmt = stmt.
 			FROM(
-				tUser.
+				tColleague.
 					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tUser.ID),
+						tUserProps.UserID.EQ(tColleague.ID),
 					).
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tUser.ID).
+						tColleagueProps.UserID.EQ(tColleague.ID).
 							AND(tColleagueProps.Job.EQ(jet.String(userInfo.Job))),
 					).
 					INNER_JOIN(tColleagueLabels,
-						tColleagueLabels.UserID.EQ(tUser.ID).
+						tColleagueLabels.UserID.EQ(tColleague.ID).
 							AND(tColleagueLabels.Job.EQ(jet.String(userInfo.Job))),
 					).
 					LEFT_JOIN(tJobLabels,
 						tJobLabels.ID.EQ(tColleagueLabels.LabelID),
+					).
+					LEFT_JOIN(tAvatar,
+						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			)
 	} else {
 		stmt = stmt.
 			FROM(
-				tUser.
+				tColleague.
 					LEFT_JOIN(tUserProps,
-						tUserProps.UserID.EQ(tUser.ID),
+						tUserProps.UserID.EQ(tColleague.ID),
 					).
 					LEFT_JOIN(tColleagueProps,
-						tColleagueProps.UserID.EQ(tUser.ID).
+						tColleagueProps.UserID.EQ(tColleague.ID).
 							AND(tColleagueProps.Job.EQ(jet.String(userInfo.Job))),
+					).
+					LEFT_JOIN(tAvatar,
+						tAvatar.ID.EQ(tUserProps.AvatarFileID),
 					),
 			)
 	}
@@ -252,7 +261,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 	stmt = stmt.
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		GROUP_BY(tUser.ID).
+		GROUP_BY(tColleague.ID).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
@@ -331,16 +340,17 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 }
 
 func (s *Server) getColleague(ctx context.Context, userInfo *userinfo.UserInfo, job string, userId int32, withColumns []jet.Projection) (*jobs.Colleague, error) {
-	tUser := tables.User().AS("colleague")
+	tColleague := tables.User().AS("colleague")
 
 	columns := []jet.Projection{
-		tUser.Firstname,
-		tUser.Lastname,
-		tUser.Job,
-		tUser.JobGrade,
-		tUser.Dateofbirth,
-		tUser.PhoneNumber,
-		tUserProps.Avatar.AS("colleague.avatar"),
+		tColleague.Firstname,
+		tColleague.Lastname,
+		tColleague.Job,
+		tColleague.JobGrade,
+		tColleague.Dateofbirth,
+		tColleague.PhoneNumber,
+		tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+		tAvatar.FilePath.AS("colleague.avatar"),
 		tUserProps.Email.AS("colleague.email"),
 		tColleagueProps.UserID,
 		tColleagueProps.Job,
@@ -351,23 +361,26 @@ func (s *Server) getColleague(ctx context.Context, userInfo *userinfo.UserInfo, 
 	}
 	columns = append(columns, withColumns...)
 
-	stmt := tUser.
+	stmt := tColleague.
 		SELECT(
-			tUser.ID,
+			tColleague.ID,
 			columns...,
 		).
 		FROM(
-			tUser.
+			tColleague.
 				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
+					tUserProps.UserID.EQ(tColleague.ID),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUser.ID).
+					tColleagueProps.UserID.EQ(tColleague.ID).
 						AND(tColleagueProps.Job.EQ(jet.String(job))),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(
-			tUser.ID.EQ(jet.Int32(userId)),
+			tColleague.ID.EQ(jet.Int32(userId)),
 		).
 		LIMIT(1)
 
@@ -688,8 +701,8 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 	}
 
 	tColleagueActivity := tColleagueActivity.AS("colleague_activity")
-	tTargetUser := tables.User().AS("target_user")
-	tSourceUser := tTargetUser.AS("source_user")
+	tTargetColleague := tables.User().AS("target_user")
+	tSourceUser := tTargetColleague.AS("source_user")
 
 	condition := tColleagueActivity.Job.EQ(jet.String(userInfo.Job))
 
@@ -705,7 +718,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 
 	// If no user IDs given or more than 2, show all the user has access to
 	if len(req.UserIds) == 0 || len(req.UserIds) >= 2 {
-		condition = condition.AND(s.getConditionForColleagueAccess(tColleagueActivity, tTargetUser, colleagueAccess.Strings, userInfo))
+		condition = condition.AND(s.getConditionForColleagueAccess(tColleagueActivity, tTargetColleague, colleagueAccess.Strings, userInfo))
 
 		if len(req.UserIds) >= 2 {
 			// More than 2 user ids
@@ -714,7 +727,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 				userIds[i] = jet.Int32(req.UserIds[i])
 			}
 
-			condition = condition.AND(tTargetUser.ID.IN(userIds...))
+			condition = condition.AND(tTargetColleague.ID.IN(userIds...))
 		}
 	} else {
 		userId := req.UserIds[0]
@@ -777,8 +790,8 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 		).
 		FROM(
 			tColleagueActivity.
-				INNER_JOIN(tTargetUser,
-					tTargetUser.ID.EQ(tColleagueActivity.TargetUserID),
+				INNER_JOIN(tTargetColleague,
+					tTargetColleague.ID.EQ(tColleagueActivity.TargetUserID),
 				),
 		).
 		WHERE(condition)
@@ -817,8 +830,10 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 	}
 
 	tTargetUserProps := tUserProps.AS("target_user_props")
+	tTargetUserAvatar := tAvatar.AS("target_user_avatar")
 	tTargetColleagueProps := tColleagueProps.AS("fivenet_colleague_props")
 	tSourceUserProps := tUserProps.AS("source_user_props")
+	tSourceUserAvatar := tAvatar.AS("source_user_avatar")
 
 	stmt := tColleagueActivity.
 		SELECT(
@@ -830,14 +845,15 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 			tColleagueActivity.ActivityType,
 			tColleagueActivity.Reason,
 			tColleagueActivity.Data,
-			tTargetUser.ID,
-			tTargetUser.Job,
-			tTargetUser.JobGrade,
-			tTargetUser.Firstname,
-			tTargetUser.Lastname,
-			tTargetUser.Dateofbirth,
-			tTargetUser.PhoneNumber,
-			tTargetUserProps.Avatar.AS("target_user.avatar"),
+			tTargetColleague.ID,
+			tTargetColleague.Job,
+			tTargetColleague.JobGrade,
+			tTargetColleague.Firstname,
+			tTargetColleague.Lastname,
+			tTargetColleague.Dateofbirth,
+			tTargetColleague.PhoneNumber,
+			tTargetUserProps.AvatarFileID.AS("target_user.avatar_file_id"),
+			tTargetUserAvatar.FilePath.AS("target_user.avatar"),
 			tTargetColleagueProps.UserID,
 			tTargetColleagueProps.Job,
 			tTargetColleagueProps.AbsenceBegin,
@@ -851,25 +867,32 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 			tSourceUser.Lastname,
 			tSourceUser.Dateofbirth,
 			tSourceUser.PhoneNumber,
-			tSourceUserProps.Avatar.AS("source_user.avatar"),
+			tSourceUserProps.AvatarFileID.AS("source_user.avatar_file_id"),
+			tSourceUserAvatar.FilePath.AS("source_user.avatar"),
 		).
 		FROM(
 			tColleagueActivity.
-				INNER_JOIN(tTargetUser,
-					tTargetUser.ID.EQ(tColleagueActivity.TargetUserID),
+				INNER_JOIN(tTargetColleague,
+					tTargetColleague.ID.EQ(tColleagueActivity.TargetUserID),
 				).
 				LEFT_JOIN(tTargetUserProps,
-					tTargetUserProps.UserID.EQ(tTargetUser.ID),
+					tTargetUserProps.UserID.EQ(tTargetColleague.ID),
+				).
+				LEFT_JOIN(tTargetUserAvatar,
+					tTargetUserAvatar.ID.EQ(tTargetUserProps.AvatarFileID),
 				).
 				LEFT_JOIN(tTargetColleagueProps,
-					tTargetColleagueProps.UserID.EQ(tTargetUser.ID).
-						AND(tTargetUser.Job.EQ(jet.String(userInfo.Job))),
+					tTargetColleagueProps.UserID.EQ(tTargetColleague.ID).
+						AND(tTargetColleague.Job.EQ(jet.String(userInfo.Job))),
 				).
 				LEFT_JOIN(tSourceUser,
 					tSourceUser.ID.EQ(tColleagueActivity.SourceUserID),
 				).
 				LEFT_JOIN(tSourceUserProps,
 					tSourceUserProps.UserID.EQ(tSourceUser.ID),
+				).
+				LEFT_JOIN(tSourceUserAvatar,
+					tSourceUserAvatar.ID.EQ(tSourceUserProps.AvatarFileID),
 				),
 		).
 		WHERE(condition).

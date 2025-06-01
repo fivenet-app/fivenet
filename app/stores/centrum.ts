@@ -1,8 +1,8 @@
-import type { RpcError } from '@protobuf-ts/runtime-rpc';
+import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
-import type { NotificationActionI18n } from '~/composables/notifications';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { NotificationActionI18n } from '~/utils/notifications';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
@@ -12,6 +12,7 @@ import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { StreamRequest, StreamResponse } from '~~/gen/ts/services/centrum/centrum';
 
 export const logger = useLogger('⛑️ Centrum');
 
@@ -340,17 +341,17 @@ export const useCentrumStore = defineStore(
             return !!disponents.value.find((d) => d.userId === userId);
         };
 
-        // Streams
+        // Stream
+        let currentStream: ServerStreamingCall<StreamRequest, StreamResponse> | undefined = undefined;
+
         const startStream = async (): Promise<void> => {
-            if (abort.value !== undefined) {
-                return;
-            }
+            if (abort.value !== undefined) return;
+
+            logger.debug('Starting Stream');
 
             if (!cleanupIntervalId.value) {
                 cleanupIntervalId.value = setInterval(() => cleanup(), cleanupInterval);
             }
-
-            logger.debug('Starting Stream');
 
             const { activeChar } = useAuth();
             const notifications = useNotificatorStore();
@@ -360,15 +361,18 @@ export const useCentrumStore = defineStore(
             reconnecting.value = false;
 
             try {
-                const call = $grpc.centrum.centrum.stream({}, { abort: abort.value.signal });
+                currentStream = $grpc.centrum.centrum.stream({}, { abort: abort.value.signal });
 
-                for await (const resp of call.responses) {
+                for await (const respRaw of currentStream.responses) {
+                    // The gRPC stream may yield unknown, so cast to the expected type
+                    const resp = respRaw as StreamResponse;
                     error.value = undefined;
+
                     if (!resp || !resp.change) {
                         continue;
                     }
 
-                    logger.debug('Received change - Kind:', resp.change.oneofKind, resp.change);
+                    logger.debug('Received change - oneofKind:', resp.change.oneofKind, resp.change);
 
                     if (resp.change.oneofKind === 'latestState') {
                         if (resp.change.latestState.serverTime) {
@@ -564,43 +568,48 @@ export const useCentrumStore = defineStore(
                             }
                         }
                     } else {
-                        logger.warn('Unknown change received - Kind: ' + resp.change.oneofKind);
+                        logger.warn('Unknown change received - oneofKind:' + resp.change.oneofKind);
                     }
                 }
             } catch (e) {
                 const rpcError = e as RpcError;
-                if (rpcError.code !== 'CANCELLED' && rpcError.code !== 'ABORTED') {
-                    logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
 
-                    if (rpcError.code === 'INVALID_ARGUMENT' && rpcError.message.includes('CentrumService.ErrDisabled')) {
-                        // Create empty settings object with enabled set to false
-                        settings.value = {
-                            enabled: false,
-                            mode: CentrumMode.UNSPECIFIED,
-                            fallbackMode: CentrumMode.UNSPECIFIED,
-                            job: '',
-                            timings: undefined,
-                        };
-
-                        useNotificatorStore().add({
-                            title: { key: 'notifications.centrum.disabled.title', parameters: {} },
-                            description: { key: 'notifications.centrum.disabled.content', parameters: {} },
-                            type: NotificationType.INFO,
-                            actions: getNotificationActions(),
-                        });
-                        console.info('Centrum is disabled for job, stopping stream.');
-                    } else if (abort.value && !abort.value.signal.aborted) {
-                        // only restart if not aborted
-                        restartStream();
-                    } else {
-                        error.value = rpcError;
-                    }
-                } else {
+                // Handle stream cancellation or abortion
+                if (rpcError.code === 'CANCELLED' || rpcError.code === 'ABORTED') {
                     error.value = undefined;
-                    // only restart if not aborted
                     if (!abort.value?.signal.aborted) {
                         await restartStream();
                     }
+                    return;
+                }
+
+                // Handle specific disabled error
+                if (rpcError.code === 'INVALID_ARGUMENT' && rpcError.message.includes('CentrumService.ErrDisabled')) {
+                    settings.value = {
+                        enabled: false,
+                        mode: CentrumMode.UNSPECIFIED,
+                        fallbackMode: CentrumMode.UNSPECIFIED,
+                        job: '',
+                        timings: undefined,
+                    };
+
+                    useNotificatorStore().add({
+                        title: { key: 'notifications.centrum.disabled.title', parameters: {} },
+                        description: { key: 'notifications.centrum.disabled.content', parameters: {} },
+                        type: NotificationType.INFO,
+                        actions: getNotificationActions(),
+                    });
+                    logger.info('Centrum is disabled for job, stopping stream.');
+                    return;
+                }
+
+                // Log and handle other errors
+                logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
+
+                if (abort.value && !abort.value.signal.aborted) {
+                    await restartStream();
+                } else {
+                    error.value = rpcError;
                 }
             }
 

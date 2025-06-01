@@ -131,7 +131,7 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 			if u.Host != proxyUrl.Host {
 				u.Host = proxyUrl.Host
 			}
-			if !strings.HasPrefix(u.Path, proxyUrl.Path) {
+			if !strings.HasPrefix(u.Path, proxyUrl.Path) && !strings.HasPrefix(u.Path, "/api/filestore/") {
 				u.Path = proxyUrl.Path + imgUrl
 			}
 			u.RawQuery = ""

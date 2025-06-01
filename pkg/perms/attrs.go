@@ -321,7 +321,7 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 		return nil, nil
 	}
 
-	cached := p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, permId, key)
+	rAttr := p.getClosestRoleAttr(userInfo.Job, userInfo.JobGrade, permId, key)
 	if userInfo.Superuser {
 		attr, ok := p.lookupAttributeByPermID(permId, key)
 		if !ok {
@@ -329,7 +329,7 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 		}
 
 		if attr.ValidValues != nil {
-			cached = &cacheRoleAttr{
+			rAttr = &cacheRoleAttr{
 				Job:          userInfo.Job,
 				AttrID:       attr.ID,
 				PermissionID: attr.PermissionID,
@@ -340,11 +340,11 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 		}
 	}
 
-	if cached == nil {
+	if rAttr == nil {
 		return nil, nil
 	}
 
-	return proto.Clone(cached.Value).(*permissions.AttributeValues), nil
+	return proto.Clone(rAttr.Value).(*permissions.AttributeValues), nil
 }
 
 func (p *Perms) AttrStringList(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (*permissions.StringList, error) {

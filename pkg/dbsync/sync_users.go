@@ -58,6 +58,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	s.logger.Debug("usersSync", zap.Any("users", users))
 
 	if len(users) == 0 {
+		s.logger.Debug("no users found to sync, resetting state offset")
 		s.state.Set(0, nil)
 		return nil
 	}

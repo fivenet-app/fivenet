@@ -3,7 +3,7 @@ import type { RoutesNamedLocations } from '@typed-router';
 
 type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations };
 
-const hints = shuffle([
+const hints = shuffleArray([
     {
         key: 'commandpalette',
         keyboard: true,

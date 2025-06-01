@@ -14,6 +14,7 @@ message Labels {
 message Label {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional string job = 2 [(validate.rules).string.max_len = 20];
+  // @sanitize: method=StripTags
   string name = 3 [(validate.rules).string.max_len = 48];
   // @sanitize: method=StripTags
   string color = 4 [(validate.rules).string = {

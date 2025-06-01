@@ -23,6 +23,8 @@ const (
 
 func GetJobProps(ctx context.Context, tx qrm.DB, job string) (*JobProps, error) {
 	tJobProps := table.FivenetJobProps.AS("job_props")
+	tFiles := table.FivenetFiles.AS("logo_file")
+
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.Job,
@@ -35,9 +37,16 @@ func GetJobProps(ctx context.Context, tx qrm.DB, job string) (*JobProps, error) 
 			tJobProps.DiscordLastSync,
 			tJobProps.DiscordSyncSettings,
 			tJobProps.DiscordSyncChanges,
-			tJobProps.LogoURL,
+			tJobProps.LogoFileID,
+			tFiles.ID,
+			tFiles.FilePath,
 		).
-		FROM(tJobProps).
+		FROM(
+			tJobProps.
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tJobProps.LogoFileID),
+				),
+		).
 		WHERE(
 			tJobProps.Job.EQ(jet.String(job)),
 		).

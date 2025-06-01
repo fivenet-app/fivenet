@@ -63,6 +63,18 @@ func (m *Document) Sanitize() error {
 		}
 	}
 
+	// Field: Files
+	for idx, item := range m.Files {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Pin
 	if m.Pin != nil {
 		if v, ok := any(m.GetPin()).(interface{ Sanitize() error }); ok {

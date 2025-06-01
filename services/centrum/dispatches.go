@@ -528,6 +528,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 	}
 
 	tUsers := tables.User().AS("colleague")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tDispatchStatus.
 		SELECT(
@@ -553,7 +554,8 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tDispatchStatus.
@@ -567,6 +569,9 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *pbcentrum.ListDi
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
 						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(

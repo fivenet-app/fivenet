@@ -9,6 +9,7 @@ package documents
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	content "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -159,6 +160,7 @@ type Document struct {
 	Pin           *DocumentPin       `protobuf:"bytes,20,opt,name=pin,proto3,oneof" json:"pin,omitempty" alias:"pin"` // @gotags: alias:"pin"
 	WorkflowState *WorkflowState     `protobuf:"bytes,21,opt,name=workflow_state,json=workflowState,proto3,oneof" json:"workflow_state,omitempty"`
 	WorkflowUser  *WorkflowUserState `protobuf:"bytes,22,opt,name=workflow_user,json=workflowUser,proto3,oneof" json:"workflow_user,omitempty"`
+	Files         []*file.File       `protobuf:"bytes,23,rep,name=files,proto3" json:"files,omitempty" alias:"files"` // @gotags: alias:"files"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -343,6 +345,13 @@ func (x *Document) GetWorkflowState() *WorkflowState {
 func (x *Document) GetWorkflowUser() *WorkflowUserState {
 	if x != nil {
 		return x.WorkflowUser
+	}
+	return nil
+}
+
+func (x *Document) GetFiles() []*file.File {
+	if x != nil {
+		return x.Files
 	}
 	return nil
 }
@@ -934,7 +943,7 @@ var File_resources_documents_documents_proto protoreflect.FileDescriptor
 
 const file_resources_documents_documents_proto_rawDesc = "" +
 	"\n" +
-	"#resources/documents/documents.proto\x12\x13resources.documents\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x82\n" +
+	"#resources/documents/documents.proto\x12\x13resources.documents\x1a&resources/common/content/content.proto\x1a\"resources/documents/category.proto\x1a\x1eresources/documents/pins.proto\x1a\"resources/documents/workflow.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xae\n" +
 	"\n" +
 	"\bDocument\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
@@ -968,7 +977,8 @@ const file_resources_documents_documents_proto_rawDesc = "" +
 	"\x03pin\x18\x14 \x01(\v2 .resources.documents.DocumentPinH\tR\x03pin\x88\x01\x01\x12N\n" +
 	"\x0eworkflow_state\x18\x15 \x01(\v2\".resources.documents.WorkflowStateH\n" +
 	"R\rworkflowState\x88\x01\x01\x12P\n" +
-	"\rworkflow_user\x18\x16 \x01(\v2&.resources.documents.WorkflowUserStateH\vR\fworkflowUser\x88\x01\x01B\r\n" +
+	"\rworkflow_user\x18\x16 \x01(\v2&.resources.documents.WorkflowUserStateH\vR\fworkflowUser\x88\x01\x01\x12*\n" +
+	"\x05files\x18\x17 \x03(\v2\x14.resources.file.FileR\x05filesB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_atB\x0e\n" +
 	"\f_category_idB\v\n" +
@@ -1125,7 +1135,8 @@ var file_resources_documents_documents_proto_goTypes = []any{
 	(*content.Content)(nil),     // 11: resources.common.content.Content
 	(*users.UserShort)(nil),     // 12: resources.users.UserShort
 	(*DocumentPin)(nil),         // 13: resources.documents.DocumentPin
-	(*Workflow)(nil),            // 14: resources.documents.Workflow
+	(*file.File)(nil),           // 14: resources.file.File
+	(*Workflow)(nil),            // 15: resources.documents.Workflow
 }
 var file_resources_documents_documents_proto_depIdxs = []int32{
 	8,  // 0: resources.documents.Document.created_at:type_name -> resources.timestamp.Timestamp
@@ -1138,38 +1149,39 @@ var file_resources_documents_documents_proto_depIdxs = []int32{
 	13, // 7: resources.documents.Document.pin:type_name -> resources.documents.DocumentPin
 	6,  // 8: resources.documents.Document.workflow_state:type_name -> resources.documents.WorkflowState
 	7,  // 9: resources.documents.Document.workflow_user:type_name -> resources.documents.WorkflowUserState
-	8,  // 10: resources.documents.DocumentShort.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 11: resources.documents.DocumentShort.updated_at:type_name -> resources.timestamp.Timestamp
-	8,  // 12: resources.documents.DocumentShort.deleted_at:type_name -> resources.timestamp.Timestamp
-	9,  // 13: resources.documents.DocumentShort.category:type_name -> resources.documents.Category
-	10, // 14: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
-	11, // 15: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
-	12, // 16: resources.documents.DocumentShort.creator:type_name -> resources.users.UserShort
-	13, // 17: resources.documents.DocumentShort.pin:type_name -> resources.documents.DocumentPin
-	6,  // 18: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.WorkflowState
-	7,  // 19: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.WorkflowUserState
-	8,  // 20: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 21: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
-	0,  // 22: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
-	3,  // 23: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
-	12, // 24: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
-	8,  // 25: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
-	3,  // 26: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
-	12, // 27: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
-	1,  // 28: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
-	12, // 29: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
-	8,  // 30: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
-	8,  // 31: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
-	14, // 32: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
-	3,  // 33: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
-	8,  // 34: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
-	14, // 35: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
-	3,  // 36: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
-	37, // [37:37] is the sub-list for method output_type
-	37, // [37:37] is the sub-list for method input_type
-	37, // [37:37] is the sub-list for extension type_name
-	37, // [37:37] is the sub-list for extension extendee
-	0,  // [0:37] is the sub-list for field type_name
+	14, // 10: resources.documents.Document.files:type_name -> resources.file.File
+	8,  // 11: resources.documents.DocumentShort.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 12: resources.documents.DocumentShort.updated_at:type_name -> resources.timestamp.Timestamp
+	8,  // 13: resources.documents.DocumentShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	9,  // 14: resources.documents.DocumentShort.category:type_name -> resources.documents.Category
+	10, // 15: resources.documents.DocumentShort.content_type:type_name -> resources.common.content.ContentType
+	11, // 16: resources.documents.DocumentShort.content:type_name -> resources.common.content.Content
+	12, // 17: resources.documents.DocumentShort.creator:type_name -> resources.users.UserShort
+	13, // 18: resources.documents.DocumentShort.pin:type_name -> resources.documents.DocumentPin
+	6,  // 19: resources.documents.DocumentShort.workflow_state:type_name -> resources.documents.WorkflowState
+	7,  // 20: resources.documents.DocumentShort.workflow_user:type_name -> resources.documents.WorkflowUserState
+	8,  // 21: resources.documents.DocumentReference.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 22: resources.documents.DocumentReference.source_document:type_name -> resources.documents.DocumentShort
+	0,  // 23: resources.documents.DocumentReference.reference:type_name -> resources.documents.DocReference
+	3,  // 24: resources.documents.DocumentReference.target_document:type_name -> resources.documents.DocumentShort
+	12, // 25: resources.documents.DocumentReference.creator:type_name -> resources.users.UserShort
+	8,  // 26: resources.documents.DocumentRelation.created_at:type_name -> resources.timestamp.Timestamp
+	3,  // 27: resources.documents.DocumentRelation.document:type_name -> resources.documents.DocumentShort
+	12, // 28: resources.documents.DocumentRelation.source_user:type_name -> resources.users.UserShort
+	1,  // 29: resources.documents.DocumentRelation.relation:type_name -> resources.documents.DocRelation
+	12, // 30: resources.documents.DocumentRelation.target_user:type_name -> resources.users.UserShort
+	8,  // 31: resources.documents.WorkflowState.next_reminder_time:type_name -> resources.timestamp.Timestamp
+	8,  // 32: resources.documents.WorkflowState.auto_close_time:type_name -> resources.timestamp.Timestamp
+	15, // 33: resources.documents.WorkflowState.workflow:type_name -> resources.documents.Workflow
+	3,  // 34: resources.documents.WorkflowState.document:type_name -> resources.documents.DocumentShort
+	8,  // 35: resources.documents.WorkflowUserState.manual_reminder_time:type_name -> resources.timestamp.Timestamp
+	15, // 36: resources.documents.WorkflowUserState.workflow:type_name -> resources.documents.Workflow
+	3,  // 37: resources.documents.WorkflowUserState.document:type_name -> resources.documents.DocumentShort
+	38, // [38:38] is the sub-list for method output_type
+	38, // [38:38] is the sub-list for method input_type
+	38, // [38:38] is the sub-list for extension type_name
+	38, // [38:38] is the sub-list for extension extendee
+	0,  // [0:38] is the sub-list for field type_name
 }
 
 func init() { file_resources_documents_documents_proto_init() }

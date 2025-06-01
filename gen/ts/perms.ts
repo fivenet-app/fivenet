@@ -11,6 +11,7 @@
 // source: resources/centrum/units.proto
 // source: resources/centrum/units_access.proto
 // source: resources/centrum/user_unit.proto
+// source: resources/collab/collab.proto
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto
 // source: resources/common/uuid.proto
@@ -28,7 +29,9 @@
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
-// source: resources/filestore/file.proto
+// source: resources/file/file.proto
+// source: resources/file/filestore.proto
+// source: resources/file/meta.proto
 // source: resources/internet/access.proto
 // source: resources/internet/ads.proto
 // source: resources/internet/domain.proto
@@ -80,7 +83,9 @@
 // source: services/centrum/centrum.proto
 // source: services/citizens/citizens.proto
 // source: services/completor/completor.proto
+// source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/filestore/filestore.proto
 // source: services/internet/ads.proto
 // source: services/internet/domain.proto
 // source: services/internet/internet.proto
@@ -94,12 +99,12 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
-// source: services/settings/filestore.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 // source: services/stats/stats.proto
 // source: services/sync/sync.proto
 // source: services/vehicles/vehicles.proto
+// source: services/wiki/collab.proto
 // source: services/wiki/wiki.proto
 
 export type Perms =
@@ -128,7 +133,6 @@ export type Perms =
 	| 'documents.DocumentsService.AddDocumentReference'
 	| 'documents.DocumentsService.AddDocumentRelation'
 	| 'documents.DocumentsService.ChangeDocumentOwner'
-	| 'documents.DocumentsService.CreateDocument'
 	| 'documents.DocumentsService.CreateDocumentReq'
 	| 'documents.DocumentsService.CreateOrUpdateCategory'
 	| 'documents.DocumentsService.CreateTemplate'
@@ -165,7 +169,6 @@ export type Perms =
 	| 'mailer.MailerService.CreateOrUpdateEmail'
 	| 'mailer.MailerService.DeleteEmail'
 	| 'mailer.MailerService.ListEmails'
-	| 'qualifications.QualificationsService.CreateQualification'
 	| 'qualifications.QualificationsService.DeleteQualification'
 	| 'qualifications.QualificationsService.ListQualifications'
 	| 'qualifications.QualificationsService.UpdateQualification'
@@ -179,7 +182,7 @@ export type Perms =
 	| 'settings.SettingsService.UpdateRolePerms'
 	| 'settings.SettingsService.ViewAuditLog'
 	| 'vehicles.VehiclesService.ListVehicles'
-	| 'wiki.WikiService.CreatePage'
 	| 'wiki.WikiService.DeletePage'
 	| 'wiki.WikiService.ListPageActivity'
-	| 'wiki.WikiService.ListPages';
+	| 'wiki.WikiService.ListPages'
+	| 'wiki.WikiService.UpdatePage';

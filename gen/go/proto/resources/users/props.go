@@ -16,6 +16,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+var tFiles = table.FivenetFiles.AS("mugshot")
+
 func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []string) (*UserProps, error) {
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	stmt := tUserProps.
@@ -28,9 +30,16 @@ func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []strin
 			tUserProps.TrafficInfractionPoints,
 			tUserProps.TrafficInfractionPointsUpdatedAt,
 			tUserProps.OpenFines,
-			tUserProps.MugShot,
+			tUserProps.MugshotFileID,
+			tFiles.ID,
+			tFiles.FilePath,
 		).
-		FROM(tUserProps).
+		FROM(
+			tUserProps.
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tUserProps.MugshotFileID),
+				),
+		).
 		WHERE(
 			tUserProps.UserID.EQ(jet.Int32(userId)),
 		).
@@ -187,10 +196,10 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 		in.OpenFines = x.OpenFines
 	}
 
-	if in.MugShot != nil {
+	if in.MugshotFileId != nil {
 		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
 	} else {
-		in.MugShot = x.MugShot
+		in.MugshotFileId = x.MugshotFileId
 	}
 
 	if in.Labels != nil {
@@ -215,7 +224,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				tUserProps.TrafficInfractionPoints,
 				tUserProps.TrafficInfractionPointsUpdatedAt,
 				tUserProps.OpenFines,
-				tUserProps.MugShot,
+				tUserProps.MugshotFileID,
 			).
 			VALUES(
 				in.UserId,
@@ -225,7 +234,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				in.TrafficInfractionPoints,
 				in.TrafficInfractionPointsUpdatedAt,
 				in.OpenFines,
-				in.MugShot,
+				in.MugshotFileId,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,
@@ -315,12 +324,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if x.MugShot != in.MugShot && (x.MugShot == nil || in.MugShot == nil || x.MugShot.GetUrl() != in.MugShot.GetUrl()) {
-		var url *string
-		if in.MugShot != nil && in.MugShot.Url != nil {
-			url = in.MugShot.Url
-		}
-
+	if x.MugshotFileId != in.MugshotFileId && (x.MugshotFileId == nil || in.MugshotFileId == nil || x.MugshotFileId != in.MugshotFileId) {
 		activities = append(activities, &UserActivity{
 			SourceUserId: sourceUserId,
 			TargetUserId: x.UserId,
@@ -328,9 +332,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			Reason:       reason,
 			Data: &UserActivityData{
 				Data: &UserActivityData_MugshotChange{
-					MugshotChange: &MugshotChange{
-						New: url,
-					},
+					MugshotChange: &MugshotChange{},
 				},
 			},
 		})

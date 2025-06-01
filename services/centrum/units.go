@@ -348,7 +348,8 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 		return resp, nil
 	}
 
-	tUsers := tables.User().AS("colleague")
+	tColleague := tables.User().AS("colleague")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -363,32 +364,36 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *pbcentrum.ListUnitAc
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Sex,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
+			tColleague.ID,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Job,
+			tColleague.JobGrade,
+			tColleague.Sex,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tUnitStatus.
-				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(tUnitStatus.UserID),
+				LEFT_JOIN(tColleague,
+					tColleague.ID.EQ(tUnitStatus.UserID),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUnitStatus.UserID).
-						AND(tUsers.Job.EQ(jet.String(userInfo.Job))),
+						AND(tColleague.Job.EQ(jet.String(userInfo.Job))),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+					tColleagueProps.UserID.EQ(tColleague.ID).
+						AND(tColleagueProps.Job.EQ(tColleague.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(

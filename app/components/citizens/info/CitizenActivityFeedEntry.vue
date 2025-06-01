@@ -261,10 +261,10 @@ const props = defineProps<{
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
                         <template v-if="activity.data.data.mugshotChange.new">
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mug_shot_set') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mugshot_set') }}
                         </template>
                         <template v-else>
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mug_shot_removed') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.user_props_mugshot_removed') }}
                         </template>
                     </h3>
 
@@ -307,7 +307,7 @@ const props = defineProps<{
                                 v-for="attribute in activity.data.data.labelsChange.removed"
                                 :key="attribute.name"
                                 class="justify-between gap-2 line-through"
-                                :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                                 :style="{ backgroundColor: attribute.color }"
                                 size="xs"
                             >
@@ -318,7 +318,7 @@ const props = defineProps<{
                                 v-for="attribute in activity.data.data.labelsChange.added"
                                 :key="attribute.name"
                                 class="justify-between gap-2"
-                                :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                                 :style="{ backgroundColor: attribute.color }"
                                 size="xs"
                             >

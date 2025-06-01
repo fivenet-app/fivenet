@@ -23,7 +23,8 @@ const { activeChar } = storeToRefs(authStore);
                 <p class="text-sm font-semibold leading-6 text-gray-100">
                     <ULink :to="{ name: 'qualifications-id', params: { id: request.qualificationId } }">
                         <span class="absolute inset-x-0 -top-px bottom-0" />
-                        {{ request.qualification?.abbreviation }}: {{ request.qualification?.title }}
+                        {{ request.qualification?.abbreviation }}:
+                        {{ !request.qualification?.title ? $t('common.untitled') : request.qualification?.title }}
                     </ULink>
                 </p>
 

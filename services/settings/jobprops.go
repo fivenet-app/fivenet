@@ -3,13 +3,15 @@ package settings
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
+	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
@@ -20,6 +22,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/multierr"
+	grpc "google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -70,36 +73,6 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 	req.JobProps.Job = userInfo.Job
 	req.JobProps.LivemapMarkerColor = strings.ToLower(req.JobProps.LivemapMarkerColor)
 
-	if req.JobProps.LogoUrl != nil {
-		// Set "current" image's url so the system will delete it if still exists
-		if jobProps != nil && jobProps.LogoUrl != nil {
-			req.JobProps.LogoUrl.Url = jobProps.LogoUrl.Url
-		}
-
-		if len(req.JobProps.LogoUrl.Data) > 0 {
-			if !req.JobProps.LogoUrl.IsImage() {
-				return nil, errorssettings.ErrFailedQuery
-			}
-
-			if err := req.JobProps.LogoUrl.Optimize(ctx); err != nil {
-				return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-			}
-
-			if err := req.JobProps.LogoUrl.Upload(ctx, s.st, filestore.JobLogos, userInfo.Job); err != nil {
-				return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-			}
-		} else if req.JobProps.LogoUrl.Delete != nil && *req.JobProps.LogoUrl.Delete {
-			// Delete avatar from store
-			if jobProps.LogoUrl != nil && jobProps.LogoUrl.Url != nil {
-				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*jobProps.LogoUrl.Url)); err != nil {
-					return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
-				}
-			}
-		}
-	} else {
-		req.JobProps.LogoUrl = jobProps.LogoUrl
-	}
-
 	stmt := tJobProps.
 		INSERT(
 			tJobProps.Job,
@@ -108,7 +81,6 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 			tJobProps.QuickButtons,
 			tJobProps.DiscordGuildID,
 			tJobProps.DiscordSyncSettings,
-			tJobProps.LogoURL,
 			tJobProps.Settings,
 		).
 		VALUES(
@@ -118,7 +90,6 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 			req.JobProps.QuickButtons,
 			req.JobProps.DiscordGuildId,
 			req.JobProps.DiscordSyncSettings,
-			req.JobProps.LogoUrl,
 			req.JobProps.Settings,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
@@ -127,7 +98,6 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 			tJobProps.QuickButtons.SET(jet.StringExp(jet.Raw("VALUES(`quick_buttons`)"))),
 			tJobProps.DiscordGuildID.SET(jet.StringExp(jet.Raw("VALUES(`discord_guild_id`)"))),
 			tJobProps.DiscordSyncSettings.SET(jet.StringExp(jet.Raw("VALUES(`discord_sync_settings`)"))),
-			tJobProps.LogoURL.SET(jet.StringExp(jet.Raw("VALUES(`logo_url`)"))),
 			tJobProps.Settings.SET(jet.StringExp(jet.Raw("VALUES(`settings`)"))),
 		)
 
@@ -157,6 +127,110 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 	return &pbsettings.SetJobPropsResponse{
 		JobProps: newJobProps,
 	}, nil
+}
+
+func (s *Server) UploadJobLogo(srv grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+	ctx := srv.Context()
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &audit.AuditEntry{
+		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
+		Method:  "UploadJobLogo",
+		UserId:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
+	}
+	defer s.aud.Log(auditEntry, nil)
+
+	props, err := s.getJobProps(ctx, userInfo.Job)
+	if err != nil {
+		return errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+
+	if props.LogoFileId != nil && *props.LogoFileId > 0 {
+		if err := s.jobPropsFileHandler.Delete(ctx, userInfo.Job, *props.LogoFileId); err != nil {
+			return errswrap.NewError(err, errorssettings.ErrFailedQuery)
+		}
+	}
+
+	meta, err := s.jobPropsFileHandler.AwaitHandshake(srv)
+	if err != nil {
+		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
+	}
+
+	name := filepath.Base(meta.GetOriginalName())
+	ext := filepath.Ext(name)
+	key := fmt.Sprintf("joblogos/%s%s", userInfo.Job, ext)
+
+	resp, err := s.jobPropsFileHandler.UploadFile(ctx, userInfo.Job, key, meta.GetSize(), meta.GetContentType(), srv)
+	if err != nil {
+		return err
+	}
+
+	if resp.Id != *props.LogoFileId {
+		newJobProps, err := s.getJobProps(ctx, userInfo.Job)
+		if err != nil {
+			return errswrap.NewError(err, errorssettings.ErrFailedQuery)
+		}
+
+		if _, err := s.js.PublishAsyncProto(ctx,
+			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
+			&notifications.JobEvent{
+				Data: &notifications.JobEvent_JobProps{
+					JobProps: newJobProps,
+				},
+			}); err != nil {
+			return errswrap.NewError(err, errorssettings.ErrFailedQuery)
+		}
+	}
+
+	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+
+	return nil
+}
+
+func (s *Server) DeleteJobLogo(ctx context.Context, req *pbsettings.DeleteJobLogoRequest) (*pbsettings.DeleteJobLogoResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &audit.AuditEntry{
+		Service: pbsettings.SettingsService_ServiceDesc.ServiceName,
+		Method:  "DeleteJobLogo",
+		UserId:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
+	}
+	defer s.aud.Log(auditEntry, nil)
+
+	props, err := s.getJobProps(ctx, userInfo.Job)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+
+	if props.LogoFileId == nil || *props.LogoFileId == 0 {
+		return &pbsettings.DeleteJobLogoResponse{}, nil
+	}
+
+	if err := s.jobPropsFileHandler.Delete(ctx, userInfo.Job, *props.LogoFileId); err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+
+	newJobProps, err := s.getJobProps(ctx, userInfo.Job)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+
+	if _, err := s.js.PublishAsyncProto(ctx,
+		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
+		&notifications.JobEvent{
+			Data: &notifications.JobEvent_JobProps{
+				JobProps: newJobProps,
+			},
+		}); err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+
+	return &pbsettings.DeleteJobLogoResponse{}, nil
 }
 
 func (s *Server) DeleteFaction(ctx context.Context, req *pbsettings.DeleteFactionRequest) (*pbsettings.DeleteFactionResponse, error) {

@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import CitizenSetJobModal from '~/components/citizens/info/props/CitizenSetJobModal.vue';
-import CitizenSetMugShotModal from '~/components/citizens/info/props/CitizenSetMugShotModal.vue';
+import CitizenSetMugshotModal from '~/components/citizens/info/props/CitizenSetMugshotModal.vue';
 import CitizenSetTrafficPointsModal from '~/components/citizens/info/props/CitizenSetTrafficPointsModal.vue';
 import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWantedModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useNotificatorStore } from '~/stores/notificator';
-import type { File } from '~~/gen/ts/resources/filestore/file';
+import type { File } from '~~/gen/ts/resources/file/file';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
@@ -26,7 +26,7 @@ const emit = defineEmits<{
     (e: 'update:wantedStatus', value: boolean): void;
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
-    (e: 'update:mugShot', value?: File): void;
+    (e: 'update:mugshot', value?: File): void;
 }>();
 
 const { attr, can, activeChar } = useAuth();
@@ -93,17 +93,17 @@ if (props.registerShortcuts) {
             });
         },
         'c-m': () => {
-            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'MugShot').value) {
+            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'Mugshot').value) {
                 return;
             }
 
-            modal.open(CitizenSetMugShotModal, {
+            modal.open(CitizenSetMugshotModal, {
                 user: props.user,
-                'onUpdate:mugShot': ($event) => emit('update:mugShot', $event),
+                'onUpdate:mugshot': ($event) => emit('update:mugshot', $event),
             });
         },
         'c-d': () => {
-            if (!can('documents.DocumentsService.CreateDocument').value) {
+            if (!can('documents.DocumentsService.UpdateDocument').value) {
                 return;
             }
 
@@ -183,26 +183,26 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'MugShot').value"
-            :text="$t('components.citizens.CitizenInfoProfile.set_mug_shot')"
+            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'Mugshot').value"
+            :text="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
             :shortcuts="['C', 'M']"
         >
             <UButton
                 block
                 icon="i-mdi-camera"
                 @click="
-                    modal.open(CitizenSetMugShotModal, {
+                    modal.open(CitizenSetMugshotModal, {
                         user: user,
-                        'onUpdate:mugShot': ($event) => $emit('update:mugShot', $event),
+                        'onUpdate:mugshot': ($event) => $emit('update:mugshot', $event),
                     })
                 "
             >
-                {{ $t('components.citizens.CitizenInfoProfile.set_mug_shot') }}
+                {{ $t('components.citizens.CitizenInfoProfile.set_mugshot') }}
             </UButton>
         </UTooltip>
 
         <UTooltip
-            v-if="can('documents.DocumentsService.CreateDocument').value"
+            v-if="can('documents.DocumentsService.UpdateDocument').value"
             :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
             :shortcuts="['C', 'D']"
         >

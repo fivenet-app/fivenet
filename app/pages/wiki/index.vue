@@ -60,6 +60,8 @@ watch(pages, async () => {
         });
     }
 });
+
+const wikiService = useWikiWiki();
 </script>
 
 <template>
@@ -71,14 +73,11 @@ watch(pages, async () => {
                 </template>
 
                 <template #right>
-                    <UButton
-                        v-if="can('wiki.WikiService.CreatePage').value"
-                        color="gray"
-                        trailing-icon="i-mdi-plus"
-                        to="/wiki/create"
-                    >
-                        {{ $t('common.page') }}
-                    </UButton>
+                    <UTooltip v-if="can('wiki.WikiService.UpdatePage').value" :text="$t('common.create')">
+                        <UButton color="gray" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
+                            {{ $t('common.page') }}
+                        </UButton>
+                    </UTooltip>
                 </template>
             </UDashboardNavbar>
 
@@ -114,8 +113,13 @@ watch(pages, async () => {
                         icon="i-mdi-brain"
                         :ui="{ title: 'text-xl' }"
                     >
-                        <template v-if="p.rootInfo?.logo?.url" #icon>
-                            <NuxtImg class="h-10 w-10" :src="p.rootInfo?.logo?.url" :alt="$t('common.logo')" loading="lazy" />
+                        <template v-if="p.rootInfo?.logo?.filePath" #icon>
+                            <NuxtImg
+                                class="h-10 w-10"
+                                :src="p.rootInfo?.logo?.filePath"
+                                :alt="$t('common.logo')"
+                                loading="lazy"
+                            />
                         </template>
                     </UPageCard>
                 </UPageGrid>

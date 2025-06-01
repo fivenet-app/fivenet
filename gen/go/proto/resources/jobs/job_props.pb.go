@@ -8,7 +8,7 @@ package jobs
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -37,8 +37,9 @@ type JobProps struct {
 	DiscordSyncSettings *DiscordSyncSettings   `protobuf:"bytes,9,opt,name=discord_sync_settings,json=discordSyncSettings,proto3" json:"discord_sync_settings,omitempty"`
 	DiscordSyncChanges  *DiscordSyncChanges    `protobuf:"bytes,10,opt,name=discord_sync_changes,json=discordSyncChanges,proto3,oneof" json:"discord_sync_changes,omitempty"`
 	Motd                *string                `protobuf:"bytes,11,opt,name=motd,proto3,oneof" json:"motd,omitempty"`
-	LogoUrl             *filestore.File        `protobuf:"bytes,12,opt,name=logo_url,json=logoUrl,proto3,oneof" json:"logo_url,omitempty"`
-	Settings            *JobSettings           `protobuf:"bytes,13,opt,name=settings,proto3" json:"settings,omitempty"`
+	LogoFileId          *uint64                `protobuf:"varint,12,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
+	LogoFile            *file.File             `protobuf:"bytes,13,opt,name=logo_file,json=logoFile,proto3,oneof" json:"logo_file,omitempty" alias:"logo_file"` // @gotags: alias:"logo_file"
+	Settings            *JobSettings           `protobuf:"bytes,14,opt,name=settings,proto3" json:"settings,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -150,9 +151,16 @@ func (x *JobProps) GetMotd() string {
 	return ""
 }
 
-func (x *JobProps) GetLogoUrl() *filestore.File {
+func (x *JobProps) GetLogoFileId() uint64 {
+	if x != nil && x.LogoFileId != nil {
+		return *x.LogoFileId
+	}
+	return 0
+}
+
+func (x *JobProps) GetLogoFile() *file.File {
 	if x != nil {
-		return x.LogoUrl
+		return x.LogoFile
 	}
 	return nil
 }
@@ -221,7 +229,7 @@ var File_resources_jobs_job_props_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/jobs/job_props.proto\x12\x0eresources.jobs\x1a!resources/jobs/job_settings.proto\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xb3\a\n" +
+	"\x1eresources/jobs/job_props.proto\x12\x0eresources.jobs\x1a!resources/jobs/job_settings.proto\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xe9\a\n" +
 	"\bJobProps\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12)\n" +
 	"\tjob_label\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x182H\x00R\bjobLabel\x88\x01\x01\x12B\n" +
@@ -235,9 +243,11 @@ const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\x15discord_sync_settings\x18\t \x01(\v2#.resources.jobs.DiscordSyncSettingsR\x13discordSyncSettings\x12Y\n" +
 	"\x14discord_sync_changes\x18\n" +
 	" \x01(\v2\".resources.jobs.DiscordSyncChangesH\x05R\x12discordSyncChanges\x88\x01\x01\x12!\n" +
-	"\x04motd\x18\v \x01(\tB\b\xfaB\x05r\x03\x18\x80\bH\x06R\x04motd\x88\x01\x01\x129\n" +
-	"\blogo_url\x18\f \x01(\v2\x19.resources.filestore.FileH\aR\alogoUrl\x88\x01\x01\x127\n" +
-	"\bsettings\x18\r \x01(\v2\x1b.resources.jobs.JobSettingsR\bsettingsB\f\n" +
+	"\x04motd\x18\v \x01(\tB\b\xfaB\x05r\x03\x18\x80\bH\x06R\x04motd\x88\x01\x01\x12%\n" +
+	"\flogo_file_id\x18\f \x01(\x04H\aR\n" +
+	"logoFileId\x88\x01\x01\x126\n" +
+	"\tlogo_file\x18\r \x01(\v2\x14.resources.file.FileH\bR\blogoFile\x88\x01\x01\x127\n" +
+	"\bsettings\x18\x0e \x01(\v2\x1b.resources.jobs.JobSettingsR\bsettingsB\f\n" +
 	"\n" +
 	"_job_labelB\r\n" +
 	"\v_deleted_atB\x12\n" +
@@ -245,8 +255,10 @@ const file_resources_jobs_job_props_proto_rawDesc = "" +
 	"\x11_discord_guild_idB\x14\n" +
 	"\x12_discord_last_syncB\x17\n" +
 	"\x15_discord_sync_changesB\a\n" +
-	"\x05_motdB\v\n" +
-	"\t_logo_url\"l\n" +
+	"\x05_motdB\x0f\n" +
+	"\r_logo_file_idB\f\n" +
+	"\n" +
+	"_logo_file\"l\n" +
 	"\fQuickButtons\x12-\n" +
 	"\x12penalty_calculator\x18\x01 \x01(\bR\x11penaltyCalculator\x12'\n" +
 	"\x0fmath_calculator\x18\x03 \x01(\bR\x0emathCalculatorJ\x04\b\x02\x10\x03BGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobsb\x06proto3"
@@ -270,7 +282,7 @@ var file_resources_jobs_job_props_proto_goTypes = []any{
 	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
 	(*DiscordSyncSettings)(nil), // 3: resources.jobs.DiscordSyncSettings
 	(*DiscordSyncChanges)(nil),  // 4: resources.jobs.DiscordSyncChanges
-	(*filestore.File)(nil),      // 5: resources.filestore.File
+	(*file.File)(nil),           // 5: resources.file.File
 	(*JobSettings)(nil),         // 6: resources.jobs.JobSettings
 }
 var file_resources_jobs_job_props_proto_depIdxs = []int32{
@@ -279,7 +291,7 @@ var file_resources_jobs_job_props_proto_depIdxs = []int32{
 	2, // 2: resources.jobs.JobProps.discord_last_sync:type_name -> resources.timestamp.Timestamp
 	3, // 3: resources.jobs.JobProps.discord_sync_settings:type_name -> resources.jobs.DiscordSyncSettings
 	4, // 4: resources.jobs.JobProps.discord_sync_changes:type_name -> resources.jobs.DiscordSyncChanges
-	5, // 5: resources.jobs.JobProps.logo_url:type_name -> resources.filestore.File
+	5, // 5: resources.jobs.JobProps.logo_file:type_name -> resources.file.File
 	6, // 6: resources.jobs.JobProps.settings:type_name -> resources.jobs.JobSettings
 	7, // [7:7] is the sub-list for method output_type
 	7, // [7:7] is the sub-list for method input_type

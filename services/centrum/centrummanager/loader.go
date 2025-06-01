@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -89,36 +90,41 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 }
 
 func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
-	tUsers := tables.User().AS("colleague")
+	tColleague := tables.User().AS("colleague")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tCentrumDisponents.
 		SELECT(
 			tCentrumDisponents.Job,
 			tCentrumDisponents.UserID,
-			tUsers.ID,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Job,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
+			tColleague.ID,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Job,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
 			tColleagueProps.UserID,
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
+			tAvatar.FilePath.AS("creator.avatar"),
 		).
 		FROM(
 			tCentrumDisponents.
-				INNER_JOIN(tUsers,
-					tUsers.ID.EQ(tCentrumDisponents.UserID),
+				INNER_JOIN(tColleague,
+					tColleague.ID.EQ(tCentrumDisponents.UserID),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tCentrumDisponents.UserID).
-						AND(tUsers.Job.EQ(jet.String(job))),
+						AND(tColleague.Job.EQ(jet.String(job))),
 				).
 				LEFT_JOIN(tColleagueProps,
-					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+					tColleagueProps.UserID.EQ(tColleague.ID).
+						AND(tColleagueProps.Job.EQ(tColleague.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		)
 

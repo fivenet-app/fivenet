@@ -9,8 +9,8 @@ import (
 )
 
 func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductEntry, error) {
-	tUser := tables.User().AS("target_user")
-	tCreator := tUser.AS("creator")
+	tColleague := tables.User().AS("target_user")
+	tCreator := tColleague.AS("creator")
 
 	stmt := tConduct.
 		SELECT(
@@ -23,11 +23,11 @@ func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductE
 			tConduct.Message,
 			tConduct.ExpiresAt,
 			tConduct.TargetUserID,
-			tUser.ID,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
+			tColleague.ID,
+			tColleague.Firstname,
+			tColleague.Lastname,
+			tColleague.Dateofbirth,
+			tColleague.PhoneNumber,
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Firstname,
@@ -37,8 +37,8 @@ func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductE
 		).
 		FROM(
 			tConduct.
-				INNER_JOIN(tUser,
-					tUser.ID.EQ(tConduct.TargetUserID),
+				INNER_JOIN(tColleague,
+					tColleague.ID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tCreator,
 					tCreator.ID.EQ(tConduct.CreatorID),

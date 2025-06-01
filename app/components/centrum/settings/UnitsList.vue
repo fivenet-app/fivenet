@@ -92,9 +92,13 @@ const columns = [
         <template #right>
             <PartialsBackButton fallback-to="/centrum" />
 
-            <UButton v-if="can('centrum.CentrumService.Stream').value" icon="i-mdi-settings" to="/centrum/settings">
-                {{ $t('common.setting', 2) }}
-            </UButton>
+            <UTooltip v-if="can('centrum.CentrumService.Stream').value" :text="$t('common.setting', 2)">
+                <UButton icon="i-mdi-settings" to="/centrum/settings">
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.setting', 2) }}
+                    </span>
+                </UButton>
+            </UTooltip>
 
             <UButton
                 v-if="can('centrum.CentrumService.CreateOrUpdateUnit').value"
@@ -107,7 +111,9 @@ const columns = [
                     })
                 "
             >
-                {{ $t('components.centrum.units.create_unit') }}
+                <span class="hidden truncate sm:block">
+                    {{ $t('components.centrum.units.create_unit') }}
+                </span>
             </UButton>
         </template>
     </UDashboardNavbar>

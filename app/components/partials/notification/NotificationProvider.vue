@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid';
 import { notificationTypeToColor, notificationTypeToIcon } from '~/components/partials/notification/helpers';
-import type { Notification } from '~/composables/notifications';
 import { useCalendarStore } from '~/stores/calendar';
 import { useMailerStore } from '~/stores/mailer';
 import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
+import type { Notification } from '~/utils/notifications';
 
 const { t } = useI18n();
 

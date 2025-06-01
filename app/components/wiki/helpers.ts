@@ -17,6 +17,8 @@ export function getPageAtivityIcon(activityType: PageActivityType): string {
             return 'i-mdi-file-account';
         case PageActivityType.DELETED:
             return 'i-mdi-delete-circle';
+        case PageActivityType.DRAFT_TOGGLED:
+            return 'i-mdi-file-document-edit-outline';
 
         default:
             return 'i-mdi-help';

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import CharacterSelector from '~/components/auth/CharacterSelector.vue';
 import { useAuthStore } from '~/stores/auth';
-import { useDocumentEditorStore } from '~/stores/documenteditor';
 
 useHead({
     title: 'components.auth.CharacterSelector.title',
@@ -15,7 +14,6 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
-const documentEditorStore = useDocumentEditorStore();
 
 const { setActiveChar, setPermissions, setJobProps } = authStore;
 
@@ -23,7 +21,6 @@ onBeforeMount(async () => {
     setActiveChar(null);
     setPermissions([]);
     setJobProps(undefined);
-    documentEditorStore.clear();
 });
 </script>
 

@@ -2,15 +2,14 @@ package qualifications
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	errorsqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -68,7 +67,9 @@ func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64)
 	return int32(count.Total), nil
 }
 
-func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qualificationId uint64, questions *qualifications.ExamQuestions) error {
+func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qualificationId uint64, questions *qualifications.ExamQuestions) ([]*file.File, error) {
+	files := []*file.File{}
+
 	tExamQuestions := table.FivenetQualificationsExamQuestions
 
 	if len(questions.Questions) == 0 {
@@ -78,15 +79,15 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 			LIMIT(100)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 
-		return nil
+		return nil, nil
 	}
 
 	current, err := s.getExamQuestions(ctx, tx, qualificationId, false)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	toCreate, toUpdate, toDelete := s.compareExamQuestions(current.Questions, questions.Questions)
@@ -98,25 +99,11 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 
 		switch data := question.Data.Data.(type) {
 		case *qualifications.ExamQuestionData_Image:
-			if data.Image.Image == nil || data.Image.Image.Url == nil {
+			if data.Image.Image == nil {
 				continue
 			}
 
-			if len(data.Image.Image.Data) == 0 {
-				continue
-			}
-
-			if !data.Image.Image.IsImage() {
-				return errorsqualifications.ErrFailedQuery
-			}
-
-			if err := data.Image.Image.Optimize(ctx); err != nil {
-				return err
-			}
-
-			if err := data.Image.Image.Upload(ctx, s.st, filestore.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
-				return err
-			}
+			files = append(files, data.Image.Image)
 		}
 
 		stmt := tExamQuestions.
@@ -138,7 +125,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -150,21 +137,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 					continue
 				}
 
-				if len(data.Image.Image.Data) == 0 {
-					continue
-				}
-
-				if !data.Image.Image.IsImage() {
-					return errorsqualifications.ErrFailedQuery
-				}
-
-				if err := data.Image.Image.Optimize(ctx); err != nil {
-					return err
-				}
-
-				if err := data.Image.Image.Upload(ctx, s.st, filestore.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
-					return err
-				}
+				files = append(files, data.Image.Image)
 			}
 		}
 
@@ -189,7 +162,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -207,28 +180,13 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 
-		for _, question := range toDelete {
-			if question.Data == nil {
-				continue
-			}
-
-			switch data := question.Data.Data.(type) {
-			case *qualifications.ExamQuestionData_Image:
-				if data.Image.Image == nil || data.Image.Image.Url == nil {
-					continue
-				}
-
-				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*data.Image.Image.Url)); err != nil {
-					return err
-				}
-			}
-		}
+		// Don't include deleted questions files in the files list
 	}
 
-	return nil
+	return files, nil
 }
 
 func (s *Server) compareExamQuestions(current, in []*qualifications.ExamQuestion) (toCreate []*qualifications.ExamQuestion, toUpdate []*qualifications.ExamQuestion, toDelete []*qualifications.ExamQuestion) {

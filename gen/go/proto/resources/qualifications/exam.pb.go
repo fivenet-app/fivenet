@@ -8,7 +8,7 @@ package qualifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -363,7 +363,7 @@ func (*ExamQuestionSeparator) Descriptor() ([]byte, []int) {
 
 type ExamQuestionImage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Image         *filestore.File        `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
+	Image         *file.File             `protobuf:"bytes,1,opt,name=image,proto3" json:"image,omitempty"`
 	Alt           *string                `protobuf:"bytes,2,opt,name=alt,proto3,oneof" json:"alt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -399,7 +399,7 @@ func (*ExamQuestionImage) Descriptor() ([]byte, []int) {
 	return file_resources_qualifications_exam_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ExamQuestionImage) GetImage() *filestore.File {
+func (x *ExamQuestionImage) GetImage() *file.File {
 	if x != nil {
 		return x.Image
 	}
@@ -1311,7 +1311,7 @@ var File_resources_qualifications_exam_proto protoreflect.FileDescriptor
 
 const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\n" +
-	"#resources/qualifications/exam.proto\x12\x18resources.qualifications\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"_\n" +
+	"#resources/qualifications/exam.proto\x12\x18resources.qualifications\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"_\n" +
 	"\rExamQuestions\x12N\n" +
 	"\tquestions\x18\x01 \x03(\v2&.resources.qualifications.ExamQuestionB\b\xfaB\x05\x92\x01\x02\x102R\tquestions\"\xa7\x04\n" +
 	"\fExamQuestion\x12\x0e\n" +
@@ -1340,9 +1340,9 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\rsingle_choice\x18\x04 \x01(\v22.resources.qualifications.ExamQuestionSingleChoiceH\x00R\fsingleChoice\x12_\n" +
 	"\x0fmultiple_choice\x18\x05 \x01(\v24.resources.qualifications.ExamQuestionMultipleChoiceH\x00R\x0emultipleChoiceB\v\n" +
 	"\x04data\x12\x03\xf8B\x01\"\x17\n" +
-	"\x15ExamQuestionSeparator\"m\n" +
-	"\x11ExamQuestionImage\x12/\n" +
-	"\x05image\x18\x01 \x01(\v2\x19.resources.filestore.FileR\x05image\x12\x1f\n" +
+	"\x15ExamQuestionSeparator\"h\n" +
+	"\x11ExamQuestionImage\x12*\n" +
+	"\x05image\x18\x01 \x01(\v2\x14.resources.file.FileR\x05image\x12\x1f\n" +
 	"\x03alt\x18\x02 \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01H\x00R\x03alt\x88\x01\x01B\x06\n" +
 	"\x04_alt\"\x13\n" +
 	"\x11ExamQuestionYesNo\"P\n" +
@@ -1452,7 +1452,7 @@ var file_resources_qualifications_exam_proto_goTypes = []any{
 	(*ExamGrading)(nil),                // 19: resources.qualifications.ExamGrading
 	(*ExamGradingResponse)(nil),        // 20: resources.qualifications.ExamGradingResponse
 	(*timestamp.Timestamp)(nil),        // 21: resources.timestamp.Timestamp
-	(*filestore.File)(nil),             // 22: resources.filestore.File
+	(*file.File)(nil),                  // 22: resources.file.File
 }
 var file_resources_qualifications_exam_proto_depIdxs = []int32{
 	1,  // 0: resources.qualifications.ExamQuestions.questions:type_name -> resources.qualifications.ExamQuestion
@@ -1466,7 +1466,7 @@ var file_resources_qualifications_exam_proto_depIdxs = []int32{
 	6,  // 8: resources.qualifications.ExamQuestionData.free_text:type_name -> resources.qualifications.ExamQuestionText
 	7,  // 9: resources.qualifications.ExamQuestionData.single_choice:type_name -> resources.qualifications.ExamQuestionSingleChoice
 	8,  // 10: resources.qualifications.ExamQuestionData.multiple_choice:type_name -> resources.qualifications.ExamQuestionMultipleChoice
-	22, // 11: resources.qualifications.ExamQuestionImage.image:type_name -> resources.filestore.File
+	22, // 11: resources.qualifications.ExamQuestionImage.image:type_name -> resources.file.File
 	21, // 12: resources.qualifications.ExamUser.created_at:type_name -> resources.timestamp.Timestamp
 	21, // 13: resources.qualifications.ExamUser.started_at:type_name -> resources.timestamp.Timestamp
 	21, // 14: resources.qualifications.ExamUser.ends_at:type_name -> resources.timestamp.Timestamp

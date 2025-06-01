@@ -11,7 +11,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
-import type { OpenClose } from '~/typings';
+import type { ToggleItem } from '~/typings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
@@ -26,10 +26,16 @@ const completorStore = useCompletorStore();
 const settingsStore = useSettingsStore();
 const { design } = storeToRefs(settingsStore);
 
-const openclose: OpenClose[] = [
-    { id: 0, label: t('common.not_selected'), closed: undefined },
-    { id: 1, label: t('common.open', 2), closed: false },
-    { id: 2, label: t('common.close', 2), closed: true },
+const openclose: ToggleItem[] = [
+    { id: 0, label: t('common.not_selected'), value: undefined },
+    { id: 1, label: t('common.open', 2), value: false },
+    { id: 2, label: t('common.close', 2), value: true },
+];
+
+const onlyDrafts: ToggleItem[] = [
+    { id: 0, label: t('common.all_documents'), value: undefined },
+    { id: 1, label: t('common.only_published'), value: false },
+    { id: 2, label: t('common.only_drafts'), value: true },
 ];
 
 const schema = z.object({
@@ -44,6 +50,7 @@ const schema = z.object({
         .optional(),
     closed: z.boolean().optional(),
     categories: z.custom<Category>().array().max(3),
+    onlyDrafts: z.boolean().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -52,7 +59,9 @@ const query = reactive<Schema>({
     title: '',
     date: undefined,
     creators: [],
+    closed: undefined,
     categories: [],
+    onlyDrafts: undefined,
 });
 
 const usersLoading = ref(false);
@@ -84,6 +93,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         categoryIds: query.categories.map((c) => c.id),
         creatorIds: query.creators.map((c) => c.userId),
         documentIds: [],
+        onlyDrafts: query.onlyDrafts,
     };
 
     if (query.documentIds) {
@@ -130,22 +140,49 @@ defineShortcuts({
 <template>
     <UDashboardToolbar>
         <UForm class="w-full" :schema="schema" :state="query" @submit="refresh()">
-            <UFormGroup name="title" :label="$t('common.search')">
-                <UInput
-                    ref="inputRef"
-                    v-model="query.title"
-                    type="text"
-                    name="title"
-                    :placeholder="$t('common.title')"
-                    block
-                    leading-icon="i-mdi-search"
-                    @keydown.esc="$event.target.blur()"
+            <div class="flex flex-1 flex-row gap-2">
+                <UFormGroup class="flex-1" name="title" :label="$t('common.search')">
+                    <UInput
+                        ref="inputRef"
+                        v-model="query.title"
+                        type="text"
+                        name="title"
+                        :placeholder="$t('common.title')"
+                        block
+                        leading-icon="i-mdi-search"
+                        @keydown.esc="$event.target.blur()"
+                    >
+                        <template #trailing>
+                            <UKbd value="/" />
+                        </template>
+                    </UInput>
+                </UFormGroup>
+
+                <UFormGroup
+                    class="flex shrink-0 grow-0 flex-col"
+                    name="onlyDrafts"
+                    :label="$t('common.show')"
+                    :ui="{ container: 'flex-1 flex' }"
                 >
-                    <template #trailing>
-                        <UKbd value="/" />
-                    </template>
-                </UInput>
-            </UFormGroup>
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="query.onlyDrafts"
+                            :options="onlyDrafts"
+                            value-attribute="value"
+                            option-attribute="label"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
+                            <template #label>
+                                {{
+                                    query.onlyDrafts === undefined
+                                        ? onlyDrafts[0]!.label
+                                        : (onlyDrafts.findLast((o) => o.value === query.onlyDrafts)?.label ?? $t('common.na'))
+                                }}
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormGroup>
+            </div>
 
             <UAccordion
                 class="mt-2"
@@ -276,7 +313,8 @@ defineShortcuts({
                                 <USelectMenu
                                     v-model="query.closed"
                                     :options="openclose"
-                                    value-attribute="closed"
+                                    value-attribute="value"
+                                    option-attribute="label"
                                     :searchable-placeholder="$t('common.search_field')"
                                 >
                                     <template #label>
@@ -294,7 +332,7 @@ defineShortcuts({
                                             {{
                                                 query.closed === undefined
                                                     ? openclose[0]!.label
-                                                    : (openclose.findLast((o) => o.closed === query.closed)?.label ??
+                                                    : (openclose.findLast((o) => o.value === query.closed)?.label ??
                                                       $t('common.na'))
                                             }}
                                         </div>

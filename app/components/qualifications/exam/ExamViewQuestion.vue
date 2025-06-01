@@ -40,7 +40,7 @@ const response = useVModel(props, 'modelValue', emit);
 
             <NuxtImg
                 class="min-h-4 min-w-4"
-                :src="modelValue?.question!.data?.data.image?.image?.url"
+                :src="modelValue?.question!.data?.data.image?.image?.filePath"
                 :alt="modelValue?.question!.data?.data.image?.alt ?? $t('common.image')"
                 loading="lazy"
             />

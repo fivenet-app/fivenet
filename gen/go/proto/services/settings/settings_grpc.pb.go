@@ -8,6 +8,7 @@ package settings
 
 import (
 	context "context"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -33,6 +34,8 @@ const (
 	SettingsService_GetJobLimits_FullMethodName            = "/services.settings.SettingsService/GetJobLimits"
 	SettingsService_UpdateJobLimits_FullMethodName         = "/services.settings.SettingsService/UpdateJobLimits"
 	SettingsService_DeleteFaction_FullMethodName           = "/services.settings.SettingsService/DeleteFaction"
+	SettingsService_UploadJobLogo_FullMethodName           = "/services.settings.SettingsService/UploadJobLogo"
+	SettingsService_DeleteJobLogo_FullMethodName           = "/services.settings.SettingsService/DeleteJobLogo"
 )
 
 // SettingsServiceClient is the client API for SettingsService service.
@@ -67,6 +70,10 @@ type SettingsServiceClient interface {
 	UpdateJobLimits(ctx context.Context, in *UpdateJobLimitsRequest, opts ...grpc.CallOption) (*UpdateJobLimitsResponse, error)
 	// @perm: Name=Superuser
 	DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error)
+	// @perm: Name=SetJobProps
+	UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	// @perm: Name=SetJobProps
+	DeleteJobLogo(ctx context.Context, in *DeleteJobLogoRequest, opts ...grpc.CallOption) (*DeleteJobLogoResponse, error)
 }
 
 type settingsServiceClient struct {
@@ -217,6 +224,29 @@ func (c *settingsServiceClient) DeleteFaction(ctx context.Context, in *DeleteFac
 	return out, nil
 }
 
+func (c *settingsServiceClient) UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &SettingsService_ServiceDesc.Streams[0], SettingsService_UploadJobLogo_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SettingsService_UploadJobLogoClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+
+func (c *settingsServiceClient) DeleteJobLogo(ctx context.Context, in *DeleteJobLogoRequest, opts ...grpc.CallOption) (*DeleteJobLogoResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteJobLogoResponse)
+	err := c.cc.Invoke(ctx, SettingsService_DeleteJobLogo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SettingsServiceServer is the server API for SettingsService service.
 // All implementations must embed UnimplementedSettingsServiceServer
 // for forward compatibility.
@@ -249,6 +279,10 @@ type SettingsServiceServer interface {
 	UpdateJobLimits(context.Context, *UpdateJobLimitsRequest) (*UpdateJobLimitsResponse, error)
 	// @perm: Name=Superuser
 	DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error)
+	// @perm: Name=SetJobProps
+	UploadJobLogo(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	// @perm: Name=SetJobProps
+	DeleteJobLogo(context.Context, *DeleteJobLogoRequest) (*DeleteJobLogoResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
 }
 
@@ -300,6 +334,12 @@ func (UnimplementedSettingsServiceServer) UpdateJobLimits(context.Context, *Upda
 }
 func (UnimplementedSettingsServiceServer) DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteFaction not implemented")
+}
+func (UnimplementedSettingsServiceServer) UploadJobLogo(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadJobLogo not implemented")
+}
+func (UnimplementedSettingsServiceServer) DeleteJobLogo(context.Context, *DeleteJobLogoRequest) (*DeleteJobLogoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteJobLogo not implemented")
 }
 func (UnimplementedSettingsServiceServer) mustEmbedUnimplementedSettingsServiceServer() {}
 func (UnimplementedSettingsServiceServer) testEmbeddedByValue()                         {}
@@ -574,6 +614,31 @@ func _SettingsService_DeleteFaction_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SettingsService_UploadJobLogo_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(SettingsServiceServer).UploadJobLogo(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SettingsService_UploadJobLogoServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+
+func _SettingsService_DeleteJobLogo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteJobLogoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).DeleteJobLogo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_DeleteJobLogo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).DeleteJobLogo(ctx, req.(*DeleteJobLogoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SettingsService_ServiceDesc is the grpc.ServiceDesc for SettingsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -637,7 +702,17 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "DeleteFaction",
 			Handler:    _SettingsService_DeleteFaction_Handler,
 		},
+		{
+			MethodName: "DeleteJobLogo",
+			Handler:    _SettingsService_DeleteJobLogo_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadJobLogo",
+			Handler:       _SettingsService_UploadJobLogo_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "services/settings/settings.proto",
 }

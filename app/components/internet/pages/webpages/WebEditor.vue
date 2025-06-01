@@ -1,5 +1,5 @@
 <script lang="ts">
-// TODO
+// TODO create a basic web page editor for a list of predefined layouts
 </script>
 
 <template>

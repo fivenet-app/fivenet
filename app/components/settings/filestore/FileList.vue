@@ -6,8 +6,9 @@ import Pagination from '~/components/partials/Pagination.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import FileUploadModal from '~/components/settings/filestore/FileUploadModal.vue';
 import { useSettingsStore } from '~/stores/settings';
-import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
-import type { DeleteFileResponse, ListFilesResponse } from '~~/gen/ts/services/settings/filestore';
+import type { File } from '~~/gen/ts/resources/file/file';
+import type { DeleteFileResponse } from '~~/gen/ts/resources/file/filestore';
+import type { ListFilesResponse } from '~~/gen/ts/services/filestore/filestore';
 
 const { $grpc } = useNuxtApp();
 
@@ -30,7 +31,7 @@ const {
 
 async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
-        const { response } = $grpc.settings.filestore.listFiles({
+        const { response } = $grpc.filestore.filestore.listFiles({
             pagination: {
                 offset: offset.value,
             },
@@ -48,11 +49,11 @@ watch(offset, async () => refresh());
 
 async function deleteFile(path: string): Promise<DeleteFileResponse> {
     try {
-        const { response } = $grpc.settings.filestore.deleteFile({
-            path,
+        const { response } = $grpc.filestore.filestore.deleteFileByPath({
+            path: path,
         });
 
-        const idx = files.value?.files.findIndex((f) => f.name === path);
+        const idx = files.value?.files.findIndex((f) => f.filePath === path);
         if (idx !== undefined && idx > -1 && files.value !== null) {
             files.value?.files.splice(idx, 1);
         }
@@ -64,8 +65,8 @@ async function deleteFile(path: string): Promise<DeleteFileResponse> {
     }
 }
 
-function addUploadedFile(file: FileInfo): void {
-    const idx = files.value?.files.findIndex((f) => f.name === file.name);
+function addUploadedFile(file: File): void {
+    const idx = files.value?.files.findIndex((f) => f.filePath === file.filePath);
     if (idx === undefined) {
         return;
     }

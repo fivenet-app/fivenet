@@ -13,6 +13,7 @@ var PermsRemap = map[string]string{
 	// Service: qualifications.QualificationsService
 	"qualifications.QualificationsService/CreateOrUpdateQualificationRequest": "qualifications.QualificationsService/ListQualifications",
 	"qualifications.QualificationsService/CreateOrUpdateQualificationResult":  "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/CreateQualification":                "qualifications.QualificationsService/UpdateQualification",
 	"qualifications.QualificationsService/DeleteQualificationReq":             "qualifications.QualificationsService/ListQualifications",
 	"qualifications.QualificationsService/DeleteQualificationResult":          "qualifications.QualificationsService/ListQualifications",
 	"qualifications.QualificationsService/GetExamInfo":                        "qualifications.QualificationsService/ListQualifications",
@@ -22,24 +23,13 @@ var PermsRemap = map[string]string{
 	"qualifications.QualificationsService/ListQualificationsResults":          "qualifications.QualificationsService/ListQualifications",
 	"qualifications.QualificationsService/SubmitExam":                         "qualifications.QualificationsService/ListQualifications",
 	"qualifications.QualificationsService/TakeExam":                           "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/UploadFile":                         "qualifications.QualificationsService/UpdateQualification",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
 		// Service: qualifications.QualificationsService
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceCreateQualificationPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:         permkeys.QualificationsServiceCreateQualificationFieldsPermField,
-					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"Public"},
-				},
-			},
-			Order: 0,
-		},
 		{
 			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceDeleteQualificationPerm,
@@ -66,6 +56,11 @@ func init() {
 					Key:         permkeys.QualificationsServiceUpdateQualificationAccessPermField,
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+				{
+					Key:         permkeys.QualificationsServiceUpdateQualificationFieldsPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Public"},
 				},
 			},
 			Order: 0,

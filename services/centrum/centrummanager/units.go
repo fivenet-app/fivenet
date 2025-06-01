@@ -571,6 +571,7 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 
 func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.UnitStatus, error) {
 	tUsers := tables.User().AS("colleague")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -597,7 +598,8 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tUnitStatus.
@@ -610,6 +612,9 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
 						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(
@@ -632,6 +637,7 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 
 func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, unitId uint64) (*centrum.UnitStatus, error) {
 	tUsers := tables.User().AS("colleague")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUnitStatus.
 		SELECT(
@@ -658,7 +664,8 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, 
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
 			tUnitStatus.
@@ -671,6 +678,9 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, 
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
 						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(

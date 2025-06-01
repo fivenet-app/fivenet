@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = defineProps<{
+    qualificationId: number;
     modelValue?: ExamQuestion;
 }>();
 
@@ -15,6 +17,8 @@ const emit = defineEmits<{
 }>();
 
 const question = useVModel(props, 'modelValue', emit);
+
+const { $grpc } = useNuxtApp();
 
 const appConfig = useAppConfig();
 
@@ -37,7 +41,6 @@ const schema = z.object({
                     alt: z.string().max(128).optional(),
                     image: z.object({
                         url: z.string().optional(),
-                        data: z.any(),
                     }),
                 }),
             }),
@@ -74,23 +77,20 @@ watch(question, () => {
     if (question.value === undefined) {
         question.value = {
             id: 0,
-            qualificationId: 0,
+            qualificationId: props.qualificationId,
             title: '',
             answer: {
                 answerKey: '',
             },
         };
-    } else {
-        if (question.value.data?.data.oneofKind === 'image') {
-            imageUrl.value = question.value.data?.data.image.image?.url;
-        }
     }
 });
 
-const imageUrl = ref<string | undefined>();
-if (question.value?.data?.data.oneofKind === 'image') {
-    imageUrl.value = question.value.data?.data.image.image?.url;
-}
+const { resizeAndUpload } = useFileUploader(
+    (opts) => $grpc.qualifications.qualifications.uploadFile(opts),
+    'qualifications-exam-questions',
+    props.qualificationId,
+);
 
 async function handleImage(files: FileList): Promise<void> {
     if (question.value!.data!.data.oneofKind !== 'image') {
@@ -101,9 +101,10 @@ async function handleImage(files: FileList): Promise<void> {
         return;
     }
 
-    question.value!.data!.data.image.image = { data: new Uint8Array(await files[0].arrayBuffer()) };
-
-    imageUrl.value = URL.createObjectURL(files[0]);
+    const resp = await resizeAndUpload(files[0]);
+    if (question.value?.data?.data.oneofKind === 'image') {
+        question.value.data.data.image.image = resp.file;
+    }
 }
 
 const questionTypes = ['separator', 'image', 'yesno', 'freeText', 'singleChoice', 'multipleChoice'];
@@ -190,6 +191,8 @@ function changeQuestionType(qt: string): void {
                     v-model="question.data!.data.oneofKind"
                     class="w-40 max-w-40"
                     :options="questionTypes"
+                    searchable
+                    :searchable-placeholder="$t('common.search_field')"
                     @update:model-value="changeQuestionType($event)"
                 >
                     <template #label>
@@ -244,7 +247,12 @@ function changeQuestionType(qt: string): void {
                             />
                         </template>
 
-                        <NuxtImg v-if="imageUrl" class="min-h-4 min-w-4" :src="imageUrl" loading="lazy" />
+                        <GenericImg
+                            v-if="question.data?.data.image.image"
+                            class="min-h-4 min-w-4"
+                            :src="question.data?.data.image.image.filePath"
+                            :alt="question.data?.data.image.alt"
+                        />
                     </div>
                 </template>
 

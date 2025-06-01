@@ -1,18 +1,19 @@
 import { defineNuxtPlugin } from '#app';
 import type { ServerAppConfig } from '~/typings';
 
-async function loadConfig(): Promise<void> {
-    // 7.5 seconds should be enough to retrieve the config from the server...
+const configPromise = loadConfig();
+
+async function loadConfig(): Promise<ServerAppConfig> {
     const abort = new AbortController();
-    const tId = setTimeout(() => abort.abort(), 7.5 * 1000);
+    const tId = setTimeout(() => abort.abort(), 7_500);
 
     try {
         const resp = await $fetch<ServerAppConfig>('/api/config', {
             method: 'POST',
             signal: abort.signal,
         });
-
         updateAppConfig(resp);
+        return resp;
     } catch (e) {
         const err = e as Error;
         throw createError({
@@ -30,9 +31,9 @@ async function loadConfig(): Promise<void> {
 export default defineNuxtPlugin({
     name: 'config',
     parallel: true,
-    async setup(_) {
-        await loadConfig();
+    async setup(nuxtApp) {
+        await configPromise;
 
-        return {};
+        nuxtApp.provide('appConfigPromise', configPromise);
     },
 });

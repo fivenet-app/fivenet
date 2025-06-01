@@ -182,6 +182,40 @@ func (m *Page) validate(all bool) error {
 		}
 	}
 
+	for idx, item := range m.GetFiles() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageValidationError{
+						field:  fmt.Sprintf("Files[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageValidationError{
+						field:  fmt.Sprintf("Files[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageValidationError{
+					field:  fmt.Sprintf("Files[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.JobLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
@@ -363,6 +397,8 @@ func (m *PageMeta) validate(all bool) error {
 	}
 
 	// no validation rules for Public
+
+	// no validation rules for Draft
 
 	if m.UpdatedAt != nil {
 
@@ -647,6 +683,8 @@ func (m *PageShort) validate(all bool) error {
 
 	}
 
+	// no validation rules for Draft
+
 	if m.JobLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
@@ -743,6 +781,21 @@ func (m *PageShort) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.Level != nil {
+
+		if m.GetLevel() < 0 {
+			err := PageShortValidationError{
+				field:  "Level",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

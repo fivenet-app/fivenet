@@ -89,7 +89,7 @@ watchOnce(opened, async () => {
             <slot name="before" />
             <template v-if="showAvatar" #leading>
                 <USkeleton v-if="!user && loading" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
-                <ProfilePictureImg v-else :src="user?.avatar?.url" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
+                <ProfilePictureImg v-else :src="user?.avatar" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
             </template>
 
             <USkeleton v-if="!user && loading" class="h-8 w-[125px]" />
@@ -150,7 +150,7 @@ watchOnce(opened, async () => {
 
                 <div v-else-if="user" class="inline-flex flex-row gap-2 text-gray-900 dark:text-white">
                     <div v-if="showAvatar === undefined || showAvatar">
-                        <ProfilePictureImg :src="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" />
+                        <ProfilePictureImg :src="user.avatar" :name="`${user.firstname} ${user.lastname}`" />
                     </div>
                     <div>
                         <UButton

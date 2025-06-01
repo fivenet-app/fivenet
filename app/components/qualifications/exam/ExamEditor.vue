@@ -5,16 +5,11 @@ import type { ExamQuestion, ExamQuestions } from '~~/gen/ts/resources/qualificat
 import type { QualificationExamSettings } from '~~/gen/ts/resources/qualifications/qualifications';
 import ExamEditorQuestion from './ExamEditorQuestion.vue';
 
-const props = withDefaults(
-    defineProps<{
-        settings: QualificationExamSettings;
-        questions: ExamQuestions;
-        qualificationId?: number;
-    }>(),
-    {
-        qualificationId: 0,
-    },
-);
+const props = defineProps<{
+    settings: QualificationExamSettings;
+    questions: ExamQuestions;
+    qualificationId: number;
+}>();
 
 const emit = defineEmits<{
     (e: 'update:settings', value: ExamQuestions): void;
@@ -64,6 +59,7 @@ if (!settings.value.time) {
                         v-for="(question, idx) in questions?.questions"
                         :key="idx"
                         v-model="questions.questions[idx]"
+                        :qualification-id="props.qualificationId"
                         :question="question"
                         @delete="questions.questions.splice(idx, 1)"
                     />

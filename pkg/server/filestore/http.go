@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/url"
 	"path"
 	"path/filepath"
 	"time"
@@ -87,23 +86,7 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(c, 6*time.Second)
 	defer cancel()
 
-	url, err := s.st.GetURL(ctx, filePath, 1*time.Hour, url.Values{})
-	if err != nil {
-		if errors.Is(err, storage.ErrNotFound) {
-			c.AbortWithStatus(http.StatusNotFound)
-			return
-		}
-
-		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to retrieve file url from store. %w", err))
-		return
-	}
-
-	if url != nil {
-		c.Redirect(http.StatusTemporaryRedirect, *url)
-		return
-	}
-
-	object, objInfo, err := s.st.Get(ctx, path.Join(prefix, fileName))
+	object, objInfo, err := s.st.Get(ctx, filePath)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			c.AbortWithStatus(http.StatusNotFound)

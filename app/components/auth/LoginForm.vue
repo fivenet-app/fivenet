@@ -26,7 +26,7 @@ const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
 const cookiesStore = useCookiesStore();
-const { hasCookiesAccepted } = storeToRefs(cookiesStore);
+const { hasCookiesAccepted, isConsentModalOpen } = storeToRefs(cookiesStore);
 
 const schema = z.object({
     username: z
@@ -91,9 +91,21 @@ function togglePasswordVisibility() {
         </UButton>
 
         <div v-if="!nuiEnabled && login.providers.length > 0" class="space-y-2">
-            <p v-if="!socialLoginEnabled" class="text-sm text-error-400">
-                {{ $t('components.auth.LoginForm.social_login_disabled') }}
-            </p>
+            <UAlert
+                v-if="!socialLoginEnabled"
+                :description="$t('components.auth.LoginForm.social_login_disabled')"
+                color="info"
+                variant="subtle"
+                :actions="[
+                    {
+                        label: $t('components.CookieControl.name'),
+                        icon: 'i-mdi-cookie',
+                        color: 'info',
+                        variant: 'outline',
+                        click: () => (isConsentModalOpen = true),
+                    },
+                ]"
+            />
 
             <template v-else>
                 <UDivider class="mt-2" :label="$t('common.or')" orientation="horizontal" />

@@ -111,16 +111,21 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		return resp, nil
 	}
 
+	tFiles := table.FivenetFiles.AS("logo")
+
 	columns := []jet.Projection{
 		tPageShort.Job,
 		tPageShort.ParentID,
 		tPageShort.Slug,
 		tPageShort.Title,
 		tPageShort.Description,
+		tPageShort.Draft,
 	}
 	if req.RootOnly != nil && *req.RootOnly {
 		columns = append(columns,
-			tJobProps.LogoURL.AS("page_root_info.logo"),
+			tJobProps.LogoFileID.AS("page_root_info.logo"),
+			tFiles.ID,
+			tFiles.FilePath,
 		)
 	}
 	if userInfo.Superuser {
@@ -140,12 +145,15 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tPageShort.Job),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tJobProps.LogoFileID),
 				),
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		// .NULLS_FIRST()
-		ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.SortKey.ASC()).
+		ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
 		GROUP_BY(groupBys...).
 		LIMIT(limit)
 
@@ -194,6 +202,9 @@ func (s *Server) GetPage(ctx context.Context, req *pbwiki.GetPageRequest) (*pbwi
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
+	if page == nil || page.Id <= 0 {
+		return nil, errorswiki.ErrPageNotFound
+	}
 
 	if !check && !page.Meta.Public {
 		return nil, errorswiki.ErrPageDenied
@@ -203,17 +214,21 @@ func (s *Server) GetPage(ctx context.Context, req *pbwiki.GetPageRequest) (*pbwi
 		Page: page,
 	}
 
-	if resp.Page != nil {
-		s.enricher.EnrichJobName(resp.Page)
+	s.enricher.EnrichJobName(resp.Page)
 
-		access, err := s.getPageAccess(ctx, userInfo, req.Id)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-		}
-		resp.Page.Access = access
-
-		auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+	access, err := s.getPageAccess(ctx, userInfo, req.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
+	resp.Page.Access = access
+
+	files, err := s.fHandler.ListFilesForParentID(ctx, resp.Page.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	resp.Page.Files = files
+
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
 
 	return resp, nil
 }
@@ -268,6 +283,7 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		tPage.ContentType.AS("page_meta.content_Type"),
 		tPage.Toc.AS("page_meta.toc"),
 		tPage.Public.AS("page_meta.public"),
+		tPage.Draft.AS("page_meta.draft"),
 	}
 	if withContent {
 		columns = append(columns,
@@ -279,7 +295,6 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 	stmt := tPage.
 		SELECT(
 			tPage.ID,
-
 			columns...,
 		).
 		FROM(
@@ -293,8 +308,8 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		)).
 		LIMIT(1)
 
-	var dest wiki.Page
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	dest := &wiki.Page{}
+	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -304,7 +319,7 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		return nil, nil
 	}
 
-	s.enricher.EnrichJobName(&dest)
+	s.enricher.EnrichJobName(dest)
 
 	if withAccess {
 		access, err := s.getPageAccess(ctx, userInfo, pageId)
@@ -314,7 +329,15 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		dest.Access = access
 	}
 
-	return &dest, nil
+	if withContent {
+		files, err := s.fHandler.ListFilesForParentID(ctx, pageId)
+		if err != nil {
+			return nil, err
+		}
+		dest.Files = files
+	}
+
+	return dest, nil
 }
 
 func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) (*pbwiki.CreatePageResponse, error) {
@@ -329,31 +352,39 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if req.Page.ParentId == nil || *req.Page.ParentId <= 0 {
-		countStmt := tPage.
+	// No parent ID?
+	// If so, check if there are any existing pages for the user's job and use one as the parent.
+	if req.ParentId == nil || *req.ParentId <= 0 {
+		parentStmt := tPageShort.
 			SELECT(
-				jet.COUNT(tPage.ID).AS("data_count.total"),
+				tPageShort.ID.AS("id"),
 			).
-			FROM(tPage).
+			FROM(tPageShort).
 			WHERE(jet.AND(
-				tPage.Job.EQ(jet.String(userInfo.Job)),
-				tPage.DeletedAt.IS_NULL(),
-			))
+				tPageShort.Job.EQ(jet.String(userInfo.Job)),
+				tPageShort.DeletedAt.IS_NULL(),
+			)).
+			ORDER_BY(tPageShort.ParentID.ASC(), tPageShort.Draft.ASC(), tPageShort.SortKey.ASC()).
+			LIMIT(1)
 
-		var count database.DataCount
-		if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		ids := struct{ ID uint64 }{}
+		if err := parentStmt.QueryContext(ctx, s.db, &ids); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
 				return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 			}
 		}
 
-		if count.Total > 0 {
-			return nil, errorswiki.ErrPageDenied
+		// Found a potential parent page
+		if ids.ID > 0 {
+			req.ParentId = &ids.ID
+			trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.parent_id", int64(*req.ParentId)))
+		} else {
+			req.ParentId = nil
 		}
 	} else {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.parent_id", int64(*req.Page.ParentId)))
+		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.parent_id", int64(*req.ParentId)))
 
-		p, err := s.getPage(ctx, *req.Page.ParentId, false, false, nil)
+		p, err := s.getPage(ctx, *req.ParentId, false, false, nil)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
@@ -362,7 +393,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 			return nil, errorswiki.ErrPageDenied
 		}
 
-		parentCheck, err := s.access.CanUserAccessTarget(ctx, *req.Page.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
+		parentCheck, err := s.access.CanUserAccessTarget(ctx, *req.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
@@ -371,31 +402,28 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 		}
 	}
 
-	if req.Page.ParentId != nil && *req.Page.ParentId == req.Page.Id {
-		req.Page.ParentId = nil
-	}
+	job := s.enricher.GetJobByName(userInfo.Job)
 
-	if req.Page.Meta.Toc == nil {
-		toc := true
-		req.Page.Meta.Toc = &toc
+	pageAccess := &wiki.PageAccess{
+		Jobs: []*wiki.PageJobAccess{
+			{
+				Job:          userInfo.Job,
+				MinimumGrade: userInfo.JobGrade,
+				Access:       wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+			},
+		},
 	}
+	if job != nil && len(job.Grades) > 0 {
+		highestGrade := job.Grades[len(job.Grades)-1]
 
-	// Field Permission Check
-	fields, err := s.perms.AttrStringList(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-	if !fields.Contains("Public") {
-		req.Page.Meta.Public = false
-	}
-
-	if req.Page.Access.IsEmpty() {
-		// Ensure at least one access entry allowing the user's rank and higher to "edit" the page
-		req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wiki.PageJobAccess{
-			Job:          userInfo.Job,
-			MinimumGrade: userInfo.JobGrade,
-			Access:       wiki.AccessLevel_ACCESS_LEVEL_EDIT,
-		})
+		if highestGrade.Grade > userInfo.JobGrade {
+			// If the user's job grade is lower than the highest grade, add an access entry for the highest grade
+			pageAccess.Jobs = append(pageAccess.Jobs, &wiki.PageJobAccess{
+				Job:          job.Name,
+				MinimumGrade: highestGrade.Grade,
+				Access:       wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+			})
+		}
 	}
 
 	// Begin transaction
@@ -413,6 +441,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 			tPage.ParentID,
 			tPage.ContentType,
 			tPage.Toc,
+			tPage.Draft,
 			tPage.Public,
 			tPage.Slug,
 			tPage.Title,
@@ -423,14 +452,15 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 		).
 		VALUES(
 			userInfo.Job,
-			req.Page.ParentId,
-			req.Page.Meta.ContentType,
-			req.Page.Meta.Toc,
-			req.Page.Meta.Public,
-			slug.Make(utils.StringFirstN(req.Page.Meta.Title, 100)),
-			req.Page.Meta.Title,
-			req.Page.Meta.Description,
-			req.Page.Content,
+			req.ParentId,
+			req.ContentType,
+			true,
+			true,
+			false,
+			"",
+			"",
+			"",
+			"",
 			nil,
 			userInfo.UserId,
 		)
@@ -444,10 +474,13 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-	req.Page.Id = uint64(lastId)
+	resp := &pbwiki.CreatePageResponse{
+		Job: userInfo.Job,
+		Id:  uint64(lastId),
+	}
 
 	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
-		PageId:       req.Page.Id,
+		PageId:       resp.Id,
 		ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_CREATED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
@@ -455,7 +488,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	if err := s.handlePageAccessChange(ctx, tx, req.Page.Id, userInfo, req.Page.Access, false); err != nil {
+	if err := s.handlePageAccessChange(ctx, tx, resp.Id, userInfo, pageAccess, false); err != nil {
 		return nil, err
 	}
 
@@ -466,14 +499,7 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 
-	page, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-
-	return &pbwiki.CreatePageResponse{
-		Page: page,
-	}, nil
+	return resp, nil
 }
 
 func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) (*pbwiki.UpdatePageResponse, error) {
@@ -546,18 +572,26 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 		return nil, errorswiki.ErrPageDenied
 	}
 
-	page, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)
+	oldPage, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
+	// A page can only be switched to published once
+	if !oldPage.Meta.Draft && oldPage.Meta.Draft != req.Page.Meta.Draft {
+		// Allow a super user to change the draft state
+		if !userInfo.Superuser {
+			req.Page.Meta.Draft = oldPage.Meta.Draft
+		}
+	}
+
 	// Field Permission Check
-	fields, err := s.perms.AttrStringList(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
+	fields, err := s.perms.AttrStringList(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceUpdatePagePerm, permswiki.WikiServiceUpdatePageFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 	if !fields.Contains("Public") {
-		req.Page.Meta.Public = page.Meta.Public
+		req.Page.Meta.Public = oldPage.Meta.Public
 	}
 
 	if req.Page.Access.IsEmpty() {
@@ -583,6 +617,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 			tPage.ParentID,
 			tPage.ContentType,
 			tPage.Toc,
+			tPage.Draft,
 			tPage.Public,
 			tPage.Slug,
 			tPage.Title,
@@ -594,6 +629,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 			req.Page.ParentId,
 			req.Page.Meta.ContentType,
 			req.Page.Meta.Toc,
+			req.Page.Meta.Draft,
 			req.Page.Meta.Public,
 			slug.Make(utils.StringFirstN(req.Page.Meta.Title, 100)),
 			req.Page.Meta.Title,
@@ -603,13 +639,14 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 		).
 		WHERE(jet.AND(
 			tPage.ID.EQ(jet.Uint64(req.Page.Id)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	diff, err := s.generatePageDiff(page, &wiki.Page{
+	diff, err := s.generatePageDiff(oldPage, &wiki.Page{
 		Meta: &wiki.PageMeta{
 			Title:       req.Page.Meta.Title,
 			Description: req.Page.Meta.Description,
@@ -618,6 +655,17 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 	})
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	added, deleted, err := s.fHandler.HandleFileChangesForParent(ctx, tx, req.Page.Id, req.Page.Files)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	if added > 0 || deleted > 0 {
+		diff.FilesChange = &wiki.PageFilesChange{
+			Added:   added,
+			Deleted: deleted,
+		}
 	}
 
 	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
@@ -638,6 +686,17 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 		return nil, err
 	}
 
+	if oldPage.Meta.Draft != req.Page.Meta.Draft {
+		if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+			PageId:       req.Page.Id,
+			ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_DRAFT_TOGGLED,
+			CreatorId:    &userInfo.UserId,
+			CreatorJob:   userInfo.Job,
+		}); err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -645,7 +704,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
-	page, err = s.getPage(ctx, req.Page.Id, true, true, userInfo)
+	page, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
@@ -721,6 +780,27 @@ func (s *Server) DeletePage(ctx context.Context, req *pbwiki.DeletePageRequest) 
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
+	tPage := table.FivenetWikiPages
+
+	// Ensure page has no children
+	countStmt := tPage.
+		SELECT(
+			jet.COUNT(tPage.ID).AS("data_count.total"),
+		).
+		FROM(tPage).
+		WHERE(tPage.ParentID.EQ(jet.Uint64(page.Id)))
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+	}
+
+	if count.Total > 0 {
+		return nil, errorswiki.ErrPageHasChildren
+	}
+
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
 	if page.Meta != nil && page.Meta.DeletedAt != nil && userInfo.Superuser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
@@ -735,7 +815,8 @@ func (s *Server) DeletePage(ctx context.Context, req *pbwiki.DeletePageRequest) 
 		).
 		WHERE(jet.AND(
 			tPage.ID.EQ(jet.Uint64(req.Id)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)

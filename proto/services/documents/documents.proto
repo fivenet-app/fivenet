@@ -12,6 +12,8 @@ import "resources/documents/documents.proto";
 import "resources/documents/pins.proto";
 import "resources/documents/requests.proto";
 import "resources/documents/templates.proto";
+import "resources/file/file.proto";
+import "resources/file/filestore.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -71,7 +73,11 @@ message ListDocumentsRequest {
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;
   repeated uint64 document_ids = 9 [(validate.rules).repeated.max_items = 5];
-  optional bool include_drafts = 10;
+  // Controls inclusion of drafts in the result:
+  // - unset/null: include all documents (drafts and non-drafts)
+  // - false: only non-draft documents
+  // - true: only draft documents
+  optional bool only_drafts = 10;
 }
 
 message ListDocumentsResponse {
@@ -168,7 +174,7 @@ message DeleteCommentRequest {
 message DeleteCommentResponse {}
 
 message UpdateDocumentResponse {
-  uint64 document_id = 1; // @gotags: alias:"id"
+  resources.documents.Document document = 1;
 }
 
 message DeleteDocumentRequest {
@@ -194,29 +200,13 @@ message ChangeDocumentOwnerRequest {
 message ChangeDocumentOwnerResponse {}
 
 message CreateDocumentRequest {
-  optional uint64 category_id = 1;
-  // @sanitize: method=StripTags
-  string title = 2 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 255
-  }];
-  // @sanitize
-  resources.common.content.Content content = 3;
-  resources.common.content.ContentType content_type = 4 [(validate.rules).enum.defined_only = true];
-  optional string data = 5 [(validate.rules).string = {
-    max_bytes: 1000000 // 1 Megabyte
-  }];
-  // @sanitize
-  string state = 6 [(validate.rules).string.max_len = 32];
-  bool closed = 7;
-  bool draft = 8;
-  bool public = 9;
-  optional resources.documents.DocumentAccess access = 10;
-  optional uint64 template_id = 11;
+  resources.common.content.ContentType content_type = 1 [(validate.rules).enum.defined_only = true];
+  optional uint64 template_id = 2;
+  optional resources.documents.TemplateData template_data = 3;
 }
 
 message CreateDocumentResponse {
-  uint64 document_id = 1; // @gotags: alias:"id"
+  uint64 id = 1;
 }
 
 message UpdateDocumentRequest {
@@ -239,6 +229,7 @@ message UpdateDocumentRequest {
   bool draft = 9;
   bool public = 10;
   optional resources.documents.DocumentAccess access = 11;
+  repeated resources.file.File files = 12; // @gotags: alias:"files"
 }
 
 // Document Activity and Requests =============================================
@@ -403,7 +394,7 @@ service DocumentsService {
   rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
   // @perm: Name=ListDocuments
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
-  // @perm
+  // @perm: Name=UpdateDocument
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
@@ -440,7 +431,7 @@ service DocumentsService {
 
   // @perm: Name=ListDocuments
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
-  // @perm: Name=CreateDocument
+  // @perm: Name=UpdateDocument
   rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
 
   // @perm
@@ -472,4 +463,7 @@ service DocumentsService {
 
   // @perm
   rpc SetDocumentReminder(SetDocumentReminderRequest) returns (SetDocumentReminderResponse);
+
+  // @perm: Name=UpdateDocument
+  rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
 }

@@ -393,6 +393,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 	tUsers := tables.User().AS("user")
 	tJobs := tables.Jobs()
 	tJobsGrades := tables.JobsGrades()
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUsers.
 		SELECT(
@@ -409,10 +410,11 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 				tUsers.Sex,
 				tUsers.Height,
 				tUsers.PhoneNumber,
-				tUserProps.Avatar.AS("user.avatar"),
+				tUserProps.AvatarFileID.AS("user.avatar_file_id"),
+				tAvatar.FilePath.AS("user.avatar"),
+				tUsers.Group.AS("character.group"),
 				s.customDB.Columns.User.GetVisum(tUsers.Alias()),
 				s.customDB.Columns.User.GetPlaytime(tUsers.Alias()),
-				tUsers.Group.AS("character.group"),
 			}.Get()...,
 		).
 		FROM(tUsers.
@@ -427,6 +429,9 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUsers.ID),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		WHERE(
@@ -482,6 +487,8 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	tUsers := tables.User().AS("user")
 	tJobs := tables.Jobs()
 	tJobsGrades := tables.JobsGrades()
+	tLogo := table.FivenetFiles.AS("logo_file")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUsers.
 		SELECT(
@@ -492,7 +499,8 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Dateofbirth,
-			tUserProps.Avatar.AS("user.avatar"),
+			tUserProps.AvatarFileID.AS("user.avatar_file_id"),
+			tAvatar.FilePath.AS("user.avatar"),
 			tUsers.Group.AS("group"),
 			tJobs.Label.AS("user.job_label"),
 			tJobsGrades.Label.AS("user.job_grade_label"),
@@ -500,7 +508,9 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			tJobProps.LivemapMarkerColor,
 			tJobProps.QuickButtons,
 			tJobProps.RadioFrequency,
-			tJobProps.LogoURL,
+			tJobProps.LogoFileID,
+			tLogo.ID,
+			tLogo.FilePath,
 		).
 		FROM(
 			tUsers.
@@ -516,8 +526,14 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tJobs.Name),
 				).
+				LEFT_JOIN(tLogo,
+					tLogo.ID.EQ(tJobProps.LogoFileID),
+				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUsers.ID),
+				).
+				LEFT_JOIN(tAvatar,
+					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
 		WHERE(
@@ -784,6 +800,7 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job, int32, *jobs.JobProps, error) {
 	tJobs := tables.Jobs().AS("job")
 	tJobsGrades := tables.JobsGrades()
+	tFiles := table.FivenetFiles.AS("logo_file")
 
 	stmt := tJobs.
 		SELECT(
@@ -795,7 +812,9 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job
 			tJobProps.LivemapMarkerColor,
 			tJobProps.RadioFrequency,
 			tJobProps.QuickButtons,
-			tJobProps.LogoURL,
+			tJobProps.LogoFileID,
+			tFiles.ID,
+			tFiles.FilePath,
 		).
 		FROM(
 			tJobs.
@@ -803,7 +822,11 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job
 					tJobsGrades.JobName.EQ(tJobs.Name),
 				).
 				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tJobs.Name)),
+					tJobProps.Job.EQ(tJobs.Name),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tJobProps.LogoFileID),
+				),
 		).
 		WHERE(
 			tJobs.Name.EQ(jet.String(jobName)),

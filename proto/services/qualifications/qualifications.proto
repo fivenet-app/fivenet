@@ -3,7 +3,9 @@ syntax = "proto3";
 package services.qualifications;
 
 import "google/protobuf/duration.proto";
+import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
+import "resources/file/filestore.proto";
 import "resources/qualifications/access.proto";
 import "resources/qualifications/exam.proto";
 import "resources/qualifications/qualifications.proto";
@@ -34,7 +36,7 @@ message GetQualificationResponse {
 }
 
 message CreateQualificationRequest {
-  resources.qualifications.Qualification qualification = 1 [(validate.rules).message.required = true];
+  resources.common.content.ContentType content_type = 1 [(validate.rules).enum.defined_only = true];
 }
 
 message CreateQualificationResponse {
@@ -182,9 +184,9 @@ service QualificationsService {
   rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse);
   // @perm: Name=ListQualifications
   rpc GetQualification(GetQualificationRequest) returns (GetQualificationResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Public"}
+  // @perm: Name=UpdateQualification
   rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"}
   rpc UpdateQualification(UpdateQualificationRequest) returns (UpdateQualificationResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc DeleteQualification(DeleteQualificationRequest) returns (DeleteQualificationResponse);
@@ -211,4 +213,7 @@ service QualificationsService {
   rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse);
   // @perm: Name=ListQualifications
   rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse);
+
+  // @perm: Name=UpdateQualification
+  rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
 }

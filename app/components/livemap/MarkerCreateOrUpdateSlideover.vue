@@ -6,6 +6,7 @@ import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/stores/livemap';
+import type { Coordinate } from '~/types/livemap';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 

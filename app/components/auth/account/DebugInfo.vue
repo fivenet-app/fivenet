@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { listEnumValues } from '@protobuf-ts/runtime';
 import { LogLevels } from 'consola';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -32,22 +33,24 @@ async function resetLocalStorage(): Promise<void> {
 }
 
 async function sendTestNotifications(): Promise<void> {
-    NotificationTypes.forEach((notificationType, index) => {
-        notifications.add({
-            title: { key: 'notifications.system.test_notification.title', parameters: { index: (index + 1).toString() } },
-            description: {
-                key: 'notifications.system.test_notification.content',
-                parameters: { type: NotificationType[notificationType] },
-            },
-            type: notificationType,
-            actions: [
-                {
-                    label: { key: 'common.click_here' },
-                    click: () => alert('Test was successful!'),
+    listEnumValues(NotificationType)
+        .filter((t) => t.number !== 0)
+        .forEach((notificationType, index) => {
+            notifications.add({
+                title: { key: 'notifications.system.test_notification.title', parameters: { index: (index + 1).toString() } },
+                description: {
+                    key: 'notifications.system.test_notification.content',
+                    parameters: { type: notificationType.name },
                 },
-            ],
+                type: notificationType.number,
+                actions: [
+                    {
+                        label: { key: 'common.click_here' },
+                        click: () => alert('Test was successful!'),
+                    },
+                ],
+            });
         });
-    });
 }
 
 function triggerBannerMessage(): void {

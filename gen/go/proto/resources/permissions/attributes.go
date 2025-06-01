@@ -197,7 +197,7 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) (b
 	}
 
 	changed := false
-	for i := range in.Strings {
+	for i := len(in.Strings) - 1; i >= 0; i-- {
 		if !slices.Contains(maxVals, in.Strings[i]) {
 			in.Strings = slices.Delete(in.Strings, i, i+1)
 			changed = true
@@ -222,7 +222,7 @@ func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool
 	}
 
 	changed := false
-	for i := range in.Strings {
+	for i := len(in.Strings) - 1; i >= 0; i-- {
 		if !slices.Contains(maxVals, in.Strings[i]) {
 			in.Strings = slices.Delete(in.Strings, i, i+1)
 			changed = true

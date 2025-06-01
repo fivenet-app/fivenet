@@ -8,7 +8,7 @@ package internet
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -92,12 +92,12 @@ type Ad struct {
 	// @sanitize: method=StripTags
 	Title string `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`
 	// @sanitize: method=StripTags
-	Description   string          `protobuf:"bytes,10,opt,name=description,proto3" json:"description,omitempty"`
-	Image         *filestore.File `protobuf:"bytes,11,opt,name=image,proto3,oneof" json:"image,omitempty"`
-	ApproverId    *int32          `protobuf:"varint,12,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`
-	ApproverJob   *string         `protobuf:"bytes,13,opt,name=approver_job,json=approverJob,proto3,oneof" json:"approver_job,omitempty"`
-	CreatorId     *int32          `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	CreatorJob    *string         `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
+	Description   string     `protobuf:"bytes,10,opt,name=description,proto3" json:"description,omitempty"`
+	Image         *file.File `protobuf:"bytes,11,opt,name=image,proto3,oneof" json:"image,omitempty"`
+	ApproverId    *int32     `protobuf:"varint,12,opt,name=approver_id,json=approverId,proto3,oneof" json:"approver_id,omitempty"`
+	ApproverJob   *string    `protobuf:"bytes,13,opt,name=approver_job,json=approverJob,proto3,oneof" json:"approver_job,omitempty"`
+	CreatorId     *int32     `protobuf:"varint,14,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	CreatorJob    *string    `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -202,7 +202,7 @@ func (x *Ad) GetDescription() string {
 	return ""
 }
 
-func (x *Ad) GetImage() *filestore.File {
+func (x *Ad) GetImage() *file.File {
 	if x != nil {
 		return x.Image
 	}
@@ -241,7 +241,7 @@ var File_resources_internet_ads_proto protoreflect.FileDescriptor
 
 const file_resources_internet_ads_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/internet/ads.proto\x12\x12resources.internet\x1a\x1eresources/filestore/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xd6\x06\n" +
+	"\x1cresources/internet/ads.proto\x12\x12resources.internet\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xd1\x06\n" +
 	"\x02Ad\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
 	"\n" +
@@ -258,8 +258,8 @@ const file_resources_internet_ads_proto_rawDesc = "" +
 	"\xfaB\ar\x05\x10\x03\x18\xff\x01R\x05title\x12,\n" +
 	"\vdescription\x18\n" +
 	" \x01(\tB\n" +
-	"\xfaB\ar\x05\x10\x03\x18\x80\bR\vdescription\x124\n" +
-	"\x05image\x18\v \x01(\v2\x19.resources.filestore.FileH\x04R\x05image\x88\x01\x01\x12$\n" +
+	"\xfaB\ar\x05\x10\x03\x18\x80\bR\vdescription\x12/\n" +
+	"\x05image\x18\v \x01(\v2\x14.resources.file.FileH\x04R\x05image\x88\x01\x01\x12$\n" +
 	"\vapprover_id\x18\f \x01(\x05H\x05R\n" +
 	"approverId\x88\x01\x01\x12&\n" +
 	"\fapprover_job\x18\r \x01(\tH\x06R\vapproverJob\x88\x01\x01\x12\"\n" +
@@ -303,7 +303,7 @@ var file_resources_internet_ads_proto_goTypes = []any{
 	(AdType)(0),                 // 0: resources.internet.AdType
 	(*Ad)(nil),                  // 1: resources.internet.Ad
 	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*filestore.File)(nil),      // 3: resources.filestore.File
+	(*file.File)(nil),           // 3: resources.file.File
 }
 var file_resources_internet_ads_proto_depIdxs = []int32{
 	2, // 0: resources.internet.Ad.created_at:type_name -> resources.timestamp.Timestamp
@@ -312,7 +312,7 @@ var file_resources_internet_ads_proto_depIdxs = []int32{
 	0, // 3: resources.internet.Ad.ad_type:type_name -> resources.internet.AdType
 	2, // 4: resources.internet.Ad.starts_at:type_name -> resources.timestamp.Timestamp
 	2, // 5: resources.internet.Ad.ends_at:type_name -> resources.timestamp.Timestamp
-	3, // 6: resources.internet.Ad.image:type_name -> resources.filestore.File
+	3, // 6: resources.internet.Ad.image:type_name -> resources.file.File
 	7, // [7:7] is the sub-list for method output_type
 	7, // [7:7] is the sub-list for method input_type
 	7, // [7:7] is the sub-list for extension type_name

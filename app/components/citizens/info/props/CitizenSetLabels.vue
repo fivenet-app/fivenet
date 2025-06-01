@@ -116,7 +116,7 @@ watch(state, () => {
                     v-for="(attribute, idx) in state.labels"
                     :key="attribute.name"
                     class="justify-between gap-2"
-                    :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                    :class="isColorBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                     :style="{ backgroundColor: attribute.color }"
                     size="lg"
                 >
@@ -127,7 +127,7 @@ watch(state, () => {
                     <UButton
                         v-if="canDo.set"
                         :class="
-                            isColourBright(hexToRgb(attribute.color, RGBBlack)!)
+                            isColorBright(hexToRgb(attribute.color, RGBBlack)!)
                                 ? '!bg-white/20 !text-black'
                                 : '!bg-black/20 !text-white'
                         "
@@ -171,7 +171,7 @@ watch(state, () => {
                     <template #option="{ option }">
                         <span
                             class="truncate"
-                            :class="isColourBright(hexToRgb(option.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                            :class="isColorBright(hexToRgb(option.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                             :style="{ backgroundColor: option.color }"
                             >{{ option.name }}</span
                         >

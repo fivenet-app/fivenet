@@ -8,7 +8,6 @@ package users
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	filestore "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -35,7 +34,8 @@ type UserShort struct {
 	Lastname      string                 `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
 	Dateofbirth   string                 `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 	PhoneNumber   *string                `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
-	Avatar        *filestore.File        `protobuf:"bytes,17,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
+	AvatarFileId  *uint64                `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
+	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -140,11 +140,18 @@ func (x *UserShort) GetPhoneNumber() string {
 	return ""
 }
 
-func (x *UserShort) GetAvatar() *filestore.File {
-	if x != nil {
-		return x.Avatar
+func (x *UserShort) GetAvatarFileId() uint64 {
+	if x != nil && x.AvatarFileId != nil {
+		return *x.AvatarFileId
 	}
-	return nil
+	return 0
+}
+
+func (x *UserShort) GetAvatar() string {
+	if x != nil && x.Avatar != nil {
+		return *x.Avatar
+	}
+	return ""
 }
 
 type User struct {
@@ -165,8 +172,9 @@ type User struct {
 	Playtime      *int32                 `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty"`
 	Props         *UserProps             `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`       // @gotags: alias:"fivenet_user_props"
 	Licenses      []*License             `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"` // @gotags: alias:"user_licenses"
-	Avatar        *filestore.File        `protobuf:"bytes,17,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
-	Group         *string                `protobuf:"bytes,18,opt,name=group,proto3,oneof" json:"group,omitempty"`
+	AvatarFileId  *uint64                `protobuf:"varint,17,opt,name=avatar_file_id,json=avatarFileId,proto3,oneof" json:"avatar_file_id,omitempty"`
+	Avatar        *string                `protobuf:"bytes,18,opt,name=avatar,proto3,oneof" json:"avatar,omitempty"`
+	Group         *string                `protobuf:"bytes,20,opt,name=group,proto3,oneof" json:"group,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -313,11 +321,18 @@ func (x *User) GetLicenses() []*License {
 	return nil
 }
 
-func (x *User) GetAvatar() *filestore.File {
-	if x != nil {
-		return x.Avatar
+func (x *User) GetAvatarFileId() uint64 {
+	if x != nil && x.AvatarFileId != nil {
+		return *x.AvatarFileId
 	}
-	return nil
+	return 0
+}
+
+func (x *User) GetAvatar() string {
+	if x != nil && x.Avatar != nil {
+		return *x.Avatar
+	}
+	return ""
 }
 
 func (x *User) GetGroup() string {
@@ -331,7 +346,7 @@ var File_resources_users_users_proto protoreflect.FileDescriptor
 
 const file_resources_users_users_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/users/users.proto\x12\x0fresources.users\x1a\x1eresources/filestore/file.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/props.proto\x1a\x17validate/validate.proto\"\xb8\x04\n" +
+	"\x1bresources/users/users.proto\x12\x0fresources.users\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/props.proto\x1a\x17validate/validate.proto\"\xdb\x04\n" +
 	"\tUserShort\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12,\n" +
 	"\n" +
@@ -345,14 +360,16 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\blastname\x18\b \x01(\tB\t\xfaB\x06r\x04\x10\x01\x182R\blastname\x12*\n" +
 	"\vdateofbirth\x18\t \x01(\tB\b\xfaB\x05r\x03\x98\x01\n" +
 	"R\vdateofbirth\x12/\n" +
-	"\fphone_number\x18\f \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x126\n" +
-	"\x06avatar\x18\x11 \x01(\v2\x19.resources.filestore.FileH\x04R\x06avatar\x88\x01\x01B\r\n" +
+	"\fphone_number\x18\f \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x03R\vphoneNumber\x88\x01\x01\x12)\n" +
+	"\x0eavatar_file_id\x18\x11 \x01(\x04H\x04R\favatarFileId\x88\x01\x01\x12\x1b\n" +
+	"\x06avatar\x18\x12 \x01(\tH\x05R\x06avatar\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_labelB\x0f\n" +
-	"\r_phone_numberB\t\n" +
-	"\a_avatar\"\x80\a\n" +
+	"\r_phone_numberB\x11\n" +
+	"\x0f_avatar_file_idB\t\n" +
+	"\a_avatar\"\xa3\a\n" +
 	"\x04User\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12,\n" +
 	"\n" +
@@ -373,9 +390,11 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\x05visum\x18\r \x01(\x05B\a\xfaB\x04\x1a\x02(\x00H\x06R\x05visum\x88\x01\x01\x12(\n" +
 	"\bplaytime\x18\x0e \x01(\x05B\a\xfaB\x04\x1a\x02(\x00H\aR\bplaytime\x88\x01\x01\x120\n" +
 	"\x05props\x18\x0f \x01(\v2\x1a.resources.users.UserPropsR\x05props\x124\n" +
-	"\blicenses\x18\x10 \x03(\v2\x18.resources.users.LicenseR\blicenses\x126\n" +
-	"\x06avatar\x18\x11 \x01(\v2\x19.resources.filestore.FileH\bR\x06avatar\x88\x01\x01\x12\"\n" +
-	"\x05group\x18\x12 \x01(\tB\a\xfaB\x04r\x02\x182H\tR\x05group\x88\x01\x01B\r\n" +
+	"\blicenses\x18\x10 \x03(\v2\x18.resources.users.LicenseR\blicenses\x12)\n" +
+	"\x0eavatar_file_id\x18\x11 \x01(\x04H\bR\favatarFileId\x88\x01\x01\x12\x1b\n" +
+	"\x06avatar\x18\x12 \x01(\tH\tR\x06avatar\x88\x01\x01\x12\"\n" +
+	"\x05group\x18\x14 \x01(\tB\a\xfaB\x04r\x02\x182H\n" +
+	"R\x05group\x88\x01\x01B\r\n" +
 	"\v_identifierB\f\n" +
 	"\n" +
 	"_job_labelB\x12\n" +
@@ -384,7 +403,8 @@ const file_resources_users_users_proto_rawDesc = "" +
 	"\a_heightB\x0f\n" +
 	"\r_phone_numberB\b\n" +
 	"\x06_visumB\v\n" +
-	"\t_playtimeB\t\n" +
+	"\t_playtimeB\x11\n" +
+	"\x0f_avatar_file_idB\t\n" +
 	"\a_avatarB\b\n" +
 	"\x06_groupBIZGgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;usersb\x06proto3"
 
@@ -402,22 +422,19 @@ func file_resources_users_users_proto_rawDescGZIP() []byte {
 
 var file_resources_users_users_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_users_users_proto_goTypes = []any{
-	(*UserShort)(nil),      // 0: resources.users.UserShort
-	(*User)(nil),           // 1: resources.users.User
-	(*filestore.File)(nil), // 2: resources.filestore.File
-	(*UserProps)(nil),      // 3: resources.users.UserProps
-	(*License)(nil),        // 4: resources.users.License
+	(*UserShort)(nil), // 0: resources.users.UserShort
+	(*User)(nil),      // 1: resources.users.User
+	(*UserProps)(nil), // 2: resources.users.UserProps
+	(*License)(nil),   // 3: resources.users.License
 }
 var file_resources_users_users_proto_depIdxs = []int32{
-	2, // 0: resources.users.UserShort.avatar:type_name -> resources.filestore.File
-	3, // 1: resources.users.User.props:type_name -> resources.users.UserProps
-	4, // 2: resources.users.User.licenses:type_name -> resources.users.License
-	2, // 3: resources.users.User.avatar:type_name -> resources.filestore.File
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	2, // 0: resources.users.User.props:type_name -> resources.users.UserProps
+	3, // 1: resources.users.User.licenses:type_name -> resources.users.License
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_resources_users_users_proto_init() }

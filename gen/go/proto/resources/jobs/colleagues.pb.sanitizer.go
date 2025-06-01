@@ -12,15 +12,6 @@ func (m *Colleague) Sanitize() error {
 		return nil
 	}
 
-	// Field: Avatar
-	if m.Avatar != nil {
-		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Email
 
 	if m.Email != nil {

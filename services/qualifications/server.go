@@ -7,6 +7,7 @@ import (
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
@@ -14,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -55,7 +57,10 @@ func init() {
 	})
 }
 
-var tQuali = table.FivenetQualifications.AS("qualification")
+var (
+	tQuali      = table.FivenetQualifications.AS("qualification")
+	tQualiFiles = table.FivenetQualificationsFiles
+)
 
 type Server struct {
 	pbqualifications.QualificationsServiceServer
@@ -69,6 +74,8 @@ type Server struct {
 	st       storage.IStorage
 
 	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel]
+
+	fHandler *filestore.Handler[uint64]
 }
 
 type Params struct {
@@ -87,6 +94,13 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
+	// 3 MiB limit
+	qualiFileHandler := filestore.NewHandler(p.Storage, p.DB, tQualiFiles, tQualiFiles.QualificationID, tQualiFiles.FileID, 3<<20,
+		func(parentId uint64) jet.BoolExpression {
+			return tQualiFiles.QualificationID.EQ(jet.Uint64(parentId))
+		}, filestore.InsertJoinRow, false,
+	)
+
 	s := &Server{
 		logger: p.Logger.Named("jobs"),
 
@@ -131,6 +145,8 @@ func NewServer(p Params) *Server {
 			nil,
 			nil,
 		),
+
+		fHandler: qualiFileHandler,
 	}
 
 	return s

@@ -11,6 +11,7 @@
 // source: resources/centrum/units.proto
 // source: resources/centrum/units_access.proto
 // source: resources/centrum/user_unit.proto
+// source: resources/collab/collab.proto
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto
 // source: resources/common/uuid.proto
@@ -28,7 +29,9 @@
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
-// source: resources/filestore/file.proto
+// source: resources/file/file.proto
+// source: resources/file/filestore.proto
+// source: resources/file/meta.proto
 // source: resources/internet/access.proto
 // source: resources/internet/ads.proto
 // source: resources/internet/domain.proto
@@ -80,7 +83,9 @@
 // source: services/centrum/centrum.proto
 // source: services/citizens/citizens.proto
 // source: services/completor/completor.proto
+// source: services/documents/collab.proto
 // source: services/documents/documents.proto
+// source: services/filestore/filestore.proto
 // source: services/internet/ads.proto
 // source: services/internet/domain.proto
 // source: services/internet/internet.proto
@@ -94,12 +99,12 @@
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
 // source: services/settings/cron.proto
-// source: services/settings/filestore.proto
 // source: services/settings/laws.proto
 // source: services/settings/settings.proto
 // source: services/stats/stats.proto
 // source: services/sync/sync.proto
 // source: services/vehicles/vehicles.proto
+// source: services/wiki/collab.proto
 // source: services/wiki/wiki.proto
 
 export const grpcServices = [
@@ -108,7 +113,9 @@ export const grpcServices = [
     'centrum.CentrumService',
     'citizens.CitizensService',
     'completor.CompletorService',
+    'documents.CollabService',
     'documents.DocumentsService',
+    'filestore.FilestoreService',
     'internet.AdsService',
     'internet.DomainService',
     'internet.InternetService',
@@ -122,12 +129,12 @@ export const grpcServices = [
     'settings.AccountsService',
     'settings.ConfigService',
     'settings.CronService',
-    'settings.FilestoreService',
     'settings.LawsService',
     'settings.SettingsService',
     'stats.StatsService',
     'sync.SyncService',
     'vehicles.VehiclesService',
+    'wiki.CollabService',
     'wiki.WikiService',
 ];
 
@@ -182,13 +189,17 @@ export const grpcMethods = [
 	'citizens.CitizensService/GetUser',
 	'citizens.CitizensService/ListUserActivity',
 	'citizens.CitizensService/SetUserProps',
-	'citizens.CitizensService/SetProfilePicture',
+	'citizens.CitizensService/UploadAvatar',
+	'citizens.CitizensService/DeleteAvatar',
+	'citizens.CitizensService/UploadMugshot',
+	'citizens.CitizensService/DeleteMugshot',
 	'citizens.CitizensService/ManageLabels',
 	'completor.CompletorService/CompleteCitizens',
 	'completor.CompletorService/CompleteJobs',
 	'completor.CompletorService/CompleteDocumentCategories',
 	'completor.CompletorService/ListLawBooks',
 	'completor.CompletorService/CompleteCitizenLabels',
+	'documents.CollabService/JoinRoom',
 	'documents.DocumentsService/ListTemplates',
 	'documents.DocumentsService/GetTemplate',
 	'documents.DocumentsService/CreateTemplate',
@@ -225,6 +236,11 @@ export const grpcMethods = [
 	'documents.DocumentsService/ListDocumentPins',
 	'documents.DocumentsService/ToggleDocumentPin',
 	'documents.DocumentsService/SetDocumentReminder',
+	'documents.DocumentsService/UploadFile',
+	'filestore.FilestoreService/Upload',
+	'filestore.FilestoreService/ListFiles',
+	'filestore.FilestoreService/DeleteFile',
+	'filestore.FilestoreService/DeleteFileByPath',
 	'internet.AdsService/GetAds',
 	'internet.DomainService/ListTLDs',
 	'internet.DomainService/CheckDomainAvailability',
@@ -292,6 +308,7 @@ export const grpcMethods = [
 	'qualifications.QualificationsService/TakeExam',
 	'qualifications.QualificationsService/SubmitExam',
 	'qualifications.QualificationsService/GetUserExam',
+	'qualifications.QualificationsService/UploadFile',
 	'settings.AccountsService/ListAccounts',
 	'settings.AccountsService/UpdateAccount',
 	'settings.AccountsService/DisconnectOAuth2Connection',
@@ -299,9 +316,6 @@ export const grpcMethods = [
 	'settings.ConfigService/GetAppConfig',
 	'settings.ConfigService/UpdateAppConfig',
 	'settings.CronService/ListCronjobs',
-	'settings.FilestoreService/ListFiles',
-	'settings.FilestoreService/UploadFile',
-	'settings.FilestoreService/DeleteFile',
 	'settings.LawsService/CreateOrUpdateLawBook',
 	'settings.LawsService/DeleteLawBook',
 	'settings.LawsService/CreateOrUpdateLaw',
@@ -320,6 +334,8 @@ export const grpcMethods = [
 	'settings.SettingsService/GetJobLimits',
 	'settings.SettingsService/UpdateJobLimits',
 	'settings.SettingsService/DeleteFaction',
+	'settings.SettingsService/UploadJobLogo',
+	'settings.SettingsService/DeleteJobLogo',
 	'stats.StatsService/GetStats',
 	'sync.SyncService/GetStatus',
 	'sync.SyncService/AddActivity',
@@ -329,10 +345,12 @@ export const grpcMethods = [
 	'sync.SyncService/DeleteData',
 	'sync.SyncService/Stream',
 	'vehicles.VehiclesService/ListVehicles',
+	'wiki.CollabService/JoinRoom',
 	'wiki.WikiService/ListPages',
 	'wiki.WikiService/GetPage',
 	'wiki.WikiService/CreatePage',
 	'wiki.WikiService/UpdatePage',
 	'wiki.WikiService/DeletePage',
 	'wiki.WikiService/ListPageActivity',
+	'wiki.WikiService/UploadFile',
 ];

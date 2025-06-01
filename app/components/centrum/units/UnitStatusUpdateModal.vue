@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { Coordinate } from '~/types/livemap';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';

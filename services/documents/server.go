@@ -1,11 +1,15 @@
 package documents
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
+	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
@@ -13,8 +17,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
 )
 
@@ -95,8 +102,12 @@ func init() {
 
 type Server struct {
 	pbdocuments.DocumentsServiceServer
+	pbdocuments.CollabServiceServer
 
-	db            *sql.DB
+	logger *zap.Logger
+	db     *sql.DB
+
+	js            *events.JSWrapper
 	ps            perms.Permissions
 	jobs          *mstlystcdata.Jobs
 	docCategories *mstlystcdata.DocumentCategories
@@ -108,13 +119,20 @@ type Server struct {
 
 	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
 	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
+
+	collabServer *collab.CollabServer
+	fHandler     *filestore.Handler[uint64]
 }
 
 type Params struct {
 	fx.In
 
+	LC fx.Lifecycle
+
+	Logger        *zap.Logger
 	DB            *sql.DB
 	Perms         perms.Permissions
+	Storage       storage.IStorage
 	Jobs          *mstlystcdata.Jobs
 	DocCategories *mstlystcdata.DocumentCategories
 	Enricher      *mstlystcdata.UserAwareEnricher
@@ -122,11 +140,28 @@ type Params struct {
 	Ui            userinfo.UserInfoRetriever
 	Notif         notifi.INotifi
 	HTMLDiffer    *htmldiffer.Differ
+	JS            *events.JSWrapper
 }
 
-func NewServer(p Params) *Server {
-	return &Server{
-		db:            p.DB,
+func NewServer(p Params) (*Server, error) {
+	ctxCancel, cancel := context.WithCancel(context.Background())
+
+	collabServer := collab.New(ctxCancel, p.Logger, p.JS, "documents")
+
+	tDocFiles := table.FivenetDocumentsFiles
+
+	// 3 MiB limit
+	fHandler := filestore.NewHandler(p.Storage, p.DB, tDocFiles, tDocFiles.DocumentID, tDocFiles.FileID, 3<<20,
+		func(parentId uint64) jet.BoolExpression {
+			return tDocFiles.DocumentID.EQ(jet.Uint64(parentId))
+		}, filestore.InsertJoinRow, false,
+	)
+
+	s := &Server{
+		logger: p.Logger.Named("documents"),
+		db:     p.DB,
+
+		js:            p.JS,
 		ps:            p.Perms,
 		jobs:          p.Jobs,
 		docCategories: p.DocCategories,
@@ -137,7 +172,6 @@ func NewServer(p Params) *Server {
 		htmlDiff:      p.HTMLDiffer,
 
 		access: newAccess(p.DB),
-
 		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
 			p.DB,
 			table.FivenetDocumentsTemplates,
@@ -172,7 +206,21 @@ func NewServer(p Params) *Server {
 			nil,
 			nil,
 		),
+		collabServer: collabServer,
+		fHandler:     fHandler,
 	}
+
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		return s.collabServer.Start(ctxStartup)
+	}))
+
+	p.LC.Append(fx.StopHook(func(ctxStartup context.Context) error {
+		cancel()
+
+		return nil
+	}))
+
+	return s, nil
 }
 
 func newAccess(db *sql.DB) *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel] {
@@ -233,6 +281,7 @@ func newAccess(db *sql.DB) *access.Grouped[documents.DocumentJobAccess, *documen
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbdocuments.RegisterDocumentsServiceServer(srv, s)
+	pbdocuments.RegisterCollabServiceServer(srv, s)
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

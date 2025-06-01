@@ -188,6 +188,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 			tQuali.UpdatedAt,
 			tQuali.Job,
 			tQuali.Closed,
+			tQuali.Draft,
 			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,

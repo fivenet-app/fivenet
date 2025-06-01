@@ -12,6 +12,7 @@ require (
 	github.com/alecthomas/kong v1.11.0
 	github.com/aymanbagabas/go-udiff v0.2.0
 	github.com/blevesearch/bleve/v2 v2.5.1
+	github.com/cespare/xxhash v1.1.0
 	github.com/coder/websocket v1.8.13
 	github.com/creasty/defaults v1.8.0
 	github.com/desertbit/timer v1.0.1
@@ -71,7 +72,7 @@ require (
 	golang.org/x/image v0.27.0
 	golang.org/x/net v0.40.0
 	golang.org/x/oauth2 v0.30.0
-	google.golang.org/grpc v1.72.1
+	google.golang.org/grpc v1.72.2
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/yaml.v3 v3.0.1
 	gotest.tools/v3 v3.5.2

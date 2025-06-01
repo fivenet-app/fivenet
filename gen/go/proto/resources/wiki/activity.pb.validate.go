@@ -521,6 +521,39 @@ func (m *PageUpdated) validate(all bool) error {
 		// no validation rules for ContentDiff
 	}
 
+	if m.FilesChange != nil {
+
+		if all {
+			switch v := interface{}(m.GetFilesChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageUpdatedValidationError{
+						field:  "FilesChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageUpdatedValidationError{
+						field:  "FilesChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFilesChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageUpdatedValidationError{
+					field:  "FilesChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return PageUpdatedMultiError(errors)
 	}
@@ -597,6 +630,110 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PageUpdatedValidationError{}
+
+// Validate checks the field values on PageFilesChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *PageFilesChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PageFilesChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PageFilesChangeMultiError, or nil if none found.
+func (m *PageFilesChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PageFilesChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Added
+
+	// no validation rules for Deleted
+
+	if len(errors) > 0 {
+		return PageFilesChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// PageFilesChangeMultiError is an error wrapping multiple validation errors
+// returned by PageFilesChange.ValidateAll() if the designated constraints
+// aren't met.
+type PageFilesChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PageFilesChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PageFilesChangeMultiError) AllErrors() []error { return m }
+
+// PageFilesChangeValidationError is the validation error returned by
+// PageFilesChange.Validate if the designated constraints aren't met.
+type PageFilesChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PageFilesChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PageFilesChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PageFilesChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PageFilesChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PageFilesChangeValidationError) ErrorName() string { return "PageFilesChangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PageFilesChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPageFilesChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PageFilesChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PageFilesChangeValidationError{}
 
 // Validate checks the field values on PageAccessUpdated with the rules defined
 // in the proto definition for this message. If any rules are violated, the

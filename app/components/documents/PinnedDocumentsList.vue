@@ -112,24 +112,6 @@ const editing = ref(false);
                             class="inline-flex items-center gap-1"
                             orientation="vertical"
                         >
-                            <UTooltip :text="doc.pin?.state && doc.pin?.job ? $t('common.pin', 1) : $t('common.unpin')">
-                                <UButton
-                                    v-if="attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value"
-                                    class="shrink-0 flex-col text-center"
-                                    variant="link"
-                                    size="xs"
-                                    :padded="false"
-                                    :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
-                                    @click="togglePin(doc.id, !doc.pin?.job, false)"
-                                >
-                                    <UIcon
-                                        class="size-5"
-                                        :name="doc.pin?.state && doc.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
-                                    />
-                                    {{ $t('common.job') }}
-                                </UButton>
-                            </UTooltip>
-
                             <UTooltip :text="doc.pin?.state && doc.pin?.userId ? $t('common.pin', 1) : $t('common.unpin')">
                                 <UButton
                                     class="shrink-0 flex-col text-center"
@@ -147,6 +129,25 @@ const editing = ref(false);
                                     />
                                     {{ $t('common.personal') }}
                                 </UButton>
+                                <UTooltip
+                                    v-if="attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value"
+                                    :text="doc.pin?.state && doc.pin?.job ? $t('common.pin', 1) : $t('common.unpin')"
+                                >
+                                    <UButton
+                                        class="shrink-0 flex-col text-center"
+                                        variant="link"
+                                        size="xs"
+                                        :padded="false"
+                                        :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
+                                        @click="togglePin(doc.id, !doc.pin?.job, false)"
+                                    >
+                                        <UIcon
+                                            class="size-5"
+                                            :name="doc.pin?.state && doc.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
+                                        />
+                                        {{ $t('common.job') }}
+                                    </UButton>
+                                </UTooltip>
                             </UTooltip>
                         </UButtonGroup>
 

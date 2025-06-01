@@ -3,7 +3,6 @@ import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
-import type { File } from '~~/gen/ts/resources/filestore/file';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
@@ -17,7 +16,7 @@ export class ClipboardUser {
     public lastname: string;
     public dateofbirth: string | undefined;
     public phoneNumber: string | undefined;
-    public avatar: File | undefined;
+    public avatar: string | undefined;
 
     constructor(u: UserShort | User) {
         this.userId = u.userId;
@@ -43,6 +42,7 @@ export class ClipboardDocument {
     public category: Category | undefined;
     public state: string;
     public closed: boolean;
+    public draft: boolean;
     public public: boolean;
 
     constructor(d: Document) {
@@ -53,6 +53,7 @@ export class ClipboardDocument {
         this.state = d.state;
         this.creator = new ClipboardUser(d.creator!);
         this.closed = d.closed;
+        this.draft = d.draft;
         this.public = d.public;
     }
 }
@@ -92,7 +93,7 @@ export function getUser(obj: ClipboardUser): User {
         dateofbirth: obj.dateofbirth ?? '',
         phoneNumber: obj.phoneNumber ?? '',
         licenses: [],
-        avatar: { url: obj.avatar?.url, data: new Uint8Array() },
+        avatar: obj.avatar,
     };
 
     return u;
@@ -115,6 +116,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         creatorJob: user.job,
         state: obj.state,
         closed: obj.closed,
+        draft: obj.draft,
         public: obj.public,
     };
     if (obj.createdAt !== undefined) {
@@ -129,7 +131,7 @@ export interface ClipboardData {
     vehicles: ClipboardVehicle[];
 }
 
-export type ListType = 'users' | 'documents' | 'vehicles';
+export type ListType = 'citizens' | 'documents' | 'vehicles';
 
 export const useClipboardStore = defineStore(
     'clipboard',
@@ -143,20 +145,18 @@ export const useClipboardStore = defineStore(
             vehicles: [],
         });
 
-        const getTemplateData = (): TemplateData => {
-            return {
-                documents: activeStack.value.documents.map(getDocument),
-                users: activeStack.value.users.map(getUser),
-                vehicles: activeStack.value.vehicles.map(getVehicle),
-            };
-        };
+        const getTemplateData = (): TemplateData => ({
+            documents: activeStack.value.documents.map(getDocument),
+            users: activeStack.value.users.map(getUser),
+            vehicles: activeStack.value.vehicles.map(getVehicle),
+        });
 
         const promoteToActiveStack = (listType: ListType): void => {
             switch (listType) {
                 case 'documents':
                     activeStack.value.documents = JSON.parse(JSON.stringify(documents.value)) as ClipboardDocument[];
                     break;
-                case 'users':
+                case 'citizens':
                     activeStack.value.users = JSON.parse(JSON.stringify(users.value)) as ClipboardUser[];
                     break;
                 case 'vehicles':
@@ -172,8 +172,8 @@ export const useClipboardStore = defineStore(
         };
 
         const addDocument = (document: Document): void => {
-            if (!documents.value.some((o) => o.id === document.id)) {
-                documents.value.unshift(new ClipboardDocument(document));
+            if (!documents.value.find((o) => o.id === document.id)) {
+                documents.value.unshift(new ClipboardDocument(unref(document)));
             }
         };
 
@@ -186,10 +186,10 @@ export const useClipboardStore = defineStore(
         };
 
         const addUser = (user: User, active?: boolean): void => {
-            if (!users.value.some((o) => o.userId === user.userId)) {
-                users.value.unshift(new ClipboardUser(user));
+            if (!users.value.find((o) => o.userId === user.userId)) {
+                users.value.unshift(new ClipboardUser(unref(user)));
             }
-            if (active) promoteToActiveStack('users');
+            if (active) promoteToActiveStack('citizens');
         };
 
         const removeUser = (id: number): void => {
@@ -201,8 +201,8 @@ export const useClipboardStore = defineStore(
         };
 
         const addVehicle = (vehicle: Vehicle): void => {
-            if (!vehicles.value.some((o) => o.plate === vehicle.plate)) {
-                vehicles.value.unshift(new ClipboardVehicle(vehicle));
+            if (!vehicles.value.find((o) => o.plate === vehicle.plate)) {
+                vehicles.value.unshift(new ClipboardVehicle(unref(vehicle)));
             }
         };
 
@@ -222,12 +222,22 @@ export const useClipboardStore = defineStore(
         };
 
         const checkRequirements = (reqs: ObjectSpecs, listType: ListType): boolean => {
-            const length = (listType === 'documents' ? documents.value : listType === 'users' ? users.value : vehicles.value)
+            const length = (listType === 'documents' ? documents.value : listType === 'citizens' ? users.value : vehicles.value)
                 .length;
-            return (
-                !(reqs.required && length <= (reqs.min ?? 1)) &&
-                !(reqs.min && length < reqs.min && reqs.max && length > reqs.max)
-            );
+            if (reqs.max !== undefined) {
+                reqs.max = reqs.min;
+            }
+
+            if (reqs.required && length === 0) {
+                return false;
+            }
+            if (typeof reqs.min === 'number' && length < reqs.min) {
+                return false;
+            }
+            if (typeof reqs.max === 'number' && length > reqs.max) {
+                return false;
+            }
+            return true;
         };
 
         return {
@@ -235,6 +245,7 @@ export const useClipboardStore = defineStore(
             documents,
             vehicles,
             activeStack,
+
             getTemplateData,
             promoteToActiveStack,
             clearActiveStack,

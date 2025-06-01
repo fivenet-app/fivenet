@@ -18,7 +18,8 @@ defineProps<{
                 <p class="text-sm font-semibold leading-6 text-gray-100">
                     <ULink :to="{ name: 'qualifications-id', params: { id: result.qualificationId } }">
                         <span class="absolute inset-x-0 -top-px bottom-0" />
-                        {{ result.qualification?.abbreviation }}: {{ result.qualification?.title }}
+                        {{ result.qualification?.abbreviation }}:
+                        {{ !result.qualification?.title ? $t('common.untitled') : result.qualification?.title }}
                     </ULink>
                 </p>
                 <p class="mt-1 flex text-xs leading-5">

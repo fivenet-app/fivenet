@@ -2,6 +2,7 @@ import { GrpcStatusCode } from '@protobuf-ts/grpcweb-transport';
 import {
     ClientStreamingCall,
     Deferred,
+    DeferredState,
     DuplexStreamingCall,
     RpcError,
     RpcOutputStreamController,
@@ -21,11 +22,38 @@ import type { GrpcWSOptions } from '../../grpcws/bridge/options';
 import { errInternal, errTimeout, errUnavailable } from '../errors';
 import type { Transport, TransportFactory } from '../transports/transport';
 import { WebsocketChannelTransport } from '../transports/websocket/websocketChannel';
-import { createGrpcStatus, createGrpcTrailers } from './utils';
+import { constructWebSocketAddress, createGrpcStatus, createGrpcTrailers } from './utils';
+
+const logger = useLogger('📡 GRPC-WS');
+
+export const webSocket = useWebSocket(
+    constructWebSocketAddress(
+        `${window.location.protocol}//${window.location.hostname}:${!import.meta.dev ? window.location.port : 8080}/api/grpcws`,
+    ),
+    {
+        immediate: false,
+        autoReconnect: {
+            delay: 750,
+        },
+        protocols: ['grpc-websocket-channel'],
+
+        onConnected(ws) {
+            ws.binaryType = 'arraybuffer';
+            logger.info('Websocket connected');
+        },
+        onDisconnected(_, event) {
+            if (event.wasClean) {
+                logger.info('Websocket disconnected cleanly, code:', event.code, 'reason:', event.reason);
+                return;
+            }
+
+            logger.error('Websocket disconnected, code:', event.code, 'reason:', event.reason);
+        },
+    },
+);
 
 export class GrpcWSTransport implements RpcTransport {
     private readonly defaultOptions;
-    private logger: ILogger;
     webSocket: UseWebSocketReturn<ArrayBuffer>;
     wsInitiated: Ref<boolean>;
     private wsTs: TransportFactory;
@@ -33,34 +61,11 @@ export class GrpcWSTransport implements RpcTransport {
     constructor(defaultOptions: GrpcWSOptions) {
         this.defaultOptions = defaultOptions;
 
-        const logger = useLogger('📡 GRPC-WS');
-        this.logger = logger;
-
         const wsInitiated = ref(false);
         this.wsInitiated = wsInitiated;
 
-        const webSocket = useWebSocket(defaultOptions.wsUrl, {
-            immediate: false,
-            autoReconnect: {
-                delay: 750,
-            },
-            protocols: ['grpc-websocket-channel'],
-
-            onConnected(ws) {
-                ws.binaryType = 'arraybuffer';
-                wsInitiated.value = true;
-                logger.info('Websocket connected');
-            },
-            onDisconnected(_, event) {
-                if (event.wasClean) {
-                    return;
-                }
-
-                logger.error('Websocket disconnected, code:', event.code, 'reason:', event.reason);
-            },
-        });
         this.webSocket = webSocket;
-        this.wsTs = WebsocketChannelTransport(this.logger, this.webSocket);
+        this.wsTs = WebsocketChannelTransport(logger, this.webSocket);
     }
 
     mergeOptions(options?: Partial<RpcOptions>): RpcOptions {
@@ -68,7 +73,7 @@ export class GrpcWSTransport implements RpcTransport {
     }
 
     unary<I extends object, O extends object>(method: MethodInfo<I, O>, _input: I, _options: RpcOptions): UnaryCall<I, O> {
-        const e = new RpcError('Unary request is not supported by grpc-web', GrpcStatusCode[GrpcStatusCode.UNIMPLEMENTED]);
+        const e = new RpcError('Unary request is not supported by grpc-ws', GrpcStatusCode[GrpcStatusCode.UNIMPLEMENTED]);
         e.methodName = method.name;
         e.serviceName = method.service.typeName;
         throw e;
@@ -79,6 +84,11 @@ export class GrpcWSTransport implements RpcTransport {
         input: I,
         options: RpcOptions,
     ): ServerStreamingCall<I, O> {
+        if (this.webSocket.status.value !== 'OPEN') {
+            logger.error("Websocket isn't connected, cannot create server streaming call");
+            throw errUnavailable;
+        }
+
         const opt = options as GrpcWSOptions,
             transport = this.wsTs({
                 methodDefinition: method,
@@ -145,26 +155,8 @@ export class GrpcWSTransport implements RpcTransport {
             });
         }
 
-        // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
-        // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value === 'OPEN') {
-            transport.start(new Metadata());
-            transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
-        } else {
-            const stop = watch(this.webSocket.status, (status) => {
-                if (status !== 'OPEN') return;
-
-                clearTimeout(timeoutId);
-                stop();
-
-                transport.start(new Metadata());
-                transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
-            });
-            timeoutId = setTimeout(() => {
-                stop();
-                transport.cancel(errUnavailable);
-            }, 3000);
-        }
+        transport.start(new Metadata());
+        transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
 
         return call;
     }
@@ -173,6 +165,11 @@ export class GrpcWSTransport implements RpcTransport {
         method: MethodInfo<I, O>,
         options: RpcOptions,
     ): ClientStreamingCall<I, O> {
+        if (this.webSocket.status.value !== 'OPEN') {
+            logger.error("Websocket isn't connected, cannot create client streaming call");
+            throw errUnavailable;
+        }
+
         const opt = options as GrpcWSOptions,
             transport = this.wsTs({
                 methodDefinition: method,
@@ -196,7 +193,10 @@ export class GrpcWSTransport implements RpcTransport {
                     defStatus.rejectPending(err);
                     defTrailer.rejectPending(err);
 
-                    defMessage.resolve(method.O.create());
+                    if (defMessage.state === DeferredState.RESOLVED) {
+                        return;
+                    }
+                    defMessage.rejectPending(err);
                 },
                 onHeaders(headers: Metadata, _: number): void {
                     defHeader.resolvePending(headers.headersMap);
@@ -231,29 +231,17 @@ export class GrpcWSTransport implements RpcTransport {
             });
         }
 
-        // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
-        // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value === 'OPEN') {
-            transport.start(new Metadata());
-        } else {
-            const stop = watch(this.webSocket.status, (status) => {
-                if (status !== 'OPEN') return;
-
-                clearTimeout(timeoutId);
-                stop();
-
-                transport.start(new Metadata());
-            });
-            timeoutId = setTimeout(() => {
-                stop();
-                transport.cancel(errUnavailable);
-            }, 3000);
-        }
+        transport.start(new Metadata());
 
         return call;
     }
 
     duplex<I extends object, O extends object>(method: MethodInfo<I, O>, options: RpcOptions): DuplexStreamingCall<I, O> {
+        if (this.webSocket.status.value !== 'OPEN') {
+            logger.error("Websocket isn't connected, cannot create duplex streaming call");
+            throw errUnavailable;
+        }
+
         const opt = options as GrpcWSOptions,
             transport = this.wsTs({
                 methodDefinition: method,
@@ -316,35 +304,16 @@ export class GrpcWSTransport implements RpcTransport {
             });
         }
 
-        // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
-        // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value === 'OPEN') {
-            transport.start(new Metadata());
-        } else {
-            const stop = watch(this.webSocket.status, (status) => {
-                if (status !== 'OPEN') return;
-
-                clearTimeout(timeoutId);
-                stop();
-
-                transport.start(new Metadata());
-            });
-            timeoutId = setTimeout(() => {
-                stop();
-                transport.cancel(errUnavailable);
-            }, 3000);
-        }
+        transport.start(new Metadata());
 
         return call;
     }
 
     close(): void {
-        if (this.webSocket.status.value === 'CLOSED') {
-            return;
-        }
+        if (this.webSocket.status.value === 'CLOSED') return;
 
         this.webSocket.close();
-        this.logger.info('Closed Websocket');
+        logger.info('Closed Websocket');
     }
 }
 

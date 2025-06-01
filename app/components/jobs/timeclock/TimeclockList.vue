@@ -594,7 +594,7 @@ const { game } = useAppConfig();
         <template #name-data="{ row: entry }">
             <div class="inline-flex items-center gap-1">
                 <ProfilePictureImg
-                    :src="entry.user?.avatar?.url"
+                    :src="entry.user?.avatar"
                     :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
                     size="xs"
                 />

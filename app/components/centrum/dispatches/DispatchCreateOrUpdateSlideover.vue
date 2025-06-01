@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useLivemapStore } from '~/stores/livemap';
+import type { Coordinate } from '~/types/livemap';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{

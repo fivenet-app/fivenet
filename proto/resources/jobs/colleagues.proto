@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package resources.jobs;
 
-import "resources/filestore/file.proto";
 import "resources/jobs/labels.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
@@ -26,10 +25,11 @@ message Colleague {
   }];
   string dateofbirth = 9 [(validate.rules).string.len = 10];
   optional string phone_number = 12 [(validate.rules).string.max_len = 20];
-  optional resources.filestore.File avatar = 17;
-  ColleagueProps props = 18; // @gotags: alias:"colleague_props"
+  optional uint64 avatar_file_id = 17;
+  optional string avatar = 18; // @gotags: alias:"avatar"
+  ColleagueProps props = 19; // @gotags: alias:"colleague_props"
   // @sanitize: method=StripTags
-  optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
+  optional string email = 20 [(validate.rules).string = {min_len: 6, max_len: 80}];
 }
 
 message ColleagueProps {

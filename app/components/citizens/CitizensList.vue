@@ -310,9 +310,9 @@ defineShortcuts({
         <template #name-data="{ row: citizen }">
             <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">
                 <ProfilePictureImg
-                    :src="citizen.props?.mugShot?.url"
+                    :src="citizen.props?.mugshot?.filePath"
                     :name="`${citizen.firstname} ${citizen.lastname}`"
-                    :alt="$t('common.mug_shot')"
+                    :alt="$t('common.mugshot')"
                     :enable-popup="true"
                     size="sm"
                 />

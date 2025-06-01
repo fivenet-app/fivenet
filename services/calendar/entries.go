@@ -392,6 +392,7 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *pbcalendar.Delete
 
 func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression) (*calendar.CalendarEntry, error) {
 	tCreator := tables.User().AS("creator")
+	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tCalendarEntry.
 		SELECT(
@@ -423,7 +424,8 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
+			tAvatar.FilePath.AS("creator.avatar"),
 			tCalendarEntry.Recurring,
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.CreatedAt,
@@ -444,6 +446,9 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			LEFT_JOIN(tCalendarRSVP,
 				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)).
 					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		GROUP_BY(tCalendarEntry.ID).

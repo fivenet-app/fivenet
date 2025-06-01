@@ -9,18 +9,7 @@ import type { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/do
 
 const clipboardStore = useClipboardStore();
 
-const props = withDefaults(
-    defineProps<{
-        autoFill?: boolean;
-    }>(),
-    {
-        autoFill: false,
-    },
-);
-
 const { isOpen } = useModal();
-
-const { can } = useAuth();
 
 const template = ref<undefined | TemplateShort>();
 const reqs = ref<undefined | TemplateRequirements>();
@@ -30,24 +19,36 @@ const steps = ref<{ selectTemplate: boolean; selectClipboard: boolean }>({
     selectClipboard: false,
 });
 
-const reqStatus = ref<{
-    documents: boolean;
-    users: boolean;
-    vehicles: boolean;
-}>({ documents: false, users: false, vehicles: false });
+const requirementTypes = ['citizens', 'documents', 'vehicles'] as const;
+type RequirementType = (typeof requirementTypes)[number];
+
+const reqStatus = ref<Record<RequirementType, boolean>>({
+    citizens: false,
+    documents: false,
+    vehicles: false,
+});
 
 const readyToCreate = ref(false);
 
 watch(reqStatus.value, () => {
-    readyToCreate.value = reqStatus.value.documents && reqStatus.value.users && reqStatus.value.vehicles;
-    // Auto redirect users when the requirements are matched
-    if (readyToCreate.value && props.autoFill) {
-        clipboardDialog();
-    }
+    readyToCreate.value = requirementTypes.every((type) => reqStatus.value[type]);
 });
+
+const documentsDocuments = useDocumentsDocuments();
 
 function closeDialog(): void {
     isOpen.value = false;
+}
+
+function clipboardComponent(type: RequirementType) {
+    switch (type) {
+        case 'citizens':
+            return ClipboardCitizens;
+        case 'vehicles':
+            return ClipboardVehicles;
+        case 'documents':
+            return ClipboardDocuments;
+    }
 }
 
 async function templateSelected(t: TemplateShort | undefined): Promise<void> {
@@ -55,60 +56,26 @@ async function templateSelected(t: TemplateShort | undefined): Promise<void> {
         template.value = t;
         if (t.schema) {
             reqs.value = t.schema?.requirements;
-            let reqDocuments = false;
-            let reqUsers = false;
-            let reqVehicles = false;
-
             clipboardStore.clearActiveStack();
-            if (reqs.value) {
-                if (reqs.value.documents) {
-                    reqDocuments = clipboardStore.checkRequirements(reqs.value.documents, 'documents');
-                    if (reqDocuments) {
-                        clipboardStore.promoteToActiveStack('documents');
-                    }
-                } else {
-                    reqDocuments = true;
+            requirementTypes.forEach((type) => {
+                const required = reqs.value?.[type === 'citizens' ? 'users' : type];
+                let status = true;
+                if (required) {
+                    clipboardStore.promoteToActiveStack(type);
+                    status = clipboardStore.checkRequirements(required, type);
                 }
-                if (reqs.value.users) {
-                    reqUsers = clipboardStore.checkRequirements(reqs.value.users, 'users');
-                    if (reqUsers) {
-                        clipboardStore.promoteToActiveStack('users');
-                    }
-                } else {
-                    reqUsers = true;
-                }
-                if (reqs.value.vehicles) {
-                    reqVehicles = clipboardStore.checkRequirements(reqs.value.vehicles, 'vehicles');
-                    if (reqVehicles) {
-                        clipboardStore.promoteToActiveStack('vehicles');
-                    }
-                } else {
-                    reqVehicles = true;
-                }
-            } else {
-                reqDocuments = true;
-                reqUsers = true;
-                reqVehicles = true;
-            }
-
-            reqStatus.value.documents = reqDocuments;
-            reqStatus.value.users = reqUsers;
-            reqStatus.value.vehicles = reqVehicles;
-
+                reqStatus.value[type] = status;
+            });
             steps.value.selectTemplate = false;
             steps.value.selectClipboard = true;
         } else {
-            await navigateTo({
-                name: 'documents-create',
-                query: { templateId: template.value?.id },
-            });
+            await documentsDocuments.createDocument(template.value.id);
             isOpen.value = false;
         }
     } else {
-        reqStatus.value.documents = false;
-        reqStatus.value.users = false;
-        reqStatus.value.vehicles = false;
-
+        requirementTypes.forEach((type) => {
+            reqStatus.value[type] = false;
+        });
         template.value = undefined;
         reqs.value = undefined;
     }
@@ -123,20 +90,14 @@ const submit = ref(false);
 
 async function clipboardDialog(): Promise<void> {
     submit.value = true;
-    await navigateTo({
-        name: 'documents-create',
-        query: { templateId: template.value?.id },
-    });
+    await documentsDocuments.createDocument(template.value?.id);
 
     isOpen.value = false;
 }
 
-onBeforeMount(async () => {
-    if (!can('documents.DocumentsService.CreateDocument').value) {
-        await navigateTo({
-            name: 'documents-create',
-        });
-    }
+const filteredRequirementTypes = computed(() => {
+    if (!reqs.value) return [];
+    return requirementTypes.filter((type) => reqs.value && reqs.value[type === 'citizens' ? 'users' : type]);
 });
 </script>
 
@@ -160,66 +121,29 @@ onBeforeMount(async () => {
                 </UButton>
 
                 <div class="pt-6">
-                    <TemplatesList hide-icon @selected="templateSelected($event)" />
+                    <TemplatesList @selected="templateSelected($event)" />
                 </div>
             </template>
             <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                 <div>
-                    <div v-if="reqs.users">
-                        <ClipboardCitizens
+                    <div v-for="type in filteredRequirementTypes" :key="type">
+                        <component
+                            :is="clipboardComponent(type)"
                             v-model:submit="submit"
-                            :specs="reqs.users!"
-                            @statisfied="(v: boolean) => (reqStatus.users = v)"
+                            :specs="reqs[type === 'citizens' ? 'users' : type]!"
+                            @statisfied="(v: boolean) => (reqStatus[type] = v)"
                             @close="closeDialog()"
                         >
                             <template #header>
                                 <span class="text-sm">
                                     <TemplateRequirementsList
-                                        :name="$t('common.citizen', 2)"
-                                        :plural="$t('common.citizen', 2)"
-                                        :specs="reqs.users!"
+                                        :name="$t('common.' + type.slice(0, -1), 2)"
+                                        :plural="$t('common.' + type.slice(0, -1), 2)"
+                                        :specs="reqs[type === 'citizens' ? 'users' : type]!"
                                     />
                                 </span>
                             </template>
-                        </ClipboardCitizens>
-                    </div>
-
-                    <div v-if="reqs.vehicles">
-                        <ClipboardVehicles
-                            v-model:submit="submit"
-                            :specs="reqs.vehicles!"
-                            @statisfied="(v: boolean) => (reqStatus.vehicles = v)"
-                            @close="closeDialog()"
-                        >
-                            <template #header>
-                                <span class="text-sm">
-                                    <TemplateRequirementsList
-                                        :name="$t('common.vehicle', 2)"
-                                        :plural="$t('common.vehicle', 2)"
-                                        :specs="reqs.vehicles!"
-                                    />
-                                </span>
-                            </template>
-                        </ClipboardVehicles>
-                    </div>
-
-                    <div v-if="reqs.documents">
-                        <ClipboardDocuments
-                            v-model:submit="submit"
-                            :specs="reqs.documents!"
-                            @statisfied="(v: boolean) => (reqStatus.documents = v)"
-                            @close="closeDialog()"
-                        >
-                            <template #header>
-                                <span class="text-sm">
-                                    <TemplateRequirementsList
-                                        :name="$t('common.document', 2)"
-                                        :plural="$t('common.document', 2)"
-                                        :specs="reqs.documents!"
-                                    />
-                                </span>
-                            </template>
-                        </ClipboardDocuments>
+                        </component>
                     </div>
                 </div>
             </div>

@@ -8,7 +8,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/filestore"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
@@ -17,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	errorscitizens "github.com/fivenet-app/fivenet/v2025/services/citizens/errors"
@@ -27,7 +25,11 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tUserProps = table.FivenetUserProps
+var (
+	tUserProps = table.FivenetUserProps
+
+	tFiles = table.FivenetFiles.AS("mugshot")
+)
 
 var ZeroTrafficInfractionPoints uint32 = 0
 
@@ -95,8 +97,12 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 		case "UserProps.BloodType":
 			selectors = append(selectors, tUserProps.BloodType)
 
-		case "UserProps.MugShot":
-			selectors = append(selectors, tUserProps.MugShot)
+		case "UserProps.Mugshot":
+			selectors = append(selectors,
+				tUserProps.MugshotFileID,
+				tFiles.ID,
+				tFiles.FilePath,
+			)
 
 		case "UserProps.Email":
 			selectors = append(selectors, tUserProps.Email)
@@ -196,6 +202,9 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizens.ListCitizensR
 		FROM(tUser.
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUser.ID),
+			).
+			LEFT_JOIN(tFiles,
+				tFiles.ID.EQ(tUserProps.MugshotFileID),
 			),
 		).
 		WHERE(condition).
@@ -282,8 +291,12 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 			selectors = append(selectors, tUserProps.OpenFines)
 		case "UserProps.BloodType":
 			selectors = append(selectors, tUserProps.BloodType)
-		case "UserProps.MugShot":
-			selectors = append(selectors, tUserProps.MugShot)
+		case "UserProps.Mugshot":
+			selectors = append(selectors,
+				tUserProps.MugshotFileID,
+				tFiles.ID,
+				tFiles.FilePath,
+			)
 		case "UserProps.Email":
 			selectors = append(selectors, tUserProps.Email)
 		}
@@ -301,6 +314,9 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 			tUser.
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUser.ID),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tUserProps.MugshotFileID),
 				),
 		).
 		WHERE(tUser.ID.EQ(jet.Int32(req.UserId))).
@@ -319,17 +335,11 @@ func (s *Server) GetUser(ctx context.Context, req *pbcitizens.GetUserRequest) (*
 	if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.User.Job) ||
 		slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
-		jobGrades, err := s.ps.AttrJobGradeList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceGetUserPerm, permscitizens.CitizensServiceGetUserJobsPermField)
+		check, err := s.checkIfUserCanAccess(userInfo, resp.User.Job, resp.User.JobGrade)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+			return nil, err
 		}
-
-		if jobGrades.Len() == 0 && !userInfo.Superuser {
-			return nil, errorscitizens.ErrJobGradeNoPermission
-		}
-
-		// Make sure user has permission to see that job's grade, otherwise deny access to the user
-		if ok := jobGrades.HasJobGrade(resp.User.Job, resp.User.JobGrade); !ok && !userInfo.Superuser {
+		if !check {
 			return nil, errorscitizens.ErrJobGradeNoPermission
 		}
 	}
@@ -409,17 +419,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 		TargetUserId: &req.Props.UserId,
 		State:        audit.EventType_EVENT_TYPE_ERRORED,
 	}
-	defer s.aud.Log(auditEntry, req, func(in *audit.AuditEntry, data any) {
-		r, ok := data.(*pbcitizens.SetUserPropsRequest)
-		if !ok {
-			return
-		}
-		if r.Props == nil || r.Props.MugShot == nil {
-			return
-		}
-
-		r.Props.MugShot.Data = []byte("MUGSHOT DATA OMITTED")
-	})
+	defer s.aud.Log(auditEntry, req)
 
 	if req.Reason == "" {
 		return nil, errorscitizens.ErrReasonRequired
@@ -467,6 +467,43 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
+	tUser := tables.User().AS("user")
+
+	u := &users.User{}
+	stmt := tUser.
+		SELECT(
+			tUser.ID,
+			tUser.Job,
+			tUser.JobGrade,
+		).
+		FROM(
+			tUser.
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUser.ID),
+				).
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tUserProps.MugshotFileID),
+				),
+		).
+		WHERE(tUser.ID.EQ(jet.Int32(req.Props.UserId))).
+		LIMIT(1)
+
+	if err := stmt.QueryContext(ctx, s.db, &u); err != nil {
+		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	}
+
+	if u.UserId <= 0 {
+		return nil, errorscitizens.ErrJobGradeNoPermission
+	}
+
+	check, err := s.checkIfUserCanAccess(userInfo, u.Job, u.JobGrade)
+	if err != nil {
+		return nil, err
+	}
+	if !check {
+		return nil, errorscitizens.ErrJobGradeNoPermission
+	}
+
 	// Generate the update sets
 	if req.Props.Wanted != nil {
 		if !fields.Contains("Wanted") {
@@ -500,40 +537,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 		}
 	}
 
-	// Users aren't allowed to set certain props, unset them
+	// Users aren't allowed to set certain props, unset them so they are set to the db state
 	req.Props.OpenFines = nil
 	req.Props.BloodType = nil
-
-	if req.Props.MugShot != nil {
-		if !fields.Contains("MugShot") {
-			return nil, errorscitizens.ErrPropsMugShotDenied
-		}
-
-		if len(req.Props.MugShot.Data) > 0 {
-			if props.MugShot != nil {
-				req.Props.MugShot.Url = props.MugShot.Url
-			}
-
-			if !req.Props.MugShot.IsImage() {
-				return nil, errorscitizens.ErrFailedQuery
-			}
-
-			if err := req.Props.MugShot.Optimize(ctx); err != nil {
-				return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-			}
-
-			if err := req.Props.MugShot.Upload(ctx, s.st, filestore.MugShots, storage.FileNameSplitter(req.Props.MugShot.GetHash())); err != nil {
-				return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-			}
-		} else {
-			// Delete mug shot from store
-			if props.MugShot != nil && props.MugShot.Url != nil {
-				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*props.MugShot.Url)); err != nil {
-					return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-				}
-			}
-		}
-	}
+	req.Props.Email = nil
 
 	if req.Props.Labels != nil {
 		if !fields.Contains("Labels") {
@@ -610,6 +617,8 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 
 func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.UserProps, error) {
 	tUserProps := tUserProps.AS("user_props")
+	tFiles := table.FivenetFiles.AS("mugshot")
+
 	stmt := tUserProps.
 		SELECT(
 			tUserProps.UserID,
@@ -619,9 +628,16 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
 			tUserProps.TrafficInfractionPointsUpdatedAt,
-			tUserProps.MugShot,
+			tUserProps.MugshotFileID,
+			tFiles.ID,
+			tFiles.FilePath,
 		).
-		FROM(tUserProps).
+		FROM(
+			tUserProps.
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tUserProps.MugshotFileID),
+				),
+		).
 		WHERE(
 			tUserProps.UserID.EQ(jet.Int32(userId)),
 		).
@@ -645,96 +661,20 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 	return &dest, nil
 }
 
-func (s *Server) SetProfilePicture(ctx context.Context, req *pbcitizens.SetProfilePictureRequest) (*pbcitizens.SetProfilePictureResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.citizens.user_id", int64(userInfo.UserId)))
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcitizens.CitizensService_ServiceDesc.ServiceName,
-		Method:  "SetProfilePicture",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req, func(in *audit.AuditEntry, data any) {
-		r, ok := data.(*pbcitizens.SetProfilePictureRequest)
-		if !ok {
-			return
-		}
-
-		r.Avatar.Data = []byte("AVATAR DATA OMITTED")
-	})
-
-	avatarFile, err := s.getUserAvatar(ctx, userInfo.UserId)
+func (s *Server) checkIfUserCanAccess(userInfo *userinfo.UserInfo, targetUserJob string, targetUserGrade int32) (bool, error) {
+	jobGrades, err := s.ps.AttrJobGradeList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceGetUserPerm, permscitizens.CitizensServiceGetUserJobsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
-	if len(req.Avatar.Data) > 0 {
-		if avatarFile != nil {
-			req.Avatar.Url = avatarFile.Url
-		}
-
-		if !req.Avatar.IsImage() {
-			return nil, errorscitizens.ErrFailedQuery
-		}
-
-		if err := req.Avatar.Optimize(ctx); err != nil {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
-
-		if err := req.Avatar.Upload(ctx, s.st, filestore.Avatars, storage.FileNameSplitter(req.Avatar.GetHash())); err != nil {
-			return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-		}
-	} else if req.Avatar.Delete != nil && *req.Avatar.Delete {
-		// Delete mug shot from store
-		if avatarFile != nil && avatarFile.Url != nil {
-			if err := s.st.Delete(ctx, filestore.StripURLPrefix(*avatarFile.Url)); err != nil {
-				return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
-			}
-		}
+	if jobGrades.Len() == 0 && !userInfo.Superuser {
+		return false, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	stmt := tUserProps.
-		INSERT(
-			tUserProps.UserID,
-			tUserProps.Avatar,
-		).
-		VALUES(
-			userInfo.UserId,
-			req.Avatar,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tUserProps.Avatar.SET(jet.StringExp(jet.Raw("VALUES(`avatar`)"))),
-		)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
+	// Make sure user has permission to see that job's grade, otherwise deny access to the user
+	if ok := jobGrades.HasJobGrade(targetUserJob, targetUserGrade); !ok && !userInfo.Superuser {
+		return false, errorscitizens.ErrJobGradeNoPermission
 	}
 
-	return &pbcitizens.SetProfilePictureResponse{
-		Avatar: req.Avatar,
-	}, nil
-}
-
-func (s *Server) getUserAvatar(ctx context.Context, userId int32) (*filestore.File, error) {
-	stmt := tUserProps.
-		SELECT(
-			tUserProps.Avatar.AS("user_short.avatar"),
-		).
-		FROM(tUserProps).
-		WHERE(
-			tUserProps.UserID.EQ(jet.Int32(userId)),
-		).
-		LIMIT(1)
-
-	var dest users.UserShort
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return dest.Avatar, nil
+	return true, nil
 }

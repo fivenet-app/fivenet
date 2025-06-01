@@ -6,6 +6,7 @@ import "resources/common/content/content.proto";
 import "resources/documents/category.proto";
 import "resources/documents/pins.proto";
 import "resources/documents/workflow.proto";
+import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -43,6 +44,7 @@ message Document {
   optional DocumentPin pin = 20; // @gotags: alias:"pin"
   optional WorkflowState workflow_state = 21;
   optional WorkflowUserState workflow_user = 22;
+  repeated resources.file.File files = 23; // @gotags: alias:"files"
 }
 
 message DocumentShort {

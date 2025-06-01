@@ -8,30 +8,12 @@ func (m *CreatePageRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Page
-	if m.Page != nil {
-		if v, ok := any(m.GetPage()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 
 func (m *CreatePageResponse) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: Page
-	if m.Page != nil {
-		if v, ok := any(m.GetPage()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

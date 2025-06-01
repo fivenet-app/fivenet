@@ -12,6 +12,7 @@ import { jsonNodeToTocLinks } from '~/utils/content';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
+import ScrollToTop from '../partials/ScrollToTop.vue';
 import { checkPageAccess } from './helpers';
 import PageActivityList from './PageActivityList.vue';
 import PageSearch from './PageSearch.vue';
@@ -22,10 +23,6 @@ const props = defineProps<{
     loading: boolean;
     refresh: () => Promise<void>;
     error: Error | undefined;
-}>();
-
-defineEmits<{
-    (e: 'edit'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -45,10 +42,13 @@ const breadcrumbs = computed(() => [
         to: '/wiki',
     },
     ...[
-        !props.page ? { label: t('pages.notfound.page_not_found') } : undefined,
+        !props.page && !props.loading ? { label: t('pages.notfound.page_not_found') } : undefined,
         props.page && props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
         props.page?.meta
-            ? { label: props.page.meta.title, to: `/wiki/${props.page.job}/${props.page.id}/${props.page.meta.slug}` }
+            ? {
+                  label: !props.page.meta.title ? t('common.untitled') : props.page.meta.title,
+                  to: `/wiki/${props.page.job}/${props.page.id}/${props.page.meta.slug}`,
+              }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 ]);
@@ -66,12 +66,27 @@ async function deletePage(id: number): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
+        // If the deleted page is not the "top page", navigate to it
+        if (props.pages[0] && props.page?.id !== props.pages[0].id) {
+            await navigateTo({
+                name: 'wiki-job-id-slug',
+                params: {
+                    job: props.pages[0].job,
+                    id: props.pages[0].id,
+                    slug: [props.pages[0].slug ?? ''],
+                },
+            });
+            return;
+        }
+
         await navigateTo({ name: 'wiki' });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
+
+const wikiService = useWikiWiki();
 
 const tocLinks = computedAsync(async () => props.page?.content?.content && jsonNodeToTocLinks(props.page?.content?.content));
 
@@ -84,6 +99,68 @@ const accordionItems = computed(() =>
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
+
+async function findSurroundingPages(
+    pages: PageShort[],
+    currentPage: Page | undefined,
+): Promise<{ prev: PageShort | undefined; next: PageShort | undefined }> {
+    if (!currentPage) return { prev: undefined, next: undefined };
+
+    const flatPages: PageShort[] = [];
+    function flattenPages(pages: PageShort[], level = 0) {
+        for (const page of pages) {
+            if (page.children[0] && page.children[0].id === page.id) {
+                if (page.children) {
+                    flattenPages(page.children, level + 1);
+                }
+                continue;
+            }
+
+            if (level > 0) {
+                flatPages.push({ ...page, level: level });
+            }
+
+            if (page.children) {
+                flattenPages(page.children, level + 1);
+            }
+        }
+    }
+
+    flattenPages(pages);
+
+    const currentIndex = flatPages.findIndex((p) => p.id === currentPage.id);
+    const prev = currentIndex > 0 ? flatPages[currentIndex - 1] : undefined;
+    const next = currentIndex >= 0 && currentIndex < flatPages.length - 1 ? flatPages[currentIndex + 1] : undefined;
+
+    return { prev, next };
+}
+
+const surround = computedAsync(async () => {
+    const { prev, next } = await findSurroundingPages(props.pages, props.page);
+    return [
+        prev
+            ? {
+                  _id: prev.id,
+                  title: prev.title || '',
+                  description: prev.description ?? '',
+                  _path: `/wiki/${prev.job}/${prev.id}/${prev.slug}`,
+              }
+            : undefined,
+        next
+            ? {
+                  _id: next.id,
+                  title: next.title || '',
+                  description: next.description ?? '',
+                  _path: `/wiki/${next.job}/${next.id}/${next.slug}`,
+              }
+            : undefined,
+    ];
+}, []);
+
+const prev = computed(() => surround.value[0]);
+const next = computed(() => surround.value[1]);
+
+const scrollRef = useTemplateRef('scrollRef');
 </script>
 
 <template>
@@ -95,13 +172,20 @@ const accordionItems = computed(() =>
         <template #right>
             <PartialsBackButton fallback-to="/wiki" />
 
-            <UButton v-if="can('wiki.WikiService.CreatePage').value" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
-                {{ $t('common.page') }}
+            <UButton
+                v-if="can('wiki.WikiService.UpdatePage').value"
+                color="gray"
+                trailing-icon="i-mdi-plus"
+                @click="wikiService.createPage(page?.parentId ?? page?.id)"
+            >
+                <span class="hidden truncate sm:block">
+                    {{ $t('common.page') }}
+                </span>
             </UButton>
         </template>
     </UDashboardNavbar>
 
-    <UDashboardPanelContent class="p-0 sm:pb-0">
+    <UDashboardPanelContent ref="scrollRef" class="p-0 sm:pb-0">
         <UPage class="px-8 py-2 pt-4">
             <template #left>
                 <slot name="left" />
@@ -149,7 +233,11 @@ const accordionItems = computed(() =>
             </template>
 
             <template v-else>
-                <UPageHeader v-if="page?.meta" :title="page.meta.title" :ui="{ wrapper: 'py-4' }">
+                <UPageHeader
+                    v-if="page?.meta"
+                    :title="!page.meta.title ? $t('common.untitled') : page.meta.title"
+                    :ui="{ wrapper: 'py-4', title: 'italic' }"
+                >
                     <template #links>
                         <UTooltip :text="$t('common.refresh')">
                             <UButton variant="link" icon="i-mdi-refresh" @click="refresh()" />
@@ -157,12 +245,16 @@ const accordionItems = computed(() =>
 
                         <UTooltip
                             v-if="
-                                can('wiki.WikiService.CreatePage').value &&
+                                can('wiki.WikiService.UpdatePage').value &&
                                 checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
                             "
                             :text="$t('common.edit')"
                         >
-                            <UButton color="white" icon="i-mdi-pencil" @click="$emit('edit')" />
+                            <UButton
+                                color="white"
+                                icon="i-mdi-pencil"
+                                :to="`/wiki/${page.job}/${page.id}/${page.meta.slug ?? ''}/edit`"
+                            />
                         </UTooltip>
 
                         <UTooltip
@@ -210,6 +302,13 @@ const accordionItems = computed(() =>
                                 </span>
                             </UBadge>
 
+                            <UBadge v-if="page.meta.draft" class="inline-flex gap-1" color="info" size="md">
+                                <UIcon class="size-5" name="i-mdi-pencil" />
+                                <span>
+                                    {{ $t('common.draft') }}
+                                </span>
+                            </UBadge>
+
                             <UBadge v-if="page.meta.public" class="inline-flex gap-1" color="black" size="md">
                                 <UIcon class="size-5" name="i-mdi-earth" />
                                 <span>
@@ -222,39 +321,50 @@ const accordionItems = computed(() =>
                     </template>
                 </UPageHeader>
 
-                <UPageBody v-if="page.content?.content" class="pb-8">
+                <UPageBody v-if="page.content?.content">
                     <div class="rounded-lg bg-neutral-100 dark:bg-base-900">
                         <HTMLContent class="px-4 py-2" :value="page.content.content" />
                     </div>
+
+                    <template v-if="surround.length > 0">
+                        <UDivider class="mb-4 mt-4" />
+
+                        <!-- UContentSurround doesn't seem to like our surround pages array -->
+                        <div class="grid gap-8 sm:grid-cols-2">
+                            <UContentSurroundLink v-if="prev" :link="prev" icon="i-mdi-arrow-left" />
+                            <span v-else class="hidden sm:block">&nbsp;</span>
+                            <UContentSurroundLink v-if="next" class="text-right" :link="next" icon="i-mdi-arrow-right" />
+                        </div>
+                    </template>
+
+                    <UDivider class="mb-4 mt-4" />
+
+                    <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
+                        <template #access>
+                            <UContainer>
+                                <DataNoDataBlock
+                                    v-if="!page.access || (page.access?.jobs.length === 0 && page.access?.users.length === 0)"
+                                    icon="i-mdi-file-search"
+                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                                />
+
+                                <AccessBadges
+                                    v-else
+                                    :access-level="AccessLevel"
+                                    :jobs="page?.access.jobs"
+                                    :users="page?.access.users"
+                                    i18n-key="enums.wiki"
+                                />
+                            </UContainer>
+                        </template>
+
+                        <template v-if="can('wiki.WikiService.ListPageActivity').value" #activity>
+                            <UContainer>
+                                <PageActivityList :page-id="page.id" />
+                            </UContainer>
+                        </template>
+                    </UAccordion>
                 </UPageBody>
-
-                <UDivider class="mb-4" />
-
-                <UAccordion class="print:hidden" multiple :items="accordionItems" :unmount="true">
-                    <template #access>
-                        <UContainer>
-                            <DataNoDataBlock
-                                v-if="!page.access || (page.access?.jobs.length === 0 && page.access?.users.length === 0)"
-                                icon="i-mdi-file-search"
-                                :message="$t('common.not_found', [$t('common.access', 2)])"
-                            />
-
-                            <AccessBadges
-                                v-else
-                                :access-level="AccessLevel"
-                                :jobs="page?.access.jobs"
-                                :users="page?.access.users"
-                                i18n-key="enums.wiki"
-                            />
-                        </UContainer>
-                    </template>
-
-                    <template v-if="can('wiki.WikiService.ListPageActivity').value" #activity>
-                        <UContainer>
-                            <PageActivityList :page-id="page.id" />
-                        </UContainer>
-                    </template>
-                </UAccordion>
             </template>
 
             <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
@@ -263,5 +373,7 @@ const accordionItems = computed(() =>
                 <UContentToc :title="$t('common.toc')" :links="tocLinks" />
             </template>
         </UPage>
+
+        <ScrollToTop :element="scrollRef?.$el" />
     </UDashboardPanelContent>
 </template>

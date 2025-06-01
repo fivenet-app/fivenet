@@ -7,6 +7,41 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+func (m *DeleteAvatarRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *DeleteAvatarResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *DeleteMugshotRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Reason
+	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+
+	return nil
+}
+
+func (m *DeleteMugshotResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *GetUserRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -183,40 +218,6 @@ func (m *ManageLabelsResponse) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *SetProfilePictureRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Avatar
-	if m.Avatar != nil {
-		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *SetProfilePictureResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Avatar
-	if m.Avatar != nil {
-		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil
