@@ -256,7 +256,8 @@ const accordionItems = computed(() =>
                 <template #header>
                     <div class="mb-4">
                         <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                            {{ qualification.abbreviation }}: {{ qualification.title }}
+                            {{ qualification.abbreviation }}:
+                            {{ !qualification.title ? $t('common.untitled') : qualification.title }}
                         </h1>
 
                         <p v-if="qualification.description" class="break-words px-0.5 py-1 text-base font-bold sm:pl-1">
@@ -266,6 +267,13 @@ const accordionItems = computed(() =>
 
                     <div class="mb-2 flex gap-2">
                         <OpenClosedBadge :closed="qualification.closed" />
+
+                        <UBadge v-if="qualification.draft" class="inline-flex gap-1" color="info" size="md">
+                            <UIcon class="size-5" name="i-mdi-pencil" />
+                            <span>
+                                {{ $t('common.draft') }}
+                            </span>
+                        </UBadge>
 
                         <UBadge v-if="qualification.public" class="inline-flex gap-1" color="black" size="md">
                             <UIcon class="size-5" name="i-mdi-earth" />
@@ -372,7 +380,11 @@ const accordionItems = computed(() =>
                                 >
                                     <span>
                                         {{ requirement.targetQualification?.abbreviation }}:
-                                        {{ requirement.targetQualification?.title }}
+                                        {{
+                                            !requirement.targetQualification?.title
+                                                ? $t('common.untitled')
+                                                : requirement.targetQualification?.title
+                                        }}
                                     </span>
                                 </UBadge>
                             </ULink>

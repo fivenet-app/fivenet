@@ -250,6 +250,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 			tQuali.Job,
 			tQuali.Weight,
 			tQuali.Closed,
+			tQuali.Draft,
 			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,
@@ -391,6 +392,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		UPDATE(
 			tQuali.Weight,
 			tQuali.Closed,
+			tQuali.Draft,
 			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,

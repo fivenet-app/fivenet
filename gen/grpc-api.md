@@ -5183,6 +5183,7 @@ Dummy - DO NOT USE!
 | `job` | [string](#string) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
 | `closed` | [bool](#bool) |  |  |
+| `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
 | `abbreviation` | [string](#string) |  | @sanitize: method=StripTags |
 | `title` | [string](#string) |  | @sanitize |
@@ -5328,6 +5329,7 @@ Dummy - DO NOT USE!
 | `job` | [string](#string) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
 | `closed` | [bool](#bool) |  |  |
+| `draft` | [bool](#bool) |  |  |
 | `public` | [bool](#bool) |  |  |
 | `abbreviation` | [string](#string) |  | @sanitize: method=StripTags |
 | `title` | [string](#string) |  | @sanitize |

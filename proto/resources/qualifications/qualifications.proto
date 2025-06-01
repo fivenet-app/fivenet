@@ -21,33 +21,34 @@ message Qualification {
   string job = 5 [(validate.rules).string.max_len = 20];
   uint32 weight = 6 [(validate.rules).uint32.lt = 4294967295];
   bool closed = 7;
-  bool public = 8;
+  bool draft = 8;
+  bool public = 9;
   // @sanitize: method=StripTags
-  string abbreviation = 9 [(validate.rules).string.max_len = 20];
+  string abbreviation = 10 [(validate.rules).string.max_len = 20];
   // @sanitize
-  string title = 10 [(validate.rules).string = {
+  string title = 11 [(validate.rules).string = {
     min_len: 3,
     max_len: 1024
   }];
   // @sanitize: method=StripTags
-  optional string description = 11 [(validate.rules).string.max_len = 512];
-  resources.common.content.Content content = 12;
-  optional int32 creator_id = 13 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
-  string creator_job = 15 [(validate.rules).string.max_len = 20];
-  resources.qualifications.QualificationAccess access = 16;
-  repeated QualificationRequirement requirements = 17;
-  bool discord_sync_enabled = 18;
-  optional QualificationDiscordSettings discord_settings = 19;
-  QualificationExamMode exam_mode = 20 [(validate.rules).enum.defined_only = true];
-  optional QualificationExamSettings exam_settings = 21;
-  optional resources.qualifications.ExamQuestions exam = 22;
-  optional QualificationResult result = 23;
-  optional QualificationRequest request = 24;
-  bool label_sync_enabled = 25;
+  optional string description = 12 [(validate.rules).string.max_len = 512];
+  resources.common.content.Content content = 13;
+  optional int32 creator_id = 14 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 15; // @gotags: alias:"creator"
+  string creator_job = 16 [(validate.rules).string.max_len = 20];
+  resources.qualifications.QualificationAccess access = 17;
+  repeated QualificationRequirement requirements = 18;
+  bool discord_sync_enabled = 19;
+  optional QualificationDiscordSettings discord_settings = 20;
+  QualificationExamMode exam_mode = 21 [(validate.rules).enum.defined_only = true];
+  optional QualificationExamSettings exam_settings = 22;
+  optional resources.qualifications.ExamQuestions exam = 23;
+  optional QualificationResult result = 24;
+  optional QualificationRequest request = 25;
+  bool label_sync_enabled = 26;
   // @sanitize: method=StripTags
-  optional string label_sync_format = 26 [(validate.rules).string.max_len = 128];
-  repeated resources.file.File files = 27; // @gotags: alias:"files"
+  optional string label_sync_format = 27 [(validate.rules).string.max_len = 128];
+  repeated resources.file.File files = 28; // @gotags: alias:"files"
 }
 
 message QualificationShort {
@@ -58,23 +59,24 @@ message QualificationShort {
   string job = 5 [(validate.rules).string.max_len = 20];
   uint32 weight = 6 [(validate.rules).uint32.lt = 4294967295];
   bool closed = 7;
-  bool public = 8;
+  bool draft = 8;
+  bool public = 9;
   // @sanitize: method=StripTags
-  string abbreviation = 9 [(validate.rules).string.max_len = 20];
+  string abbreviation = 10 [(validate.rules).string.max_len = 20];
   // @sanitize
-  string title = 10 [(validate.rules).string = {
+  string title = 11 [(validate.rules).string = {
     min_len: 3,
     max_len: 1024
   }];
   // @sanitize: method=StripTags
-  optional string description = 11 [(validate.rules).string.max_len = 512];
-  optional int32 creator_id = 13 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
-  string creator_job = 15 [(validate.rules).string.max_len = 20];
-  repeated QualificationRequirement requirements = 17;
-  QualificationExamMode exam_mode = 20 [(validate.rules).enum.defined_only = true];
-  optional QualificationExamSettings exam_settings = 21;
-  optional QualificationResult result = 23;
+  optional string description = 12 [(validate.rules).string.max_len = 512];
+  optional int32 creator_id = 14 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 15; // @gotags: alias:"creator"
+  string creator_job = 16 [(validate.rules).string.max_len = 20];
+  repeated QualificationRequirement requirements = 18;
+  QualificationExamMode exam_mode = 21 [(validate.rules).enum.defined_only = true];
+  optional QualificationExamSettings exam_settings = 22;
+  optional QualificationResult result = 24;
 }
 
 message QualificationRequirement {
