@@ -2,10 +2,12 @@ package qualifications
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -65,7 +67,7 @@ func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64)
 	return int32(count.Total), nil
 }
 
-func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qualificationId uint64, questions *qualifications.ExamQuestions) error {
+func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qualificationId uint64, questions *qualifications.ExamQuestions) error {
 	tExamQuestions := table.FivenetQualificationsExamQuestions
 	if len(questions.Questions) == 0 {
 		stmt := tExamQuestions.
@@ -92,31 +94,16 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 			continue
 		}
 
-		// TODO switch to filestore handler
-		/*
-			switch data := question.Data.Data.(type) {
-			case *qualifications.ExamQuestionData_Image:
-				if data.Image.Image == nil || data.Image.Image.Url == nil {
-					continue
-				}
-
-				if len(data.Image.Image.Data) == 0 {
-					continue
-				}
-
-				if !data.Image.Image.IsImage() {
-					return errorsqualifications.ErrFailedQuery
-				}
-
-				if err := data.Image.Image.Optimize(ctx); err != nil {
-					return err
-				}
-
-				if err := data.Image.Image.Upload(ctx, s.st, file.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
-					return err
-				}
+		switch data := question.Data.Data.(type) {
+		case *qualifications.ExamQuestionData_Image:
+			if data.Image.Image == nil {
+				continue
 			}
-		*/
+
+			if _, _, err := s.questionFileHandler.HandleFileChangesForParent(ctx, tx, question.Id, []*file.File{data.Image.Image}); err != nil {
+				return err
+			}
+		}
 
 		stmt := tExamQuestions.
 			INSERT(
@@ -149,24 +136,9 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 					continue
 				}
 
-				// TODO
-				/*
-					if len(data.Image.Image.Data) == 0 {
-						continue
-					}
-
-					if !data.Image.Image.IsImage() {
-						return errorsqualifications.ErrFailedQuery
-					}
-
-					if err := data.Image.Image.Optimize(ctx); err != nil {
-						return err
-					}
-
-					if err := data.Image.Image.Upload(ctx, s.st, file.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
-						return err
-					}
-				*/
+				if _, _, err := s.questionFileHandler.HandleFileChangesForParent(ctx, tx, question.Id, []*file.File{data.Image.Image}); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -217,19 +189,16 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 				continue
 			}
 
-			// TODO
-			/*
-							switch data := question.Data.Data.(type) {
-							case *qualifications.ExamQuestionData_Image:
-				                if data.Image.Image == nil || data.Image.Image.Url == nil {
-									continue
-								}
+			switch data := question.Data.Data.(type) {
+			case *qualifications.ExamQuestionData_Image:
+				if data.Image.Image == nil {
+					continue
+				}
 
-								if err := s.st.Delete(ctx, file.StripURLPrefix(*data.Image.Image.Url)); err != nil {
-									return err
-								}
-							}
-			*/
+				if _, _, err := s.questionFileHandler.HandleFileChangesForParent(ctx, tx, question.Id, []*file.File{}); err != nil {
+					return err
+				}
+			}
 		}
 	}
 

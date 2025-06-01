@@ -101,6 +101,7 @@ async function handleImage(files: FileList): Promise<void> {
         return;
     }
 
+    // TODO move to filestore upload
     question.value!.data!.data.image.image = { data: new Uint8Array(await files[0].arrayBuffer()) };
 
     imageUrl.value = URL.createObjectURL(files[0]);
@@ -190,6 +191,8 @@ function changeQuestionType(qt: string): void {
                     v-model="question.data!.data.oneofKind"
                     class="w-40 max-w-40"
                     :options="questionTypes"
+                    searchable
+                    :searchable-placeholder="$t('common.search_field')"
                     @update:model-value="changeQuestionType($event)"
                 >
                     <template #label>

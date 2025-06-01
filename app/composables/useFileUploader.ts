@@ -6,12 +6,14 @@ import { UploadMeta, UploadPacket, type UploadResponse } from '~~/gen/ts/resourc
 
 const MAX_READ_SIZE = 128 * 1024; // 128 KB
 
+export type UploadNamespaces = 'documents' | 'qualifications' | 'qualifications-exam-questions' | 'wiki';
+
 /**
  * Factory that returns resize + upload helpers bound to a parent record.
  */
 export function useFileUploader(
     filestore: (options?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>,
-    namespace: 'documents' | 'wiki',
+    namespace: UploadNamespaces,
     parentId: number,
 ) {
     // 1. Resize and convert to webp (if available) in browser
@@ -46,12 +48,12 @@ export function useFileUploader(
         await pica().resize(from, to, { unsharpAmount: 80 });
 
         const wantsWebp = await canEncodeWebp();
-        const mime = wantsWebp ? 'image/webp' : 'image/jpeg';
+        const mime = wantsWebp ? 'image/webp' : 'image/png';
         const blob = await pica().toBlob(to, mime, 0.9);
 
         // Final file name (keep original base)
         const base = file.name.replace(/\.[^.]+$/, '');
-        const ext = wantsWebp ? '.webp' : '.jpg';
+        const ext = wantsWebp ? '.webp' : '.png';
 
         return { blob, fileName: base + ext, mime };
     };

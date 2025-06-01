@@ -48,6 +48,7 @@ import { DeleteImageTrackerExt } from '~/composables/tiptap/extensions/DeleteIma
 import { EnhancedImageResize } from '~/composables/tiptap/extensions/EnhancedImageResize';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
 import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
+import type { UploadNamespaces } from '~/composables/useFileUploader';
 import type GrpcProvider from '~/composables/yjs/yjs';
 import { fontColors, highlightColors } from '~/types/editor';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
@@ -71,7 +72,7 @@ const props = withDefaults(
 
         disableCollab?: boolean;
         targetId?: number;
-        filestoreNamespace?: 'documents' | 'wiki';
+        filestoreNamespace?: UploadNamespaces;
         filestoreService?: (options?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>;
     }>(),
     {

@@ -6,6 +6,7 @@ import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/a
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { QualificationJobAccess } from '~~/gen/ts/resources/qualifications/access';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
@@ -75,6 +76,7 @@ const schema = z.object({
     }),
     labelSyncEnabled: z.boolean(),
     labelSyncFormat: z.string().max(128).optional(),
+    files: z.custom<File>().array().max(5),
 });
 
 type Schema = z.output<typeof schema>;
@@ -107,6 +109,7 @@ const state = reactive<Schema>({
     },
     labelSyncEnabled: false,
     labelSyncFormat: '%abbr%: %name%',
+    files: [],
 });
 const qualiRequirements = ref<QualificationRequirement[]>([]);
 
@@ -151,6 +154,8 @@ async function getQualification(qualificationId: number): Promise<void> {
             }
 
             qualiRequirements.value = qualification.requirements;
+
+            state.files = qualification.files;
         }
 
         loading.value = false;
@@ -201,6 +206,7 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
             access: values.access,
             labelSyncEnabled: values.labelSyncEnabled,
             labelSyncFormat: values.labelSyncFormat,
+            files: values.files,
         },
     };
 
@@ -245,6 +251,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             access: values.access,
             labelSyncEnabled: values.labelSyncEnabled,
             labelSyncFormat: values.labelSyncFormat,
+            files: values.files,
         },
     };
 
@@ -456,6 +463,10 @@ const selectedTab = computed({
                                     class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                     :disabled="!canDo.edit"
                                     rounded="rounded-none"
+                                    :target-id="props.qualificationId ?? 0"
+                                    filestore-namespace="qualifications"
+                                    :filestore-service="(opts) => $grpc.qualifications.qualifications.uploadFile(opts)"
+                                    @file-uploaded="(file) => state.files.push(file)"
                                 />
                             </ClientOnly>
                         </UFormGroup>

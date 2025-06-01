@@ -305,6 +305,10 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 		}
 	}
 
+	if _, _, err := s.qualiFileHandler.HandleFileChangesForParent(ctx, tx, req.Qualification.Id, req.Qualification.Files); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

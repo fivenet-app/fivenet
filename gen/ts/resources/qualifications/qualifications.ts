@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Duration } from "../../google/protobuf/duration";
+import { File } from "../file/file";
 import { ExamQuestions } from "./exam";
 import { QualificationAccess } from "./access";
 import { UserShort } from "../users/users";
@@ -49,89 +50,93 @@ export interface Qualification {
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 26
+     * @generated from protobuf field: bool public = 8
      */
     public: boolean;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string abbreviation = 8
+     * @generated from protobuf field: string abbreviation = 9
      */
     abbreviation: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string title = 9
+     * @generated from protobuf field: string title = 10
      */
     title: string;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string description = 10
+     * @generated from protobuf field: optional string description = 11
      */
     description?: string;
     /**
-     * @generated from protobuf field: resources.common.content.Content content = 11
+     * @generated from protobuf field: resources.common.content.Content content = 12
      */
     content?: Content;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 12
+     * @generated from protobuf field: optional int32 creator_id = 13
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 13
+     * @generated from protobuf field: optional resources.users.UserShort creator = 14
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string creator_job = 14
+     * @generated from protobuf field: string creator_job = 15
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationAccess access = 15
+     * @generated from protobuf field: resources.qualifications.QualificationAccess access = 16
      */
     access?: QualificationAccess;
     /**
-     * @generated from protobuf field: repeated resources.qualifications.QualificationRequirement requirements = 16
+     * @generated from protobuf field: repeated resources.qualifications.QualificationRequirement requirements = 17
      */
     requirements: QualificationRequirement[];
     /**
-     * @generated from protobuf field: bool discord_sync_enabled = 17
+     * @generated from protobuf field: bool discord_sync_enabled = 18
      */
     discordSyncEnabled: boolean;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationDiscordSettings discord_settings = 18
+     * @generated from protobuf field: optional resources.qualifications.QualificationDiscordSettings discord_settings = 19
      */
     discordSettings?: QualificationDiscordSettings;
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationExamMode exam_mode = 19
+     * @generated from protobuf field: resources.qualifications.QualificationExamMode exam_mode = 20
      */
     examMode: QualificationExamMode;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationExamSettings exam_settings = 20
+     * @generated from protobuf field: optional resources.qualifications.QualificationExamSettings exam_settings = 21
      */
     examSettings?: QualificationExamSettings;
     /**
-     * @generated from protobuf field: optional resources.qualifications.ExamQuestions exam = 21
+     * @generated from protobuf field: optional resources.qualifications.ExamQuestions exam = 22
      */
     exam?: ExamQuestions;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationResult result = 22
+     * @generated from protobuf field: optional resources.qualifications.QualificationResult result = 23
      */
     result?: QualificationResult;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationRequest request = 23
+     * @generated from protobuf field: optional resources.qualifications.QualificationRequest request = 24
      */
     request?: QualificationRequest;
     /**
-     * @generated from protobuf field: bool label_sync_enabled = 24
+     * @generated from protobuf field: bool label_sync_enabled = 25
      */
     labelSyncEnabled: boolean;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string label_sync_format = 25
+     * @generated from protobuf field: optional string label_sync_format = 26
      */
     labelSyncFormat?: string;
+    /**
+     * @generated from protobuf field: repeated resources.file.File files = 27
+     */
+    files: File[]; // @gotags: alias:"files"
 }
 /**
  * @generated from protobuf message resources.qualifications.QualificationShort
@@ -166,53 +171,53 @@ export interface QualificationShort {
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 22
+     * @generated from protobuf field: bool public = 8
      */
     public: boolean;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string abbreviation = 8
+     * @generated from protobuf field: string abbreviation = 9
      */
     abbreviation: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string title = 9
+     * @generated from protobuf field: string title = 10
      */
     title: string;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string description = 10
+     * @generated from protobuf field: optional string description = 11
      */
     description?: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 12
+     * @generated from protobuf field: optional int32 creator_id = 13
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 13
+     * @generated from protobuf field: optional resources.users.UserShort creator = 14
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string creator_job = 14
+     * @generated from protobuf field: string creator_job = 15
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: repeated resources.qualifications.QualificationRequirement requirements = 16
+     * @generated from protobuf field: repeated resources.qualifications.QualificationRequirement requirements = 17
      */
     requirements: QualificationRequirement[];
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationExamMode exam_mode = 18
+     * @generated from protobuf field: resources.qualifications.QualificationExamMode exam_mode = 20
      */
     examMode: QualificationExamMode;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationExamSettings exam_settings = 19
+     * @generated from protobuf field: optional resources.qualifications.QualificationExamSettings exam_settings = 21
      */
     examSettings?: QualificationExamSettings;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationResult result = 21
+     * @generated from protobuf field: optional resources.qualifications.QualificationResult result = 23
      */
     result?: QualificationResult;
 }
@@ -473,25 +478,26 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 26, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 11, name: "content", kind: "message", T: () => Content },
-            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 13, name: "creator", kind: "message", T: () => UserShort },
-            { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 15, name: "access", kind: "message", T: () => QualificationAccess },
-            { no: 16, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequirement },
-            { no: 17, name: "discord_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 18, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings },
-            { no: 19, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 20, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
-            { no: 21, name: "exam", kind: "message", T: () => ExamQuestions },
-            { no: 22, name: "result", kind: "message", T: () => QualificationResult },
-            { no: 23, name: "request", kind: "message", T: () => QualificationRequest },
-            { no: 24, name: "label_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 25, name: "label_sync_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+            { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 9, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 10, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
+            { no: 11, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 12, name: "content", kind: "message", T: () => Content },
+            { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 14, name: "creator", kind: "message", T: () => UserShort },
+            { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 16, name: "access", kind: "message", T: () => QualificationAccess },
+            { no: 17, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequirement },
+            { no: 18, name: "discord_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 19, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings },
+            { no: 20, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 21, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
+            { no: 22, name: "exam", kind: "message", T: () => ExamQuestions },
+            { no: 23, name: "result", kind: "message", T: () => QualificationResult },
+            { no: 24, name: "request", kind: "message", T: () => QualificationRequest },
+            { no: 25, name: "label_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 26, name: "label_sync_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 27, name: "files", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => File }
         ]);
     }
     create(value?: PartialMessage<Qualification>): Qualification {
@@ -508,6 +514,7 @@ class Qualification$Type extends MessageType<Qualification> {
         message.discordSyncEnabled = false;
         message.examMode = 0;
         message.labelSyncEnabled = false;
+        message.files = [];
         if (value !== undefined)
             reflectionMergePartial<Qualification>(this, message, value);
         return message;
@@ -538,62 +545,65 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* bool closed */ 7:
                     message.closed = reader.bool();
                     break;
-                case /* bool public */ 26:
+                case /* bool public */ 8:
                     message.public = reader.bool();
                     break;
-                case /* string abbreviation */ 8:
+                case /* string abbreviation */ 9:
                     message.abbreviation = reader.string();
                     break;
-                case /* string title */ 9:
+                case /* string title */ 10:
                     message.title = reader.string();
                     break;
-                case /* optional string description */ 10:
+                case /* optional string description */ 11:
                     message.description = reader.string();
                     break;
-                case /* resources.common.content.Content content */ 11:
+                case /* resources.common.content.Content content */ 12:
                     message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
-                case /* optional int32 creator_id */ 12:
+                case /* optional int32 creator_id */ 13:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 13:
+                case /* optional resources.users.UserShort creator */ 14:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 14:
+                case /* string creator_job */ 15:
                     message.creatorJob = reader.string();
                     break;
-                case /* resources.qualifications.QualificationAccess access */ 15:
+                case /* resources.qualifications.QualificationAccess access */ 16:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
-                case /* repeated resources.qualifications.QualificationRequirement requirements */ 16:
+                case /* repeated resources.qualifications.QualificationRequirement requirements */ 17:
                     message.requirements.push(QualificationRequirement.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* bool discord_sync_enabled */ 17:
+                case /* bool discord_sync_enabled */ 18:
                     message.discordSyncEnabled = reader.bool();
                     break;
-                case /* optional resources.qualifications.QualificationDiscordSettings discord_settings */ 18:
+                case /* optional resources.qualifications.QualificationDiscordSettings discord_settings */ 19:
                     message.discordSettings = QualificationDiscordSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSettings);
                     break;
-                case /* resources.qualifications.QualificationExamMode exam_mode */ 19:
+                case /* resources.qualifications.QualificationExamMode exam_mode */ 20:
                     message.examMode = reader.int32();
                     break;
-                case /* optional resources.qualifications.QualificationExamSettings exam_settings */ 20:
+                case /* optional resources.qualifications.QualificationExamSettings exam_settings */ 21:
                     message.examSettings = QualificationExamSettings.internalBinaryRead(reader, reader.uint32(), options, message.examSettings);
                     break;
-                case /* optional resources.qualifications.ExamQuestions exam */ 21:
+                case /* optional resources.qualifications.ExamQuestions exam */ 22:
                     message.exam = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.exam);
                     break;
-                case /* optional resources.qualifications.QualificationResult result */ 22:
+                case /* optional resources.qualifications.QualificationResult result */ 23:
                     message.result = QualificationResult.internalBinaryRead(reader, reader.uint32(), options, message.result);
                     break;
-                case /* optional resources.qualifications.QualificationRequest request */ 23:
+                case /* optional resources.qualifications.QualificationRequest request */ 24:
                     message.request = QualificationRequest.internalBinaryRead(reader, reader.uint32(), options, message.request);
                     break;
-                case /* bool label_sync_enabled */ 24:
+                case /* bool label_sync_enabled */ 25:
                     message.labelSyncEnabled = reader.bool();
                     break;
-                case /* optional string label_sync_format */ 25:
+                case /* optional string label_sync_format */ 26:
                     message.labelSyncFormat = reader.string();
+                    break;
+                case /* repeated resources.file.File files */ 27:
+                    message.files.push(File.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -628,63 +638,66 @@ class Qualification$Type extends MessageType<Qualification> {
         /* bool closed = 7; */
         if (message.closed !== false)
             writer.tag(7, WireType.Varint).bool(message.closed);
-        /* string abbreviation = 8; */
-        if (message.abbreviation !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.abbreviation);
-        /* string title = 9; */
-        if (message.title !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.title);
-        /* optional string description = 10; */
-        if (message.description !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.description);
-        /* resources.common.content.Content content = 11; */
-        if (message.content)
-            Content.internalBinaryWrite(message.content, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 creator_id = 12; */
-        if (message.creatorId !== undefined)
-            writer.tag(12, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 13; */
-        if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 14; */
-        if (message.creatorJob !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.creatorJob);
-        /* resources.qualifications.QualificationAccess access = 15; */
-        if (message.access)
-            QualificationAccess.internalBinaryWrite(message.access, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.qualifications.QualificationRequirement requirements = 16; */
-        for (let i = 0; i < message.requirements.length; i++)
-            QualificationRequirement.internalBinaryWrite(message.requirements[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* bool discord_sync_enabled = 17; */
-        if (message.discordSyncEnabled !== false)
-            writer.tag(17, WireType.Varint).bool(message.discordSyncEnabled);
-        /* optional resources.qualifications.QualificationDiscordSettings discord_settings = 18; */
-        if (message.discordSettings)
-            QualificationDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.QualificationExamMode exam_mode = 19; */
-        if (message.examMode !== 0)
-            writer.tag(19, WireType.Varint).int32(message.examMode);
-        /* optional resources.qualifications.QualificationExamSettings exam_settings = 20; */
-        if (message.examSettings)
-            QualificationExamSettings.internalBinaryWrite(message.examSettings, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.ExamQuestions exam = 21; */
-        if (message.exam)
-            ExamQuestions.internalBinaryWrite(message.exam, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.QualificationResult result = 22; */
-        if (message.result)
-            QualificationResult.internalBinaryWrite(message.result, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.QualificationRequest request = 23; */
-        if (message.request)
-            QualificationRequest.internalBinaryWrite(message.request, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
-        /* bool label_sync_enabled = 24; */
-        if (message.labelSyncEnabled !== false)
-            writer.tag(24, WireType.Varint).bool(message.labelSyncEnabled);
-        /* optional string label_sync_format = 25; */
-        if (message.labelSyncFormat !== undefined)
-            writer.tag(25, WireType.LengthDelimited).string(message.labelSyncFormat);
-        /* bool public = 26; */
+        /* bool public = 8; */
         if (message.public !== false)
-            writer.tag(26, WireType.Varint).bool(message.public);
+            writer.tag(8, WireType.Varint).bool(message.public);
+        /* string abbreviation = 9; */
+        if (message.abbreviation !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.abbreviation);
+        /* string title = 10; */
+        if (message.title !== "")
+            writer.tag(10, WireType.LengthDelimited).string(message.title);
+        /* optional string description = 11; */
+        if (message.description !== undefined)
+            writer.tag(11, WireType.LengthDelimited).string(message.description);
+        /* resources.common.content.Content content = 12; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 creator_id = 13; */
+        if (message.creatorId !== undefined)
+            writer.tag(13, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 14; */
+        if (message.creator)
+            UserShort.internalBinaryWrite(message.creator, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 15; */
+        if (message.creatorJob !== "")
+            writer.tag(15, WireType.LengthDelimited).string(message.creatorJob);
+        /* resources.qualifications.QualificationAccess access = 16; */
+        if (message.access)
+            QualificationAccess.internalBinaryWrite(message.access, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.qualifications.QualificationRequirement requirements = 17; */
+        for (let i = 0; i < message.requirements.length; i++)
+            QualificationRequirement.internalBinaryWrite(message.requirements[i], writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* bool discord_sync_enabled = 18; */
+        if (message.discordSyncEnabled !== false)
+            writer.tag(18, WireType.Varint).bool(message.discordSyncEnabled);
+        /* optional resources.qualifications.QualificationDiscordSettings discord_settings = 19; */
+        if (message.discordSettings)
+            QualificationDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.QualificationExamMode exam_mode = 20; */
+        if (message.examMode !== 0)
+            writer.tag(20, WireType.Varint).int32(message.examMode);
+        /* optional resources.qualifications.QualificationExamSettings exam_settings = 21; */
+        if (message.examSettings)
+            QualificationExamSettings.internalBinaryWrite(message.examSettings, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.ExamQuestions exam = 22; */
+        if (message.exam)
+            ExamQuestions.internalBinaryWrite(message.exam, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.QualificationResult result = 23; */
+        if (message.result)
+            QualificationResult.internalBinaryWrite(message.result, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.QualificationRequest request = 24; */
+        if (message.request)
+            QualificationRequest.internalBinaryWrite(message.request, writer.tag(24, WireType.LengthDelimited).fork(), options).join();
+        /* bool label_sync_enabled = 25; */
+        if (message.labelSyncEnabled !== false)
+            writer.tag(25, WireType.Varint).bool(message.labelSyncEnabled);
+        /* optional string label_sync_format = 26; */
+        if (message.labelSyncFormat !== undefined)
+            writer.tag(26, WireType.LengthDelimited).string(message.labelSyncFormat);
+        /* repeated resources.file.File files = 27; */
+        for (let i = 0; i < message.files.length; i++)
+            File.internalBinaryWrite(message.files[i], writer.tag(27, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -706,17 +719,17 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 22, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 13, name: "creator", kind: "message", T: () => UserShort },
-            { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 16, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequirement },
-            { no: 18, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 19, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
-            { no: 21, name: "result", kind: "message", T: () => QualificationResult }
+            { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 9, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 10, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
+            { no: 11, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 14, name: "creator", kind: "message", T: () => UserShort },
+            { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 17, name: "requirements", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => QualificationRequirement },
+            { no: 20, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 21, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
+            { no: 23, name: "result", kind: "message", T: () => QualificationResult }
         ]);
     }
     create(value?: PartialMessage<QualificationShort>): QualificationShort {
@@ -761,37 +774,37 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
                 case /* bool closed */ 7:
                     message.closed = reader.bool();
                     break;
-                case /* bool public */ 22:
+                case /* bool public */ 8:
                     message.public = reader.bool();
                     break;
-                case /* string abbreviation */ 8:
+                case /* string abbreviation */ 9:
                     message.abbreviation = reader.string();
                     break;
-                case /* string title */ 9:
+                case /* string title */ 10:
                     message.title = reader.string();
                     break;
-                case /* optional string description */ 10:
+                case /* optional string description */ 11:
                     message.description = reader.string();
                     break;
-                case /* optional int32 creator_id */ 12:
+                case /* optional int32 creator_id */ 13:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 13:
+                case /* optional resources.users.UserShort creator */ 14:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 14:
+                case /* string creator_job */ 15:
                     message.creatorJob = reader.string();
                     break;
-                case /* repeated resources.qualifications.QualificationRequirement requirements */ 16:
+                case /* repeated resources.qualifications.QualificationRequirement requirements */ 17:
                     message.requirements.push(QualificationRequirement.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* resources.qualifications.QualificationExamMode exam_mode */ 18:
+                case /* resources.qualifications.QualificationExamMode exam_mode */ 20:
                     message.examMode = reader.int32();
                     break;
-                case /* optional resources.qualifications.QualificationExamSettings exam_settings */ 19:
+                case /* optional resources.qualifications.QualificationExamSettings exam_settings */ 21:
                     message.examSettings = QualificationExamSettings.internalBinaryRead(reader, reader.uint32(), options, message.examSettings);
                     break;
-                case /* optional resources.qualifications.QualificationResult result */ 21:
+                case /* optional resources.qualifications.QualificationResult result */ 23:
                     message.result = QualificationResult.internalBinaryRead(reader, reader.uint32(), options, message.result);
                     break;
                 default:
@@ -827,39 +840,39 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         /* bool closed = 7; */
         if (message.closed !== false)
             writer.tag(7, WireType.Varint).bool(message.closed);
-        /* string abbreviation = 8; */
-        if (message.abbreviation !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.abbreviation);
-        /* string title = 9; */
-        if (message.title !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.title);
-        /* optional string description = 10; */
-        if (message.description !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.description);
-        /* optional int32 creator_id = 12; */
-        if (message.creatorId !== undefined)
-            writer.tag(12, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 13; */
-        if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 14; */
-        if (message.creatorJob !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.creatorJob);
-        /* repeated resources.qualifications.QualificationRequirement requirements = 16; */
-        for (let i = 0; i < message.requirements.length; i++)
-            QualificationRequirement.internalBinaryWrite(message.requirements[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.QualificationExamMode exam_mode = 18; */
-        if (message.examMode !== 0)
-            writer.tag(18, WireType.Varint).int32(message.examMode);
-        /* optional resources.qualifications.QualificationExamSettings exam_settings = 19; */
-        if (message.examSettings)
-            QualificationExamSettings.internalBinaryWrite(message.examSettings, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.QualificationResult result = 21; */
-        if (message.result)
-            QualificationResult.internalBinaryWrite(message.result, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* bool public = 22; */
+        /* bool public = 8; */
         if (message.public !== false)
-            writer.tag(22, WireType.Varint).bool(message.public);
+            writer.tag(8, WireType.Varint).bool(message.public);
+        /* string abbreviation = 9; */
+        if (message.abbreviation !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.abbreviation);
+        /* string title = 10; */
+        if (message.title !== "")
+            writer.tag(10, WireType.LengthDelimited).string(message.title);
+        /* optional string description = 11; */
+        if (message.description !== undefined)
+            writer.tag(11, WireType.LengthDelimited).string(message.description);
+        /* optional int32 creator_id = 13; */
+        if (message.creatorId !== undefined)
+            writer.tag(13, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 14; */
+        if (message.creator)
+            UserShort.internalBinaryWrite(message.creator, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 15; */
+        if (message.creatorJob !== "")
+            writer.tag(15, WireType.LengthDelimited).string(message.creatorJob);
+        /* repeated resources.qualifications.QualificationRequirement requirements = 17; */
+        for (let i = 0; i < message.requirements.length; i++)
+            QualificationRequirement.internalBinaryWrite(message.requirements[i], writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.QualificationExamMode exam_mode = 20; */
+        if (message.examMode !== 0)
+            writer.tag(20, WireType.Varint).int32(message.examMode);
+        /* optional resources.qualifications.QualificationExamSettings exam_settings = 21; */
+        if (message.examSettings)
+            QualificationExamSettings.internalBinaryWrite(message.examSettings, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.QualificationResult result = 23; */
+        if (message.result)
+            QualificationResult.internalBinaryWrite(message.result, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

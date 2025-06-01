@@ -93,6 +93,18 @@ func (m *Qualification) Sanitize() error {
 		}
 	}
 
+	// Field: Files
+	for idx, item := range m.Files {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: LabelSyncFormat
 
 	if m.LabelSyncFormat != nil {
