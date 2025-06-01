@@ -62,7 +62,7 @@ export const useMailerStore = defineStore(
 
         // Actions
         const handleEvent = async (event: MailerEvent): Promise<void> => {
-            logger.debug('Received change - Kind:', event.data.oneofKind, event.data);
+            logger.debug('Received change - oneofKind:', event.data.oneofKind, event.data);
 
             if (event.data.oneofKind === 'emailUpdate') {
                 const searchId = event.data.emailUpdate.id;

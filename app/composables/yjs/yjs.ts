@@ -6,7 +6,7 @@ import { ClientPacket, type ServerPacket } from '~~/gen/ts/resources/collab/coll
 
 export type StreamConnectFn = (options?: RpcOptions) => DuplexStreamingCall<ClientPacket, ServerPacket>;
 
-const logger = useLogger('yjs:grpc');
+const logger = useLogger('📞 yjs:grpc');
 
 interface GrpcProviderOpts {
     /** Target id (e.g., document id, page id) */
@@ -85,8 +85,9 @@ export default class GrpcProvider extends ObservableV2<Events> {
         this.stream = this.streamConnect({});
         this.sendHello();
 
-        this.stream.responses.onError((_) => {
+        this.stream.responses.onError(() => {
             this.connected = false;
+
             this.stream = undefined;
             this.scheduleReconnect();
         });
@@ -131,7 +132,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
 
             // Ignore our own echoes (server broadcasts them to everyone incl. sender)
             if (msg.senderId === this.clientId) return;
-            logger.debug('Received message from', msg.senderId, ' - oneofKind: ', msg.msg.oneofKind);
+            logger.debug('Received message from', msg.senderId, 'oneofKind:', msg.msg.oneofKind);
 
             switch (msg.msg.oneofKind) {
                 case 'syncStep': {

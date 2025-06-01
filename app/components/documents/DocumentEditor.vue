@@ -11,7 +11,6 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
-import { useDocumentEditorStore } from '~/stores/documenteditor';
 import { useNotificatorStore } from '~/stores/notificator';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
@@ -41,8 +40,6 @@ const modal = useModal();
 const clipboardStore = useClipboardStore();
 
 const completorStore = useCompletorStore();
-
-const documentStore = useDocumentEditorStore();
 
 const notifications = useNotificatorStore();
 
@@ -150,19 +147,13 @@ const relations = ref<DocumentRelation[]>([]);
 
 const saving = ref(false);
 
-async function saveToStore(values: Schema): Promise<void> {
+async function saveToStore(_values: Schema): Promise<void> {
     if (saving.value) {
         return;
     }
     saving.value = true;
 
-    documentStore.save({
-        title: values.title,
-        content: values.content,
-        state: values.state,
-        closed: values.closed,
-        category: values.category,
-    });
+    // TODO auto save logic
 
     useTimeoutFn(() => {
         saving.value = false;
@@ -268,7 +259,6 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
         clipboardStore.clear();
-        documentStore.clear();
 
         await navigateTo({
             name: 'documents-id',

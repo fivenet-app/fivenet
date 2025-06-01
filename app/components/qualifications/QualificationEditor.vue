@@ -168,8 +168,6 @@ function setFromProps(): void {
     }
     state.files = qualification.value.files;
     state.requirements = qualification.value.requirements;
-
-    console.log('state', state, qualification.value);
 }
 
 watch(qualification, () => setFromProps());

@@ -2,6 +2,7 @@ import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
+import { webSocket } from '~/composables/grpc/grpcws/bridge';
 import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
@@ -59,9 +60,6 @@ export const useAuthStore = defineStore(
         const setActiveChar = (char: User | null): void => {
             activeChar.value = char;
             lastCharID.value = char ? char.userId : lastCharID.value;
-            if (char === null) {
-                useGRPCWebsocketTransport().close();
-            }
         };
 
         const setPermissions = (perms: string[]): void => {
@@ -255,6 +253,18 @@ export const useAuthStore = defineStore(
         // Getters
         const isSuperuser = computed<boolean>(() => {
             return permissions.value.includes('superuser');
+        });
+
+        // Watchers
+        watch(username, (val) => {
+            // Connect to the WebSocket if the user is logged in
+            if (val !== null && val !== '') {
+                if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
+                    webSocket.open();
+                }
+            } else {
+                webSocket.close();
+            }
         });
 
         return {

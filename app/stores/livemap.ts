@@ -1,9 +1,11 @@
-import type { RpcError } from '@protobuf-ts/runtime-rpc';
+import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import type { Coordinate } from '~/types/livemap';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import type { MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { StreamRequest } from '~~/gen/ts/services/centrum/centrum';
+import type { StreamResponse } from '~~/gen/ts/services/livemap/livemap';
 import { useSettingsStore } from './settings';
 
 const logger = useLogger('🗺️ Livemap');
@@ -51,10 +53,11 @@ export const useLivemapStore = defineStore(
             });
         };
 
+        // Stream
+        let currentStream: ServerStreamingCall<StreamRequest, StreamResponse> | undefined = undefined;
+
         const startStream = async (): Promise<void> => {
-            if (abort.value !== undefined) {
-                return;
-            }
+            if (abort.value !== undefined) return;
 
             logger.debug('Starting Stream');
 
@@ -74,9 +77,11 @@ export const useLivemapStore = defineStore(
             cleanupMarkerMarkers();
 
             try {
-                const call = $grpc.livemap.livemap.stream({}, { abort: abort.value.signal });
+                currentStream = $grpc.livemap.livemap.stream({}, { abort: abort.value.signal });
 
-                for await (const resp of call.responses) {
+                for await (const respRaw of currentStream.responses) {
+                    // The gRPC stream may yield unknown, so cast to the expected type
+                    const resp = respRaw as StreamResponse;
                     error.value = undefined;
 
                     if (!resp || !resp.data) {
@@ -87,13 +92,13 @@ export const useLivemapStore = defineStore(
                         userOnDuty.value = resp.userOnDuty;
                     }
 
-                    logger.debug('Received change - Kind:', resp.data.oneofKind, resp.data);
+                    logger.debug('Received change - oneofKind:', resp.data.oneofKind, resp.data);
 
                     if (resp.data.oneofKind === 'jobs') {
                         jobsMarkers.value = resp.data.jobs.markers;
                         jobsUsers.value = resp.data.jobs.users;
                     } else if (resp.data.oneofKind === 'markers') {
-                        resp.data.markers.updated.forEach((v) => {
+                        resp.data.markers.updated.forEach((v: MarkerMarker) => {
                             // Only record found users for non-partial responses
                             if (resp.data.oneofKind === 'markers' && !resp.data.markers.partial) {
                                 foundMarkers.push(v.id);
@@ -102,7 +107,7 @@ export const useLivemapStore = defineStore(
                             addOrUpdateMarkerMarker(v);
                         });
 
-                        resp.data.markers.deleted.forEach((id) => markersMarkers.value.delete(id));
+                        resp.data.markers.deleted.forEach((id: number) => markersMarkers.value.delete(id));
 
                         if (!resp.data.markers.partial) {
                             if (resp.data.markers.part <= 0) {
@@ -120,14 +125,14 @@ export const useLivemapStore = defineStore(
                         }
                     } else if (resp.data.oneofKind === 'users') {
                         if (resp.data.users.clear === true) {
-                            console.info('Clearing all user markers');
+                            logger.info('Clearing all user markers');
                             selectedMarker.value = undefined;
                             foundUsers.length = 0;
                             markersUsers.value.clear();
                             continue;
                         }
 
-                        resp.data.users.updated.forEach((v) => {
+                        resp.data.users.updated.forEach((v: UserMarker) => {
                             // Only record found users for non-partial responses
                             if (resp.data.oneofKind === 'users' && !resp.data.users.partial) {
                                 foundUsers.push(v.userId);
@@ -144,7 +149,7 @@ export const useLivemapStore = defineStore(
                             }
                         });
 
-                        resp.data.users.deleted.forEach((id) => markersUsers.value.delete(id));
+                        resp.data.users.deleted.forEach((id: number) => markersUsers.value.delete(id));
 
                         if (!resp.data.users.partial) {
                             if (resp.data.users.part <= 0) {
@@ -167,29 +172,32 @@ export const useLivemapStore = defineStore(
                             initiated.value = true;
                         }
                     } else {
-                        logger.warn('Unknown data received - Kind: ' + resp.data.oneofKind);
+                        logger.warn('Unknown data received - oneofKind:' + resp.data.oneofKind);
                     }
                 }
             } catch (e) {
                 const err = e as RpcError;
 
-                // Only restart if not cancelled or aborted
-                if (err.code !== 'CANCELLED' && err.code !== 'ABORTED') {
-                    logger.error('Stream failed', err.code, err.message, err.cause);
+                // Always clear the error first
+                error.value = undefined;
 
-                    // If we haven't manually aborted, attempt restart
-                    if (!abort.value?.signal.aborted) {
-                        restartStream();
-                    } else {
-                        error.value = err;
-                    }
-                } else {
-                    error.value = undefined;
-
-                    // Restart only if not manually aborted
+                // If the stream was cancelled or aborted
+                if (err.code === 'CANCELLED' || err.code === 'ABORTED') {
+                    // Only restart if not manually aborted
                     if (!abort.value?.signal.aborted) {
                         await restartStream();
                     }
+                    // Otherwise, do nothing (intentional stop)
+                    return;
+                }
+
+                // For all other errors, log and attempt restart if not manually aborted
+                logger.error('Stream failed', err.code, err.message, err.cause);
+
+                if (!abort.value?.signal.aborted) {
+                    await restartStream();
+                } else {
+                    error.value = err;
                 }
             }
 
