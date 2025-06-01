@@ -394,7 +394,7 @@ service DocumentsService {
   rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
   // @perm: Name=ListDocuments
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
-  // @perm
+  // @perm: Name=UpdateDocument
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
@@ -431,7 +431,7 @@ service DocumentsService {
 
   // @perm: Name=ListDocuments
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
-  // @perm: Name=CreateDocument
+  // @perm: Name=UpdateDocument
   rpc SetDocumentAccess(SetDocumentAccessRequest) returns (SetDocumentAccessResponse);
 
   // @perm
@@ -464,6 +464,6 @@ service DocumentsService {
   // @perm
   rpc SetDocumentReminder(SetDocumentReminderRequest) returns (SetDocumentReminderResponse);
 
-  // @perm: Name=CreateDocument
+  // @perm: Name=UpdateDocument
   rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
 }

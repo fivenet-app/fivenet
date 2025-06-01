@@ -194,11 +194,18 @@ const columnsNew = [
                             :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.reference', 2)]) }"
                         >
                             <template #title-data="{ row }">
-                                <DocumentInfoPopover :document="row.targetDocument" />
+                                <DocumentInfoPopover
+                                    :document="!row.targetDocument?.id ? undefined : row.targetDocument"
+                                    :document-id="row.targetDocumentId"
+                                />
                             </template>
 
                             <template #creator-data="{ row }">
-                                <CitizenInfoPopover :user="row.targetDocument?.creator" :trailing="false" />
+                                <CitizenInfoPopover
+                                    :user="!row.targetDocument?.creator ? undefined : row.targetDocument?.creator"
+                                    :user-id="row.targetDocument?.creatorId"
+                                    :trailing="false"
+                                />
                             </template>
 
                             <template #reference-data="{ row }">

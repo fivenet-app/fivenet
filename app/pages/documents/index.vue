@@ -55,17 +55,13 @@ const isOpen = ref(false);
                         </UButton>
                     </UButtonGroup>
 
-                    <UButton
-                        v-if="can('documents.DocumentsService.CreateDocument').value"
-                        trailing-icon="i-mdi-plus"
-                        color="gray"
-                        truncate
-                        @click="modal.open(TemplatesModal, {})"
-                    >
-                        <span class="hidden truncate sm:block">
-                            {{ $t('common.create') }}
-                        </span>
-                    </UButton>
+                    <UTooltip v-if="can('documents.DocumentsService.UpdateDocument').value" :text="$t('common.create')">
+                        <UButton trailing-icon="i-mdi-plus" color="gray" truncate @click="modal.open(TemplatesModal, {})">
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.document', 1) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
                 </template>
             </UDashboardNavbar>
 

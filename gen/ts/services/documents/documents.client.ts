@@ -129,7 +129,7 @@ export interface IDocumentsServiceClient {
      */
     getDocument(input: GetDocumentRequest, options?: RpcOptions): UnaryCall<GetDocumentRequest, GetDocumentResponse>;
     /**
-     * @perm
+     * @perm: Name=UpdateDocument
      *
      * @generated from protobuf rpc: CreateDocument
      */
@@ -225,7 +225,7 @@ export interface IDocumentsServiceClient {
      */
     getDocumentAccess(input: GetDocumentAccessRequest, options?: RpcOptions): UnaryCall<GetDocumentAccessRequest, GetDocumentAccessResponse>;
     /**
-     * @perm: Name=CreateDocument
+     * @perm: Name=UpdateDocument
      *
      * @generated from protobuf rpc: SetDocumentAccess
      */
@@ -303,7 +303,7 @@ export interface IDocumentsServiceClient {
      */
     setDocumentReminder(input: SetDocumentReminderRequest, options?: RpcOptions): UnaryCall<SetDocumentReminderRequest, SetDocumentReminderResponse>;
     /**
-     * @perm: Name=CreateDocument
+     * @perm: Name=UpdateDocument
      *
      * @generated from protobuf rpc: UploadFile
      */
@@ -382,7 +382,7 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<GetDocumentRequest, GetDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=UpdateDocument
      *
      * @generated from protobuf rpc: CreateDocument
      */
@@ -526,7 +526,7 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<GetDocumentAccessRequest, GetDocumentAccessResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateDocument
+     * @perm: Name=UpdateDocument
      *
      * @generated from protobuf rpc: SetDocumentAccess
      */
@@ -643,7 +643,7 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
         return stackIntercept<SetDocumentReminderRequest, SetDocumentReminderResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateDocument
+     * @perm: Name=UpdateDocument
      *
      * @generated from protobuf rpc: UploadFile
      */

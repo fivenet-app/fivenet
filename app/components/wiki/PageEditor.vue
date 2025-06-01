@@ -68,7 +68,7 @@ const { ydoc, provider } = useCollabDoc('wiki', props.pageId);
 watchOnce(page, () => provider.connect());
 
 const canDo = computed(() => ({
-    public: attr('wiki.WikiService.CreatePage', 'Fields', 'Public').value,
+    public: attr('wiki.WikiService.UpdatePage', 'Fields', 'Public').value,
 }));
 
 const schema = z.object({
@@ -107,7 +107,7 @@ const state = reactive<Schema>({
     files: [],
 });
 
-const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages:${route.path}`, () => listPages(), {
+const { data: pages, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages-${props.pageId}-editor`, () => listPages(), {
     default: () => [],
 });
 
@@ -289,13 +289,13 @@ useYNumber(detailsYdoc, 'parentId', toRef(state, 'parentId'), { provider: provid
 useYBoolean(detailsYdoc, 'public', toRef(state.meta, 'public'), { provider: provider });
 useYBoolean(detailsYdoc, 'toc', toRef(state.meta, 'toc'), { provider: provider });
 
+// Access
 useYArrayFiltered<PageJobAccess>(
     ydoc.getArray('access_jobs'),
     toRef(state.access, 'jobs'),
     { omit: ['createdAt', 'user'] },
     { provider: provider },
 );
-
 useYArrayFiltered<PageUserAccess>(
     ydoc.getArray('access_users'),
     toRef(state.access, 'users'),
@@ -305,6 +305,7 @@ useYArrayFiltered<PageUserAccess>(
     { provider: provider },
 );
 
+// Files
 useYArrayFiltered<File>(
     ydoc.getArray('files'),
     toRef(state, 'files'),

@@ -1006,7 +1006,6 @@
             "mark_unread": "Mark as unread"
         },
         "qualifications": {
-            "create_new_qualification": "Create New Qualification",
             "user_qualifications": "Your Qualifications",
             "all_qualifications": "All Qualifications",
             "user_requests": "Requested Qualifications",
@@ -2757,10 +2756,6 @@
                     "key": "Add Document Relations",
                     "description": "Add/ Remove citizen relation."
                 },
-                "CreateDocument": {
-                    "key": "Create Documents",
-                    "description": "Create new documents."
-                },
                 "ListDocuments": {
                     "key": "List and view Documents",
                     "description": "List, search and view documents."
@@ -2774,8 +2769,8 @@
                     "description": "List available document templates."
                 },
                 "UpdateDocument": {
-                    "key": "Update Documents",
-                    "description": "Edit/ Update an existing document.",
+                    "key": "Create and update Documents",
+                    "description": "Create documents and edit/ update existing documents.",
                     "attrs": {
                         "Own": "Own",
                         "Lower_Rank": "Lower Rank",
@@ -3103,27 +3098,19 @@
                     "key": "Get Qualifications",
                     "description": "Retrieve qualification info"
                 },
-                "CreateQualification": {
-                    "key": "Create Qualifications",
-                    "description": "Create qualifications",
-                    "attrs": {
-                        "Public": "Public qualifications for anyone to view"
-                    },
-                    "attrs_types": {
-                        "Fields": "Access to creating qualifications with specific access"
-                    }
-                },
                 "UpdateQualification": {
-                    "key": "Update Qualifications",
-                    "description": "Update qualifications",
+                    "key": "Create and update Qualifications",
+                    "description": "Create an update qualifications",
                     "attrs": {
                         "Own": "Own",
                         "Lower_Rank": "Lower Rank",
                         "Same_Rank": "Same Rank",
-                        "Any": "Any"
+                        "Any": "Any",
+                        "Public": "Public qualifications for anyone to view"
                     },
                     "attrs_types": {
-                        "Access": "Access to factions-own qualifications"
+                        "Access": "Access to factions-own qualifications",
+                        "Fields": "Access to creating qualifications with specific access"
                     }
                 },
                 "DeleteQualification": {
@@ -3180,9 +3167,9 @@
                     "key": "List and view Pages",
                     "description": "Should always be given."
                 },
-                "CreatePage": {
-                    "key": "Create Pages",
-                    "description": "Create pages in wiki.",
+                "UpdatePage": {
+                    "key": "Create and Update Pages",
+                    "description": "Create and update wiki pages.",
                     "attrs": {
                         "Public": "Public pages for anyone to view"
                     },

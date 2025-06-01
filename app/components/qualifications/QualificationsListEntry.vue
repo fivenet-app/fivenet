@@ -23,11 +23,11 @@ defineProps<{
                     >
                         <span class="absolute inset-x-0 -top-px bottom-0" />
                         <span
-                            >{{ qualification.abbreviation }}:
+                            ><template v-if="qualification.abbreviation">{{ qualification.abbreviation }}: </template>
                             {{ !qualification.title ? $t('common.untitled') : qualification.title }}</span
                         >
 
-                        <UBadge v-if="qualification.draft" class="inline-flex gap-1" color="info" size="md">
+                        <UBadge v-if="qualification.draft" class="inline-flex gap-1" color="info" size="xs">
                             <UIcon class="size-5" name="i-mdi-pencil" />
                             <span>
                                 {{ $t('common.draft') }}

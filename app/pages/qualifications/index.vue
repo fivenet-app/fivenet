@@ -50,6 +50,8 @@ const selectedTab = computed({
         router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
+
+const qualifications = useQualifications();
 </script>
 
 <template>
@@ -57,14 +59,16 @@ const selectedTab = computed({
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.qualifications.title')">
                 <template #right>
-                    <UButton
-                        v-if="can('qualifications.QualificationsService.CreateQualification').value"
-                        :to="{ name: 'qualifications-create' }"
-                        trailing-icon="i-mdi-plus"
-                        color="gray"
+                    <UTooltip
+                        v-if="can('qualifications.QualificationsService.UpdateQualification').value"
+                        :text="$t('common.create')"
                     >
-                        {{ $t('components.qualifications.create_new_qualification') }}
-                    </UButton>
+                        <UButton trailing-icon="i-mdi-plus" color="gray" @click="qualifications.createQualification()">
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.qualification', 1) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
                 </template>
             </UDashboardNavbar>
 

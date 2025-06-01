@@ -46,9 +46,9 @@ type QualificationsServiceClient interface {
 	ListQualifications(ctx context.Context, in *ListQualificationsRequest, opts ...grpc.CallOption) (*ListQualificationsResponse, error)
 	// @perm: Name=ListQualifications
 	GetQualification(ctx context.Context, in *GetQualificationRequest, opts ...grpc.CallOption) (*GetQualificationResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Public"}
+	// @perm: Name=UpdateQualification
 	CreateQualification(ctx context.Context, in *CreateQualificationRequest, opts ...grpc.CallOption) (*CreateQualificationResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"}
 	UpdateQualification(ctx context.Context, in *UpdateQualificationRequest, opts ...grpc.CallOption) (*UpdateQualificationResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteQualification(ctx context.Context, in *DeleteQualificationRequest, opts ...grpc.CallOption) (*DeleteQualificationResponse, error)
@@ -72,7 +72,7 @@ type QualificationsServiceClient interface {
 	SubmitExam(ctx context.Context, in *SubmitExamRequest, opts ...grpc.CallOption) (*SubmitExamResponse, error)
 	// @perm: Name=ListQualifications
 	GetUserExam(ctx context.Context, in *GetUserExamRequest, opts ...grpc.CallOption) (*GetUserExamResponse, error)
-	// @perm: Name=CreateQualification
+	// @perm: Name=UpdateQualification
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
 }
 
@@ -255,9 +255,9 @@ type QualificationsServiceServer interface {
 	ListQualifications(context.Context, *ListQualificationsRequest) (*ListQualificationsResponse, error)
 	// @perm: Name=ListQualifications
 	GetQualification(context.Context, *GetQualificationRequest) (*GetQualificationResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Public"}
+	// @perm: Name=UpdateQualification
 	CreateQualification(context.Context, *CreateQualificationRequest) (*CreateQualificationResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"}
 	UpdateQualification(context.Context, *UpdateQualificationRequest) (*UpdateQualificationResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteQualification(context.Context, *DeleteQualificationRequest) (*DeleteQualificationResponse, error)
@@ -281,7 +281,7 @@ type QualificationsServiceServer interface {
 	SubmitExam(context.Context, *SubmitExamRequest) (*SubmitExamResponse, error)
 	// @perm: Name=ListQualifications
 	GetUserExam(context.Context, *GetUserExamRequest) (*GetUserExamResponse, error)
-	// @perm: Name=CreateQualification
+	// @perm: Name=UpdateQualification
 	UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
 	mustEmbedUnimplementedQualificationsServiceServer()
 }

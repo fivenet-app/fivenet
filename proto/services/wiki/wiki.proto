@@ -72,9 +72,9 @@ service WikiService {
   rpc ListPages(ListPagesRequest) returns (ListPagesResponse);
   // @perm: Name=ListPages
   rpc GetPage(GetPageRequest) returns (GetPageResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Public"}
+  // @perm: Name=UpdatePage
   rpc CreatePage(CreatePageRequest) returns (CreatePageResponse);
-  // @perm: Name=ListPages
+  // @perm: Attrs=Fields/StringList:[]string{"Public"}
   rpc UpdatePage(UpdatePageRequest) returns (UpdatePageResponse);
   // @perm
   rpc DeletePage(DeletePageRequest) returns (DeletePageResponse);
@@ -82,6 +82,6 @@ service WikiService {
   // @perm
   rpc ListPageActivity(ListPageActivityRequest) returns (ListPageActivityResponse);
 
-  // @perm: Name=CreatePage
+  // @perm: Name=UpdatePage
   rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
 }

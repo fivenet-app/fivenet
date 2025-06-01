@@ -29,7 +29,7 @@ const {
 
 async function getTemplate(): Promise<Template> {
     try {
-        const data = clipboardStore.getTemplateData(clipboardStore.activeStack);
+        const data = clipboardStore.getTemplateData();
         data.activeChar = activeChar.value!;
         logger.debug('Documents: Editor - Clipboard Template Data', data);
 

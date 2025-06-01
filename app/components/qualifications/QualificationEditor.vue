@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { UForm } from '#components';
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
@@ -12,42 +13,35 @@ import type { QualificationJobAccess } from '~~/gen/ts/resources/qualifications/
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
 import type {
+    Qualification,
     QualificationExamSettings,
     QualificationRequirement,
     QualificationShort,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
-import type {
-    CreateQualificationRequest,
-    CreateQualificationResponse,
-    UpdateQualificationRequest,
-    UpdateQualificationResponse,
-} from '~~/gen/ts/services/qualifications/qualifications';
+import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import BackButton from '../partials/BackButton.vue';
+import ConfirmModal from '../partials/ConfirmModal.vue';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import ExamEditor from './exam/ExamEditor.vue';
 
 const props = defineProps<{
-    qualificationId?: number;
+    qualificationId: number;
 }>();
 
 const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
+const modal = useModal();
+
 const { attr, can, activeChar } = useAuth();
 
 const notifications = useNotificatorStore();
 
 const { maxAccessEntries } = useAppConfig();
-
-const canDo = computed(() => ({
-    edit: !props.qualificationId
-        ? can('qualifications.QualificationsService.CreateQualification').value
-        : can('qualifications.QualificationsService.UpdateQualification').value,
-    access: true,
-    public: attr('qualifications.QualificationsService.CreateQualification', 'Fields', 'Public').value,
-}));
-
-const loading = ref(props.qualificationId !== undefined);
 
 const examModes = ref<{ mode: QualificationExamMode; selected?: boolean }[]>([
     { mode: QualificationExamMode.DISABLED },
@@ -62,6 +56,7 @@ const schema = z.object({
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     content: z.string().min(3).max(750000),
     closed: z.boolean(),
+    draft: z.boolean(),
     public: z.boolean(),
     discordSyncEnabled: z.boolean(),
     discordSettings: z.object({
@@ -77,6 +72,7 @@ const schema = z.object({
     labelSyncEnabled: z.boolean(),
     labelSyncFormat: z.string().max(128).optional(),
     files: z.custom<File>().array().max(5),
+    requirements: z.custom<QualificationRequirement>().array().max(10),
 });
 
 type Schema = z.output<typeof schema>;
@@ -88,6 +84,7 @@ const state = reactive<Schema>({
     description: '',
     content: '',
     closed: false,
+    draft: false,
     public: false,
     discordSyncEnabled: false,
     discordSettings: {
@@ -110,10 +107,17 @@ const state = reactive<Schema>({
     labelSyncEnabled: false,
     labelSyncFormat: '%abbr%: %name%',
     files: [],
+    requirements: [],
 });
-const qualiRequirements = ref<QualificationRequirement[]>([]);
 
-async function getQualification(qualificationId: number): Promise<void> {
+const {
+    data: qualification,
+    pending: loading,
+    error,
+    refresh,
+} = useLazyAsyncData(`qualification-${props.qualificationId}-editor`, () => getQualification(props.qualificationId));
+
+async function getQualification(qualificationId: number): Promise<Qualification> {
     try {
         const call = $grpc.qualifications.qualifications.getQualification({
             qualificationId: qualificationId,
@@ -121,44 +125,7 @@ async function getQualification(qualificationId: number): Promise<void> {
         });
         const { response } = await call;
 
-        const qualification = response.qualification;
-        if (qualification) {
-            state.abbreviation = qualification.abbreviation;
-            state.title = qualification.title;
-            state.description = qualification.description;
-            state.content = qualification.content?.rawContent ?? '';
-            state.closed = qualification.closed;
-            state.public = qualification.public;
-            state.abbreviation = qualification.abbreviation;
-            state.discordSyncEnabled = qualification.discordSyncEnabled;
-            state.discordSettings = qualification.discordSettings ?? {
-                roleName: '',
-                roleFormat: '',
-            };
-            state.examMode = qualification.examMode;
-            if (qualification.examSettings) {
-                state.examSettings = qualification.examSettings;
-            }
-            if (qualification.exam) {
-                qualification.exam.questions.forEach((q) => {
-                    if (q.answer === undefined) {
-                        q.answer = {
-                            answerKey: '',
-                        };
-                    }
-                });
-                state.exam = qualification.exam;
-            }
-            if (qualification.access) {
-                state.access = qualification.access;
-            }
-
-            qualiRequirements.value = qualification.requirements;
-
-            state.files = qualification.files;
-        }
-
-        loading.value = false;
+        return response.qualification!;
     } catch (e) {
         handleGRPCError(e as RpcError);
 
@@ -167,64 +134,45 @@ async function getQualification(qualificationId: number): Promise<void> {
     }
 }
 
-onMounted(async () => {
-    if (props.qualificationId) {
-        await getQualification(props.qualificationId);
-    } else {
-        state.access.jobs.push({
-            id: 0,
-            targetId: 0,
-            job: activeChar.value!.job,
-            minimumGrade: -1,
-            access: AccessLevel.EDIT,
-        });
-    }
-});
+function setFromProps(): void {
+    if (!qualification.value) return;
 
-async function createQualification(values: Schema): Promise<CreateQualificationResponse> {
-    const req: CreateQualificationRequest = {
-        qualification: {
-            id: 0,
-            job: '',
-            weight: 0,
-            closed: values.closed,
-            public: values.public,
-            abbreviation: values.abbreviation,
-            title: values.title,
-            description: values.description,
-            content: {
-                rawContent: values.content,
-            },
-            creatorId: activeChar.value!.userId,
-            creatorJob: activeChar.value!.job,
-            requirements: qualiRequirements.value,
-            discordSyncEnabled: values.discordSyncEnabled,
-            discordSettings: values.discordSettings,
-            examMode: values.examMode,
-            examSettings: values.examSettings,
-            exam: values.exam,
-            access: values.access,
-            labelSyncEnabled: values.labelSyncEnabled,
-            labelSyncFormat: values.labelSyncFormat,
-            files: values.files,
-        },
+    state.abbreviation = qualification.value.abbreviation;
+    state.title = qualification.value.title;
+    state.description = qualification.value.description;
+    state.content = qualification.value.content?.rawContent ?? '';
+    state.closed = qualification.value.closed;
+    state.public = qualification.value.public;
+    state.abbreviation = qualification.value.abbreviation;
+    state.discordSyncEnabled = qualification.value.discordSyncEnabled;
+    state.discordSettings = qualification.value.discordSettings ?? {
+        roleName: '',
+        roleFormat: '',
     };
-
-    try {
-        const call = $grpc.qualifications.qualifications.createQualification(req);
-        const { response } = await call;
-
-        await navigateTo({
-            name: 'qualifications-id',
-            params: { id: response.qualificationId },
-        });
-
-        return response;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
+    state.examMode = qualification.value.examMode;
+    if (qualification.value.examSettings) {
+        state.examSettings = qualification.value.examSettings;
     }
+    if (qualification.value.exam) {
+        qualification.value.exam.questions.forEach((q) => {
+            if (q.answer === undefined) {
+                q.answer = {
+                    answerKey: '',
+                };
+            }
+        });
+        state.exam = qualification.value.exam;
+    }
+    if (qualification.value.access) {
+        state.access = qualification.value.access;
+    }
+    state.files = qualification.value.files;
+    state.requirements = qualification.value.requirements;
+
+    console.log('state', state, qualification.value);
 }
+
+watch(qualification, () => setFromProps());
 
 async function updateQualification(values: Schema): Promise<UpdateQualificationResponse> {
     const req: UpdateQualificationRequest = {
@@ -233,6 +181,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             job: '',
             weight: 0,
             closed: values.closed,
+            draft: values.draft,
             public: values.public,
             abbreviation: values.abbreviation,
             title: values.title,
@@ -242,7 +191,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
-            requirements: qualiRequirements.value,
+            requirements: state.requirements,
             discordSyncEnabled: values.discordSyncEnabled,
             discordSettings: values.discordSettings,
             examMode: values.examMode,
@@ -257,13 +206,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
 
     try {
         const call = $grpc.qualifications.qualifications.updateQualification(req);
-
         const { response } = await call;
-
-        await navigateTo({
-            name: 'qualifications-id',
-            params: { id: response.qualificationId },
-        });
 
         return response;
     } catch (e) {
@@ -279,11 +222,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     }
 
     canSubmit.value = false;
-    if (props.qualificationId === undefined) {
-        await createQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    } else {
-        await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    }
+    await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 
     notifications.add({
         title: { key: 'notifications.action_successfull.title', parameters: {} },
@@ -295,13 +234,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 const accessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
 
 function updateQualificationRequirement(idx: number, qualification?: QualificationShort): void {
-    if (!qualification || !qualiRequirements.value[idx]) {
+    if (!qualification || !state.requirements[idx]) {
         return;
     }
 
-    qualiRequirements.value[idx]!.qualificationId = props.qualificationId ?? 0;
-    qualiRequirements.value[idx]!.targetQualificationId = qualification.id;
+    state.requirements[idx]!.qualificationId = props.qualificationId ?? 0;
+    state.requirements[idx]!.targetQualificationId = qualification.id;
 }
+
+const canDo = computed(() => ({
+    edit: can('qualifications.QualificationsService.UpdateQualification').value,
+    access: true,
+    public: attr('qualifications.QualificationsService.UpdateQualification', 'Fields', 'Public').value,
+}));
 
 const items = [
     {
@@ -338,24 +283,21 @@ const selectedTab = computed({
         router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
+
+const formRef = useTemplateRef<typeof UForm>('formRef');
 </script>
 
 <template>
     <UForm
+        ref="formRef"
         class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         :schema="schema"
         :state="state"
         @submit="onSubmitThrottle"
     >
-        <UDashboardNavbar :title="qualificationId ? $t('pages.qualifications.edit.title') : $t('pages.qualifications.create')">
+        <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
             <template #right>
-                <UButton
-                    color="black"
-                    icon="i-mdi-arrow-back"
-                    :to="qualificationId ? { name: 'qualifications-id', params: { id: qualificationId } } : '/qualifications'"
-                >
-                    {{ $t('common.back') }}
-                </UButton>
+                <BackButton :disabled="!canSubmit" />
 
                 <UButton
                     type="submit"
@@ -364,19 +306,54 @@ const selectedTab = computed({
                     :loading="!canSubmit"
                 >
                     <span class="hidden truncate sm:block">
-                        <template v-if="!qualificationId">
-                            {{ $t('common.create') }}
-                        </template>
-                        <template v-else>
-                            {{ $t('common.save') }}
-                        </template>
+                        {{ $t('common.save') }}
+                    </span>
+                </UButton>
+
+                <UButton
+                    v-if="qualification?.draft"
+                    type="submit"
+                    color="info"
+                    trailing-icon="i-mdi-publish"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    @click.prevent="
+                        modal.open(ConfirmModal, {
+                            title: $t('common.publish_confirm.title', { type: $t('common.qualification', 1) }),
+                            description: $t('common.publish_confirm.description'),
+                            color: 'info',
+                            iconClass: 'text-info-500 dark:text-info-400',
+                            icon: 'i-mdi-publish',
+                            confirm: () => {
+                                state.draft = false;
+                                formRef?.submit();
+                            },
+                        })
+                    "
+                >
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.publish') }}
                     </span>
                 </UButton>
             </template>
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0 sm:pb-0">
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.qualification', 1)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.qualification', 1)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="!qualification"
+                icon="i-mdi-file-search"
+                :message="$t('common.not_found', [$t('common.qualification', 1)])"
+            />
+
             <UTabs
+                v-else
                 v-model="selectedTab"
                 class="flex flex-1 flex-col"
                 :items="items"
@@ -495,11 +472,11 @@ const selectedTab = computed({
                             </h2>
 
                             <QualificationRequirementEntry
-                                v-for="(requirement, idx) in qualiRequirements"
+                                v-for="(requirement, idx) in state.requirements"
                                 :key="requirement.id"
                                 :requirement="requirement"
                                 @update-qualification="updateQualificationRequirement(idx, $event)"
-                                @remove="qualiRequirements.splice(idx, 1)"
+                                @remove="state.requirements.splice(idx, 1)"
                             />
 
                             <UTooltip :text="$t('components.qualifications.add_requirement')">
@@ -507,7 +484,7 @@ const selectedTab = computed({
                                     :ui="{ rounded: 'rounded-full' }"
                                     :disabled="!canSubmit"
                                     icon="i-mdi-plus"
-                                    @click="qualiRequirements.push({ id: 0, qualificationId: 0, targetQualificationId: 0 })"
+                                    @click="state.requirements.push({ id: 0, qualificationId: 0, targetQualificationId: 0 })"
                                 />
                             </UTooltip>
                         </div>
@@ -668,6 +645,7 @@ const selectedTab = computed({
                         v-model:settings="state.examSettings"
                         v-model:questions="state.exam"
                         class="overflow-y-auto"
+                        :qualification-id="props.qualificationId"
                     />
                 </template>
             </UTabs>

@@ -51,12 +51,13 @@ const {
     pending: loading,
     error,
     refresh,
-} = useLazyAsyncData(`documents-${props.documentId}`, () => getDocument(props.documentId));
+} = useLazyAsyncData(`documents-${props.documentId}-editor`, () => getDocument(props.documentId));
 
 async function getDocument(id: number): Promise<GetDocumentResponse> {
     try {
-        const req = { documentId: id };
-        const call = $grpc.documents.documents.getDocument(req);
+        const call = $grpc.documents.documents.getDocument({
+            documentId: id,
+        });
         const { response } = await call;
 
         return response;
@@ -144,8 +145,8 @@ const state = reactive<Schema>({
     files: [],
 });
 
-const relations = ref<DocumentRelation[]>([]);
 const references = ref<DocumentReference[]>([]);
+const relations = ref<DocumentRelation[]>([]);
 
 const saving = ref(false);
 
@@ -363,13 +364,13 @@ useYObject<Category>(
     },
 );
 
+// Access
 useYArrayFiltered<DocumentJobAccess>(
     ydoc.getArray('access_jobs'),
     toRef(state.access, 'jobs'),
     { omit: ['createdAt', 'user'] },
     { provider: provider },
 );
-
 useYArrayFiltered<DocumentUserAccess>(
     ydoc.getArray('access_users'),
     toRef(state.access, 'users'),
@@ -379,11 +380,30 @@ useYArrayFiltered<DocumentUserAccess>(
     { provider: provider },
 );
 
+// Files
 useYArrayFiltered<File>(
     ydoc.getArray('files'),
     toRef(state, 'files'),
     {
         omit: ['createdAt', 'meta'],
+    },
+    { provider: provider },
+);
+
+// References and Relations
+useYArrayFiltered<DocumentReference>(
+    ydoc.getArray('doc_references'),
+    references,
+    {
+        omit: ['createdAt', 'sourceDocument', 'targetUser', 'deletedAt', 'updatedAt'],
+    },
+    { provider: provider },
+);
+useYArrayFiltered<DocumentRelation>(
+    ydoc.getArray('doc_relations'),
+    relations,
+    {
+        omit: ['createdAt', 'document', 'sourceUser'],
     },
     { provider: provider },
 );

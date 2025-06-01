@@ -12,9 +12,9 @@ const (
 	CollabServicePerm perms.Category = "wiki.CollabService"
 	WikiServicePerm   perms.Category = "wiki.WikiService"
 
-	WikiServiceCreatePagePerm            perms.Name = "CreatePage"
-	WikiServiceCreatePageFieldsPermField perms.Key  = "Fields"
 	WikiServiceDeletePagePerm            perms.Name = "DeletePage"
 	WikiServiceListPageActivityPerm      perms.Name = "ListPageActivity"
 	WikiServiceListPagesPerm             perms.Name = "ListPages"
+	WikiServiceUpdatePagePerm            perms.Name = "UpdatePage"
+	WikiServiceUpdatePageFieldsPermField perms.Key  = "Fields"
 )

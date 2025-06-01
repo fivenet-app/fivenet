@@ -15,6 +15,7 @@ var PermsRemap = map[string]string{
 	"documents.CollabService/JoinRoom": "documents.DocumentsService/ListDocuments",
 
 	// Service: documents.DocumentsService
+	"documents.DocumentsService/CreateDocument":          "documents.DocumentsService/UpdateDocument",
 	"documents.DocumentsService/EditComment":             "documents.DocumentsService/ListDocuments",
 	"documents.DocumentsService/GetComments":             "documents.DocumentsService/ListDocuments",
 	"documents.DocumentsService/GetDocument":             "documents.DocumentsService/ListDocuments",
@@ -26,10 +27,10 @@ var PermsRemap = map[string]string{
 	"documents.DocumentsService/PostComment":             "documents.DocumentsService/ListDocuments",
 	"documents.DocumentsService/RemoveDocumentReference": "documents.DocumentsService/AddDocumentReference",
 	"documents.DocumentsService/RemoveDocumentRelation":  "documents.DocumentsService/AddDocumentRelation",
-	"documents.DocumentsService/SetDocumentAccess":       "documents.DocumentsService/CreateDocument",
+	"documents.DocumentsService/SetDocumentAccess":       "documents.DocumentsService/UpdateDocument",
 	"documents.DocumentsService/UpdateDocumentReq":       "documents.DocumentsService/CreateDocumentReq",
 	"documents.DocumentsService/UpdateTemplate":          "documents.DocumentsService/CreateTemplate",
-	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/CreateDocument",
+	"documents.DocumentsService/UploadFile":              "documents.DocumentsService/UpdateDocument",
 }
 
 func init() {
@@ -59,12 +60,6 @@ func init() {
 				},
 			},
 			Order: 0,
-		},
-		{
-			Category: permkeys.DocumentsServicePerm,
-			Name:     permkeys.DocumentsServiceCreateDocumentPerm,
-			Attrs:    []perms.Attr{},
-			Order:    0,
 		},
 		{
 			Category: permkeys.DocumentsServicePerm,

@@ -107,8 +107,6 @@ const modal = useModal();
 const content = defineModel<string>({ required: true });
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
-const loading = ref(!props.disableCollab);
-
 const extensions: Extensions = [
     UniqueId.configure({
         attributeName: 'id',
@@ -190,6 +188,9 @@ const extensions: Extensions = [
 
 const ydoc = inject<Y.Doc | undefined>('yjsDoc', undefined);
 const yjsProvider = inject<GrpcProvider | undefined>('yjsProvider', undefined);
+
+const loading = ref(ydoc && yjsProvider && !props.disableCollab);
+
 if (ydoc && yjsProvider && !props.disableCollab) {
     const ourName = `${activeChar.value?.firstname} ${activeChar.value?.lastname}`;
     const user = {

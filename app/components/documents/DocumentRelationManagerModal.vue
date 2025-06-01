@@ -182,11 +182,19 @@ const columnsNew = [
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.relation', 2)]) }"
                             >
                                 <template #name-data="{ row }">
-                                    <CitizenInfoPopover :user="row.targetUser" show-birthdate />
+                                    <CitizenInfoPopover
+                                        :user="!row.targetUser?.userId ? undefined : row.targetUser"
+                                        :user-id="row.targetUserId"
+                                        show-birthdate
+                                    />
                                 </template>
 
                                 <template #creator-data="{ row }">
-                                    <CitizenInfoPopover :user="row.sourceUser" :trailing="false" />
+                                    <CitizenInfoPopover
+                                        :user="!row.sourceUser?.userId ? undefined : row.sourceUser"
+                                        :user-id="row.sourceUserId"
+                                        :trailing="false"
+                                    />
                                 </template>
 
                                 <template #relation-data="{ row }">

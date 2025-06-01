@@ -39,13 +39,13 @@ export interface IWikiServiceClient {
      */
     getPage(input: GetPageRequest, options?: RpcOptions): UnaryCall<GetPageRequest, GetPageResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Public"}
+     * @perm: Name=UpdatePage
      *
      * @generated from protobuf rpc: CreatePage
      */
     createPage(input: CreatePageRequest, options?: RpcOptions): UnaryCall<CreatePageRequest, CreatePageResponse>;
     /**
-     * @perm: Name=ListPages
+     * @perm: Attrs=Fields/StringList:[]string{"Public"}
      *
      * @generated from protobuf rpc: UpdatePage
      */
@@ -63,7 +63,7 @@ export interface IWikiServiceClient {
      */
     listPageActivity(input: ListPageActivityRequest, options?: RpcOptions): UnaryCall<ListPageActivityRequest, ListPageActivityResponse>;
     /**
-     * @perm: Name=CreatePage
+     * @perm: Name=UpdatePage
      *
      * @generated from protobuf rpc: UploadFile
      */
@@ -97,7 +97,7 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<GetPageRequest, GetPageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Public"}
+     * @perm: Name=UpdatePage
      *
      * @generated from protobuf rpc: CreatePage
      */
@@ -106,7 +106,7 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<CreatePageRequest, CreatePageResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListPages
+     * @perm: Attrs=Fields/StringList:[]string{"Public"}
      *
      * @generated from protobuf rpc: UpdatePage
      */
@@ -133,7 +133,7 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
         return stackIntercept<ListPageActivityRequest, ListPageActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreatePage
+     * @perm: Name=UpdatePage
      *
      * @generated from protobuf rpc: UploadFile
      */

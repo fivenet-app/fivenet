@@ -7,6 +7,7 @@ import { useSettingsStore } from '~/stores/settings';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = defineProps<{
+    qualificationId: number;
     modelValue?: ExamQuestion;
 }>();
 
@@ -40,7 +41,6 @@ const schema = z.object({
                     alt: z.string().max(128).optional(),
                     image: z.object({
                         url: z.string().optional(),
-                        data: z.any(),
                     }),
                 }),
             }),
@@ -77,7 +77,7 @@ watch(question, () => {
     if (question.value === undefined) {
         question.value = {
             id: 0,
-            qualificationId: 0,
+            qualificationId: props.qualificationId,
             title: '',
             answer: {
                 answerKey: '',
@@ -87,9 +87,9 @@ watch(question, () => {
 });
 
 const { resizeAndUpload } = useFileUploader(
-    (_) => $grpc.citizens.citizens.uploadMugshot(_),
+    (opts) => $grpc.qualifications.qualifications.uploadFile(opts),
     'qualifications-exam-questions',
-    question.value?.id ?? 0, // TODO
+    props.qualificationId,
 );
 
 async function handleImage(files: FileList): Promise<void> {

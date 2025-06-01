@@ -166,7 +166,11 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 					data.Permissions[sName][perm.Name] = perm
 					p.Debugf("Permission added: %q - %+v\n", mName, perm)
 				} else {
-					p.Debugf("Permission already in list: %q - %+v\n", mName, perm)
+					p.Debugf("Permission already in list, updating: %q - %+v\n", mName, perm)
+					if len(perm.Attrs) > 0 {
+						data.Permissions[sName][perm.Name].Attrs = append(data.Permissions[sName][perm.Name].Attrs, perm.Attrs...)
+					}
+					perm.Order = data.Permissions[sName][perm.Name].Order
 				}
 			}
 		}
@@ -194,6 +198,7 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 	}
 
 	if comment == "" {
+		p.Debugf("No permission comment found for method %s, skipping", method)
 		return perm, nil
 	}
 
@@ -202,6 +207,7 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 	for i := range split {
 		k, v, _ := strings.Cut(split[i], "=")
 		if v == "" {
+			p.Debugf("Skipping empty permission key %s in method %s", k, method)
 			continue
 		}
 
@@ -217,6 +223,7 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 			} else {
 				perm.Name = v
 			}
+			p.Log("Parsing permission name:", v)
 
 		case "order":
 			order, err := strconv.ParseInt(v, 10, 32)
@@ -230,7 +237,7 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 			for v := range strings.SplitSeq(v, "|") {
 				attrSplit := strings.Split(v, "/")
 				if len(attrSplit) <= 1 {
-					p.Fail("Invalid attrs value found: ", v)
+					p.Fail("Invalid attrs value found:", v)
 				}
 
 				attrType := attrSplit[1]
@@ -247,6 +254,9 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 					Valid: validValue,
 				})
 			}
+		}
+		if perm.Attrs != nil {
+			p.Log("Parsing attr:", perm.Attrs)
 		}
 	}
 
@@ -341,8 +351,7 @@ type Perm struct {
 }
 
 type Attr struct {
-	Key     string
-	Type    string
-	Valid   string
-	Default string
+	Key   string
+	Type  string
+	Valid string
 }

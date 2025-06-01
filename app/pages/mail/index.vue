@@ -186,18 +186,18 @@ onBeforeMount(async () => {
                 </template>
 
                 <template #right>
-                    <UButton
+                    <UTooltip
                         v-if="
                             selectedEmail &&
                             !selectedEmail.deactivated &&
                             canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.WRITE)
                         "
-                        color="gray"
-                        trailing-icon="i-mdi-plus"
-                        @click="modal.open(ThreadCreateOrUpdateModal, {})"
+                        :text="$t('components.mailer.create_thread')"
                     >
-                        {{ $t('components.mailer.create_thread') }}
-                    </UButton>
+                        <UButton color="gray" trailing-icon="i-mdi-plus" @click="modal.open(ThreadCreateOrUpdateModal, {})">
+                            {{ $t('components.mailer.create_thread') }}
+                        </UButton>
+                    </UTooltip>
                 </template>
             </UDashboardNavbar>
 

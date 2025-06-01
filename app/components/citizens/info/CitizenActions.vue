@@ -103,7 +103,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-d': () => {
-            if (!can('documents.DocumentsService.CreateDocument').value) {
+            if (!can('documents.DocumentsService.UpdateDocument').value) {
                 return;
             }
 
@@ -202,7 +202,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="can('documents.DocumentsService.CreateDocument').value"
+            v-if="can('documents.DocumentsService.UpdateDocument').value"
             :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
             :shortcuts="['C', 'D']"
         >

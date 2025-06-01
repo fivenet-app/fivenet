@@ -58,9 +58,8 @@ func init() {
 }
 
 var (
-	tQuali              = table.FivenetQualifications.AS("qualification")
-	tQualiFiles         = table.FivenetQualificationsFiles
-	tExamQuestionsFiles = table.FivenetQualificationsExamQuestionsFiles
+	tQuali      = table.FivenetQualifications.AS("qualification")
+	tQualiFiles = table.FivenetQualificationsFiles
 )
 
 type Server struct {
@@ -76,8 +75,7 @@ type Server struct {
 
 	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel]
 
-	qualiFileHandler    *filestore.Handler[uint64]
-	questionFileHandler *filestore.Handler[uint64]
+	fHandler *filestore.Handler[uint64]
 }
 
 type Params struct {
@@ -100,12 +98,6 @@ func NewServer(p Params) *Server {
 	qualiFileHandler := filestore.NewHandler(p.Storage, p.DB, tQualiFiles, tQualiFiles.QualificationID, tQualiFiles.FileID, 3<<20,
 		func(parentId uint64) jet.BoolExpression {
 			return tQualiFiles.QualificationID.EQ(jet.Uint64(parentId))
-		}, filestore.InsertJoinRow, false,
-	)
-
-	questionFileHandler := filestore.NewHandler(p.Storage, p.DB, tExamQuestionsFiles, tExamQuestionsFiles.QuestionID, tExamQuestionsFiles.FileID, 3<<20,
-		func(parentId uint64) jet.BoolExpression {
-			return tExamQuestionsFiles.QuestionID.EQ(jet.Uint64(parentId))
 		}, filestore.InsertJoinRow, false,
 	)
 
@@ -154,8 +146,7 @@ func NewServer(p Params) *Server {
 			nil,
 		),
 
-		qualiFileHandler:    qualiFileHandler,
-		questionFileHandler: questionFileHandler,
+		fHandler: qualiFileHandler,
 	}
 
 	return s

@@ -37,15 +37,15 @@ type WikiServiceClient interface {
 	ListPages(ctx context.Context, in *ListPagesRequest, opts ...grpc.CallOption) (*ListPagesResponse, error)
 	// @perm: Name=ListPages
 	GetPage(ctx context.Context, in *GetPageRequest, opts ...grpc.CallOption) (*GetPageResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Public"}
+	// @perm: Name=UpdatePage
 	CreatePage(ctx context.Context, in *CreatePageRequest, opts ...grpc.CallOption) (*CreatePageResponse, error)
-	// @perm: Name=ListPages
+	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	UpdatePage(ctx context.Context, in *UpdatePageRequest, opts ...grpc.CallOption) (*UpdatePageResponse, error)
 	// @perm
 	DeletePage(ctx context.Context, in *DeletePageRequest, opts ...grpc.CallOption) (*DeletePageResponse, error)
 	// @perm
 	ListPageActivity(ctx context.Context, in *ListPageActivityRequest, opts ...grpc.CallOption) (*ListPageActivityResponse, error)
-	// @perm: Name=CreatePage
+	// @perm: Name=UpdatePage
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
 }
 
@@ -138,15 +138,15 @@ type WikiServiceServer interface {
 	ListPages(context.Context, *ListPagesRequest) (*ListPagesResponse, error)
 	// @perm: Name=ListPages
 	GetPage(context.Context, *GetPageRequest) (*GetPageResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Public"}
+	// @perm: Name=UpdatePage
 	CreatePage(context.Context, *CreatePageRequest) (*CreatePageResponse, error)
-	// @perm: Name=ListPages
+	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	UpdatePage(context.Context, *UpdatePageRequest) (*UpdatePageResponse, error)
 	// @perm
 	DeletePage(context.Context, *DeletePageRequest) (*DeletePageResponse, error)
 	// @perm
 	ListPageActivity(context.Context, *ListPageActivityRequest) (*ListPageActivityResponse, error)
-	// @perm: Name=CreatePage
+	// @perm: Name=UpdatePage
 	UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
 	mustEmbedUnimplementedWikiServiceServer()
 }

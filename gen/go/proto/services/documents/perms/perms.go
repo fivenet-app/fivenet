@@ -16,7 +16,6 @@ const (
 	DocumentsServiceAddDocumentRelationPerm            perms.Name = "AddDocumentRelation"
 	DocumentsServiceChangeDocumentOwnerPerm            perms.Name = "ChangeDocumentOwner"
 	DocumentsServiceChangeDocumentOwnerAccessPermField perms.Key  = "Access"
-	DocumentsServiceCreateDocumentPerm                 perms.Name = "CreateDocument"
 	DocumentsServiceCreateDocumentReqPerm              perms.Name = "CreateDocumentReq"
 	DocumentsServiceCreateDocumentReqTypesPermField    perms.Key  = "Types"
 	DocumentsServiceCreateOrUpdateCategoryPerm         perms.Name = "CreateOrUpdateCategory"

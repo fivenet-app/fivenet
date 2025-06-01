@@ -371,7 +371,7 @@ const clipboardLink = computed(() =>
     [
         activeChar.value &&
         can([
-            'documents.DocumentsService.CreateDocument',
+            'documents.DocumentsService.UpdateDocument',
             'citizens.CitizensService.GetUser',
             'vehicles.VehiclesService.ListVehicles',
         ]).value

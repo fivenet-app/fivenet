@@ -67,7 +67,9 @@ func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64)
 	return int32(count.Total), nil
 }
 
-func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qualificationId uint64, questions *qualifications.ExamQuestions) error {
+func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qualificationId uint64, questions *qualifications.ExamQuestions) ([]*file.File, error) {
+	files := []*file.File{}
+
 	tExamQuestions := table.FivenetQualificationsExamQuestions
 	if len(questions.Questions) == 0 {
 		stmt := tExamQuestions.
@@ -76,15 +78,15 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 			LIMIT(100)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 
-		return nil
+		return nil, nil
 	}
 
 	current, err := s.getExamQuestions(ctx, tx, qualificationId, false)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	toCreate, toUpdate, toDelete := s.compareExamQuestions(current.Questions, questions.Questions)
@@ -100,9 +102,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 				continue
 			}
 
-			if _, _, err := s.questionFileHandler.HandleFileChangesForParent(ctx, tx, question.Id, []*file.File{data.Image.Image}); err != nil {
-				return err
-			}
+			files = append(files, data.Image.Image)
 		}
 
 		stmt := tExamQuestions.
@@ -124,7 +124,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -136,9 +136,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 					continue
 				}
 
-				if _, _, err := s.questionFileHandler.HandleFileChangesForParent(ctx, tx, question.Id, []*file.File{data.Image.Image}); err != nil {
-					return err
-				}
+				files = append(files, data.Image.Image)
 			}
 		}
 
@@ -163,7 +161,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -181,28 +179,13 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
+			return nil, err
 		}
 
-		for _, question := range toDelete {
-			if question.Data == nil {
-				continue
-			}
-
-			switch data := question.Data.Data.(type) {
-			case *qualifications.ExamQuestionData_Image:
-				if data.Image.Image == nil {
-					continue
-				}
-
-				if _, _, err := s.questionFileHandler.HandleFileChangesForParent(ctx, tx, question.Id, []*file.File{}); err != nil {
-					return err
-				}
-			}
-		}
+		// Don't include deleted questions files in the files list
 	}
 
-	return nil
+	return files, nil
 }
 
 func (s *Server) compareExamQuestions(current, in []*qualifications.ExamQuestion) (toCreate []*qualifications.ExamQuestion, toUpdate []*qualifications.ExamQuestion, toDelete []*qualifications.ExamQuestion) {

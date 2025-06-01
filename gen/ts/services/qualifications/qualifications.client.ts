@@ -57,13 +57,13 @@ export interface IQualificationsServiceClient {
      */
     getQualification(input: GetQualificationRequest, options?: RpcOptions): UnaryCall<GetQualificationRequest, GetQualificationResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Public"}
+     * @perm: Name=UpdateQualification
      *
      * @generated from protobuf rpc: CreateQualification
      */
     createQualification(input: CreateQualificationRequest, options?: RpcOptions): UnaryCall<CreateQualificationRequest, CreateQualificationResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"}
      *
      * @generated from protobuf rpc: UpdateQualification
      */
@@ -135,7 +135,7 @@ export interface IQualificationsServiceClient {
      */
     getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse>;
     /**
-     * @perm: Name=CreateQualification
+     * @perm: Name=UpdateQualification
      *
      * @generated from protobuf rpc: UploadFile
      */
@@ -169,7 +169,7 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<GetQualificationRequest, GetQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Public"}
+     * @perm: Name=UpdateQualification
      *
      * @generated from protobuf rpc: CreateQualification
      */
@@ -178,7 +178,7 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<CreateQualificationRequest, CreateQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Fields/StringList:[]string{"Public"}
      *
      * @generated from protobuf rpc: UpdateQualification
      */
@@ -286,7 +286,7 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<GetUserExamRequest, GetUserExamResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateQualification
+     * @perm: Name=UpdateQualification
      *
      * @generated from protobuf rpc: UploadFile
      */

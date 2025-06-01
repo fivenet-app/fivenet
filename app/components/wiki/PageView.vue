@@ -173,7 +173,7 @@ const scrollRef = useTemplateRef('scrollRef');
             <PartialsBackButton fallback-to="/wiki" />
 
             <UButton
-                v-if="can('wiki.WikiService.CreatePage').value"
+                v-if="can('wiki.WikiService.UpdatePage').value"
                 color="gray"
                 trailing-icon="i-mdi-plus"
                 @click="wikiService.createPage(page?.parentId ?? page?.id)"
@@ -245,7 +245,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
                         <UTooltip
                             v-if="
-                                can('wiki.WikiService.CreatePage').value &&
+                                can('wiki.WikiService.UpdatePage').value &&
                                 checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
                             "
                             :text="$t('common.edit')"

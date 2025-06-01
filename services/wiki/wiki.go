@@ -586,7 +586,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 	}
 
 	// Field Permission Check
-	fields, err := s.perms.AttrStringList(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
+	fields, err := s.perms.AttrStringList(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceUpdatePagePerm, permswiki.WikiServiceUpdatePageFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}

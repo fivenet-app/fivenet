@@ -85,15 +85,6 @@ func (m *CreateQualificationRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Qualification
-	if m.Qualification != nil {
-		if v, ok := any(m.GetQualification()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 

@@ -24,6 +24,7 @@ import { ResultStatus } from "../../resources/qualifications/qualifications";
 import { QualificationRequest } from "../../resources/qualifications/qualifications";
 import { RequestStatus } from "../../resources/qualifications/qualifications";
 import { QualificationAccess } from "../../resources/qualifications/access";
+import { ContentType } from "../../resources/common/content/content";
 import { Qualification } from "../../resources/qualifications/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
@@ -91,9 +92,9 @@ export interface GetQualificationResponse {
  */
 export interface CreateQualificationRequest {
     /**
-     * @generated from protobuf field: resources.qualifications.Qualification qualification = 1
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 1
      */
-    qualification?: Qualification;
+    contentType: ContentType;
 }
 /**
  * @generated from protobuf message services.qualifications.CreateQualificationResponse
@@ -665,11 +666,12 @@ export const GetQualificationResponse = new GetQualificationResponse$Type();
 class CreateQualificationRequest$Type extends MessageType<CreateQualificationRequest> {
     constructor() {
         super("services.qualifications.CreateQualificationRequest", [
-            { no: 1, name: "qualification", kind: "message", T: () => Qualification, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<CreateQualificationRequest>): CreateQualificationRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.contentType = 0;
         if (value !== undefined)
             reflectionMergePartial<CreateQualificationRequest>(this, message, value);
         return message;
@@ -679,8 +681,8 @@ class CreateQualificationRequest$Type extends MessageType<CreateQualificationReq
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.qualifications.Qualification qualification */ 1:
-                    message.qualification = Qualification.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                case /* resources.common.content.ContentType content_type */ 1:
+                    message.contentType = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -694,9 +696,9 @@ class CreateQualificationRequest$Type extends MessageType<CreateQualificationReq
         return message;
     }
     internalBinaryWrite(message: CreateQualificationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.Qualification qualification = 1; */
-        if (message.qualification)
-            Qualification.internalBinaryWrite(message.qualification, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.common.content.ContentType content_type = 1; */
+        if (message.contentType !== 0)
+            writer.tag(1, WireType.Varint).int32(message.contentType);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

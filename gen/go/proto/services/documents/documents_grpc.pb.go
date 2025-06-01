@@ -77,7 +77,7 @@ type DocumentsServiceClient interface {
 	ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error)
 	// @perm: Name=ListDocuments
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
-	// @perm
+	// @perm: Name=UpdateDocument
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
@@ -109,7 +109,7 @@ type DocumentsServiceClient interface {
 	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
 	// @perm: Name=ListDocuments
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
-	// @perm: Name=CreateDocument
+	// @perm: Name=UpdateDocument
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
 	// @perm
 	ListDocumentActivity(ctx context.Context, in *ListDocumentActivityRequest, opts ...grpc.CallOption) (*ListDocumentActivityResponse, error)
@@ -135,7 +135,7 @@ type DocumentsServiceClient interface {
 	ToggleDocumentPin(ctx context.Context, in *ToggleDocumentPinRequest, opts ...grpc.CallOption) (*ToggleDocumentPinResponse, error)
 	// @perm
 	SetDocumentReminder(ctx context.Context, in *SetDocumentReminderRequest, opts ...grpc.CallOption) (*SetDocumentReminderResponse, error)
-	// @perm: Name=CreateDocument
+	// @perm: Name=UpdateDocument
 	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
 }
 
@@ -538,7 +538,7 @@ type DocumentsServiceServer interface {
 	ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error)
 	// @perm: Name=ListDocuments
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
-	// @perm
+	// @perm: Name=UpdateDocument
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
@@ -570,7 +570,7 @@ type DocumentsServiceServer interface {
 	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
 	// @perm: Name=ListDocuments
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
-	// @perm: Name=CreateDocument
+	// @perm: Name=UpdateDocument
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
 	// @perm
 	ListDocumentActivity(context.Context, *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error)
@@ -596,7 +596,7 @@ type DocumentsServiceServer interface {
 	ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error)
 	// @perm
 	SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error)
-	// @perm: Name=CreateDocument
+	// @perm: Name=UpdateDocument
 	UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
 	mustEmbedUnimplementedDocumentsServiceServer()
 }

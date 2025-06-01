@@ -133,7 +133,6 @@ export type Perms =
 	| 'documents.DocumentsService.AddDocumentReference'
 	| 'documents.DocumentsService.AddDocumentRelation'
 	| 'documents.DocumentsService.ChangeDocumentOwner'
-	| 'documents.DocumentsService.CreateDocument'
 	| 'documents.DocumentsService.CreateDocumentReq'
 	| 'documents.DocumentsService.CreateOrUpdateCategory'
 	| 'documents.DocumentsService.CreateTemplate'
@@ -170,7 +169,6 @@ export type Perms =
 	| 'mailer.MailerService.CreateOrUpdateEmail'
 	| 'mailer.MailerService.DeleteEmail'
 	| 'mailer.MailerService.ListEmails'
-	| 'qualifications.QualificationsService.CreateQualification'
 	| 'qualifications.QualificationsService.DeleteQualification'
 	| 'qualifications.QualificationsService.ListQualifications'
 	| 'qualifications.QualificationsService.UpdateQualification'
@@ -184,7 +182,7 @@ export type Perms =
 	| 'settings.SettingsService.UpdateRolePerms'
 	| 'settings.SettingsService.ViewAuditLog'
 	| 'vehicles.VehiclesService.ListVehicles'
-	| 'wiki.WikiService.CreatePage'
 	| 'wiki.WikiService.DeletePage'
 	| 'wiki.WikiService.ListPageActivity'
-	| 'wiki.WikiService.ListPages';
+	| 'wiki.WikiService.ListPages'
+	| 'wiki.WikiService.UpdatePage';

@@ -73,14 +73,11 @@ const wikiService = useWikiWiki();
                 </template>
 
                 <template #right>
-                    <UButton
-                        v-if="can('wiki.WikiService.CreatePage').value"
-                        color="gray"
-                        trailing-icon="i-mdi-plus"
-                        @click="wikiService.createPage()"
-                    >
-                        {{ $t('common.page') }}
-                    </UButton>
+                    <UTooltip v-if="can('wiki.WikiService.UpdatePage').value" :text="$t('common.create')">
+                        <UButton color="gray" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
+                            {{ $t('common.page') }}
+                        </UButton>
+                    </UTooltip>
                 </template>
             </UDashboardNavbar>
 

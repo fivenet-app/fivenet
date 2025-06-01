@@ -216,7 +216,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div class="flex flex-1 flex-row justify-between gap-2">
                     <div>
                         <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                            {{ qualification.abbreviation }}:
+                            <template v-if="qualification.abbreviation">{{ qualification.abbreviation }}: </template>
                             {{ !qualification.title ? $t('common.untitled') : qualification.title }}
                         </h1>
 

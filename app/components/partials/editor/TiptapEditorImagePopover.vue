@@ -42,8 +42,8 @@ const imageState = reactive({
 async function setViaURL(urlOrBlob: string | File): Promise<void> {
     canSubmit.value = false;
 
-    let dataUrl: string | undefined = undefined;
     if (typeof urlOrBlob === 'string') {
+        let dataUrl: string | undefined = undefined;
         // If Image Proxy is enabled use it to load the image
         if (featureGates.imageProxy && urlOrBlob.startsWith('http')) {
             const url = new URL(urlOrBlob);
@@ -51,13 +51,12 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
         } else {
             dataUrl = urlOrBlob;
         }
-    }
 
-    if (props.uploadHandler) {
+        return setImage(dataUrl);
+    } else if (props.uploadHandler) {
         await props.uploadHandler([urlOrBlob]);
     } else {
-        dataUrl = await blobToBase64(urlOrBlob);
-        setImage(dataUrl);
+        setImage(await blobToBase64(urlOrBlob));
     }
 }
 

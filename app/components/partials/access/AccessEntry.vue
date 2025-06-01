@@ -88,15 +88,16 @@ async function setFromProps(): Promise<void> {
             // Fallback to show qualification id
             selectedQualification.value = {
                 id: entry.value.qualificationId,
+                job: '',
+                weight: 0,
                 abbreviation: 'N/A',
                 title: 'N/A (ID: ' + entry.value.qualificationId + ')',
                 closed: false,
-                job: '',
+                draft: false,
+                public: false,
                 creatorJob: '',
                 examMode: QualificationExamMode.UNSPECIFIED,
                 requirements: [],
-                weight: 0,
-                public: false,
             };
         }
     } else if (entry.value.type === 'job') {

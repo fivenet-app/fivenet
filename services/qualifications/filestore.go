@@ -27,7 +27,7 @@ func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadPacket, fi
 		State:   audit.EventType_EVENT_TYPE_ERRORED,
 	}
 
-	meta, err := s.qualiFileHandler.AwaitHandshake(srv)
+	meta, err := s.fHandler.AwaitHandshake(srv)
 	defer s.aud.Log(auditEntry, meta)
 	if err != nil {
 		return errswrap.NewError(err, filestore.ErrInvalidUploadMeta)
@@ -44,7 +44,7 @@ func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadPacket, fi
 		return errorsdocuments.ErrDocViewDenied
 	}
 
-	_, err = s.qualiFileHandler.UploadFromMeta(ctx, meta, meta.ParentId, srv)
+	_, err = s.fHandler.UploadFromMeta(ctx, meta, meta.ParentId, srv)
 	if err != nil {
 		return err
 	}

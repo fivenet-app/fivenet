@@ -15,27 +15,15 @@ var PermsRemap = map[string]string{
 	"wiki.CollabService/JoinRoom": "wiki.WikiService/ListPages",
 
 	// Service: wiki.WikiService
+	"wiki.WikiService/CreatePage": "wiki.WikiService/UpdatePage",
 	"wiki.WikiService/GetPage":    "wiki.WikiService/ListPages",
-	"wiki.WikiService/UpdatePage": "wiki.WikiService/ListPages",
-	"wiki.WikiService/UploadFile": "wiki.WikiService/CreatePage",
+	"wiki.WikiService/UploadFile": "wiki.WikiService/UpdatePage",
 }
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
 		// Service: wiki.WikiService
-		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceCreatePagePerm,
-			Attrs: []perms.Attr{
-				{
-					Key:         permkeys.WikiServiceCreatePageFieldsPermField,
-					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"Public"},
-				},
-			},
-			Order: 0,
-		},
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceDeletePagePerm,
@@ -53,6 +41,18 @@ func init() {
 			Name:     permkeys.WikiServiceListPagesPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
+		},
+		{
+			Category: permkeys.WikiServicePerm,
+			Name:     permkeys.WikiServiceUpdatePagePerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.WikiServiceUpdatePageFieldsPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Public"},
+				},
+			},
+			Order: 0,
 		},
 	})
 }
