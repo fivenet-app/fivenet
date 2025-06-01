@@ -28,7 +28,7 @@ type fivenetUserPropsTable struct {
 	BloodType                        mysql.ColumnString
 	Avatar                           mysql.ColumnString
 	AvatarFileID                     mysql.ColumnInteger
-	Mugshot                          mysql.ColumnString
+	MugShot                          mysql.ColumnString
 	MugshotFileID                    mysql.ColumnInteger
 	Email                            mysql.ColumnString
 
@@ -83,11 +83,11 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		BloodTypeColumn                        = mysql.StringColumn("blood_type")
 		AvatarColumn                           = mysql.StringColumn("avatar")
 		AvatarFileIDColumn                     = mysql.IntegerColumn("avatar_file_id")
-		MugshotColumn                          = mysql.StringColumn("mug_shot")
+		MugShotColumn                          = mysql.StringColumn("mug_shot")
 		MugshotFileIDColumn                    = mysql.IntegerColumn("mugshot_file_id")
 		EmailColumn                            = mysql.StringColumn("email")
-		allColumns                             = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, AvatarFileIDColumn, MugshotColumn, MugshotFileIDColumn, EmailColumn}
-		mutableColumns                         = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, AvatarFileIDColumn, MugshotColumn, MugshotFileIDColumn, EmailColumn}
+		allColumns                             = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, AvatarFileIDColumn, MugShotColumn, MugshotFileIDColumn, EmailColumn}
+		mutableColumns                         = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, TrafficInfractionPointsUpdatedAtColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, AvatarFileIDColumn, MugShotColumn, MugshotFileIDColumn, EmailColumn}
 		defaultColumns                         = mysql.ColumnList{WantedColumn, TrafficInfractionPointsColumn, OpenFinesColumn}
 	)
 
@@ -106,7 +106,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		BloodType:                        BloodTypeColumn,
 		Avatar:                           AvatarColumn,
 		AvatarFileID:                     AvatarFileIDColumn,
-		Mugshot:                          MugshotColumn,
+		MugShot:                          MugShotColumn,
 		MugshotFileID:                    MugshotFileIDColumn,
 		Email:                            EmailColumn,
 

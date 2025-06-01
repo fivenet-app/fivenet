@@ -45,7 +45,10 @@ const breadcrumbs = computed(() => [
         !props.page && !props.loading ? { label: t('pages.notfound.page_not_found') } : undefined,
         props.page && props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
         props.page?.meta
-            ? { label: props.page.meta.title, to: `/wiki/${props.page.job}/${props.page.id}/${props.page.meta.slug}` }
+            ? {
+                  label: !props.page.meta.title ? t('common.untitled') : props.page.meta.title,
+                  to: `/wiki/${props.page.job}/${props.page.id}/${props.page.meta.slug}`,
+              }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 ]);

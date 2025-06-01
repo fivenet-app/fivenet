@@ -623,7 +623,7 @@ var File_services_wiki_wiki_proto protoreflect.FileDescriptor
 
 const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\x1a\x1eresources/file/filestore.proto\x1a\x17validate/validate.proto\"\xb6\x02\n" +
+	"\x18services/wiki/wiki.proto\x12\rservices.wiki\x1a&resources/common/content/content.proto\x1a(resources/common/database/database.proto\x1a\x1eresources/file/filestore.proto\x1a\x1dresources/wiki/activity.proto\x1a\x19resources/wiki/page.proto\x1a\x17validate/validate.proto\"\xb6\x02\n" +
 	"\x10ListPagesRequest\x12V\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +

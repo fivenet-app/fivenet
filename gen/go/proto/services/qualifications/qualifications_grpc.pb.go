@@ -8,6 +8,7 @@ package qualifications
 
 import (
 	context "context"
+	file "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -34,6 +35,7 @@ const (
 	QualificationsService_TakeExam_FullMethodName                           = "/services.qualifications.QualificationsService/TakeExam"
 	QualificationsService_SubmitExam_FullMethodName                         = "/services.qualifications.QualificationsService/SubmitExam"
 	QualificationsService_GetUserExam_FullMethodName                        = "/services.qualifications.QualificationsService/GetUserExam"
+	QualificationsService_UploadFile_FullMethodName                         = "/services.qualifications.QualificationsService/UploadFile"
 )
 
 // QualificationsServiceClient is the client API for QualificationsService service.
@@ -70,6 +72,8 @@ type QualificationsServiceClient interface {
 	SubmitExam(ctx context.Context, in *SubmitExamRequest, opts ...grpc.CallOption) (*SubmitExamResponse, error)
 	// @perm: Name=ListQualifications
 	GetUserExam(ctx context.Context, in *GetUserExamRequest, opts ...grpc.CallOption) (*GetUserExamResponse, error)
+	// @perm: Name=CreateQualification
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
 }
 
 type qualificationsServiceClient struct {
@@ -230,6 +234,19 @@ func (c *qualificationsServiceClient) GetUserExam(ctx context.Context, in *GetUs
 	return out, nil
 }
 
+func (c *qualificationsServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &QualificationsService_ServiceDesc.Streams[0], QualificationsService_UploadFile_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type QualificationsService_UploadFileClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+
 // QualificationsServiceServer is the server API for QualificationsService service.
 // All implementations must embed UnimplementedQualificationsServiceServer
 // for forward compatibility.
@@ -264,6 +281,8 @@ type QualificationsServiceServer interface {
 	SubmitExam(context.Context, *SubmitExamRequest) (*SubmitExamResponse, error)
 	// @perm: Name=ListQualifications
 	GetUserExam(context.Context, *GetUserExamRequest) (*GetUserExamResponse, error)
+	// @perm: Name=CreateQualification
+	UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
 	mustEmbedUnimplementedQualificationsServiceServer()
 }
 
@@ -318,6 +337,9 @@ func (UnimplementedQualificationsServiceServer) SubmitExam(context.Context, *Sub
 }
 func (UnimplementedQualificationsServiceServer) GetUserExam(context.Context, *GetUserExamRequest) (*GetUserExamResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserExam not implemented")
+}
+func (UnimplementedQualificationsServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedQualificationsServiceServer) mustEmbedUnimplementedQualificationsServiceServer() {}
 func (UnimplementedQualificationsServiceServer) testEmbeddedByValue()                               {}
@@ -610,6 +632,13 @@ func _QualificationsService_GetUserExam_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _QualificationsService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(QualificationsServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type QualificationsService_UploadFileServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+
 // QualificationsService_ServiceDesc is the grpc.ServiceDesc for QualificationsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -678,6 +707,12 @@ var QualificationsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _QualificationsService_GetUserExam_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "UploadFile",
+			Handler:       _QualificationsService_UploadFile_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "services/qualifications/qualifications.proto",
 }

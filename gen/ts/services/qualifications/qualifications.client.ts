@@ -4,6 +4,9 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { QualificationsService } from "./qualifications";
+import type { UploadResponse } from "../../resources/file/filestore";
+import type { UploadPacket } from "../../resources/file/filestore";
+import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { GetUserExamResponse } from "./qualifications";
 import type { GetUserExamRequest } from "./qualifications";
 import type { SubmitExamResponse } from "./qualifications";
@@ -131,6 +134,12 @@ export interface IQualificationsServiceClient {
      * @generated from protobuf rpc: GetUserExam
      */
     getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse>;
+    /**
+     * @perm: Name=CreateQualification
+     *
+     * @generated from protobuf rpc: UploadFile
+     */
+    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse>;
 }
 /**
  * @generated from protobuf service services.qualifications.QualificationsService
@@ -275,5 +284,14 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
     getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse> {
         const method = this.methods[14], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetUserExamRequest, GetUserExamResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=CreateQualification
+     *
+     * @generated from protobuf rpc: UploadFile
+     */
+    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse> {
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UploadPacket, UploadResponse>("clientStreaming", this._transport, method, opt);
     }
 }

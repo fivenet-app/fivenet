@@ -16,6 +16,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+var tFiles = table.FivenetFiles.AS("mugshot")
+
 func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []string) (*UserProps, error) {
 	tUserProps := table.FivenetUserProps.AS("user_props")
 	stmt := tUserProps.
@@ -28,10 +30,16 @@ func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []strin
 			tUserProps.TrafficInfractionPoints,
 			tUserProps.TrafficInfractionPointsUpdatedAt,
 			tUserProps.OpenFines,
-			tUserProps.Mugshot,
 			tUserProps.MugshotFileID,
+			tFiles.ID,
+			tFiles.FilePath,
 		).
-		FROM(tUserProps).
+		FROM(
+			tUserProps.
+				LEFT_JOIN(tFiles,
+					tFiles.ID.EQ(tUserProps.MugshotFileID),
+				),
+		).
 		WHERE(
 			tUserProps.UserID.EQ(jet.Int32(userId)),
 		).
@@ -188,10 +196,10 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 		in.OpenFines = x.OpenFines
 	}
 
-	if in.Mugshot != nil {
-		updateSets = append(updateSets, tUserProps.Mugshot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
+	if in.MugshotFileId != nil {
+		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
 	} else {
-		in.Mugshot = x.Mugshot
+		in.MugshotFileId = x.MugshotFileId
 	}
 
 	if in.Labels != nil {
@@ -216,7 +224,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				tUserProps.TrafficInfractionPoints,
 				tUserProps.TrafficInfractionPointsUpdatedAt,
 				tUserProps.OpenFines,
-				tUserProps.Mugshot,
+				tUserProps.MugshotFileID,
 			).
 			VALUES(
 				in.UserId,
@@ -226,7 +234,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 				in.TrafficInfractionPoints,
 				in.TrafficInfractionPointsUpdatedAt,
 				in.OpenFines,
-				in.Mugshot,
+				in.MugshotFileId,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				updateSets...,

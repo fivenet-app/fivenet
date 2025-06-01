@@ -22,6 +22,7 @@ var PermsRemap = map[string]string{
 	"qualifications.QualificationsService/ListQualificationsResults":          "qualifications.QualificationsService/ListQualifications",
 	"qualifications.QualificationsService/SubmitExam":                         "qualifications.QualificationsService/ListQualifications",
 	"qualifications.QualificationsService/TakeExam":                           "qualifications.QualificationsService/ListQualifications",
+	"qualifications.QualificationsService/UploadFile":                         "qualifications.QualificationsService/CreateQualification",
 }
 
 func init() {

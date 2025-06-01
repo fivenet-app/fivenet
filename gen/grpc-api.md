@@ -10915,6 +10915,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `TakeExam` | [TakeExamRequest](#services-qualifications-TakeExamRequest) | [TakeExamResponse](#services-qualifications-TakeExamResponse) | @perm: Name=ListQualifications |
 | `SubmitExam` | [SubmitExamRequest](#services-qualifications-SubmitExamRequest) | [SubmitExamResponse](#services-qualifications-SubmitExamResponse) | @perm: Name=ListQualifications |
 | `GetUserExam` | [GetUserExamRequest](#services-qualifications-GetUserExamRequest) | [GetUserExamResponse](#services-qualifications-GetUserExamResponse) | @perm: Name=ListQualifications |
+| `UploadFile` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=CreateQualification |
 
  <!-- end services -->
 

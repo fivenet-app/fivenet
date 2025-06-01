@@ -92,7 +92,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 			continue
 		}
 
-		// TODO
+		// TODO switch to filestore handler
 		/*
 			switch data := question.Data.Data.(type) {
 			case *qualifications.ExamQuestionData_Image:

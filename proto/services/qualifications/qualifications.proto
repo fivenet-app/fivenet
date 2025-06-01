@@ -4,6 +4,7 @@ package services.qualifications;
 
 import "google/protobuf/duration.proto";
 import "resources/common/database/database.proto";
+import "resources/file/filestore.proto";
 import "resources/qualifications/access.proto";
 import "resources/qualifications/exam.proto";
 import "resources/qualifications/qualifications.proto";
@@ -211,4 +212,7 @@ service QualificationsService {
   rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse);
   // @perm: Name=ListQualifications
   rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse);
+
+  // @perm: Name=CreateQualification
+  rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
 }

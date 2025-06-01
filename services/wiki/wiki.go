@@ -354,7 +354,6 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 
 	// No parent ID?
 	// If so, check if there are any existing pages for the user's job and use one as the parent.
-	// TODO a nil error occurs when no pages exist at all (root page creation)
 	if req.ParentId == nil || *req.ParentId <= 0 {
 		parentStmt := tPageShort.
 			SELECT(

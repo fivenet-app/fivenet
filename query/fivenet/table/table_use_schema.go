@@ -77,6 +77,7 @@ func UseSchema(schema string) {
 	FivenetQualifications = FivenetQualifications.FromSchema(schema)
 	FivenetQualificationsAccess = FivenetQualificationsAccess.FromSchema(schema)
 	FivenetQualificationsExamQuestions = FivenetQualificationsExamQuestions.FromSchema(schema)
+	FivenetQualificationsExamQuestionsFiles = FivenetQualificationsExamQuestionsFiles.FromSchema(schema)
 	FivenetQualificationsExamResponses = FivenetQualificationsExamResponses.FromSchema(schema)
 	FivenetQualificationsExamUsers = FivenetQualificationsExamUsers.FromSchema(schema)
 	FivenetQualificationsFiles = FivenetQualificationsFiles.FromSchema(schema)
