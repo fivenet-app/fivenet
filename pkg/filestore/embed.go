@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -416,11 +415,6 @@ func putToStorage(ctx context.Context, st storage.IStorage, key string, r io.Rea
 	}
 	if _, err = st.Put(ctx, key, cr, s, ctype); err != nil {
 		return "", 0, err
-	}
-
-	u, _ := st.GetURL(ctx, key, 24*time.Hour, nil) // ignore error if backend doesn’t support URLs
-	if u != nil {
-		return deref(u), cr.n, nil
 	}
 
 	return key, cr.n, nil

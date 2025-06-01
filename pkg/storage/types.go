@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/url"
 	"path/filepath"
 	"time"
 )
@@ -23,8 +22,6 @@ type IStorage interface {
 
 	// Get return object contents and info
 	Get(ctx context.Context, key string) (IObject, IObjectInfo, error)
-	// Get URL of object (not every storage adapter supports this)
-	GetURL(ctx context.Context, key string, expires time.Duration, reqParams url.Values) (*string, error)
 	// Return object info
 	Stat(ctx context.Context, key string) (IObjectInfo, error)
 	// Upload file, size and content type must be accurate

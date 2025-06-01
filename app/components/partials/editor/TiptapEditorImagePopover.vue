@@ -78,11 +78,13 @@ function setImage(url: string | undefined): void {
 
 async function onFilesHandler(files: FileList | File[] | null): Promise<void> {
     if (!files || !files[0]) {
+        canSubmit.value = true;
         return;
     }
 
     await setViaURL(files[0]);
 
+    canSubmit.value = true;
     isOpen.value = false;
 }
 

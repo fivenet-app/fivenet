@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptrace"
-	"net/url"
 	"path"
 	"path/filepath"
 	"strings"
@@ -29,10 +28,9 @@ func init() {
 type S3 struct {
 	IStorage
 
-	s3           *minio.Client
-	bucketName   string
-	prefix       string
-	usePresigned bool
+	s3         *minio.Client
+	bucketName string
+	prefix     string
 }
 
 func NewS3(p Params) (IStorage, error) {
@@ -56,10 +54,9 @@ func NewS3(p Params) (IStorage, error) {
 	}
 
 	s := &S3{
-		s3:           mc,
-		bucketName:   p.Cfg.Storage.S3.BucketName,
-		prefix:       p.Cfg.Storage.S3.Prefix,
-		usePresigned: p.Cfg.Storage.S3.UsePreSigned,
+		s3:         mc,
+		bucketName: p.Cfg.Storage.S3.BucketName,
+		prefix:     p.Cfg.Storage.S3.Prefix,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -118,26 +115,6 @@ func (s *S3) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error
 		lastModified: info.LastModified,
 		expiration:   info.Expiration,
 	}, nil
-}
-
-func (s *S3) GetURL(ctx context.Context, key string, expires time.Duration, reqParams url.Values) (*string, error) {
-	if !s.usePresigned {
-		return nil, nil
-	}
-
-	key, ok := utils.CleanFilePath(key)
-	if !ok {
-		return nil, ErrInvalidPath
-	}
-	key = path.Join(s.prefix, key)
-
-	u, err := s.s3.PresignedGetObject(ctx, s.bucketName, key, expires, reqParams)
-	if err != nil {
-		return nil, err
-	}
-
-	url := u.String()
-	return &url, nil
 }
 
 func (s *S3) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
