@@ -104,14 +104,14 @@ const schema = z.object({
             bannerMessageEnabled: z.literal(false),
             bannerMessage: z.object({
                 title: z.string().max(512),
-                expiresAt: z.date().min(new Date()).optional(),
+                expiresAt: z.date().optional(),
             }),
         }),
         z.object({
             bannerMessageEnabled: z.literal(true),
             bannerMessage: z.object({
                 title: z.string().min(3).max(512),
-                expiresAt: z.date().min(new Date()).optional(),
+                expiresAt: z.date().optional(),
             }),
         }),
     ]),

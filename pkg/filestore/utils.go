@@ -53,10 +53,3 @@ func buildKey(ns, name string) string {
 	return fmt.Sprintf("%s/%s/%s-%s",
 		ns, time.Now().UTC().Format("20060102"), uuid.NewString(), name)
 }
-
-func deref(p *string) string {
-	if p == nil {
-		return ""
-	}
-	return *p
-}

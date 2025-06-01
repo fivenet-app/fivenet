@@ -206,6 +206,12 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
         const call = $grpc.qualifications.qualifications.updateQualification(req);
         const { response } = await call;
 
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+
         return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -221,12 +227,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
     canSubmit.value = false;
     await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-
-    notifications.add({
-        title: { key: 'notifications.action_successfull.title', parameters: {} },
-        description: { key: 'notifications.action_successfull.content', parameters: {} },
-        type: NotificationType.SUCCESS,
-    });
 }, 1000);
 
 const accessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];

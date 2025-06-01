@@ -276,6 +276,8 @@ if (!props.commentMode) {
 
 const disabled = computed(() => props.disabled || loading.value);
 
+let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefined;
+
 const editor = useEditor({
     content: '',
     editable: !disabled.value,
@@ -288,9 +290,13 @@ const editor = useEditor({
             class: 'prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-none dark:prose-invert max-w-full break-words',
         },
     },
+    onCreate: () => {
+        if (props.filestoreService && props.filestoreNamespace && fileUploadHandler) {
+            unref(editor)?.registerPlugin(imageUploadPlugin(unref(editor)!, fileUploadHandler));
+        }
+    },
 });
 
-let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefined;
 if (props.filestoreService && props.filestoreNamespace && props.targetId) {
     const { resizeAndUpload } = useFileUploader(props.filestoreService, props.filestoreNamespace, props.targetId);
 
@@ -327,12 +333,6 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
         }
     }
     fileUploadHandler = handleFiles;
-
-    unref(editor)?.on('create', () => {
-        if (props.filestoreService) {
-            unref(editor)?.registerPlugin(imageUploadPlugin(unref(editor)!, handleFiles));
-        }
-    });
 }
 
 const fonts = [
@@ -945,13 +945,13 @@ onBeforeUnmount(() => unref(editor)?.destroy());
 
                 <TiptapEditorImagePopover
                     v-if="!commentMode"
-                    :editor="unref(editor)"
+                    :editor="editor"
                     :file-limit="fileLimit"
                     :disabled="disabled"
                     :upload-handler="fileUploadHandler"
                     @open-file-list="
                         modal.open(FileListModal, {
-                            editor: unref(editor),
+                            editor: editor,
                             files: files,
                         })
                     "
@@ -1213,7 +1213,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                                 :disabled="disabled"
                                 @click="
                                     modal.open(FileListModal, {
-                                        editor: unref(editor)!,
+                                        editor: editor!,
                                         files: files,
                                     })
                                 "

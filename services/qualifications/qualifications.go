@@ -204,6 +204,12 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 		resp.Qualification.Access = qualiAccess.Access
 	}
 
+	files, err := s.fHandler.ListFilesForParentID(ctx, req.QualificationId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	resp.Qualification.Files = files
+
 	if canGrade && req.WithExam != nil && *req.WithExam {
 		exam, err := s.getExamQuestions(ctx, s.db, req.QualificationId, canGrade)
 		if err != nil {
