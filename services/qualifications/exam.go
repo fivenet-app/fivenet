@@ -347,6 +347,8 @@ func (s *Server) GetUserExam(ctx context.Context, req *pbqualifications.GetUserE
 }
 
 func (s *Server) deleteExamUser(ctx context.Context, tx qrm.DB, qualificationId uint64, userId int32) error {
+	tExamUser := table.FivenetQualificationsExamUsers
+
 	stmt := tExamUser.
 		DELETE().
 		WHERE(jet.AND(

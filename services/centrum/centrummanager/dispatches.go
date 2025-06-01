@@ -397,6 +397,7 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, all
 
 	if allTheWay {
 		tDispatch := table.FivenetCentrumDispatches
+
 		stmt := tDispatch.
 			DELETE().
 			WHERE(jet.AND(

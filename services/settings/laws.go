@@ -107,6 +107,8 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *pbsettings.DeleteLawBoo
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
+	tLawBooks := table.FivenetLawbooks
+
 	stmt := tLawBooks.
 		DELETE().
 		WHERE(
@@ -256,6 +258,8 @@ func (s *Server) DeleteLaw(ctx context.Context, req *pbsettings.DeleteLawRequest
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
+
+	tLaws := table.FivenetLawbooksLaws
 
 	stmt := tLaws.
 		DELETE().

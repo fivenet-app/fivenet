@@ -714,6 +714,8 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 		return err
 	}
 
+	tUnits := table.FivenetCentrumUnits
+
 	stmt := tUnits.
 		DELETE().
 		WHERE(jet.AND(

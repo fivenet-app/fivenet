@@ -55,8 +55,9 @@ func (s *Server) SubscribeToCalendar(ctx context.Context, req *pbcalendar.Subscr
 }
 
 func (s *Server) createOrDeleteSubscription(ctx context.Context, calendarId uint64, userId int32, subscribe bool, confirmed bool, muted bool) error {
+	tCalendarSubs := table.FivenetCalendarSubs
+
 	if subscribe {
-		tCalendarSubs := table.FivenetCalendarSubs
 		stmt := tCalendarSubs.
 			INSERT(
 				tCalendarSubs.CalendarID,

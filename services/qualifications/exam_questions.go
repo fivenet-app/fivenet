@@ -70,6 +70,7 @@ func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64)
 
 func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qualificationId uint64, questions *qualifications.ExamQuestions) error {
 	tExamQuestions := table.FivenetQualificationsExamQuestions
+
 	if len(questions.Questions) == 0 {
 		stmt := tExamQuestions.
 			DELETE().

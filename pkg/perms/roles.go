@@ -255,6 +255,7 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	}
 
 	tRoles := table.FivenetRbacRoles
+
 	stmt := tRoles.
 		DELETE().
 		WHERE(

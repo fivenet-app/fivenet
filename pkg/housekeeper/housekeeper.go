@@ -161,7 +161,9 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 	tJobProps := table.FivenetJobProps
 
 	stmt := tJobProps.
-		SELECT(tJobProps.Job).
+		SELECT(
+			tJobProps.Job,
+		).
 		WHERE(jet.AND(
 			tJobProps.DeletedAt.IS_NOT_NULL(),
 			tJobProps.DeletedAt.LT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(1, jet.DAY))),

@@ -12,8 +12,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tOAuth2Accs = table.FivenetAccountsOauth2
-
 func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *pbauth.DeleteOAuth2ConnectionRequest) (*pbauth.DeleteOAuth2ConnectionResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.oauth2_provider", req.Provider))
 
@@ -26,6 +24,8 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *pbauth.DeleteO
 	if err != nil {
 		return nil, errswrap.NewError(err, ErrGenericAccount)
 	}
+
+	tOAuth2Accs := table.FivenetAccountsOauth2
 
 	stmt := tOAuth2Accs.
 		DELETE().
