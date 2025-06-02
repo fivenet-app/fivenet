@@ -14,7 +14,7 @@ import (
 )
 
 func (p *Perms) loadData(ctx context.Context) error {
-	ctx, span := p.tracer.Start(ctx, "perms-load")
+	ctx, span := p.tracer.Start(ctx, "perms.load")
 	defer span.End()
 
 	if err := p.loadPermissions(ctx); err != nil {

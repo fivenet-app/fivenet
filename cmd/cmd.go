@@ -77,11 +77,12 @@ var Cli struct {
 	StartTimeout   time.Duration `help:"App start timeout duration" default:"180s" env:"FIVENET_START_TIMEOUT"`
 	SkipMigrations *bool         `help:"Disable the automatic DB migrations on startup." env:"FIVENET_SKIP_DB_MIGRATIONS"`
 
-	Server  ServerCmd  `cmd:"" help:"Run FiveNet server."`
-	Worker  WorkerCmd  `cmd:"" help:"Run FiveNet worker."`
-	Discord DiscordCmd `cmd:"" help:"Run FiveNet Discord bot."`
-	DBSync  DBSyncCmd  `cmd:"" name:"dbsync" help:"Run FiveNet database sync."`
-	Tools   ToolsCmd   `cmd:"" help:"Run FiveNet tools/helpers."`
+	Server     ServerCmd     `cmd:"" help:"Run FiveNet server."`
+	Worker     WorkerCmd     `cmd:"" help:"Run FiveNet worker."`
+	Discord    DiscordCmd    `cmd:"" help:"Run FiveNet Discord bot."`
+	DBSync     DBSyncCmd     `cmd:"" name:"dbsync" help:"Run FiveNet database sync."`
+	Tools      ToolsCmd      `cmd:"" help:"Run FiveNet tools/helpers."`
+	Migrations MigrationsCmd `cmd:"" help:"Run FiveNet migrations."`
 }
 
 func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {

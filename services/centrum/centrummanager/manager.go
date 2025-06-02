@@ -69,7 +69,7 @@ func New(p Params) *Manager {
 	s := &Manager{
 		logger: p.Logger.Named("centrum.state"),
 
-		tracer:   p.TP.Tracer("centrum-manager"),
+		tracer:   p.TP.Tracer("centrum.manager"),
 		db:       p.DB,
 		js:       p.JS,
 		enricher: p.Enricher,

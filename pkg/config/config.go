@@ -12,7 +12,7 @@ type Config struct {
 
 	LogLevels map[string][]string `yaml:"logLevels"`
 
-	Tracing Tracing `yaml:"tracing"`
+	OTLP OTLPConfig `yaml:"otlp"`
 
 	HTTP        HTTP       `yaml:"http"`
 	Database    Database   `yaml:"database"`
@@ -34,23 +34,27 @@ type Config struct {
 	Sync Sync `yaml:"sync"`
 }
 
-type TracingExporter string
+type OtelExporter string
 
 const (
-	TracingExporter_StdoutTrace   TracingExporter = "stdout"
-	TracingExporter_OTLPTraceGRPC TracingExporter = "otlptracegrpc"
-	TracingExporter_OTLPTraceHTTP TracingExporter = "otlptracehttp"
+	TracingExporter_StdoutTrace OtelExporter = "stdout"
+	TracingExporter_OTLPGRPC    OtelExporter = "grpc"
+	TracingExporter_OTLPHTTP    OtelExporter = "http"
 )
 
-type Tracing struct {
-	Enabled     bool            `default:"false" yaml:"enabled"`
-	Type        TracingExporter `default:"stdout" yaml:"type"`
-	URL         string          `yaml:"url"`
-	Insecure    bool            `yaml:"insecure"`
-	Timeout     time.Duration   `default:"10s" yaml:"timeout"`
-	Environment string          `default:"dev" yaml:"environment"`
-	Ratio       float64         `default:"0.1" yaml:"ratio"`
-	Attributes  []string        `yaml:"attributes"`
+type OTLPConfig struct {
+	Enabled     bool          `default:"false" yaml:"enabled"`
+	Type        OtelExporter  `default:"stdout" yaml:"type"`
+	URL         string        `yaml:"url"`
+	Insecure    bool          `yaml:"insecure"`
+	Timeout     time.Duration `default:"10s" yaml:"timeout"`
+	Environment string        `default:"dev" yaml:"environment"`
+	Ratio       float64       `default:"0.1" yaml:"ratio"`
+	Attributes  []string      `yaml:"attributes"`
+	// Headers to send with OTLP HTTP requests
+	Headers map[string]string `yaml:"headers,omitempty"`
+	// Compression type for OTLP HTTP requests
+	Compression string `default:"none" yaml:"compression"`
 }
 
 type HTTP struct {
@@ -73,26 +77,50 @@ type Links struct {
 	Imprint       *string `json:"imprint"`
 }
 
+// Database represents the configuration for connecting to a MySQL database.
+// It includes credentials, connection settings, and additional options.
 type Database struct {
-	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+	// DSN is the Data Source Name used to connect to the database.
+	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details.
 	DSN string `yaml:"dsn"`
 
-	Net       string `default:"tcp" yaml:"net"`
-	Host      string `yaml:"host"`
-	Port      int32  `default:"3306" yaml:"port"`
-	Username  string `yaml:"username"`
-	Password  string `yaml:"password"`
-	Database  string `yaml:"database"`
+	// Net specifies the network type to use for the connection (e.g., "tcp").
+	Net string `default:"tcp" yaml:"net"`
+
+	// Host is the hostname or IP address of the MySQL server.
+	Host string `yaml:"host"`
+
+	// Port is the port number on which the MySQL server is listening.
+	Port int32 `default:"3306" yaml:"port"`
+
+	// Username is the username for authenticating with the MySQL server.
+	Username string `yaml:"username"`
+
+	// Password is the password for authenticating with the MySQL server.
+	Password string `yaml:"password"`
+
+	// Database is the name of the specific database to connect to.
+	Database string `yaml:"database"`
+
+	// Collation specifies the character set collation to use for the connection.
 	Collation string `default:"utf8mb4_unicode_ci" yaml:"collation"`
 
-	// Connection options
-	MaxOpenConns    int           `default:"32" yaml:"maxOpenConns"`
-	MaxIdleConns    int           `default:"5" yaml:"maxIdleConns"`
+	// MaxOpenConns defines the maximum number of open connections to the database.
+	MaxOpenConns int `default:"32" yaml:"maxOpenConns"`
+
+	// MaxIdleConns defines the maximum number of idle connections to the database.
+	MaxIdleConns int `default:"5" yaml:"maxIdleConns"`
+
+	// ConnMaxIdleTime specifies the maximum amount of time a connection can remain idle.
 	ConnMaxIdleTime time.Duration `default:"15m" yaml:"connMaxIdleTime"`
+
+	// ConnMaxLifetime specifies the maximum amount of time a connection can remain open.
 	ConnMaxLifetime time.Duration `default:"60m" yaml:"connMaxLifetime"`
 
+	// ESXCompat enables compatibility mode for ESX-specific database configurations.
 	ESXCompat bool `default:"false" yaml:"esxCompat"`
 
+	// Custom contains additional custom database configuration options.
 	Custom CustomDB `yaml:"custom"`
 }
 

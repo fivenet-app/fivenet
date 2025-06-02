@@ -43,7 +43,7 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 		logger: p.Logger,
 		db:     p.DB,
 
-		tracer: p.TP.Tracer("mstlystcdata-doccategories"),
+		tracer: p.TP.Tracer("mstlystcdata.doccategories"),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

@@ -62,7 +62,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 
 	m := &Manager{
 		logger:   p.Logger,
-		tracer:   p.TP.Tracer("tracker-manager"),
+		tracer:   p.TP.Tracer("tracker.manager"),
 		js:       p.JS,
 		db:       p.DB,
 		enricher: p.Enricher,

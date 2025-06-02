@@ -9,7 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
-	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -49,7 +48,7 @@ func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 		s.jsCons.Stop()
 	}
 
-	s.jsCons, err = consumer.Consume(s.watchForEventsFunc(ctxCancel),
+	s.jsCons, err = consumer.Consume(s.watchForEventsFunc,
 		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger, s.registerSubscriptions))
 	if err != nil {
 		return err
@@ -66,60 +65,54 @@ func (s *Server) sendUpdateEvent(ctx context.Context, topic events.Topic, tType 
 	return nil
 }
 
-func (s *Server) watchForEventsFunc(ctx context.Context) jetstream.MessageHandler {
-	return func(msg jetstream.Msg) {
-		remoteCtx, _ := events.GetJetstreamMsgContext(msg)
-		_, span := s.tracer.Start(trace.ContextWithRemoteSpanContext(ctx, remoteCtx), msg.Subject())
-		defer span.End()
+func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
+	if err := msg.Ack(); err != nil {
+		s.logger.Error("failed to ack message", zap.Error(err))
+	}
 
-		if err := msg.Ack(); err != nil {
-			s.logger.Error("failed to ack message", zap.Error(err))
-		}
+	split := strings.Split(msg.Subject(), ".")
+	if len(split) < 4 {
+		return
+	}
 
-		split := strings.Split(msg.Subject(), ".")
-		if len(split) < 4 {
-			return
-		}
-
-		topic := events.Topic(split[1])
-		tType := events.Type(split[2])
-		job := events.Type(split[3])
-		_ = job
-		switch topic {
-		case MarkerTopic:
-			switch tType {
-			case MarkerUpdate:
-				// Send marker update when there is at least one subscriber
-				if s.broker.SubCount() <= 0 {
-					return
-				}
-
-				marker := &livemap.MarkerMarker{}
-				if err := proto.Unmarshal(msg.Data(), marker); err != nil {
-					s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
-					return
-				}
-
-				s.broker.Publish(&brokerEvent{
-					MarkerUpdate: marker,
-				})
-
-			case MarkerDelete:
-				// Send marker deletion when there is at least one subscriber
-				if s.broker.SubCount() <= 0 {
-					return
-				}
-
-				marker := &livemap.MarkerMarker{}
-				if err := proto.Unmarshal(msg.Data(), marker); err != nil {
-					s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
-					return
-				}
-
-				s.broker.Publish(&brokerEvent{
-					MarkerDelete: &marker.Id,
-				})
+	topic := events.Topic(split[1])
+	tType := events.Type(split[2])
+	job := events.Type(split[3])
+	_ = job
+	switch topic {
+	case MarkerTopic:
+		switch tType {
+		case MarkerUpdate:
+			// Send marker update when there is at least one subscriber
+			if s.broker.SubCount() <= 0 {
+				return
 			}
+
+			marker := &livemap.MarkerMarker{}
+			if err := proto.Unmarshal(msg.Data(), marker); err != nil {
+				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
+				return
+			}
+
+			s.broker.Publish(&brokerEvent{
+				MarkerUpdate: marker,
+			})
+
+		case MarkerDelete:
+			// Send marker deletion when there is at least one subscriber
+			if s.broker.SubCount() <= 0 {
+				return
+			}
+
+			marker := &livemap.MarkerMarker{}
+			if err := proto.Unmarshal(msg.Data(), marker); err != nil {
+				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
+				return
+			}
+
+			s.broker.Publish(&brokerEvent{
+				MarkerDelete: &marker.Id,
+			})
 		}
 	}
 }

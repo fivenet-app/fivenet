@@ -63,7 +63,7 @@ type WorkflowResult struct {
 func NewWorkflow(p WorkflowParams) (WorkflowResult, error) {
 	w := &Workflow{
 		logger: p.Logger.Named("documents.workflow"),
-		tracer: p.TP.Tracer("documents_workflow"),
+		tracer: p.TP.Tracer("documents.workflow"),
 		db:     p.DB,
 		notif:  p.Notif,
 		ui:     p.Ui,

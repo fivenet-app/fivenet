@@ -77,7 +77,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 		ctx:           ctxCancel,
 		logger:        p.Logger.Named("centrum.manager.housekeeper"),
 		wg:            sync.WaitGroup{},
-		tracer:        p.TP.Tracer("centrum-manager-housekeeper"),
+		tracer:        p.TP.Tracer("centrum.manager.housekeeper"),
 		db:            p.DB,
 		converterType: p.Config.DispatchCenter.Type,
 		convertJobs:   p.Config.DispatchCenter.ConvertJobs,
@@ -196,7 +196,7 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 }
 
 func (s *Housekeeper) runHandleDispatchAssignmentExpiration(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(ctx, "centrum-dispatch-assignment-expiration")
+	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-assignment-expiration")
 	defer span.End()
 
 	if err := s.handleDispatchAssignmentExpiration(ctx); err != nil {
@@ -259,7 +259,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 }
 
 func (s *Housekeeper) runCancelOldDispatches(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(ctx, "centrum-dispatch-cancel")
+	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-cancel")
 	defer span.End()
 
 	if err := s.cancelOldDispatches(ctx); err != nil {
@@ -348,7 +348,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 }
 
 func (s *Housekeeper) runDeleteOldDispatches(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(ctx, "centrum-dispatch-old-delete")
+	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-old-delete")
 	defer span.End()
 
 	errs := multierr.Combine()
@@ -453,7 +453,7 @@ func (s *Housekeeper) deleteOldUnitStatus(ctx context.Context) error {
 }
 
 func (s *Housekeeper) runDispatchDeduplication(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(ctx, "centrum-dispatch-deduplicatation")
+	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-deduplicatation")
 	defer span.End()
 
 	if err := s.deduplicateDispatches(ctx); err != nil {
@@ -620,7 +620,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 }
 
 func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(ctx, "centrum-units-cleanup")
+	ctx, span := s.tracer.Start(ctx, "centrum.units-cleanup")
 	defer span.End()
 
 	if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
@@ -854,7 +854,7 @@ func (s *Housekeeper) watchUserChanges() {
 			}
 
 			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
+				ctx, span := s.tracer.Start(s.ctx, "centrum.watch-users")
 				defer span.End()
 
 				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))

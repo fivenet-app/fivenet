@@ -38,7 +38,7 @@ type HousekeeperResult struct {
 func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 	s := &Housekeeper{
 		logger: p.Logger.Named("jobs_housekeeper"),
-		tracer: p.TP.Tracer("jobs_housekeeper"),
+		tracer: p.TP.Tracer("jobs.housekeeper"),
 		db:     p.DB,
 	}
 

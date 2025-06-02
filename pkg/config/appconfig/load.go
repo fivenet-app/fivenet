@@ -170,6 +170,9 @@ func (c *Config) updateConfigInDB(ctx context.Context, cfg *Cfg) error {
 }
 
 func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
+	ctx, span := c.tracer.Start(ctx, "appconfig.reload")
+	defer span.End()
+
 	stmt := tConfig.
 		SELECT(
 			tConfig.AppConfig.AS("app_config"),

@@ -65,7 +65,7 @@ func NewManager(p Params) *Manager {
 		mutex:  &sync.RWMutex{},
 		wg:     sync.WaitGroup{},
 
-		tracer: p.TP.Tracer("centrum-cache"),
+		tracer: p.TP.Tracer("centrum.cache"),
 
 		bots:    xsync.NewMap[string, *Bot](),
 		js:      p.JS,
@@ -103,7 +103,7 @@ func (s *Manager) Run(ctx context.Context) {
 
 		case <-time.After(3 * time.Second):
 			func() {
-				ctx, span := s.tracer.Start(ctx, "centrum-bots-check")
+				ctx, span := s.tracer.Start(ctx, "centrum.bots-check")
 				defer span.End()
 
 				if err := s.checkIfBotsAreNeeded(ctx); err != nil {

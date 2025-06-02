@@ -7,10 +7,8 @@ import (
 
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
 	"github.com/nats-io/nats.go/jetstream"
-	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -46,10 +44,6 @@ func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 }
 
 func (s *Server) watchForChanges(msg jetstream.Msg) {
-	remoteCtx, _ := events.GetJetstreamMsgContext(msg)
-	_, span := s.tracer.Start(trace.ContextWithRemoteSpanContext(context.Background(), remoteCtx), msg.Subject())
-	defer span.End()
-
 	startTime := time.Now()
 
 	if err := msg.Ack(); err != nil {

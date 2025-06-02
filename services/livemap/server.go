@@ -104,7 +104,7 @@ func NewServer(p Params) *Server {
 	s := &Server{
 		logger: p.Logger,
 
-		tracer:   p.TP.Tracer("livemap-cache"),
+		tracer:   p.TP.Tracer("livemap"),
 		db:       p.DB,
 		js:       p.JS,
 		ps:       p.Perms,
@@ -194,7 +194,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 }
 
 func (s *Server) refreshData(ctx context.Context) error {
-	ctx, span := s.tracer.Start(ctx, "livemap-refresh-cache")
+	ctx, span := s.tracer.Start(ctx, "livemap.refresh-cache")
 	defer span.End()
 
 	if err := s.refreshMarkers(ctx); err != nil {

@@ -43,7 +43,7 @@ func NewLaws(p Params) LawsResult {
 		logger: p.Logger,
 		db:     p.DB,
 
-		tracer: p.TP.Tracer("mstlystcdata-laws"),
+		tracer: p.TP.Tracer("mstlystcdata.laws"),
 
 		lawBooks: xsync.NewMap[uint64, *laws.LawBook](),
 	}

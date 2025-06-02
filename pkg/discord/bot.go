@@ -123,7 +123,7 @@ func New(p BotParams) Result {
 	b := &Bot{
 		ctx:      cancelCtx,
 		logger:   p.Logger,
-		tracer:   p.TP.Tracer("discord_bot"),
+		tracer:   p.TP.Tracer("discord.bot"),
 		js:       p.JS,
 		db:       p.DB,
 		enricher: p.Enricher,

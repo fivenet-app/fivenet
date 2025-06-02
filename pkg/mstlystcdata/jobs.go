@@ -60,7 +60,7 @@ func NewJobs(p Params) (JobsResult, error) {
 		logger: p.Logger,
 		db:     p.DB,
 
-		tracer: p.TP.Tracer("mstlystcdata-cache"),
+		tracer: p.TP.Tracer("mstlystcdata.jobs"),
 
 		updateCallbacks: []updateCallbackFn{},
 	}

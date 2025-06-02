@@ -21,7 +21,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -57,12 +56,10 @@ func init() {
 type Server struct {
 	pbcentrum.CentrumServiceServer
 
-	logger *zap.Logger
-	wg     sync.WaitGroup
-	ctx    context.Context
-	jsCons jetstream.ConsumeContext
-
-	tracer   trace.Tracer
+	logger   *zap.Logger
+	wg       sync.WaitGroup
+	ctx      context.Context
+	jsCons   jetstream.ConsumeContext
 	db       *sql.DB
 	ps       perms.Permissions
 	aud      audit.IAuditer
@@ -103,8 +100,6 @@ func NewServer(p Params) (*Server, error) {
 		logger: p.Logger.Named("centrum"),
 		wg:     sync.WaitGroup{},
 		ctx:    ctxCancel,
-
-		tracer: p.TP.Tracer("centrum-cache"),
 
 		db:       p.DB,
 		ps:       p.Perms,

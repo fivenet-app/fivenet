@@ -17,7 +17,7 @@ import (
 )
 
 func (s *Manager) loadData(ctx context.Context) error {
-	ctx, span := s.tracer.Start(ctx, "centrum-loaddata")
+	ctx, span := s.tracer.Start(ctx, "centrum.loaddata")
 	defer span.End()
 
 	s.logger.Debug("loading settings")

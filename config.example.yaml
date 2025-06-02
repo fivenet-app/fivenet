@@ -6,11 +6,11 @@ logLevel: "DEBUG"
 mode: "release"
 logLevels:
   nats.store: "INFO"
-tracing:
+otlp:
   enabled: false
   # Can be "stdout", "otlptracegrpc", "otlptracehttp"
   type: "stdout"
-  # OTLP Tracing endpoint URL
+  # OTLP endpoint URL (don't include `http(s)://` when using "grpc" type)`)
   url: "https://localhost:4317"
   insecure: false
   timeout: 10s
@@ -18,6 +18,11 @@ tracing:
   ratio: 0.1
   attributes: []
   # - service.name=fivenet-server
+  headers: {}
+    # Example to authenticate with an API key
+    #Authorization: "API_KEY_HERE"
+  # Can be "none" or "gzip"
+  compression: "none"
 http:
   listen: ":8080"
   adminListen: ":7070"
