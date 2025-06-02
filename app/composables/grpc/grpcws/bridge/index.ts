@@ -33,7 +33,7 @@ export const webSocket = useWebSocket(
     {
         immediate: false,
         autoReconnect: {
-            delay: 750,
+            delay: 350,
         },
         protocols: ['grpc-websocket-channel'],
 
@@ -55,14 +55,10 @@ export const webSocket = useWebSocket(
 export class GrpcWSTransport implements RpcTransport {
     private readonly defaultOptions;
     webSocket: UseWebSocketReturn<ArrayBuffer>;
-    wsInitiated: Ref<boolean>;
     private wsTs: TransportFactory;
 
     constructor(defaultOptions: GrpcWSOptions) {
         this.defaultOptions = defaultOptions;
-
-        const wsInitiated = ref(false);
-        this.wsInitiated = wsInitiated;
 
         this.webSocket = webSocket;
         this.wsTs = WebsocketChannelTransport(logger, this.webSocket);

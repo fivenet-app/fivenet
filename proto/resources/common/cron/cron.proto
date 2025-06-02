@@ -78,6 +78,9 @@ message CronjobCompletedEvent {
 
   // Name of the node where the cronjob was executed
   string node_name = 6;
+
+  // Error message (if success = false)
+  optional string error_message = 8;
 }
 
 message GenericCronData {

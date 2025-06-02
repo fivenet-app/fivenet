@@ -20,7 +20,7 @@ const { clearAuthInfo } = authStore;
 
 const notifications = useNotificatorStore();
 
-const { webSocket, wsInitiated } = useGRPCWebsocketTransport();
+const { webSocket } = useGRPCWebsocketTransport();
 
 async function resetLocalStorage(): Promise<void> {
     clearAuthInfo();
@@ -146,7 +146,6 @@ const version = APP_VERSION;
                 :label="$t('common.status')"
                 :ui="{ container: '' }"
             >
-                {{ $t('common.active') }}: {{ wsInitiated ? $t('common.yes') : $t('common.no') }}<br />
                 {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
             </UFormGroup>
 

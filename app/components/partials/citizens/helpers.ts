@@ -1,4 +1,6 @@
-export function sexToColor(sex: string): string {
+import type { BadgeColor } from '#ui/types';
+
+export function sexToColor(sex: string): BadgeColor {
     if (sex === 'f') {
         return 'pink';
     } else if (sex === 'm') {

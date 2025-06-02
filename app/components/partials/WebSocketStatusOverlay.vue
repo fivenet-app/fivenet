@@ -16,7 +16,7 @@ const { t } = useI18n();
 
 const { timeouts } = useAppConfig();
 
-const { webSocket, wsInitiated } = useGRPCWebsocketTransport();
+const { webSocket } = useGRPCWebsocketTransport();
 
 const toast = useToast();
 
@@ -83,7 +83,7 @@ const previousStatus = ref<WebSocketStatus>('OPEN');
 const { resume } = watchPausable(
     status,
     async () => {
-        if (wsInitiated.value && previousStatus.value !== status.value) {
+        if (previousStatus.value !== status.value) {
             checkWebSocketStatus(previousStatus.value, status.value);
             previousStatus.value = status.value;
         }

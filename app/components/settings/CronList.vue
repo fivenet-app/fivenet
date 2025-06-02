@@ -15,6 +15,8 @@ async function listCronjobs(): Promise<ListCronjobsResponse> {
     try {
         const { response } = $grpc.settings.cron.listCronjobs({});
 
+        start();
+
         return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -46,7 +48,8 @@ const { remaining, start, pause, resume } = useCountdown(60, {
         refresh();
     },
 });
-start();
+
+onBeforeMount(() => start());
 
 watchDebounced(windowFocus, () => {
     if (!windowFocus) {
@@ -152,6 +155,17 @@ const expand = ref({
                                 : row.lastCompletedEvent.data
                         "
                     />
+
+                    <template #footer>
+                        <div>
+                            <span class="font-semibold">{{ $t('pages.error.error_message') }}</span>
+
+                            <pre
+                                class="line-clamp-[4] whitespace-break-spaces hover:line-clamp-none"
+                                v-text="row.lastCompletedEvent.errorMessage"
+                            />
+                        </div>
+                    </template>
                 </UCard>
             </div>
         </template>

@@ -875,6 +875,10 @@ func (m *CronjobCompletedEvent) validate(all bool) error {
 
 	}
 
+	if m.ErrorMessage != nil {
+		// no validation rules for ErrorMessage
+	}
+
 	if len(errors) > 0 {
 		return CronjobCompletedEventMultiError(errors)
 	}

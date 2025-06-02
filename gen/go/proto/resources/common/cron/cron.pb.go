@@ -362,7 +362,9 @@ type CronjobCompletedEvent struct {
 	// Cronjob data (can be empty if not touched by the Cronjob handler)
 	Data *CronjobData `protobuf:"bytes,5,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	// Name of the node where the cronjob was executed
-	NodeName      string `protobuf:"bytes,6,opt,name=node_name,json=nodeName,proto3" json:"node_name,omitempty"`
+	NodeName string `protobuf:"bytes,6,opt,name=node_name,json=nodeName,proto3" json:"node_name,omitempty"`
+	// Error message (if success = false)
+	ErrorMessage  *string `protobuf:"bytes,8,opt,name=error_message,json=errorMessage,proto3,oneof" json:"error_message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -446,6 +448,13 @@ func (x *CronjobCompletedEvent) GetNodeName() string {
 	return ""
 }
 
+func (x *CronjobCompletedEvent) GetErrorMessage() string {
+	if x != nil && x.ErrorMessage != nil {
+		return *x.ErrorMessage
+	}
+	return ""
+}
+
 type GenericCronData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// @sanitize: method=StripTags
@@ -521,7 +530,7 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tupdatedAt\"Q\n" +
 	"\x15CronjobSchedulerEvent\x128\n" +
-	"\acronjob\x18\x01 \x01(\v2\x1e.resources.common.cron.CronjobR\acronjob\"\xb5\x02\n" +
+	"\acronjob\x18\x01 \x01(\v2\x1e.resources.common.cron.CronjobR\acronjob\"\xf1\x02\n" +
 	"\x15CronjobCompletedEvent\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\asuccess\x18\x02 \x01(\bR\asuccess\x12\x1c\n" +
@@ -529,8 +538,10 @@ const file_resources_common_cron_cron_proto_rawDesc = "" +
 	"\aendDate\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\aendDate\x123\n" +
 	"\aelapsed\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\aelapsed\x12;\n" +
 	"\x04data\x18\x05 \x01(\v2\".resources.common.cron.CronjobDataH\x00R\x04data\x88\x01\x01\x12\x1b\n" +
-	"\tnode_name\x18\x06 \x01(\tR\bnodeNameB\a\n" +
-	"\x05_data\"\xa8\x01\n" +
+	"\tnode_name\x18\x06 \x01(\tR\bnodeName\x12(\n" +
+	"\rerror_message\x18\b \x01(\tH\x01R\ferrorMessage\x88\x01\x01B\a\n" +
+	"\x05_dataB\x10\n" +
+	"\x0e_error_message\"\xa8\x01\n" +
 	"\x0fGenericCronData\x12V\n" +
 	"\n" +
 	"attributes\x18\x01 \x03(\v26.resources.common.cron.GenericCronData.AttributesEntryR\n" +

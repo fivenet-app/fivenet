@@ -49,19 +49,24 @@ func NewHandler[P ParentID](
 	st storage.IStorage,
 	db *sql.DB,
 	join jet.Table,
-	parent jet.Column,
-	file jet.ColumnInteger,
+	parentCol jet.Column,
+	fileCol jet.ColumnInteger,
 	sizeLimit int64,
 	parentColBoolExp ParentColBoolExpFn[P],
 	joinRowInserter JoinRowInserterFn[P],
 	nullOnlyParentRow bool,
 ) *Handler[P] {
+	AddTable(joinInfo{
+		Table:   join,
+		FileCol: fileCol,
+	})
+
 	return &Handler[P]{
 		store:     st,
 		db:        db,
 		joinTable: join,
-		parentCol: parent,
-		fileCol:   file,
+		parentCol: parentCol,
+		fileCol:   fileCol,
 		sizeLimit: sizeLimit,
 		// parentColBoolExp is a function that converts the parent ID to a jet.BoolExpression
 		parentColBoolExp:  parentColBoolExp,
@@ -299,6 +304,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) erro
 			UPDATE().
 			SET(tFiles.DeletedAt.SET(jet.CURRENT_TIMESTAMP())).
 			WHERE(tFiles.ID.EQ(jet.Uint64(fileID))).
+			LIMIT(1).
 			ExecContext(ctx, tx)
 		if err != nil {
 			return err

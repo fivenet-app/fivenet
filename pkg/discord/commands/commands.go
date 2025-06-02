@@ -14,9 +14,19 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
+
+var metricCommandCalls = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	Namespace: admin.MetricsNamespace,
+	Subsystem: "discord_commands",
+	Name:      "call_count",
+	Help:      "Number of per command call count.",
+}, []string{"command"})
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord_bot").Named("commands")
@@ -100,8 +110,9 @@ func (c *Cmds) registerCommands() error {
 	commands := []api.CreateCommandData{}
 	for _, cmd := range c.cmds {
 		cmdData := cmd.RegisterCommand(c.router)
-
 		commands = append(commands, cmdData)
+
+		metricCommandCalls.WithLabelValues(cmdData.Name).Set(0)
 	}
 
 	if err := cmdroute.OverwriteCommands(c.dc, commands); err != nil {
@@ -121,7 +132,17 @@ func newMiddlewareLogger(logger *zap.Logger) cmdroute.Middleware {
 				logger.Info("received interaction event", zap.Uint64("sender_id", uint64(ev.SenderID())), zap.String("command", data.Name))
 			}
 
-			return next.HandleInteraction(ctx, ev)
+			resp := next.HandleInteraction(ctx, ev)
+			if resp == nil {
+				// Most likely command not found error
+				return nil
+			}
+
+			switch data := ev.Data.(type) {
+			case *discord.CommandInteraction:
+				metricCommandCalls.WithLabelValues(data.Name).Inc()
+			}
+			return resp
 		})
 	}
 }

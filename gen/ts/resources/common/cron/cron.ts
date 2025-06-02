@@ -161,6 +161,12 @@ export interface CronjobCompletedEvent {
      * @generated from protobuf field: string node_name = 6
      */
     nodeName: string;
+    /**
+     * Error message (if success = false)
+     *
+     * @generated from protobuf field: optional string error_message = 8
+     */
+    errorMessage?: string;
 }
 /**
  * @generated from protobuf message resources.common.cron.GenericCronData
@@ -466,7 +472,8 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
             { no: 3, name: "endDate", kind: "message", T: () => Timestamp },
             { no: 4, name: "elapsed", kind: "message", T: () => Duration },
             { no: 5, name: "data", kind: "message", T: () => CronjobData },
-            { no: 6, name: "node_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 6, name: "node_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "error_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<CronjobCompletedEvent>): CronjobCompletedEvent {
@@ -505,6 +512,9 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
                 case /* string node_name */ 6:
                     message.nodeName = reader.string();
                     break;
+                case /* optional string error_message */ 8:
+                    message.errorMessage = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -538,6 +548,9 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
         /* bool cancelled = 7; */
         if (message.cancelled !== false)
             writer.tag(7, WireType.Varint).bool(message.cancelled);
+        /* optional string error_message = 8; */
+        if (message.errorMessage !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.errorMessage);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

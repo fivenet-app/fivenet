@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { BadgeColor } from '#ui/types';
 import { sexToColor, sexToIcon } from './helpers';
 
 defineProps<{
@@ -8,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-    <UBadge :color="sexToColor(sex) as BadgeColor" size="lg">
-        <UIcon :name="sexToIcon(sex)" />
+    <UBadge :color="sexToColor(sex)" size="lg">
+        <UIcon class="h-3.5" :name="sexToIcon(sex)" />
     </UBadge>
 </template>

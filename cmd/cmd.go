@@ -41,6 +41,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	pkgfilestore "github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
@@ -123,6 +124,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		storage.Module,
 		housekeeper.Module,
 		dbsync.Module,
+		fx.Provide(pkgfilestore.NewHousekeeper),
 		// Discord Bot
 		discord.StateModule,
 		discord.BotModule,

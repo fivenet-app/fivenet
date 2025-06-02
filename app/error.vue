@@ -92,9 +92,7 @@ const isDev = import.meta.dev;
                         <pre class="text-wrap" :class="kbdBlockClasses">{{ version }}</pre>
                     </div>
 
-                    <p class="font-semibold">
-                        {{ $t !== undefined ? $t('pages.error.error_message') : 'Error message:' }}
-                    </p>
+                    <p class="font-semibold">{{ $t !== undefined ? $t('pages.error.error_message') : 'Error message' }}:</p>
                     <span v-if="error">
                         <!-- @vue-ignore -->
                         <pre

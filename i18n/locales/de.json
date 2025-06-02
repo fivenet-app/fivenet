@@ -85,7 +85,7 @@
         "error": {
             "title": "Fehler aufgetreten",
             "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuche es erneut.",
-            "error_message": "Fehlermeldung:",
+            "error_message": "Fehlermeldung",
             "copy_error": "Fehlerbericht kopieren"
         },
         "qualifications": {

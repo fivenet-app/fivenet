@@ -85,7 +85,7 @@
         "error": {
             "title": "Error occurred",
             "subtitle": "A fatal error occurred, please try again in a few seconds.",
-            "error_message": "Error message:",
+            "error_message": "Error message",
             "copy_error": "Copy Error message"
         },
         "qualifications": {

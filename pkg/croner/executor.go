@@ -177,6 +177,11 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 	// Update timestamp in cronjob data
 	now := timestamp.Now()
 	job.Cronjob.Data.UpdatedAt = now
+	var errMsg *string
+	if err != nil {
+		msg := err.Error()
+		errMsg = &msg
+	}
 
 	if _, err := ag.js.PublishProto(ag.ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic), &cron.CronjobCompletedEvent{
 		Name:      job.Cronjob.Name,
@@ -187,6 +192,8 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 
 		NodeName: ag.nodeName,
 		Data:     job.Cronjob.Data,
+
+		ErrorMessage: errMsg,
 	}); err != nil {
 		ag.logger.Error("failed to publish cron schedule completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		return
