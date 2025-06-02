@@ -10,8 +10,8 @@ require (
 	github.com/XSAM/otelsql v0.38.0
 	github.com/adhocore/gronx v1.19.6
 	github.com/alecthomas/kong v1.11.0
-	github.com/aymanbagabas/go-udiff v0.2.0
-	github.com/blevesearch/bleve/v2 v2.5.1
+	github.com/aymanbagabas/go-udiff v0.3.0
+	github.com/blevesearch/bleve/v2 v2.5.2
 	github.com/cespare/xxhash/v2 v2.3.0
 	github.com/coder/websocket v1.8.13
 	github.com/creasty/defaults v1.8.0
@@ -118,7 +118,7 @@ require (
 	github.com/blevesearch/zapx/v13 v13.4.2 // indirect
 	github.com/blevesearch/zapx/v14 v14.4.2 // indirect
 	github.com/blevesearch/zapx/v15 v15.4.2 // indirect
-	github.com/blevesearch/zapx/v16 v16.2.3 // indirect
+	github.com/blevesearch/zapx/v16 v16.2.4 // indirect
 	github.com/bytedance/sonic v1.13.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
