@@ -3,7 +3,7 @@ package collab
 import (
 	"strconv"
 
-	"github.com/cespare/xxhash"
+	"github.com/cespare/xxhash/v2"
 )
 
 // Max safe JS integer (2^53 - 1)
