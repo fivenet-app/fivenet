@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.5.5] - 2025-05-29
+
+### 🐛 Fixes
+
+- Perms events issues by reducing amount of events
+
 ## [2025.5.3] - 2025-05-24
 
 ### ⚙️ Miscellaneous Tasks
