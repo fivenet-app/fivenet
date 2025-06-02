@@ -103,7 +103,12 @@ const expand = ref({
         </template>
     </UDashboardNavbar>
 
-    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.file', 2)])" :error="error" :retry="refresh" />
+    <DataErrorBlock
+        v-if="error"
+        :title="$t('common.unable_to_load', [$t('common.cronjob', 2)])"
+        :error="error"
+        :retry="refresh"
+    />
 
     <UTable
         v-else
@@ -116,7 +121,7 @@ const expand = ref({
     >
         <template #expand="{ row }">
             <div class="p-2">
-                <pre v-if="!row.lastCompletedEvent">{{ $t('common.na') }}</pre>
+                <pre v-if="!row.lastCompletedEvent">{{ $t('common.unknown') }}</pre>
                 <UCard v-else>
                     <template #header>
                         <div class="flex items-center justify-between gap-2">
@@ -162,7 +167,11 @@ const expand = ref({
 
                             <pre
                                 class="line-clamp-[4] whitespace-break-spaces hover:line-clamp-none"
-                                v-text="row.lastCompletedEvent.errorMessage"
+                                v-text="
+                                    row.lastCompletedEvent.errorMessage
+                                        ? row.lastCompletedEvent.errorMessage
+                                        : $t('common.none')
+                                "
                             />
                         </div>
                     </template>

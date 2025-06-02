@@ -10,6 +10,10 @@ var (
 )
 
 func AddTable(tbl joinInfo) {
+	if tbl.Table == nil {
+		return
+	}
+
 	tableListsMu.Lock()
 	defer tableListsMu.Unlock()
 

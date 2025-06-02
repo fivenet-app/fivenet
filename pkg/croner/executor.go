@@ -160,7 +160,7 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 		defer func() {
 			elapsed = time.Since(start)
 
-			// Recover from a panic and set err accordingly nil otherwise.
+			// Recover from a panic and set err accordingly
 			if e := recover(); e != nil {
 				if er, ok := e.(error); ok {
 					err = fmt.Errorf("recovered from panic. %w", er)

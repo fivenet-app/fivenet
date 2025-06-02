@@ -652,7 +652,8 @@
             "description": "Are you sure you want to publish this document? Once published, the draft status will be removed. This action cannot be undone."
         },
         "insert_file": "Insert File",
-        "untitled": "(Untitled)"
+        "untitled": "(Untitled)",
+        "cronjob": "Background Task | Background Tasks"
     },
     "components": {
         "partials": {

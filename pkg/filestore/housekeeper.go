@@ -141,7 +141,8 @@ func (h *Housekeeper) Run(ctx context.Context) error {
 			// NOT EXISTS (SELECT 1 FROM ji.table WHERE ji.fileCol = files.id)
 			orphanCond = orphanCond.AND(
 				jet.NOT(jet.EXISTS(
-					ji.Table.SELECT(jet.RawInt("1")).
+					ji.Table.
+						SELECT(jet.RawInt("1")).
 						FROM(ji.Table).
 						WHERE(ji.FileCol.EQ(tFiles.ID)),
 				)),

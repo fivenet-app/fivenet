@@ -68,7 +68,7 @@ func TestSoftDeleteJobData(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 10))
 
 	// Mock queries for dependant table `calendar_entries`
-	mock.ExpectExec("UPDATE calendar_entries SET deleted_at = CURRENT_TIMESTAMP WHERE \\(\\(job = \\?\\) AND deleted_at IS NULL\\) AND \\(calendar_id IN \\(\\( SELECT id AS \"id\" FROM calendars WHERE .+\\(job = \\?\\) AND deleted_at IS NULL.+ LIMIT \\?;").
+	mock.ExpectExec("UPDATE calendar_entries SET deleted_at = CURRENT_TIMESTAMP WHERE \\(job = \\?\\) AND.+deleted_at IS NULL AND \\(calendar_id IN .+ SELECT id AS \"id\" FROM calendars WHERE .+\\(job = \\?\\) AND deleted_at IS NULL.+ LIMIT \\?;").
 		WithArgs().
 		WillReturnResult(sqlmock.NewResult(0, 5))
 
