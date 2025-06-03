@@ -72,6 +72,14 @@ export type GameConfig = {
 export type SystemConfig = {
     bannerMessageEnabled: boolean;
     bannerMessage?: BannerMessage;
+
+    otlp: OTLP;
+};
+
+export type OTLP = {
+    enabled: boolean;
+    url: string;
+    headers?: Record<string, string>;
 };
 
 export type BannerMessage = {

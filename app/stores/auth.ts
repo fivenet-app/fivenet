@@ -125,9 +125,10 @@ export const useAuthStore = defineStore(
                     setPermissions(response.char.permissions);
                     setJobProps(response.char.jobProps);
 
-                    // @ts-expect-error route should be valid, as we test it against a valid URL list
-                    const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
-                    await navigateTo(target);
+                    const startpage = useSettingsStore().startpage ?? '/overview';
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore route should be valid, as we test it against a valid URL list
+                    await navigateTo(startpage);
                 }
             } catch (e) {
                 const err = e as RpcError;
@@ -191,11 +192,16 @@ export const useAuthStore = defineStore(
                 setJobProps(response.jobProps);
 
                 if (redirect) {
-                    const redirectPath = useRoute().query.redirect ?? useSettingsStore().startpage ?? '/overview';
+                    const redirectQuery = useRoute().query.redirect;
+                    const redirectPath =
+                        (typeof redirectQuery === 'string' ? redirectQuery : redirectQuery?.join('/')) ??
+                        useSettingsStore().startpage ??
+                        '/overview';
                     const path = redirectPath || '/overview';
                     const url = new URL('https://example.com' + path);
 
-                    // @ts-expect-error route should be valid, as we test it against a valid URL list
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore route should be valid, as we test it against a valid URL list
                     await navigateTo({
                         path: url.pathname,
                         query: parseQuery(url.search),

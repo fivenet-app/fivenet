@@ -49,11 +49,11 @@ const links = computed(() =>
             permission: 'mailer.MailerService.ListEmails' as Perms,
         },
         {
-            label: t('common.citizen'),
+            label: t('common.citizen', 1),
             icon: 'i-mdi-account-multiple-outline',
             to: '/citizens',
             tooltip: {
-                text: t('common.citizen'),
+                text: t('common.citizen', 1),
                 shortcuts: ['G', 'C'],
             },
             permission: 'citizens.CitizensService.ListCitizens' as Perms,

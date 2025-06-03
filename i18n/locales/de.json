@@ -2757,10 +2757,6 @@
                     "key": "Dokumenten-Bürger-Beziehungen hinzufügen",
                     "description": "Bürgerbeziehung hinzufügen/ entfernen."
                 },
-                "CreateDocument": {
-                    "key": "Dokument erstellen",
-                    "description": "Ein neues Dokument erstellen."
-                },
                 "ListDocuments": {
                     "key": "Dokumente auflisten, suchen und anzeigen",
                     "description": "Dokumente auflisten/ suchen, und anzeigen."
@@ -2774,8 +2770,8 @@
                     "description": "Verfügbare Vorlagen auflisten."
                 },
                 "UpdateDocument": {
-                    "key": "Dokument aktualisieren",
-                    "description": "Ein vorhandenes Dokument bearbeiten/ aktualisieren.",
+                    "key": "Dokument erstellen und aktualisieren",
+                    "description": "Neue Dokumente erstellen und vorhandenes Dokumente bearbeiten/ aktualisieren.",
                     "attrs": {
                         "Own": "Eigene",
                         "Lower_Rank": "Niedrigerer Rang",
@@ -3103,16 +3099,6 @@
                     "key": "Qualifizierung aufrufen",
                     "description": "Rufe Qualifizierungsinformationen ab"
                 },
-                "CreateQualification": {
-                    "key": "Qualifizierungen erstellen",
-                    "description": "Erstelle Qualifizierungen",
-                    "attrs": {
-                        "Public": "Öffentliche Qualifizierungen die jeder sehen kann"
-                    },
-                    "attrs_types": {
-                        "Fields": "Zugriff auf spezielle Freigaben von Qualifizierungen"
-                    }
-                },
                 "UpdateQualification": {
                     "key": "Qualifizierung aktualisieren",
                     "description": "Aktualisiere Qualifizierungen",
@@ -3120,10 +3106,12 @@
                         "Own": "Eigene",
                         "Lower_Rank": "Niedrigerer Rang",
                         "Same_Rank": "Gleicher Rang",
-                        "Any": "Egal"
+                        "Any": "Egal",
+                        "Public": "Öffentliche Qualifizierungen die jeder sehen kann"
                     },
                     "attrs_types": {
-                        "Access": "Zugriff auf fraktionseigene Qualifizierungen"
+                        "Access": "Zugriff auf fraktionseigene Qualifizierungen",
+                        "Fields": "Zugriff auf spezielle Freigaben von Qualifizierungen"
                     }
                 },
                 "DeleteQualification": {
@@ -3180,9 +3168,9 @@
                     "key": "Seiten auflisten und anzeigen",
                     "description": "Sollte immer gegeben werden."
                 },
-                "CreatePage": {
-                    "key": "Seiten erstellen",
-                    "description": "Lexikon Seiten erstellen können.",
+                "UpdatePage": {
+                    "key": "Seiten erstellen und aktualisieren",
+                    "description": "Lexikon Seiten erstellen und aktualisieren können.",
                     "attrs": {
                         "Public": "Öffentliche Seiten, die jeder aufrufen kann"
                     },

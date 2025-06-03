@@ -58,6 +58,14 @@ type Game struct {
 type System struct {
 	BannerMessageEnabled bool           `json:"bannerMessageEnabled"`
 	BannerMessage        *BannerMessage `json:"bannerMessage,omitempty"`
+
+	OTLP OTLPFrontend `json:"otlp"`
+}
+
+type OTLPFrontend struct {
+	Enabled bool              `json:"enabled"`
+	URL     string            `json:"url,omitempty"`
+	Headers map[string]string `json:"headers,omitempty"`
 }
 
 type BannerMessage struct {

@@ -24,6 +24,10 @@ export default defineAppConfig({
     } as GameConfig,
     system: {
         bannerMessageEnabled: false,
+
+        otlp: {
+            enabled: false,
+        },
     } as SystemConfig,
 
     // File upload related config

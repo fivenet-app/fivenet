@@ -54,7 +54,14 @@ type OTLPConfig struct {
 	// Headers to send with OTLP HTTP requests
 	Headers map[string]string `yaml:"headers,omitempty"`
 	// Compression type for OTLP HTTP requests
-	Compression string `default:"none" yaml:"compression"`
+	Compression string             `default:"none" yaml:"compression"`
+	Frontend    OTLPFrontendConfig `yaml:"frontend"`
+}
+
+type OTLPFrontendConfig struct {
+	// Public URL for traces and other instrumentation (if set, only then instrumentation is enabled in the frontend)
+	URL     string            `yaml:"url"`
+	Headers map[string]string `yaml:"headers,omitempty"`
 }
 
 type HTTP struct {

@@ -12,13 +12,13 @@ const { can, activeChar } = useAuth();
 const settings = useSettingsStore();
 const { startpage, design, streamerMode, audio, calendar } = storeToRefs(settings);
 
-const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
+const startpages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
     { name: t('common.overview'), path: '/overview' },
     { name: t('common.mail'), path: '/mail', permission: 'mailer.MailerService.ListEmails' },
     { name: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService.ListCitizens' },
     { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService.ListVehicles' },
     { name: t('pages.documents.title'), path: '/documents', permission: 'documents.DocumentsService.ListDocuments' },
-    { name: t('pages.jobs.overview.title'), path: '/jobs/overview' },
+    { name: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.JobsService.ListColleagues' },
     { name: t('common.calendar'), path: '/calendar' },
     {
         name: t('common.qualification', 2),
@@ -27,9 +27,10 @@ const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] =
     },
     { name: t('common.livemap'), path: '/livemap', permission: 'livemap.LivemapService.Stream' },
     { name: t('common.dispatch_center'), path: '/centrum', permission: 'centrum.CentrumService.TakeControl' },
+    { name: t('common.wiki'), path: '/wiki', permission: 'wiki.WikiService.ListPages' },
 ];
 
-const selectedHomepage = ref<(typeof homepages)[0]>();
+const selectedHomepage = ref<(typeof startpages)[0]>();
 watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ?? '/overview'));
 
 const designDocumentsListStyle = ref(design.value.documents.listStyle === 'double');
@@ -80,7 +81,7 @@ const selectedTab = computed({
 
 const notificationSound = useSounds('/sounds/notification.mp3');
 
-onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path === startpage.value)));
+onBeforeMount(async () => (selectedHomepage.value = startpages.find((h) => h.path === startpage.value)));
 </script>
 
 <template>
@@ -142,7 +143,7 @@ onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path
                         <ClientOnly v-if="activeChar">
                             <USelectMenu
                                 v-model="selectedHomepage"
-                                :options="homepages.filter((h) => h.permission === undefined || can(h.permission).value)"
+                                :options="startpages.filter((h) => h.permission === undefined || can(h.permission).value)"
                                 option-attribute="name"
                                 :searchable-placeholder="$t('common.search_field')"
                             />

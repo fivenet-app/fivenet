@@ -1,7 +1,7 @@
 import { defineNuxtPlugin } from '#app';
 import type { ServerAppConfig } from '~/typings';
 
-const configPromise = loadConfig();
+const appConfigPromise = loadConfig();
 
 async function loadConfig(): Promise<ServerAppConfig> {
     const abort = new AbortController();
@@ -32,8 +32,8 @@ export default defineNuxtPlugin({
     name: 'config',
     parallel: true,
     async setup(nuxtApp) {
-        await configPromise;
+        await appConfigPromise;
 
-        nuxtApp.provide('appConfigPromise', configPromise);
+        nuxtApp.provide('appConfigPromise', appConfigPromise);
     },
 });

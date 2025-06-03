@@ -112,7 +112,13 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 			UnemployedJobName: "unemployed",
 			StartJobGrade:     0,
 		},
-		System: System{},
+		System: System{
+			OTLP: OTLPFrontend{
+				Enabled: r.cfg.OTLP.Enabled,
+				URL:     r.cfg.OTLP.Frontend.URL,
+				Headers: r.cfg.OTLP.Frontend.Headers,
+			},
+		},
 	}
 
 	clientCfg.Discord.BotInviteURL = appCfg.Discord.InviteUrl

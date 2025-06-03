@@ -10,8 +10,8 @@ otlp:
   enabled: false
   # Can be "stdout", "otlptracegrpc", "otlptracehttp"
   type: "stdout"
-  # OTLP endpoint URL (don't include `http(s)://` when using "grpc" type)`)
-  url: "https://localhost:4317"
+  # OTLP endpoint URL
+  url: "http://localhost:4317"
   insecure: false
   timeout: 10s
   environment: "dev"
@@ -20,9 +20,14 @@ otlp:
   # - service.name=fivenet-server
   headers: {}
     # Example to authenticate with an API key
-    #Authorization: "API_KEY_HERE"
+    #authorization: "API_KEY_HERE"
   # Can be "none" or "gzip"
   compression: "none"
+  frontend:
+    url: ""
+    headers: {}
+      # Example to authenticate with an API key
+      #authorization: "API_KEY_HERE"
 http:
   listen: ":8080"
   adminListen: ":7070"
