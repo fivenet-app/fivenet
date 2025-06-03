@@ -233,7 +233,7 @@ func newTraceExporter(ctx context.Context, tracingType config.OtelExporter, endp
 		}
 
 		opts := []otlptracegrpc.Option{
-			otlptracegrpc.WithEndpoint(endpoint),
+			otlptracegrpc.WithEndpointURL(endpoint),
 			secureOption,
 			otlptracegrpc.WithCompressor(compression),
 			otlptracegrpc.WithTimeout(timeout),
@@ -249,7 +249,7 @@ func newTraceExporter(ctx context.Context, tracingType config.OtelExporter, endp
 		}
 
 		opts := []otlptracehttp.Option{
-			otlptracehttp.WithEndpoint(endpoint),
+			otlptracehttp.WithEndpointURL(endpoint),
 			otlptracehttp.WithTimeout(timeout),
 			otlptracehttp.WithHeaders(headers),
 			otlptracehttp.WithCompression(comp),
