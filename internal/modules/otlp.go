@@ -155,7 +155,7 @@ func newMetricsExporter(ctx context.Context, tracingType config.OtelExporter, en
 			secureOption = otlpmetricgrpc.WithInsecure()
 		}
 		return otlpmetricgrpc.New(ctx,
-			otlpmetricgrpc.WithEndpoint(endpoint),
+			otlpmetricgrpc.WithEndpointURL(endpoint),
 			secureOption,
 			otlpmetricgrpc.WithCompressor(gzip.Name),
 			otlpmetricgrpc.WithTimeout(timeout),
@@ -164,7 +164,7 @@ func newMetricsExporter(ctx context.Context, tracingType config.OtelExporter, en
 
 	case config.TracingExporter_OTLPHTTP:
 		opts := []otlpmetrichttp.Option{
-			otlpmetrichttp.WithEndpoint(endpoint),
+			otlpmetrichttp.WithEndpointURL(endpoint),
 			otlpmetrichttp.WithTimeout(timeout),
 			otlpmetrichttp.WithHeaders(headers),
 		}
