@@ -8,9 +8,9 @@ logLevels:
   nats.store: "INFO"
 otlp:
   enabled: false
-  # Can be "stdout", "otlptracegrpc", "otlptracehttp"
+  # Can be "stdout", "grpc", "http"
   type: "stdout"
-  # OTLP endpoint URL
+  # OTLP endpoint URL (must include `http(s)://`)
   url: "http://localhost:4317"
   insecure: false
   timeout: 10s
