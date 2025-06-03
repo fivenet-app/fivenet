@@ -9,13 +9,15 @@ permissions:
 jobs:
   build-image:
     name: Build Container Image
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        # Build and publish in parallel: linux/amd64, linux/arm64
-        platform:
-          - linux/amd64
-          - linux/arm64
+        # Build and publish in parallel for linux/amd64 and linux/arm64
+        include:
+          - os: ubuntu-24.04
+            platform: linux/amd64
+          - os: ubuntu-24.04-arm
+            platform: linux/arm64
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -41,18 +43,11 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Build and push by digest
         id: build
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           tags: ghcr.io/fivenet-app/fivenet
           outputs: type=image,push-by-digest=true,name-canonical=true,push=true
