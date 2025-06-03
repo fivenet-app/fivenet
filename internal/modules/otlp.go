@@ -193,6 +193,7 @@ func newLoggerExporter(ctx context.Context, loggerType config.OtelExporter, endp
 		logExporter, err := otlploggrpc.New(ctx,
 			otlploggrpc.WithEndpointURL(endpoint),
 			secureOption,
+			otlploggrpc.WithCompressor(compression),
 			otlploggrpc.WithTimeout(timeout),
 			otlploggrpc.WithHeaders(headers),
 		)
@@ -234,6 +235,7 @@ func newTraceExporter(ctx context.Context, tracingType config.OtelExporter, endp
 		opts := []otlptracegrpc.Option{
 			otlptracegrpc.WithEndpointURL(endpoint),
 			secureOption,
+			otlptracegrpc.WithCompressor(compression),
 			otlptracegrpc.WithTimeout(timeout),
 			otlptracegrpc.WithHeaders(headers),
 		}
