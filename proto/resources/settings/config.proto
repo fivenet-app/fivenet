@@ -89,6 +89,9 @@ message Discord {
   // @sanitize: method=StripTags
   repeated string ignored_jobs = 4 [(validate.rules).repeated.max_items = 100];
   optional DiscordBotPresence bot_presence = 5;
+  // @sanitize: method=StripTags
+  optional string bot_id = 6 [(validate.rules).string.max_len = 255];
+  int64 bot_permissions = 7;
 }
 
 enum DiscordBotPresenceType {

@@ -7,6 +7,7 @@ import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/a
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { QualificationContent, QualificationMeta } from '~/types/history';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { QualificationJobAccess } from '~~/gen/ts/resources/qualifications/access';
@@ -40,6 +41,8 @@ const modal = useModal();
 const { attr, can, activeChar } = useAuth();
 
 const notifications = useNotificatorStore();
+
+const historyStore = useHistoryStore();
 
 const { maxAccessEntries } = useAppConfig();
 
@@ -109,6 +112,54 @@ const state = reactive<Schema>({
     files: [],
     requirements: [],
 });
+
+const changed = ref(false);
+const saving = ref(false);
+
+async function saveHistory(values: Schema, type = 'qualification'): Promise<void> {
+    if (saving.value) {
+        return;
+    }
+    saving.value = true;
+
+    historyStore.addVersion<QualificationContent, QualificationMeta>(
+        type,
+        props.qualificationId,
+        {
+            content: values.content,
+            files: values.files,
+            requirements: values.requirements,
+        },
+        {
+            weight: values.weight,
+            abbreviation: values.abbreviation,
+            title: values.title,
+            description: values.description,
+            closed: values.closed,
+            public: values.public,
+            access: values.access,
+        },
+    );
+
+    useTimeoutFn(() => {
+        saving.value = false;
+    }, 1750);
+}
+
+watchDebounced(
+    state,
+    async () => {
+        if (changed.value) {
+            saveHistory(state);
+        } else {
+            changed.value = true;
+        }
+    },
+    {
+        debounce: 750,
+        maxWait: 2500,
+    },
+);
 
 const {
     data: qualification,

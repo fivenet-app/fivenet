@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package resources.discord;
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord;discord";
+
+message Channel {
+  string id = 1;
+  string guild_id = 2;
+  string name = 3;
+  uint32 type = 4;
+  int64 position = 5;
+}

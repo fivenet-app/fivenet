@@ -15,6 +15,7 @@ import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/jobs/job_settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileUpload from '../partials/elements/FileUpload.vue';
+import FormatBuilder from '../partials/FormatBuilder.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -200,6 +201,9 @@ function setSettingsValues(): void {
         state.discordSyncSettings.userInfoSync = jobProps.value.discordSyncSettings.userInfoSync;
         if (jobProps.value.discordSyncSettings.userInfoSyncSettings) {
             state.discordSyncSettings.userInfoSyncSettings = jobProps.value.discordSyncSettings.userInfoSyncSettings;
+
+            state.discordSyncSettings.userInfoSyncSettings.employeeRoleFormat =
+                state.discordSyncSettings.userInfoSyncSettings.employeeRoleFormat.replaceAll('%s', '%job%');
         }
         state.discordSyncSettings.jobsAbsence = jobProps.value.discordSyncSettings.jobsAbsence;
         if (jobProps.value.discordSyncSettings.jobsAbsenceSettings) {
@@ -222,6 +226,18 @@ function setSettingsValues(): void {
 }
 
 watch(jobProps, () => setSettingsValues());
+
+async function searchChannels() {
+    try {
+        const call = $grpc.settings.settings.listDiscordChannels({});
+        const { response } = await call;
+
+        return response.channels.sort((a, b) => a.position - b.position);
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        return [];
+    }
+}
 
 const canEdit = can('settings.SettingsService.SetJobProps');
 
@@ -311,6 +327,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-else-if="!jobProps"
                 icon="i-mdi-tune"
                 :type="$t('components.settings.job_props.job_properties')"
+                :retry="refresh"
             />
 
             <template v-else-if="loading || jobProps">
@@ -460,13 +477,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             >
                                 <template #links>
                                     <UButton
-                                        v-if="appConfig.discord.botInviteURL !== undefined"
+                                        v-if="appConfig.discord.botEnabled"
                                         class="mt-1"
                                         block
                                         color="white"
                                         trailing-icon="i-mdi-robot"
                                         :disabled="!canSubmit || !canEdit"
-                                        :to="appConfig.discord.botInviteURL"
+                                        to="/api/discord/invite-bot"
                                         :external="true"
                                     >
                                         {{ $t('components.settings.job_props.discord_sync_settings.invite_bot') }}
@@ -482,7 +499,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UInput
                                         v-model="state.discordGuildId"
                                         type="text"
-                                        :disabled="appConfig.discord.botInviteURL === undefined || !canSubmit || !canEdit"
+                                        :disabled="!appConfig.discord.botEnabled || !canSubmit || !canEdit"
                                         :placeholder="
                                             $t('components.settings.job_props.discord_sync_settings.discord_guild_id')
                                         "
@@ -515,20 +532,42 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UFormGroup
                                     class="grid grid-cols-2 items-center gap-2"
                                     name="discordSyncSettings.statusLogSettings.channelId"
-                                    :label="`${$t('components.settings.job_props.discord_sync_settings.status_log')} ${$t('components.settings.job_props.discord_sync_settings.status_log_settings.channel_id')}`"
+                                    :label="
+                                        $t('components.settings.job_props.discord_sync_settings.status_log_settings.channel_id')
+                                    "
                                     :ui="{ container: '' }"
                                 >
-                                    <UInput
+                                    <USelectMenu
                                         v-model="state.discordSyncSettings.statusLogSettings!.channelId"
-                                        type="text"
                                         name="discordSyncSettings.statusLogSettings.channelId"
                                         :disabled="!state.discordSyncSettings.statusLog || !canSubmit || !canEdit"
+                                        :searchable="searchChannels"
+                                        :search-attributes="['name']"
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        value-attribute="id"
                                         :placeholder="
                                             $t(
                                                 'components.settings.job_props.discord_sync_settings.status_log_settings.channel_id',
                                             )
                                         "
-                                    />
+                                    >
+                                        <template #label="{ selected }">
+                                            <span v-if="selected" class="truncate">{{ selected.name }}</span>
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            <span class="truncate">{{ option.name }}</span>
+                                        </template>
+
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.channel', 1)]) }}
+                                        </template>
+                                    </USelectMenu>
                                 </UFormGroup>
 
                                 <UAlert
@@ -569,21 +608,33 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         name="discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
                                         :label="
                                             $t(
-                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format',
+                                                'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format.title',
                                             )
                                         "
                                         :ui="{ container: '' }"
                                     >
-                                        <UInput
+                                        <FormatBuilder
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
-                                            type="text"
-                                            name="gradeRoleFormat"
-                                            :disabled="!state.discordSyncSettings.userInfoSync || !canSubmit || !canEdit"
-                                            :placeholder="
-                                                $t(
-                                                    'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format',
-                                                )
-                                            "
+                                            :extensions="[
+                                                {
+                                                    label: $t(
+                                                        'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format.grade_single',
+                                                    ),
+                                                    value: 'grade_single',
+                                                },
+                                                {
+                                                    label: $t(
+                                                        'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format.grade',
+                                                    ),
+                                                    value: 'grade',
+                                                },
+                                                {
+                                                    label: $t(
+                                                        'components.settings.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format.grade_label',
+                                                    ),
+                                                    value: 'grade_label',
+                                                },
+                                            ]"
                                         />
                                     </UFormGroup>
 
@@ -613,21 +664,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :ui="{ container: '' }"
                                     >
-                                        <UInput
+                                        <FormatBuilder
                                             v-model="state.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat"
-                                            type="text"
-                                            name="employeeRoleFormat"
                                             :disabled="
                                                 !state.discordSyncSettings.userInfoSync ||
                                                 !state.discordSyncSettings.userInfoSyncSettings?.employeeRoleEnabled ||
                                                 !canSubmit ||
                                                 !canEdit
                                             "
-                                            :placeholder="
-                                                $t(
-                                                    'components.settings.job_props.discord_sync_settings.user_info_sync_settings.employee_role_format',
-                                                )
-                                            "
+                                            :extensions="[{ label: $t('common.job_name'), value: 'job' }]"
                                         />
                                     </UFormGroup>
 
@@ -962,16 +1007,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :ui="{ container: '' }"
                                     >
-                                        <UInput
+                                        <FormatBuilder
                                             v-model="state.discordSyncSettings.qualificationsRoleFormat"
-                                            type="text"
-                                            name="discordSyncSettings.qualificationsRoleFormat"
                                             :disabled="!canSubmit || !canEdit"
-                                            :placeholder="
-                                                $t(
-                                                    'components.settings.job_props.discord_sync_settings.qualifications_role_format.title',
-                                                )
-                                            "
+                                            :extensions="[
+                                                { label: $t('common.qualification_name'), value: 'name' },
+                                                { label: $t('common.abbreviation'), value: 'abbr' },
+                                            ]"
                                         />
                                     </UFormGroup>
                                 </template>

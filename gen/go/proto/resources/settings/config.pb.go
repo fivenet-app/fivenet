@@ -616,10 +616,13 @@ type Discord struct {
 	// @sanitize: method=StripTags
 	InviteUrl *string `protobuf:"bytes,3,opt,name=invite_url,json=inviteUrl,proto3,oneof" json:"invite_url,omitempty"`
 	// @sanitize: method=StripTags
-	IgnoredJobs   []string            `protobuf:"bytes,4,rep,name=ignored_jobs,json=ignoredJobs,proto3" json:"ignored_jobs,omitempty"`
-	BotPresence   *DiscordBotPresence `protobuf:"bytes,5,opt,name=bot_presence,json=botPresence,proto3,oneof" json:"bot_presence,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	IgnoredJobs []string            `protobuf:"bytes,4,rep,name=ignored_jobs,json=ignoredJobs,proto3" json:"ignored_jobs,omitempty"`
+	BotPresence *DiscordBotPresence `protobuf:"bytes,5,opt,name=bot_presence,json=botPresence,proto3,oneof" json:"bot_presence,omitempty"`
+	// @sanitize: method=StripTags
+	BotId          *string `protobuf:"bytes,6,opt,name=bot_id,json=botId,proto3,oneof" json:"bot_id,omitempty"`
+	BotPermissions int64   `protobuf:"varint,7,opt,name=bot_permissions,json=botPermissions,proto3" json:"bot_permissions,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *Discord) Reset() {
@@ -685,6 +688,20 @@ func (x *Discord) GetBotPresence() *DiscordBotPresence {
 		return x.BotPresence
 	}
 	return nil
+}
+
+func (x *Discord) GetBotId() string {
+	if x != nil && x.BotId != nil {
+		return *x.BotId
+	}
+	return ""
+}
+
+func (x *Discord) GetBotPermissions() int64 {
+	if x != nil {
+		return x.BotPermissions
+	}
+	return 0
 }
 
 type DiscordBotPresence struct {
@@ -847,16 +864,19 @@ const file_resources_settings_config_proto_rawDesc = "" +
 	"\x05grade\x18\x02 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x05grade\"\xba\x01\n" +
 	"\vUserTracker\x12R\n" +
 	"\frefresh_time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x14\xfaB\x11\xaa\x01\x0e\b\x01\x1a\x02\b<2\x06\x10\x80ʵ\xee\x01R\vrefreshTime\x12W\n" +
-	"\x0fdb_refresh_time\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x14\xfaB\x11\xaa\x01\x0e\b\x01\x1a\x02\b<2\x06\x10\x80ʵ\xee\x01R\rdbRefreshTime\"\xc3\x02\n" +
+	"\x0fdb_refresh_time\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x14\xfaB\x11\xaa\x01\x0e\b\x01\x1a\x02\b<2\x06\x10\x80ʵ\xee\x01R\rdbRefreshTime\"\x9d\x03\n" +
 	"\aDiscord\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\x12S\n" +
 	"\rsync_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationB\x13\xfaB\x10\xaa\x01\r\b\x01\x1a\x05\b\x80\xaa\xeaU2\x02\b<R\fsyncInterval\x12,\n" +
 	"\n" +
 	"invite_url\x18\x03 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x00R\tinviteUrl\x88\x01\x01\x12+\n" +
 	"\fignored_jobs\x18\x04 \x03(\tB\b\xfaB\x05\x92\x01\x02\x10dR\vignoredJobs\x12N\n" +
-	"\fbot_presence\x18\x05 \x01(\v2&.resources.settings.DiscordBotPresenceH\x01R\vbotPresence\x88\x01\x01B\r\n" +
+	"\fbot_presence\x18\x05 \x01(\v2&.resources.settings.DiscordBotPresenceH\x01R\vbotPresence\x88\x01\x01\x12$\n" +
+	"\x06bot_id\x18\x06 \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x02R\x05botId\x88\x01\x01\x12'\n" +
+	"\x0fbot_permissions\x18\a \x01(\x03R\x0ebotPermissionsB\r\n" +
 	"\v_invite_urlB\x0f\n" +
-	"\r_bot_presence\"\x9b\x01\n" +
+	"\r_bot_presenceB\t\n" +
+	"\a_bot_id\"\x9b\x01\n" +
 	"\x12DiscordBotPresence\x12>\n" +
 	"\x04type\x18\x01 \x01(\x0e2*.resources.settings.DiscordBotPresenceTypeR\x04type\x12\x1b\n" +
 	"\x06status\x18\x02 \x01(\tH\x00R\x06status\x88\x01\x01\x12\x15\n" +

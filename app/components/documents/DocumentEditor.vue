@@ -12,6 +12,7 @@ import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { DocumentContent, DocumentMeta } from '~/types/history';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -42,6 +43,8 @@ const clipboardStore = useClipboardStore();
 const completorStore = useCompletorStore();
 
 const notifications = useNotificatorStore();
+
+const historyStore = useHistoryStore();
 
 const {
     data: document,
@@ -99,8 +102,8 @@ watch(document, async () => {
             documentId: props.documentId,
         }),
     ]);
-    references.value = refs.response.references;
-    relations.value = rels.response.relations;
+    state.references = refs.response.references;
+    state.relations = rels.response.relations;
 });
 
 const route = useRoute();
@@ -123,6 +126,8 @@ const schema = z.object({
         users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries),
     }),
     files: z.custom<File>().array().max(5),
+    references: z.custom<DocumentReference>().array().max(15),
+    relations: z.custom<DocumentRelation>().array().max(15),
 });
 
 type Schema = z.output<typeof schema>;
@@ -140,40 +145,47 @@ const state = reactive<Schema>({
         users: [],
     },
     files: [],
+    references: [],
+    relations: [],
 });
 
-const references = ref<DocumentReference[]>([]);
-const relations = ref<DocumentRelation[]>([]);
-
+const changed = ref(false);
 const saving = ref(false);
 
-async function saveToStore(_values: Schema): Promise<void> {
+async function saveHistory(values: Schema, type = 'document'): Promise<void> {
     if (saving.value) {
         return;
     }
     saving.value = true;
 
-    // TODO auto save logic
+    historyStore.addVersion<DocumentContent, DocumentMeta>(
+        type,
+        props.documentId,
+        {
+            content: values.content,
+            files: values.files,
+        },
+        {
+            title: values.title,
+            category: values.category,
+            access: values.access,
+            closed: values.closed,
+            state: values.state,
+            references: values.references,
+            relations: values.relations,
+        },
+    );
 
     useTimeoutFn(() => {
         saving.value = false;
-    }, 1250);
+    }, 1750);
 }
-
-const changed = ref(false);
-
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-
-    await updateDocument(props.documentId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
 
 watchDebounced(
     state,
     async () => {
         if (changed.value) {
-            saveToStore(state);
+            saveHistory(state);
         } else {
             changed.value = true;
         }
@@ -183,6 +195,13 @@ watchDebounced(
         maxWait: 2500,
     },
 );
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
+
+    await updateDocument(props.documentId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 
 async function updateDocument(id: number, values: Schema): Promise<void> {
     const req: UpdateDocumentRequest = {
@@ -208,8 +227,8 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         if (canDo.value.references) {
             // Remove references that are no longer present
             const referencesToRemove: number[] = [];
-            references.value.forEach((ref) => {
-                if (!references.value.some((r) => r.id === ref.id)) {
+            state.references.forEach((ref) => {
+                if (!state.references.some((r) => r.id === ref.id)) {
                     referencesToRemove.push(ref.id!);
                 }
             });
@@ -219,8 +238,8 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 });
             });
             // Add new references
-            references.value.forEach((ref) => {
-                if (references.value.some((r) => r.id === ref.id)) {
+            state.references.forEach((ref) => {
+                if (state.references.some((r) => r.id === ref.id)) {
                     return;
                 }
                 ref.sourceDocumentId = response.document!.id!;
@@ -233,8 +252,8 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         if (canDo.value.relations) {
             // Remove relations that are no longer present
             const relationsToRemove: number[] = [];
-            relations.value.forEach((rel) => {
-                if (!relations.value.some((r) => r.id === rel.id)) {
+            state.relations.forEach((rel) => {
+                if (!state.relations.some((r) => r.id === rel.id)) {
                     relationsToRemove.push(rel.id!);
                 }
             });
@@ -242,8 +261,8 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 $grpc.documents.documents.removeDocumentRelation({ id });
             });
             // Add new relations
-            relations.value.forEach((rel) => {
-                if (relations.value.some((r) => r.id === rel.id)) {
+            state.relations.forEach((rel) => {
+                if (state.relations.some((r) => r.id === rel.id)) {
                     return;
                 }
                 rel.documentId = response.document!.id;
@@ -383,7 +402,7 @@ useYArrayFiltered<File>(
 // References and Relations
 useYArrayFiltered<DocumentReference>(
     ydoc.getArray('doc_references'),
-    references,
+    toRef(state, 'references'),
     {
         omit: ['createdAt', 'sourceDocument', 'targetUser', 'deletedAt', 'updatedAt'],
     },
@@ -391,7 +410,7 @@ useYArrayFiltered<DocumentReference>(
 );
 useYArrayFiltered<DocumentRelation>(
     ydoc.getArray('doc_relations'),
-    relations,
+    toRef(state, 'relations'),
     {
         omit: ['createdAt', 'document', 'sourceUser'],
     },
@@ -626,9 +645,9 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 icon="i-mdi-account-multiple"
                                 @click="
                                     modal.open(DocumentRelationManagerModal, {
-                                        relations: relations,
+                                        relations: state.relations,
                                         documentId: documentId,
-                                        'onUpdate:relations': (value) => (relations = value),
+                                        'onUpdate:relations': (value) => (state.relations = value),
                                     })
                                 "
                             >
@@ -643,9 +662,9 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 icon="i-mdi-file-document"
                                 @click="
                                     modal.open(DocumentReferenceManagerModal, {
-                                        references: references,
+                                        references: state.references,
                                         documentId: documentId,
-                                        'onUpdate:references': (value) => (references = value),
+                                        'onUpdate:references': (value) => (state.references = value),
                                     })
                                 "
                             >

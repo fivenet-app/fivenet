@@ -653,7 +653,11 @@
         },
         "insert_file": "Datei einfügen",
         "untitled": "(Unbenannt)",
-        "cronjob": "Hintergrund-Aufgabe | Hintergrund-Aufgaben"
+        "cronjob": "Hintergrund-Aufgabe | Hintergrund-Aufgaben",
+        "channel": "Kanal | Kanäle",
+        "text": "Text",
+        "job_name": "Berufsname",
+        "qualification_name": "Name der Qualifizierung"
     },
     "components": {
         "partials": {
@@ -1345,8 +1349,7 @@
                     "user_info_sync": "Mitarbeiter Sync (Namen und Ränge-Rollen)",
                     "user_info_sync_settings": {
                         "employee_role_enabled": "Erstelle und Verwalte Mitarbeiter Rolle",
-                        "employee_role_format": "Mitarbeiter-Rollen-Format (%s wird durch den Job Namen erstetzt)",
-                        "grade_role_format": "Rang-Rollen-Format (%grade% wird durch die Rang-Nummer, %grade_label% durch das Rang-Label ersetzt)",
+                        "employee_role_format": "Mitarbeiter-Rollen-Format",
                         "unemployed_enabled": "Verwalte die Rolle für Arbeitslose",
                         "unemployed_mode": "Modus für das Behandeln von Arbeitslosen",
                         "unemployed_role_name": "Arbeitslosen Rolle",
@@ -1357,11 +1360,17 @@
                             "name": "Rollen-Name",
                             "from_grade": "Von Rang",
                             "to_grade": "Bis Rang"
+                        },
+                        "grade_role_format": {
+                            "title": "Rang-Rollen-Format",
+                            "grade": "Arbeitsgrad (e.g., 01, 02, etc.)",
+                            "grade_label": "Arbeitsgrad-Name (e.g., Officer, Sergeant, etc.)",
+                            "grade_single": "Arbeitsgrad (1, 2, 3, etc.)"
                         }
                     },
                     "status_log": "Statusprotokoll",
                     "status_log_settings": {
-                        "channel_id": "Channel-ID"
+                        "channel_id": "Statusprotokoll-Channel-ID"
                     },
                     "jobs_absence_settings": {
                         "jobs_absence_role_enabled": "Verwalte die Abwesenheitsrolle",
@@ -1379,7 +1388,7 @@
                     "dry_run": "Trockenlaufmodus",
                     "qualifications_role_format": {
                         "title": "Qualifizierungen-Rollen-Format",
-                        "description": "Format der Discord Rolle. Nutze %abbr% für die Abkürzung und %name% für den Rollen-Namen der Qualifizierungen."
+                        "description": "Namesformat der Discord-Rollen, welche für Qualifizierungen erstellt wird."
                     },
                     "discord_sync_command_info": {
                         "description": "Der /sync Discord-Bot-Befehl kann genutzt werden um eine Discord-Synchronisation auszulösen. Standardmäßig kann dieser von Discord-Administratoren ausgeführt werden."
@@ -1450,7 +1459,9 @@
                         "type": "Art",
                         "status": "Status",
                         "url": "URL"
-                    }
+                    },
+                    "bot_id": "Bot ID",
+                    "bot_permissions": "Bot Berechtigungen"
                 },
                 "save": {
                     "description": "Stellen Sie sicher, dass Sie alle Konfigurationsoptionen vor dem Speichern der Konfiguration überprüfen."
@@ -2119,7 +2130,7 @@
             "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
             "ErrInvalidPerms": "Fehler beim Aktualisieren der Rollen Berechtigungen!",
             "ErrInvalidAttrs": "Fehler beim Aktualisieren der Rollen Attributen!",
-            "ErrInvalidJPQuickButton": "Fehlerhafter Schnellzugriff-Knopf!"
+            "ErrDiscordNotEnabled": "Discord ist nicht aktiviert!"
         },
         "Filestore": {
             "ErrInvalidUploadMeta": "Ungültige Upload-Metadaten!",
@@ -3168,6 +3179,14 @@
                     "key": "Seiten auflisten und anzeigen",
                     "description": "Sollte immer gegeben werden."
                 },
+                "DeletePage": {
+                    "key": "Seiten löschen",
+                    "description": "Lexikon Seiten löschen können (Erfordert Besitzer Rechte)."
+                },
+                "ListPageActivity": {
+                    "key": "Seiten Aktivität anzeigen",
+                    "description": "Historische Aktivität von Seiten anzeigen lassen."
+                },
                 "UpdatePage": {
                     "key": "Seiten erstellen und aktualisieren",
                     "description": "Lexikon Seiten erstellen und aktualisieren können.",
@@ -3177,14 +3196,6 @@
                     "attrs_types": {
                         "Fields": "Zugriff auf spezielle Freigaben von Seiten"
                     }
-                },
-                "DeletePage": {
-                    "key": "Seiten löschen",
-                    "description": "Lexikon Seiten löschen können (Erfordert Besitzer Rechte)."
-                },
-                "ListPageActivity": {
-                    "key": "Seiten Aktivität anzeigen",
-                    "description": "Historische Aktivität von Seiten anzeigen lassen."
                 }
             }
         },

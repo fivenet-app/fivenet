@@ -9,6 +9,8 @@ import type { DeleteJobLogoRequest } from "./settings";
 import type { UploadResponse } from "../../resources/file/filestore";
 import type { UploadPacket } from "../../resources/file/filestore";
 import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
+import type { ListDiscordChannelsResponse } from "./settings";
+import type { ListDiscordChannelsRequest } from "./settings";
 import type { DeleteFactionResponse } from "./settings";
 import type { DeleteFactionRequest } from "./settings";
 import type { UpdateJobLimitsResponse } from "./settings";
@@ -128,6 +130,12 @@ export interface ISettingsServiceClient {
      * @generated from protobuf rpc: DeleteFaction
      */
     deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse>;
+    /**
+     * @perm: Name=SetJobProps
+     *
+     * @generated from protobuf rpc: ListDiscordChannels
+     */
+    listDiscordChannels(input: ListDiscordChannelsRequest, options?: RpcOptions): UnaryCall<ListDiscordChannelsRequest, ListDiscordChannelsResponse>;
     /**
      * @perm: Name=SetJobProps
      *
@@ -279,10 +287,19 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
     /**
      * @perm: Name=SetJobProps
      *
+     * @generated from protobuf rpc: ListDiscordChannels
+     */
+    listDiscordChannels(input: ListDiscordChannelsRequest, options?: RpcOptions): UnaryCall<ListDiscordChannelsRequest, ListDiscordChannelsResponse> {
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListDiscordChannelsRequest, ListDiscordChannelsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=SetJobProps
+     *
      * @generated from protobuf rpc: UploadJobLogo
      */
     uploadJobLogo(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
         return stackIntercept<UploadPacket, UploadResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
@@ -291,7 +308,7 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
      * @generated from protobuf rpc: DeleteJobLogo
      */
     deleteJobLogo(input: DeleteJobLogoRequest, options?: RpcOptions): UnaryCall<DeleteJobLogoRequest, DeleteJobLogoResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteJobLogoRequest, DeleteJobLogoResponse>("unary", this._transport, method, opt, input);
     }
 }

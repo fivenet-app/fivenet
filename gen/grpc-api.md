@@ -523,6 +523,9 @@
     - [FileMeta](#resources-file-FileMeta)
     - [ImageMeta](#resources-file-ImageMeta)
   
+- [resources/discord/discord.proto](#resources_discord_discord-proto)
+    - [Channel](#resources-discord-Channel)
+  
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -1029,6 +1032,8 @@
     - [GetRoleResponse](#services-settings-GetRoleResponse)
     - [GetRolesRequest](#services-settings-GetRolesRequest)
     - [GetRolesResponse](#services-settings-GetRolesResponse)
+    - [ListDiscordChannelsRequest](#services-settings-ListDiscordChannelsRequest)
+    - [ListDiscordChannelsResponse](#services-settings-ListDiscordChannelsResponse)
     - [PermsUpdate](#services-settings-PermsUpdate)
     - [SetJobPropsRequest](#services-settings-SetJobPropsRequest)
     - [SetJobPropsResponse](#services-settings-SetJobPropsResponse)
@@ -7875,6 +7880,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `invite_url` | [string](#string) | optional | @sanitize: method=StripTags |
 | `ignored_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
 | `bot_presence` | [DiscordBotPresence](#resources-settings-DiscordBotPresence) | optional |  |
+| `bot_id` | [string](#string) | optional | @sanitize: method=StripTags |
+| `bot_permissions` | [int64](#int64) |  |  |
 
 
 
@@ -8374,6 +8381,41 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----- | ---- | ----- | ----------- |
 | `width` | [int64](#int64) |  |  |
 | `height` | [int64](#int64) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_discord_discord-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/discord/discord.proto
+
+
+
+<a name="resources-discord-Channel"></a>
+
+### Channel
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [string](#string) |  |  |
+| `guild_id` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+| `type` | [uint32](#uint32) |  |  |
+| `position` | [int64](#int64) |  |  |
 
 
 
@@ -15304,6 +15346,31 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
+<a name="services-settings-ListDiscordChannelsRequest"></a>
+
+### ListDiscordChannelsRequest
+
+
+
+
+
+
+
+<a name="services-settings-ListDiscordChannelsResponse"></a>
+
+### ListDiscordChannelsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `channels` | [resources.discord.Channel](#resources-discord-Channel) | repeated |  |
+
+
+
+
+
+
 <a name="services-settings-PermsUpdate"></a>
 
 ### PermsUpdate
@@ -15469,6 +15536,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `GetJobLimits` | [GetJobLimitsRequest](#services-settings-GetJobLimitsRequest) | [GetJobLimitsResponse](#services-settings-GetJobLimitsResponse) | @perm: Name=Superuser |
 | `UpdateJobLimits` | [UpdateJobLimitsRequest](#services-settings-UpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#services-settings-UpdateJobLimitsResponse) | @perm: Name=Superuser |
 | `DeleteFaction` | [DeleteFactionRequest](#services-settings-DeleteFactionRequest) | [DeleteFactionResponse](#services-settings-DeleteFactionResponse) | @perm: Name=Superuser |
+| `ListDiscordChannels` | [ListDiscordChannelsRequest](#services-settings-ListDiscordChannelsRequest) | [ListDiscordChannelsResponse](#services-settings-ListDiscordChannelsResponse) | @perm: Name=SetJobProps |
 | `UploadJobLogo` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=SetJobProps |
 | `DeleteJobLogo` | [DeleteJobLogoRequest](#services-settings-DeleteJobLogoRequest) | [DeleteJobLogoResponse](#services-settings-DeleteJobLogoResponse) | @perm: Name=SetJobProps |
 

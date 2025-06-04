@@ -6,6 +6,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { WikiContent, WikiMeta } from '~/types/history';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -30,6 +31,8 @@ const { t } = useI18n();
 const modal = useModal();
 
 const { attr, activeChar } = useAuth();
+
+const historyStore = useHistoryStore();
 
 const route = useRoute<'wiki-job-id-slug-edit'>();
 
@@ -129,6 +132,54 @@ async function listPages(): Promise<PageShort[]> {
         throw e;
     }
 }
+
+const changed = ref(false);
+const saving = ref(false);
+
+async function saveHistory(values: Schema, type = 'wiki'): Promise<void> {
+    if (saving.value) {
+        return;
+    }
+    saving.value = true;
+
+    historyStore.addVersion<WikiContent, WikiMeta>(
+        type,
+        props.pageId,
+        {
+            content: values.content,
+            files: values.files,
+        },
+        {
+            parentId: values.parentId,
+            meta: {
+                title: values.meta.title,
+                description: values.meta.description,
+                public: values.meta.public,
+                toc: values.meta.toc,
+            },
+            access: values.access,
+        },
+    );
+
+    useTimeoutFn(() => {
+        saving.value = false;
+    }, 1750);
+}
+
+watchDebounced(
+    state,
+    async () => {
+        if (changed.value) {
+            saveHistory(state);
+        } else {
+            changed.value = true;
+        }
+    },
+    {
+        debounce: 750,
+        maxWait: 2500,
+    },
+);
 
 function setFromProps(): void {
     if (!page.value) return;

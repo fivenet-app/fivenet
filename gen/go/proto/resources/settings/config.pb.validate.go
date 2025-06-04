@@ -1515,6 +1515,8 @@ func (m *Discord) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for BotPermissions
+
 	if m.InviteUrl != nil {
 
 		if utf8.RuneCountInString(m.GetInviteUrl()) > 255 {
@@ -1559,6 +1561,21 @@ func (m *Discord) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.BotId != nil {
+
+		if utf8.RuneCountInString(m.GetBotId()) > 255 {
+			err := DiscordValidationError{
+				field:  "BotId",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

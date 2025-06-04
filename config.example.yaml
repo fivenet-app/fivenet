@@ -83,6 +83,7 @@ storage:
     bucketName: ""
     prefix: ""
     retries: 3
+    checkOnStartup: false
 imageProxy:
   enabled: true
   url: "/api/image_proxy/"

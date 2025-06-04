@@ -3,6 +3,7 @@ package settings
 import (
 	"database/sql"
 
+	discordapi "github.com/diamondburned/arikawa/v3/api"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
@@ -51,6 +52,8 @@ type Server struct {
 	cronState *croner.Registry
 
 	jobPropsFileHandler *filestore.Handler[string]
+
+	dc *discordapi.Client
 }
 
 type Params struct {
@@ -77,6 +80,11 @@ func NewServer(p Params) *Server {
 		},
 		filestore.UpdateJoinRow, true)
 
+	var dc *discordapi.Client
+	if p.Config.Discord.Enabled {
+		dc = discordapi.NewClient("Bot " + p.Config.Discord.Token)
+	}
+
 	return &Server{
 		logger:    p.Logger,
 		db:        p.DB,
@@ -91,6 +99,8 @@ func NewServer(p Params) *Server {
 		cronState: p.CronState,
 
 		jobPropsFileHandler: fHandler,
+
+		dc: dc,
 	}
 }
 

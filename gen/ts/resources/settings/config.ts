@@ -199,6 +199,16 @@ export interface Discord {
      * @generated from protobuf field: optional resources.settings.DiscordBotPresence bot_presence = 5
      */
     botPresence?: DiscordBotPresence;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string bot_id = 6
+     */
+    botId?: string;
+    /**
+     * @generated from protobuf field: int64 bot_permissions = 7
+     */
+    botPermissions: number;
 }
 /**
  * @generated from protobuf message resources.settings.DiscordBotPresence
@@ -804,13 +814,16 @@ class Discord$Type extends MessageType<Discord> {
             { no: 2, name: "sync_interval", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "180000000" }, gte: { seconds: "60" } } } } },
             { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "ignored_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "100" } } } },
-            { no: 5, name: "bot_presence", kind: "message", T: () => DiscordBotPresence }
+            { no: 5, name: "bot_presence", kind: "message", T: () => DiscordBotPresence },
+            { no: 6, name: "bot_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 7, name: "bot_permissions", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<Discord>): Discord {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.enabled = false;
         message.ignoredJobs = [];
+        message.botPermissions = 0;
         if (value !== undefined)
             reflectionMergePartial<Discord>(this, message, value);
         return message;
@@ -834,6 +847,12 @@ class Discord$Type extends MessageType<Discord> {
                     break;
                 case /* optional resources.settings.DiscordBotPresence bot_presence */ 5:
                     message.botPresence = DiscordBotPresence.internalBinaryRead(reader, reader.uint32(), options, message.botPresence);
+                    break;
+                case /* optional string bot_id */ 6:
+                    message.botId = reader.string();
+                    break;
+                case /* int64 bot_permissions */ 7:
+                    message.botPermissions = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -862,6 +881,12 @@ class Discord$Type extends MessageType<Discord> {
         /* optional resources.settings.DiscordBotPresence bot_presence = 5; */
         if (message.botPresence)
             DiscordBotPresence.internalBinaryWrite(message.botPresence, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional string bot_id = 6; */
+        if (message.botId !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.botId);
+        /* int64 bot_permissions = 7; */
+        if (message.botPermissions !== 0)
+            writer.tag(7, WireType.Varint).int64(message.botPermissions);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

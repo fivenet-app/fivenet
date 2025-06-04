@@ -13,4 +13,6 @@ var (
 	ErrOwnRoleDeletion   = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrOwnRoleDeletion"}, nil)
 	ErrInvalidAttrs      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrInvalidAttrs"}, nil)
 	ErrInvalidPerms      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrInvalidPerms"}, nil)
+
+	ErrDiscordNotEnabled = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrDiscordNotEnabled"}, nil)
 )

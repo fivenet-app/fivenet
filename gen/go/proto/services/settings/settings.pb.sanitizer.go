@@ -359,6 +359,34 @@ func (m *GetRolesResponse) Sanitize() error {
 	return nil
 }
 
+func (m *ListDiscordChannelsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *ListDiscordChannelsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Channels
+	for idx, item := range m.Channels {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *PermsUpdate) Sanitize() error {
 	if m == nil {
 		return nil

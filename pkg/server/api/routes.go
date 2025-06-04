@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"net/http"
+	"net/url"
+	"strconv"
 	"sync/atomic"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
@@ -16,8 +18,9 @@ import (
 type Routes struct {
 	logger *zap.Logger
 
-	cfg       *config.Config
-	clientCfg *atomic.Pointer[ClientConfig]
+	cfg              *config.Config
+	clientCfg        *atomic.Pointer[ClientConfig]
+	discordInviteUrl *atomic.Pointer[string]
 }
 
 type Params struct {
@@ -32,9 +35,10 @@ type Params struct {
 
 func New(p Params) *Routes {
 	r := &Routes{
-		logger:    p.Logger,
-		cfg:       p.Config,
-		clientCfg: &atomic.Pointer[ClientConfig]{},
+		logger:           p.Logger,
+		cfg:              p.Config,
+		clientCfg:        &atomic.Pointer[ClientConfig]{},
+		discordInviteUrl: &atomic.Pointer[string]{},
 	}
 
 	providers := make([]*ProviderConfig, len(p.Config.OAuth2.Providers))
@@ -87,6 +91,37 @@ func New(p Params) *Routes {
 func (r *Routes) handleAppConfigUpdate(providers []*ProviderConfig, appCfg *appconfig.Cfg) {
 	clientCfg := r.buildClientConfig(providers, appCfg)
 	r.clientCfg.Store(clientCfg)
+
+	if appCfg.Discord.BotId == nil || *appCfg.Discord.BotId == "" {
+		r.discordInviteUrl.Store(nil)
+		return
+	}
+
+	clientId := appCfg.Discord.BotId
+	permissions := strconv.FormatInt(appCfg.Discord.BotPermissions, 10)
+	redirectUri, err := url.JoinPath(r.cfg.HTTP.PublicURL, "/settings/props")
+	if err != nil {
+		r.logger.Warn("failed to build redirect URI for discord invite", zap.Error(err))
+		return
+	}
+	redirectUri = redirectUri + "?tab=discord#"
+	scopes := "bot identify"
+
+	u, err := url.Parse("https://discord.com/oauth2/authorize")
+	if err != nil {
+		r.logger.Warn("failed to build discord invite URL", zap.Error(err))
+		return
+	}
+	q := u.Query()
+	q.Set("client_id", *clientId)
+	q.Set("permissions", permissions)
+	q.Set("scope", scopes)
+	q.Set("redirect_uri", redirectUri)
+	q.Set("response_type", "code")
+	u.RawQuery = q.Encode()
+
+	inviteUrl := u.String()
+	r.discordInviteUrl.Store(&inviteUrl)
 }
 
 func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfig.Cfg) *ClientConfig {
@@ -100,19 +135,25 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 			LastCharLock:  appCfg.Auth.LastCharLock,
 			Providers:     providers,
 		},
-		Discord: Discord{},
+		Discord: Discord{
+			BotEnabled: appCfg.Discord.BotId != nil && *appCfg.Discord.BotId != "",
+		},
 		Website: Website{
-			Links:     Links{},
+			Links: Links{
+				Imprint:       appCfg.Website.Links.Imprint,
+				PrivacyPolicy: appCfg.Website.Links.PrivacyPolicy,
+			},
 			StatsPage: appCfg.Website.StatsPage,
 		},
 		FeatureGates: FeatureGates{
 			ImageProxy: r.cfg.ImageProxy.Enabled,
 		},
 		Game: Game{
-			UnemployedJobName: "unemployed",
-			StartJobGrade:     0,
+			UnemployedJobName: appCfg.JobInfo.UnemployedJob.Name,
+			StartJobGrade:     r.cfg.Game.StartJobGrade,
 		},
 		System: System{
+			BannerMessageEnabled: appCfg.System.BannerMessageEnabled,
 			OTLP: OTLPFrontend{
 				Enabled: r.cfg.OTLP.Enabled,
 				URL:     r.cfg.OTLP.Frontend.URL,
@@ -121,21 +162,6 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 		},
 	}
 
-	clientCfg.Discord.BotInviteURL = appCfg.Discord.InviteUrl
-
-	if appCfg.Website.Links.Imprint != nil {
-		clientCfg.Website.Links.Imprint = appCfg.Website.Links.Imprint
-	}
-	if appCfg.Website.Links.PrivacyPolicy != nil {
-		clientCfg.Website.Links.PrivacyPolicy = appCfg.Website.Links.PrivacyPolicy
-	}
-
-	if appCfg.JobInfo.UnemployedJob != nil {
-		clientCfg.Game.UnemployedJobName = appCfg.JobInfo.UnemployedJob.Name
-	}
-	clientCfg.Game.StartJobGrade = r.cfg.Game.StartJobGrade
-
-	clientCfg.System.BannerMessageEnabled = appCfg.System.BannerMessageEnabled
 	if appCfg.System.BannerMessage != nil {
 		clientCfg.System.BannerMessage = &BannerMessage{
 			Id:        appCfg.System.BannerMessage.Id,
@@ -173,6 +199,10 @@ func (r *Routes) RegisterHTTP(e *gin.Engine) {
 
 		g.GET("/version", func(c *gin.Context) {
 			c.JSON(http.StatusOK, versionInfo)
+		})
+
+		g.GET("/discord/invite-bot", func(c *gin.Context) {
+			c.JSON(http.StatusOK, r.discordInviteUrl.Load())
 		})
 	}
 }

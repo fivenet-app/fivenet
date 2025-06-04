@@ -38,6 +38,7 @@ var PermsRemap = map[string]string{
 	"settings.SettingsService/GetJobLimits":            "Superuser",
 	"settings.SettingsService/GetPermissions":          "settings.SettingsService/GetRoles",
 	"settings.SettingsService/GetRole":                 "settings.SettingsService/GetRoles",
+	"settings.SettingsService/ListDiscordChannels":     "settings.SettingsService/SetJobProps",
 	"settings.SettingsService/UpdateJobLimits":         "Superuser",
 	"settings.SettingsService/UploadJobLogo":           "settings.SettingsService/SetJobProps",
 }

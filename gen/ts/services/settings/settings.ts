@@ -13,6 +13,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Channel } from "../../resources/discord/discord";
 import { AuditEntry } from "../../resources/audit/audit";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
@@ -354,16 +355,6 @@ export interface UpdateJobLimitsRequest {
 export interface UpdateJobLimitsResponse {
 }
 /**
- * @generated from protobuf message services.settings.DeleteJobLogoRequest
- */
-export interface DeleteJobLogoRequest {
-}
-/**
- * @generated from protobuf message services.settings.DeleteJobLogoResponse
- */
-export interface DeleteJobLogoResponse {
-}
-/**
  * @generated from protobuf message services.settings.DeleteFactionRequest
  */
 export interface DeleteFactionRequest {
@@ -376,6 +367,30 @@ export interface DeleteFactionRequest {
  * @generated from protobuf message services.settings.DeleteFactionResponse
  */
 export interface DeleteFactionResponse {
+}
+/**
+ * @generated from protobuf message services.settings.ListDiscordChannelsRequest
+ */
+export interface ListDiscordChannelsRequest {
+}
+/**
+ * @generated from protobuf message services.settings.ListDiscordChannelsResponse
+ */
+export interface ListDiscordChannelsResponse {
+    /**
+     * @generated from protobuf field: repeated resources.discord.Channel channels = 1
+     */
+    channels: Channel[];
+}
+/**
+ * @generated from protobuf message services.settings.DeleteJobLogoRequest
+ */
+export interface DeleteJobLogoRequest {
+}
+/**
+ * @generated from protobuf message services.settings.DeleteJobLogoResponse
+ */
+export interface DeleteJobLogoResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetJobPropsRequest$Type extends MessageType<GetJobPropsRequest> {
@@ -1824,82 +1839,6 @@ class UpdateJobLimitsResponse$Type extends MessageType<UpdateJobLimitsResponse> 
  */
 export const UpdateJobLimitsResponse = new UpdateJobLimitsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteJobLogoRequest$Type extends MessageType<DeleteJobLogoRequest> {
-    constructor() {
-        super("services.settings.DeleteJobLogoRequest", []);
-    }
-    create(value?: PartialMessage<DeleteJobLogoRequest>): DeleteJobLogoRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<DeleteJobLogoRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteJobLogoRequest): DeleteJobLogoRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DeleteJobLogoRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.DeleteJobLogoRequest
- */
-export const DeleteJobLogoRequest = new DeleteJobLogoRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DeleteJobLogoResponse$Type extends MessageType<DeleteJobLogoResponse> {
-    constructor() {
-        super("services.settings.DeleteJobLogoResponse", []);
-    }
-    create(value?: PartialMessage<DeleteJobLogoResponse>): DeleteJobLogoResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<DeleteJobLogoResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteJobLogoResponse): DeleteJobLogoResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DeleteJobLogoResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.settings.DeleteJobLogoResponse
- */
-export const DeleteJobLogoResponse = new DeleteJobLogoResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class DeleteFactionRequest$Type extends MessageType<DeleteFactionRequest> {
     constructor() {
         super("services.settings.DeleteFactionRequest", [
@@ -1984,6 +1923,167 @@ class DeleteFactionResponse$Type extends MessageType<DeleteFactionResponse> {
  * @generated MessageType for protobuf message services.settings.DeleteFactionResponse
  */
 export const DeleteFactionResponse = new DeleteFactionResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDiscordChannelsRequest$Type extends MessageType<ListDiscordChannelsRequest> {
+    constructor() {
+        super("services.settings.ListDiscordChannelsRequest", []);
+    }
+    create(value?: PartialMessage<ListDiscordChannelsRequest>): ListDiscordChannelsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListDiscordChannelsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDiscordChannelsRequest): ListDiscordChannelsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListDiscordChannelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ListDiscordChannelsRequest
+ */
+export const ListDiscordChannelsRequest = new ListDiscordChannelsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDiscordChannelsResponse$Type extends MessageType<ListDiscordChannelsResponse> {
+    constructor() {
+        super("services.settings.ListDiscordChannelsResponse", [
+            { no: 1, name: "channels", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Channel }
+        ]);
+    }
+    create(value?: PartialMessage<ListDiscordChannelsResponse>): ListDiscordChannelsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.channels = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListDiscordChannelsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDiscordChannelsResponse): ListDiscordChannelsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.discord.Channel channels */ 1:
+                    message.channels.push(Channel.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListDiscordChannelsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.discord.Channel channels = 1; */
+        for (let i = 0; i < message.channels.length; i++)
+            Channel.internalBinaryWrite(message.channels[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ListDiscordChannelsResponse
+ */
+export const ListDiscordChannelsResponse = new ListDiscordChannelsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteJobLogoRequest$Type extends MessageType<DeleteJobLogoRequest> {
+    constructor() {
+        super("services.settings.DeleteJobLogoRequest", []);
+    }
+    create(value?: PartialMessage<DeleteJobLogoRequest>): DeleteJobLogoRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteJobLogoRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteJobLogoRequest): DeleteJobLogoRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteJobLogoRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.DeleteJobLogoRequest
+ */
+export const DeleteJobLogoRequest = new DeleteJobLogoRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteJobLogoResponse$Type extends MessageType<DeleteJobLogoResponse> {
+    constructor() {
+        super("services.settings.DeleteJobLogoResponse", []);
+    }
+    create(value?: PartialMessage<DeleteJobLogoResponse>): DeleteJobLogoResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteJobLogoResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteJobLogoResponse): DeleteJobLogoResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteJobLogoResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.DeleteJobLogoResponse
+ */
+export const DeleteJobLogoResponse = new DeleteJobLogoResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.settings.SettingsService
  */
@@ -2002,6 +2102,7 @@ export const SettingsService = new ServiceType("services.settings.SettingsServic
     { name: "GetJobLimits", options: {}, I: GetJobLimitsRequest, O: GetJobLimitsResponse },
     { name: "UpdateJobLimits", options: {}, I: UpdateJobLimitsRequest, O: UpdateJobLimitsResponse },
     { name: "DeleteFaction", options: {}, I: DeleteFactionRequest, O: DeleteFactionResponse },
+    { name: "ListDiscordChannels", options: {}, I: ListDiscordChannelsRequest, O: ListDiscordChannelsResponse },
     { name: "UploadJobLogo", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse },
     { name: "DeleteJobLogo", options: {}, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse }
 ]);

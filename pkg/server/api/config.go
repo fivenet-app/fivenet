@@ -33,7 +33,7 @@ type ProviderConfig struct {
 }
 
 type Discord struct {
-	BotInviteURL *string `json:"botInviteURL"`
+	BotEnabled bool `json:"botEnabled"`
 }
 
 type Website struct {

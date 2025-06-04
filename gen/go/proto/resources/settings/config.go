@@ -12,6 +12,9 @@ const (
 	DefaultUserTrackerDbRefreshTime = 1 * time.Second
 
 	DefaultDiscordSyncInterval = 15 * time.Minute
+
+	// https://discord.com/developers/docs/topics/permissions#permissions-bitwise-permission-flags
+	DefaultDiscordBotPermissions = -42471713
 )
 
 func (x *AppConfig) Default() {
@@ -83,8 +86,17 @@ func (x *AppConfig) Default() {
 	}
 
 	if x.Discord == nil {
+		status := "FiveNet"
+		url := "https://fivenet.app"
+
 		x.Discord = &Discord{
 			Enabled: false,
+			BotPresence: &DiscordBotPresence{
+				Type:   DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_GAME,
+				Status: &status,
+				Url:    &url,
+			},
+			BotPermissions: DefaultDiscordBotPermissions,
 		}
 	}
 	if x.Discord.SyncInterval == nil {
@@ -94,6 +106,9 @@ func (x *AppConfig) Default() {
 		x.Discord.BotPresence = &DiscordBotPresence{
 			Type: DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED,
 		}
+	}
+	if x.Discord.BotPermissions == 0 {
+		x.Discord.BotPermissions = DefaultDiscordBotPermissions
 	}
 
 	if x.System == nil {

@@ -174,6 +174,7 @@ type S3Storage struct {
 	BucketName      string `yaml:"bucketName"`
 	Prefix          string `yaml:"prefix"`
 	Retries         int    `default:"3" yaml:"retries"`
+	CheckOnStartup  bool   `default:"false" yaml:"checkOnStartup"`
 }
 
 type ImageProxy struct {

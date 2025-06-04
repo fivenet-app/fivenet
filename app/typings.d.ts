@@ -44,7 +44,7 @@ export type LoginConfig = {
 };
 
 export type DiscordConfig = {
-    botInviteURL?: string;
+    botEnabled: boolean;
 };
 
 export type WebsiteConfig = {

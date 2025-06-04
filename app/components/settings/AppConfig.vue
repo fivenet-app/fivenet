@@ -86,6 +86,8 @@ const schema = z.object({
     discord: z.object({
         enabled: z.boolean(),
         syncInterval: zodDurationSchema,
+        botId: z.string().optional(),
+        botPermissions: z.coerce.number(),
         inviteUrl: z.union([
             z.string().min(1).max(255).url().startsWith('https://discord.com/'),
             z.string().length(0).optional(),
@@ -148,6 +150,8 @@ const state = reactive<Schema>({
     discord: {
         enabled: false,
         syncInterval: 9.0,
+        botId: '',
+        botPermissions: 0,
         inviteUrl: '',
         ignoredJobs: [],
         botPresence: {
@@ -180,6 +184,8 @@ async function updateAppConfig(values: Schema): Promise<void> {
     config.value.config.discord = {
         enabled: values.discord.enabled,
         inviteUrl: values.discord.inviteUrl,
+        botId: values.discord.botId ? values.discord.botId : undefined,
+        botPermissions: values.discord.botPermissions,
         syncInterval: toDuration(values.discord.syncInterval),
         ignoredJobs: values.discord.ignoredJobs,
         botPresence: values.discord.botPresence,
@@ -257,6 +263,8 @@ function setSettingsValues(): void {
         if (config.value.config.discord.syncInterval) {
             state.discord.syncInterval = fromDuration(config.value.config.discord.syncInterval);
         }
+        state.discord.botId = config.value.config.discord.botId;
+        state.discord.botPermissions = config.value.config.discord.botPermissions;
         state.discord.inviteUrl = config.value.config.discord.inviteUrl;
         state.discord.ignoredJobs = config.value.config.discord.ignoredJobs;
         state.discord.botPresence = config.value.config.discord.botPresence;
@@ -367,7 +375,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :error="error"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="!config" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
+            <DataNoDataBlock
+                v-else-if="!config"
+                icon="i-mdi-office-building-cog"
+                :type="$t('common.setting', 2)"
+                :retry="refresh"
+            />
 
             <UTabs
                 v-else
@@ -775,14 +788,27 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                             <UFormGroup
                                 class="grid grid-cols-2 items-center gap-2"
-                                name="discord.inviteUrl"
-                                :label="$t('components.settings.app_config.discord.bot_invite_url')"
+                                name="discord.botId"
+                                :label="$t('components.settings.app_config.discord.bot_id')"
                                 :ui="{ container: '' }"
                             >
                                 <UInput
-                                    v-model="state.discord.inviteUrl"
+                                    v-model="state.discord.botId"
                                     type="text"
-                                    :placeholder="$t('components.settings.app_config.discord.bot_invite_url')"
+                                    :placeholder="$t('components.settings.app_config.discord.bot_id')"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="discord.botPermissions"
+                                :label="$t('components.settings.app_config.discord.bot_permissions')"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.discord.botPermissions"
+                                    type="text"
+                                    :placeholder="$t('components.settings.app_config.discord.bot_permissions')"
                                 />
                             </UFormGroup>
 

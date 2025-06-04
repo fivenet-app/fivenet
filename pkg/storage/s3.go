@@ -59,17 +59,19 @@ func NewS3(p Params) (IStorage, error) {
 		prefix:     p.Cfg.Storage.S3.Prefix,
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		exists, err := s.s3.BucketExists(ctx, s.bucketName)
-		if err != nil {
-			return err
-		}
-		if !exists {
-			return fmt.Errorf("storage: s3 bucket '%s' doesn't exist/can't access", s.bucketName)
-		}
+	if p.Cfg.Storage.S3.CheckOnStartup {
+		p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+			exists, err := s.s3.BucketExists(ctx, s.bucketName)
+			if err != nil {
+				return err
+			}
+			if !exists {
+				return fmt.Errorf("storage: s3 bucket '%s' doesn't exist/can't access", s.bucketName)
+			}
 
-		return nil
-	}))
+			return nil
+		}))
+	}
 
 	return s, nil
 }

@@ -12,7 +12,7 @@ export default defineAppConfig({
         providers: [],
     } as LoginConfig,
     discord: {
-        botInviteURL: '',
+        botId: '',
     } as DiscordConfig,
     website: {} as WebsiteConfig,
     featureGates: {

@@ -20,6 +20,7 @@
 // source: resources/common/database/database.proto
 // source: resources/common/grpcws/grpcws.proto
 // source: resources/common/tests/objects.proto
+// source: resources/discord/discord.proto
 // source: resources/documents/access.proto
 // source: resources/documents/activity.proto
 // source: resources/documents/category.proto
@@ -334,6 +335,7 @@ export const grpcMethods = [
 	'settings.SettingsService/GetJobLimits',
 	'settings.SettingsService/UpdateJobLimits',
 	'settings.SettingsService/DeleteFaction',
+	'settings.SettingsService/ListDiscordChannels',
 	'settings.SettingsService/UploadJobLogo',
 	'settings.SettingsService/DeleteJobLogo',
 	'stats.StatsService/GetStats',

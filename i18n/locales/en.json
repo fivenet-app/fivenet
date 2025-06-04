@@ -653,7 +653,11 @@
         },
         "insert_file": "Insert File",
         "untitled": "(Untitled)",
-        "cronjob": "Background Task | Background Tasks"
+        "cronjob": "Background Task | Background Tasks",
+        "channel": "Channel | Channels",
+        "text": "Text",
+        "job_name": "Job Name",
+        "qualification_name": "Qualification Name"
     },
     "components": {
         "partials": {
@@ -1345,8 +1349,13 @@
                     "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
                     "user_info_sync_settings": {
                         "employee_role_enabled": "Create and manage Employee Role",
-                        "employee_role_format": "Employee Role format (%s will be replaced by your job's name)",
-                        "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)",
+                        "employee_role_format": "Employee Role format",
+                        "grade_role_format": {
+                            "title": "Grade Role format",
+                            "grade": "Job Grade (e.g., 01, 02, etc.)",
+                            "grade_label": "Job Grade Label (e.g., Officer, Sergeant, etc.)",
+                            "grade_single": "Job Grade (1, 2, 3, etc.)"
+                        },
                         "unemployed_enabled": "Manage the unemployed role",
                         "unemployed_mode": "Mode for handling unemployed users",
                         "unemployed_role_name": "Unemployed Role Name",
@@ -1361,7 +1370,7 @@
                     },
                     "status_log": "Status Log",
                     "status_log_settings": {
-                        "channel_id": "Channel ID"
+                        "channel_id": "Status Log Channel ID"
                     },
                     "jobs_absence_settings": {
                         "jobs_absence_role_enabled": "Manage the absence role",
@@ -1379,7 +1388,7 @@
                     "dry_run": "Dry run mode",
                     "qualifications_role_format": {
                         "title": "Qualifications Role Format",
-                        "description": "Format of the Discord role. Use %abbr% for the abbreviation and %name% for the role name of the qualification."
+                        "description": "Name format of the Discord roles created for Qualifications."
                     },
                     "discord_sync_command_info": {
                         "description": "The /sync Discord bot command can be used to trigger a sync. By default Discord admins can use the command."
@@ -1450,7 +1459,9 @@
                         "type": "Type",
                         "status": "Status",
                         "url": "URL"
-                    }
+                    },
+                    "bot_id": "Bot ID",
+                    "bot_permissions": "Bot Permissions"
                 },
                 "save": {
                     "description": "Make sure to double check any config options before saving the config."
@@ -2119,7 +2130,7 @@
             "ErrOwnRoleDeletion": "Can't delete your own role!",
             "ErrInvalidPerms": "Failed to update role permissions!",
             "ErrInvalidAttrs": "Failed to update role attributes!",
-            "ErrInvalidJPQuickButton": "Invalid quick access button found!"
+            "ErrDiscordNotEnabled": "Discord bot integration is not enabled!"
         },
         "Filestore": {
             "ErrInvalidUploadMeta": "Invalid upload meta data!",

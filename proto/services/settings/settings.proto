@@ -4,6 +4,7 @@ package services.settings;
 
 import "resources/audit/audit.proto";
 import "resources/common/database/database.proto";
+import "resources/discord/discord.proto";
 import "resources/file/filestore.proto";
 import "resources/jobs/job_props.proto";
 import "resources/permissions/attributes.proto";
@@ -148,15 +149,21 @@ message UpdateJobLimitsRequest {
 
 message UpdateJobLimitsResponse {}
 
-message DeleteJobLogoRequest {}
-
-message DeleteJobLogoResponse {}
-
 message DeleteFactionRequest {
   string job = 1 [(validate.rules).string.max_len = 20];
 }
 
 message DeleteFactionResponse {}
+
+message ListDiscordChannelsRequest {}
+
+message ListDiscordChannelsResponse {
+  repeated resources.discord.Channel channels = 1;
+}
+
+message DeleteJobLogoRequest {}
+
+message DeleteJobLogoResponse {}
 
 service SettingsService {
   // @perm
@@ -192,6 +199,9 @@ service SettingsService {
   rpc UpdateJobLimits(UpdateJobLimitsRequest) returns (UpdateJobLimitsResponse);
   // @perm: Name=Superuser
   rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse);
+
+  // @perm: Name=SetJobProps
+  rpc ListDiscordChannels(ListDiscordChannelsRequest) returns (ListDiscordChannelsResponse);
 
   // @perm: Name=SetJobProps
   rpc UploadJobLogo(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);

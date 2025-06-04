@@ -91,6 +91,12 @@ func (m *Discord) Sanitize() error {
 		return nil
 	}
 
+	// Field: BotId
+
+	if m.BotId != nil {
+		*m.BotId = htmlsanitizer.StripTags(*m.BotId)
+	}
+
 	// Field: BotPresence
 	if m.BotPresence != nil {
 		if v, ok := any(m.GetBotPresence()).(interface{ Sanitize() error }); ok {
