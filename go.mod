@@ -43,7 +43,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.92
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.11.4
-	github.com/nats-io/nats.go v1.42.0
+	github.com/nats-io/nats.go v1.43.0
 	github.com/ory/dockertest/v3 v3.12.0
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
@@ -82,7 +82,7 @@ require (
 	golang.org/x/image v0.27.0
 	golang.org/x/net v0.40.0
 	golang.org/x/oauth2 v0.30.0
-	google.golang.org/grpc v1.72.2
+	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/yaml.v3 v3.0.1
 	gotest.tools/v3 v3.5.2
