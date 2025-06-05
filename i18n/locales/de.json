@@ -657,7 +657,18 @@
         "channel": "Kanal | Kanäle",
         "text": "Text",
         "job_name": "Berufsname",
-        "qualification_name": "Name der Qualifizierung"
+        "qualification_name": "Name der Qualifizierung",
+        "version_history": "Versionsverlauf",
+        "version": "Version | Versionen",
+        "apply": "Übernehmen",
+        "compare": "Vergleichen",
+        "additions": "Hinzufügungen",
+        "deletions": "Löschungen",
+        "property": "Eigenschaft | Eigenschaften",
+        "active_user": "Aktiver Nutzer",
+        "firstname": "Vorname",
+        "lastname": "Nachname",
+        "first_citizen": "Erster Bürger"
     },
     "components": {
         "partials": {
@@ -727,7 +738,34 @@
                 },
                 "file_list": "Liste der Anhänge",
                 "file_list_empty": "Es wurden noch keine Dateien hochgeladen.",
-                "file_list_hint": "Sie können Dateien hochladen, indem Sie sie per Drag & Drop in den Editor ziehen oder die Schaltfläche 'Datei einfügen' verwenden."
+                "file_list_hint": "Sie können Dateien hochladen, indem Sie sie per Drag & Drop in den Editor ziehen oder die Schaltfläche 'Datei einfügen' verwenden.",
+                "extensions": {
+                    "template_var": {
+                        "title": "Vorlage-Variablen",
+                        "trim_left": "Linke Leerzeichen beschneiden",
+                        "trim_right": "Rechte Leerzeichen beschneiden",
+                        "custom_template": "Oder geben Sie einen benutzerdefinierten Vorlagen-Aufruf ein",
+                        "insert_custom": "Benutzerdefiniert einfügen",
+                        "custom_placeholder": "E.g. now | date \"01/02/2006 15:04\"",
+                        "categories": {
+                            "date": "Date",
+                            "active_char": "Aktiver Benutzer"
+                        }
+                    },
+                    "template_block": {
+                        "title": "Vorlage-Logik-Block",
+                        "insert_block": "Block einfügen",
+                        "block_placeholder": {
+                            "empty": "Zuerst einen Block auswählen",
+                            "select": "E.g., .Vehicles"
+                        },
+                        "options": {
+                            "range": "Range-Schleife",
+                            "if": "If-Bedingung",
+                            "with": "With-Block"
+                        }
+                    }
+                }
             }
         },
         "clipboard": {
@@ -1039,7 +1077,7 @@
             "qualification_editor": {
                 "label_sync_format": {
                     "label": "Label Format",
-                    "description": "Nutze %abbr% für die Abkürzung und %name% für den Namen der Qualifizierung. Sollte der Label Name länger als 64 Zeichen werden, so wird dieser abgeschnitten."
+                    "description": "Sollte der Label Name länger als 64 Zeichen werden, so wird dieser abgeschnitten."
                 }
             },
             "add_requirement": "Anforderung hinzufügen",

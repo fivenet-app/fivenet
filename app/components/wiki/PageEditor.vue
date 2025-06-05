@@ -6,7 +6,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useNotificatorStore } from '~/stores/notificator';
-import type { WikiContent, WikiMeta } from '~/types/history';
+import type { Content } from '~/types/history';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -142,24 +142,10 @@ async function saveHistory(values: Schema, type = 'wiki'): Promise<void> {
     }
     saving.value = true;
 
-    historyStore.addVersion<WikiContent, WikiMeta>(
-        type,
-        props.pageId,
-        {
-            content: values.content,
-            files: values.files,
-        },
-        {
-            parentId: values.parentId,
-            meta: {
-                title: values.meta.title,
-                description: values.meta.description,
-                public: values.meta.public,
-                toc: values.meta.toc,
-            },
-            access: values.access,
-        },
-    );
+    historyStore.addVersion<Content>(type, props.pageId, {
+        content: values.content,
+        files: values.files,
+    });
 
     useTimeoutFn(() => {
         saving.value = false;
@@ -514,7 +500,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <TiptapEditor
                                 v-model="state.content"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
-                                rounded="rounded-none"
                                 :target-id="page?.id"
                                 filestore-namespace="wiki"
                                 :filestore-service="(opts) => $grpc.wiki.wiki.uploadFile(opts)"

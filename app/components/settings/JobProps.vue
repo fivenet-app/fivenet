@@ -247,7 +247,7 @@ const items = [
         label: t('components.settings.job_props.job_properties'),
         icon: 'i-mdi-settings',
     },
-    { slot: 'discord', label: t('common.discord'), icon: 'i-simple-icons-discord' },
+    { slot: 'discord', label: t('common.discord'), icon: 'i-simple-icons-discord', disabled: !appConfig.discord.botEnabled },
 ];
 
 const route = useRoute();
@@ -255,7 +255,7 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
+        const index = items.findIndex((item) => item.slot === route.query.tab && !item.disabled);
         if (index === -1) {
             return 0;
         }

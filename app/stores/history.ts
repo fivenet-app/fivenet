@@ -3,60 +3,65 @@ import type { Version } from '~/types/history';
 
 const MAX_HISTORY_LENGTH = 20; // Customize this limit as needed
 
-export const useHistoryStore = defineStore('historyStore', () => {
-    const history = ref<Version<unknown, unknown>[]>([]);
+export const useHistoryStore = defineStore(
+    'historyStore',
+    () => {
+        const history = ref<Version<unknown>[]>([]);
 
-    // Combine type and id for uniqueness
-    const storageKey = (type: string, id: number) => `history_${type}_${id.toString()}`;
+        // Combine type and id for uniqueness
+        const storageKey = (type: string, id: number) => `history_${type}_${id.toString()}`;
 
-    const loadHistory = <TContent, TMeta>(type: string, id: number) => {
-        const data = localStorage.getItem(storageKey(type, id));
-        history.value = data ? (JSON.parse(data) as Version<TContent, TMeta>[]) : [];
-    };
-
-    const saveHistory = <TContent, TMeta>(type: string, id: number) => {
-        localStorage.setItem(storageKey(type, id), JSON.stringify(history.value));
-    };
-
-    const addVersion = <TContent, TMeta>(type: string, id: number, content: TContent, meta: TMeta, name = '') => {
-        const version: Version<TContent, TMeta> = {
-            id: new Date().toISOString(),
-            type,
-            content,
-            meta,
-            name,
+        const loadHistory = <TContent>(type: string, id: number) => {
+            const data = localStorage.getItem(storageKey(type, id));
+            history.value = data ? (JSON.parse(data) as Version<TContent>[]) : [];
         };
-        history.value.push(version as Version<unknown, unknown>);
 
-        // Enforce history length limit
-        clearOldVersions(MAX_HISTORY_LENGTH);
+        const saveHistory = <_TContent>(type: string, id: number) => {
+            localStorage.setItem(storageKey(type, id), JSON.stringify(history.value));
+        };
 
-        saveHistory(type, id);
-    };
+        const addVersion = <TContent>(type: string, id: number, content: TContent, name = '') => {
+            const version: Version<TContent> = {
+                id: new Date().toISOString(),
+                type,
+                content,
+                name,
+            };
+            history.value.push(version as Version<unknown>);
 
-    const revertToVersion = <TContent, TMeta>(versionId: string): Version<TContent, TMeta> | undefined => {
-        return history.value.find((v) => v.id === versionId) as Version<TContent, TMeta> | undefined;
-    };
+            // Enforce history length limit
+            clearOldVersions(MAX_HISTORY_LENGTH);
 
-    const clearOldVersions = (maxVersions: number) => {
-        while (history.value.length > maxVersions) {
-            history.value.shift();
-        }
-    };
+            saveHistory(type, id);
+        };
 
-    const getVersionsByType = <TContent, TMeta>(type: string) =>
-        computed(() => history.value.filter((v) => v.type === type) as Version<TContent, TMeta>[]);
+        const revertToVersion = <TContent>(versionId: string): Version<TContent> | undefined => {
+            return history.value.find((v) => v.id === versionId) as Version<TContent> | undefined;
+        };
 
-    return {
-        // State
-        history,
+        const clearOldVersions = (maxVersions: number) => {
+            while (history.value.length > maxVersions) {
+                history.value.shift();
+            }
+        };
 
-        // Actions
-        loadHistory,
-        saveHistory,
-        addVersion,
-        revertToVersion,
-        clearOldVersions,
-        getVersionsByType,
-    };
-});
+        const getVersionsByType = <TContent>(type: string) =>
+            computed(() => history.value.filter((v) => v.type === type) as Version<TContent>[]);
+
+        return {
+            // State
+            history,
+
+            // Actions
+            loadHistory,
+            saveHistory,
+            addVersion,
+            revertToVersion,
+            clearOldVersions,
+            getVersionsByType,
+        };
+    },
+    {
+        persist: true,
+    },
+);

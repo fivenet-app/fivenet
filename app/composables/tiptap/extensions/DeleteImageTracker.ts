@@ -2,9 +2,7 @@ import { Extension } from '@tiptap/core';
 import type { Node } from 'prosemirror-model';
 import { Plugin, PluginKey } from 'prosemirror-state';
 
-/* ------------------------------------------------------------------ */
-/*  Helper – collect current <image> fileIds in the document          */
-/* ------------------------------------------------------------------ */
+// Helper – collect current <image> fileIds in the document
 function collectImageIds(doc: Node): Set<number> {
     const out = new Set<number>();
     doc.descendants((node) => {
@@ -15,10 +13,8 @@ function collectImageIds(doc: Node): Set<number> {
     return out;
 }
 
-/* ------------------------------------------------------------------ */
-/*  Factory that triggers `onRemoved(ids)` whenever an image vanishes */
-/* ------------------------------------------------------------------ */
-function DeleteImageTracker(onRemoved: (ids: number[]) => void) {
+// Factory that triggers `onRemoved(ids)` whenever an image vanishes
+function deleteImageTracker(onRemoved: (ids: number[]) => void) {
     return new Plugin({
         key: new PluginKey('delete-image-tracker'),
 
@@ -40,10 +36,8 @@ function DeleteImageTracker(onRemoved: (ids: number[]) => void) {
     });
 }
 
-/* ------------------------------------------------------------------ */
-/*  Exported Tiptap extension                                         */
-/* ------------------------------------------------------------------ */
-export const DeleteImageTrackerExt = Extension.create<{
+// Exported Tiptap extension
+export const DeleteImageTracker = Extension.create<{
     /** callback fired with *all* fileIds that disappeared in a tx */
     onRemoved: (ids: number[]) => void;
 }>({
@@ -56,6 +50,6 @@ export const DeleteImageTrackerExt = Extension.create<{
     },
 
     addProseMirrorPlugins() {
-        return [DeleteImageTracker(this.options.onRemoved)];
+        return [deleteImageTracker(this.options.onRemoved)];
     },
 });

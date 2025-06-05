@@ -44,7 +44,7 @@ import FontSize from 'tiptap-extension-font-size';
 import UniqueId from 'tiptap-unique-id';
 import type * as Y from 'yjs';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
-import { DeleteImageTrackerExt } from '~/composables/tiptap/extensions/DeleteImageTrackerExt';
+import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
 import { EnhancedImageResize } from '~/composables/tiptap/extensions/EnhancedImageResize';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
 import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
@@ -57,6 +57,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import FileListModal from './FileListModal.vue';
 import TiptapEditorImagePopover from './TiptapEditorImagePopover.vue';
 import TiptapEditorSourceCodeModal from './TiptapEditorSourceCodeModal.vue';
+import VersionHistoryModal from './VersionHistoryModal.vue';
 import YJSUserPopover from './YJSUserPopover.vue';
 
 const props = withDefaults(
@@ -67,8 +68,10 @@ const props = withDefaults(
         disabled?: boolean;
         placeholder?: string;
         hideToolbar?: boolean;
-        rounded?: string;
+        footerClass?: string;
         commentMode?: boolean;
+
+        extensions?: Extensions;
 
         disableCollab?: boolean;
         targetId?: number;
@@ -82,8 +85,10 @@ const props = withDefaults(
         disabled: false,
         placeholder: undefined,
         hideToolbar: false,
-        rounded: 'rounded',
+        footerClass: '',
         commentMode: false,
+
+        extensions: () => [],
 
         disableCollab: false,
         targetId: undefined,
@@ -101,6 +106,8 @@ const { t } = useI18n();
 const { activeChar } = useAuth();
 
 const notifications = useNotificatorStore();
+
+const historyStore = useHistoryStore();
 
 const modal = useModal();
 
@@ -262,7 +269,7 @@ if (!props.commentMode) {
             inline: false,
             allowBase64: true,
         }),
-        DeleteImageTrackerExt.configure({
+        DeleteImageTracker.configure({
             onRemoved: (ids) =>
                 ids.forEach((id) => {
                     if (hasFileById(files.value, id)) {
@@ -281,7 +288,7 @@ let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefine
 const editor = useEditor({
     content: '',
     editable: !disabled.value,
-    extensions: extensions,
+    extensions: [...extensions, ...props.extensions],
     onFocus: () => focusTablet(true),
     onBlur: () => focusTablet(false),
     onUpdate: () => (content.value = unref(editor)?.getHTML() ?? ''),
@@ -550,7 +557,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
 </script>
 
 <template>
-    <div class="relative flex flex-col border border-gray-100 dark:border-gray-800" :class="rounded">
+    <div class="relative flex flex-col rounded-none border border-gray-100 dark:border-gray-800">
         <div v-if="editor && !hideToolbar" class="shrink-0 bg-gray-100 p-0.5 dark:bg-gray-800">
             <div class="flex snap-x flex-wrap gap-1">
                 <UButtonGroup>
@@ -1081,87 +1088,86 @@ onBeforeUnmount(() => unref(editor)?.destroy());
 
                 <div class="flex-1"></div>
 
+                <slot name="toolbar" :editor="editor" :disabled="disabled" />
+
                 <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
+                <UPopover>
+                    <UTooltip :text="$t('components.partials.TiptapEditor.search_and_replace')" :popper="{ placement: 'top' }">
+                        <UButton color="white" variant="ghost" icon="i-mdi-text-search" :disabled="disabled" />
+                    </UTooltip>
+
+                    <template #panel>
+                        <div class="flex flex-1 gap-0.5 p-4">
+                            <UForm :state="searchAndReplace">
+                                <UFormGroup name="search" :label="$t('common.search')">
+                                    <UInput v-model="searchAndReplace.search" :disabled="disabled" />
+                                </UFormGroup>
+
+                                <UFormGroup name="replace" :label="$t('components.partials.TiptapEditor.replace')">
+                                    <UInput v-model="searchAndReplace.replace" :disabled="disabled" />
+                                </UFormGroup>
+
+                                <UFormGroup name="caseSensitive" :label="$t('common.case_sensitive')">
+                                    <UToggle v-model="searchAndReplace.caseSensitive" :disabled="disabled" />
+                                </UFormGroup>
+
+                                <UFormGroup class="flex flex-col lg:flex-row">
+                                    <UButtonGroup>
+                                        <UButton
+                                            color="error"
+                                            variant="outline"
+                                            :label="$t('components.partials.TiptapEditor.clear')"
+                                            :disabled="disabled"
+                                            @click="clear"
+                                        />
+                                        <UButton
+                                            color="white"
+                                            variant="outline"
+                                            :label="$t('components.partials.TiptapEditor.previous')"
+                                            :disabled="disabled"
+                                            @click="previous"
+                                        />
+                                        <UButton
+                                            color="white"
+                                            variant="outline"
+                                            :label="$t('components.partials.TiptapEditor.next')"
+                                            :disabled="disabled"
+                                            @click="next"
+                                        />
+                                        <UButton
+                                            color="white"
+                                            variant="outline"
+                                            :label="$t('components.partials.TiptapEditor.replace')"
+                                            :disabled="disabled"
+                                            @click="replace"
+                                        />
+                                        <UButton
+                                            color="white"
+                                            variant="outline"
+                                            :label="$t('components.partials.TiptapEditor.replace_all')"
+                                            :disabled="disabled"
+                                            @click="replaceAll"
+                                        />
+                                    </UButtonGroup>
+
+                                    <div class="mt-1 block text-sm font-medium">
+                                        {{ $t('common.result', 2) }}:
+                                        {{
+                                            editor?.storage?.searchAndReplace?.resultIndex > 0
+                                                ? editor?.storage?.searchAndReplace?.resultIndex + 1
+                                                : 0
+                                        }}
+                                        /
+                                        {{ editor?.storage?.searchAndReplace?.results.length }}
+                                    </div>
+                                </UFormGroup>
+                            </UForm>
+                        </div>
+                    </template>
+                </UPopover>
+
                 <UButtonGroup>
-                    <UPopover>
-                        <UTooltip
-                            :text="$t('components.partials.TiptapEditor.search_and_replace')"
-                            :popper="{ placement: 'top' }"
-                        >
-                            <UButton color="white" variant="ghost" icon="i-mdi-text-search" :disabled="disabled" />
-                        </UTooltip>
-
-                        <template #panel>
-                            <div class="flex flex-1 gap-0.5 p-4">
-                                <UForm :state="searchAndReplace">
-                                    <UFormGroup name="search" :label="$t('common.search')">
-                                        <UInput v-model="searchAndReplace.search" :disabled="disabled" />
-                                    </UFormGroup>
-
-                                    <UFormGroup name="replace" :label="$t('components.partials.TiptapEditor.replace')">
-                                        <UInput v-model="searchAndReplace.replace" :disabled="disabled" />
-                                    </UFormGroup>
-
-                                    <UFormGroup name="caseSensitive" :label="$t('common.case_sensitive')">
-                                        <UToggle v-model="searchAndReplace.caseSensitive" :disabled="disabled" />
-                                    </UFormGroup>
-
-                                    <UFormGroup class="flex flex-col lg:flex-row">
-                                        <UButtonGroup>
-                                            <UButton
-                                                color="error"
-                                                variant="outline"
-                                                :label="$t('components.partials.TiptapEditor.clear')"
-                                                :disabled="disabled"
-                                                @click="clear"
-                                            />
-                                            <UButton
-                                                color="white"
-                                                variant="outline"
-                                                :label="$t('components.partials.TiptapEditor.previous')"
-                                                :disabled="disabled"
-                                                @click="previous"
-                                            />
-                                            <UButton
-                                                color="white"
-                                                variant="outline"
-                                                :label="$t('components.partials.TiptapEditor.next')"
-                                                :disabled="disabled"
-                                                @click="next"
-                                            />
-                                            <UButton
-                                                color="white"
-                                                variant="outline"
-                                                :label="$t('components.partials.TiptapEditor.replace')"
-                                                :disabled="disabled"
-                                                @click="replace"
-                                            />
-                                            <UButton
-                                                color="white"
-                                                variant="outline"
-                                                :label="$t('components.partials.TiptapEditor.replace_all')"
-                                                :disabled="disabled"
-                                                @click="replaceAll"
-                                            />
-                                        </UButtonGroup>
-
-                                        <div class="mt-1 block text-sm font-medium">
-                                            {{ $t('common.result', 2) }}:
-                                            {{
-                                                editor?.storage?.searchAndReplace?.resultIndex > 0
-                                                    ? editor?.storage?.searchAndReplace?.resultIndex + 1
-                                                    : 0
-                                            }}
-                                            /
-                                            {{ editor?.storage?.searchAndReplace?.results.length }}
-                                        </div>
-                                    </UFormGroup>
-                                </UForm>
-                            </div>
-                        </template>
-                    </UPopover>
-
                     <UTooltip :text="$t('components.partials.TiptapEditor.undo')" :popper="{ placement: 'top' }">
                         <UButton
                             :disabled="!editor.can().chain().focus().undo().run() || disabled"
@@ -1219,6 +1225,22 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                                 "
                             />
                         </UTooltip>
+
+                        <UTooltip :text="$t('common.version_history')" :popper="{ placement: 'top' }">
+                            <UButton
+                                color="white"
+                                variant="ghost"
+                                icon="i-mdi-history"
+                                :disabled="disabled"
+                                @click="
+                                    modal.open(VersionHistoryModal, {
+                                        history: historyStore.history,
+                                        currentContent: { content: content, files: files },
+                                        currentMeta: {},
+                                    })
+                                "
+                            />
+                        </UTooltip>
                     </UButtonGroup>
                 </template>
             </div>
@@ -1263,7 +1285,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
         />
 
         <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
-            <div class="flex" :class="{ 'flex-1': targetId }">
+            <div class="flex" :class="[{ 'flex-1': targetId }, footerClass]">
                 <slot name="footer" />
 
                 <div v-if="loading" class="inline-flex items-center gap-1">

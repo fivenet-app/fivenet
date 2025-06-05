@@ -10,6 +10,8 @@ import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
+import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
+import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
 import { useNotificatorStore } from '~/stores/notificator';
@@ -19,6 +21,7 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { ObjectSpecs, Template, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/documents/documents';
+import TemplateEditorButtons from './TemplateEditorButtons.vue';
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
 const props = defineProps<{
@@ -289,6 +292,8 @@ function setValuesFromTemplate(tpl: Template): void {
     schemaEditor.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
 }
 
+const extensions = [TemplateVar.configure(), TemplateBlock.configure()];
+
 onBeforeMount(async () => {
     if (props.templateId) {
         try {
@@ -553,13 +558,18 @@ const categoriesLoading = ref(false);
                             name="content"
                             :label="`${$t('common.content')} ${$t('common.template')}`"
                             required
-                            :ui="{ container: 'flex flex-1 overflow-y-hidden' }"
+                            :ui="{ container: 'flex flex-1 overflow-y-hidden flex-col' }"
                         >
                             <ClientOnly>
                                 <TiptapEditor
                                     v-model="state.content"
                                     class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
-                                />
+                                    :extensions="extensions"
+                                >
+                                    <template #toolbar="{ editor }">
+                                        <TemplateEditorButtons :editor="editor" />
+                                    </template>
+                                </TiptapEditor>
                             </ClientOnly>
                         </UFormGroup>
                     </UContainer>

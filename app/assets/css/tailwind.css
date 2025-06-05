@@ -167,7 +167,7 @@ html {
         }
 
         .column-resize-handle {
-            background-color: var(--color-primary-500);
+            background-color: rgb(var(--color-primary-500));
             bottom: -2px;
             pointer-events: none;
             position: absolute;
@@ -186,4 +186,31 @@ html {
         cursor: ew-resize;
         cursor: col-resize;
     }
+}
+
+/* Tiptap Editor Extensions */
+.template-block {
+    border-left: 1px dashed rgb(var(--color-primary-500));
+    background-color: rgb(var(--color-gray-800));
+    padding: 0.25rem;
+    margin: 0.25rem 0;
+    font-family: monospace;
+}
+
+.template-open,
+.template-close {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+}
+
+.template-var {
+    background-color: rgb(var(--color-gray-800));
+    border-radius: 4px;
+    padding: 2px 2px;
+    font-family: monospace;
+    border: 1px dashed rgb(var(--color-primary-500));
+}
+
+.template-var[data-hidden="true"] {
+    display: none;
 }

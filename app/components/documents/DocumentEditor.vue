@@ -12,7 +12,7 @@ import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
 import { useNotificatorStore } from '~/stores/notificator';
-import type { DocumentContent, DocumentMeta } from '~/types/history';
+import type { Content } from '~/types/history';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -158,23 +158,10 @@ async function saveHistory(values: Schema, type = 'document'): Promise<void> {
     }
     saving.value = true;
 
-    historyStore.addVersion<DocumentContent, DocumentMeta>(
-        type,
-        props.documentId,
-        {
-            content: values.content,
-            files: values.files,
-        },
-        {
-            title: values.title,
-            category: values.category,
-            access: values.access,
-            closed: values.closed,
-            state: values.state,
-            references: values.references,
-            relations: values.relations,
-        },
-    );
+    historyStore.addVersion<Content>(type, props.documentId, {
+        content: values.content,
+        files: values.files,
+    });
 
     useTimeoutFn(() => {
         saving.value = false;
@@ -617,14 +604,14 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 v-model:files="state.files"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 :disabled="!canDo.edit"
-                                rounded="rounded-none"
+                                footer-class="items-center justify-start"
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"
                                 :filestore-service="(opts) => $grpc.documents.documents.uploadFile(opts)"
                                 @file-uploaded="(file) => state.files.push(file)"
                             >
-                                <template #footer>
-                                    <div v-if="saving" class="place-self-start">
+                                <template v-if="saving" #footer>
+                                    <div class="inline-flex items-center gap-1">
                                         <UIcon class="h-4 w-4 animate-spin" name="i-mdi-content-save" />
                                         <span>{{ $t('common.save', 2) }}...</span>
                                     </div>

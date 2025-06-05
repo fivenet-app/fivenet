@@ -7,7 +7,7 @@ import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/a
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
 import { useNotificatorStore } from '~/stores/notificator';
-import type { QualificationContent, QualificationMeta } from '~/types/history';
+import type { Content } from '~/types/history';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { QualificationJobAccess } from '~~/gen/ts/resources/qualifications/access';
@@ -26,6 +26,7 @@ import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import FormatBuilder from '../partials/FormatBuilder.vue';
 import ExamEditor from './exam/ExamEditor.vue';
 
 const props = defineProps<{
@@ -122,24 +123,10 @@ async function saveHistory(values: Schema, type = 'qualification'): Promise<void
     }
     saving.value = true;
 
-    historyStore.addVersion<QualificationContent, QualificationMeta>(
-        type,
-        props.qualificationId,
-        {
-            content: values.content,
-            files: values.files,
-            requirements: values.requirements,
-        },
-        {
-            weight: values.weight,
-            abbreviation: values.abbreviation,
-            title: values.title,
-            description: values.description,
-            closed: values.closed,
-            public: values.public,
-            access: values.access,
-        },
-    );
+    historyStore.addVersion<Content>(type, props.qualificationId, {
+        content: values.content,
+        files: values.files,
+    });
 
     useTimeoutFn(() => {
         saving.value = false;
@@ -399,6 +386,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                 v-else-if="!qualification"
                 icon="i-mdi-file-search"
                 :message="$t('common.not_found', [$t('common.qualification', 1)])"
+                :retry="refresh"
             />
 
             <UTabs
@@ -488,7 +476,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                     v-model="state.content"
                                     class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                     :disabled="!canDo.edit"
-                                    rounded="rounded-none"
                                     :target-id="props.qualificationId ?? 0"
                                     filestore-namespace="qualifications"
                                     :filestore-service="(opts) => $grpc.qualifications.qualifications.uploadFile(opts)"
@@ -583,15 +570,12 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 )
                                             "
                                         >
-                                            <UInput
-                                                v-model="state.discordSettings.roleFormat"
-                                                name="discordSettings.roleFormat"
-                                                type="text"
-                                                :placeholder="
-                                                    $t(
-                                                        'components.settings.job_props.discord_sync_settings.qualifications_role_format.title',
-                                                    )
-                                                "
+                                            <FormatBuilder
+                                                v-model="state.discordSettings.roleFormat!"
+                                                :extensions="[
+                                                    { label: $t('common.abbreviation'), value: 'abbr' },
+                                                    { label: $t('common.name'), value: 'name' },
+                                                ]"
                                                 :disabled="!canDo.edit"
                                             />
                                         </UFormGroup>
@@ -624,6 +608,14 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 )
                                             "
                                         >
+                                            <FormatBuilder
+                                                v-model="state.labelSyncFormat!"
+                                                :extensions="[
+                                                    { label: $t('common.abbreviation'), value: 'abbr' },
+                                                    { label: $t('common.name'), value: 'name' },
+                                                ]"
+                                                :disabled="!canDo.edit"
+                                            />
                                             <UInput
                                                 v-model="state.labelSyncFormat"
                                                 name="labelSyncFormat"
