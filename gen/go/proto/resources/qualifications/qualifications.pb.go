@@ -778,10 +778,11 @@ func (x *QualificationDiscordSettings) GetRoleFormat() string {
 
 // @dbscanner: json
 type QualificationExamSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Time          *durationpb.Duration   `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Time             *durationpb.Duration   `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
+	AutomaticGrading bool                   `protobuf:"varint,2,opt,name=automatic_grading,json=automaticGrading,proto3" json:"automatic_grading,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *QualificationExamSettings) Reset() {
@@ -819,6 +820,13 @@ func (x *QualificationExamSettings) GetTime() *durationpb.Duration {
 		return x.Time
 	}
 	return nil
+}
+
+func (x *QualificationExamSettings) GetAutomaticGrading() bool {
+	if x != nil {
+		return x.AutomaticGrading
+	}
+	return false
 }
 
 type QualificationRequest struct {
@@ -1211,9 +1219,10 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"roleFormat\x88\x01\x01B\f\n" +
 	"\n" +
 	"_role_nameB\x0e\n" +
-	"\f_role_format\"_\n" +
+	"\f_role_format\"\x8c\x01\n" +
 	"\x19QualificationExamSettings\x12B\n" +
-	"\x04time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x13\xfaB\x10\xaa\x01\r\b\x01\x1a\x04\b\x80\xa4?2\x03\b\xac\x02R\x04time\"\xa9\a\n" +
+	"\x04time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x13\xfaB\x10\xaa\x01\r\b\x01\x1a\x04\b\x80\xa4?2\x03\b\xac\x02R\x04time\x12+\n" +
+	"\x11automatic_grading\x18\x02 \x01(\bR\x10automaticGrading\"\xa9\a\n" +
 	"\x14QualificationRequest\x12B\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +

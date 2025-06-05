@@ -136,16 +136,26 @@ async function listPages(): Promise<PageShort[]> {
 const changed = ref(false);
 const saving = ref(false);
 
-async function saveHistory(values: Schema, type = 'wiki'): Promise<void> {
+// Track last saved string and timestamp
+let lastSavedString = '';
+let lastSaveTimestamp = 0;
+
+async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'wiki'): Promise<void> {
     if (saving.value) {
         return;
     }
+
     saving.value = true;
 
-    historyStore.addVersion<Content>(type, props.pageId, {
-        content: values.content,
-        files: values.files,
-    });
+    historyStore.addVersion<Content>(
+        type,
+        props.pageId,
+        {
+            content: values.content,
+            files: values.files,
+        },
+        name,
+    );
 
     useTimeoutFn(() => {
         saving.value = false;
@@ -154,15 +164,24 @@ async function saveHistory(values: Schema, type = 'wiki'): Promise<void> {
 
 watchDebounced(
     state,
-    async () => {
+    () => {
         if (changed.value) {
+            const now = Date.now();
+            // Skip if identical to last saved or if within MIN_GAP
+            if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
+                return;
+            }
+
             saveHistory(state);
+
+            lastSavedString = state.content;
+            lastSaveTimestamp = now;
         } else {
             changed.value = true;
         }
     },
     {
-        debounce: 750,
+        debounce: 1000,
         maxWait: 2500,
     },
 );

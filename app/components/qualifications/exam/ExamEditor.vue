@@ -23,6 +23,7 @@ const { settings, questions } = useVModels(props, emit);
 const schema = z.object({
     settings: z.object({
         time: zodDurationSchema,
+        automaticGrading: z.boolean(),
     }),
     questions: z.custom<ExamQuestion>().array().max(50),
 });
@@ -49,6 +50,15 @@ if (!settings.value.time) {
                     </template>
                 </UInput>
             </UFormGroup>
+
+            <!--
+            <UFormGroup name="settings.automaticGrading" :label="$t('components.qualifications.exam_editor.automatic_grading')">
+                <UToggle
+                    v-model="settings.automaticGrading"
+                    :placeholder="$t('components.qualifications.exam_editor.automatic_grading')"
+                />
+            </UFormGroup>
+            -->
 
             <h3>{{ $t('common.question', 2) }}</h3>
 

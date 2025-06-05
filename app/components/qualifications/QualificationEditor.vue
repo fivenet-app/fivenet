@@ -101,6 +101,7 @@ const state = reactive<Schema>({
             seconds: 360,
             nanos: 0,
         },
+        automaticGrading: false,
     },
     exam: {
         questions: [],
@@ -116,6 +117,10 @@ const state = reactive<Schema>({
 
 const changed = ref(false);
 const saving = ref(false);
+
+// Track last saved string and timestamp
+let lastSavedString = '';
+let lastSaveTimestamp = 0;
 
 async function saveHistory(values: Schema, type = 'qualification'): Promise<void> {
     if (saving.value) {
@@ -135,15 +140,24 @@ async function saveHistory(values: Schema, type = 'qualification'): Promise<void
 
 watchDebounced(
     state,
-    async () => {
+    () => {
         if (changed.value) {
+            const now = Date.now();
+            // Skip if identical to last saved or if within MIN_GAP
+            if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
+                return;
+            }
+
             saveHistory(state);
+
+            lastSavedString = state.content;
+            lastSaveTimestamp = now;
         } else {
             changed.value = true;
         }
     },
     {
-        debounce: 750,
+        debounce: 1000,
         maxWait: 2500,
     },
 );

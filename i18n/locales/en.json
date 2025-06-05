@@ -668,7 +668,8 @@
         "active_user": "Active User",
         "firstname": "Firstname",
         "lastname": "Lastname",
-        "first_citizen": "First Citizen"
+        "first_citizen": "First Citizen",
+        "auto_save": "Auto Save"
     },
     "components": {
         "partials": {
@@ -1065,7 +1066,8 @@
                     "singleChoice": "Single Choice",
                     "multipleChoice": "Multiple Choice",
                     "image": "Image"
-                }
+                },
+                "automatic_grading": "Automatic Grading"
             },
             "result_modal": {
                 "title": "Qualification Result"

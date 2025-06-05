@@ -233,6 +233,11 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
+	quali, err := s.getQualification(ctx, req.QualificationId, nil, userInfo, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
 	duration := 0 * time.Second
 	endedAt := time.Now()
 	examUser, err := s.getExamUser(ctx, req.QualificationId, userInfo.UserId)
@@ -293,6 +298,9 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 	if err := s.updateRequestStatus(ctx, req.QualificationId, userInfo.UserId, qualifications.RequestStatus_REQUEST_STATUS_EXAM_GRADING); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+
+	_ = quali
+	// TODO handle auto grading
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 

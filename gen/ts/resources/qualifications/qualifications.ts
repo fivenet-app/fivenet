@@ -279,6 +279,10 @@ export interface QualificationExamSettings {
      * @generated from protobuf field: google.protobuf.Duration time = 1
      */
     time?: Duration;
+    /**
+     * @generated from protobuf field: bool automatic_grading = 2
+     */
+    automaticGrading: boolean;
 }
 /**
  * @generated from protobuf message resources.qualifications.QualificationRequest
@@ -1041,11 +1045,13 @@ export const QualificationDiscordSettings = new QualificationDiscordSettings$Typ
 class QualificationExamSettings$Type extends MessageType<QualificationExamSettings> {
     constructor() {
         super("resources.qualifications.QualificationExamSettings", [
-            { no: 1, name: "time", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "1036800" }, gte: { seconds: "300" } } } } }
+            { no: 1, name: "time", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "1036800" }, gte: { seconds: "300" } } } } },
+            { no: 2, name: "automatic_grading", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<QualificationExamSettings>): QualificationExamSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.automaticGrading = false;
         if (value !== undefined)
             reflectionMergePartial<QualificationExamSettings>(this, message, value);
         return message;
@@ -1057,6 +1063,9 @@ class QualificationExamSettings$Type extends MessageType<QualificationExamSettin
             switch (fieldNo) {
                 case /* google.protobuf.Duration time */ 1:
                     message.time = Duration.internalBinaryRead(reader, reader.uint32(), options, message.time);
+                    break;
+                case /* bool automatic_grading */ 2:
+                    message.automaticGrading = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1073,6 +1082,9 @@ class QualificationExamSettings$Type extends MessageType<QualificationExamSettin
         /* google.protobuf.Duration time = 1; */
         if (message.time)
             Duration.internalBinaryWrite(message.time, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool automatic_grading = 2; */
+        if (message.automaticGrading !== false)
+            writer.tag(2, WireType.Varint).bool(message.automaticGrading);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

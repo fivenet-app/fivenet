@@ -1490,6 +1490,8 @@ func (m *QualificationExamSettings) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for AutomaticGrading
+
 	if len(errors) > 0 {
 		return QualificationExamSettingsMultiError(errors)
 	}

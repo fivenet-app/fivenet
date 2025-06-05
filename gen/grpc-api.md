@@ -5591,6 +5591,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `time` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| `automatic_grading` | [bool](#bool) |  |  |
 
 
 

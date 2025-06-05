@@ -107,6 +107,7 @@ message QualificationExamSettings {
     lt: {seconds: 1036800}, // 24 hours
     gte:  {seconds: 300}, // 5 minutes
   }];
+  bool automatic_grading = 2;
 }
 
 enum RequestStatus {

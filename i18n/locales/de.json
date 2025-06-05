@@ -668,7 +668,8 @@
         "active_user": "Aktiver Nutzer",
         "firstname": "Vorname",
         "lastname": "Nachname",
-        "first_citizen": "Erster Bürger"
+        "first_citizen": "Erster Bürger",
+        "auto_save": "Automatische Speicherung"
     },
     "components": {
         "partials": {
@@ -1059,13 +1060,14 @@
             "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde.",
             "exam_editor": {
                 "question_types": {
-                    "separator": "Trenner",
+                    "separator": "Trennzeichen",
                     "yesno": "Ja/Nein",
                     "freeText": "Freitext",
-                    "singleChoice": "Einfachauswahl",
+                    "singleChoice": "Einzelauswahl",
                     "multipleChoice": "Mehrfachauswahl",
                     "image": "Bild"
-                }
+                },
+                "automatic_grading": "Automatische Bewertung"
             },
             "result_modal": {
                 "title": "Qualifizierungsergebnis"
