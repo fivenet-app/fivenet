@@ -19,6 +19,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/exporters/stdout/stdoutmetric"
 	"go.opentelemetry.io/otel/exporters/stdout/stdouttrace"
+	otelmetric "go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/propagation"
 	"go.opentelemetry.io/otel/sdk/log"
 	"go.opentelemetry.io/otel/sdk/metric"
@@ -45,7 +46,8 @@ type TracingParams struct {
 type TracingResults struct {
 	fx.Out
 
-	TP *tracesdk.TracerProvider
+	TP            *tracesdk.TracerProvider
+	MeterProvider otelmetric.MeterProvider
 }
 
 // NewTracerProvider returns an OpenTelemetry TracerProvider configured to use
@@ -114,7 +116,8 @@ func NewTracerProvider(p TracingParams) (TracingResults, error) {
 	}))
 
 	return TracingResults{
-		TP: tp,
+		TP:            tp,
+		MeterProvider: meterProvider,
 	}, nil
 }
 

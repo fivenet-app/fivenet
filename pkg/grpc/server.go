@@ -22,7 +22,8 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	otelmetric "go.opentelemetry.io/otel/metric"
+	otelpropagation "go.opentelemetry.io/otel/propagation"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -30,8 +31,10 @@ import (
 	"go.uber.org/zap/zapgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	oteltracing "google.golang.org/grpc/experimental/opentelemetry"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
+	"google.golang.org/grpc/stats/opentelemetry"
 )
 
 var ErrInternalServer = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.general.internal_error.content"}, &common.TranslateItem{Key: "errors.general.internal_error.title"})
@@ -67,6 +70,8 @@ type ServerParams struct {
 	GRPCPerm *auth.GRPCPerm
 
 	Services []Service `group:"grpcservices"`
+
+	MeterProvider otelmetric.MeterProvider
 }
 
 type ServerResult struct {
@@ -97,8 +102,15 @@ func NewServer(p ServerParams) (ServerResult, error) {
 		return nil
 	}
 
+	// Configure W3C Trace Context Propagator for traces
+	textMapPropagator := otelpropagation.TraceContext{}
+	so := opentelemetry.ServerOption(opentelemetry.Options{
+		MetricsOptions: opentelemetry.MetricsOptions{MeterProvider: p.MeterProvider},
+		TraceOptions:   oteltracing.TraceOptions{TracerProvider: p.TP, TextMapPropagator: textMapPropagator},
+	})
+
 	// Setup GRPC server with custom options interceptors, and tracing
-	srv := grpc.NewServer(
+	srv := grpc.NewServer(so,
 		grpc.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionIdle:     0,
 			MaxConnectionAge:      time.Duration(math.MaxInt64),
@@ -106,9 +118,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			Time:                  60 * time.Minute,
 			Timeout:               20 * time.Second,
 		}),
-		grpc.MaxConcurrentStreams(128),
-
-		grpc.StatsHandler(otelgrpc.NewServerHandler(otelgrpc.WithTracerProvider(p.TP))),
+		grpc.MaxConcurrentStreams(1024),
 
 		grpc.ChainUnaryInterceptor(
 			srvMetrics.UnaryServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
