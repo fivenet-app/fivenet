@@ -73,6 +73,13 @@ message ExamQuestionMultipleChoice {
 // @dbscanner: json
 message ExamQuestionAnswerData {
   string answer_key = 1 [(validate.rules).string.max_len = 1024];
+
+  oneof answer {
+    ExamResponseYesNo yesno  = 4;
+    ExamResponseText free_text = 5;
+    ExamResponseSingleChoice single_choice = 6;
+    ExamResponseMultipleChoice multiple_choice = 7;
+  }
 }
 
 // User Response

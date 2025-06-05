@@ -93,6 +93,42 @@ func (m *ExamQuestionAnswerData) Sanitize() error {
 		return nil
 	}
 
+	// Field: FreeText
+	switch v := m.Answer.(type) {
+
+	case *ExamQuestionAnswerData_FreeText:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: MultipleChoice
+	case *ExamQuestionAnswerData_MultipleChoice:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: SingleChoice
+	case *ExamQuestionAnswerData_SingleChoice:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Yesno
+	case *ExamQuestionAnswerData_Yesno:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

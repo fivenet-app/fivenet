@@ -55,11 +55,15 @@ const response = useVModel(props, 'modelValue', emit);
             "
             class="flex flex-1 flex-col gap-2"
         >
-            <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
+            <div class="flex flex-1 flex-row gap-2">
+                <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
+                    {{ modelValue?.question.title }}
+                </h4>
 
-            <div class="flex flex-1 justify-between gap-2">
-                <p>{{ modelValue?.question.description }}</p>
-                <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                <div class="flex flex-1 justify-between gap-2">
+                    <p>{{ modelValue?.question.description }}</p>
+                    <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                </div>
             </div>
 
             <UButtonGroup>
@@ -100,13 +104,15 @@ const response = useVModel(props, 'modelValue', emit);
             class="flex flex-1 flex-col gap-2"
         >
             <div class="flex flex-1 flex-col gap-2">
-                <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
-                    {{ modelValue?.question.title }}
-                </h4>
+                <div class="flex flex-1 flex-row gap-2">
+                    <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
+                        {{ modelValue?.question.title }}
+                    </h4>
 
-                <div class="inline-flex gap-2">
-                    <p>{{ modelValue?.question.description }}</p>
-                    <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                    <div class="flex flex-1 justify-between gap-2">
+                        <p>{{ modelValue?.question.description }}</p>
+                        <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                    </div>
                 </div>
 
                 <div>
@@ -131,11 +137,15 @@ const response = useVModel(props, 'modelValue', emit);
             "
             class="flex flex-1 flex-col gap-2"
         >
-            <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
+            <div class="flex flex-1 flex-row gap-2">
+                <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
+                    {{ modelValue?.question.title }}
+                </h4>
 
-            <div class="inline-flex gap-2">
-                <p>{{ modelValue?.question.description }}</p>
-                <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                <div class="flex flex-1 justify-between gap-2">
+                    <p>{{ modelValue?.question.description }}</p>
+                    <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                </div>
             </div>
 
             <UFormGroup class="flex-1" name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required>
@@ -155,11 +165,15 @@ const response = useVModel(props, 'modelValue', emit);
             "
             class="flex flex-1 flex-col gap-2"
         >
-            <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
+            <div class="flex flex-1 flex-row gap-2">
+                <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
+                    {{ modelValue?.question.title }}
+                </h4>
 
-            <div class="inline-flex gap-2">
-                <p>{{ modelValue?.question.description }}</p>
-                <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                <div class="flex flex-1 justify-between gap-2">
+                    <p>{{ modelValue?.question.description }}</p>
+                    <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                </div>
             </div>
 
             <div>

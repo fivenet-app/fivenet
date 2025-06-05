@@ -107,7 +107,15 @@ message QualificationExamSettings {
     lt: {seconds: 1036800}, // 24 hours
     gte:  {seconds: 300}, // 5 minutes
   }];
-  bool automatic_grading = 2;
+  bool auto_grade = 2;
+  AutoGradeMode auto_grade_mode = 3 [(validate.rules).enum.defined_only = true];
+  int32 minimum_points = 4;
+}
+
+enum AutoGradeMode {
+  AUTO_GRADE_MODE_UNSPECIFIED = 0;
+  AUTO_GRADE_MODE_STRICT = 1;
+  AUTO_GRADE_MODE_PARTIAL_CREDIT = 2;
 }
 
 enum RequestStatus {

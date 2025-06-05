@@ -601,8 +601,15 @@ func (x *ExamQuestionMultipleChoice) GetLimit() int32 {
 
 // @dbscanner: json
 type ExamQuestionAnswerData struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	AnswerKey     string                 `protobuf:"bytes,1,opt,name=answer_key,json=answerKey,proto3" json:"answer_key,omitempty"`
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	AnswerKey string                 `protobuf:"bytes,1,opt,name=answer_key,json=answerKey,proto3" json:"answer_key,omitempty"`
+	// Types that are valid to be assigned to Answer:
+	//
+	//	*ExamQuestionAnswerData_Yesno
+	//	*ExamQuestionAnswerData_FreeText
+	//	*ExamQuestionAnswerData_SingleChoice
+	//	*ExamQuestionAnswerData_MultipleChoice
+	Answer        isExamQuestionAnswerData_Answer `protobuf_oneof:"answer"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -643,6 +650,77 @@ func (x *ExamQuestionAnswerData) GetAnswerKey() string {
 	}
 	return ""
 }
+
+func (x *ExamQuestionAnswerData) GetAnswer() isExamQuestionAnswerData_Answer {
+	if x != nil {
+		return x.Answer
+	}
+	return nil
+}
+
+func (x *ExamQuestionAnswerData) GetYesno() *ExamResponseYesNo {
+	if x != nil {
+		if x, ok := x.Answer.(*ExamQuestionAnswerData_Yesno); ok {
+			return x.Yesno
+		}
+	}
+	return nil
+}
+
+func (x *ExamQuestionAnswerData) GetFreeText() *ExamResponseText {
+	if x != nil {
+		if x, ok := x.Answer.(*ExamQuestionAnswerData_FreeText); ok {
+			return x.FreeText
+		}
+	}
+	return nil
+}
+
+func (x *ExamQuestionAnswerData) GetSingleChoice() *ExamResponseSingleChoice {
+	if x != nil {
+		if x, ok := x.Answer.(*ExamQuestionAnswerData_SingleChoice); ok {
+			return x.SingleChoice
+		}
+	}
+	return nil
+}
+
+func (x *ExamQuestionAnswerData) GetMultipleChoice() *ExamResponseMultipleChoice {
+	if x != nil {
+		if x, ok := x.Answer.(*ExamQuestionAnswerData_MultipleChoice); ok {
+			return x.MultipleChoice
+		}
+	}
+	return nil
+}
+
+type isExamQuestionAnswerData_Answer interface {
+	isExamQuestionAnswerData_Answer()
+}
+
+type ExamQuestionAnswerData_Yesno struct {
+	Yesno *ExamResponseYesNo `protobuf:"bytes,4,opt,name=yesno,proto3,oneof"`
+}
+
+type ExamQuestionAnswerData_FreeText struct {
+	FreeText *ExamResponseText `protobuf:"bytes,5,opt,name=free_text,json=freeText,proto3,oneof"`
+}
+
+type ExamQuestionAnswerData_SingleChoice struct {
+	SingleChoice *ExamResponseSingleChoice `protobuf:"bytes,6,opt,name=single_choice,json=singleChoice,proto3,oneof"`
+}
+
+type ExamQuestionAnswerData_MultipleChoice struct {
+	MultipleChoice *ExamResponseMultipleChoice `protobuf:"bytes,7,opt,name=multiple_choice,json=multipleChoice,proto3,oneof"`
+}
+
+func (*ExamQuestionAnswerData_Yesno) isExamQuestionAnswerData_Answer() {}
+
+func (*ExamQuestionAnswerData_FreeText) isExamQuestionAnswerData_Answer() {}
+
+func (*ExamQuestionAnswerData_SingleChoice) isExamQuestionAnswerData_Answer() {}
+
+func (*ExamQuestionAnswerData_MultipleChoice) isExamQuestionAnswerData_Answer() {}
 
 type ExamUser struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
@@ -1359,10 +1437,15 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"R\achoices\x12$\n" +
 	"\x05limit\x18\x02 \x01(\x05B\t\xfaB\x06\x1a\x04\x18\n" +
 	"(\x00H\x00R\x05limit\x88\x01\x01B\b\n" +
-	"\x06_limit\"A\n" +
+	"\x06_limit\"\x97\x03\n" +
 	"\x16ExamQuestionAnswerData\x12'\n" +
 	"\n" +
-	"answer_key\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x18\x80\bR\tanswerKey\"\x8b\x03\n" +
+	"answer_key\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x18\x80\bR\tanswerKey\x12C\n" +
+	"\x05yesno\x18\x04 \x01(\v2+.resources.qualifications.ExamResponseYesNoH\x00R\x05yesno\x12I\n" +
+	"\tfree_text\x18\x05 \x01(\v2*.resources.qualifications.ExamResponseTextH\x00R\bfreeText\x12Y\n" +
+	"\rsingle_choice\x18\x06 \x01(\v22.resources.qualifications.ExamResponseSingleChoiceH\x00R\fsingleChoice\x12_\n" +
+	"\x0fmultiple_choice\x18\a \x01(\v24.resources.qualifications.ExamResponseMultipleChoiceH\x00R\x0emultipleChoiceB\b\n" +
+	"\x06answer\"\x8b\x03\n" +
 	"\bExamUser\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12B\n" +
@@ -1467,24 +1550,28 @@ var file_resources_qualifications_exam_proto_depIdxs = []int32{
 	7,  // 9: resources.qualifications.ExamQuestionData.single_choice:type_name -> resources.qualifications.ExamQuestionSingleChoice
 	8,  // 10: resources.qualifications.ExamQuestionData.multiple_choice:type_name -> resources.qualifications.ExamQuestionMultipleChoice
 	22, // 11: resources.qualifications.ExamQuestionImage.image:type_name -> resources.file.File
-	21, // 12: resources.qualifications.ExamUser.created_at:type_name -> resources.timestamp.Timestamp
-	21, // 13: resources.qualifications.ExamUser.started_at:type_name -> resources.timestamp.Timestamp
-	21, // 14: resources.qualifications.ExamUser.ends_at:type_name -> resources.timestamp.Timestamp
-	21, // 15: resources.qualifications.ExamUser.ended_at:type_name -> resources.timestamp.Timestamp
-	12, // 16: resources.qualifications.ExamResponses.responses:type_name -> resources.qualifications.ExamResponse
-	1,  // 17: resources.qualifications.ExamResponse.question:type_name -> resources.qualifications.ExamQuestion
-	13, // 18: resources.qualifications.ExamResponse.response:type_name -> resources.qualifications.ExamResponseData
-	14, // 19: resources.qualifications.ExamResponseData.separator:type_name -> resources.qualifications.ExamResponseSeparator
-	15, // 20: resources.qualifications.ExamResponseData.yesno:type_name -> resources.qualifications.ExamResponseYesNo
-	16, // 21: resources.qualifications.ExamResponseData.free_text:type_name -> resources.qualifications.ExamResponseText
-	17, // 22: resources.qualifications.ExamResponseData.single_choice:type_name -> resources.qualifications.ExamResponseSingleChoice
-	18, // 23: resources.qualifications.ExamResponseData.multiple_choice:type_name -> resources.qualifications.ExamResponseMultipleChoice
-	20, // 24: resources.qualifications.ExamGrading.responses:type_name -> resources.qualifications.ExamGradingResponse
-	25, // [25:25] is the sub-list for method output_type
-	25, // [25:25] is the sub-list for method input_type
-	25, // [25:25] is the sub-list for extension type_name
-	25, // [25:25] is the sub-list for extension extendee
-	0,  // [0:25] is the sub-list for field type_name
+	15, // 12: resources.qualifications.ExamQuestionAnswerData.yesno:type_name -> resources.qualifications.ExamResponseYesNo
+	16, // 13: resources.qualifications.ExamQuestionAnswerData.free_text:type_name -> resources.qualifications.ExamResponseText
+	17, // 14: resources.qualifications.ExamQuestionAnswerData.single_choice:type_name -> resources.qualifications.ExamResponseSingleChoice
+	18, // 15: resources.qualifications.ExamQuestionAnswerData.multiple_choice:type_name -> resources.qualifications.ExamResponseMultipleChoice
+	21, // 16: resources.qualifications.ExamUser.created_at:type_name -> resources.timestamp.Timestamp
+	21, // 17: resources.qualifications.ExamUser.started_at:type_name -> resources.timestamp.Timestamp
+	21, // 18: resources.qualifications.ExamUser.ends_at:type_name -> resources.timestamp.Timestamp
+	21, // 19: resources.qualifications.ExamUser.ended_at:type_name -> resources.timestamp.Timestamp
+	12, // 20: resources.qualifications.ExamResponses.responses:type_name -> resources.qualifications.ExamResponse
+	1,  // 21: resources.qualifications.ExamResponse.question:type_name -> resources.qualifications.ExamQuestion
+	13, // 22: resources.qualifications.ExamResponse.response:type_name -> resources.qualifications.ExamResponseData
+	14, // 23: resources.qualifications.ExamResponseData.separator:type_name -> resources.qualifications.ExamResponseSeparator
+	15, // 24: resources.qualifications.ExamResponseData.yesno:type_name -> resources.qualifications.ExamResponseYesNo
+	16, // 25: resources.qualifications.ExamResponseData.free_text:type_name -> resources.qualifications.ExamResponseText
+	17, // 26: resources.qualifications.ExamResponseData.single_choice:type_name -> resources.qualifications.ExamResponseSingleChoice
+	18, // 27: resources.qualifications.ExamResponseData.multiple_choice:type_name -> resources.qualifications.ExamResponseMultipleChoice
+	20, // 28: resources.qualifications.ExamGrading.responses:type_name -> resources.qualifications.ExamGradingResponse
+	29, // [29:29] is the sub-list for method output_type
+	29, // [29:29] is the sub-list for method input_type
+	29, // [29:29] is the sub-list for extension type_name
+	29, // [29:29] is the sub-list for extension extendee
+	0,  // [0:29] is the sub-list for field type_name
 }
 
 func init() { file_resources_qualifications_exam_proto_init() }
@@ -1503,6 +1590,12 @@ func file_resources_qualifications_exam_proto_init() {
 	}
 	file_resources_qualifications_exam_proto_msgTypes[4].OneofWrappers = []any{}
 	file_resources_qualifications_exam_proto_msgTypes[8].OneofWrappers = []any{}
+	file_resources_qualifications_exam_proto_msgTypes[9].OneofWrappers = []any{
+		(*ExamQuestionAnswerData_Yesno)(nil),
+		(*ExamQuestionAnswerData_FreeText)(nil),
+		(*ExamQuestionAnswerData_SingleChoice)(nil),
+		(*ExamQuestionAnswerData_MultipleChoice)(nil),
+	}
 	file_resources_qualifications_exam_proto_msgTypes[10].OneofWrappers = []any{}
 	file_resources_qualifications_exam_proto_msgTypes[13].OneofWrappers = []any{
 		(*ExamResponseData_Separator)(nil),

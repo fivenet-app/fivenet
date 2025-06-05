@@ -329,6 +329,7 @@
     - [QualificationResult](#resources-qualifications-QualificationResult)
     - [QualificationShort](#resources-qualifications-QualificationShort)
   
+    - [AutoGradeMode](#resources-qualifications-AutoGradeMode)
     - [QualificationExamMode](#resources-qualifications-QualificationExamMode)
     - [RequestStatus](#resources-qualifications-RequestStatus)
     - [ResultStatus](#resources-qualifications-ResultStatus)
@@ -5238,6 +5239,10 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `answer_key` | [string](#string) |  |  |
+| `yesno` | [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo) |  |  |
+| `free_text` | [ExamResponseText](#resources-qualifications-ExamResponseText) |  |  |
+| `single_choice` | [ExamResponseSingleChoice](#resources-qualifications-ExamResponseSingleChoice) |  |  |
+| `multiple_choice` | [ExamResponseMultipleChoice](#resources-qualifications-ExamResponseMultipleChoice) |  |  |
 
 
 
@@ -5591,7 +5596,9 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `time` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| `automatic_grading` | [bool](#bool) |  |  |
+| `auto_grade` | [bool](#bool) |  |  |
+| `auto_grade_mode` | [AutoGradeMode](#resources-qualifications-AutoGradeMode) |  |  |
+| `minimum_points` | [int32](#int32) |  |  |
 
 
 
@@ -5704,6 +5711,19 @@ Dummy - DO NOT USE!
 
 
  <!-- end messages -->
+
+
+<a name="resources-qualifications-AutoGradeMode"></a>
+
+### AutoGradeMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `AUTO_GRADE_MODE_UNSPECIFIED` | 0 |  |
+| `AUTO_GRADE_MODE_STRICT` | 1 |  |
+| `AUTO_GRADE_MODE_PARTIAL_CREDIT` | 2 |  |
+
 
 
 <a name="resources-qualifications-QualificationExamMode"></a>

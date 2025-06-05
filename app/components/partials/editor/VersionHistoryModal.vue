@@ -3,8 +3,7 @@ import type { Content, Version } from '~/types/history';
 import VersinoDiffModal from './VersionDiffModal.vue';
 
 const props = defineProps<{
-    history: Version<Content>[];
-    title?: string;
+    historyType: string;
     currentContent: Content;
 }>();
 
@@ -14,7 +13,11 @@ const emit = defineEmits<{
 
 const { isOpen } = useModal();
 
-const sortedHistory = computed(() => [...props.history].sort((a, b) => b.id.localeCompare(a.id)));
+const historyStore = useHistoryStore();
+
+const history = historyStore.listHistory<Content>(props.historyType);
+
+const sortedHistory = computed(() => (history.value ?? []).slice().sort((a, b) => b.date.localeCompare(a.date)));
 
 const showDiffModal = ref(false);
 const selectedVersion = ref<Version<Content> | undefined>(undefined);
@@ -58,29 +61,35 @@ function onConfirmDiff(version: Version<Content>) {
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
-                        {{ title || $t('common.version_history') }}
-                        <span v-if="history && history.length" class="text-xs text-gray-400">({{ history.length }})</span>
+                        {{ $t('common.version_history') }}
                     </h3>
 
                     <UButton class="-my-1" color="gray" variant="ghost" icon="i-mdi-window-close" @click="isOpen = false" />
                 </div>
             </template>
 
-            <div v-if="history.length">
+            <div v-if="sortedHistory.length">
                 <ul class="list">
-                    <li v-for="version in sortedHistory" :key="version.id" class="py-2">
+                    <li v-for="version in sortedHistory" :key="version.date" class="py-2">
                         <div class="flex w-full items-center justify-between">
                             <div>
                                 <p class="font-semibold">
                                     {{ version.name || $t('common.untitled') }}
                                 </p>
-                                <p class="text-sm text-gray-500">{{ date(version.id) }}</p>
+                                <p class="text-sm text-gray-500">{{ date(version.date) }}</p>
                                 <p v-if="version.name" class="text-xs italic">{{ version.name }}</p>
                             </div>
 
-                            <UButton size="sm" color="primary" variant="soft" @click="emitApply(version)">{{
-                                $t('common.compare')
-                            }}</UButton>
+                            <UButtonGroup>
+                                <UButton
+                                    size="sm"
+                                    color="primary"
+                                    variant="soft"
+                                    :label="$t('common.compare')"
+                                    @click="emitApply(version as Version<Content>)"
+                                />
+                                <UButton icon="i-mdi-trash" color="error" @click="historyStore.deleteVersion(version.date)" />
+                            </UButtonGroup>
                         </div>
                     </li>
                 </ul>

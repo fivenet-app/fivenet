@@ -531,7 +531,7 @@ func (s *Server) deleteQualificationRequest(ctx context.Context, tx qrm.DB, qual
 	return nil
 }
 
-func (s *Server) updateRequestStatus(ctx context.Context, qualificationId uint64, userId int32, status qualifications.RequestStatus) error {
+func (s *Server) updateRequestStatus(ctx context.Context, tx qrm.DB, qualificationId uint64, userId int32, status qualifications.RequestStatus) error {
 	tQualiRequests := table.FivenetQualificationsRequests
 	stmt := tQualiRequests.
 		INSERT(
@@ -548,7 +548,7 @@ func (s *Server) updateRequestStatus(ctx context.Context, qualificationId uint64
 			tQualiRequests.Status.SET(jet.Int16(int16(status))),
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

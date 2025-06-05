@@ -1060,14 +1060,23 @@
             "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde.",
             "exam_editor": {
                 "question_types": {
-                    "separator": "Trennzeichen",
+                    "separator": "Trenner",
                     "yesno": "Ja/Nein",
                     "freeText": "Freitext",
-                    "singleChoice": "Einzelauswahl",
+                    "singleChoice": "Einfachauswahl",
                     "multipleChoice": "Mehrfachauswahl",
                     "image": "Bild"
                 },
-                "automatic_grading": "Automatische Bewertung"
+                "minimum_points": "Mindestpunktzahl",
+                "auto_grade": {
+                    "title": "Automatische Benotung",
+                    "description": "Wenn aktiviert, werden eingereichte Prüfungen automatisch bewertet. Das System verwendet die ausgewählten Antworten, um die Prüfung automatisch zu bewerten (der Antwortschlüssel dient zur Unterstützung der Tutoren)."
+                },
+                "exam_duration": "Prüfungsdauer (in Sekunden)",
+                "auto_grade_mode": {
+                    "title": "Bewertungsmodus",
+                    "description": "Der Modus für die automatische Bewertung. 'Strikter Modus' gibt keine Punkte für teilweise richtige Antworten (z. B. müssen alle Multiple-Choice-Antworten ausgewählt und korrekt sein.)"
+                }
             },
             "result_modal": {
                 "title": "Qualifizierungsergebnis"
@@ -1087,7 +1096,8 @@
             "add_question": "Frage hinzufügen",
             "remove_question": "Frage entfernen",
             "add_option": "Option hinzufügen",
-            "remove_option": "Option entfernen"
+            "remove_option": "Option entfernen",
+            "exam_mode": "Prüfungsmodus"
         },
         "language_switcher": {
             "title": "Sprache wechseln"
@@ -2311,6 +2321,11 @@
                 "DISABLED": "Deaktiviert",
                 "ENABLED": "Aktiviert",
                 "REQUEST_NEEDED": "Anfrage benötigt"
+            },
+            "AutoGradeMode": {
+                "UNSPECIFIED": "Unbestimmter Modus",
+                "STRICT": "Strikter Modus",
+                "PARTIAL_CREDIT": "Teilpunkte-Modus"
             }
         },
         "calendar": {

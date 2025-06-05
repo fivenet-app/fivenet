@@ -1559,6 +1559,175 @@ func (m *ExamQuestionAnswerData) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	switch v := m.Answer.(type) {
+	case *ExamQuestionAnswerData_Yesno:
+		if v == nil {
+			err := ExamQuestionAnswerDataValidationError{
+				field:  "Answer",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetYesno()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamQuestionAnswerDataValidationError{
+						field:  "Yesno",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamQuestionAnswerDataValidationError{
+						field:  "Yesno",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetYesno()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamQuestionAnswerDataValidationError{
+					field:  "Yesno",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ExamQuestionAnswerData_FreeText:
+		if v == nil {
+			err := ExamQuestionAnswerDataValidationError{
+				field:  "Answer",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetFreeText()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamQuestionAnswerDataValidationError{
+						field:  "FreeText",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamQuestionAnswerDataValidationError{
+						field:  "FreeText",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFreeText()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamQuestionAnswerDataValidationError{
+					field:  "FreeText",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ExamQuestionAnswerData_SingleChoice:
+		if v == nil {
+			err := ExamQuestionAnswerDataValidationError{
+				field:  "Answer",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetSingleChoice()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamQuestionAnswerDataValidationError{
+						field:  "SingleChoice",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamQuestionAnswerDataValidationError{
+						field:  "SingleChoice",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSingleChoice()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamQuestionAnswerDataValidationError{
+					field:  "SingleChoice",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ExamQuestionAnswerData_MultipleChoice:
+		if v == nil {
+			err := ExamQuestionAnswerDataValidationError{
+				field:  "Answer",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetMultipleChoice()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamQuestionAnswerDataValidationError{
+						field:  "MultipleChoice",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamQuestionAnswerDataValidationError{
+						field:  "MultipleChoice",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMultipleChoice()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamQuestionAnswerDataValidationError{
+					field:  "MultipleChoice",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+
 	if len(errors) > 0 {
 		return ExamQuestionAnswerDataMultiError(errors)
 	}

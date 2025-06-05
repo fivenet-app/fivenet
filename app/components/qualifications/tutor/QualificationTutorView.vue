@@ -74,7 +74,7 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.user', 2)]) }} </template>
                     </UInputMenu>
                 </ClientOnly>
             </UFormGroup>

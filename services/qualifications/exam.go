@@ -166,7 +166,7 @@ func (s *Server) TakeExam(ctx context.Context, req *pbqualifications.TakeExamReq
 		}
 	}
 
-	if err := s.updateRequestStatus(ctx, req.QualificationId, userInfo.UserId, qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED); err != nil {
+	if err := s.updateRequestStatus(ctx, s.db, req.QualificationId, userInfo.UserId, qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -249,6 +249,14 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 		duration = endedAt.Sub(examUser.StartedAt.AsTime())
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	tExamUser := table.FivenetQualificationsExamUsers
 	stmt := tExamUser.
 		INSERT(
@@ -265,7 +273,7 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 			tExamUser.EndedAt.SET(jet.TimestampT(endedAt)),
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -291,16 +299,47 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 			tExamResponses.Responses.SET(jet.RawString("VALUES(`responses`)")),
 		)
 
-	if _, err := respStmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := respStmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if err := s.updateRequestStatus(ctx, req.QualificationId, userInfo.UserId, qualifications.RequestStatus_REQUEST_STATUS_EXAM_GRADING); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	if quali.ExamSettings != nil && quali.ExamSettings.AutoGrade {
+		exam, err := s.getExamQuestions(ctx, tx, req.QualificationId, true)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		if exam != nil && len(exam.Questions) > 0 {
+			// Auto grading is enabled, we can grade the exam now
+			score, grading := exam.Grade(quali.ExamSettings.AutoGradeMode, req.Responses)
+			var status qualifications.ResultStatus
+			if score >= float32(quali.ExamSettings.MinimumPoints) {
+				status = qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL
+			} else {
+				status = qualifications.ResultStatus_RESULT_STATUS_FAILED
+			}
+
+			if _, err := s.createOrUpdateQualificationResult(ctx, tx, req.QualificationId, 0, &userinfo.UserInfo{
+				Superuser: true,
+				Job:       quali.CreatorJob,
+				UserId:    0,
+			}, userInfo.UserId, status, &score, "", grading); err != nil {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
+		}
+
+		if err := s.updateRequestStatus(ctx, tx, req.QualificationId, userInfo.UserId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	} else {
+		if err := s.updateRequestStatus(ctx, tx, req.QualificationId, userInfo.UserId, qualifications.RequestStatus_REQUEST_STATUS_EXAM_GRADING); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
-	_ = quali
-	// TODO handle auto grading
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 

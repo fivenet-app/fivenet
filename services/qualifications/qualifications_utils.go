@@ -153,7 +153,9 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
 	tCreator := tables.User().AS("creator")
 
-	wheres := []jet.BoolExpression{jet.Bool(true)}
+	wheres := []jet.BoolExpression{
+		tQuali.ID.EQ(jet.Uint64(qualificationId)),
+	}
 	if !userInfo.Superuser {
 		wheres = append(wheres,
 			jet.AND(

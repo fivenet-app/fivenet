@@ -1490,7 +1490,20 @@ func (m *QualificationExamSettings) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for AutomaticGrading
+	// no validation rules for AutoGrade
+
+	if _, ok := AutoGradeMode_name[int32(m.GetAutoGradeMode())]; !ok {
+		err := QualificationExamSettingsValidationError{
+			field:  "AutoGradeMode",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for MinimumPoints
 
 	if len(errors) > 0 {
 		return QualificationExamSettingsMultiError(errors)

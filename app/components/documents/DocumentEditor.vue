@@ -156,36 +156,44 @@ const saving = ref(false);
 let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
-async function saveHistory(values: Schema, type = 'document'): Promise<void> {
+async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document'): Promise<void> {
     if (saving.value) {
         return;
     }
+
+    const now = Date.now();
+    // Skip if identical to last saved or if within MIN_GAP
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
+        return;
+    }
+
     saving.value = true;
 
-    historyStore.addVersion<Content>(type, props.documentId, {
-        content: values.content,
-        files: values.files,
-    });
+    historyStore.addVersion<Content>(
+        type,
+        props.documentId,
+        {
+            content: values.content,
+            files: values.files,
+        },
+        name,
+    );
 
     useTimeoutFn(() => {
         saving.value = false;
     }, 1750);
+
+    lastSavedString = state.content;
+    lastSaveTimestamp = now;
 }
+
+historyStore.handleRefresh(() => saveHistory(state, 'document'));
 
 watchDebounced(
     state,
     () => {
         if (changed.value) {
-            const now = Date.now();
-            // Skip if identical to last saved or if within MIN_GAP
-            if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
-                return;
-            }
-
             saveHistory(state);
-
-            lastSavedString = state.content;
-            lastSaveTimestamp = now;
         } else {
             changed.value = true;
         }
@@ -618,6 +626,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 :disabled="!canDo.edit"
                                 footer-class="items-center justify-start"
+                                history-type="document"
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"
                                 :filestore-service="(opts) => $grpc.documents.documents.uploadFile(opts)"
@@ -676,7 +685,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
 
                 <template #access>
                     <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
-                        <h2 class="text- text-gray-900 dark:text-white">
+                        <h2 class="text-gray-900 dark:text-white">
                             {{ $t('common.access') }}
                         </h2>
 

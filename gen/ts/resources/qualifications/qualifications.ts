@@ -280,9 +280,17 @@ export interface QualificationExamSettings {
      */
     time?: Duration;
     /**
-     * @generated from protobuf field: bool automatic_grading = 2
+     * @generated from protobuf field: bool auto_grade = 2
      */
-    automaticGrading: boolean;
+    autoGrade: boolean;
+    /**
+     * @generated from protobuf field: resources.qualifications.AutoGradeMode auto_grade_mode = 3
+     */
+    autoGradeMode: AutoGradeMode;
+    /**
+     * @generated from protobuf field: int32 minimum_points = 4
+     */
+    minimumPoints: number;
 }
 /**
  * @generated from protobuf message resources.qualifications.QualificationRequest
@@ -424,6 +432,23 @@ export enum QualificationExamMode {
      * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_ENABLED = 3;
      */
     ENABLED = 3
+}
+/**
+ * @generated from protobuf enum resources.qualifications.AutoGradeMode
+ */
+export enum AutoGradeMode {
+    /**
+     * @generated from protobuf enum value: AUTO_GRADE_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: AUTO_GRADE_MODE_STRICT = 1;
+     */
+    STRICT = 1,
+    /**
+     * @generated from protobuf enum value: AUTO_GRADE_MODE_PARTIAL_CREDIT = 2;
+     */
+    PARTIAL_CREDIT = 2
 }
 /**
  * @generated from protobuf enum resources.qualifications.RequestStatus
@@ -1046,12 +1071,16 @@ class QualificationExamSettings$Type extends MessageType<QualificationExamSettin
     constructor() {
         super("resources.qualifications.QualificationExamSettings", [
             { no: 1, name: "time", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "1036800" }, gte: { seconds: "300" } } } } },
-            { no: 2, name: "automatic_grading", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "auto_grade", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "auto_grade_mode", kind: "enum", T: () => ["resources.qualifications.AutoGradeMode", AutoGradeMode, "AUTO_GRADE_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 4, name: "minimum_points", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<QualificationExamSettings>): QualificationExamSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.automaticGrading = false;
+        message.autoGrade = false;
+        message.autoGradeMode = 0;
+        message.minimumPoints = 0;
         if (value !== undefined)
             reflectionMergePartial<QualificationExamSettings>(this, message, value);
         return message;
@@ -1064,8 +1093,14 @@ class QualificationExamSettings$Type extends MessageType<QualificationExamSettin
                 case /* google.protobuf.Duration time */ 1:
                     message.time = Duration.internalBinaryRead(reader, reader.uint32(), options, message.time);
                     break;
-                case /* bool automatic_grading */ 2:
-                    message.automaticGrading = reader.bool();
+                case /* bool auto_grade */ 2:
+                    message.autoGrade = reader.bool();
+                    break;
+                case /* resources.qualifications.AutoGradeMode auto_grade_mode */ 3:
+                    message.autoGradeMode = reader.int32();
+                    break;
+                case /* int32 minimum_points */ 4:
+                    message.minimumPoints = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1082,9 +1117,15 @@ class QualificationExamSettings$Type extends MessageType<QualificationExamSettin
         /* google.protobuf.Duration time = 1; */
         if (message.time)
             Duration.internalBinaryWrite(message.time, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* bool automatic_grading = 2; */
-        if (message.automaticGrading !== false)
-            writer.tag(2, WireType.Varint).bool(message.automaticGrading);
+        /* bool auto_grade = 2; */
+        if (message.autoGrade !== false)
+            writer.tag(2, WireType.Varint).bool(message.autoGrade);
+        /* resources.qualifications.AutoGradeMode auto_grade_mode = 3; */
+        if (message.autoGradeMode !== 0)
+            writer.tag(3, WireType.Varint).int32(message.autoGradeMode);
+        /* int32 minimum_points = 4; */
+        if (message.minimumPoints !== 0)
+            writer.tag(4, WireType.Varint).int32(message.minimumPoints);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

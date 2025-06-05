@@ -189,6 +189,36 @@ export interface ExamQuestionAnswerData {
      * @generated from protobuf field: string answer_key = 1
      */
     answerKey: string;
+    /**
+     * @generated from protobuf oneof: answer
+     */
+    answer: {
+        oneofKind: "yesno";
+        /**
+         * @generated from protobuf field: resources.qualifications.ExamResponseYesNo yesno = 4
+         */
+        yesno: ExamResponseYesNo;
+    } | {
+        oneofKind: "freeText";
+        /**
+         * @generated from protobuf field: resources.qualifications.ExamResponseText free_text = 5
+         */
+        freeText: ExamResponseText;
+    } | {
+        oneofKind: "singleChoice";
+        /**
+         * @generated from protobuf field: resources.qualifications.ExamResponseSingleChoice single_choice = 6
+         */
+        singleChoice: ExamResponseSingleChoice;
+    } | {
+        oneofKind: "multipleChoice";
+        /**
+         * @generated from protobuf field: resources.qualifications.ExamResponseMultipleChoice multiple_choice = 7
+         */
+        multipleChoice: ExamResponseMultipleChoice;
+    } | {
+        oneofKind: undefined;
+    };
 }
 // User Response
 
@@ -918,12 +948,17 @@ export const ExamQuestionMultipleChoice = new ExamQuestionMultipleChoice$Type();
 class ExamQuestionAnswerData$Type extends MessageType<ExamQuestionAnswerData> {
     constructor() {
         super("resources.qualifications.ExamQuestionAnswerData", [
-            { no: 1, name: "answer_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } }
+            { no: 1, name: "answer_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
+            { no: 4, name: "yesno", kind: "message", oneof: "answer", T: () => ExamResponseYesNo },
+            { no: 5, name: "free_text", kind: "message", oneof: "answer", T: () => ExamResponseText },
+            { no: 6, name: "single_choice", kind: "message", oneof: "answer", T: () => ExamResponseSingleChoice },
+            { no: 7, name: "multiple_choice", kind: "message", oneof: "answer", T: () => ExamResponseMultipleChoice }
         ]);
     }
     create(value?: PartialMessage<ExamQuestionAnswerData>): ExamQuestionAnswerData {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.answerKey = "";
+        message.answer = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<ExamQuestionAnswerData>(this, message, value);
         return message;
@@ -935,6 +970,30 @@ class ExamQuestionAnswerData$Type extends MessageType<ExamQuestionAnswerData> {
             switch (fieldNo) {
                 case /* string answer_key */ 1:
                     message.answerKey = reader.string();
+                    break;
+                case /* resources.qualifications.ExamResponseYesNo yesno */ 4:
+                    message.answer = {
+                        oneofKind: "yesno",
+                        yesno: ExamResponseYesNo.internalBinaryRead(reader, reader.uint32(), options, (message.answer as any).yesno)
+                    };
+                    break;
+                case /* resources.qualifications.ExamResponseText free_text */ 5:
+                    message.answer = {
+                        oneofKind: "freeText",
+                        freeText: ExamResponseText.internalBinaryRead(reader, reader.uint32(), options, (message.answer as any).freeText)
+                    };
+                    break;
+                case /* resources.qualifications.ExamResponseSingleChoice single_choice */ 6:
+                    message.answer = {
+                        oneofKind: "singleChoice",
+                        singleChoice: ExamResponseSingleChoice.internalBinaryRead(reader, reader.uint32(), options, (message.answer as any).singleChoice)
+                    };
+                    break;
+                case /* resources.qualifications.ExamResponseMultipleChoice multiple_choice */ 7:
+                    message.answer = {
+                        oneofKind: "multipleChoice",
+                        multipleChoice: ExamResponseMultipleChoice.internalBinaryRead(reader, reader.uint32(), options, (message.answer as any).multipleChoice)
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -951,6 +1010,18 @@ class ExamQuestionAnswerData$Type extends MessageType<ExamQuestionAnswerData> {
         /* string answer_key = 1; */
         if (message.answerKey !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.answerKey);
+        /* resources.qualifications.ExamResponseYesNo yesno = 4; */
+        if (message.answer.oneofKind === "yesno")
+            ExamResponseYesNo.internalBinaryWrite(message.answer.yesno, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamResponseText free_text = 5; */
+        if (message.answer.oneofKind === "freeText")
+            ExamResponseText.internalBinaryWrite(message.answer.freeText, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamResponseSingleChoice single_choice = 6; */
+        if (message.answer.oneofKind === "singleChoice")
+            ExamResponseSingleChoice.internalBinaryWrite(message.answer.singleChoice, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamResponseMultipleChoice multiple_choice = 7; */
+        if (message.answer.oneofKind === "multipleChoice")
+            ExamResponseMultipleChoice.internalBinaryWrite(message.answer.multipleChoice, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

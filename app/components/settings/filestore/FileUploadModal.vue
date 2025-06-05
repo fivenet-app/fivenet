@@ -44,8 +44,6 @@ async function upload(values: Schema): Promise<UploadResponse | undefined> {
         return;
     }
 
-    // TODO
-
     try {
         const call = $grpc.filestore.filestore.upload({
             prefix: values.category,

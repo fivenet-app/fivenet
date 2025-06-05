@@ -448,7 +448,7 @@ const accordionItems = computed(() =>
                                         <span class="font-semibold">{{ $t('common.score') }}:</span>
                                         {{ $t('common.point', qualification.result?.score ?? 0) }}
                                     </div>
-                                    <div class="inline-flex gap-1">
+                                    <div v-if="qualification.result?.creator" class="inline-flex gap-1">
                                         <span class="font-semibold">{{ $t('common.created_by') }}:</span>
                                         <CitizenInfoPopover :user="qualification.result?.creator" />
                                     </div>

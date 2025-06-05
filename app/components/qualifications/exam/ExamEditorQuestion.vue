@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { WatchStopHandle } from 'vue';
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
@@ -83,6 +84,17 @@ watch(question, () => {
             title: '',
             answer: {
                 answerKey: '',
+                answer: {
+                    oneofKind: undefined,
+                },
+            },
+        };
+    }
+    if (question.value.answer === undefined) {
+        question.value.answer = {
+            answerKey: '',
+            answer: {
+                oneofKind: undefined,
             },
         };
     }
@@ -126,6 +138,12 @@ function changeQuestionType(qt: string): void {
                     image: {},
                 },
             };
+            question.value.answer = {
+                answerKey: '',
+                answer: {
+                    oneofKind: undefined,
+                },
+            };
             break;
 
         case 'yesno':
@@ -133,6 +151,16 @@ function changeQuestionType(qt: string): void {
                 data: {
                     oneofKind: 'yesno',
                     yesno: {},
+                },
+            };
+
+            question.value.answer = {
+                answerKey: '',
+                answer: {
+                    oneofKind: 'yesno',
+                    yesno: {
+                        value: false,
+                    },
                 },
             };
             break;
@@ -147,6 +175,16 @@ function changeQuestionType(qt: string): void {
                     },
                 },
             };
+
+            question.value.answer = {
+                answerKey: '',
+                answer: {
+                    oneofKind: 'freeText',
+                    freeText: {
+                        text: '',
+                    },
+                },
+            };
             break;
 
         case 'singleChoice':
@@ -155,6 +193,15 @@ function changeQuestionType(qt: string): void {
                     oneofKind: 'singleChoice',
                     singleChoice: {
                         choices: [''],
+                    },
+                },
+            };
+            question.value.answer = {
+                answerKey: '',
+                answer: {
+                    oneofKind: 'singleChoice',
+                    singleChoice: {
+                        choice: '__UNDEFINED__', // Placeholder for an undefined choice
                     },
                 },
             };
@@ -170,6 +217,15 @@ function changeQuestionType(qt: string): void {
                     },
                 },
             };
+            question.value.answer = {
+                answerKey: '',
+                answer: {
+                    oneofKind: 'multipleChoice',
+                    multipleChoice: {
+                        choices: [],
+                    },
+                },
+            };
             break;
 
         case 'separator':
@@ -180,9 +236,82 @@ function changeQuestionType(qt: string): void {
                     separator: {},
                 },
             };
+            question.value.answer = {
+                answerKey: '',
+                answer: {
+                    oneofKind: undefined,
+                },
+            };
             break;
     }
 }
+
+let multipleChoiceWatcher: WatchStopHandle | null = null;
+let singleChoiceWatcher: WatchStopHandle | null = null;
+
+watch(
+    () => question.value?.data?.data.oneofKind,
+    (newKind, oldKind) => {
+        // Stop previous watchers if they exist
+        if (multipleChoiceWatcher) {
+            multipleChoiceWatcher();
+            multipleChoiceWatcher = null;
+        }
+        if (singleChoiceWatcher) {
+            singleChoiceWatcher();
+            singleChoiceWatcher = null;
+        }
+
+        // Activate watchers based on the new oneofKind
+        if (newKind === 'multipleChoice') {
+            multipleChoiceWatcher = watch(
+                () =>
+                    question.value?.data?.data.oneofKind === 'multipleChoice'
+                        ? question.value.data.data.multipleChoice?.choices
+                        : undefined,
+                (newChoices) => {
+                    if (
+                        question.value?.answer?.answer?.oneofKind === 'multipleChoice' &&
+                        question.value?.answer?.answer?.multipleChoice
+                    ) {
+                        // Filter answer choices to ensure they are valid values
+                        question.value.answer.answer.multipleChoice.choices =
+                            question.value.answer.answer.multipleChoice.choices.filter((value) => newChoices?.includes(value));
+                    }
+                },
+                { immediate: true, deep: true },
+            );
+        } else if (newKind === 'singleChoice') {
+            singleChoiceWatcher = watch(
+                () =>
+                    question.value?.data?.data.oneofKind === 'singleChoice'
+                        ? question.value.data.data.singleChoice?.choices
+                        : undefined,
+                (newChoices) => {
+                    if (
+                        question.value?.answer?.answer?.oneofKind === 'singleChoice' &&
+                        question.value?.answer?.answer?.singleChoice
+                    ) {
+                        // Reset singleChoice answer if it becomes invalid
+                        if (!newChoices?.includes(question.value.answer.answer.singleChoice.choice)) {
+                            question.value.answer.answer.singleChoice.choice = '__UNDEFINED__'; // Reset to a placeholder
+                        }
+                    }
+                },
+                { immediate: true, deep: true },
+            );
+        }
+
+        // Reset answer values if the oneofKind changes to a different type
+        if (oldKind !== newKind) {
+            if (oldKind === 'multipleChoice' && question.value?.answer?.answer.oneofKind === 'multipleChoice') {
+                question.value.answer.answer.multipleChoice = { choices: [] };
+            } else if (oldKind === 'singleChoice' && question.value?.answer?.answer.oneofKind === 'singleChoice') {
+                question.value.answer.answer.singleChoice = { choice: '' };
+            }
+        }
+    },
+);
 </script>
 
 <template>
@@ -227,7 +356,13 @@ function changeQuestionType(qt: string): void {
                 </UFormGroup>
 
                 <UFormGroup class="flex-1" name="description" :label="$t('common.description')">
-                    <UTextarea v-model="question.description" type="text" :rows="3" :placeholder="$t('common.description')" />
+                    <UTextarea
+                        v-model="question.description"
+                        type="text"
+                        :rows="3"
+                        resize
+                        :placeholder="$t('common.description')"
+                    />
                 </UFormGroup>
             </div>
             <div class="flex-1">
@@ -264,16 +399,32 @@ function changeQuestionType(qt: string): void {
                     </div>
                 </template>
 
-                <template v-else-if="question.data!.data.oneofKind === 'yesno'">
+                <template
+                    v-else-if="question.data!.data.oneofKind === 'yesno' && question.answer!.answer.oneofKind === 'yesno'"
+                >
                     <div class="flex flex-col gap-2">
                         <UButtonGroup>
-                            <UButton color="green" :label="$t('common.yes')" disabled />
-                            <UButton color="error" :label="$t('common.no')" disabled />
+                            <UButton
+                                :model-value="question.answer!.answer.yesno.value"
+                                color="green"
+                                :label="$t('common.yes')"
+                                :variant="question.answer!.answer.yesno.value ? 'solid' : 'outline'"
+                                @click="question.answer!.answer.yesno.value = true"
+                            />
+                            <UButton
+                                :model-value="question.answer!.answer.yesno.value"
+                                color="error"
+                                :label="$t('common.no')"
+                                :variant="!question.answer!.answer.yesno.value ? 'solid' : 'outline'"
+                                @click="question.answer!.answer.yesno.value = false"
+                            />
                         </UButtonGroup>
                     </div>
                 </template>
 
-                <template v-else-if="question.data!.data.oneofKind === 'freeText'">
+                <template
+                    v-else-if="question.data!.data.oneofKind === 'freeText' && question.answer!.answer.oneofKind === 'freeText'"
+                >
                     <div class="flex flex-col gap-2">
                         <div class="flex gap-2">
                             <UFormGroup class="flex-1" name="data.data.freeText.minLength" :label="$t('common.min')">
@@ -295,11 +446,15 @@ function changeQuestionType(qt: string): void {
                             </UFormGroup>
                         </div>
 
-                        <UTextarea disabled :rows="5" />
+                        <UTextarea v-model="question.answer!.answer.freeText.text" :rows="5" resize />
                     </div>
                 </template>
 
-                <template v-else-if="question.data!.data.oneofKind === 'singleChoice'">
+                <template
+                    v-else-if="
+                        question.data!.data.oneofKind === 'singleChoice' && question.answer!.answer.oneofKind === 'singleChoice'
+                    "
+                >
                     <div class="flex flex-col gap-2">
                         <UFormGroup
                             class="flex-1"
@@ -314,7 +469,10 @@ function changeQuestionType(qt: string): void {
                                     class="inline-flex items-center gap-2"
                                 >
                                     <UIcon class="size-6" name="i-mdi-drag-horizontal" />
-                                    <URadio disabled />
+                                    <URadio
+                                        v-model="question.answer!.answer.singleChoice.choice"
+                                        :value="question.data!.data.singleChoice.choices[idx]"
+                                    />
                                     <UFormGroup :name="`data.data.singleChoices.choices.${idx}`">
                                         <UInput
                                             v-model="question.data!.data.singleChoice.choices[idx]"
@@ -346,7 +504,12 @@ function changeQuestionType(qt: string): void {
                     </div>
                 </template>
 
-                <template v-else-if="question.data!.data.oneofKind === 'multipleChoice'">
+                <template
+                    v-else-if="
+                        question.data!.data.oneofKind === 'multipleChoice' &&
+                        question.answer!.answer.oneofKind === 'multipleChoice'
+                    "
+                >
                     <div class="flex flex-col gap-2">
                         <UFormGroup name="data.data.multipleChoice.limit" :label="$t('common.max')">
                             <UInput
@@ -365,7 +528,10 @@ function changeQuestionType(qt: string): void {
                                     class="inline-flex items-center gap-2"
                                 >
                                     <UIcon class="size-6" name="i-mdi-drag-horizontal" />
-                                    <UCheckbox disabled />
+                                    <UCheckbox
+                                        v-model="question.answer!.answer.multipleChoice.choices"
+                                        :value="question.data!.data.multipleChoice.choices[idx]"
+                                    />
                                     <UInput
                                         v-model="question.data!.data.multipleChoice.choices[idx]"
                                         class="w-full"
@@ -401,7 +567,12 @@ function changeQuestionType(qt: string): void {
                     class="mt-2 flex flex-row gap-2"
                 >
                     <UFormGroup class="flex-1" name="answer.answerKey" :label="$t('common.answer_key')">
-                        <UTextarea v-model="question.answer!.answerKey" :placeholder="$t('common.answer_key')" />
+                        <UTextarea
+                            v-model="question.answer!.answerKey"
+                            :placeholder="$t('common.answer_key')"
+                            :rows="2"
+                            resize
+                        />
                     </UFormGroup>
 
                     <UFormGroup class="max-w-24" name="points" :label="$t('common.points', 2)">

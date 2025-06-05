@@ -70,6 +70,7 @@ const props = withDefaults(
         hideToolbar?: boolean;
         footerClass?: string;
         commentMode?: boolean;
+        historyType?: string;
 
         extensions?: Extensions;
 
@@ -87,6 +88,7 @@ const props = withDefaults(
         hideToolbar: false,
         footerClass: '',
         commentMode: false,
+        historyType: undefined,
 
         extensions: () => [],
 
@@ -106,8 +108,6 @@ const { t } = useI18n();
 const { activeChar } = useAuth();
 
 const notifications = useNotificatorStore();
-
-const historyStore = useHistoryStore();
 
 const modal = useModal();
 
@@ -1226,7 +1226,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             />
                         </UTooltip>
 
-                        <UTooltip :text="$t('common.version_history')" :popper="{ placement: 'top' }">
+                        <UTooltip v-if="historyType" :text="$t('common.version_history')" :popper="{ placement: 'top' }">
                             <UButton
                                 color="white"
                                 variant="ghost"
@@ -1234,9 +1234,8 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                                 :disabled="disabled"
                                 @click="
                                     modal.open(VersionHistoryModal, {
-                                        history: historyStore.history,
+                                        historyType: historyType,
                                         currentContent: { content: content, files: files },
-                                        currentMeta: {},
                                     })
                                 "
                             />

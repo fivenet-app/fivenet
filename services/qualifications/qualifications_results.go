@@ -259,27 +259,42 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, []qualifications.ResultStatus{qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL}, userInfo, req.Result.UserId)
+	resultId, err := s.createOrUpdateQualificationResult(ctx, s.db, req.Result.QualificationId, req.Result.Id, userInfo, req.Result.UserId, req.Result.Status, req.Result.Score, req.Result.Summary, req.Grading)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	quali, err := s.getQualification(ctx, req.Result.QualificationId, tQuali.ID.EQ(jet.Uint64(req.Result.QualificationId)), userInfo, false)
+	result, err := s.getQualificationResult(ctx, req.Result.QualificationId, resultId, nil, userInfo, req.Result.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
+	return &pbqualifications.CreateOrUpdateQualificationResultResponse{
+		Result: result,
+	}, nil
+}
+
+func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.DB, qualificationId uint64, resultId uint64, userInfo *userinfo.UserInfo, userId int32, status qualifications.ResultStatus, score *float32, summary string, grading *qualifications.ExamGrading) (uint64, error) {
+	result, err := s.getQualificationResult(ctx, qualificationId, resultId, []qualifications.ResultStatus{qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL}, userInfo, userId)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		return 0, err
 	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
+
+	quali, err := s.getQualification(ctx, qualificationId, tQuali.ID.EQ(jet.Uint64(qualificationId)), userInfo, false)
+	if err != nil {
+		return 0, err
+	}
 
 	tQualiResults := table.FivenetQualificationsResults
 	// There is currently no result with status successful
-	if req.Result.Id <= 0 && (result == nil || (result.Status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && req.Result.Status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
+	if resultId <= 0 && (result == nil || (result.Status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
+		var creatorId jet.Expression
+		if userInfo.UserId <= 0 {
+			creatorId = jet.NULL
+		} else {
+			creatorId = jet.Int32(userInfo.UserId)
+		}
+
 		stmt := tQualiResults.
 			INSERT(
 				tQualiResults.QualificationID,
@@ -292,34 +307,32 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 			).
 			VALUES(
 				quali.Id,
-				req.Result.UserId,
-				req.Result.Status,
-				req.Result.Score,
-				req.Result.Summary,
-				userInfo.UserId,
+				userId,
+				status,
+				score,
+				summary,
+				creatorId,
 				userInfo.Job,
 			)
 
 		res, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			return 0, err
 		}
 
 		lastId, err := res.LastInsertId()
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			return 0, err
 		}
 
-		req.Result.Id = uint64(lastId)
-
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
+		resultId = uint64(lastId)
 	} else {
-		result, err := s.getQualificationResult(ctx, quali.Id, req.Result.Id, nil, userInfo, req.Result.UserId)
+		result, err := s.getQualificationResult(ctx, quali.Id, resultId, nil, userInfo, userId)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			return 0, err
 		}
 
-		req.Result.UserId = result.UserId
+		userId = result.UserId
 
 		stmt := tQualiResults.
 			UPDATE(
@@ -331,58 +344,68 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 			).
 			SET(
 				quali.Id,
-				req.Result.UserId,
-				req.Result.Status,
-				req.Result.Score,
-				req.Result.Summary,
+				userId,
+				status,
+				score,
+				summary,
 			).
 			WHERE(jet.AND(
-				tQualiResults.ID.EQ(jet.Uint64(req.Result.Id)),
+				tQualiResults.ID.EQ(jet.Uint64(resultId)),
 				tQualiResults.DeletedAt.IS_NULL(),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			return 0, err
 		}
-
-		auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 	}
 
-	if quali.ExamMode > qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED && req.Grading != nil { // Only update the exam grading info when
+	if quali.ExamMode > qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED && grading != nil { // Only update the exam grading info when
 		// Insert/update exam grading info from tutor
 		stmt := tExamResponses.
 			UPDATE(
 				tExamResponses.Grading,
 			).
 			SET(
-				req.Grading,
+				grading,
 			).
 			WHERE(jet.AND(
 				tExamResponses.QualificationID.EQ(jet.Uint64(quali.Id)),
-				tExamResponses.UserID.EQ(jet.Int32(req.Result.UserId)),
+				tExamResponses.UserID.EQ(jet.Int32(userId)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			return 0, err
 		}
 	}
 
 	if quali.LabelSyncEnabled {
 		// Add/Remove label based on result status
-		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, req.Result.UserId, req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		// TODO add check to only add label to the user if they are part of the qualification creator's job
+		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, userId, status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL); err != nil {
+			return 0, err
 		}
 	}
 
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	// If the result is successful, complete the request status
+	if status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+		if err := s.updateRequestStatus(ctx, tx, qualificationId, userId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
+			return 0, err
+		}
+	} else {
+		// If failed or other status, delete the request
+		if err := s.deleteQualificationRequest(ctx, tx, qualificationId, userId); err != nil {
+			return 0, err
+		}
+
+		if err := s.deleteExamUser(ctx, tx, qualificationId, userId); err != nil {
+			return 0, err
+		}
 	}
 
 	// Only send notification when the original result had no score and wasn't in pending status
-	if req.Result.Status != qualifications.ResultStatus_RESULT_STATUS_PENDING && (result == nil || (result.Status == qualifications.ResultStatus_RESULT_STATUS_PENDING || (result.Score == nil && req.Result.Score != nil))) {
+	if status != qualifications.ResultStatus_RESULT_STATUS_PENDING && (result == nil || (result.Status == qualifications.ResultStatus_RESULT_STATUS_PENDING || (result.Score == nil && score != nil))) {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
-			UserId: req.Result.UserId,
+			UserId: userId,
 			Title: &common.TranslateItem{
 				Key: "notifications.qualifications.result_updated.title",
 			},
@@ -394,38 +417,15 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Data: &notifications.Data{
 				Link: &notifications.Link{
-					To: fmt.Sprintf("/qualifications/%d", req.Result.QualificationId),
+					To: fmt.Sprintf("/qualifications/%d", qualificationId),
 				},
 			},
 		}); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			return 0, err
 		}
 	}
 
-	// If the result is successful, complete the request status
-	if req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
-		if err := s.updateRequestStatus(ctx, req.Result.QualificationId, req.Result.UserId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-	} else {
-		// If failed or other status, delete the request
-		if err := s.deleteQualificationRequest(ctx, s.db, req.Result.QualificationId, req.Result.UserId); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-
-		if err := s.deleteExamUser(ctx, s.db, req.Result.QualificationId, req.Result.UserId); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-	}
-
-	result, err = s.getQualificationResult(ctx, quali.Id, req.Result.Id, nil, userInfo, req.Result.UserId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-
-	return &pbqualifications.CreateOrUpdateQualificationResultResponse{
-		Result: result,
-	}, nil
+	return resultId, nil
 }
 
 func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, status []qualifications.ResultStatus, userInfo *userinfo.UserInfo, userId int32) (*qualifications.QualificationResult, error) {

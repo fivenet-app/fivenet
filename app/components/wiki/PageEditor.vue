@@ -145,6 +145,12 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
         return;
     }
 
+    const now = Date.now();
+    // Skip if identical to last saved or if within MIN_GAP
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
+        return;
+    }
+
     saving.value = true;
 
     historyStore.addVersion<Content>(
@@ -160,22 +166,18 @@ async function saveHistory(values: Schema, name: string | undefined = undefined,
     useTimeoutFn(() => {
         saving.value = false;
     }, 1750);
+
+    lastSavedString = state.content;
+    lastSaveTimestamp = now;
 }
+
+historyStore.handleRefresh(() => saveHistory(state, 'wiki'));
 
 watchDebounced(
     state,
     () => {
         if (changed.value) {
-            const now = Date.now();
-            // Skip if identical to last saved or if within MIN_GAP
-            if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
-                return;
-            }
-
             saveHistory(state);
-
-            lastSavedString = state.content;
-            lastSaveTimestamp = now;
         } else {
             changed.value = true;
         }
@@ -519,6 +521,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <TiptapEditor
                                 v-model="state.content"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                history-type="wiki"
                                 :target-id="page?.id"
                                 filestore-namespace="wiki"
                                 :filestore-service="(opts) => $grpc.wiki.wiki.uploadFile(opts)"

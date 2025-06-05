@@ -19,7 +19,7 @@ import type {
     QualificationRequirement,
     QualificationShort,
 } from '~~/gen/ts/resources/qualifications/qualifications';
-import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
+import { AutoGradeMode, QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
@@ -101,7 +101,9 @@ const state = reactive<Schema>({
             seconds: 360,
             nanos: 0,
         },
-        automaticGrading: false,
+        autoGrade: false,
+        autoGradeMode: AutoGradeMode.STRICT,
+        minimumPoints: 0,
     },
     exam: {
         questions: [],
@@ -122,21 +124,38 @@ const saving = ref(false);
 let lastSavedString = '';
 let lastSaveTimestamp = 0;
 
-async function saveHistory(values: Schema, type = 'qualification'): Promise<void> {
+async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'qualification'): Promise<void> {
     if (saving.value) {
         return;
     }
+
+    const now = Date.now();
+    // Skip if identical to last saved or if within MIN_GAP
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
+        return;
+    }
+
     saving.value = true;
 
-    historyStore.addVersion<Content>(type, props.qualificationId, {
-        content: values.content,
-        files: values.files,
-    });
+    historyStore.addVersion<Content>(
+        type,
+        props.qualificationId,
+        {
+            content: values.content,
+            files: values.files,
+        },
+        name,
+    );
 
     useTimeoutFn(() => {
         saving.value = false;
     }, 1750);
+
+    lastSavedString = state.content;
+    lastSaveTimestamp = now;
 }
+
+historyStore.handleRefresh(() => saveHistory(state, 'qualification'));
 
 watchDebounced(
     state,
@@ -210,6 +229,9 @@ function setFromProps(): void {
             if (q.answer === undefined) {
                 q.answer = {
                     answerKey: '',
+                    answer: {
+                        oneofKind: undefined,
+                    },
                 };
             }
         });
@@ -246,7 +268,16 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             discordSettings: values.discordSettings,
             examMode: values.examMode,
             examSettings: values.examSettings,
-            exam: values.exam,
+            exam: {
+                questions: values.exam.questions.slice().map((q) => {
+                    if (q.answer?.answer.oneofKind === 'singleChoice') {
+                        if (q.answer.answer.singleChoice.choice === '__UNDEFINED__') {
+                            q.answer.answer.singleChoice.choice = '';
+                        }
+                    }
+                    return q;
+                }),
+            },
             access: values.access,
             labelSyncEnabled: values.labelSyncEnabled,
             labelSyncFormat: values.labelSyncFormat,
@@ -308,6 +339,11 @@ const items = [
         slot: 'details',
         label: t('common.detail', 2),
         icon: 'i-mdi-details',
+    },
+    {
+        slot: 'access',
+        label: t('common.access'),
+        icon: 'i-mdi-key',
     },
     {
         slot: 'exam',
@@ -490,6 +526,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                     v-model="state.content"
                                     class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                     :disabled="!canDo.edit"
+                                    history-type="qualification"
                                     :target-id="props.qualificationId ?? 0"
                                     filestore-namespace="qualifications"
                                     :filestore-service="(opts) => $grpc.qualifications.qualifications.uploadFile(opts)"
@@ -500,10 +537,10 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     </template>
                 </template>
 
-                <template #details>
+                <template #access>
                     <div class="flex flex-col gap-2 overflow-y-auto px-2">
                         <div>
-                            <h2 class="text- text-gray-900 dark:text-white">
+                            <h2 class="text-gray-900 dark:text-white">
                                 {{ $t('common.access') }}
                             </h2>
 
@@ -515,9 +552,13 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
                             />
                         </div>
+                    </div>
+                </template>
 
+                <template #details>
+                    <div class="flex flex-col gap-2 overflow-y-auto px-2">
                         <div>
-                            <h2 class="text- text-gray-900 dark:text-white">
+                            <h2 class="text-gray-900 dark:text-white">
                                 {{ $t('common.requirements', 2) }}
                             </h2>
 
@@ -549,16 +590,12 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 <template #discord>
                                     <UContainer>
                                         <UFormGroup
+                                            class="grid grid-cols-2 items-center gap-2"
                                             name="discordSettings.enabled"
                                             :label="$t('common.enabled')"
-                                            :ui="{ container: 'inline-flex gap-2' }"
+                                            :ui="{ container: '' }"
                                         >
-                                            <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit">
-                                                <span class="sr-only">
-                                                    {{ $t('common.enabled') }}
-                                                </span>
-                                            </UToggle>
-                                            <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
+                                            <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit" />
                                         </UFormGroup>
 
                                         <UFormGroup name="discordSettings.roleName" :label="$t('common.role')">
@@ -599,16 +636,12 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 <template #label>
                                     <UContainer>
                                         <UFormGroup
+                                            class="grid grid-cols-2 items-center gap-2"
                                             name="labelSyncEnabled"
                                             :label="$t('common.enabled')"
-                                            :ui="{ container: 'inline-flex gap-2' }"
+                                            :ui="{ container: '' }"
                                         >
-                                            <UToggle v-model="state.labelSyncEnabled" :disabled="!canDo.edit">
-                                                <span class="sr-only">
-                                                    {{ $t('common.enabled') }}
-                                                </span>
-                                            </UToggle>
-                                            <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
+                                            <UToggle v-model="state.labelSyncEnabled" :disabled="!canDo.edit" />
                                         </UFormGroup>
 
                                         <UFormGroup
@@ -630,15 +663,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 ]"
                                                 :disabled="!canDo.edit"
                                             />
-                                            <UInput
-                                                v-model="state.labelSyncFormat"
-                                                name="labelSyncFormat"
-                                                type="text"
-                                                :placeholder="
-                                                    $t('components.qualifications.qualification_editor.label_sync_format.label')
-                                                "
-                                                :disabled="!canDo.edit"
-                                            />
                                         </UFormGroup>
                                     </UContainer>
                                 </template>
@@ -646,18 +670,18 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                         </div>
 
                         <div>
-                            <h2 class="text- text-gray-900 dark:text-white">
+                            <h2 class="text-gray-900 dark:text-white">
                                 {{ $t('common.exam', 1) }}
                             </h2>
 
-                            <UFormGroup name="examMode">
+                            <UFormGroup
+                                class="grid grid-cols-2 items-center gap-2"
+                                name="examMode"
+                                :label="$t('components.qualifications.exam_mode')"
+                                :ui="{ container: '' }"
+                            >
                                 <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.examMode"
-                                        class="w-40 max-w-40"
-                                        :options="examModes"
-                                        value-attribute="mode"
-                                    >
+                                    <USelectMenu v-model="state.examMode" :options="examModes" value-attribute="mode">
                                         <template #label>
                                             <span class="truncate">
                                                 {{

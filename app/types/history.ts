@@ -1,7 +1,8 @@
 import type { File } from '~~/gen/ts/resources/file/file';
 
 export interface Version<TContent> {
-    id: string;
+    id: number;
+    date: string;
     type: string;
     name?: string;
     content: TContent;

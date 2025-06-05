@@ -79,6 +79,55 @@ func (QualificationExamMode) EnumDescriptor() ([]byte, []int) {
 	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{0}
 }
 
+type AutoGradeMode int32
+
+const (
+	AutoGradeMode_AUTO_GRADE_MODE_UNSPECIFIED    AutoGradeMode = 0
+	AutoGradeMode_AUTO_GRADE_MODE_STRICT         AutoGradeMode = 1
+	AutoGradeMode_AUTO_GRADE_MODE_PARTIAL_CREDIT AutoGradeMode = 2
+)
+
+// Enum value maps for AutoGradeMode.
+var (
+	AutoGradeMode_name = map[int32]string{
+		0: "AUTO_GRADE_MODE_UNSPECIFIED",
+		1: "AUTO_GRADE_MODE_STRICT",
+		2: "AUTO_GRADE_MODE_PARTIAL_CREDIT",
+	}
+	AutoGradeMode_value = map[string]int32{
+		"AUTO_GRADE_MODE_UNSPECIFIED":    0,
+		"AUTO_GRADE_MODE_STRICT":         1,
+		"AUTO_GRADE_MODE_PARTIAL_CREDIT": 2,
+	}
+)
+
+func (x AutoGradeMode) Enum() *AutoGradeMode {
+	p := new(AutoGradeMode)
+	*p = x
+	return p
+}
+
+func (x AutoGradeMode) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AutoGradeMode) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_qualifications_qualifications_proto_enumTypes[1].Descriptor()
+}
+
+func (AutoGradeMode) Type() protoreflect.EnumType {
+	return &file_resources_qualifications_qualifications_proto_enumTypes[1]
+}
+
+func (x AutoGradeMode) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AutoGradeMode.Descriptor instead.
+func (AutoGradeMode) EnumDescriptor() ([]byte, []int) {
+	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{1}
+}
+
 type RequestStatus int32
 
 const (
@@ -124,11 +173,11 @@ func (x RequestStatus) String() string {
 }
 
 func (RequestStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_qualifications_qualifications_proto_enumTypes[1].Descriptor()
+	return file_resources_qualifications_qualifications_proto_enumTypes[2].Descriptor()
 }
 
 func (RequestStatus) Type() protoreflect.EnumType {
-	return &file_resources_qualifications_qualifications_proto_enumTypes[1]
+	return &file_resources_qualifications_qualifications_proto_enumTypes[2]
 }
 
 func (x RequestStatus) Number() protoreflect.EnumNumber {
@@ -137,7 +186,7 @@ func (x RequestStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use RequestStatus.Descriptor instead.
 func (RequestStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{1}
+	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{2}
 }
 
 type ResultStatus int32
@@ -176,11 +225,11 @@ func (x ResultStatus) String() string {
 }
 
 func (ResultStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_qualifications_qualifications_proto_enumTypes[2].Descriptor()
+	return file_resources_qualifications_qualifications_proto_enumTypes[3].Descriptor()
 }
 
 func (ResultStatus) Type() protoreflect.EnumType {
-	return &file_resources_qualifications_qualifications_proto_enumTypes[2]
+	return &file_resources_qualifications_qualifications_proto_enumTypes[3]
 }
 
 func (x ResultStatus) Number() protoreflect.EnumNumber {
@@ -189,7 +238,7 @@ func (x ResultStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ResultStatus.Descriptor instead.
 func (ResultStatus) EnumDescriptor() ([]byte, []int) {
-	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{2}
+	return file_resources_qualifications_qualifications_proto_rawDescGZIP(), []int{3}
 }
 
 type Qualification struct {
@@ -778,11 +827,13 @@ func (x *QualificationDiscordSettings) GetRoleFormat() string {
 
 // @dbscanner: json
 type QualificationExamSettings struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Time             *durationpb.Duration   `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
-	AutomaticGrading bool                   `protobuf:"varint,2,opt,name=automatic_grading,json=automaticGrading,proto3" json:"automatic_grading,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Time          *durationpb.Duration   `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`
+	AutoGrade     bool                   `protobuf:"varint,2,opt,name=auto_grade,json=autoGrade,proto3" json:"auto_grade,omitempty"`
+	AutoGradeMode AutoGradeMode          `protobuf:"varint,3,opt,name=auto_grade_mode,json=autoGradeMode,proto3,enum=resources.qualifications.AutoGradeMode" json:"auto_grade_mode,omitempty"`
+	MinimumPoints int32                  `protobuf:"varint,4,opt,name=minimum_points,json=minimumPoints,proto3" json:"minimum_points,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *QualificationExamSettings) Reset() {
@@ -822,11 +873,25 @@ func (x *QualificationExamSettings) GetTime() *durationpb.Duration {
 	return nil
 }
 
-func (x *QualificationExamSettings) GetAutomaticGrading() bool {
+func (x *QualificationExamSettings) GetAutoGrade() bool {
 	if x != nil {
-		return x.AutomaticGrading
+		return x.AutoGrade
 	}
 	return false
+}
+
+func (x *QualificationExamSettings) GetAutoGradeMode() AutoGradeMode {
+	if x != nil {
+		return x.AutoGradeMode
+	}
+	return AutoGradeMode_AUTO_GRADE_MODE_UNSPECIFIED
+}
+
+func (x *QualificationExamSettings) GetMinimumPoints() int32 {
+	if x != nil {
+		return x.MinimumPoints
+	}
+	return 0
 }
 
 type QualificationRequest struct {
@@ -1219,10 +1284,13 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"roleFormat\x88\x01\x01B\f\n" +
 	"\n" +
 	"_role_nameB\x0e\n" +
-	"\f_role_format\"\x8c\x01\n" +
+	"\f_role_format\"\x80\x02\n" +
 	"\x19QualificationExamSettings\x12B\n" +
-	"\x04time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x13\xfaB\x10\xaa\x01\r\b\x01\x1a\x04\b\x80\xa4?2\x03\b\xac\x02R\x04time\x12+\n" +
-	"\x11automatic_grading\x18\x02 \x01(\bR\x10automaticGrading\"\xa9\a\n" +
+	"\x04time\x18\x01 \x01(\v2\x19.google.protobuf.DurationB\x13\xfaB\x10\xaa\x01\r\b\x01\x1a\x04\b\x80\xa4?2\x03\b\xac\x02R\x04time\x12\x1d\n" +
+	"\n" +
+	"auto_grade\x18\x02 \x01(\bR\tautoGrade\x12Y\n" +
+	"\x0fauto_grade_mode\x18\x03 \x01(\x0e2'.resources.qualifications.AutoGradeModeB\b\xfaB\x05\x82\x01\x02\x10\x01R\rautoGradeMode\x12%\n" +
+	"\x0eminimum_points\x18\x04 \x01(\x05R\rminimumPoints\"\xa9\a\n" +
 	"\x14QualificationRequest\x12B\n" +
 	"\n" +
 	"created_at\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
@@ -1281,7 +1349,11 @@ const file_resources_qualifications_qualifications_proto_rawDesc = "" +
 	"#QUALIFICATION_EXAM_MODE_UNSPECIFIED\x10\x00\x12$\n" +
 	" QUALIFICATION_EXAM_MODE_DISABLED\x10\x01\x12*\n" +
 	"&QUALIFICATION_EXAM_MODE_REQUEST_NEEDED\x10\x02\x12#\n" +
-	"\x1fQUALIFICATION_EXAM_MODE_ENABLED\x10\x03*\xe3\x01\n" +
+	"\x1fQUALIFICATION_EXAM_MODE_ENABLED\x10\x03*p\n" +
+	"\rAutoGradeMode\x12\x1f\n" +
+	"\x1bAUTO_GRADE_MODE_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16AUTO_GRADE_MODE_STRICT\x10\x01\x12\"\n" +
+	"\x1eAUTO_GRADE_MODE_PARTIAL_CREDIT\x10\x02*\xe3\x01\n" +
 	"\rRequestStatus\x12\x1e\n" +
 	"\x1aREQUEST_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
 	"\x16REQUEST_STATUS_PENDING\x10\x01\x12\x19\n" +
@@ -1308,71 +1380,73 @@ func file_resources_qualifications_qualifications_proto_rawDescGZIP() []byte {
 	return file_resources_qualifications_qualifications_proto_rawDescData
 }
 
-var file_resources_qualifications_qualifications_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_resources_qualifications_qualifications_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
 var file_resources_qualifications_qualifications_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_resources_qualifications_qualifications_proto_goTypes = []any{
 	(QualificationExamMode)(0),           // 0: resources.qualifications.QualificationExamMode
-	(RequestStatus)(0),                   // 1: resources.qualifications.RequestStatus
-	(ResultStatus)(0),                    // 2: resources.qualifications.ResultStatus
-	(*Qualification)(nil),                // 3: resources.qualifications.Qualification
-	(*QualificationShort)(nil),           // 4: resources.qualifications.QualificationShort
-	(*QualificationRequirement)(nil),     // 5: resources.qualifications.QualificationRequirement
-	(*QualificationDiscordSettings)(nil), // 6: resources.qualifications.QualificationDiscordSettings
-	(*QualificationExamSettings)(nil),    // 7: resources.qualifications.QualificationExamSettings
-	(*QualificationRequest)(nil),         // 8: resources.qualifications.QualificationRequest
-	(*QualificationResult)(nil),          // 9: resources.qualifications.QualificationResult
-	(*timestamp.Timestamp)(nil),          // 10: resources.timestamp.Timestamp
-	(*content.Content)(nil),              // 11: resources.common.content.Content
-	(*users.UserShort)(nil),              // 12: resources.users.UserShort
-	(*QualificationAccess)(nil),          // 13: resources.qualifications.QualificationAccess
-	(*ExamQuestions)(nil),                // 14: resources.qualifications.ExamQuestions
-	(*file.File)(nil),                    // 15: resources.file.File
-	(*durationpb.Duration)(nil),          // 16: google.protobuf.Duration
+	(AutoGradeMode)(0),                   // 1: resources.qualifications.AutoGradeMode
+	(RequestStatus)(0),                   // 2: resources.qualifications.RequestStatus
+	(ResultStatus)(0),                    // 3: resources.qualifications.ResultStatus
+	(*Qualification)(nil),                // 4: resources.qualifications.Qualification
+	(*QualificationShort)(nil),           // 5: resources.qualifications.QualificationShort
+	(*QualificationRequirement)(nil),     // 6: resources.qualifications.QualificationRequirement
+	(*QualificationDiscordSettings)(nil), // 7: resources.qualifications.QualificationDiscordSettings
+	(*QualificationExamSettings)(nil),    // 8: resources.qualifications.QualificationExamSettings
+	(*QualificationRequest)(nil),         // 9: resources.qualifications.QualificationRequest
+	(*QualificationResult)(nil),          // 10: resources.qualifications.QualificationResult
+	(*timestamp.Timestamp)(nil),          // 11: resources.timestamp.Timestamp
+	(*content.Content)(nil),              // 12: resources.common.content.Content
+	(*users.UserShort)(nil),              // 13: resources.users.UserShort
+	(*QualificationAccess)(nil),          // 14: resources.qualifications.QualificationAccess
+	(*ExamQuestions)(nil),                // 15: resources.qualifications.ExamQuestions
+	(*file.File)(nil),                    // 16: resources.file.File
+	(*durationpb.Duration)(nil),          // 17: google.protobuf.Duration
 }
 var file_resources_qualifications_qualifications_proto_depIdxs = []int32{
-	10, // 0: resources.qualifications.Qualification.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 1: resources.qualifications.Qualification.updated_at:type_name -> resources.timestamp.Timestamp
-	10, // 2: resources.qualifications.Qualification.deleted_at:type_name -> resources.timestamp.Timestamp
-	11, // 3: resources.qualifications.Qualification.content:type_name -> resources.common.content.Content
-	12, // 4: resources.qualifications.Qualification.creator:type_name -> resources.users.UserShort
-	13, // 5: resources.qualifications.Qualification.access:type_name -> resources.qualifications.QualificationAccess
-	5,  // 6: resources.qualifications.Qualification.requirements:type_name -> resources.qualifications.QualificationRequirement
-	6,  // 7: resources.qualifications.Qualification.discord_settings:type_name -> resources.qualifications.QualificationDiscordSettings
+	11, // 0: resources.qualifications.Qualification.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 1: resources.qualifications.Qualification.updated_at:type_name -> resources.timestamp.Timestamp
+	11, // 2: resources.qualifications.Qualification.deleted_at:type_name -> resources.timestamp.Timestamp
+	12, // 3: resources.qualifications.Qualification.content:type_name -> resources.common.content.Content
+	13, // 4: resources.qualifications.Qualification.creator:type_name -> resources.users.UserShort
+	14, // 5: resources.qualifications.Qualification.access:type_name -> resources.qualifications.QualificationAccess
+	6,  // 6: resources.qualifications.Qualification.requirements:type_name -> resources.qualifications.QualificationRequirement
+	7,  // 7: resources.qualifications.Qualification.discord_settings:type_name -> resources.qualifications.QualificationDiscordSettings
 	0,  // 8: resources.qualifications.Qualification.exam_mode:type_name -> resources.qualifications.QualificationExamMode
-	7,  // 9: resources.qualifications.Qualification.exam_settings:type_name -> resources.qualifications.QualificationExamSettings
-	14, // 10: resources.qualifications.Qualification.exam:type_name -> resources.qualifications.ExamQuestions
-	9,  // 11: resources.qualifications.Qualification.result:type_name -> resources.qualifications.QualificationResult
-	8,  // 12: resources.qualifications.Qualification.request:type_name -> resources.qualifications.QualificationRequest
-	15, // 13: resources.qualifications.Qualification.files:type_name -> resources.file.File
-	10, // 14: resources.qualifications.QualificationShort.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 15: resources.qualifications.QualificationShort.updated_at:type_name -> resources.timestamp.Timestamp
-	10, // 16: resources.qualifications.QualificationShort.deleted_at:type_name -> resources.timestamp.Timestamp
-	12, // 17: resources.qualifications.QualificationShort.creator:type_name -> resources.users.UserShort
-	5,  // 18: resources.qualifications.QualificationShort.requirements:type_name -> resources.qualifications.QualificationRequirement
+	8,  // 9: resources.qualifications.Qualification.exam_settings:type_name -> resources.qualifications.QualificationExamSettings
+	15, // 10: resources.qualifications.Qualification.exam:type_name -> resources.qualifications.ExamQuestions
+	10, // 11: resources.qualifications.Qualification.result:type_name -> resources.qualifications.QualificationResult
+	9,  // 12: resources.qualifications.Qualification.request:type_name -> resources.qualifications.QualificationRequest
+	16, // 13: resources.qualifications.Qualification.files:type_name -> resources.file.File
+	11, // 14: resources.qualifications.QualificationShort.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 15: resources.qualifications.QualificationShort.updated_at:type_name -> resources.timestamp.Timestamp
+	11, // 16: resources.qualifications.QualificationShort.deleted_at:type_name -> resources.timestamp.Timestamp
+	13, // 17: resources.qualifications.QualificationShort.creator:type_name -> resources.users.UserShort
+	6,  // 18: resources.qualifications.QualificationShort.requirements:type_name -> resources.qualifications.QualificationRequirement
 	0,  // 19: resources.qualifications.QualificationShort.exam_mode:type_name -> resources.qualifications.QualificationExamMode
-	7,  // 20: resources.qualifications.QualificationShort.exam_settings:type_name -> resources.qualifications.QualificationExamSettings
-	9,  // 21: resources.qualifications.QualificationShort.result:type_name -> resources.qualifications.QualificationResult
-	10, // 22: resources.qualifications.QualificationRequirement.created_at:type_name -> resources.timestamp.Timestamp
-	4,  // 23: resources.qualifications.QualificationRequirement.target_qualification:type_name -> resources.qualifications.QualificationShort
-	16, // 24: resources.qualifications.QualificationExamSettings.time:type_name -> google.protobuf.Duration
-	10, // 25: resources.qualifications.QualificationRequest.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 26: resources.qualifications.QualificationRequest.deleted_at:type_name -> resources.timestamp.Timestamp
-	4,  // 27: resources.qualifications.QualificationRequest.qualification:type_name -> resources.qualifications.QualificationShort
-	12, // 28: resources.qualifications.QualificationRequest.user:type_name -> resources.users.UserShort
-	1,  // 29: resources.qualifications.QualificationRequest.status:type_name -> resources.qualifications.RequestStatus
-	10, // 30: resources.qualifications.QualificationRequest.approved_at:type_name -> resources.timestamp.Timestamp
-	12, // 31: resources.qualifications.QualificationRequest.approver:type_name -> resources.users.UserShort
-	10, // 32: resources.qualifications.QualificationResult.created_at:type_name -> resources.timestamp.Timestamp
-	10, // 33: resources.qualifications.QualificationResult.deleted_at:type_name -> resources.timestamp.Timestamp
-	4,  // 34: resources.qualifications.QualificationResult.qualification:type_name -> resources.qualifications.QualificationShort
-	12, // 35: resources.qualifications.QualificationResult.user:type_name -> resources.users.UserShort
-	2,  // 36: resources.qualifications.QualificationResult.status:type_name -> resources.qualifications.ResultStatus
-	12, // 37: resources.qualifications.QualificationResult.creator:type_name -> resources.users.UserShort
-	38, // [38:38] is the sub-list for method output_type
-	38, // [38:38] is the sub-list for method input_type
-	38, // [38:38] is the sub-list for extension type_name
-	38, // [38:38] is the sub-list for extension extendee
-	0,  // [0:38] is the sub-list for field type_name
+	8,  // 20: resources.qualifications.QualificationShort.exam_settings:type_name -> resources.qualifications.QualificationExamSettings
+	10, // 21: resources.qualifications.QualificationShort.result:type_name -> resources.qualifications.QualificationResult
+	11, // 22: resources.qualifications.QualificationRequirement.created_at:type_name -> resources.timestamp.Timestamp
+	5,  // 23: resources.qualifications.QualificationRequirement.target_qualification:type_name -> resources.qualifications.QualificationShort
+	17, // 24: resources.qualifications.QualificationExamSettings.time:type_name -> google.protobuf.Duration
+	1,  // 25: resources.qualifications.QualificationExamSettings.auto_grade_mode:type_name -> resources.qualifications.AutoGradeMode
+	11, // 26: resources.qualifications.QualificationRequest.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 27: resources.qualifications.QualificationRequest.deleted_at:type_name -> resources.timestamp.Timestamp
+	5,  // 28: resources.qualifications.QualificationRequest.qualification:type_name -> resources.qualifications.QualificationShort
+	13, // 29: resources.qualifications.QualificationRequest.user:type_name -> resources.users.UserShort
+	2,  // 30: resources.qualifications.QualificationRequest.status:type_name -> resources.qualifications.RequestStatus
+	11, // 31: resources.qualifications.QualificationRequest.approved_at:type_name -> resources.timestamp.Timestamp
+	13, // 32: resources.qualifications.QualificationRequest.approver:type_name -> resources.users.UserShort
+	11, // 33: resources.qualifications.QualificationResult.created_at:type_name -> resources.timestamp.Timestamp
+	11, // 34: resources.qualifications.QualificationResult.deleted_at:type_name -> resources.timestamp.Timestamp
+	5,  // 35: resources.qualifications.QualificationResult.qualification:type_name -> resources.qualifications.QualificationShort
+	13, // 36: resources.qualifications.QualificationResult.user:type_name -> resources.users.UserShort
+	3,  // 37: resources.qualifications.QualificationResult.status:type_name -> resources.qualifications.ResultStatus
+	13, // 38: resources.qualifications.QualificationResult.creator:type_name -> resources.users.UserShort
+	39, // [39:39] is the sub-list for method output_type
+	39, // [39:39] is the sub-list for method input_type
+	39, // [39:39] is the sub-list for extension type_name
+	39, // [39:39] is the sub-list for extension extendee
+	0,  // [0:39] is the sub-list for field type_name
 }
 
 func init() { file_resources_qualifications_qualifications_proto_init() }
@@ -1393,7 +1467,7 @@ func file_resources_qualifications_qualifications_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_qualifications_qualifications_proto_rawDesc), len(file_resources_qualifications_qualifications_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      4,
 			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
