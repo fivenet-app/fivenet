@@ -1568,6 +1568,86 @@ func (x *ListDiscordChannelsResponse) GetChannels() []*discord.Channel {
 	return nil
 }
 
+type ListUserGuildsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserGuildsRequest) Reset() {
+	*x = ListUserGuildsRequest{}
+	mi := &file_services_settings_settings_proto_msgTypes[32]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserGuildsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserGuildsRequest) ProtoMessage() {}
+
+func (x *ListUserGuildsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_settings_proto_msgTypes[32]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserGuildsRequest.ProtoReflect.Descriptor instead.
+func (*ListUserGuildsRequest) Descriptor() ([]byte, []int) {
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{32}
+}
+
+type ListUserGuildsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Guilds        []*discord.Guild       `protobuf:"bytes,1,rep,name=guilds,proto3" json:"guilds,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListUserGuildsResponse) Reset() {
+	*x = ListUserGuildsResponse{}
+	mi := &file_services_settings_settings_proto_msgTypes[33]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListUserGuildsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListUserGuildsResponse) ProtoMessage() {}
+
+func (x *ListUserGuildsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_settings_settings_proto_msgTypes[33]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListUserGuildsResponse.ProtoReflect.Descriptor instead.
+func (*ListUserGuildsResponse) Descriptor() ([]byte, []int) {
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{33}
+}
+
+func (x *ListUserGuildsResponse) GetGuilds() []*discord.Guild {
+	if x != nil {
+		return x.Guilds
+	}
+	return nil
+}
+
 type DeleteJobLogoRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1576,7 +1656,7 @@ type DeleteJobLogoRequest struct {
 
 func (x *DeleteJobLogoRequest) Reset() {
 	*x = DeleteJobLogoRequest{}
-	mi := &file_services_settings_settings_proto_msgTypes[32]
+	mi := &file_services_settings_settings_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1588,7 +1668,7 @@ func (x *DeleteJobLogoRequest) String() string {
 func (*DeleteJobLogoRequest) ProtoMessage() {}
 
 func (x *DeleteJobLogoRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[32]
+	mi := &file_services_settings_settings_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1601,7 +1681,7 @@ func (x *DeleteJobLogoRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteJobLogoRequest.ProtoReflect.Descriptor instead.
 func (*DeleteJobLogoRequest) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{32}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{34}
 }
 
 type DeleteJobLogoResponse struct {
@@ -1612,7 +1692,7 @@ type DeleteJobLogoResponse struct {
 
 func (x *DeleteJobLogoResponse) Reset() {
 	*x = DeleteJobLogoResponse{}
-	mi := &file_services_settings_settings_proto_msgTypes[33]
+	mi := &file_services_settings_settings_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1624,7 +1704,7 @@ func (x *DeleteJobLogoResponse) String() string {
 func (*DeleteJobLogoResponse) ProtoMessage() {}
 
 func (x *DeleteJobLogoResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_settings_settings_proto_msgTypes[33]
+	mi := &file_services_settings_settings_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1637,7 +1717,7 @@ func (x *DeleteJobLogoResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteJobLogoResponse.ProtoReflect.Descriptor instead.
 func (*DeleteJobLogoResponse) Descriptor() ([]byte, []int) {
-	return file_services_settings_settings_proto_rawDescGZIP(), []int{33}
+	return file_services_settings_settings_proto_rawDescGZIP(), []int{35}
 }
 
 var File_services_settings_settings_proto protoreflect.FileDescriptor
@@ -1750,9 +1830,12 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x15DeleteFactionResponse\"\x1c\n" +
 	"\x1aListDiscordChannelsRequest\"U\n" +
 	"\x1bListDiscordChannelsResponse\x126\n" +
-	"\bchannels\x18\x01 \x03(\v2\x1a.resources.discord.ChannelR\bchannels\"\x16\n" +
+	"\bchannels\x18\x01 \x03(\v2\x1a.resources.discord.ChannelR\bchannels\"\x17\n" +
+	"\x15ListUserGuildsRequest\"J\n" +
+	"\x16ListUserGuildsResponse\x120\n" +
+	"\x06guilds\x18\x01 \x03(\v2\x18.resources.discord.GuildR\x06guilds\"\x16\n" +
 	"\x14DeleteJobLogoRequest\"\x17\n" +
-	"\x15DeleteJobLogoResponse2\xa9\r\n" +
+	"\x15DeleteJobLogoResponse2\x90\x0e\n" +
 	"\x0fSettingsService\x12\\\n" +
 	"\vGetJobProps\x12%.services.settings.GetJobPropsRequest\x1a&.services.settings.GetJobPropsResponse\x12\\\n" +
 	"\vSetJobProps\x12%.services.settings.SetJobPropsRequest\x1a&.services.settings.SetJobPropsResponse\x12S\n" +
@@ -1770,7 +1853,8 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\fGetJobLimits\x12&.services.settings.GetJobLimitsRequest\x1a'.services.settings.GetJobLimitsResponse\x12h\n" +
 	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\x12b\n" +
 	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\x12t\n" +
-	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\x12O\n" +
+	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\x12e\n" +
+	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\x12O\n" +
 	"\rUploadJobLogo\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01\x12b\n" +
 	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
@@ -1786,7 +1870,7 @@ func file_services_settings_settings_proto_rawDescGZIP() []byte {
 	return file_services_settings_settings_proto_rawDescData
 }
 
-var file_services_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 34)
+var file_services_settings_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 36)
 var file_services_settings_settings_proto_goTypes = []any{
 	(*GetJobPropsRequest)(nil),              // 0: services.settings.GetJobPropsRequest
 	(*GetJobPropsResponse)(nil),             // 1: services.settings.GetJobPropsResponse
@@ -1820,92 +1904,98 @@ var file_services_settings_settings_proto_goTypes = []any{
 	(*DeleteFactionResponse)(nil),           // 29: services.settings.DeleteFactionResponse
 	(*ListDiscordChannelsRequest)(nil),      // 30: services.settings.ListDiscordChannelsRequest
 	(*ListDiscordChannelsResponse)(nil),     // 31: services.settings.ListDiscordChannelsResponse
-	(*DeleteJobLogoRequest)(nil),            // 32: services.settings.DeleteJobLogoRequest
-	(*DeleteJobLogoResponse)(nil),           // 33: services.settings.DeleteJobLogoResponse
-	(*jobs.JobProps)(nil),                   // 34: resources.jobs.JobProps
-	(*permissions.Role)(nil),                // 35: resources.permissions.Role
-	(*permissions.PermItem)(nil),            // 36: resources.permissions.PermItem
-	(*permissions.RoleAttribute)(nil),       // 37: resources.permissions.RoleAttribute
-	(*permissions.Permission)(nil),          // 38: resources.permissions.Permission
-	(*database.PaginationRequest)(nil),      // 39: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),                   // 40: resources.common.database.Sort
-	(*timestamp.Timestamp)(nil),             // 41: resources.timestamp.Timestamp
-	(*database.PaginationResponse)(nil),     // 42: resources.common.database.PaginationResponse
-	(*audit.AuditEntry)(nil),                // 43: resources.audit.AuditEntry
-	(*discord.Channel)(nil),                 // 44: resources.discord.Channel
-	(*file.UploadPacket)(nil),               // 45: resources.file.UploadPacket
-	(*file.UploadResponse)(nil),             // 46: resources.file.UploadResponse
+	(*ListUserGuildsRequest)(nil),           // 32: services.settings.ListUserGuildsRequest
+	(*ListUserGuildsResponse)(nil),          // 33: services.settings.ListUserGuildsResponse
+	(*DeleteJobLogoRequest)(nil),            // 34: services.settings.DeleteJobLogoRequest
+	(*DeleteJobLogoResponse)(nil),           // 35: services.settings.DeleteJobLogoResponse
+	(*jobs.JobProps)(nil),                   // 36: resources.jobs.JobProps
+	(*permissions.Role)(nil),                // 37: resources.permissions.Role
+	(*permissions.PermItem)(nil),            // 38: resources.permissions.PermItem
+	(*permissions.RoleAttribute)(nil),       // 39: resources.permissions.RoleAttribute
+	(*permissions.Permission)(nil),          // 40: resources.permissions.Permission
+	(*database.PaginationRequest)(nil),      // 41: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),                   // 42: resources.common.database.Sort
+	(*timestamp.Timestamp)(nil),             // 43: resources.timestamp.Timestamp
+	(*database.PaginationResponse)(nil),     // 44: resources.common.database.PaginationResponse
+	(*audit.AuditEntry)(nil),                // 45: resources.audit.AuditEntry
+	(*discord.Channel)(nil),                 // 46: resources.discord.Channel
+	(*discord.Guild)(nil),                   // 47: resources.discord.Guild
+	(*file.UploadPacket)(nil),               // 48: resources.file.UploadPacket
+	(*file.UploadResponse)(nil),             // 49: resources.file.UploadResponse
 }
 var file_services_settings_settings_proto_depIdxs = []int32{
-	34, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
-	34, // 1: services.settings.SetJobPropsRequest.job_props:type_name -> resources.jobs.JobProps
-	34, // 2: services.settings.SetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
-	35, // 3: services.settings.GetRolesResponse.roles:type_name -> resources.permissions.Role
-	35, // 4: services.settings.GetRoleResponse.role:type_name -> resources.permissions.Role
-	35, // 5: services.settings.CreateRoleResponse.role:type_name -> resources.permissions.Role
+	36, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
+	36, // 1: services.settings.SetJobPropsRequest.job_props:type_name -> resources.jobs.JobProps
+	36, // 2: services.settings.SetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
+	37, // 3: services.settings.GetRolesResponse.roles:type_name -> resources.permissions.Role
+	37, // 4: services.settings.GetRoleResponse.role:type_name -> resources.permissions.Role
+	37, // 5: services.settings.CreateRoleResponse.role:type_name -> resources.permissions.Role
 	13, // 6: services.settings.UpdateRolePermsRequest.perms:type_name -> services.settings.PermsUpdate
 	14, // 7: services.settings.UpdateRolePermsRequest.attrs:type_name -> services.settings.AttrsUpdate
-	36, // 8: services.settings.PermsUpdate.to_update:type_name -> resources.permissions.PermItem
-	36, // 9: services.settings.PermsUpdate.to_remove:type_name -> resources.permissions.PermItem
-	37, // 10: services.settings.AttrsUpdate.to_update:type_name -> resources.permissions.RoleAttribute
-	37, // 11: services.settings.AttrsUpdate.to_remove:type_name -> resources.permissions.RoleAttribute
-	38, // 12: services.settings.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	37, // 13: services.settings.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	35, // 14: services.settings.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
-	38, // 15: services.settings.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	37, // 16: services.settings.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	39, // 17: services.settings.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	40, // 18: services.settings.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
-	41, // 19: services.settings.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp
-	41, // 20: services.settings.ViewAuditLogRequest.to:type_name -> resources.timestamp.Timestamp
-	42, // 21: services.settings.ViewAuditLogResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	43, // 22: services.settings.ViewAuditLogResponse.logs:type_name -> resources.audit.AuditEntry
-	38, // 23: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
-	37, // 24: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
-	38, // 25: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
-	37, // 26: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	38, // 8: services.settings.PermsUpdate.to_update:type_name -> resources.permissions.PermItem
+	38, // 9: services.settings.PermsUpdate.to_remove:type_name -> resources.permissions.PermItem
+	39, // 10: services.settings.AttrsUpdate.to_update:type_name -> resources.permissions.RoleAttribute
+	39, // 11: services.settings.AttrsUpdate.to_remove:type_name -> resources.permissions.RoleAttribute
+	40, // 12: services.settings.GetPermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	39, // 13: services.settings.GetPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	37, // 14: services.settings.GetEffectivePermissionsResponse.role:type_name -> resources.permissions.Role
+	40, // 15: services.settings.GetEffectivePermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	39, // 16: services.settings.GetEffectivePermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	41, // 17: services.settings.ViewAuditLogRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	42, // 18: services.settings.ViewAuditLogRequest.sort:type_name -> resources.common.database.Sort
+	43, // 19: services.settings.ViewAuditLogRequest.from:type_name -> resources.timestamp.Timestamp
+	43, // 20: services.settings.ViewAuditLogRequest.to:type_name -> resources.timestamp.Timestamp
+	44, // 21: services.settings.ViewAuditLogResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	45, // 22: services.settings.ViewAuditLogResponse.logs:type_name -> resources.audit.AuditEntry
+	40, // 23: services.settings.GetAllPermissionsResponse.permissions:type_name -> resources.permissions.Permission
+	39, // 24: services.settings.GetAllPermissionsResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	40, // 25: services.settings.GetJobLimitsResponse.permissions:type_name -> resources.permissions.Permission
+	39, // 26: services.settings.GetJobLimitsResponse.attributes:type_name -> resources.permissions.RoleAttribute
 	13, // 27: services.settings.UpdateJobLimitsRequest.perms:type_name -> services.settings.PermsUpdate
 	14, // 28: services.settings.UpdateJobLimitsRequest.attrs:type_name -> services.settings.AttrsUpdate
-	44, // 29: services.settings.ListDiscordChannelsResponse.channels:type_name -> resources.discord.Channel
-	0,  // 30: services.settings.SettingsService.GetJobProps:input_type -> services.settings.GetJobPropsRequest
-	2,  // 31: services.settings.SettingsService.SetJobProps:input_type -> services.settings.SetJobPropsRequest
-	4,  // 32: services.settings.SettingsService.GetRoles:input_type -> services.settings.GetRolesRequest
-	6,  // 33: services.settings.SettingsService.GetRole:input_type -> services.settings.GetRoleRequest
-	8,  // 34: services.settings.SettingsService.CreateRole:input_type -> services.settings.CreateRoleRequest
-	10, // 35: services.settings.SettingsService.DeleteRole:input_type -> services.settings.DeleteRoleRequest
-	12, // 36: services.settings.SettingsService.UpdateRolePerms:input_type -> services.settings.UpdateRolePermsRequest
-	16, // 37: services.settings.SettingsService.GetPermissions:input_type -> services.settings.GetPermissionsRequest
-	18, // 38: services.settings.SettingsService.GetEffectivePermissions:input_type -> services.settings.GetEffectivePermissionsRequest
-	20, // 39: services.settings.SettingsService.ViewAuditLog:input_type -> services.settings.ViewAuditLogRequest
-	22, // 40: services.settings.SettingsService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
-	24, // 41: services.settings.SettingsService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
-	26, // 42: services.settings.SettingsService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
-	28, // 43: services.settings.SettingsService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
-	30, // 44: services.settings.SettingsService.ListDiscordChannels:input_type -> services.settings.ListDiscordChannelsRequest
-	45, // 45: services.settings.SettingsService.UploadJobLogo:input_type -> resources.file.UploadPacket
-	32, // 46: services.settings.SettingsService.DeleteJobLogo:input_type -> services.settings.DeleteJobLogoRequest
-	1,  // 47: services.settings.SettingsService.GetJobProps:output_type -> services.settings.GetJobPropsResponse
-	3,  // 48: services.settings.SettingsService.SetJobProps:output_type -> services.settings.SetJobPropsResponse
-	5,  // 49: services.settings.SettingsService.GetRoles:output_type -> services.settings.GetRolesResponse
-	7,  // 50: services.settings.SettingsService.GetRole:output_type -> services.settings.GetRoleResponse
-	9,  // 51: services.settings.SettingsService.CreateRole:output_type -> services.settings.CreateRoleResponse
-	11, // 52: services.settings.SettingsService.DeleteRole:output_type -> services.settings.DeleteRoleResponse
-	15, // 53: services.settings.SettingsService.UpdateRolePerms:output_type -> services.settings.UpdateRolePermsResponse
-	17, // 54: services.settings.SettingsService.GetPermissions:output_type -> services.settings.GetPermissionsResponse
-	19, // 55: services.settings.SettingsService.GetEffectivePermissions:output_type -> services.settings.GetEffectivePermissionsResponse
-	21, // 56: services.settings.SettingsService.ViewAuditLog:output_type -> services.settings.ViewAuditLogResponse
-	23, // 57: services.settings.SettingsService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
-	25, // 58: services.settings.SettingsService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
-	27, // 59: services.settings.SettingsService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
-	29, // 60: services.settings.SettingsService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
-	31, // 61: services.settings.SettingsService.ListDiscordChannels:output_type -> services.settings.ListDiscordChannelsResponse
-	46, // 62: services.settings.SettingsService.UploadJobLogo:output_type -> resources.file.UploadResponse
-	33, // 63: services.settings.SettingsService.DeleteJobLogo:output_type -> services.settings.DeleteJobLogoResponse
-	47, // [47:64] is the sub-list for method output_type
-	30, // [30:47] is the sub-list for method input_type
-	30, // [30:30] is the sub-list for extension type_name
-	30, // [30:30] is the sub-list for extension extendee
-	0,  // [0:30] is the sub-list for field type_name
+	46, // 29: services.settings.ListDiscordChannelsResponse.channels:type_name -> resources.discord.Channel
+	47, // 30: services.settings.ListUserGuildsResponse.guilds:type_name -> resources.discord.Guild
+	0,  // 31: services.settings.SettingsService.GetJobProps:input_type -> services.settings.GetJobPropsRequest
+	2,  // 32: services.settings.SettingsService.SetJobProps:input_type -> services.settings.SetJobPropsRequest
+	4,  // 33: services.settings.SettingsService.GetRoles:input_type -> services.settings.GetRolesRequest
+	6,  // 34: services.settings.SettingsService.GetRole:input_type -> services.settings.GetRoleRequest
+	8,  // 35: services.settings.SettingsService.CreateRole:input_type -> services.settings.CreateRoleRequest
+	10, // 36: services.settings.SettingsService.DeleteRole:input_type -> services.settings.DeleteRoleRequest
+	12, // 37: services.settings.SettingsService.UpdateRolePerms:input_type -> services.settings.UpdateRolePermsRequest
+	16, // 38: services.settings.SettingsService.GetPermissions:input_type -> services.settings.GetPermissionsRequest
+	18, // 39: services.settings.SettingsService.GetEffectivePermissions:input_type -> services.settings.GetEffectivePermissionsRequest
+	20, // 40: services.settings.SettingsService.ViewAuditLog:input_type -> services.settings.ViewAuditLogRequest
+	22, // 41: services.settings.SettingsService.GetAllPermissions:input_type -> services.settings.GetAllPermissionsRequest
+	24, // 42: services.settings.SettingsService.GetJobLimits:input_type -> services.settings.GetJobLimitsRequest
+	26, // 43: services.settings.SettingsService.UpdateJobLimits:input_type -> services.settings.UpdateJobLimitsRequest
+	28, // 44: services.settings.SettingsService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
+	30, // 45: services.settings.SettingsService.ListDiscordChannels:input_type -> services.settings.ListDiscordChannelsRequest
+	32, // 46: services.settings.SettingsService.ListUserGuilds:input_type -> services.settings.ListUserGuildsRequest
+	48, // 47: services.settings.SettingsService.UploadJobLogo:input_type -> resources.file.UploadPacket
+	34, // 48: services.settings.SettingsService.DeleteJobLogo:input_type -> services.settings.DeleteJobLogoRequest
+	1,  // 49: services.settings.SettingsService.GetJobProps:output_type -> services.settings.GetJobPropsResponse
+	3,  // 50: services.settings.SettingsService.SetJobProps:output_type -> services.settings.SetJobPropsResponse
+	5,  // 51: services.settings.SettingsService.GetRoles:output_type -> services.settings.GetRolesResponse
+	7,  // 52: services.settings.SettingsService.GetRole:output_type -> services.settings.GetRoleResponse
+	9,  // 53: services.settings.SettingsService.CreateRole:output_type -> services.settings.CreateRoleResponse
+	11, // 54: services.settings.SettingsService.DeleteRole:output_type -> services.settings.DeleteRoleResponse
+	15, // 55: services.settings.SettingsService.UpdateRolePerms:output_type -> services.settings.UpdateRolePermsResponse
+	17, // 56: services.settings.SettingsService.GetPermissions:output_type -> services.settings.GetPermissionsResponse
+	19, // 57: services.settings.SettingsService.GetEffectivePermissions:output_type -> services.settings.GetEffectivePermissionsResponse
+	21, // 58: services.settings.SettingsService.ViewAuditLog:output_type -> services.settings.ViewAuditLogResponse
+	23, // 59: services.settings.SettingsService.GetAllPermissions:output_type -> services.settings.GetAllPermissionsResponse
+	25, // 60: services.settings.SettingsService.GetJobLimits:output_type -> services.settings.GetJobLimitsResponse
+	27, // 61: services.settings.SettingsService.UpdateJobLimits:output_type -> services.settings.UpdateJobLimitsResponse
+	29, // 62: services.settings.SettingsService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
+	31, // 63: services.settings.SettingsService.ListDiscordChannels:output_type -> services.settings.ListDiscordChannelsResponse
+	33, // 64: services.settings.SettingsService.ListUserGuilds:output_type -> services.settings.ListUserGuildsResponse
+	49, // 65: services.settings.SettingsService.UploadJobLogo:output_type -> resources.file.UploadResponse
+	35, // 66: services.settings.SettingsService.DeleteJobLogo:output_type -> services.settings.DeleteJobLogoResponse
+	49, // [49:67] is the sub-list for method output_type
+	31, // [31:49] is the sub-list for method input_type
+	31, // [31:31] is the sub-list for extension type_name
+	31, // [31:31] is the sub-list for extension extendee
+	0,  // [0:31] is the sub-list for field type_name
 }
 
 func init() { file_services_settings_settings_proto_init() }
@@ -1924,7 +2014,7 @@ func file_services_settings_settings_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_settings_settings_proto_rawDesc), len(file_services_settings_settings_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   34,
+			NumMessages:   36,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

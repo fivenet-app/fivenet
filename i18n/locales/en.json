@@ -669,7 +669,8 @@
         "firstname": "Firstname",
         "lastname": "Lastname",
         "first_citizen": "First Citizen",
-        "auto_save": "Auto Save"
+        "auto_save": "Auto Save",
+        "discord_guild": "Discord Guild | Discord Guilds"
     },
     "components": {
         "partials": {
@@ -2180,7 +2181,11 @@
             "ErrOwnRoleDeletion": "Can't delete your own role!",
             "ErrInvalidPerms": "Failed to update role permissions!",
             "ErrInvalidAttrs": "Failed to update role attributes!",
-            "ErrDiscordNotEnabled": "Discord bot integration is not enabled!"
+            "ErrDiscordNotEnabled": "Discord bot integration is not enabled!",
+            "ErrDiscordConnectRequired": {
+                "title": "You must have your Discord account connected!",
+                "content": "Please make sure to connect your Discord account with FiveNet."
+            }
         },
         "Filestore": {
             "ErrInvalidUploadMeta": "Invalid upload meta data!",

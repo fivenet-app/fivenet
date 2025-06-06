@@ -4436,6 +4436,244 @@ var _ interface {
 	ErrorName() string
 } = ListDiscordChannelsResponseValidationError{}
 
+// Validate checks the field values on ListUserGuildsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListUserGuildsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListUserGuildsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListUserGuildsRequestMultiError, or nil if none found.
+func (m *ListUserGuildsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListUserGuildsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListUserGuildsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListUserGuildsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListUserGuildsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListUserGuildsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListUserGuildsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListUserGuildsRequestMultiError) AllErrors() []error { return m }
+
+// ListUserGuildsRequestValidationError is the validation error returned by
+// ListUserGuildsRequest.Validate if the designated constraints aren't met.
+type ListUserGuildsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListUserGuildsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListUserGuildsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListUserGuildsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListUserGuildsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListUserGuildsRequestValidationError) ErrorName() string {
+	return "ListUserGuildsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListUserGuildsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListUserGuildsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListUserGuildsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListUserGuildsRequestValidationError{}
+
+// Validate checks the field values on ListUserGuildsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListUserGuildsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListUserGuildsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListUserGuildsResponseMultiError, or nil if none found.
+func (m *ListUserGuildsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListUserGuildsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetGuilds() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListUserGuildsResponseValidationError{
+						field:  fmt.Sprintf("Guilds[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListUserGuildsResponseValidationError{
+						field:  fmt.Sprintf("Guilds[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListUserGuildsResponseValidationError{
+					field:  fmt.Sprintf("Guilds[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListUserGuildsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListUserGuildsResponseMultiError is an error wrapping multiple validation
+// errors returned by ListUserGuildsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListUserGuildsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListUserGuildsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListUserGuildsResponseMultiError) AllErrors() []error { return m }
+
+// ListUserGuildsResponseValidationError is the validation error returned by
+// ListUserGuildsResponse.Validate if the designated constraints aren't met.
+type ListUserGuildsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListUserGuildsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListUserGuildsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListUserGuildsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListUserGuildsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListUserGuildsResponseValidationError) ErrorName() string {
+	return "ListUserGuildsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListUserGuildsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListUserGuildsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListUserGuildsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListUserGuildsResponseValidationError{}
+
 // Validate checks the field values on DeleteJobLogoRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

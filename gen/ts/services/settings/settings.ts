@@ -13,6 +13,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Guild } from "../../resources/discord/discord";
 import { Channel } from "../../resources/discord/discord";
 import { AuditEntry } from "../../resources/audit/audit";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -381,6 +382,20 @@ export interface ListDiscordChannelsResponse {
      * @generated from protobuf field: repeated resources.discord.Channel channels = 1
      */
     channels: Channel[];
+}
+/**
+ * @generated from protobuf message services.settings.ListUserGuildsRequest
+ */
+export interface ListUserGuildsRequest {
+}
+/**
+ * @generated from protobuf message services.settings.ListUserGuildsResponse
+ */
+export interface ListUserGuildsResponse {
+    /**
+     * @generated from protobuf field: repeated resources.discord.Guild guilds = 1
+     */
+    guilds: Guild[];
 }
 /**
  * @generated from protobuf message services.settings.DeleteJobLogoRequest
@@ -2009,6 +2024,91 @@ class ListDiscordChannelsResponse$Type extends MessageType<ListDiscordChannelsRe
  */
 export const ListDiscordChannelsResponse = new ListDiscordChannelsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ListUserGuildsRequest$Type extends MessageType<ListUserGuildsRequest> {
+    constructor() {
+        super("services.settings.ListUserGuildsRequest", []);
+    }
+    create(value?: PartialMessage<ListUserGuildsRequest>): ListUserGuildsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListUserGuildsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListUserGuildsRequest): ListUserGuildsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListUserGuildsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ListUserGuildsRequest
+ */
+export const ListUserGuildsRequest = new ListUserGuildsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListUserGuildsResponse$Type extends MessageType<ListUserGuildsResponse> {
+    constructor() {
+        super("services.settings.ListUserGuildsResponse", [
+            { no: 1, name: "guilds", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Guild }
+        ]);
+    }
+    create(value?: PartialMessage<ListUserGuildsResponse>): ListUserGuildsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.guilds = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListUserGuildsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListUserGuildsResponse): ListUserGuildsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.discord.Guild guilds */ 1:
+                    message.guilds.push(Guild.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListUserGuildsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.discord.Guild guilds = 1; */
+        for (let i = 0; i < message.guilds.length; i++)
+            Guild.internalBinaryWrite(message.guilds[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.ListUserGuildsResponse
+ */
+export const ListUserGuildsResponse = new ListUserGuildsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class DeleteJobLogoRequest$Type extends MessageType<DeleteJobLogoRequest> {
     constructor() {
         super("services.settings.DeleteJobLogoRequest", []);
@@ -2103,6 +2203,7 @@ export const SettingsService = new ServiceType("services.settings.SettingsServic
     { name: "UpdateJobLimits", options: {}, I: UpdateJobLimitsRequest, O: UpdateJobLimitsResponse },
     { name: "DeleteFaction", options: {}, I: DeleteFactionRequest, O: DeleteFactionResponse },
     { name: "ListDiscordChannels", options: {}, I: ListDiscordChannelsRequest, O: ListDiscordChannelsResponse },
+    { name: "ListUserGuilds", options: {}, I: ListUserGuildsRequest, O: ListUserGuildsResponse },
     { name: "UploadJobLogo", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse },
     { name: "DeleteJobLogo", options: {}, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse }
 ]);

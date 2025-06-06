@@ -54,7 +54,12 @@ func (m *MockUserInfoStore) storeUserInfo(ctx context.Context, accountId uint64,
 	return args.Error(0)
 }
 
-func (m *MockUserInfoStore) getUserInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error) {
+func (m *MockUserInfoStore) updateUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error {
+	args := m.Called(ctx, accountId, provider, userInfo)
+	return args.Error(0)
+}
+
+func (m *MockUserInfoStore) getAccountInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error) {
 	args := m.Called(ctx, provider, userInfo)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
@@ -198,12 +203,14 @@ func TestCallback_LoginSuccess(t *testing.T) {
 	}
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
-	mockUserInfoStore := new(MockUserInfoStore)
-	mockUserInfoStore.On("getUserInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
+	mockUserInfoStore := &MockUserInfoStore{}
+	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
 		ID:       123,
 		Username: &mockUserInfo.Username,
 		License:  "license",
 	}, nil)
+	mockUserInfoStore.On("updateUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).Return(nil)
+
 	oauth := &OAuth2{
 		logger: zaptest.NewLogger(t),
 		oauthConfigs: map[string]providers.IProvider{
@@ -248,8 +255,8 @@ func TestCallback_ConnectError(t *testing.T) {
 	}
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
-	mockUserInfoStore := new(MockUserInfoStore)
-	mockUserInfoStore.On("getUserInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
+	mockUserInfoStore := &MockUserInfoStore{}
+	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
 		ID:       123,
 		Username: &mockUserInfo.Username,
 		License:  "license",
@@ -305,7 +312,7 @@ func TestCallback_ConnectErrorAlreadyInUse(t *testing.T) {
 	}
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
-	mockUserInfoStore := new(MockUserInfoStore)
+	mockUserInfoStore := &MockUserInfoStore{}
 	mockUserInfoStore.On("storeUserInfo", mock.Anything, uint64(123), "test-provider", mockUserInfo).Return(&mysql.MySQLError{Number: 1062})
 
 	oauth := &OAuth2{
@@ -360,8 +367,8 @@ func TestCallback_ConnectFlow(t *testing.T) {
 	mockProvider.On("GetRedirect", mock.Anything).Return(redirectUrl)
 	mockProvider.On("GetUserInfo", mock.Anything, "test-code").Return(mockUserInfo, nil)
 
-	mockUserInfoStore := new(MockUserInfoStore)
-	mockUserInfoStore.On("getUserInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
+	mockUserInfoStore := &MockUserInfoStore{}
+	mockUserInfoStore.On("getAccountInfo", mock.Anything, "test-provider", mockUserInfo).Return(&model.FivenetAccounts{
 		ID:       123,
 		Username: &mockUserInfo.Username,
 		License:  "license",

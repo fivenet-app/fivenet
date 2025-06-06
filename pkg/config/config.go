@@ -9,29 +9,24 @@ import (
 type Config struct {
 	LogLevel string `default:"DEBUG" yaml:"logLevel"`
 	Mode     string `default:"debug" yaml:"mode"`
+	// Secret used to encrypt/decrypt data in, e.g., the database
+	Secret string `yaml:"secret"`
 
-	LogLevels map[string][]string `yaml:"logLevels"`
-
-	OTLP OTLPConfig `yaml:"otlp"`
-
-	HTTP        HTTP       `yaml:"http"`
-	Database    Database   `yaml:"database"`
-	NATS        NATS       `yaml:"nats"`
-	JWT         JWT        `yaml:"jwt"`
-	Storage     Storage    `yaml:"storage"`
-	ImageProxy  ImageProxy `yaml:"imageProxy"`
-	Audit       Audit      `yaml:"audit"`
-	OAuth2      OAuth2     `yaml:"oauth2"`
-	PostalsFile string     `default:".output/public/data/postals.json" yaml:"postalsFile"`
-
+	OTLP           OTLPConfig     `yaml:"otlp"`
+	HTTP           HTTP           `yaml:"http"`
+	Database       Database       `yaml:"database"`
+	NATS           NATS           `yaml:"nats"`
+	JWT            JWT            `yaml:"jwt"`
+	Storage        Storage        `yaml:"storage"`
+	ImageProxy     ImageProxy     `yaml:"imageProxy"`
+	Audit          Audit          `yaml:"audit"`
+	OAuth2         OAuth2         `yaml:"oauth2"`
+	PostalsFile    string         `default:".output/public/data/postals.json" yaml:"postalsFile"`
 	Auth           Auth           `yaml:"auth"`
 	DispatchCenter DispatchCenter `yaml:"dispatchCenter"`
-
-	Discord Discord `yaml:"discord"`
-
-	Game Game `yaml:"game"`
-
-	Sync Sync `yaml:"sync"`
+	Discord        Discord        `yaml:"discord"`
+	Game           Game           `yaml:"game"`
+	Sync           Sync           `yaml:"sync"`
 }
 
 type OtelExporter string

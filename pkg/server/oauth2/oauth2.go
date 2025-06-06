@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/oauth2/providers"
@@ -21,8 +22,8 @@ import (
 )
 
 var (
-	tAccs      = table.FivenetAccounts
-	tOAuthAccs = table.FivenetAccountsOauth2
+	tAccs   = table.FivenetAccounts
+	tOauth2 = table.FivenetAccountsOauth2
 )
 
 type Params struct {
@@ -32,6 +33,7 @@ type Params struct {
 	DB     *sql.DB
 	TM     *auth.TokenMgr
 	Config *config.Config
+	Crypt  *crypt.Crypt
 }
 
 type OAuth2 struct {
@@ -56,7 +58,8 @@ func New(p Params) *OAuth2 {
 		domain:       p.Config.HTTP.Sessions.Domain,
 		oauthConfigs: make(map[string]providers.IProvider, len(p.Config.OAuth2.Providers)),
 		userInfoStore: &oauth2UserInfo{
-			db: p.DB,
+			db:    p.DB,
+			crypt: p.Crypt,
 		},
 	}
 
@@ -172,6 +175,18 @@ func (o *OAuth2) Login(c *gin.Context) {
 		}
 	}
 
+	customRedirectVal := c.Query("redirect")
+	if customRedirectVal != "" {
+		u, err := url.Parse(customRedirectVal)
+		if err != nil {
+			o.logger.Error("failed to parse redirect url", zap.Error(err))
+			o.handleRedirect(c, false, false, "invalid_request_connect_only")
+			return
+		}
+
+		sess.Set("redirect", u.Path)
+	}
+
 	tokenVal, err := c.Cookie("fivenet_token")
 	if err != nil && connectOnly {
 		o.logger.Error("failed to get token cookie for connect only request", zap.Error(err))
@@ -225,10 +240,17 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		token = sessToken.(string)
 	}
 
+	var redirect string
+	redirectVal := sess.Get("redirect")
+	if redirectVal != nil {
+		redirect = redirectVal.(string)
+	}
+
 	// Remove vars from session
 	sess.Delete("connect-only")
 	sess.Delete("state")
 	sess.Delete("token")
+	sess.Delete("redirect")
 	sess.Save()
 
 	if c.Request.FormValue("state") != state {
@@ -243,7 +265,9 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
-	userInfo, err := provider.GetUserInfo(c.Request.Context(), c.Request.FormValue("code"))
+	ctx := c.Request.Context()
+
+	userInfo, err := provider.GetUserInfo(ctx, c.Request.FormValue("code"))
 	if err != nil {
 		o.logger.Error("failed to get userinfo from provider", zap.Error(err))
 		o.handleRedirect(c, connectOnly, false, "provider_failed")
@@ -257,22 +281,26 @@ func (o *OAuth2) Callback(c *gin.Context) {
 			return
 		}
 
-		if err := o.userInfoStore.storeUserInfo(c.Request.Context(), claims.AccID, provider.GetName(), userInfo); err != nil {
-			o.logger.Error("failed to store user info", zap.Error(err))
+		if err := o.userInfoStore.storeUserInfo(ctx, claims.AccID, provider.GetName(), userInfo); err != nil {
 			if dbutils.IsDuplicateError(err) {
 				o.handleRedirect(c, connectOnly, false, "already_in_use")
 			} else {
+				o.logger.Error("failed to store user info", zap.Error(err))
 				o.handleRedirect(c, connectOnly, false, ReasonInternalError)
 			}
 			return
 		}
 
-		o.handleRedirect(c, connectOnly, true, "")
+		if redirect == "" {
+			o.handleRedirect(c, connectOnly, true, "")
+		} else {
+			c.Redirect(http.StatusTemporaryRedirect, redirect)
+		}
 		return
 	}
 
-	// Take care of logging user in
-	account, err := o.userInfoStore.getUserInfo(c.Request.Context(), provider.GetName(), userInfo)
+	// Take care of updating user info (mainly for tokens and logging user in)
+	account, err := o.userInfoStore.getAccountInfo(ctx, provider.GetName(), userInfo)
 	if err != nil {
 		o.logger.Error("failed to store userinfo in database", zap.Error(err))
 		o.handleRedirect(c, connectOnly, false, ReasonInternalError)
@@ -284,6 +312,12 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	} else if account.ID == 0 {
 		o.logger.Error("invalid account id from userinfo", zap.Error(err))
+		o.handleRedirect(c, connectOnly, true, ReasonInternalError)
+		return
+	}
+
+	if err := o.userInfoStore.updateUserInfo(ctx, account.ID, provider.GetName(), userInfo); err != nil {
+		o.logger.Error("failed to update oauth2 user info for account id", zap.Uint64("account_id", account.ID), zap.Error(err))
 		o.handleRedirect(c, connectOnly, true, ReasonInternalError)
 		return
 	}

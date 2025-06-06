@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
@@ -50,10 +51,12 @@ type Server struct {
 	appCfg    appconfig.IConfig
 	js        *events.JSWrapper
 	cronState *croner.Registry
+	crypt     *crypt.Crypt
 
 	jobPropsFileHandler *filestore.Handler[string]
 
-	dc *discordapi.Client
+	dc               *discordapi.Client
+	dcOAuth2Provider *config.OAuth2Provider
 }
 
 type Params struct {
@@ -70,6 +73,7 @@ type Params struct {
 	AppConfig appconfig.IConfig
 	JS        *events.JSWrapper
 	CronState *croner.Registry
+	Crypt     *crypt.Crypt
 }
 
 func NewServer(p Params) *Server {
@@ -80,12 +84,20 @@ func NewServer(p Params) *Server {
 		},
 		filestore.UpdateJoinRow, true)
 
+	var dcOAuth2Provider *config.OAuth2Provider
 	var dc *discordapi.Client
 	if p.Config.Discord.Enabled {
 		dc = discordapi.NewClient("Bot " + p.Config.Discord.Token)
+
+		for _, provider := range p.Config.OAuth2.Providers {
+			if provider.Name == "discord" {
+				dcOAuth2Provider = provider
+				break
+			}
+		}
 	}
 
-	return &Server{
+	s := &Server{
 		logger:    p.Logger,
 		db:        p.DB,
 		ps:        p.PS,
@@ -97,11 +109,15 @@ func NewServer(p Params) *Server {
 		appCfg:    p.AppConfig,
 		js:        p.JS,
 		cronState: p.CronState,
+		crypt:     p.Crypt,
 
 		jobPropsFileHandler: fHandler,
 
-		dc: dc,
+		dc:               dc,
+		dcOAuth2Provider: dcOAuth2Provider,
 	}
+
+	return s
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

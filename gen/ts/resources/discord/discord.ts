@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.discord.Channel
  */
@@ -34,6 +35,27 @@ export interface Channel {
      * @generated from protobuf field: int64 position = 5
      */
     position: number;
+}
+/**
+ * @generated from protobuf message resources.discord.Guild
+ */
+export interface Guild {
+    /**
+     * @generated from protobuf field: string id = 1
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: string name = 2
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string icon = 3
+     */
+    icon: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 4
+     */
+    createdAt?: Timestamp;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Channel$Type extends MessageType<Channel> {
@@ -114,3 +136,73 @@ class Channel$Type extends MessageType<Channel> {
  * @generated MessageType for protobuf message resources.discord.Channel
  */
 export const Channel = new Channel$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Guild$Type extends MessageType<Guild> {
+    constructor() {
+        super("resources.discord.Guild", [
+            { no: 1, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "created_at", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<Guild>): Guild {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "";
+        message.name = "";
+        message.icon = "";
+        if (value !== undefined)
+            reflectionMergePartial<Guild>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Guild): Guild {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string id */ 1:
+                    message.id = reader.string();
+                    break;
+                case /* string name */ 2:
+                    message.name = reader.string();
+                    break;
+                case /* string icon */ 3:
+                    message.icon = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 4:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Guild, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string id = 1; */
+        if (message.id !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.id);
+        /* string name = 2; */
+        if (message.name !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* string icon = 3; */
+        if (message.icon !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.icon);
+        /* optional resources.timestamp.Timestamp created_at = 4; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.discord.Guild
+ */
+export const Guild = new Guild$Type();

@@ -10,3 +10,20 @@ func (m *Channel) Sanitize() error {
 
 	return nil
 }
+
+func (m *Guild) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

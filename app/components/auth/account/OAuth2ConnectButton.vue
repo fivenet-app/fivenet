@@ -7,10 +7,5 @@ defineProps<{
 </script>
 
 <template>
-    <form method="get" :action="`/api/oauth2/login/${provider.name}`">
-        <UButton type="submit" icon="i-mdi-connection">
-            {{ $t('common.connect') }}
-        </UButton>
-        <input type="hidden" name="connect-only" value="true" />
-    </form>
+    <UButton icon="i-mdi-connection" :label="$t('common.connect')" :to="generateDiscordConnectURL(provider.name)" />
 </template>

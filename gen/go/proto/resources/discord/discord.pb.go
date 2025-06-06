@@ -7,6 +7,7 @@
 package discord
 
 import (
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -97,17 +98,92 @@ func (x *Channel) GetPosition() int64 {
 	return 0
 }
 
+type Guild struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Icon          string                 `protobuf:"bytes,3,opt,name=icon,proto3" json:"icon,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Guild) Reset() {
+	*x = Guild{}
+	mi := &file_resources_discord_discord_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Guild) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Guild) ProtoMessage() {}
+
+func (x *Guild) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_discord_discord_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Guild.ProtoReflect.Descriptor instead.
+func (*Guild) Descriptor() ([]byte, []int) {
+	return file_resources_discord_discord_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Guild) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *Guild) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Guild) GetIcon() string {
+	if x != nil {
+		return x.Icon
+	}
+	return ""
+}
+
+func (x *Guild) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
 var File_resources_discord_discord_proto protoreflect.FileDescriptor
 
 const file_resources_discord_discord_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/discord/discord.proto\x12\x11resources.discord\"x\n" +
+	"\x1fresources/discord/discord.proto\x12\x11resources.discord\x1a#resources/timestamp/timestamp.proto\"x\n" +
 	"\aChannel\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
 	"\bguild_id\x18\x02 \x01(\tR\aguildId\x12\x12\n" +
 	"\x04name\x18\x03 \x01(\tR\x04name\x12\x12\n" +
 	"\x04type\x18\x04 \x01(\rR\x04type\x12\x1a\n" +
-	"\bposition\x18\x05 \x01(\x03R\bpositionBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord;discordb\x06proto3"
+	"\bposition\x18\x05 \x01(\x03R\bposition\"\x92\x01\n" +
+	"\x05Guild\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x12\n" +
+	"\x04icon\x18\x03 \x01(\tR\x04icon\x12B\n" +
+	"\n" +
+	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01B\r\n" +
+	"\v_created_atBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord;discordb\x06proto3"
 
 var (
 	file_resources_discord_discord_proto_rawDescOnce sync.Once
@@ -121,16 +197,19 @@ func file_resources_discord_discord_proto_rawDescGZIP() []byte {
 	return file_resources_discord_discord_proto_rawDescData
 }
 
-var file_resources_discord_discord_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_resources_discord_discord_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_discord_discord_proto_goTypes = []any{
-	(*Channel)(nil), // 0: resources.discord.Channel
+	(*Channel)(nil),             // 0: resources.discord.Channel
+	(*Guild)(nil),               // 1: resources.discord.Guild
+	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
 }
 var file_resources_discord_discord_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: resources.discord.Guild.created_at:type_name -> resources.timestamp.Timestamp
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_resources_discord_discord_proto_init() }
@@ -138,13 +217,14 @@ func file_resources_discord_discord_proto_init() {
 	if File_resources_discord_discord_proto != nil {
 		return
 	}
+	file_resources_discord_discord_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_discord_discord_proto_rawDesc), len(file_resources_discord_discord_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

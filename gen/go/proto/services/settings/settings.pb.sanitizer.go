@@ -387,6 +387,34 @@ func (m *ListDiscordChannelsResponse) Sanitize() error {
 	return nil
 }
 
+func (m *ListUserGuildsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *ListUserGuildsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Guilds
+	for idx, item := range m.Guilds {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *PermsUpdate) Sanitize() error {
 	if m == nil {
 		return nil

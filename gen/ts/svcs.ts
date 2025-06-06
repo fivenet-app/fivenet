@@ -336,6 +336,7 @@ export const grpcMethods = [
 	'settings.SettingsService/UpdateJobLimits',
 	'settings.SettingsService/DeleteFaction',
 	'settings.SettingsService/ListDiscordChannels',
+	'settings.SettingsService/ListUserGuilds',
 	'settings.SettingsService/UploadJobLogo',
 	'settings.SettingsService/DeleteJobLogo',
 	'stats.StatsService/GetStats',

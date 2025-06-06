@@ -17,12 +17,18 @@ type fivenetAccountsOauth2Table struct {
 	mysql.Table
 
 	// Columns
-	AccountID  mysql.ColumnInteger
-	CreatedAt  mysql.ColumnTimestamp
-	Provider   mysql.ColumnString
-	ExternalID mysql.ColumnString
-	Username   mysql.ColumnString
-	Avatar     mysql.ColumnString
+	AccountID    mysql.ColumnInteger
+	CreatedAt    mysql.ColumnTimestamp
+	Provider     mysql.ColumnString
+	ExternalID   mysql.ColumnString
+	Username     mysql.ColumnString
+	Avatar       mysql.ColumnString
+	AccessToken  mysql.ColumnString
+	RefreshToken mysql.ColumnString
+	TokenType    mysql.ColumnString
+	Scope        mysql.ColumnString
+	ExpiresIn    mysql.ColumnInteger
+	ObtainedAt   mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,27 +70,39 @@ func newFivenetAccountsOauth2Table(schemaName, tableName, alias string) *Fivenet
 
 func newFivenetAccountsOauth2TableImpl(schemaName, tableName, alias string) fivenetAccountsOauth2Table {
 	var (
-		AccountIDColumn  = mysql.IntegerColumn("account_id")
-		CreatedAtColumn  = mysql.TimestampColumn("created_at")
-		ProviderColumn   = mysql.StringColumn("provider")
-		ExternalIDColumn = mysql.StringColumn("external_id")
-		UsernameColumn   = mysql.StringColumn("username")
-		AvatarColumn     = mysql.StringColumn("avatar")
-		allColumns       = mysql.ColumnList{AccountIDColumn, CreatedAtColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn}
-		mutableColumns   = mysql.ColumnList{AccountIDColumn, CreatedAtColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn}
-		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
+		AccountIDColumn    = mysql.IntegerColumn("account_id")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		ProviderColumn     = mysql.StringColumn("provider")
+		ExternalIDColumn   = mysql.StringColumn("external_id")
+		UsernameColumn     = mysql.StringColumn("username")
+		AvatarColumn       = mysql.StringColumn("avatar")
+		AccessTokenColumn  = mysql.StringColumn("access_token")
+		RefreshTokenColumn = mysql.StringColumn("refresh_token")
+		TokenTypeColumn    = mysql.StringColumn("token_type")
+		ScopeColumn        = mysql.StringColumn("scope")
+		ExpiresInColumn    = mysql.IntegerColumn("expires_in")
+		ObtainedAtColumn   = mysql.TimestampColumn("obtained_at")
+		allColumns         = mysql.ColumnList{AccountIDColumn, CreatedAtColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn, AccessTokenColumn, RefreshTokenColumn, TokenTypeColumn, ScopeColumn, ExpiresInColumn, ObtainedAtColumn}
+		mutableColumns     = mysql.ColumnList{AccountIDColumn, CreatedAtColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn, AccessTokenColumn, RefreshTokenColumn, TokenTypeColumn, ScopeColumn, ExpiresInColumn, ObtainedAtColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetAccountsOauth2Table{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		AccountID:  AccountIDColumn,
-		CreatedAt:  CreatedAtColumn,
-		Provider:   ProviderColumn,
-		ExternalID: ExternalIDColumn,
-		Username:   UsernameColumn,
-		Avatar:     AvatarColumn,
+		AccountID:    AccountIDColumn,
+		CreatedAt:    CreatedAtColumn,
+		Provider:     ProviderColumn,
+		ExternalID:   ExternalIDColumn,
+		Username:     UsernameColumn,
+		Avatar:       AvatarColumn,
+		AccessToken:  AccessTokenColumn,
+		RefreshToken: RefreshTokenColumn,
+		TokenType:    TokenTypeColumn,
+		Scope:        ScopeColumn,
+		ExpiresIn:    ExpiresInColumn,
+		ObtainedAt:   ObtainedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

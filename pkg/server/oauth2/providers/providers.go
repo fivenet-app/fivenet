@@ -2,6 +2,7 @@ package providers
 
 import (
 	"context"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	jsoniter "github.com/json-iterator/go"
@@ -50,4 +51,11 @@ type UserInfo struct {
 	ID       string
 	Username string
 	Avatar   string
+
+	RefreshToken *string
+	AccessToken  *string
+	Scope        *string
+	TokenType    *string
+	ExpiresIn    *int64
+	ObtainedAt   *time.Time
 }

@@ -526,6 +526,7 @@
   
 - [resources/discord/discord.proto](#resources_discord_discord-proto)
     - [Channel](#resources-discord-Channel)
+    - [Guild](#resources-discord-Guild)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -1035,6 +1036,8 @@
     - [GetRolesResponse](#services-settings-GetRolesResponse)
     - [ListDiscordChannelsRequest](#services-settings-ListDiscordChannelsRequest)
     - [ListDiscordChannelsResponse](#services-settings-ListDiscordChannelsResponse)
+    - [ListUserGuildsRequest](#services-settings-ListUserGuildsRequest)
+    - [ListUserGuildsResponse](#services-settings-ListUserGuildsResponse)
     - [PermsUpdate](#services-settings-PermsUpdate)
     - [SetJobPropsRequest](#services-settings-SetJobPropsRequest)
     - [SetJobPropsResponse](#services-settings-SetJobPropsResponse)
@@ -8442,6 +8445,24 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+
+<a name="resources-discord-Guild"></a>
+
+### Guild
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [string](#string) |  |  |
+| `name` | [string](#string) |  |  |
+| `icon` | [string](#string) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -15392,6 +15413,31 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
+<a name="services-settings-ListUserGuildsRequest"></a>
+
+### ListUserGuildsRequest
+
+
+
+
+
+
+
+<a name="services-settings-ListUserGuildsResponse"></a>
+
+### ListUserGuildsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `guilds` | [resources.discord.Guild](#resources-discord-Guild) | repeated |  |
+
+
+
+
+
+
 <a name="services-settings-PermsUpdate"></a>
 
 ### PermsUpdate
@@ -15558,6 +15604,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `UpdateJobLimits` | [UpdateJobLimitsRequest](#services-settings-UpdateJobLimitsRequest) | [UpdateJobLimitsResponse](#services-settings-UpdateJobLimitsResponse) | @perm: Name=Superuser |
 | `DeleteFaction` | [DeleteFactionRequest](#services-settings-DeleteFactionRequest) | [DeleteFactionResponse](#services-settings-DeleteFactionResponse) | @perm: Name=Superuser |
 | `ListDiscordChannels` | [ListDiscordChannelsRequest](#services-settings-ListDiscordChannelsRequest) | [ListDiscordChannelsResponse](#services-settings-ListDiscordChannelsResponse) | @perm: Name=SetJobProps |
+| `ListUserGuilds` | [ListUserGuildsRequest](#services-settings-ListUserGuildsRequest) | [ListUserGuildsResponse](#services-settings-ListUserGuildsResponse) | @perm: Name=SetJobProps |
 | `UploadJobLogo` | [.resources.file.UploadPacket](#resources-file-UploadPacket) stream | [.resources.file.UploadResponse](#resources-file-UploadResponse) | @perm: Name=SetJobProps |
 | `DeleteJobLogo` | [DeleteJobLogoRequest](#services-settings-DeleteJobLogoRequest) | [DeleteJobLogoResponse](#services-settings-DeleteJobLogoResponse) | @perm: Name=SetJobProps |
 

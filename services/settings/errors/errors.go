@@ -14,5 +14,6 @@ var (
 	ErrInvalidAttrs      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrInvalidAttrs"}, nil)
 	ErrInvalidPerms      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrInvalidPerms"}, nil)
 
-	ErrDiscordNotEnabled = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrDiscordNotEnabled"}, nil)
+	ErrDiscordNotEnabled      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrDiscordNotEnabled"}, nil)
+	ErrDiscordConnectRequired = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.content"}, &common.TranslateItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.title"})
 )

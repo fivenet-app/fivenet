@@ -37,6 +37,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbsync"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/commands"
@@ -126,6 +127,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		housekeeper.Module,
 		dbsync.Module,
 		fx.Provide(pkgfilestore.NewHousekeeper),
+		fx.Provide(crypt.New),
 		// Discord Bot
 		discord.StateModule,
 		discord.BotModule,

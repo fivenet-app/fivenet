@@ -4,9 +4,13 @@ import (
 	"context"
 	"slices"
 	"strconv"
+	"strings"
 
+	discordapi "github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	pbdiscord "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -47,6 +51,7 @@ func (s *Server) ListDiscordChannels(ctx context.Context, req *pbsettings.ListDi
 		if channel.Type != discord.GuildText {
 			continue // Only include text and news channels
 		}
+
 		resp.Channels = append(resp.Channels, &pbdiscord.Channel{
 			Id:       channel.ID.String(),
 			GuildId:  channel.GuildID.String(),
@@ -61,4 +66,59 @@ func (s *Server) ListDiscordChannels(ctx context.Context, req *pbsettings.ListDi
 	})
 
 	return resp, nil
+}
+
+func (s *Server) ListUserGuilds(ctx context.Context, req *pbsettings.ListUserGuildsRequest) (*pbsettings.ListUserGuildsResponse, error) {
+	if s.dc == nil {
+		return nil, errorssettings.ErrDiscordNotEnabled
+	}
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	acc, err := accounts.RetrieveOAuth2Account(ctx, s.db, s.crypt, userInfo.AccountId, "discord")
+	if err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+
+	accessToken, err := accounts.GetAccessToken(ctx, s.db, s.crypt, acc, s.dcOAuth2Provider.ClientID, s.dcOAuth2Provider.ClientSecret, s.dcOAuth2Provider.RedirectURL)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+	if accessToken == "" {
+		return nil, errorssettings.ErrDiscordConnectRequired
+	}
+
+	guilds, err := getUserGuilds(ctx, accessToken)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+	}
+
+	resp := &pbsettings.ListUserGuildsResponse{
+		Guilds: []*pbdiscord.Guild{},
+	}
+	for _, guild := range guilds {
+		resp.Guilds = append(resp.Guilds, &pbdiscord.Guild{
+			Id:        guild.ID.String(),
+			Name:      guild.Name,
+			Icon:      guild.IconURL(),
+			CreatedAt: timestamp.New(guild.CreatedAt()),
+		})
+	}
+
+	slices.SortFunc(resp.Guilds, func(a, b *pbdiscord.Guild) int {
+		return strings.Compare(a.Name, b.Name)
+	})
+
+	return resp, nil
+}
+
+func getUserGuilds(ctx context.Context, accessToken string) ([]discord.Guild, error) {
+	dc := discordapi.NewClient("Bearer " + accessToken).WithContext(ctx)
+
+	guilds, err := dc.Guilds(200)
+	if err != nil {
+		return nil, err
+	}
+
+	return guilds, nil
 }

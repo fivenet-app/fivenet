@@ -227,6 +227,27 @@ function setSettingsValues(): void {
 
 watch(jobProps, () => setSettingsValues());
 
+const dcConnectRequired = ref(false);
+const { data: userGuilds } = useLazyAsyncData(`settings-userguilds`, () => listGuilds());
+
+async function listGuilds() {
+    try {
+        const call = $grpc.settings.settings.listUserGuilds({});
+        const { response } = await call;
+
+        return response.guilds;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        if ((e as Error).message.includes('ErrDiscordConnectRequired')) {
+            dcConnectRequired.value = true;
+        } else {
+            dcConnectRequired.value = false;
+        }
+
+        return [];
+    }
+}
+
 async function searchChannels() {
     try {
         const call = $grpc.settings.settings.listDiscordChannels({});
@@ -496,15 +517,53 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :label="$t('components.settings.job_props.discord_sync_settings.discord_guild_id')"
                                     :ui="{ container: '' }"
                                 >
-                                    <UInput
+                                    <UButton
+                                        v-if="dcConnectRequired"
+                                        icon="i-mdi-connection"
+                                        :label="$t('common.connect')"
+                                        @click="
+                                            async () =>
+                                                await navigateTo(
+                                                    generateDiscordConnectURL('discord', '/settings/props?tab=discord#'),
+                                                    { external: true },
+                                                )
+                                        "
+                                    />
+                                    <USelectMenu
+                                        v-else
                                         v-model="state.discordGuildId"
-                                        type="text"
-                                        :disabled="!appConfig.discord.botEnabled || !canSubmit || !canEdit"
+                                        :options="userGuilds"
+                                        searchable
+                                        :search-attributes="['name', 'id']"
                                         :placeholder="
                                             $t('components.settings.job_props.discord_sync_settings.discord_guild_id')
                                         "
-                                        maxlength="70"
-                                    />
+                                        value-attribute="id"
+                                        :disabled="!appConfig.discord.botEnabled || !canSubmit || !canEdit"
+                                        size="lg"
+                                    >
+                                        <template #label="{ selected }">
+                                            <div class="inline-flex items-center gap-2">
+                                                <UAvatar :src="selected?.icon" :alt="selected?.name" />
+                                                <span class="truncate">{{ selected?.name ?? '&nbsp;' }}</span>
+                                            </div>
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            <div class="inline-flex items-center gap-2">
+                                                <UAvatar :src="option.icon" :alt="option.name" />
+                                                <span class="truncate">{{ option.name }}</span>
+                                            </div>
+                                        </template>
+
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.discord_guild', 2)]) }}
+                                        </template>
+                                    </USelectMenu>
                                     <p v-if="jobProps.discordLastSync" class="mt-2 text-xs">
                                         {{ $t('components.settings.job_props.discord_sync_settings.last_sync') }}:
                                         <GenericTime :value="jobProps.discordLastSync" />
@@ -553,11 +612,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                     >
                                         <template #label="{ selected }">
-                                            <span v-if="selected" class="truncate">{{ selected.name }}</span>
+                                            <span class="truncate">{{
+                                                selected ? `${selected.name} (${selected.id})` : '&nbsp;'
+                                            }}</span>
                                         </template>
 
                                         <template #option="{ option }">
-                                            <span class="truncate">{{ option.name }}</span>
+                                            <span class="truncate">{{ option.name }} ({{ option.id }})</span>
                                         </template>
 
                                         <template #option-empty="{ query: search }">

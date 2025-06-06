@@ -161,6 +161,12 @@ message ListDiscordChannelsResponse {
   repeated resources.discord.Channel channels = 1;
 }
 
+message ListUserGuildsRequest {}
+
+message ListUserGuildsResponse {
+  repeated resources.discord.Guild guilds = 1;
+}
+
 message DeleteJobLogoRequest {}
 
 message DeleteJobLogoResponse {}
@@ -202,6 +208,8 @@ service SettingsService {
 
   // @perm: Name=SetJobProps
   rpc ListDiscordChannels(ListDiscordChannelsRequest) returns (ListDiscordChannelsResponse);
+  // @perm: Name=SetJobProps
+  rpc ListUserGuilds(ListUserGuildsRequest) returns (ListUserGuildsResponse);
 
   // @perm: Name=SetJobProps
   rpc UploadJobLogo(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);

@@ -3,6 +3,8 @@ package providers
 import (
 	"context"
 	"fmt"
+	"strings"
+	"time"
 )
 
 type Discord struct {
@@ -17,6 +19,7 @@ type discordUser struct {
 }
 
 func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, error) {
+	obtainedAt := time.Now()
 	token, err := p.oauthConfig.Exchange(ctx, code)
 	if err != nil {
 		return nil, err
@@ -39,9 +42,17 @@ func (p *Discord) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 		username = dest.Username + "#" + dest.Discriminator
 	}
 
+	scopes := strings.Join(p.oauthConfig.Scopes, " ")
+
 	return &UserInfo{
-		ID:       dest.ID,
-		Username: username,
-		Avatar:   fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", dest.ID, dest.Avatar),
+		ID:           dest.ID,
+		Username:     username,
+		Avatar:       fmt.Sprintf("https://cdn.discordapp.com/avatars/%s/%s.png", dest.ID, dest.Avatar),
+		TokenType:    &token.TokenType,
+		RefreshToken: &token.RefreshToken,
+		AccessToken:  &token.AccessToken,
+		Scope:        &scopes,
+		ExpiresIn:    &token.ExpiresIn,
+		ObtainedAt:   &obtainedAt,
 	}, nil
 }

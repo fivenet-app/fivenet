@@ -4,8 +4,8 @@
 logLevel: "DEBUG"
 # debug or release
 mode: "release"
-logLevels:
-  nats.store: "INFO"
+# Must be 32 chars (bytes) long
+secret: "your_generated_db_secret_32_char"
 otlp:
   enabled: false
   # Can be "stdout", "grpc", "http"
@@ -105,7 +105,7 @@ oauth2:
       clientID: "your_discord_oauth2_client_id"
       clientSecret: "your_discord_oauth2_client_secret"
       scopes:
-        - openid
+        - guilds
         - identify
       endpoints:
         authURL: "https://discord.com/api/oauth2/authorize"

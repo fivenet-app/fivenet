@@ -35,6 +35,7 @@ const (
 	SettingsService_UpdateJobLimits_FullMethodName         = "/services.settings.SettingsService/UpdateJobLimits"
 	SettingsService_DeleteFaction_FullMethodName           = "/services.settings.SettingsService/DeleteFaction"
 	SettingsService_ListDiscordChannels_FullMethodName     = "/services.settings.SettingsService/ListDiscordChannels"
+	SettingsService_ListUserGuilds_FullMethodName          = "/services.settings.SettingsService/ListUserGuilds"
 	SettingsService_UploadJobLogo_FullMethodName           = "/services.settings.SettingsService/UploadJobLogo"
 	SettingsService_DeleteJobLogo_FullMethodName           = "/services.settings.SettingsService/DeleteJobLogo"
 )
@@ -73,6 +74,8 @@ type SettingsServiceClient interface {
 	DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error)
 	// @perm: Name=SetJobProps
 	ListDiscordChannels(ctx context.Context, in *ListDiscordChannelsRequest, opts ...grpc.CallOption) (*ListDiscordChannelsResponse, error)
+	// @perm: Name=SetJobProps
+	ListUserGuilds(ctx context.Context, in *ListUserGuildsRequest, opts ...grpc.CallOption) (*ListUserGuildsResponse, error)
 	// @perm: Name=SetJobProps
 	UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
 	// @perm: Name=SetJobProps
@@ -237,6 +240,16 @@ func (c *settingsServiceClient) ListDiscordChannels(ctx context.Context, in *Lis
 	return out, nil
 }
 
+func (c *settingsServiceClient) ListUserGuilds(ctx context.Context, in *ListUserGuildsRequest, opts ...grpc.CallOption) (*ListUserGuildsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListUserGuildsResponse)
+	err := c.cc.Invoke(ctx, SettingsService_ListUserGuilds_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *settingsServiceClient) UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &SettingsService_ServiceDesc.Streams[0], SettingsService_UploadJobLogo_FullMethodName, cOpts...)
@@ -295,6 +308,8 @@ type SettingsServiceServer interface {
 	// @perm: Name=SetJobProps
 	ListDiscordChannels(context.Context, *ListDiscordChannelsRequest) (*ListDiscordChannelsResponse, error)
 	// @perm: Name=SetJobProps
+	ListUserGuilds(context.Context, *ListUserGuildsRequest) (*ListUserGuildsResponse, error)
+	// @perm: Name=SetJobProps
 	UploadJobLogo(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
 	// @perm: Name=SetJobProps
 	DeleteJobLogo(context.Context, *DeleteJobLogoRequest) (*DeleteJobLogoResponse, error)
@@ -352,6 +367,9 @@ func (UnimplementedSettingsServiceServer) DeleteFaction(context.Context, *Delete
 }
 func (UnimplementedSettingsServiceServer) ListDiscordChannels(context.Context, *ListDiscordChannelsRequest) (*ListDiscordChannelsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDiscordChannels not implemented")
+}
+func (UnimplementedSettingsServiceServer) ListUserGuilds(context.Context, *ListUserGuildsRequest) (*ListUserGuildsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserGuilds not implemented")
 }
 func (UnimplementedSettingsServiceServer) UploadJobLogo(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadJobLogo not implemented")
@@ -650,6 +668,24 @@ func _SettingsService_ListDiscordChannels_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SettingsService_ListUserGuilds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserGuildsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServiceServer).ListUserGuilds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SettingsService_ListUserGuilds_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServiceServer).ListUserGuilds(ctx, req.(*ListUserGuildsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SettingsService_UploadJobLogo_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(SettingsServiceServer).UploadJobLogo(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
 }
@@ -741,6 +777,10 @@ var SettingsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListDiscordChannels",
 			Handler:    _SettingsService_ListDiscordChannels_Handler,
+		},
+		{
+			MethodName: "ListUserGuilds",
+			Handler:    _SettingsService_ListUserGuilds_Handler,
 		},
 		{
 			MethodName: "DeleteJobLogo",
