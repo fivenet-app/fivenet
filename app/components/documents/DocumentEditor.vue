@@ -199,8 +199,8 @@ watchDebounced(
         }
     },
     {
-        debounce: 1000,
-        maxWait: 2500,
+        debounce: 1_000,
+        maxWait: 2_500,
     },
 );
 

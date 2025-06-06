@@ -46,8 +46,12 @@ async function setViaURL(urlOrBlob: string | File): Promise<void> {
         let dataUrl: string | undefined = undefined;
         // If Image Proxy is enabled use it to load the image
         if (featureGates.imageProxy && urlOrBlob.startsWith('http')) {
-            const url = new URL(urlOrBlob);
-            dataUrl = await remoteImageURLToBase64Data(`/api/image_proxy/${url.toString()}`);
+            if (props.uploadHandler) {
+                dataUrl = `/api/image_proxy/${urlOrBlob}`;
+            } else {
+                const url = new URL(urlOrBlob);
+                dataUrl = await remoteImageURLToBase64Data(`/api/image_proxy/${url.toString()}`);
+            }
         } else {
             dataUrl = urlOrBlob;
         }

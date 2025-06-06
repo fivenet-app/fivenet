@@ -228,7 +228,9 @@ function setSettingsValues(): void {
 watch(jobProps, () => setSettingsValues());
 
 const dcConnectRequired = ref(false);
-const { data: userGuilds } = useLazyAsyncData(`settings-userguilds`, () => listGuilds());
+const { data: userGuilds } = useLazyAsyncData(`settings-userguilds`, () => listGuilds(), {
+    immediate: appConfig.discord.botEnabled,
+});
 
 async function listGuilds() {
     try {
@@ -486,7 +488,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UDashboardPanelContent>
                     </template>
 
-                    <template #discord>
+                    <template v-if="appConfig.discord.botEnabled" #discord>
                         <div v-if="loading" class="space-y-1 px-4">
                             <USkeleton v-for="idx in 10" :key="idx" class="h-20 w-full" />
                         </div>
@@ -539,7 +541,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             $t('components.settings.job_props.discord_sync_settings.discord_guild_id')
                                         "
                                         value-attribute="id"
-                                        :disabled="!appConfig.discord.botEnabled || !canSubmit || !canEdit"
+                                        :disabled="!canSubmit || !canEdit"
                                         size="lg"
                                     >
                                         <template #label="{ selected }">
@@ -599,7 +601,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <USelectMenu
                                         v-model="state.discordSyncSettings.statusLogSettings!.channelId"
                                         name="discordSyncSettings.statusLogSettings.channelId"
-                                        :disabled="!state.discordSyncSettings.statusLog || !canSubmit || !canEdit"
+                                        :disabled="
+                                            !state.discordGuildId ||
+                                            !state.discordSyncSettings.statusLog ||
+                                            !canSubmit ||
+                                            !canEdit
+                                        "
                                         :searchable="searchChannels"
                                         :search-attributes="['name']"
                                         searchable-lazy
@@ -676,6 +683,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     >
                                         <FormatBuilder
                                             v-model="state.discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
+                                            :disabled="!canSubmit || !canEdit"
                                             :extensions="[
                                                 {
                                                     label: $t(

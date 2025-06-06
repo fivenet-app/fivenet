@@ -2,12 +2,14 @@ package settings
 
 import (
 	"context"
+	"net/http"
 	"slices"
 	"strconv"
 	"strings"
 
 	discordapi "github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/utils/httputil"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	pbdiscord "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/discord"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
@@ -28,12 +30,14 @@ func (s *Server) ListDiscordChannels(ctx context.Context, req *pbsettings.ListDi
 	if err != nil {
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
-	if jp.DiscordGuildId == nil || *jp.DiscordGuildId == "" {
-		return nil, errorssettings.ErrDiscordNotEnabled
-	}
 
 	resp := &pbsettings.ListDiscordChannelsResponse{
 		Channels: []*pbdiscord.Channel{},
+	}
+	// No Guild Id set yet, return empty response
+	// This is the case when the job is not linked to a Discord guild yet
+	if jp.DiscordGuildId == nil || *jp.DiscordGuildId == "" {
+		return resp, nil
 	}
 
 	jobGuildID, err := strconv.ParseUint(*jp.DiscordGuildId, 10, 64)
@@ -44,6 +48,11 @@ func (s *Server) ListDiscordChannels(ctx context.Context, req *pbsettings.ListDi
 
 	channels, err := s.dc.WithContext(ctx).Channels(guildId)
 	if err != nil {
+		if restErr, ok := err.(*httputil.HTTPError); ok {
+			if restErr.Status == http.StatusNotFound {
+				return resp, nil // Guild not found, return empty response
+			}
+		}
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
