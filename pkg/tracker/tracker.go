@@ -8,7 +8,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -16,12 +15,6 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
-)
-
-var (
-	tLocs           = table.FivenetCentrumUserLocations
-	tJobProps       = table.FivenetJobProps
-	tColleagueProps = table.FivenetJobColleagueProps.AS("colleague_props")
 )
 
 type ITracker interface {

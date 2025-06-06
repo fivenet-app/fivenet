@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -26,6 +27,12 @@ import (
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
+)
+
+var (
+	tLocs           = table.FivenetCentrumUserLocations
+	tJobProps       = table.FivenetJobProps
+	tColleagueProps = table.FivenetJobColleagueProps.AS("colleague_props")
 )
 
 type Manager struct {
@@ -208,11 +215,11 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 					tLocs.Identifier.EQ(tUsers.Identifier),
 				).
 				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tUsers.Job),
+					tJobProps.Job.EQ(tLocs.Job).OR(tJobProps.Job.EQ(tUsers.Job)),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tUsers.Job)),
+						AND(tColleagueProps.Job.EQ(tLocs.Job).OR(tColleagueProps.Job.EQ(tUsers.Job))),
 				),
 		).
 		WHERE(jet.AND(
