@@ -16,6 +16,7 @@ import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/re
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileUpload from '../partials/elements/FileUpload.vue';
 import FormatBuilder from '../partials/FormatBuilder.vue';
+import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -24,7 +25,7 @@ const { t } = useI18n();
 const { can } = useAuth();
 
 const settingsStore = useSettingsStore();
-const { streamerMode } = storeToRefs(settingsStore);
+const { streamerMode, nuiEnabled } = storeToRefs(settingsStore);
 
 const appConfig = useAppConfig();
 
@@ -498,9 +499,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.settings.job_props.discord_sync_settings.title')"
                                 :description="$t('components.settings.job_props.discord_sync_settings.subtitle')"
                             >
-                                <template #links>
+                                <template v-if="appConfig.discord.botEnabled" #links>
+                                    <NotSupportedTabletBlock v-if="nuiEnabled" />
                                     <UButton
-                                        v-if="appConfig.discord.botEnabled"
+                                        v-else
                                         class="mt-1"
                                         block
                                         color="white"
@@ -519,8 +521,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :label="$t('components.settings.job_props.discord_sync_settings.discord_guild_id')"
                                     :ui="{ container: '' }"
                                 >
+                                    <NotSupportedTabletBlock v-if="nuiEnabled" />
                                     <UButton
-                                        v-if="dcConnectRequired"
+                                        v-else-if="dcConnectRequired"
                                         icon="i-mdi-connection"
                                         :label="$t('common.connect')"
                                         @click="
@@ -546,8 +549,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     >
                                         <template #label="{ selected }">
                                             <div class="inline-flex items-center gap-2">
-                                                <UAvatar :src="selected?.icon" :alt="selected?.name" />
-                                                <span class="truncate">{{ selected?.name ?? '&nbsp;' }}</span>
+                                                <template v-if="selected">
+                                                    <UAvatar :src="selected?.icon" :alt="selected?.name" />
+                                                    <span class="truncate">{{ selected?.name ?? '&nbsp;' }}</span>
+                                                </template>
+                                                <span class="truncate">{{ state.discordGuildId }}</span>
                                             </div>
                                         </template>
 
@@ -619,8 +625,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                     >
                                         <template #label="{ selected }">
-                                            <span class="truncate">{{
+                                            <span v-if="selected" class="truncate">{{
                                                 selected ? `${selected.name} (${selected.id})` : '&nbsp;'
+                                            }}</span>
+                                            <span v-else class="truncate">{{
+                                                state.discordSyncSettings.statusLogSettings!.channelId
                                             }}</span>
                                         </template>
 
