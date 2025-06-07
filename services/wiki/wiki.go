@@ -714,6 +714,8 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
+	s.collabServer.SendTargetSaved(ctx, page.Id)
+
 	return &pbwiki.UpdatePageResponse{
 		Page: page,
 	}, nil

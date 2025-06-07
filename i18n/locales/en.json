@@ -1581,7 +1581,7 @@
                 "content": "E-Mail address has been copied to your clipboard."
             }
         },
-        "action_successfull": {
+        "action_successful": {
             "title": "Success!",
             "content": "Your action was successfully submitted"
         },

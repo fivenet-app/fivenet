@@ -22,6 +22,7 @@ interface GrpcProviderOpts {
 type Events = {
     loadContent(): void;
     sync(synced: boolean, doc: Y.Doc): void;
+    saved(): void;
 };
 
 export default class GrpcProvider extends ObservableV2<Events> {
@@ -194,6 +195,12 @@ export default class GrpcProvider extends ObservableV2<Events> {
                         Y.applyUpdate(this.yDoc, msg.msg.yjsUpdate.data);
                     }
                     break;
+                }
+
+                case 'targetSaved': {
+                    logger.info('Received target saved message', msg.msg.targetSaved);
+
+                    this.emit('saved', []);
                 }
             }
         });

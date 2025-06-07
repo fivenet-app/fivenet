@@ -195,3 +195,15 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 		}
 	}
 }
+
+func (s *CollabServer) SendTargetSaved(ctx context.Context, targetId uint64) {
+	s.mu.Lock()
+	room, exists := s.rooms[targetId]
+	s.mu.Unlock()
+
+	if !exists {
+		return // No room exists for this target, nothing to do
+	}
+
+	room.SendTargetSaved()
+}

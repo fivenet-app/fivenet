@@ -48,8 +48,8 @@ async function updateAccount(values: Schema): Promise<UpdateAccountResponse | un
             account.value = response.account;
 
             notifications.add({
-                title: { key: 'notifications.action_successfull.title', parameters: {} },
-                description: { key: 'notifications.action_successfull.content', parameters: {} },
+                title: { key: 'notifications.action_successful.title', parameters: {} },
+                description: { key: 'notifications.action_successful.content', parameters: {} },
                 type: NotificationType.SUCCESS,
             });
         }

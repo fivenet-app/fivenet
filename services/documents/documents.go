@@ -650,6 +650,8 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
+	s.collabServer.SendTargetSaved(ctx, doc.Id)
+
 	return &pbdocuments.UpdateDocumentResponse{
 		Document: doc,
 	}, nil

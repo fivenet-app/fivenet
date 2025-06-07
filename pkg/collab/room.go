@@ -247,7 +247,17 @@ func (r *CollabRoom) BroadcastAwareness(fromId uint64, data []byte) {
 	r.Broadcast(fromId, pkt)
 }
 
-// shutdown graceful teardown of room
+func (r *CollabRoom) SendTargetSaved() {
+	r.Broadcast(0, &collab.ServerPacket{
+		Msg: &collab.ServerPacket_TargetSaved{
+			TargetSaved: &collab.TargetSaved{
+				TargetId: r.Id,
+			},
+		},
+	})
+}
+
+// Shutdown graceful teardown of room
 func (r *CollabRoom) shutdown() {
 	r.logger.Debug("shutting down")
 	r.cancel() // Stop consumeLoop

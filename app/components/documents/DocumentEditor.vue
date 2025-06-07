@@ -286,11 +286,6 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
         clipboardStore.clear();
-
-        await navigateTo({
-            name: 'documents-id',
-            params: { id: response.document!.id },
-        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

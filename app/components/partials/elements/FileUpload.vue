@@ -54,8 +54,8 @@ async function uploadFile(files: File[]): Promise<void> {
         const resp = await resizeAndUpload(f);
 
         notifications.add({
-            title: { key: 'notifications.action_successfull.title', parameters: {} },
-            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
@@ -73,8 +73,8 @@ async function deleteFile(): Promise<void> {
         await props.deleteFn();
 
         notifications.add({
-            title: { key: 'notifications.action_successfull.title', parameters: {} },
-            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
     } catch (e) {

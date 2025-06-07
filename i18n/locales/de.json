@@ -1581,7 +1581,7 @@
                 "content": "E-Mail Adresse wurde in die Zwischenablage kopiert."
             }
         },
-        "action_successfull": {
+        "action_successful": {
             "title": "Erfolg!",
             "content": "Ihre Aktion wurde erfolgreich übermittelt"
         },

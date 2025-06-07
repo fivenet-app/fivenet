@@ -410,8 +410,8 @@ export const useMailerStore = defineStore(
                 useNotificatorStore().restartStream();
 
                 useNotificatorStore().add({
-                    title: { key: 'notifications.action_successfull.title', parameters: {} },
-                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    title: { key: 'notifications.action_successful.title', parameters: {} },
+                    description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
                 });
 
@@ -539,8 +539,8 @@ export const useMailerStore = defineStore(
                 }
 
                 useNotificatorStore().add({
-                    title: { key: 'notifications.action_successfull.title', parameters: {} },
-                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    title: { key: 'notifications.action_successful.title', parameters: {} },
+                    description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
                 });
 
@@ -611,8 +611,8 @@ export const useMailerStore = defineStore(
 
             if (notify) {
                 useNotificatorStore().add({
-                    title: { key: 'notifications.action_successfull.title', parameters: {} },
-                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    title: { key: 'notifications.action_successful.title', parameters: {} },
+                    description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
                 });
             }
@@ -670,8 +670,8 @@ export const useMailerStore = defineStore(
                 const { response } = await call;
 
                 useNotificatorStore().add({
-                    title: { key: 'notifications.action_successfull.title', parameters: {} },
-                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    title: { key: 'notifications.action_successful.title', parameters: {} },
+                    description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
                 });
 
@@ -709,8 +709,8 @@ export const useMailerStore = defineStore(
                 }
 
                 useNotificatorStore().add({
-                    title: { key: 'notifications.action_successfull.title', parameters: {} },
-                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    title: { key: 'notifications.action_successful.title', parameters: {} },
+                    description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
                 });
 

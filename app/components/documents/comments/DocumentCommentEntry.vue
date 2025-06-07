@@ -120,8 +120,8 @@ async function editComment(documentId: number, commentId: number, values: Schema
         });
 
         notifications.add({
-            title: { key: 'notifications.action_successfull.title', parameters: {} },
-            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
@@ -146,8 +146,8 @@ async function deleteComment(id: number): Promise<void> {
         });
 
         notifications.add({
-            title: { key: 'notifications.action_successfull.title', parameters: {} },
-            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 

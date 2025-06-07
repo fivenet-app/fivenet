@@ -63,8 +63,8 @@ async function uploadMugshot(files: File[], reason: string): Promise<void> {
             const resp = await resizeAndUpload(f, reason);
 
             notifications.add({
-                title: { key: 'notifications.action_successfull.title', parameters: {} },
-                description: { key: 'notifications.action_successfull.content', parameters: {} },
+                title: { key: 'notifications.action_successful.title', parameters: {} },
+                description: { key: 'notifications.action_successful.content', parameters: {} },
                 type: NotificationType.SUCCESS,
             });
 
@@ -94,8 +94,8 @@ async function deleteMugshot(fileId: number | undefined, reason: string): Promis
         });
 
         notifications.add({
-            title: { key: 'notifications.action_successfull.title', parameters: {} },
-            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
         if (modelValue.value.props) {

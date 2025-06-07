@@ -52,8 +52,8 @@ async function uploadMugshot(files: File[]): Promise<void> {
             const resp = await resizeAndUpload(f);
 
             notifications.add({
-                title: { key: 'notifications.action_successfull.title', parameters: {} },
-                description: { key: 'notifications.action_successfull.content', parameters: {} },
+                title: { key: 'notifications.action_successful.title', parameters: {} },
+                description: { key: 'notifications.action_successful.content', parameters: {} },
                 type: NotificationType.SUCCESS,
             });
 
@@ -74,8 +74,8 @@ async function deleteAvatar(): Promise<void> {
         await $grpc.citizens.citizens.deleteAvatar({});
 
         notifications.add({
-            title: { key: 'notifications.action_successfull.title', parameters: {} },
-            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            title: { key: 'notifications.action_successful.title', parameters: {} },
+            description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
