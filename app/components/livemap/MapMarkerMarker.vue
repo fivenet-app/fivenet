@@ -52,7 +52,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
                         (icon) =>
                             marker.data?.data.oneofKind === 'icon' &&
                             icon.name === convertDynamicIconNameToComponent(marker.data?.data.icon.icon),
-                    ) ?? fallbackIcon.name
+                    )?.component ?? fallbackIcon.name
                 "
                 class="size-full"
                 :style="{ color: marker.color ?? 'currentColor' }"

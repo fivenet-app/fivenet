@@ -38,7 +38,7 @@ const { can } = useAuth();
             <template v-if="showIcon && module.icon" #icon>
                 <template v-if="!module.icon.startsWith('i-')">
                     <component
-                        :is="availableIcons.find((item) => item.name === module.icon) ?? fallbackIcon"
+                        :is="availableIcons.find((item) => item.name === module.icon)?.component ?? fallbackIcon"
                         v-if="module.icon"
                         class="text-primary h-10 w-10 shrink-0"
                         :class="module.color && `text-${module.color}-500 dark:text-${module.color}-400`"

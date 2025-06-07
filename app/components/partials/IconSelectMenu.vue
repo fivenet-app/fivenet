@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { DefineComponent } from 'vue';
-import { availableIcons, fallbackIcon as defaultIcon } from './icons';
+import { availableIcons, fallbackIcon as defaultIcon, type IconEntry } from './icons';
 
 const props = withDefaults(
     defineProps<{
@@ -24,7 +24,7 @@ defineOptions({
 
 const icon = useVModel(props, 'modelValue', emit);
 
-async function iconSearch(query: string): Promise<DefineComponent[]> {
+async function iconSearch(query: string): Promise<IconEntry[]> {
     // Remove spaces from query as icon names don't have spaces
     query = query.toLowerCase().replaceAll(' ', '').trim();
     let count = 0;
@@ -50,14 +50,14 @@ async function iconSearch(query: string): Promise<DefineComponent[]> {
         >
             <template #label>
                 <component
-                    :is="availableIcons.find((item) => item.name === icon) ?? fallbackIcon"
+                    :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon"
                     class="size-5"
                     :style="{ fill: color }"
                 />
                 <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
             </template>
             <template #option="{ option }">
-                <component :is="option" class="size-5" :style="{ color: color }" />
+                <component :is="option?.component" class="size-5" :style="{ color: color }" />
                 <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
             </template>
         </USelectMenu>

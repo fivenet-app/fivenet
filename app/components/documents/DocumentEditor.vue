@@ -560,7 +560,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                             :is="
                                                                 availableIcons.find(
                                                                     (item) => item.name === state.category?.icon,
-                                                                ) ?? fallbackIcon
+                                                                )?.component ?? fallbackIcon
                                                             "
                                                             v-if="state.category.icon"
                                                             class="size-5"
@@ -574,8 +574,8 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                     <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
                                                         <component
                                                             :is="
-                                                                availableIcons.find((item) => item.name === option.icon) ??
-                                                                fallbackIcon
+                                                                availableIcons.find((item) => item.name === option.icon)
+                                                                    ?.component ?? fallbackIcon
                                                             "
                                                             v-if="option.icon"
                                                             class="size-5"

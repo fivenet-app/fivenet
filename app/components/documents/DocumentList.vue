@@ -230,8 +230,8 @@ defineShortcuts({
                                                 <span class="inline-flex gap-1" :class="`bg-${category.color}-500`">
                                                     <component
                                                         :is="
-                                                            availableIcons.find((item) => item.name === category?.icon) ??
-                                                            fallbackIcon
+                                                            availableIcons.find((item) => item.name === category?.icon)
+                                                                ?.component ?? fallbackIcon
                                                         "
                                                         v-if="category.icon"
                                                         class="size-5"
@@ -246,7 +246,10 @@ defineShortcuts({
                                     <template #option="{ option }">
                                         <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
                                             <component
-                                                :is="availableIcons.find((item) => item.name === option.icon) ?? fallbackIcon"
+                                                :is="
+                                                    availableIcons.find((item) => item.name === option.icon)?.component ??
+                                                    fallbackIcon
+                                                "
                                                 v-if="option.icon"
                                                 class="size-5"
                                             />
