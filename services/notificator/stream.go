@@ -20,7 +20,8 @@ import (
 )
 
 func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.NotificatorService_StreamServer) error {
-	userInfo, ok := auth.GetUserInfoFromContext(srv.Context())
+	ctx := srv.Context()
+	userInfo, ok := auth.GetUserInfoFromContext(ctx)
 	if !ok {
 		return ErrFailedStream
 	}
@@ -38,7 +39,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 	// Clone user info and disable superuser
 	cloned := currentUserInfo.Clone()
 	cloned.Superuser = false
-	emails, err := pbmailer.ListUserEmails(srv.Context(), s.db, &cloned, nil, false)
+	emails, err := pbmailer.ListUserEmails(ctx, s.db, &cloned, nil, false)
 	if err != nil {
 		return ErrFailedStream
 	}
@@ -48,7 +49,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 	}
 
 	// Setup consumer
-	c, err := s.js.CreateConsumer(srv.Context(), notifi.StreamName, jetstream.ConsumerConfig{
+	c, err := s.js.CreateConsumer(ctx, notifi.StreamName, jetstream.ConsumerConfig{
 		FilterSubjects: subjects,
 		DeliverPolicy:  jetstream.DeliverNewPolicy,
 	})
@@ -80,12 +81,12 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 	defer updateTicker.Stop()
 
 	// Check user token validity and update if necessary
-	data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
+	data, stop, err := s.checkUser(ctx, currentUserInfo)
 	if err != nil {
 		return err
 	}
 
-	notificationCount, err := s.getNotificationCount(srv.Context(), userInfo.UserId)
+	notificationCount, err := s.getNotificationCount(ctx, userInfo.UserId)
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)
 	}
@@ -100,12 +101,12 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 
 	for {
 		select {
-		case <-srv.Context().Done():
+		case <-ctx.Done():
 			return nil
 
 		case <-updateTicker.C:
 			// Check user token validity
-			data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
+			data, stop, err := s.checkUser(ctx, currentUserInfo)
 			if err != nil {
 				return err
 			}
@@ -124,7 +125,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 			}
 
 			// Make sure the notification is in sync (again)
-			notificationCount, err = s.getNotificationCount(srv.Context(), userInfo.UserId)
+			notificationCount, err = s.getNotificationCount(ctx, userInfo.UserId)
 			if err != nil {
 				return errswrap.NewError(err, ErrFailedStream)
 			}

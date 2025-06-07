@@ -205,13 +205,17 @@ if (ydoc && yjsProvider && !props.disableCollab) {
         name: ourName,
         color: stringToColor(ourName),
     };
-    ydoc.once('sync', (isSynced: boolean) => {
-        if (isSynced === false) {
+
+    const onSync = (synced: boolean) => {
+        if (synced === false) {
+            loading.value = true;
             return;
         }
 
         loading.value = false;
-    });
+    };
+    yjsProvider.on('sync', onSync);
+    onBeforeUnmount(() => yjsProvider.off('sync', onSync));
 
     extensions.push(
         Collaboration.configure({

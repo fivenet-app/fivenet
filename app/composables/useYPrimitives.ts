@@ -60,6 +60,8 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
         });
     };
 
+    const onSync = (s: boolean) => s && init();
+
     // INITIAL SYNC
     const init = (): void => {
         const remote = yText.toString();
@@ -80,7 +82,11 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
         });
 
         yText.observe(handleUpdate);
-        if (getCurrentInstance()) onUnmounted(() => yText.unobserve(handleUpdate));
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                provider?.off('sync', onSync);
+                yText.unobserve(handleUpdate);
+            });
 
         // LOCAL → REMOTE
         watch(
@@ -108,7 +114,7 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
     };
 
     if (provider) {
-        provider.once('sync', (synced: boolean) => synced && init());
+        provider.on('sync', onSync);
     } else {
         init();
     }
@@ -171,6 +177,8 @@ export function useYBoolean(
         });
     };
 
+    const onSync = (s: boolean) => s && init();
+
     // INITIAL SYNC
     const init = (): void => {
         const remote = yMap.get(key);
@@ -182,7 +190,11 @@ export function useYBoolean(
         }
 
         yMap.observe(handleUpdate);
-        if (getCurrentInstance()) onUnmounted(() => yMap.unobserve(handleUpdate));
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                provider?.off('sync', onSync);
+                yMap.unobserve(handleUpdate);
+            });
 
         watch(
             bool,
@@ -195,7 +207,7 @@ export function useYBoolean(
     };
 
     if (provider) {
-        provider.once('sync', (synced: boolean) => synced && init());
+        provider.on('sync', onSync);
     } else {
         init();
     }
@@ -230,6 +242,8 @@ export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<numbe
         });
     };
 
+    const onSync = (s: boolean) => s && init();
+
     // INITIAL SYNC
     const init = (): void => {
         const remote = yMap.get(key);
@@ -241,7 +255,11 @@ export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<numbe
         }
 
         yMap.observe(handleUpdate);
-        if (getCurrentInstance()) onUnmounted(() => yMap.unobserve(handleUpdate));
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                provider?.off('sync', onSync);
+                yMap.unobserve(handleUpdate);
+            });
 
         watch(
             num,
@@ -254,7 +272,7 @@ export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<numbe
     };
 
     if (provider) {
-        provider.once('sync', (synced: boolean) => synced && init());
+        provider.on('sync', onSync);
     } else {
         init();
     }

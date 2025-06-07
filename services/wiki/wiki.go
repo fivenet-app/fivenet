@@ -560,8 +560,13 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 		}
 	}
 
-	if req.Page.ParentId != nil && *req.Page.ParentId == req.Page.Id {
-		req.Page.ParentId = nil
+	if req.Page.ParentId != nil {
+		if *req.Page.ParentId == req.Page.Id {
+			req.Page.ParentId = nil
+		} else if *req.Page.ParentId <= 0 {
+			// If the parent ID is not set, we can set it to nil
+			req.Page.ParentId = nil
+		}
 	}
 
 	check, err := s.access.CanUserAccessTarget(ctx, req.Page.Id, userInfo, wiki.AccessLevel_ACCESS_LEVEL_EDIT)

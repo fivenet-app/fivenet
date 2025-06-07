@@ -151,7 +151,7 @@ func (ws *WebsocketChannel) poll() error {
 		}()
 
 	case *grpcws.GrpcFrame_Body:
-		if stream == nil {
+		if stream == nil || stream.inputClosed {
 			return ws.writeError(frame.StreamId, "stream does not exist")
 		}
 

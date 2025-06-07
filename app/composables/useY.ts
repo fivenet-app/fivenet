@@ -88,6 +88,8 @@ export function useYArray<T extends object | Primitive>(
         }, LOCAL_ORIGIN);
     };
 
+    const onSync = (s: boolean) => s && init();
+
     const init = () => {
         remoteApplying = true;
 
@@ -102,7 +104,11 @@ export function useYArray<T extends object | Primitive>(
         });
 
         yArray.observe(handleYArray);
-        if (getCurrentInstance()) onUnmounted(() => yArray.unobserve(handleYArray));
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                provider?.off('sync', onSync);
+                yArray.unobserve(handleYArray);
+            });
 
         watch(
             items,
@@ -115,7 +121,7 @@ export function useYArray<T extends object | Primitive>(
     };
 
     if (provider) {
-        provider.once('sync', (s) => s && init());
+        provider.on('sync', onSync);
     } else {
         init();
     }
@@ -183,6 +189,8 @@ export function useYArrayFiltered<T extends object>(
         syncFromY();
     };
 
+    const onSync = (s: boolean) => s && init();
+
     const init = () => {
         remoteApplying = true;
 
@@ -197,7 +205,11 @@ export function useYArrayFiltered<T extends object>(
         });
 
         (yArr as Y.Array<Y.Map<unknown>>).observe(handleYArr);
-        if (getCurrentInstance()) onUnmounted(() => (yArr as Y.Array<Y.Map<unknown>>).unobserve(handleYArr));
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                provider?.off('sync', onSync);
+                (yArr as Y.Array<Y.Map<unknown>>).unobserve(handleYArr);
+            });
 
         watch(
             items,
@@ -210,7 +222,7 @@ export function useYArrayFiltered<T extends object>(
     };
 
     if (provider) {
-        provider.once('sync', (s) => s && init());
+        provider.on('sync', onSync);
     } else {
         init();
     }
@@ -292,12 +304,18 @@ export function useYMap<T extends Record<string, any>>(
         };
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         yMap.observe(handle as any);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (getCurrentInstance()) onUnmounted(() => yMap.unobserve(handle as any));
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                provider?.off('sync', onSync);
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                yMap.unobserve(handle as any);
+            });
         observerAttached = true;
     };
 
-    /** Initialize: pull existing remote data or seed if authoritative, then set up watchers. */
+    const onSync = (s: boolean) => s && init();
+
+    // Initialize: pull existing remote data or seed if authoritative, then set up watchers.
     const init = () => {
         const hasRemote = keys.some((k) => yMap.get(k as string) !== undefined);
         if (hasRemote) {
@@ -326,9 +344,7 @@ export function useYMap<T extends Record<string, any>>(
     };
 
     if (provider) {
-        provider.once('sync', (s) => {
-            if (s) init();
-        });
+        provider.on('sync', onSync);
     } else {
         init();
     }
@@ -456,6 +472,8 @@ function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]
         }, LOCAL_ORIGIN);
     };
 
+    const onSync = (s: boolean) => s && init();
+
     const init = () => {
         remoteApplying = true;
 
@@ -474,11 +492,15 @@ function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]
         });
 
         yarr.observe(syncFromY);
-        if (getCurrentInstance()) onUnmounted(() => yarr.unobserve(syncFromY));
+        if (getCurrentInstance())
+            onUnmounted(() => {
+                provider?.off('sync', onSync);
+                yarr.unobserve(syncFromY);
+            });
     };
 
     if (provider) {
-        provider.once('sync', (s) => s && init());
+        provider.on('sync', onSync);
     } else {
         init();
     }
@@ -569,14 +591,15 @@ export function useYObject<T extends Record<string, any>>(
         if (getCurrentInstance()) {
             onUnmounted(() => {
                 yMap.unobserve(handle);
+                provider?.off('sync', onSync);
             });
         }
         observerAttached = true;
     };
 
-    /**
-     * Initialize: if remote has any keys, pull them; otherwise if authoritative, seed from objRef.value.
-     */
+    const onSync = (s: boolean) => s && init();
+
+    // Initialize: if remote has any keys, pull them; otherwise if authoritative, seed from objRef.value.
     const init = () => {
         if (provider && provider.isAuthoritative) {
             remoteApplying = true;
@@ -623,9 +646,7 @@ export function useYObject<T extends Record<string, any>>(
 
     // Wait for provider "sync" event before init, or init immediately if no provider
     if (provider) {
-        provider.once('sync', (synced: boolean) => {
-            if (synced) init();
-        });
+        provider.on('sync', onSync);
     } else {
         init();
     }
