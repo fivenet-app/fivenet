@@ -139,7 +139,8 @@ func newAttributes(cfg config.OTLPConfig) (*resource.Resource, error) {
 			return nil, fmt.Errorf("failed to parse tracing attribute (%q)", cfg.Attributes[i])
 		}
 
-		customAttrs = append(customAttrs, attribute.String(split[0], split[1]))
+		val := os.ExpandEnv(split[1]) // Expand environment variables in the value
+		customAttrs = append(customAttrs, attribute.String(split[0], val))
 	}
 
 	attrs := resource.NewWithAttributes(
