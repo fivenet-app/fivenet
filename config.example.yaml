@@ -18,6 +18,7 @@ otlp:
   ratio: 0.1
   attributes: []
   # - service.name=fivenet-server
+  # - k8s.namespace.name=${POD_NAMESPACE}
   headers: {}
     # Example to authenticate with an API key
     #authorization: "API_KEY_HERE"
