@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet/v2025/internal/cmd/protoc-gen-customizer
 
-go 1.24.3
+go 1.24.4
 
 require (
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
