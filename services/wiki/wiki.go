@@ -202,7 +202,7 @@ func (s *Server) GetPage(ctx context.Context, req *pbwiki.GetPageRequest) (*pbwi
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-	if page == nil || page.Id <= 0 {
+	if page == nil || page.Id <= 0 || page.Meta == nil {
 		return nil, errorswiki.ErrPageNotFound
 	}
 
