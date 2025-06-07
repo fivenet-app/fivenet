@@ -366,6 +366,7 @@ logger.info(
 useYText(ydoc.getText('title'), toRef(state, 'title'), { provider: provider });
 useYText(ydoc.getText('state'), toRef(state, 'state'), { provider: provider });
 const detailsYdoc = ydoc.getMap('details');
+useYBoolean(detailsYdoc, 'draft', toRef(state, 'draft'), { provider: provider });
 useYBoolean(detailsYdoc, 'closed', toRef(state, 'closed'), { provider: provider });
 useYBoolean(detailsYdoc, 'draft', toRef(state, 'draft'), { provider: provider });
 useYBoolean(detailsYdoc, 'public', toRef(state, 'public'), { provider: provider });

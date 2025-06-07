@@ -346,6 +346,7 @@ const detailsYdoc = ydoc.getMap('details');
 useYNumber(detailsYdoc, 'parentId', toRef(state, 'parentId'), { provider: provider });
 useYBoolean(detailsYdoc, 'public', toRef(state.meta, 'public'), { provider: provider });
 useYBoolean(detailsYdoc, 'toc', toRef(state.meta, 'toc'), { provider: provider });
+useYBoolean(detailsYdoc, 'draft', toRef(state.meta, 'draft'), { provider: provider });
 
 // Access
 useYArrayFiltered<PageJobAccess>(
