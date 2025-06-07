@@ -128,7 +128,13 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !check && !userInfo.Superuser {
+
+	quali, err := s.getQualificationShort(ctx, req.QualificationId, nil, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if !check && !userInfo.Superuser && !quali.Public {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -157,15 +163,8 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if canTake {
-		quali, err := s.getQualificationShort(ctx, req.QualificationId, nil, userInfo)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
-
-		if quali.ExamMode == qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED {
-			canContent = true
-		}
+	if canTake && quali.ExamMode == qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED {
+		canContent = true
 	}
 
 	resp := &pbqualifications.GetQualificationResponse{}
