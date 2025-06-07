@@ -626,19 +626,12 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 v-model:files="state.files"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 :disabled="!canDo.edit"
-                                footer-class="items-center justify-start"
                                 history-type="document"
+                                :saving="saving"
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"
                                 :filestore-service="(opts) => $grpc.documents.documents.uploadFile(opts)"
-                            >
-                                <template v-if="saving" #footer>
-                                    <div class="inline-flex items-center gap-1">
-                                        <UIcon class="h-4 w-4 animate-spin" name="i-mdi-content-save" />
-                                        <span>{{ $t('common.save', 2) }}...</span>
-                                    </div>
-                                </template>
-                            </TiptapEditor>
+                            />
                         </ClientOnly>
                     </UFormGroup>
 

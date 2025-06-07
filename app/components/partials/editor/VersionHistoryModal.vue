@@ -37,6 +37,13 @@ function onConfirmDiff(version: Version<Content>) {
     selectedVersion.value = undefined;
     isOpen.value = false;
 }
+
+watch(showDiffModal, (val) => {
+    if (!val) {
+        selectedVersion.value = undefined;
+        showDiffModal.value = false;
+    }
+});
 </script>
 
 <template>
@@ -51,11 +58,14 @@ function onConfirmDiff(version: Version<Content>) {
 
         <UCard
             v-else
+            class="flex flex-1 flex-col"
             :ui="{
+                body: {
+                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
                 ring: '',
                 divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                base: 'flex flex-1 flex-col',
-                body: { base: 'flex flex-1 flex-col' },
             }"
         >
             <template #header>
@@ -94,7 +104,7 @@ function onConfirmDiff(version: Version<Content>) {
                     </li>
                 </ul>
             </div>
-            <div v-else class="py-4 text-center text-gray-400">No versions available.</div>
+            <div v-else class="py-4 text-center text-gray-400">{{ $t('common.no_versions') }}</div>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">

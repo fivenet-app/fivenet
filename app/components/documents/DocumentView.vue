@@ -499,7 +499,7 @@ const scrollRef = useTemplateRef('scrollRef');
                 </template>
             </UDashboardToolbar>
 
-            <UCard ref="scrollRef" class="relative overflow-x-auto">
+            <UCard ref="scrollRef" class="relative overflow-x-auto" :ui="{ rounded: '' }">
                 <template #header>
                     <div class="mb-4">
                         <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">

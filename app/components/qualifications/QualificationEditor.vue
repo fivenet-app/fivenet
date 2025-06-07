@@ -527,6 +527,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                     v-model:files="state.files"
                                     class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                     :disabled="!canDo.edit"
+                                    :saving="saving"
                                     history-type="qualification"
                                     :target-id="props.qualificationId ?? 0"
                                     filestore-namespace="qualifications"

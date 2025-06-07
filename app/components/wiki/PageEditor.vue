@@ -524,6 +524,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 v-model:files="state.files"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 history-type="wiki"
+                                :saving="saving"
                                 :target-id="page?.id"
                                 filestore-namespace="wiki"
                                 :filestore-service="(opts) => $grpc.wiki.wiki.uploadFile(opts)"

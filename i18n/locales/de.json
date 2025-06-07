@@ -669,7 +669,9 @@
         "firstname": "Vorname",
         "lastname": "Nachname",
         "first_citizen": "Erster Bürger",
-        "auto_save": "Automatische Speicherung"
+        "auto_save": "Automatische Speicherung",
+        "discord_guild": "Discord Gilde | Discord Gilden",
+        "no_versions": "Keine Versionen verfügbar."
     },
     "components": {
         "partials": {
@@ -784,7 +786,7 @@
                 "edit_comment": "Bearbeite deinen Kommentar"
             },
             "document_comments": {
-                "add_comment": "Füge deinen Kommentar hinzu",
+                "add_comment": "Fügen Sie Ihren Kommentar hinzu.",
                 "no_comments": "Noch keine Kommentare veröffentlicht"
             },
             "document_managers": {
@@ -2180,7 +2182,11 @@
             "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
             "ErrInvalidPerms": "Fehler beim Aktualisieren der Rollen Berechtigungen!",
             "ErrInvalidAttrs": "Fehler beim Aktualisieren der Rollen Attributen!",
-            "ErrDiscordNotEnabled": "Discord ist nicht aktiviert!"
+            "ErrDiscordNotEnabled": "Discord ist nicht aktiviert!",
+            "ErrDiscordConnectRequired": {
+                "title": "Sie müssen Ihr Discord-Konto verbunden haben!",
+                "content": "Bitte stellen Sie sicher, dass Ihr Discord-Konto mit FiveNet verbunden ist."
+            }
         },
         "Filestore": {
             "ErrInvalidUploadMeta": "Ungültige Upload-Metadaten!",

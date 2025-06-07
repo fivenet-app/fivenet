@@ -18,9 +18,9 @@ export const useHistoryStore = defineStore(
             const version: Version<TContent> = {
                 id: id,
                 date: new Date().toISOString(),
-                type,
-                content,
-                name,
+                type: type,
+                content: content,
+                name: name,
             };
             history.value.push(version as Version<unknown>);
 

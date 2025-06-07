@@ -670,7 +670,8 @@
         "lastname": "Lastname",
         "first_citizen": "First Citizen",
         "auto_save": "Auto Save",
-        "discord_guild": "Discord Guild | Discord Guilds"
+        "discord_guild": "Discord Guild | Discord Guilds",
+        "no_versions": "No versions available."
     },
     "components": {
         "partials": {
@@ -785,8 +786,8 @@
                 "edit_comment": "Edit your comment"
             },
             "document_comments": {
-                "add_comment": "Add your comment",
-                "no_comments": "No comments have been posted yet"
+                "add_comment": "Add your comment.",
+                "no_comments": "No comments have been posted yet."
             },
             "document_managers": {
                 "view_current": "View current",
@@ -1068,11 +1069,11 @@
                     "multipleChoice": "Multiple Choice",
                     "image": "Image"
                 },
+                "minimum_points": "Minimum Points",
                 "auto_grade": {
                     "title": "Automatic Grading",
                     "description": "If enabled, the exam will be automatically graded after the user has submitted it. If disabled, the exam will be graded manually by a tutor. The system uses the selected answers to grade the exam automatically (answer key is for helping tutors.)"
                 },
-                "minimum_points": "Minimum Points",
                 "exam_duration": "Exam Duration (in seconds)",
                 "auto_grade_mode": {
                     "title": "Grade Mode",
@@ -1401,12 +1402,6 @@
                     "user_info_sync_settings": {
                         "employee_role_enabled": "Create and manage Employee Role",
                         "employee_role_format": "Employee Role format",
-                        "grade_role_format": {
-                            "title": "Grade Role format",
-                            "grade": "Job Grade (e.g., 01, 02, etc.)",
-                            "grade_label": "Job Grade Label (e.g., Officer, Sergeant, etc.)",
-                            "grade_single": "Job Grade (1, 2, 3, etc.)"
-                        },
                         "unemployed_enabled": "Manage the unemployed role",
                         "unemployed_mode": "Mode for handling unemployed users",
                         "unemployed_role_name": "Unemployed Role Name",
@@ -1417,6 +1412,12 @@
                             "name": "Role name",
                             "from_grade": "From Grade",
                             "to_grade": "To Grade"
+                        },
+                        "grade_role_format": {
+                            "title": "Grade Role format",
+                            "grade": "Job Grade (e.g., 01, 02, etc.)",
+                            "grade_label": "Job Grade Label (e.g., Officer, Sergeant, etc.)",
+                            "grade_single": "Job Grade (1, 2, 3, etc.)"
                         }
                     },
                     "status_log": "Status Log",
@@ -3239,6 +3240,14 @@
                     "key": "List and view Pages",
                     "description": "Should always be given."
                 },
+                "DeletePage": {
+                    "key": "Delete Pages",
+                    "description": "Deleting wiki pages (requires Owner access)."
+                },
+                "ListPageActivity": {
+                    "key": "View Page history",
+                    "description": "Viewing page history."
+                },
                 "UpdatePage": {
                     "key": "Create and Update Pages",
                     "description": "Create and update wiki pages.",
@@ -3248,14 +3257,6 @@
                     "attrs_types": {
                         "Fields": "Access to creating pages with specific access"
                     }
-                },
-                "DeletePage": {
-                    "key": "Delete Pages",
-                    "description": "Deleting wiki pages (requires Owner access)."
-                },
-                "ListPageActivity": {
-                    "key": "View Page history",
-                    "description": "Viewing page history."
                 }
             }
         },

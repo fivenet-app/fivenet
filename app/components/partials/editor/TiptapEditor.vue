@@ -51,6 +51,7 @@ import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
 import type { UploadNamespaces } from '~/composables/useFileUploader';
 import type GrpcProvider from '~/composables/yjs/yjs';
 import { fontColors, highlightColors } from '~/types/editor';
+import type { Content, Version } from '~/types/history';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
 import type { UploadPacket, UploadResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -68,13 +69,14 @@ const props = withDefaults(
         disabled?: boolean;
         placeholder?: string;
         hideToolbar?: boolean;
-        footerClass?: string;
-        commentMode?: boolean;
+        disableImages?: boolean;
         historyType?: string;
+        disableCollab?: boolean;
 
         extensions?: Extensions;
 
-        disableCollab?: boolean;
+        saving?: boolean;
+
         targetId?: number;
         filestoreNamespace?: UploadNamespaces;
         filestoreService?: (options?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>;
@@ -86,13 +88,14 @@ const props = withDefaults(
         disabled: false,
         placeholder: undefined,
         hideToolbar: false,
-        footerClass: '',
-        commentMode: false,
+        disableImages: false,
         historyType: undefined,
+        disableCollab: false,
 
         extensions: () => [],
 
-        disableCollab: false,
+        saving: false,
+
         targetId: undefined,
         filestoreNamespace: undefined,
         filestoreService: undefined,
@@ -267,7 +270,7 @@ function hasFileById(files: FileGrpc[] | undefined | null, id: number): boolean 
     return files.some((f) => f.id === id);
 }
 
-if (!props.commentMode) {
+if (!props.disableImages) {
     extensions.push(
         EnhancedImageResize.configure({
             inline: false,
@@ -551,6 +554,18 @@ watch(contentRef, () => {
     });
 });
 
+function applyVersion(version: Version<unknown>): void {
+    const v = version as Version<Content>;
+    content.value = v.content.content;
+    files.value = v.content.files;
+
+    notifications.add({
+        title: { key: 'notifications.action_successfull.title', parameters: {} },
+        description: { key: 'notifications.action_successfull.content', parameters: {} },
+        type: NotificationType.SUCCESS,
+    });
+}
+
 onMounted(() => {
     if (!ydoc) {
         unref(editor)?.commands.setContent(content.value);
@@ -646,14 +661,10 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                     </UTooltip>
                 </UButtonGroup>
 
-                <UDivider
-                    v-if="!commentMode"
-                    orientation="vertical"
-                    :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }"
-                />
+                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <!-- Text Align -->
-                <UButtonGroup v-if="!commentMode">
+                <UButtonGroup>
                     <UTooltip :text="$t('components.partials.TiptapEditor.align_left')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
@@ -848,7 +859,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
             </div>
 
             <div class="flex snap-x flex-wrap gap-1">
-                <UButtonGroup v-if="!commentMode">
+                <UButtonGroup>
                     <UTooltip :text="$t('components.partials.TiptapEditor.highlight')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('highlight') }"
@@ -902,11 +913,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                     </UPopover>
                 </UButtonGroup>
 
-                <UDivider
-                    v-if="!commentMode"
-                    orientation="vertical"
-                    :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }"
-                />
+                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <UButtonGroup>
                     <UTooltip :text="$t('components.partials.TiptapEditor.bullet_list')" :popper="{ placement: 'top' }">
@@ -955,7 +962,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                 <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <TiptapEditorImagePopover
-                    v-if="!commentMode"
+                    v-if="!disableImages"
                     :editor="editor"
                     :file-limit="fileLimit"
                     :disabled="disabled"
@@ -968,7 +975,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                     "
                 />
 
-                <UPopover v-if="!commentMode">
+                <UPopover>
                     <UTooltip :text="$t('components.partials.TiptapEditor.table')" :popper="{ placement: 'top' }">
                         <UButton
                             :class="{ 'is-active': editor.isActive('table') }"
@@ -1192,60 +1199,59 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                     </UTooltip>
                 </UButtonGroup>
 
-                <template v-if="!commentMode">
-                    <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
+                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
-                    <UButtonGroup>
-                        <UTooltip :text="$t('components.partials.TiptapEditor.source_code')" :popper="{ placement: 'top' }">
-                            <UButton
-                                color="white"
-                                variant="ghost"
-                                icon="i-mdi-file-code"
-                                :disabled="disabled"
-                                @click="
-                                    modal.open(TiptapEditorSourceCodeModal, {
-                                        content: content,
-                                        'onUpdate:content': ($event) => (content = $event),
-                                    })
-                                "
-                            />
-                        </UTooltip>
+                <UButtonGroup>
+                    <UTooltip :text="$t('components.partials.TiptapEditor.source_code')" :popper="{ placement: 'top' }">
+                        <UButton
+                            color="white"
+                            variant="ghost"
+                            icon="i-mdi-file-code"
+                            :disabled="disabled"
+                            @click="
+                                modal.open(TiptapEditorSourceCodeModal, {
+                                    content: content,
+                                    'onUpdate:content': ($event) => (content = $event),
+                                })
+                            "
+                        />
+                    </UTooltip>
 
-                        <UTooltip
-                            v-if="filestoreService"
-                            :text="$t('components.partials.TiptapEditor.file_list')"
-                            :popper="{ placement: 'top' }"
-                        >
-                            <UButton
-                                color="white"
-                                variant="ghost"
-                                icon="i-mdi-file-multiple"
-                                :disabled="disabled"
-                                @click="
-                                    modal.open(FileListModal, {
-                                        editor: editor!,
-                                        files: files,
-                                    })
-                                "
-                            />
-                        </UTooltip>
+                    <UTooltip
+                        v-if="!disableImages && filestoreService"
+                        :text="$t('components.partials.TiptapEditor.file_list')"
+                        :popper="{ placement: 'top' }"
+                    >
+                        <UButton
+                            color="white"
+                            variant="ghost"
+                            icon="i-mdi-file-multiple"
+                            :disabled="disabled"
+                            @click="
+                                modal.open(FileListModal, {
+                                    editor: editor!,
+                                    files: files,
+                                })
+                            "
+                        />
+                    </UTooltip>
 
-                        <UTooltip v-if="historyType" :text="$t('common.version_history')" :popper="{ placement: 'top' }">
-                            <UButton
-                                color="white"
-                                variant="ghost"
-                                icon="i-mdi-history"
-                                :disabled="disabled"
-                                @click="
-                                    modal.open(VersionHistoryModal, {
-                                        historyType: historyType,
-                                        currentContent: { content: content, files: files },
-                                    })
-                                "
-                            />
-                        </UTooltip>
-                    </UButtonGroup>
-                </template>
+                    <UTooltip v-if="historyType" :text="$t('common.version_history')" :popper="{ placement: 'top' }">
+                        <UButton
+                            color="white"
+                            variant="ghost"
+                            icon="i-mdi-history"
+                            :disabled="disabled"
+                            @click="
+                                modal.open(VersionHistoryModal, {
+                                    historyType: historyType,
+                                    currentContent: { content: content, files: files },
+                                    onApply: applyVersion,
+                                })
+                            "
+                        />
+                    </UTooltip>
+                </UButtonGroup>
             </div>
         </div>
 
@@ -1288,8 +1294,14 @@ onBeforeUnmount(() => unref(editor)?.destroy());
         />
 
         <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
-            <div class="flex" :class="[{ 'flex-1': targetId }, footerClass]">
-                <slot name="footer" />
+            <div class="flex" :class="[{ 'flex-1': targetId }]">
+                <template v-if="$slots.footer">
+                    <slot name="footer" />
+                </template>
+                <div v-else-if="saving" class="inline-flex items-center gap-1">
+                    <UIcon class="h-4 w-4 animate-spin" name="i-mdi-content-save" />
+                    <span>{{ $t('common.save', 2) }}...</span>
+                </div>
 
                 <div v-if="loading" class="inline-flex items-center gap-1">
                     <UIcon class="size-5 animate-spin" name="i-mdi-refresh" />

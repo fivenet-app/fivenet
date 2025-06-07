@@ -83,11 +83,14 @@ function close() {
 
 <template>
     <UCard
+        class="flex flex-1 flex-col"
         :ui="{
+            body: {
+                base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                padding: 'px-1 py-2 sm:p-2',
+            },
             ring: '',
             divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-            base: 'flex flex-1 flex-col',
-            body: { base: 'flex flex-1 flex-col' },
         }"
     >
         <template #header>

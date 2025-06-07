@@ -7,6 +7,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useNotificatorStore } from '~/stores/notificator';
+import type { Content } from '~/types/history';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/documents/documents';
@@ -33,6 +34,8 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificatorStore();
+
+const historyStore = useHistoryStore();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -69,14 +72,69 @@ async function getComments(): Promise<GetCommentsResponse> {
 }
 
 const schema = z.object({
-    comment: z.string().min(3).max(1536),
+    content: z.string().min(3).max(1536),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    comment: '',
+    content: '',
 });
+
+const changed = ref(false);
+const saving = ref(false);
+
+// Track last saved string and timestamp
+let lastSavedString = '';
+let lastSaveTimestamp = 0;
+
+async function saveHistory(values: Schema, name: string | undefined = undefined, type = 'document_comments'): Promise<void> {
+    if (saving.value) {
+        return;
+    }
+
+    const now = Date.now();
+    // Skip if identical to last saved or if within MIN_GAP
+    if (state.content === lastSavedString || now - lastSaveTimestamp < 5000) {
+        return;
+    }
+
+    saving.value = true;
+
+    historyStore.addVersion<Content>(
+        type,
+        props.documentId,
+        {
+            content: values.content,
+            files: [],
+        },
+        name,
+    );
+
+    useTimeoutFn(() => {
+        saving.value = false;
+    }, 1750);
+
+    lastSavedString = state.content;
+    lastSaveTimestamp = now;
+}
+
+historyStore.handleRefresh(() => saveHistory(state, 'document'));
+
+watchDebounced(
+    state,
+    () => {
+        if (changed.value) {
+            saveHistory(state);
+        } else {
+            changed.value = true;
+        }
+    },
+    {
+        debounce: 1_000,
+        maxWait: 2_500,
+    },
+);
 
 async function addComment(documentId: number, values: Schema): Promise<void> {
     if (data.value === null) {
@@ -87,7 +145,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
         id: 0,
         documentId,
         content: {
-            rawContent: values.comment,
+            rawContent: values.content,
         },
         creatorJob: '',
     };
@@ -106,7 +164,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
             data.value?.comments.unshift(response.comment);
         }
 
-        state.comment = '';
+        state.content = '';
 
         emit('newComment');
     } catch (e) {
@@ -155,11 +213,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UFormGroup name="comment">
                                 <ClientOnly>
                                     <TiptapEditor
-                                        v-model="state.comment"
+                                        v-model="state.content"
                                         :placeholder="$t('components.documents.document_comments.add_comment')"
                                         wrapper-class="min-h-44"
-                                        comment-mode
+                                        disable-images
                                         :limit="1250"
+                                        history-type="document_comments"
+                                        :saving="saving"
                                         disable-collab
                                     />
                                 </ClientOnly>
