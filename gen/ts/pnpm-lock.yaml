@@ -17,11 +17,11 @@ importers:
 
 packages:
 
-  '@bufbuild/protobuf@2.5.1':
-    resolution: {integrity: sha512-lut4UTvKL8tqtend0UDu7R79/n9jA7Jtxf77RNPbxtmWqfWI4qQ9bTjf7KCS4vfqLmpQbuHr1ciqJumAgJODdw==}
+  '@bufbuild/protobuf@2.5.2':
+    resolution: {integrity: sha512-foZ7qr0IsUBjzWIq+SuBLfdQCpJ1j8cTuNNT4owngTHoN5KsJb8L9t65fzz7SCeSWzescoOil/0ldqiL041ABg==}
 
-  '@bufbuild/protoplugin@2.5.1':
-    resolution: {integrity: sha512-viJAgCqPUw1JZQxYTdhbRmMy5+C0afS52ak7CgeKL8R7bwVHWb8HjOFMMvJwPXb8fkDQqxIEBdWP7Yn00Dnikw==}
+  '@bufbuild/protoplugin@2.5.2':
+    resolution: {integrity: sha512-7d/NUae/ugs/qgHEYOwkVWGDE3Bf/xjuGviVFs38+MLRdwiHNTiuvzPVwuIPo/1wuZCZn3Nax1cg1owLuY72xw==}
 
   '@protobuf-ts/plugin@2.11.0':
     resolution: {integrity: sha512-Y+p4Axrk3thxws4BVSIO+x4CKWH2c8k3K+QPrp6Oq8agdsXPL/uwsMTIdpTdXIzTaUEZFASJL9LU56pob5GTHg==}
@@ -69,11 +69,11 @@ packages:
 
 snapshots:
 
-  '@bufbuild/protobuf@2.5.1': {}
+  '@bufbuild/protobuf@2.5.2': {}
 
-  '@bufbuild/protoplugin@2.5.1':
+  '@bufbuild/protoplugin@2.5.2':
     dependencies:
-      '@bufbuild/protobuf': 2.5.1
+      '@bufbuild/protobuf': 2.5.2
       '@typescript/vfs': 1.6.1(typescript@5.4.5)
       typescript: 5.4.5
     transitivePeerDependencies:
@@ -81,8 +81,8 @@ snapshots:
 
   '@protobuf-ts/plugin@2.11.0':
     dependencies:
-      '@bufbuild/protobuf': 2.5.1
-      '@bufbuild/protoplugin': 2.5.1
+      '@bufbuild/protobuf': 2.5.2
+      '@bufbuild/protoplugin': 2.5.2
       '@protobuf-ts/protoc': 2.11.0
       '@protobuf-ts/runtime': 2.11.0
       '@protobuf-ts/runtime-rpc': 2.11.0
