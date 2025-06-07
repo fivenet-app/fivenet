@@ -630,7 +630,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"
                                 :filestore-service="(opts) => $grpc.documents.documents.uploadFile(opts)"
-                                @file-uploaded="(file) => state.files.push(file)"
                             >
                                 <template v-if="saving" #footer>
                                     <div class="inline-flex items-center gap-1">

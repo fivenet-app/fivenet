@@ -524,13 +524,13 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <ClientOnly>
                                 <TiptapEditor
                                     v-model="state.content"
+                                    v-model:files="state.files"
                                     class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                     :disabled="!canDo.edit"
                                     history-type="qualification"
                                     :target-id="props.qualificationId ?? 0"
                                     filestore-namespace="qualifications"
                                     :filestore-service="(opts) => $grpc.qualifications.qualifications.uploadFile(opts)"
-                                    @file-uploaded="(file) => state.files.push(file)"
                                 />
                             </ClientOnly>
                         </UFormGroup>
