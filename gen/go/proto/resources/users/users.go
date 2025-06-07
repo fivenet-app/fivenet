@@ -1,6 +1,8 @@
 package users
 
-import "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+import (
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+)
 
 func (x *User) SetJob(job string) {
 	x.Job = job

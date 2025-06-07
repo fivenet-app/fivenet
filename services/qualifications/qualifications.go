@@ -186,7 +186,8 @@ func (s *Server) GetQualification(ctx context.Context, req *pbqualifications.Get
 	}
 	if resp.Qualification.ExamSettings == nil {
 		resp.Qualification.ExamSettings = &qualifications.QualificationExamSettings{
-			Time: durationpb.New(10 * time.Minute),
+			Time:          durationpb.New(10 * time.Minute),
+			AutoGradeMode: qualifications.AutoGradeMode_AUTO_GRADE_MODE_STRICT,
 		}
 	}
 

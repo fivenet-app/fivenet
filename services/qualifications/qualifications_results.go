@@ -380,7 +380,6 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 
 	if quali.LabelSyncEnabled {
 		// Add/Remove label based on result status
-		// TODO add check to only add label to the user if they are part of the qualification creator's job
 		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, userId, status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL); err != nil {
 			return 0, err
 		}
