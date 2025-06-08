@@ -488,7 +488,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 		WHERE(tUser.ID.EQ(jet.Int32(req.Props.UserId))).
 		LIMIT(1)
 
-	if err := stmt.QueryContext(ctx, s.db, &u); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, u); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
