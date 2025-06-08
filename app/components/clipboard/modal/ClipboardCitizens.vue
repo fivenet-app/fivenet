@@ -35,11 +35,12 @@ const selected = ref<ClipboardUser[]>([]);
 
 async function select(item: ClipboardUser): Promise<void> {
     const idx = selected.value.indexOf(item);
-    if (idx !== undefined && idx > -1) {
+    if (idx > -1) {
         selected.value.splice(idx, 1);
     } else {
-        if (props.specs && props.specs.max) {
-            selected.value.splice(0, selected.value.length);
+        // If specs are defined and max is set, clear the selection if we are over the limit
+        if (props.specs && props.specs.max !== undefined && props.specs.max > 0 && selected.value.length >= props.specs.max) {
+            selected.value.splice(0, props.specs.max);
         }
         selected.value.push(item);
     }
@@ -142,7 +143,7 @@ watch(props, async (newVal) => {
                     <th class="relative py-3.5 pl-3 pr-4 sm:pr-0" scope="col">
                         {{ $t('common.action', 2) }}
                         <UTooltip v-if="selected.length > 0" :text="$t('common.delete')">
-                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="removeAll()" />
+                            <UButton variant="link" icon="i-mdi-delete" color="error" :padded="false" @click="removeAll()" />
                         </UTooltip>
                     </th>
                 </tr>
@@ -168,15 +169,24 @@ watch(props, async (newVal) => {
                             @click="select(item)"
                         />
                     </td>
+
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                         {{ item.firstname }} {{ item.lastname }}
                     </td>
+
                     <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                         {{ item.jobLabel }}
                     </td>
+
                     <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                         <UTooltip :text="$t('common.delete')">
-                            <UButton variant="link" icon="i-mdi-delete" color="error" @click="remove(item, true)" />
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-delete"
+                                color="error"
+                                :padded="false"
+                                @click="remove(item, true)"
+                            />
                         </UTooltip>
                     </td>
                 </tr>

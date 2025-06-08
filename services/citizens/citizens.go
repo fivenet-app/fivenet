@@ -469,7 +469,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 
 	tUser := tables.User().AS("user")
 
-	u := &users.User{}
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
@@ -488,6 +487,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 		WHERE(tUser.ID.EQ(jet.Int32(req.Props.UserId))).
 		LIMIT(1)
 
+	u := &users.User{}
 	if err := stmt.QueryContext(ctx, s.db, u); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
@@ -662,6 +662,18 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 }
 
 func (s *Server) checkIfUserCanAccess(userInfo *userinfo.UserInfo, targetUserJob string, targetUserGrade int32) (bool, error) {
+	// Skip if user is job unemployed
+	unemployedJob := s.appCfg.Get().JobInfo.UnemployedJob
+	if unemployedJob.Name == targetUserJob {
+		return true, nil
+	}
+
+	// If the user is not part of public or hidden jobs (e.g., police, medics), allow access
+	if !slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, targetUserJob) &&
+		!slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, targetUserJob) {
+		return true, nil
+	}
+
 	jobGrades, err := s.ps.AttrJobGradeList(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceGetUserPerm, permscitizens.CitizensServiceGetUserJobsPermField)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizens.ErrFailedQuery)

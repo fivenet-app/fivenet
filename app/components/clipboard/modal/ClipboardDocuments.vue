@@ -38,8 +38,9 @@ async function select(item: ClipboardDocument): Promise<void> {
     if (idx !== undefined && idx > -1) {
         selected.value.splice(idx, 1);
     } else {
-        if (props.specs && props.specs.max) {
-            selected.value.splice(0, selected.value.length);
+        // If specs are defined and max is set, clear the selection if we are over the limit
+        if (props.specs && props.specs.max !== undefined && props.specs.max > 0 && selected.value.length >= props.specs.max) {
+            selected.value.splice(0, props.specs.max);
         }
         selected.value.push(item);
     }
