@@ -36,8 +36,8 @@ func (l *MigrateLogger) Verbose() bool {
 }
 
 func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
-	// FiveNet's own citizens (users/chars) table
-	tableName := "fivenet_citizens"
+	// FiveNet's own users/chars table
+	tableName := "fivenet_user"
 	if esxCompat {
 		// Use ESX's table
 		tableName = "users"
