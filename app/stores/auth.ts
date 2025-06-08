@@ -233,11 +233,6 @@ export const useAuthStore = defineStore(
                     permissions.value = permissions.value.filter((p) => p !== 'superuser');
                 }
 
-                setAccessTokenExpiration(toDate(response.expires));
-                setActiveChar(response.char!);
-                setPermissions(response.permissions);
-                setJobProps(response.jobProps);
-
                 useNotificatorStore().add({
                     title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
                     description: {
@@ -250,6 +245,11 @@ export const useAuthStore = defineStore(
                 });
 
                 await navigateTo({ name: 'overview' });
+
+                setAccessTokenExpiration(toDate(response.expires));
+                setActiveChar(response.char!);
+                setPermissions(response.permissions);
+                setJobProps(response.jobProps);
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;

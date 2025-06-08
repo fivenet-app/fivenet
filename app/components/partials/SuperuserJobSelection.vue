@@ -25,12 +25,12 @@ const selectedJob = ref<undefined | Job>(
 
 watchOnce(jobs, () => (selectedJob.value = jobs.value.find((j) => j.name === activeChar.value?.job)));
 
-watch(selectedJob, () => {
+watch(selectedJob, async () => {
     if (activeChar.value?.job === selectedJob.value?.name) {
         return;
     }
 
-    setSuperuserMode(isSuperuser.value, selectedJob.value);
+    await setSuperuserMode(isSuperuser.value, selectedJob.value);
 });
 </script>
 

@@ -1,12 +1,9 @@
-import { MapMarkerQuestionIcon } from 'mdi-vue3';
 import { defineAsyncComponent, type DefineComponent } from 'vue';
 
 export type IconEntry = {
     name: string;
     component: ReturnType<typeof defineAsyncComponent>;
 };
-
-export const fallbackIcon = MapMarkerQuestionIcon;
 
 const modules = import.meta.glob('../../../node_modules/mdi-vue3/icons/*.js', { eager: false });
 
@@ -28,3 +25,5 @@ export const availableIcons: IconEntry[] = Object.entries(modules).map(([path, l
         }),
     };
 });
+
+export const fallbackIcon = availableIcons.find((icon) => icon.name === 'MapMarkerQuestionIcon')!;
