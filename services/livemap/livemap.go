@@ -42,6 +42,9 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 		})
 		markerJobs.Strings = utils.RemoveSliceDuplicates(markerJobs.Strings)
 
+		if usersJobs.Jobs == nil {
+			usersJobs.Jobs = make(map[string]int32)
+		}
 		// Disable fine-grained permissions for superuser as the it is now just a list of jobs
 		usersJobs.FineGrained = false
 		for _, j := range s.tracker.ListTrackedJobs() {
