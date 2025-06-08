@@ -42,9 +42,9 @@ const state = reactive<Schema>({
     reset: false,
 });
 
-const { resizeAndUpload } = useFileUploader((_) => $grpc.citizens.citizens.uploadMugshot(_), 'documents', 0);
+const { resizeAndUpload } = useFileUploader((_) => $grpc.citizens.citizens.uploadAvatar(_), 'documents', 0);
 
-async function uploadMugshot(files: File[]): Promise<void> {
+async function uploadAvatar(files: File[]): Promise<void> {
     for (const f of files) {
         if (!f.type.startsWith('image/')) continue;
 
@@ -95,7 +95,7 @@ function handleFileChanges(event: FileList) {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await (!event.data.reset ? uploadMugshot(event.data.avatar) : deleteAvatar()).finally(() =>
+    await (!event.data.reset ? uploadAvatar(event.data.avatar) : deleteAvatar()).finally(() =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
