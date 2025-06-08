@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import type { Ad } from '~~/gen/ts/resources/internet/ads';
 
 defineProps<{
@@ -13,7 +14,7 @@ defineProps<{
         </template>
 
         <template v-if="ad.image?.filePath" #icon>
-            <NuxtImg class="mx-auto h-40" :src="ad.image.filePath" :alt="$t('common.logo')" loading="lazy" />
+            <GenericImg class="mx-auto h-40" :src="ad.image.filePath" :alt="$t('common.logo')" />
         </template>
     </UPageCard>
 </template>

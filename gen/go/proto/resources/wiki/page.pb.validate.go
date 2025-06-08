@@ -899,6 +899,10 @@ func (m *PageRootInfo) validate(all bool) error {
 
 	var errors []error
 
+	if m.LogoFileId != nil {
+		// no validation rules for LogoFileId
+	}
+
 	if m.Logo != nil {
 
 		if all {

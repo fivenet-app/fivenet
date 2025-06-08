@@ -180,9 +180,13 @@ export interface PageShort {
  */
 export interface PageRootInfo {
     /**
-     * @generated from protobuf field: optional resources.file.File logo = 1
+     * @generated from protobuf field: optional uint64 logo_file_id = 1
      */
-    logo?: File;
+    logoFileId?: number;
+    /**
+     * @generated from protobuf field: optional resources.file.File logo = 2
+     */
+    logo?: File; // @gotags: alias:"logo"
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Page$Type extends MessageType<Page> {
@@ -551,7 +555,8 @@ export const PageShort = new PageShort$Type();
 class PageRootInfo$Type extends MessageType<PageRootInfo> {
     constructor() {
         super("resources.wiki.PageRootInfo", [
-            { no: 1, name: "logo", kind: "message", T: () => File }
+            { no: 1, name: "logo_file_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "logo", kind: "message", T: () => File }
         ]);
     }
     create(value?: PartialMessage<PageRootInfo>): PageRootInfo {
@@ -565,7 +570,10 @@ class PageRootInfo$Type extends MessageType<PageRootInfo> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional resources.file.File logo */ 1:
+                case /* optional uint64 logo_file_id */ 1:
+                    message.logoFileId = reader.uint64().toNumber();
+                    break;
+                case /* optional resources.file.File logo */ 2:
                     message.logo = File.internalBinaryRead(reader, reader.uint32(), options, message.logo);
                     break;
                 default:
@@ -580,9 +588,12 @@ class PageRootInfo$Type extends MessageType<PageRootInfo> {
         return message;
     }
     internalBinaryWrite(message: PageRootInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional resources.file.File logo = 1; */
+        /* optional uint64 logo_file_id = 1; */
+        if (message.logoFileId !== undefined)
+            writer.tag(1, WireType.Varint).uint64(message.logoFileId);
+        /* optional resources.file.File logo = 2; */
         if (message.logo)
-            File.internalBinaryWrite(message.logo, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            File.internalBinaryWrite(message.logo, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

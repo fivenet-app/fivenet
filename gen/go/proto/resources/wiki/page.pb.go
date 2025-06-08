@@ -406,7 +406,8 @@ func (x *PageShort) GetDraft() bool {
 
 type PageRootInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Logo          *file.File             `protobuf:"bytes,1,opt,name=logo,proto3,oneof" json:"logo,omitempty"`
+	LogoFileId    *uint64                `protobuf:"varint,1,opt,name=logo_file_id,json=logoFileId,proto3,oneof" json:"logo_file_id,omitempty"`
+	Logo          *file.File             `protobuf:"bytes,2,opt,name=logo,proto3,oneof" json:"logo,omitempty" alias:"logo"` // @gotags: alias:"logo"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -439,6 +440,13 @@ func (x *PageRootInfo) ProtoReflect() protoreflect.Message {
 // Deprecated: Use PageRootInfo.ProtoReflect.Descriptor instead.
 func (*PageRootInfo) Descriptor() ([]byte, []int) {
 	return file_resources_wiki_page_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *PageRootInfo) GetLogoFileId() uint64 {
+	if x != nil && x.LogoFileId != nil {
+		return *x.LogoFileId
+	}
+	return 0
 }
 
 func (x *PageRootInfo) GetLogo() *file.File {
@@ -516,9 +524,12 @@ const file_resources_wiki_page_proto_rawDesc = "" +
 	"\x05_slugB\f\n" +
 	"\n" +
 	"_root_infoB\b\n" +
-	"\x06_level\"F\n" +
-	"\fPageRootInfo\x12-\n" +
-	"\x04logo\x18\x01 \x01(\v2\x14.resources.file.FileH\x00R\x04logo\x88\x01\x01B\a\n" +
+	"\x06_level\"~\n" +
+	"\fPageRootInfo\x12%\n" +
+	"\flogo_file_id\x18\x01 \x01(\x04H\x00R\n" +
+	"logoFileId\x88\x01\x01\x12-\n" +
+	"\x04logo\x18\x02 \x01(\v2\x14.resources.file.FileH\x01R\x04logo\x88\x01\x01B\x0f\n" +
+	"\r_logo_file_idB\a\n" +
 	"\x05_logoBGZEgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wikib\x06proto3"
 
 var (

@@ -2,6 +2,7 @@
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
@@ -114,12 +115,7 @@ const wikiService = useWikiWiki();
                         :ui="{ title: 'text-xl' }"
                     >
                         <template v-if="p.rootInfo?.logo?.filePath" #icon>
-                            <NuxtImg
-                                class="h-10 w-10"
-                                :src="p.rootInfo?.logo?.filePath"
-                                :alt="$t('common.logo')"
-                                loading="lazy"
-                            />
+                            <GenericImg class="h-10 w-10" :src="p.rootInfo?.logo?.filePath" :alt="$t('common.logo')" />
                         </template>
                     </UPageCard>
                 </UPageGrid>

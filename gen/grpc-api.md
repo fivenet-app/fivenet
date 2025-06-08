@@ -6980,7 +6980,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `logo` | [resources.file.File](#resources-file-File) | optional |  |
+| `logo_file_id` | [uint64](#uint64) | optional |  |
+| `logo` | [resources.file.File](#resources-file-File) | optional | @gotags: alias:"logo" |
 
 
 

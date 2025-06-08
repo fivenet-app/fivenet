@@ -123,7 +123,7 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 	}
 	if req.RootOnly != nil && *req.RootOnly {
 		columns = append(columns,
-			tJobProps.LogoFileID.AS("page_root_info.logo"),
+			tJobProps.LogoFileID.AS("page_root_info.logo_file_id"),
 			tFiles.ID,
 			tFiles.FilePath,
 		)

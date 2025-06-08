@@ -31,7 +31,7 @@ func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []strin
 			tUserProps.TrafficInfractionPointsUpdatedAt,
 			tUserProps.OpenFines,
 			tUserProps.MugshotFileID,
-			tFiles.ID,
+			tFiles.ID.AS("mugshot.mugshot_file_id"),
 			tFiles.FilePath,
 		).
 		FROM(
