@@ -1,8 +1,9 @@
 #
 # Be sure to checkout the Config file reference: https://fivenet.app/getting-started/configuration/config-reference
 #
-logLevel: "DEBUG"
-# debug or release
+# Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+logLevel: "INFO"
+# Debug or release mode
 mode: "release"
 # Must be 32 chars (bytes) long
 secret: "your_generated_db_secret_32_char"
@@ -21,14 +22,14 @@ otlp:
   # - k8s.namespace.name=${POD_NAMESPACE}
   headers: {}
     # Example to authenticate with an API key
-    #authorization: "API_KEY_HERE"
+    #authorization: "OTEL_API_KEY_HERE"
   # Can be "none" or "gzip"
   compression: "none"
   frontend:
     url: ""
     headers: {}
       # Example to authenticate with an API key
-      #authorization: "API_KEY_HERE"
+      #authorization: "OTEL_API_KEY_HERE"
 http:
   listen: ":8080"
   adminListen: ":7070"
@@ -66,6 +67,7 @@ database:
         filterEmptyName: false
 nats:
   # This NATS url is for using the NATS server from the `docker-compose.yaml`
+  # If you change the NATS username or password, below `nats:` config section
   url: "nats://fivenet:fivenet_topsecret@nats:4222"
   replicas: 1
 jwt:
