@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.6.1] - 2025-06-08
+
 ## [2025.6.0] - 2025-06-07
 
 ### 🚀 Features
