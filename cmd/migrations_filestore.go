@@ -95,12 +95,14 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 		return err
 	}
 
+	var errs error
 	for _, row := range rows {
 		row.LogoURL = strings.TrimPrefix(row.LogoURL, "/api/filestore")
 
 		objectInfo, err := c.storage.Stat(ctx, row.LogoURL)
 		if err != nil {
-			return fmt.Errorf("failed to stat logo file %q. %w", row.LogoURL, err)
+			errs = multierr.Append(errs, fmt.Errorf("failed to stat logo file %q. %w", row.LogoURL, err))
+			continue
 		}
 
 		fmt.Println(objectInfo)
@@ -121,11 +123,13 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 
 		res, err := insertStmt.ExecContext(ctx, c.db)
 		if err != nil {
-			return fmt.Errorf("failed to insert file %q for job %q. %w", objectInfo.GetName(), row.Job, err)
+			errs = multierr.Append(errs, fmt.Errorf("failed to insert file %q for job %q. %w", objectInfo.GetName(), row.Job, err))
+			continue
 		}
 		lastInsertID, err := res.LastInsertId()
 		if err != nil {
-			return fmt.Errorf("failed to get last insert ID for file %q for job %q. %w", objectInfo.GetName(), row.Job, err)
+			errs = multierr.Append(errs, fmt.Errorf("failed to get last insert ID for file %q for job %q. %w", objectInfo.GetName(), row.Job, err))
+			continue
 		}
 
 		updateStmt := tJobProps.
@@ -142,7 +146,8 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 			)
 
 		if _, err := updateStmt.ExecContext(ctx, c.db); err != nil {
-			return fmt.Errorf("failed to update job %q with new logo file ID %d. %w", row.Job, lastInsertID, err)
+			errs = multierr.Append(errs, fmt.Errorf("failed to update job %q with new logo file ID %d. %w", row.Job, lastInsertID, err))
+			continue
 		}
 
 		fmt.Printf("Updated job %q with new logo file ID %d\n", row.Job, lastInsertID)
@@ -227,7 +232,7 @@ func (c FilestoreCmd) migrateAvatars(ctx context.Context) error {
 			continue
 		}
 
-		fmt.Printf("Updated user %d with new logo file ID %d\n", row.UserId, lastInsertID)
+		fmt.Printf("Updated user %d with new avatar file ID %d\n", row.UserId, lastInsertID)
 	}
 
 	return errs
