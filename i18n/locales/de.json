@@ -867,7 +867,11 @@
             "show_unit_names": "Zeige Einheiten Namen (gilt nur für Karten-Ansicht)",
             "show_unit_status": "Zeige Einheiten Status Farbe",
             "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Karten-Ansicht)",
-            "restarting_datastream": "Wiederherstellung des Datenstroms..."
+            "restarting_datastream": "Wiederherstellung des Datenstroms...",
+            "tile_layers": {
+                "postal": "Postleitzahlen",
+                "satelite": "Satellitenansicht"
+            }
         },
         "debug_info": {
             "title": "Debug-Informationen",

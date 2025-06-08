@@ -87,6 +87,7 @@ watchOnce(opened, async () => {
         <UButton
             class="inline-flex items-center gap-1 p-px"
             variant="link"
+            truncate
             :padded="false"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
             v-bind="$attrs"
@@ -98,7 +99,7 @@ watchOnce(opened, async () => {
             </template>
 
             <USkeleton v-if="!user && loading" class="h-8 w-[125px]" />
-            <span v-else class="truncate" :class="textClass">
+            <span v-else :class="textClass">
                 <slot name="name" :user="user">
                     {{ user?.firstname }} {{ user?.lastname }}
                     <template v-if="showBirthdate && user.dateofbirth">({{ user.dateofbirth }})</template>

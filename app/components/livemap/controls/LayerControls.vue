@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useSettingsStore, type LivemapLayer } from '~/stores/settings';
+import { tileLayers } from '~/types/livemap';
 
 const { attr, can } = useAuth();
 
 const settingsStore = useSettingsStore();
-const { livemapLayers, livemapLayerCategories } = storeToRefs(settingsStore);
+const { livemapLayers, livemapLayerCategories, livemapTileLayer } = storeToRefs(settingsStore);
 
 const groupedLayers = computed(() => {
     const reduced = livemapLayers.value.reduce(
@@ -50,7 +51,26 @@ const groupedLayers = computed(() => {
                 />
 
                 <template #panel>
-                    <div class="w-full max-w-sm py-1">
+                    <div class="w-full max-w-sm divide-y divide-gray-100 py-1 dark:divide-gray-800">
+                        <div class="px-1">
+                            <p class="truncate text-sm font-bold text-gray-900 dark:text-white">
+                                {{ $t('common.layer', 2) }}
+                            </p>
+
+                            <URadioGroup
+                                v-model="livemapTileLayer"
+                                class="overflow-y-hidden"
+                                :options="tileLayers"
+                                value-attribute="key"
+                                :ui-radio="{ inner: 'ms-1' }"
+                                :ui="{ fieldset: 'grid auto-cols-auto grid-flow-col gap-1' }"
+                            >
+                                <template #label="{ option }">
+                                    <span class="truncate">{{ $t(option.label) }}</span>
+                                </template>
+                            </URadioGroup>
+                        </div>
+
                         <p v-if="Object.keys(groupedLayers).length === 0" class="truncate">
                             {{ $t('common.layers', 0) }}
                         </p>

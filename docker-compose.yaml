@@ -62,7 +62,9 @@ services:
       - fivenet
     restart: on-failure
     volumes:
+      - fivenet:/data
       - ./config.yaml:/config/config.yaml
+
 
   # FiveNet Worker
   fivenet_worker:
@@ -76,6 +78,7 @@ services:
       - fivenet
     restart: on-failure
     volumes:
+      - fivenet:/data
       - ./config.yaml:/config/config.yaml
 
   # FiveNet Discord bot
@@ -90,6 +93,7 @@ services:
       - fivenet
     restart: on-failure
     volumes:
+      - fivenet:/data
       - ./config.yaml:/config/config.yaml
 
   # Iconify - Requires a reverse prox/"ingress controller" (e.g., jwilder/nginx-proxy, Traefik), that makes the Iconify container available under `/api/icons`
@@ -112,4 +116,7 @@ services:
     restart: on-failure
 
 networks:
+  fivenet:
+
+volumes:
   fivenet:

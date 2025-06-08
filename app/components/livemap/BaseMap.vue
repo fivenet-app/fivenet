@@ -6,6 +6,7 @@ import 'leaflet-contextmenu';
 import 'leaflet/dist/leaflet.css';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { useLivemapStore } from '~/stores/livemap';
+import { backgroundColorList, tileLayers } from '~/types/livemap';
 import type { ValueOf } from '~/utils/types';
 import LayerControls from './controls/LayerControls.vue';
 
@@ -21,6 +22,9 @@ const emit = defineEmits<{
 }>();
 
 const slideover = useSlideover();
+
+const settingsStore = useSettingsStore();
+const { livemapTileLayer } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
 const { location, selectedMarker, zoom } = storeToRefs(livemapStore);
@@ -66,7 +70,6 @@ const customCRS = extend({}, CRS.Simple, {
 
 // eslint-disable-next-line prefer-const
 let center: PointExpression = [0, 0];
-const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>' as const;
 
 const mouseLat = ref<number>(0);
 const mouseLong = ref<number>(0);
@@ -137,19 +140,22 @@ watchDebounced(
     { debounce: 1000, maxWait: 3000 },
 );
 
-const backgroundColorList = {
-    Postal: '#74aace',
-} as const;
-const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.Postal);
+const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.postal);
 
 async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
-        case 'Postal':
+        case 'satelite':
+            backgroundColor.value = backgroundColorList.satelite;
+            break;
+
+        case 'postal':
         default:
-            backgroundColor.value = backgroundColorList.Postal;
+            backgroundColor.value = backgroundColorList.postal;
             break;
     }
 }
+
+watch(livemapTileLayer, async (layer) => updateBackground(layer));
 
 function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
     const precision = Math.max(0, Math.ceil(Math.log(zoom.value) / Math.LN2));
@@ -176,6 +182,8 @@ function parseLocationQuery(query: string): { latlng: L.LatLng; zoom: number } |
 }
 
 async function onMapReady(m: L.Map): Promise<void> {
+    updateBackground(livemapTileLayer.value);
+
     map = m;
     map.invalidateSize();
 
@@ -236,15 +244,17 @@ onBeforeUnmount(() => {
             <ZoomControls />
 
             <LTileLayer
-                url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"
+                v-for="layer in tileLayers"
+                :key="layer.key"
+                :url="layer.url"
                 layer-type="base"
-                name="Postal"
+                :name="$t(layer.label)"
                 :no-wrap="true"
                 :tms="true"
-                :visible="true"
-                :attribution="attribution"
+                :visible="livemapTileLayer === layer.key"
                 :min-zoom="1"
-                :max-zoom="7"
+                :max-zoom="layer.options?.maxZoom || 7"
+                :attribution="layer.options?.attribution || ''"
             />
 
             <LayerControls />

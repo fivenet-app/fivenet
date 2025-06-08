@@ -867,7 +867,11 @@
             "show_unit_names": "Show Unit Names (only affects Map)",
             "show_unit_status": "Show Unit Status Color",
             "show_all_dispatches": "Show all Dispatches (only affects Map)",
-            "restarting_datastream": "Reconnecting data stream..."
+            "restarting_datastream": "Reconnecting data stream...",
+            "tile_layers": {
+                "postal": "Postal Codes",
+                "satelite": "Satellite"
+            }
         },
         "debug_info": {
             "title": "Debug Info",

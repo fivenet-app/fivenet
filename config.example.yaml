@@ -75,7 +75,7 @@ jwt:
 storage:
   type: "filesystem"
   filesystem:
-    path: ".data/"
+    path: "/data"
     prefix: ""
   s3:
     endpoint: ""

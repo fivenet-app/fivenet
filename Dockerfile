@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1.7-labs
 
 # Frontend Build
 FROM docker.io/library/node:23.11.1-alpine3.20 AS nodebuilder
@@ -7,23 +7,31 @@ ARG NUXT_UI_PRO_LICENSE
 
 WORKDIR /app
 
-COPY . ./
+COPY --exclude=public/images/livemap/ . ./
 
-RUN find ./public/images/livemap/ \
-        ! -path '*/tiles*' -and ! -path './public/images/livemap/' \
-        -exec rm -rf {} + && \
-    apk add --no-cache git && \
+RUN apk add --no-cache git && \
     corepack enable && \
     corepack prepare pnpm@10.4.0 --activate && \
     pnpm install && \
     NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
+
+# Livemap Tiles Layer for better caching
+FROM docker.io/library/alpine:3.22.0 AS livemaptiles
+
+WORKDIR /app
+
+COPY ./public/images/livemap/ ./public/images/livemap/
+
+RUN find ./public/images/livemap/ \
+        ! -path '*/tiles*' -and ! -path './public/images/livemap/' \
+        -exec rm -rf {} +
 
 # Backend Build
 FROM docker.io/library/golang:1.24.3 AS gobuilder
 
 WORKDIR /go/src/github.com/fivenet-app/fivenet/v2025/
 
-COPY . ./
+COPY --exclude=public/images/livemap/ . ./
 
 RUN apt-get update && \
     apt-get install -y git && \
@@ -33,6 +41,10 @@ RUN apt-get update && \
 FROM docker.io/library/alpine:3.22.0
 
 WORKDIR /app
+
+VOLUME ["/config", "/data"]
+
+COPY --from=livemaptiles /app/public/images/livemap/ ./.output/public/images/livemap/
 
 ## Install required packages and create a non-root user
 RUN apk --no-cache add ca-certificates tini tzdata && \

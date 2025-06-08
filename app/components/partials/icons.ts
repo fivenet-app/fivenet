@@ -8,7 +8,7 @@ export type IconEntry = {
 
 export const fallbackIcon = MapMarkerQuestionIcon;
 
-const modules = import.meta.glob('/node_modules/mdi-vue3/icons/*.js', { eager: false });
+const modules = import.meta.glob('../../../node_modules/mdi-vue3/icons/*.js', { eager: false });
 
 export const availableIcons: IconEntry[] = Object.entries(modules).map(([path, loader]) => {
     const name = path.split('/').pop()!.replace(/\.js$/, '');

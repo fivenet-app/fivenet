@@ -39,7 +39,7 @@ async function deleteMarker(id: number): Promise<void> {
 
 <template>
     <LPopup :options="{ closeButton: true }">
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 overflow-x-hidden">
             <div class="grid grid-cols-2 gap-1">
                 <UTooltip v-if="marker.x !== undefined && marker.y !== undefined" :text="$t('common.mark')">
                     <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.x, y: marker.y })">

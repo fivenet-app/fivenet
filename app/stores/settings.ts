@@ -42,6 +42,7 @@ export const useSettingsStore = defineStore(
             showAllDispatches: false,
         });
 
+        const livemapTileLayer = ref<string>('postal');
         const livemapLayers = ref<LivemapLayer[]>([]);
         const livemapLayerCategories = ref<LivemapLayerCategory[]>([]);
 
@@ -140,6 +141,7 @@ export const useSettingsStore = defineStore(
             livemap,
             livemapLayerCategories,
             livemapLayers,
+            livemapTileLayer,
             startpage,
             design,
             audio,

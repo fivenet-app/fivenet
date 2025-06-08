@@ -3,7 +3,7 @@ import { LCircle, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
 import type { PointExpression } from 'leaflet';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 
 const props = withDefaults(
     defineProps<{
@@ -26,8 +26,21 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
 </script>
 
 <template>
+    <LMarker
+        v-if="marker.type === MarkerType.DOT"
+        :name="marker.name"
+        :lat-lng="[marker.y, marker.x]"
+        @click="$emit('selected')"
+    >
+        <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
+            <div class="size-full" style="background-color: white; border-radius: 50%; border: 1px solid #000"></div>
+        </LIcon>
+
+        <MarkerMarkerPopup :marker="marker" />
+    </LMarker>
+
     <LCircle
-        v-if="marker.data?.data.oneofKind === 'circle'"
+        v-else-if="marker.data?.data.oneofKind === 'circle'"
         :key="marker.id"
         :name="marker.name"
         :lat-lng="[marker.y, marker.x]"
