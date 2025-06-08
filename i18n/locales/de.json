@@ -871,7 +871,8 @@
             "tile_layers": {
                 "postal": "Postleitzahlen",
                 "satelite": "Satellitenansicht"
-            }
+            },
+            "show_grid": "Raster anzeigen"
         },
         "debug_info": {
             "title": "Debug-Informationen",

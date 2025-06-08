@@ -24,7 +24,7 @@ const emit = defineEmits<{
 const slideover = useSlideover();
 
 const settingsStore = useSettingsStore();
-const { livemapTileLayer } = storeToRefs(settingsStore);
+const { livemapTileLayer, livemap: livemapSettings } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
 const { location, selectedMarker, zoom } = storeToRefs(livemapStore);
@@ -255,6 +255,17 @@ onBeforeUnmount(() => {
                 :min-zoom="1"
                 :max-zoom="layer.options?.maxZoom || 7"
                 :attribution="layer.options?.attribution || ''"
+            />
+
+            <LTileLayer
+                url="/images/livemap/tiles/grid/{z}/{x}/{y}.png"
+                layer-type="base"
+                :no-wrap="true"
+                :tms="true"
+                :min-zoom="1"
+                :max-zoom="7"
+                :opacity="0.75"
+                :visible="livemapSettings.showGrid"
             />
 
             <LayerControls />

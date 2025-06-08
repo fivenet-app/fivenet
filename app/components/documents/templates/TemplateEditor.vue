@@ -141,6 +141,11 @@ function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
 }
 
 async function createOrUpdateTemplate(values: Schema, templateId?: number): Promise<void> {
+    values.contentAccess.users.forEach((user) => user.id < 0 && (user.id = 0));
+    values.contentAccess.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+
+    values.jobAccess.forEach((job) => job.id < 0 && (job.id = 0));
+
     const tRequirements: TemplateRequirements = {
         users: createObjectSpec(schemaEditor.value.users),
         documents: createObjectSpec(schemaEditor.value.documents),

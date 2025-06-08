@@ -871,7 +871,8 @@
             "tile_layers": {
                 "postal": "Postal Codes",
                 "satelite": "Satellite"
-            }
+            },
+            "show_grid": "Show Grid"
         },
         "debug_info": {
             "title": "Debug Info",

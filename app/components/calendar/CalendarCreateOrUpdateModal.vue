@@ -75,6 +75,9 @@ const {
 );
 
 async function createOrUpdateCalendar(values: Schema): Promise<CreateCalendarResponse | UpdateCalendarResponse> {
+    values.access.users.forEach((user) => user.id < 0 && (user.id = 0));
+    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+
     try {
         const response = await calendarStore.createOrUpdateCalendar({
             id: data.value?.calendar?.id ?? 0,
@@ -203,6 +206,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup class="flex-1" name="access" :label="$t('common.access')">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
+                                v-model:users="state.access.users"
                                 :target-id="calendarId ?? 0"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
                             />

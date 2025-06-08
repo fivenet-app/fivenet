@@ -40,6 +40,7 @@ export const useSettingsStore = defineStore(
             showUnitNames: true,
             showUnitStatus: true,
             showAllDispatches: false,
+            showGrid: false,
         });
 
         const livemapTileLayer = ref<string>('postal');

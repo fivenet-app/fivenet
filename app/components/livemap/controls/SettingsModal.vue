@@ -13,6 +13,7 @@ const schema = z.object({
     showUnitNames: z.boolean(),
     showUnitStatus: z.boolean(),
     showAllDispatches: z.boolean(),
+    showGrid: z.boolean(),
 });
 </script>
 
@@ -48,21 +49,19 @@ const schema = z.object({
                 </UFormGroup>
 
                 <UFormGroup name="showUnitNames" :label="$t('components.livemap.show_unit_names')">
-                    <UToggle v-model="livemap.showUnitNames">
-                        <span class="sr-only">{{ $t('components.livemap.show_unit_names') }}</span>
-                    </UToggle>
+                    <UToggle v-model="livemap.showUnitNames" />
                 </UFormGroup>
 
                 <UFormGroup name="showUnitStatus" :label="$t('components.livemap.show_unit_status')">
-                    <UToggle v-model="livemap.showUnitStatus">
-                        <span class="sr-only">{{ $t('components.livemap.show_unit_status') }}</span>
-                    </UToggle>
+                    <UToggle v-model="livemap.showUnitStatus" />
                 </UFormGroup>
 
                 <UFormGroup name="showAllDispatches" :label="$t('components.livemap.show_all_dispatches')">
-                    <UToggle v-model="livemap.showAllDispatches">
-                        <span class="sr-only">{{ $t('components.livemap.show_all_dispatches') }}</span>
-                    </UToggle>
+                    <UToggle v-model="livemap.showAllDispatches" />
+                </UFormGroup>
+
+                <UFormGroup name="showGrid" :label="$t('components.livemap.show_grid')">
+                    <UToggle v-model="livemap.showGrid" />
                 </UFormGroup>
             </UForm>
 

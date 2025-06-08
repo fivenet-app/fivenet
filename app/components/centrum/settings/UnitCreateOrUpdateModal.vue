@@ -62,6 +62,9 @@ const state = reactive<Schema>({
 const selectedAttributes = ref<string[]>([]);
 
 async function createOrUpdateUnit(values: Schema): Promise<void> {
+    values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
+    values.access.qualifications.forEach((quali) => quali.id < 0 && (quali.id = 0));
+
     try {
         const call = $grpc.centrum.centrum.createOrUpdateUnit({
             unit: {
