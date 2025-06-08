@@ -6,11 +6,11 @@ const props = withDefaults(
     defineProps<{
         modelValue: string | undefined;
         color?: string;
-        fallbackIcon?: DefineComponent;
+        fallbackIcon?: DefineComponent | IconEntry;
     }>(),
     {
         color: undefined,
-        fallbackIcon: defaultIcon,
+        fallbackIcon: () => defaultIcon,
     },
 );
 
