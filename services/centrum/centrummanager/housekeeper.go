@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/nats-io/nats.go/jetstream"
 	"github.com/paulmach/orb"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -706,11 +707,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 	for _, settings := range s.ListSettings(ctx) {
 		job := settings.Job
 
-		units, ok := s.ListUnits(ctx, job)
-		if !ok {
-			continue
-		}
-
+		units := s.ListUnits(ctx, job)
 		for _, unit := range units {
 			// Either unit has users but is static and in a wrong status
 			if len(unit.Users) > 0 {
@@ -762,11 +759,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 	for _, settings := range s.ListSettings(ctx) {
 		job := settings.Job
 
-		units, ok := s.ListUnits(ctx, job)
-		if !ok {
-			continue
-		}
-
+		units := s.ListUnits(ctx, job)
 		for _, u := range units {
 			unit, err := s.GetUnit(ctx, job, u.Id)
 			if err != nil {
@@ -789,9 +782,9 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 					continue
 				}
 
-				unitId, found := s.GetUserUnitID(ctx, userId)
+				unitMapping, found := s.GetUserUnitMapping(ctx, userId)
 				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-				if found && unit.Id == unitId && s.tracker.IsUserOnDuty(userId) {
+				if found && unit.Id == unitMapping.UnitId && s.tracker.IsUserOnDuty(userId) {
 					foundUserIds = append(foundUserIds, userId)
 					continue
 				}
@@ -839,10 +832,14 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 }
 
 func (s *Housekeeper) watchUserChanges() {
-	userCh := s.tracker.Subscribe()
-	defer s.tracker.Unsubscribe(userCh)
-
 	for {
+		userCh, err := s.tracker.Subscribe(s.ctx)
+		if err != nil {
+			s.logger.Error("failed to subscribe to user changes", zap.Error(err))
+			time.Sleep(2 * time.Second) // Wait before retrying
+			continue
+		}
+
 		select {
 		case <-s.ctx.Done():
 			return
@@ -857,33 +854,36 @@ func (s *Housekeeper) watchUserChanges() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum.watch-users")
 				defer span.End()
 
-				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))
-				for _, userMarker := range event.Added {
-					if _, ok := s.GetUserUnitID(ctx, userMarker.UserId); ok {
-						break
+				userMarker, err := event.Value()
+				if err != nil {
+					s.logger.Error("failed to get user marker from event", zap.Error(err))
+					return
+				}
+
+				if event.Operation() == jetstream.KeyValuePut {
+					if _, ok := s.GetUserUnitMapping(ctx, userMarker.UserId); ok {
+						return
 					}
 
 					unitId, err := s.LoadUnitIDForUserID(ctx, userMarker.UserId)
 					if err != nil {
 						s.logger.Error("failed to load user unit id", zap.Error(err))
-						continue
+						return
 					}
 
 					if unitId == 0 {
 						if err := s.UnsetUnitIDForUser(ctx, userMarker.UserId); err != nil {
 							s.logger.Error("failed to unset user's unit id", zap.Error(err))
 						}
-						continue
+						return
 					}
 
 					if err := s.SetUnitForUser(ctx, userMarker.Job, userMarker.UserId, unitId); err != nil {
 						s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
-						continue
+						return
 					}
-				}
-
-				for _, userMarker := range event.Removed {
-					s.handleRemovedUserDisponents(ctx, userMarker.Job, userMarker.UserId)
+				} else if event.Operation() == jetstream.KeyValueDelete || event.Operation() == jetstream.KeyValuePurge {
+					s.handleRemovedUserDispatchers(ctx, userMarker.Job, userMarker.UserId)
 					s.handleRemovedUserUnit(ctx, userMarker.Job, userMarker.UserId)
 				}
 			}()
@@ -891,23 +891,23 @@ func (s *Housekeeper) watchUserChanges() {
 	}
 }
 
-func (s *Housekeeper) handleRemovedUserDisponents(ctx context.Context, job string, userId int32) {
-	if s.CheckIfUserIsDisponent(ctx, job, userId) {
-		if err := s.DisponentSignOn(ctx, job, userId, false); err != nil {
-			s.logger.Error("failed to remove user from disponents", zap.Error(err))
+func (s *Housekeeper) handleRemovedUserDispatchers(ctx context.Context, job string, userId int32) {
+	if s.CheckIfUserIsDispatcher(ctx, job, userId) {
+		if err := s.DispatcherSignOn(ctx, job, userId, false); err != nil {
+			s.logger.Error("failed to remove user from dispatchers", zap.Error(err))
 			return
 		}
 	}
 }
 
 func (s *Housekeeper) handleRemovedUserUnit(ctx context.Context, job string, userId int32) bool {
-	unitId, ok := s.GetUserUnitID(ctx, userId)
+	unitMapping, ok := s.GetUserUnitMapping(ctx, userId)
 	if !ok {
 		// Nothing to do
 		return false
 	}
 
-	unit, err := s.GetUnit(ctx, job, unitId)
+	unit, err := s.GetUnit(ctx, job, unitMapping.UnitId)
 	if err != nil {
 		if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
 			s.logger.Error("failed to unset user's unit id", zap.Error(err))

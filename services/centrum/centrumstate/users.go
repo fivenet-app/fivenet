@@ -7,13 +7,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 )
 
-func (s *State) GetUserUnitID(ctx context.Context, userId int32) (uint64, bool) {
+func (s *State) GetUserUnitMapping(ctx context.Context, userId int32) (*centrum.UserUnitMapping, bool) {
 	mapping, err := s.userIDToUnitID.Load(ctx, userIdKey(userId))
 	if mapping == nil || err != nil {
-		return 0, false
+		return nil, false
 	}
 
-	return mapping.UnitId, true
+	return mapping, true
 }
 
 func (s *State) SetUnitForUser(ctx context.Context, job string, userId int32, unitId uint64) error {

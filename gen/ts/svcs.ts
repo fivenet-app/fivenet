@@ -4,9 +4,10 @@
 // source: resources/audit/audit.proto
 // source: resources/calendar/access.proto
 // source: resources/calendar/calendar.proto
+// source: resources/centrum/access.proto
 // source: resources/centrum/attributes.proto
+// source: resources/centrum/dispatchers.proto
 // source: resources/centrum/dispatches.proto
-// source: resources/centrum/disponents.proto
 // source: resources/centrum/settings.proto
 // source: resources/centrum/units.proto
 // source: resources/centrum/units_access.proto
@@ -173,6 +174,7 @@ export const grpcMethods = [
 	'centrum.CentrumService/TakeControl',
 	'centrum.CentrumService/AssignDispatch',
 	'centrum.CentrumService/AssignUnit',
+	'centrum.CentrumService/UpdateDispatchers',
 	'centrum.CentrumService/Stream',
 	'centrum.CentrumService/GetSettings',
 	'centrum.CentrumService/JoinUnit',

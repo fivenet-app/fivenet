@@ -7,7 +7,7 @@
 
 package model
 
-type FivenetCentrumDisponents struct {
+type FivenetCentrumDispatchers struct {
 	Job    string `json:"job"`
 	UserID int32  `sql:"primary_key" json:"user_id"`
 }

@@ -70,6 +70,17 @@ func (m *Dispatch) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if len(m.GetJobs()) > 10 {
+		err := DispatchValidationError{
+			field:  "Jobs",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetMessage()) > 255 {
 		err := DispatchValidationError{
 			field:  "Message",

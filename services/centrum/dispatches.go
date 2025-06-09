@@ -374,13 +374,13 @@ func (s *Server) TakeDispatch(ctx context.Context, req *pbcentrum.TakeDispatchRe
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	unitId, ok := s.state.GetUserUnitID(ctx, userInfo.UserId)
+	unitMapping, ok := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
 	if !ok {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, unitId, req.Resp, req.DispatchIds); err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, unitMapping.UnitId, req.Resp, req.DispatchIds); err != nil {
+		return nil, err
 	}
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
@@ -410,13 +410,13 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 	}
 
 	var statusUnitId *uint64
-	unitId, ok := s.state.GetUserUnitID(ctx, userInfo.UserId)
+	userMapping, ok := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
 	if !ok {
-		if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+		if !s.state.CheckIfUserIsDispatcher(ctx, userInfo.Job, userInfo.UserId) {
 			return nil, errorscentrum.ErrNotPartOfDispatch
 		}
 	} else {
-		statusUnitId = &unitId
+		statusUnitId = &userMapping.UnitId
 	}
 
 	if _, err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp.Id, &centrum.DispatchStatus{
@@ -431,13 +431,13 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	if req.Status == centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
+	if (req.Status == centrum.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
 		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
-		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE {
-		if unit, err := s.state.GetUnit(ctx, userInfo.Job, unitId); err == nil {
+		req.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE) && statusUnitId != nil {
+		if unit, err := s.state.GetUnit(ctx, userInfo.Job, *statusUnitId); err == nil {
 			// Set unit to busy when unit accepts a dispatch
 			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_BUSY {
-				if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unitId, &centrum.UnitStatus{
+				if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, *statusUnitId, &centrum.UnitStatus{
 					CreatedAt: timestamp.Now(),
 					UnitId:    unit.Id,
 					Status:    centrum.StatusUnit_STATUS_UNIT_BUSY,

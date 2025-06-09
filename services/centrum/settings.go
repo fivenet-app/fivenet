@@ -13,7 +13,10 @@ import (
 func (s *Server) GetSettings(ctx context.Context, req *pbcentrum.GetSettingsRequest) (*pbcentrum.GetSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	settings := s.state.GetSettings(ctx, userInfo.Job)
+	settings, err := s.state.GetSettings(ctx, userInfo.Job)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
 
 	return &pbcentrum.GetSettingsResponse{
 		Settings: settings,

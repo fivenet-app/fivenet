@@ -36,6 +36,10 @@ export interface Dispatch {
      */
     job: string;
     /**
+     * @generated from protobuf field: repeated string jobs = 18
+     */
+    jobs: string[];
+    /**
      * @generated from protobuf field: optional resources.centrum.DispatchStatus status = 5
      */
     status?: DispatchStatus;
@@ -330,6 +334,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 18, name: "jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
             { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
             { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
@@ -348,6 +353,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.job = "";
+        message.jobs = [];
         message.message = "";
         message.x = 0;
         message.y = 0;
@@ -373,6 +379,9 @@ class Dispatch$Type extends MessageType<Dispatch> {
                     break;
                 case /* string job */ 4:
                     message.job = reader.string();
+                    break;
+                case /* repeated string jobs */ 18:
+                    message.jobs.push(reader.string());
                     break;
                 case /* optional resources.centrum.DispatchStatus status */ 5:
                     message.status = DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, message.status);
@@ -470,6 +479,9 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* optional resources.centrum.DispatchReferences references = 17; */
         if (message.references)
             DispatchReferences.internalBinaryWrite(message.references, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string jobs = 18; */
+        for (let i = 0; i < message.jobs.length; i++)
+            writer.tag(18, WireType.LengthDelimited).string(message.jobs[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

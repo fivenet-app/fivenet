@@ -20,6 +20,8 @@ type fivenetCentrumSettingsTable struct {
 	Job              mysql.ColumnString
 	DeletedAt        mysql.ColumnTimestamp
 	Enabled          mysql.ColumnBool
+	Type             mysql.ColumnInteger
+	Public           mysql.ColumnBool
 	Mode             mysql.ColumnInteger
 	FallbackMode     mysql.ColumnInteger
 	PredefinedStatus mysql.ColumnString
@@ -68,13 +70,15 @@ func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fiv
 		JobColumn              = mysql.StringColumn("job")
 		DeletedAtColumn        = mysql.TimestampColumn("deleted_at")
 		EnabledColumn          = mysql.BoolColumn("enabled")
+		TypeColumn             = mysql.IntegerColumn("type")
+		PublicColumn           = mysql.BoolColumn("public")
 		ModeColumn             = mysql.IntegerColumn("mode")
 		FallbackModeColumn     = mysql.IntegerColumn("fallback_mode")
 		PredefinedStatusColumn = mysql.StringColumn("predefined_status")
 		TimingsColumn          = mysql.StringColumn("timings")
-		allColumns             = mysql.ColumnList{JobColumn, DeletedAtColumn, EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn}
-		mutableColumns         = mysql.ColumnList{DeletedAtColumn, EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn}
-		defaultColumns         = mysql.ColumnList{EnabledColumn, ModeColumn, FallbackModeColumn}
+		allColumns             = mysql.ColumnList{JobColumn, DeletedAtColumn, EnabledColumn, TypeColumn, PublicColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn}
+		mutableColumns         = mysql.ColumnList{DeletedAtColumn, EnabledColumn, TypeColumn, PublicColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn}
+		defaultColumns         = mysql.ColumnList{EnabledColumn, TypeColumn, PublicColumn, ModeColumn, FallbackModeColumn}
 	)
 
 	return fivenetCentrumSettingsTable{
@@ -84,6 +88,8 @@ func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fiv
 		Job:              JobColumn,
 		DeletedAt:        DeletedAtColumn,
 		Enabled:          EnabledColumn,
+		Type:             TypeColumn,
+		Public:           PublicColumn,
 		Mode:             ModeColumn,
 		FallbackMode:     FallbackModeColumn,
 		PredefinedStatus: PredefinedStatusColumn,

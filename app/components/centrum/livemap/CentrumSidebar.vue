@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
+import DispatchersInfo from '~/components/centrum/dispatchers/DispatchersInfo.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import DisponentsInfo from '~/components/centrum/disponents/DisponentsInfo.vue';
 import {
     dispatchStatusToBGColor,
     dispatchStatuses,
@@ -359,7 +359,7 @@ defineShortcuts({
     <UDashboardPanel grow>
         <UDashboardNavbar :title="$t('common.livemap')">
             <template #right>
-                <DisponentsInfo v-if="canStream && settings?.enabled" :hide-join="true" />
+                <DispatchersInfo v-if="canStream && settings?.enabled" :hide-join="true" />
             </template>
         </UDashboardNavbar>
 

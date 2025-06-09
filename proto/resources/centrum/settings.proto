@@ -2,9 +2,16 @@ syntax = "proto3";
 
 package resources.centrum;
 
+import "resources/centrum/access.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
+
+enum CentrumType {
+  CENTRUM_TYPE_UNSPECIFIED = 0;
+  CENTRUM_TYPE_DISPATCH = 1;
+  CENTRUM_TYPE_DELIVERY = 2;
+}
 
 enum CentrumMode {
   CENTRUM_MODE_UNSPECIFIED = 0;
@@ -17,10 +24,13 @@ enum CentrumMode {
 message Settings {
   string job = 1 [(validate.rules).string.max_len = 20];
   bool enabled = 2;
-  CentrumMode mode = 3 [(validate.rules).enum.defined_only = true];
+  CentrumType type = 3 [(validate.rules).enum.defined_only = true];
+  bool public = 9;
+  CentrumMode mode = 8 [(validate.rules).enum.defined_only = true];
   CentrumMode fallback_mode = 4 [(validate.rules).enum.defined_only = true];
   optional PredefinedStatus predefined_status = 5;
   Timings timings = 6;
+  resources.centrum.CentrumAccess access = 7;
 }
 
 // @dbscanner: json

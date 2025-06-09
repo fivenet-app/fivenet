@@ -15,6 +15,8 @@ type FivenetCentrumSettings struct {
 	Job              string     `sql:"primary_key" json:"job"`
 	DeletedAt        *time.Time `json:"deleted_at"`
 	Enabled          bool       `json:"enabled"`
+	Type             *int32     `json:"type"`
+	Public           bool       `json:"public"`
 	Mode             *int32     `json:"mode"`
 	FallbackMode     *int32     `json:"fallback_mode"`
 	PredefinedStatus *string    `json:"predefined_status"`

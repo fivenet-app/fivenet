@@ -416,8 +416,8 @@
         "member": "No Members | {n} Member | {n} Members",
         "attributes": "Attribute | Attributes",
         "last_update": "Last Update",
-        "disponents": "Disponent | Disponents",
-        "disponent": "No Disponents | {n} Disponent | {n} Disponents",
+        "dispatchers": "Dispatcher | Dispatchers",
+        "dispatcher": "No Dispatchers | {n} Dispatcher | {n} Dispatchers",
         "confirm": "Confirm | Confirmed",
         "word": "Word | Words",
         "marker": "Marker | Markers",
@@ -3050,6 +3050,10 @@
                 "DeleteDispatch": {
                     "key": "Delete Dispatches",
                     "description": "Allows to delete dispatches."
+                },
+                "UpdateDispatchers": {
+                    "key": "Remove Dispatchers",
+                    "description": "Allows to remove dispatchers from the dispatch center."
                 }
             }
         },

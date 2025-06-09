@@ -4,6 +4,7 @@
 package centrum
 
 import (
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	permkeys "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 )
@@ -77,9 +78,21 @@ func init() {
 		},
 		{
 			Category: permkeys.CentrumServicePerm,
-			Name:     permkeys.CentrumServiceUpdateSettingsPerm,
+			Name:     permkeys.CentrumServiceUpdateDispatchersPerm,
 			Attrs:    []perms.Attr{},
 			Order:    0,
+		},
+		{
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceUpdateSettingsPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.CentrumServiceUpdateSettingsAccessPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Shared"},
+				},
+			},
+			Order: 0,
 		},
 	})
 }

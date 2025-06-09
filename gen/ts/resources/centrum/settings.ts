@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { CentrumAccess } from "./access";
 /**
  * @generated from protobuf message resources.centrum.Settings
  */
@@ -23,7 +24,15 @@ export interface Settings {
      */
     enabled: boolean;
     /**
-     * @generated from protobuf field: resources.centrum.CentrumMode mode = 3
+     * @generated from protobuf field: resources.centrum.CentrumType type = 3
+     */
+    type: CentrumType;
+    /**
+     * @generated from protobuf field: bool public = 9
+     */
+    public: boolean;
+    /**
+     * @generated from protobuf field: resources.centrum.CentrumMode mode = 8
      */
     mode: CentrumMode;
     /**
@@ -38,6 +47,10 @@ export interface Settings {
      * @generated from protobuf field: resources.centrum.Timings timings = 6
      */
     timings?: Timings;
+    /**
+     * @generated from protobuf field: resources.centrum.CentrumAccess access = 7
+     */
+    access?: CentrumAccess;
 }
 /**
  * @dbscanner: json
@@ -78,6 +91,23 @@ export interface Timings {
     requireUnitReminderSeconds: number;
 }
 /**
+ * @generated from protobuf enum resources.centrum.CentrumType
+ */
+export enum CentrumType {
+    /**
+     * @generated from protobuf enum value: CENTRUM_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: CENTRUM_TYPE_DISPATCH = 1;
+     */
+    DISPATCH = 1,
+    /**
+     * @generated from protobuf enum value: CENTRUM_TYPE_DELIVERY = 2;
+     */
+    DELIVERY = 2
+}
+/**
  * @generated from protobuf enum resources.centrum.CentrumMode
  */
 export enum CentrumMode {
@@ -108,16 +138,21 @@ class Settings$Type extends MessageType<Settings> {
         super("resources.centrum.Settings", [
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 3, name: "type", kind: "enum", T: () => ["resources.centrum.CentrumType", CentrumType, "CENTRUM_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 9, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "predefined_status", kind: "message", T: () => PredefinedStatus },
-            { no: 6, name: "timings", kind: "message", T: () => Timings }
+            { no: 6, name: "timings", kind: "message", T: () => Timings },
+            { no: 7, name: "access", kind: "message", T: () => CentrumAccess }
         ]);
     }
     create(value?: PartialMessage<Settings>): Settings {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.job = "";
         message.enabled = false;
+        message.type = 0;
+        message.public = false;
         message.mode = 0;
         message.fallbackMode = 0;
         if (value !== undefined)
@@ -135,7 +170,13 @@ class Settings$Type extends MessageType<Settings> {
                 case /* bool enabled */ 2:
                     message.enabled = reader.bool();
                     break;
-                case /* resources.centrum.CentrumMode mode */ 3:
+                case /* resources.centrum.CentrumType type */ 3:
+                    message.type = reader.int32();
+                    break;
+                case /* bool public */ 9:
+                    message.public = reader.bool();
+                    break;
+                case /* resources.centrum.CentrumMode mode */ 8:
                     message.mode = reader.int32();
                     break;
                 case /* resources.centrum.CentrumMode fallback_mode */ 4:
@@ -146,6 +187,9 @@ class Settings$Type extends MessageType<Settings> {
                     break;
                 case /* resources.centrum.Timings timings */ 6:
                     message.timings = Timings.internalBinaryRead(reader, reader.uint32(), options, message.timings);
+                    break;
+                case /* resources.centrum.CentrumAccess access */ 7:
+                    message.access = CentrumAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -165,9 +209,9 @@ class Settings$Type extends MessageType<Settings> {
         /* bool enabled = 2; */
         if (message.enabled !== false)
             writer.tag(2, WireType.Varint).bool(message.enabled);
-        /* resources.centrum.CentrumMode mode = 3; */
-        if (message.mode !== 0)
-            writer.tag(3, WireType.Varint).int32(message.mode);
+        /* resources.centrum.CentrumType type = 3; */
+        if (message.type !== 0)
+            writer.tag(3, WireType.Varint).int32(message.type);
         /* resources.centrum.CentrumMode fallback_mode = 4; */
         if (message.fallbackMode !== 0)
             writer.tag(4, WireType.Varint).int32(message.fallbackMode);
@@ -177,6 +221,15 @@ class Settings$Type extends MessageType<Settings> {
         /* resources.centrum.Timings timings = 6; */
         if (message.timings)
             Timings.internalBinaryWrite(message.timings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.CentrumAccess access = 7; */
+        if (message.access)
+            CentrumAccess.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.CentrumMode mode = 8; */
+        if (message.mode !== 0)
+            writer.tag(8, WireType.Varint).int32(message.mode);
+        /* bool public = 9; */
+        if (message.public !== false)
+            writer.tag(9, WireType.Varint).bool(message.public);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

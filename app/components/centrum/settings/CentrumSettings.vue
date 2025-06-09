@@ -6,7 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
-import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
+import { CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
@@ -45,6 +45,8 @@ const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
 
 const schema = z.object({
     enabled: z.boolean(),
+    type: z.nativeEnum(CentrumType),
+    public: z.boolean(),
     mode: z.nativeEnum(CentrumMode),
     fallbackMode: z.nativeEnum(CentrumMode),
     predefinedStatus: z.object({
@@ -62,6 +64,8 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     enabled: false,
+    type: CentrumType.DISPATCH,
+    public: false,
     mode: CentrumMode.MANUAL,
     fallbackMode: CentrumMode.AUTO_ROUND_ROBIN,
     predefinedStatus: {
@@ -81,6 +85,8 @@ async function updateSettings(values: Schema): Promise<void> {
             settings: {
                 job: '',
                 enabled: values.enabled,
+                type: values.type,
+                public: values.public,
                 mode: values.mode,
                 fallbackMode: values.fallbackMode,
                 predefinedStatus: values.predefinedStatus,

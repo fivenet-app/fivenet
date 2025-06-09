@@ -7,7 +7,8 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
-message Disponents {
+message Dispatchers {
   string job = 1 [(validate.rules).string.max_len = 20];
-  repeated resources.jobs.Colleague disponents = 2;
+  optional string job_label = 2 [(validate.rules).string.max_len = 50];
+  repeated resources.jobs.Colleague dispatchers = 3;
 }

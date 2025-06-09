@@ -139,6 +139,26 @@ func (m *DeleteUnitResponse) Sanitize() error {
 	return nil
 }
 
+func (m *Dispatchers) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatchers
+	for idx, item := range m.Dispatchers {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *GetDispatchRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -189,6 +209,26 @@ func (m *GetSettingsResponse) Sanitize() error {
 	return nil
 }
 
+func (m *JobsList) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatches
+	for idx, item := range m.Dispatches {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *JoinUnitRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -219,20 +259,17 @@ func (m *LatestState) Sanitize() error {
 		return nil
 	}
 
-	// Field: Dispatches
-	for idx, item := range m.Dispatches {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+	// Field: Dispatchers
+	if m.Dispatchers != nil {
+		if v, ok := any(m.GetDispatchers()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
-
 	}
 
-	// Field: Disponents
-	for idx, item := range m.Disponents {
+	// Field: Dispatches
+	for idx, item := range m.Dispatches {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -460,6 +497,32 @@ func (m *ListUnitsResponse) Sanitize() error {
 	return nil
 }
 
+func (m *StreamHandshake) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Jobs
+	if m.Jobs != nil {
+		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Settings
+	if m.Settings != nil {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *StreamRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -483,14 +546,6 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
-		// Field: DispatchDeleted
-	case *StreamResponse_DispatchDeleted:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 		// Field: DispatchStatus
 	case *StreamResponse_DispatchStatus:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -507,8 +562,24 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
-		// Field: Disponents
-	case *StreamResponse_Disponents:
+		// Field: Dispatchers
+	case *StreamResponse_Dispatchers:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Handshake
+	case *StreamResponse_Handshake:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Jobs
+	case *StreamResponse_Jobs:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -533,14 +604,6 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: UnitCreated
 	case *StreamResponse_UnitCreated:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: UnitDeleted
-	case *StreamResponse_UnitDeleted:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -654,6 +717,31 @@ func (m *UpdateDispatchStatusRequest) Sanitize() error {
 func (m *UpdateDispatchStatusResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	return nil
+}
+
+func (m *UpdateDispatchersRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *UpdateDispatchersResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatchers
+	if m.Dispatchers != nil {
+		if v, ok := any(m.GetDispatchers()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

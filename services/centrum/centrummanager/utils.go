@@ -5,19 +5,20 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"go.uber.org/zap"
 )
 
-func (s *Manager) CheckIfUserIsDisponent(ctx context.Context, job string, userId int32) bool {
-	disponents, err := s.GetDisponents(ctx, job)
+func (s *Manager) CheckIfUserIsDispatcher(ctx context.Context, job string, userId int32) bool {
+	dispatchers, err := s.GetDispatchers(ctx, job)
 	if err != nil {
 		return false
 	}
 
-	if len(disponents) == 0 {
+	if dispatchers.IsEmpty() {
 		return false
 	}
-	for i := range disponents {
-		if userId == disponents[i].UserId {
+	for i := range dispatchers.Dispatchers {
+		if userId == dispatchers.Dispatchers[i].UserId {
 			return true
 		}
 	}
@@ -25,9 +26,9 @@ func (s *Manager) CheckIfUserIsDisponent(ctx context.Context, job string, userId
 	return false
 }
 
-func (s *Manager) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *centrum.Dispatch, disponentOkay bool) bool {
-	// Check if user is a disponent
-	if disponentOkay && s.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+func (s *Manager) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *centrum.Dispatch, dispatcherOkay bool) bool {
+	// Check if user is a dispatcher
+	if dispatcherOkay && s.CheckIfUserIsDispatcher(ctx, userInfo.Job, userInfo.UserId) {
 		return true
 	}
 
@@ -38,7 +39,7 @@ func (s *Manager) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *use
 			continue
 		}
 
-		if s.CheckIfUserPartOfUnit(ctx, userInfo.Job, userInfo.UserId, unit, disponentOkay) {
+		if s.CheckIfUserPartOfUnit(ctx, userInfo.Job, userInfo.UserId, unit, dispatcherOkay) {
 			return true
 		}
 	}
@@ -46,9 +47,9 @@ func (s *Manager) CheckIfUserIsPartOfDispatch(ctx context.Context, userInfo *use
 	return false
 }
 
-func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId int32, unit *centrum.Unit, disponentOkay bool) bool {
-	// Check if user is a disponent
-	if disponentOkay && s.CheckIfUserIsDisponent(ctx, job, userId) {
+func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId int32, unit *centrum.Unit, dispatcherOkay bool) bool {
+	// Check if user is a dispatcher
+	if dispatcherOkay && s.CheckIfUserIsDispatcher(ctx, job, userId) {
 		return true
 	}
 
@@ -62,7 +63,11 @@ func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId 
 }
 
 func (s *Manager) CheckIfBotNeeded(ctx context.Context, job string) bool {
-	settings := s.GetSettings(ctx, job)
+	settings, err := s.GetSettings(ctx, job)
+	if err != nil {
+		s.logger.Error("failed to get centrum settings", zap.String("job", job), zap.Error(err))
+		return false
+	}
 
 	// If centrum is disabled, why bother with the bot
 	if !settings.Enabled {
@@ -73,12 +78,12 @@ func (s *Manager) CheckIfBotNeeded(ctx context.Context, job string) bool {
 		return true
 	}
 
-	disponents, err := s.GetDisponents(ctx, job)
+	dispatchers, err := s.GetDispatchers(ctx, job)
 	if err != nil {
 		return false
 	}
 
-	if len(disponents) == 0 {
+	if dispatchers.IsEmpty() {
 		if settings.FallbackMode == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
 			return true
 		}

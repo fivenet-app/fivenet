@@ -45,6 +45,8 @@ type Manager struct {
 	state    *centrumstate.State
 	appCfg   appconfig.IConfig
 
+	refreshTimer *time.Timer
+
 	userStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
 }
 
@@ -79,6 +81,26 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		m.refreshTimer = time.NewTimer(p.AppConfig.Get().UserTracker.DbRefreshTime.AsDuration())
+
+		go func() {
+			configUpdateCh := p.AppConfig.Subscribe()
+			for {
+				select {
+				case <-ctxCancel.Done():
+					p.AppConfig.Unsubscribe(configUpdateCh)
+					return
+
+				case cfg := <-configUpdateCh:
+					if cfg == nil {
+						continue
+					}
+
+					m.handleAppConfigUpdate(cfg)
+				}
+			}
+		}()
+
 		userStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, p.Logger, p.JS, "tracker",
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
@@ -91,10 +113,6 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		}
 		m.userStore = userStore
 
-		if err := registerStreams(ctxStartup, m.js); err != nil {
-			return err
-		}
-
 		go m.start(ctxCancel)
 
 		return nil
@@ -103,10 +121,17 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
+		m.refreshTimer.Stop()
+
 		return nil
 	}))
 
 	return m, nil
+}
+
+func (m *Manager) handleAppConfigUpdate(appCfg *appconfig.Cfg) {
+	dbRefreshTime := appCfg.UserTracker.DbRefreshTime.AsDuration()
+	m.refreshTimer.Reset(dbRefreshTime)
 }
 
 func (m *Manager) start(ctx context.Context) {
@@ -115,7 +140,7 @@ func (m *Manager) start(ctx context.Context) {
 		case <-ctx.Done():
 			return
 
-		case <-time.After(m.appCfg.Get().UserTracker.DbRefreshTime.AsDuration()):
+		case <-m.refreshTimer.C:
 			m.refreshCache(ctx)
 		}
 	}
@@ -133,13 +158,11 @@ func (m *Manager) refreshCache(ctx context.Context) {
 	}
 }
 
-func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any) error {
-	event := &livemap.UsersUpdateEvent{}
+func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any) (int, error) {
+	m.logger.Debug("cleaning up user IDs", zap.Int32s("found_user_ids", utils.GetMapKeys(foundUserIDs)))
 
 	var errs error
-
 	now := time.Now()
-	m.logger.Debug("cleaning up user IDs", zap.Int32s("found_user_ids", utils.GetMapKeys(foundUserIDs)))
 	keys := m.userStore.Keys(ctx, "")
 	removed := []string{}
 	for _, key := range keys {
@@ -167,19 +190,12 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any
 			continue
 		}
 
-		event.Removed = append(event.Removed, marker)
 		removed = append(removed, key)
 	}
 
 	m.logger.Debug("removed user ids from tracker cache", zap.Strings("user_ids", removed))
 
-	if len(event.Removed) > 0 {
-		if err := m.sendUpdateEvent(ctx, UsersUpdate, event); err != nil {
-			errs = multierr.Append(errs, err)
-		}
-	}
-
-	return errs
+	return len(removed), errs
 }
 
 func (m *Manager) refreshUserLocations(ctx context.Context) error {
@@ -234,10 +250,9 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	}
 
 	foundUserIds := map[int32]any{}
+	added := 0
 
 	errs := multierr.Combine()
-
-	event := &livemap.UsersUpdateEvent{}
 	for i := range dest {
 		if dest[i].User == nil {
 			continue
@@ -258,11 +273,11 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			dest[i].Postal = postal.Code
 		}
 
-		unitId, ok := m.state.GetUserUnitID(ctx, dest[i].UserId)
+		unitMapping, ok := m.state.GetUserUnitMapping(ctx, dest[i].UserId)
 		if ok {
-			dest[i].UnitId = &unitId
+			dest[i].UnitId = &unitMapping.UnitId
 			job := dest[i].User.Job
-			if unit, err := m.state.GetUnit(ctx, job, unitId); err == nil {
+			if unit, err := m.state.GetUnit(ctx, job, unitMapping.UnitId); err == nil {
 				dest[i].Unit = unit
 			}
 		}
@@ -270,9 +285,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		userMarker, ok := m.userStore.Get(userIdKey(dest[i].UserId))
 		// No user marker in key value store nor locally
 		if userMarker == nil || !ok {
-			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
-			event.Added = append(event.Added, dest[i])
-
+			added++
 			if err := m.userStore.Put(ctx, userIdKey(dest[i].UserId), dest[i]); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
@@ -290,17 +303,12 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		}
 	}
 
-	if len(event.Added) > 0 {
-		if err := m.sendUpdateEvent(ctx, UsersUpdate, event); err != nil {
-			return err
-		}
-	}
-
-	if err := m.cleanupUserIDs(ctx, foundUserIds); err != nil {
+	removed, err := m.cleanupUserIDs(ctx, foundUserIds)
+	if err != nil {
 		return err
 	}
 
-	m.logger.Debug("completed user tracker cache refresh", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))
+	m.logger.Debug("completed user tracker cache refresh", zap.Int("added", added), zap.Int("removed", removed))
 
 	return nil
 }

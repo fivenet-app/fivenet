@@ -2,12 +2,10 @@ package tracker
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/broker"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -23,8 +21,7 @@ type ITracker interface {
 	GetUserById(id int32) (*livemap.UserMarker, bool)
 	IsUserOnDuty(userId int32) bool
 
-	Subscribe() chan *livemap.UsersUpdateEvent
-	Unsubscribe(ch chan *livemap.UsersUpdateEvent)
+	Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error)
 }
 
 type Tracker struct {
@@ -38,8 +35,6 @@ type Tracker struct {
 
 	userStore  *store.Store[livemap.UserMarker, *livemap.UserMarker]
 	usersByJob *xsync.Map[string, *xsync.Map[int32, *livemap.UserMarker]]
-
-	broker *broker.Broker[*livemap.UsersUpdateEvent]
 }
 
 type Params struct {
@@ -61,17 +56,9 @@ func New(p Params) (ITracker, error) {
 		js:     p.JS,
 
 		usersByJob: xsync.NewMap[string, *xsync.Map[int32, *livemap.UserMarker]](),
-
-		broker: broker.New[*livemap.UsersUpdateEvent](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if err := registerStreams(ctxStartup, p.JS); err != nil {
-			return err
-		}
-
-		go t.broker.Start(ctxCancel)
-
 		userIDs, err := store.New(ctxStartup, p.Logger, p.JS, "tracker",
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 			store.WithOnUpdateFn(func(s *store.Store[livemap.UserMarker, *livemap.UserMarker], um *livemap.UserMarker) (*livemap.UserMarker, error) {
@@ -111,10 +98,6 @@ func New(p Params) (ITracker, error) {
 		}
 		t.userStore = userIDs
 
-		if err := t.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
-			return fmt.Errorf("failed to register tracker nats subscriptions. %w", err)
-		}
-
 		return nil
 	}))
 
@@ -130,28 +113,6 @@ func New(p Params) (ITracker, error) {
 	}))
 
 	return t, nil
-}
-
-func (s *Tracker) watchForChanges(msg jetstream.Msg) {
-	remoteCtx, _ := events.GetJetstreamMsgContext(msg)
-	_, span := s.tracer.Start(trace.ContextWithRemoteSpanContext(context.Background(), remoteCtx), msg.Subject())
-	defer span.End()
-
-	if err := msg.Ack(); err != nil {
-		s.logger.Error("failed to ack message", zap.Error(err))
-	}
-
-	dest := &livemap.UsersUpdateEvent{}
-	if err := proto.Unmarshal(msg.Data(), dest); err != nil {
-		s.logger.Error("failed to unmarshal nats user update response", zap.Error(err))
-		return
-	}
-
-	if s.broker.SubCount() <= 0 {
-		return
-	}
-
-	s.broker.Publish(dest)
 }
 
 // Returns a `xsync.Map` with **copies** (proto cloned) of the `*livemap.UserMarker`
@@ -183,10 +144,6 @@ func (s *Tracker) IsUserOnDuty(userId int32) bool {
 	return !um.Hidden
 }
 
-func (s *Tracker) Subscribe() chan *livemap.UsersUpdateEvent {
-	return s.broker.Subscribe()
-}
-
-func (s *Tracker) Unsubscribe(ch chan *livemap.UsersUpdateEvent) {
-	s.broker.Unsubscribe(ch)
+func (s *Tracker) Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
+	return s.userStore.WatchAll(ctx)
 }

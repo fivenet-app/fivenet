@@ -70,6 +70,19 @@ func (m *Settings) validate(all bool) error {
 
 	// no validation rules for Enabled
 
+	if _, ok := CentrumType_name[int32(m.GetType())]; !ok {
+		err := SettingsValidationError{
+			field:  "Type",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Public
+
 	if _, ok := CentrumMode_name[int32(m.GetMode())]; !ok {
 		err := SettingsValidationError{
 			field:  "Mode",
@@ -115,6 +128,35 @@ func (m *Settings) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return SettingsValidationError{
 				field:  "Timings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetAccess()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SettingsValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SettingsValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SettingsValidationError{
+				field:  "Access",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}

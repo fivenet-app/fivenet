@@ -115,7 +115,7 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 				tFiles.CreatedAt,
 			).
 			VALUES(
-				objectInfo.GetName(),
+				strings.TrimPrefix(objectInfo.GetName(), "/"),
 				objectInfo.GetSize(),
 				objectInfo.GetContentType(),
 				timestamp.New(objectInfo.GetLastModified()),
@@ -197,7 +197,7 @@ func (c FilestoreCmd) migrateAvatars(ctx context.Context) error {
 				tFiles.CreatedAt,
 			).
 			VALUES(
-				objectInfo.GetName(),
+				strings.TrimPrefix(objectInfo.GetName(), "/"),
 				objectInfo.GetSize(),
 				objectInfo.GetContentType(),
 				timestamp.New(objectInfo.GetLastModified()),
@@ -279,7 +279,7 @@ func (c FilestoreCmd) migrateMugshots(ctx context.Context) error {
 				tFiles.CreatedAt,
 			).
 			VALUES(
-				objectInfo.GetName(),
+				strings.TrimPrefix(objectInfo.GetName(), "/"),
 				objectInfo.GetSize(),
 				objectInfo.GetContentType(),
 				timestamp.New(objectInfo.GetLastModified()),

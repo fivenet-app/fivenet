@@ -2007,6 +2007,250 @@ var _ interface {
 	ErrorName() string
 } = AssignUnitResponseValidationError{}
 
+// Validate checks the field values on UpdateDispatchersRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateDispatchersRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateDispatchersRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateDispatchersRequestMultiError, or nil if none found.
+func (m *UpdateDispatchersRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateDispatchersRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetToRemove()) > 10 {
+		err := UpdateDispatchersRequestValidationError{
+			field:  "ToRemove",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UpdateDispatchersRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateDispatchersRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateDispatchersRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateDispatchersRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateDispatchersRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateDispatchersRequestMultiError) AllErrors() []error { return m }
+
+// UpdateDispatchersRequestValidationError is the validation error returned by
+// UpdateDispatchersRequest.Validate if the designated constraints aren't met.
+type UpdateDispatchersRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateDispatchersRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateDispatchersRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateDispatchersRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateDispatchersRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateDispatchersRequestValidationError) ErrorName() string {
+	return "UpdateDispatchersRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateDispatchersRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateDispatchersRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateDispatchersRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateDispatchersRequestValidationError{}
+
+// Validate checks the field values on UpdateDispatchersResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateDispatchersResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateDispatchersResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateDispatchersResponseMultiError, or nil if none found.
+func (m *UpdateDispatchersResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateDispatchersResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDispatchers()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateDispatchersResponseValidationError{
+					field:  "Dispatchers",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateDispatchersResponseValidationError{
+					field:  "Dispatchers",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDispatchers()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateDispatchersResponseValidationError{
+				field:  "Dispatchers",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateDispatchersResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateDispatchersResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateDispatchersResponse.ValidateAll() if the
+// designated constraints aren't met.
+type UpdateDispatchersResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateDispatchersResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateDispatchersResponseMultiError) AllErrors() []error { return m }
+
+// UpdateDispatchersResponseValidationError is the validation error returned by
+// UpdateDispatchersResponse.Validate if the designated constraints aren't met.
+type UpdateDispatchersResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateDispatchersResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateDispatchersResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateDispatchersResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateDispatchersResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateDispatchersResponseValidationError) ErrorName() string {
+	return "UpdateDispatchersResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateDispatchersResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateDispatchersResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateDispatchersResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateDispatchersResponseValidationError{}
+
 // Validate checks the field values on ListUnitActivityResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -4807,6 +5051,164 @@ var _ interface {
 	ErrorName() string
 } = TakeDispatchResponseValidationError{}
 
+// Validate checks the field values on StreamHandshake with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *StreamHandshake) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on StreamHandshake with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// StreamHandshakeMultiError, or nil if none found.
+func (m *StreamHandshake) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *StreamHandshake) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, StreamHandshakeValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, StreamHandshakeValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return StreamHandshakeValidationError{
+				field:  "Settings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetJobs()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, StreamHandshakeValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, StreamHandshakeValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return StreamHandshakeValidationError{
+				field:  "Jobs",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return StreamHandshakeMultiError(errors)
+	}
+
+	return nil
+}
+
+// StreamHandshakeMultiError is an error wrapping multiple validation errors
+// returned by StreamHandshake.ValidateAll() if the designated constraints
+// aren't met.
+type StreamHandshakeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m StreamHandshakeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m StreamHandshakeMultiError) AllErrors() []error { return m }
+
+// StreamHandshakeValidationError is the validation error returned by
+// StreamHandshake.Validate if the designated constraints aren't met.
+type StreamHandshakeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e StreamHandshakeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e StreamHandshakeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e StreamHandshakeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e StreamHandshakeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e StreamHandshakeValidationError) ErrorName() string { return "StreamHandshakeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e StreamHandshakeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sStreamHandshake.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = StreamHandshakeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = StreamHandshakeValidationError{}
+
 // Validate checks the field values on LatestState with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -4887,38 +5289,33 @@ func (m *LatestState) validate(all bool) error {
 		}
 	}
 
-	for idx, item := range m.GetDisponents() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, LatestStateValidationError{
-						field:  fmt.Sprintf("Disponents[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, LatestStateValidationError{
-						field:  fmt.Sprintf("Disponents[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return LatestStateValidationError{
-					field:  fmt.Sprintf("Disponents[%v]", idx),
+	if all {
+		switch v := interface{}(m.GetDispatchers()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LatestStateValidationError{
+					field:  "Dispatchers",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LatestStateValidationError{
+					field:  "Dispatchers",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
 			}
 		}
-
+	} else if v, ok := interface{}(m.GetDispatchers()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LatestStateValidationError{
+				field:  "Dispatchers",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	for idx, item := range m.GetUnits() {
@@ -5194,6 +5591,48 @@ func (m *StreamResponse) validate(all bool) error {
 
 	oneofChangePresent := false
 	switch v := m.Change.(type) {
+	case *StreamResponse_Handshake:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofChangePresent = true
+
+		if all {
+			switch v := interface{}(m.GetHandshake()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Handshake",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Handshake",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetHandshake()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "Handshake",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *StreamResponse_LatestState:
 		if v == nil {
 			err := StreamResponseValidationError{
@@ -5278,7 +5717,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_Disponents:
+	case *StreamResponse_Jobs:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -5292,11 +5731,11 @@ func (m *StreamResponse) validate(all bool) error {
 		oneofChangePresent = true
 
 		if all {
-			switch v := interface{}(m.GetDisponents()).(type) {
+			switch v := interface{}(m.GetJobs()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "Disponents",
+						field:  "Jobs",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -5304,16 +5743,168 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "Disponents",
+						field:  "Jobs",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetDisponents()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "Disponents",
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *StreamResponse_Dispatchers:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofChangePresent = true
+
+		if all {
+			switch v := interface{}(m.GetDispatchers()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Dispatchers",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Dispatchers",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDispatchers()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "Dispatchers",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *StreamResponse_UnitDeleted:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofChangePresent = true
+		// no validation rules for UnitDeleted
+	case *StreamResponse_UnitUpdated:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofChangePresent = true
+
+		if all {
+			switch v := interface{}(m.GetUnitUpdated()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "UnitUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "UnitUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUnitUpdated()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "UnitUpdated",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *StreamResponse_DispatchDeleted:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofChangePresent = true
+		// no validation rules for DispatchDeleted
+	case *StreamResponse_DispatchUpdated:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofChangePresent = true
+
+		if all {
+			switch v := interface{}(m.GetDispatchUpdated()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDispatchUpdated()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "DispatchUpdated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -5356,90 +5947,6 @@ func (m *StreamResponse) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
 					field:  "UnitCreated",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *StreamResponse_UnitDeleted:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofChangePresent = true
-
-		if all {
-			switch v := interface{}(m.GetUnitDeleted()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitDeleted",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitDeleted",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUnitDeleted()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "UnitDeleted",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *StreamResponse_UnitUpdated:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofChangePresent = true
-
-		if all {
-			switch v := interface{}(m.GetUnitUpdated()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitUpdated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitUpdated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUnitUpdated()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "UnitUpdated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -5524,90 +6031,6 @@ func (m *StreamResponse) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
 					field:  "DispatchCreated",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *StreamResponse_DispatchDeleted:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofChangePresent = true
-
-		if all {
-			switch v := interface{}(m.GetDispatchDeleted()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchDeleted",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchDeleted",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetDispatchDeleted()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "DispatchDeleted",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *StreamResponse_DispatchUpdated:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofChangePresent = true
-
-		if all {
-			switch v := interface{}(m.GetDispatchUpdated()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchUpdated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchUpdated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetDispatchUpdated()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "DispatchUpdated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -5747,3 +6170,269 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = StreamResponseValidationError{}
+
+// Validate checks the field values on JobsList with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JobsList) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JobsList with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JobsListMultiError, or nil
+// if none found.
+func (m *JobsList) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JobsList) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetDispatches() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JobsListValidationError{
+						field:  fmt.Sprintf("Dispatches[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JobsListValidationError{
+						field:  fmt.Sprintf("Dispatches[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JobsListValidationError{
+					field:  fmt.Sprintf("Dispatches[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return JobsListMultiError(errors)
+	}
+
+	return nil
+}
+
+// JobsListMultiError is an error wrapping multiple validation errors returned
+// by JobsList.ValidateAll() if the designated constraints aren't met.
+type JobsListMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JobsListMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JobsListMultiError) AllErrors() []error { return m }
+
+// JobsListValidationError is the validation error returned by
+// JobsList.Validate if the designated constraints aren't met.
+type JobsListValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JobsListValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JobsListValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JobsListValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JobsListValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JobsListValidationError) ErrorName() string { return "JobsListValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JobsListValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJobsList.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JobsListValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JobsListValidationError{}
+
+// Validate checks the field values on Dispatchers with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Dispatchers) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Dispatchers with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DispatchersMultiError, or
+// nil if none found.
+func (m *Dispatchers) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Dispatchers) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetDispatchers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchersValidationError{
+						field:  fmt.Sprintf("Dispatchers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchersValidationError{
+						field:  fmt.Sprintf("Dispatchers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchersValidationError{
+					field:  fmt.Sprintf("Dispatchers[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DispatchersMultiError(errors)
+	}
+
+	return nil
+}
+
+// DispatchersMultiError is an error wrapping multiple validation errors
+// returned by Dispatchers.ValidateAll() if the designated constraints aren't met.
+type DispatchersMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DispatchersMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DispatchersMultiError) AllErrors() []error { return m }
+
+// DispatchersValidationError is the validation error returned by
+// Dispatchers.Validate if the designated constraints aren't met.
+type DispatchersValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DispatchersValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DispatchersValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DispatchersValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DispatchersValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DispatchersValidationError) ErrorName() string { return "DispatchersValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DispatchersValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDispatchers.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DispatchersValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DispatchersValidationError{}

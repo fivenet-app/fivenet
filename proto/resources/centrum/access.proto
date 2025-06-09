@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package resources.centrum;
+
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
+
+enum CentrumAccessLevel {
+  ACCESS_LEVEL_UNSPECIFIED = 0;
+  ACCESS_LEVEL_VIEW = 1;
+  ACCESS_LEVEL_PARTICIPATE = 2;
+  ACCESS_LEVEL_DISPATCH = 3;
+}
+
+// @dbscanner: json
+message CentrumAccess {
+  repeated CentrumJobAccess jobs = 1 [(validate.rules).repeated.max_items = 10]; // @gotags: alias:"job_access"
+}
+
+message CentrumJobAccess {
+  uint64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 target_id = 3;
+  string job = 4 [(validate.rules).string.max_len = 20];
+  optional string job_label = 5 [(validate.rules).string.max_len = 50];
+  int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
+  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50];
+  CentrumAccessLevel access = 8 [(validate.rules).enum.defined_only = true];
+}
+
+// Dummy - DO NOT USE!
+message CentrumUserAccess {}
+
+// Dummy - DO NOT USE!
+message CentrumQualificationAccess {}

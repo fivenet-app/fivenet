@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/v2025/internal/modules"
 	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
@@ -22,7 +21,6 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxtest"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 func TestMain(m *testing.M) {
@@ -59,9 +57,10 @@ func TestRefreshUserLocations(t *testing.T) {
 	require.NotNil(t, manager)
 
 	msgCh := make(chan int)
-	consumer, err := manager.js.CreateConsumer(ctx, StreamName, jetstream.ConsumerConfig{
-		DeliverPolicy: jetstream.DeliverNewPolicy,
-		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
+	consumer, err := manager.js.CreateConsumer(ctx, "KV_tracker", jetstream.ConsumerConfig{
+		DeliverPolicy: jetstream.DeliverLastPerSubjectPolicy,
+		AckPolicy:     jetstream.AckNonePolicy,
+		FilterSubject: "$KV.tracker.>",
 	})
 	if err != nil {
 		require.NoError(t, err)
@@ -75,13 +74,6 @@ func TestRefreshUserLocations(t *testing.T) {
 		if err := msg.Ack(); err != nil {
 			manager.logger.Error("failed to ack message", zap.Error(err))
 		}
-
-		dest := &livemap.UsersUpdateEvent{}
-		if err := proto.Unmarshal(msg.Data(), dest); err != nil {
-			manager.logger.Error("failed to unmarshal nats user update response", zap.Error(err))
-			return
-		}
-		assert.NoError(t, err)
 
 		msgCh <- eventCount
 	})

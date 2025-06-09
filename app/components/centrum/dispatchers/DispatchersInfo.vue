@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
+import DispatchersModal from '~/components/centrum/dispatchers/DispatchersModal.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
@@ -17,7 +17,7 @@ const { $grpc } = useNuxtApp();
 const modal = useModal();
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, disponents, isDisponent } = storeToRefs(centrumStore);
+const { getCurrentMode, dispatchers, isDispatcher } = storeToRefs(centrumStore);
 
 async function takeControl(signon: boolean): Promise<void> {
     try {
@@ -39,7 +39,7 @@ const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
 
 if (!props.hideJoin) {
     defineShortcuts({
-        'c-q': () => onSubmitThrottle(!isDisponent.value),
+        'c-q': () => onSubmitThrottle(!isDispatcher.value),
     });
 }
 </script>
@@ -51,25 +51,25 @@ if (!props.hideJoin) {
                 <UButton
                     :disabled="!canSubmit"
                     :loading="!canSubmit"
-                    :icon="!isDisponent ? 'i-mdi-location-enter' : 'i-mdi-location-exit'"
-                    :color="!isDisponent ? 'primary' : 'amber'"
-                    :label="!isDisponent ? $t('common.join', 1) : $t('common.leave', 1)"
-                    @click="onSubmitThrottle(!isDisponent)"
+                    :icon="!isDispatcher ? 'i-mdi-location-enter' : 'i-mdi-location-exit'"
+                    :color="!isDispatcher ? 'primary' : 'amber'"
+                    :label="!isDispatcher ? $t('common.join', 1) : $t('common.leave', 1)"
+                    @click="onSubmitThrottle(!isDispatcher)"
                 />
             </UTooltip>
         </template>
 
-        <UTooltip :text="usersToLabel(disponents)">
+        <UTooltip :text="usersToLabel(dispatchers)">
             <UButton
                 :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
                 :color="
-                    getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'gray' : disponents.length === 0 ? 'amber' : 'success'
+                    getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'gray' : dispatchers.length === 0 ? 'amber' : 'success'
                 "
                 truncate
-                @click="modal.open(DisponentsModal, {})"
+                @click="modal.open(DispatchersModal, {})"
             >
                 <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                    {{ $t('common.disponent', disponents.length) }}
+                    {{ $t('common.dispatcher', dispatchers.length) }}
                 </template>
                 <template v-else>
                     {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}

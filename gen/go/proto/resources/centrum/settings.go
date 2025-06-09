@@ -18,10 +18,10 @@ func (x *Settings) Default(job string) {
 	if x.Timings == nil {
 		x.Timings = &Timings{}
 	}
-	if x.Timings.DispatchMaxWait == 0 {
+	if x.Timings.DispatchMaxWait <= 0 {
 		x.Timings.DispatchMaxWait = 900
 	}
-	if x.Timings.RequireUnitReminderSeconds == 0 {
+	if x.Timings.RequireUnitReminderSeconds <= 0 {
 		x.Timings.RequireUnitReminderSeconds = 180
 	}
 }
@@ -44,6 +44,14 @@ func (x *Settings) Merge(in *Settings) *Settings {
 	} else {
 		x.Timings = in.Timings
 	}
+
+	if in.Access == nil {
+		x.Access = &CentrumAccess{}
+	} else {
+		x.Access = in.Access
+	}
+
+	x.Public = in.Public
 
 	return x
 }

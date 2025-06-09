@@ -2,73 +2,95 @@ package centrum
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
+	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) TakeControl(ctx context.Context, req *pbcentrum.TakeControlRequest) (*pbcentrum.TakeControlResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &audit.AuditEntry{
-		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
-		Method:  "TakeControl",
-		UserId:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   audit.EventType_EVENT_TYPE_ERRORED,
-	}
-	defer s.aud.Log(auditEntry, req)
-
-	if err := s.state.DisponentSignOn(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
-		return nil, err
+func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, userId int32, additionalJobs []string) error {
+	jobs := []*jobs.Job{}
+	for _, job := range additionalJobs {
+		j := s.enricher.GetJobByName(job)
+		if j == nil {
+			return errswrap.NewError(fmt.Errorf("job not found. %s", job), errorscentrum.ErrFailedQuery)
+		}
+		jobs = append(jobs, j)
 	}
 
-	if req.Signon {
-		auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
-	} else {
-		auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
+	settings, err := s.state.GetSettings(ctx, userJob)
+	if err != nil {
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+	if err := srv.Send(&pbcentrum.StreamResponse{
+		Change: &pbcentrum.StreamResponse_Jobs{
+			Jobs: &pbcentrum.JobsList{
+				Dispatches: jobs,
+			},
+		},
+	}); err != nil {
+		return err
+	}
 
-	return &pbcentrum.TakeControlResponse{}, nil
-}
+	dispatchers := &pbcentrum.Dispatchers{}
+	dispos, _ := s.state.GetDispatchers(ctx, userJob)
+	dispatchers.Dispatchers = []*centrum.Dispatchers{dispos}
+	for _, j := range additionalJobs {
+		dispos, err := s.state.GetDispatchers(ctx, j)
+		if err != nil {
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+		dispatchers.Dispatchers = append(dispatchers.Dispatchers, dispos)
+	}
 
-func (s *Server) sendLatestState(srv pbcentrum.CentrumService_StreamServer, job string, userId int32) error {
-	ctx := srv.Context()
-
-	settings := s.state.GetSettings(ctx, job)
-	disponents, _ := s.state.GetDisponents(ctx, job)
-	ownUnitId, _ := s.state.GetUserUnitID(ctx, userId)
+	ownUnitMapping, _ := s.state.GetUserUnitMapping(ctx, userId)
 	var pOwnUnitId *uint64
-	if ownUnitId > 0 {
-		pOwnUnitId = &ownUnitId
+	if ownUnitMapping != nil && ownUnitMapping.UnitId > 0 {
+		pOwnUnitId = &ownUnitMapping.UnitId
 	}
 
-	units, _ := s.state.ListUnits(ctx, job)
-	dispatches := s.state.FilterDispatches(ctx, job, nil, []centrum.StatusDispatch{
+	// Retrieve units and dispatches
+	units := s.state.ListUnits(ctx, userJob)
+	for _, j := range additionalJobs {
+		units = append(units, s.state.ListUnits(ctx, j)...)
+	}
+
+	dispatchStatusFilter := []centrum.StatusDispatch{
 		centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 		centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-	})
+	}
+	dispatches := s.state.FilterDispatches(ctx, userJob, nil, dispatchStatusFilter)
+	for _, j := range additionalJobs {
+		dispatches = append(dispatches, s.state.FilterDispatches(ctx, j, nil, dispatchStatusFilter)...)
+	}
 
 	// Send initial state to client
 	if err := srv.Send(&pbcentrum.StreamResponse{
 		Change: &pbcentrum.StreamResponse_LatestState{
 			LatestState: &pbcentrum.LatestState{
-				ServerTime: timestamp.Now(),
-				Settings:   settings,
-				Disponents: disponents,
-				OwnUnitId:  pOwnUnitId,
-				Units:      units,
-				Dispatches: dispatches,
+				ServerTime:  timestamp.Now(),
+				Settings:    settings,
+				Dispatchers: dispatchers,
+				OwnUnitId:   pOwnUnitId,
+				Units:       units,
+				Dispatches:  dispatches,
 			},
 		},
 	}); err != nil {
@@ -82,11 +104,11 @@ func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumServi
 	userInfo := *auth.MustGetUserInfoFromContext(srv.Context())
 
 	for {
-		if err := s.sendLatestState(srv, userInfo.Job, userInfo.UserId); err != nil {
+		if err := s.sendLatestState(srv.Context(), srv, userInfo.Job, userInfo.UserId, []string{}); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.stream(srv, userInfo.Job, userInfo.UserId); err != nil {
+		if err := s.stream(srv.Context(), srv, userInfo.Job, userInfo.UserId, []string{}); err != nil {
 			return err
 		}
 
@@ -99,34 +121,173 @@ func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumServi
 	}
 }
 
-func (s *Server) stream(srv pbcentrum.CentrumService_StreamServer, job string, userId int32) error {
-	s.logger.Debug("getting centrum job broker", zap.String("job", job), zap.Int32("user_id", userId))
-	broker, ok := s.brokers.GetJobBroker(job)
-	if !ok {
-		return errorscentrum.ErrDisabled
+type feedCfg struct {
+	Bucket     string
+	Unmarshal  func([]byte) (proto.Message, error) // bucket → concrete proto
+	WrapPut    func(proto.Message) *pbcentrum.StreamResponse
+	WrapDelete func(key string) *pbcentrum.StreamResponse
+}
+
+var feeds = []feedCfg{
+	{
+		Bucket: "centrum_settings",
+		Unmarshal: func(b []byte) (proto.Message, error) {
+			var u centrum.Settings
+			return &u, proto.Unmarshal(b, &u)
+		},
+		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_Settings{Settings: m.(*centrum.Settings)}}
+		},
+	},
+	{
+		Bucket: "centrum_dispatchers",
+		Unmarshal: func(b []byte) (proto.Message, error) {
+			var u centrum.Dispatchers
+			return &u, proto.Unmarshal(b, &u)
+		},
+		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_Dispatchers{Dispatchers: m.(*centrum.Dispatchers)}}
+		},
+	},
+	{
+		Bucket: "centrum_units",
+		Unmarshal: func(b []byte) (proto.Message, error) {
+			var u centrum.Unit
+			return &u, proto.Unmarshal(b, &u)
+		},
+		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_UnitUpdated{UnitUpdated: m.(*centrum.Unit)}}
+		},
+		WrapDelete: func(key string) *pbcentrum.StreamResponse {
+			id, err := extractID(key)
+			if err != nil {
+				return nil
+			}
+
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_UnitDeleted{
+					UnitDeleted: id,
+				},
+			}
+		},
+	},
+	{
+		Bucket: "centrum_dispatches",
+		Unmarshal: func(b []byte) (proto.Message, error) {
+			var d centrum.Dispatch
+			return &d, proto.Unmarshal(b, &d)
+		},
+		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
+			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_DispatchUpdated{DispatchUpdated: m.(*centrum.Dispatch)}}
+		},
+		WrapDelete: func(key string) *pbcentrum.StreamResponse {
+			id, err := extractID(key)
+			if err != nil {
+				return nil
+			}
+
+			return &pbcentrum.StreamResponse{
+				Change: &pbcentrum.StreamResponse_DispatchDeleted{
+					DispatchDeleted: id,
+				},
+			}
+		},
+	},
+}
+
+func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, job string, userId int32, additionalJobs []string) error {
+	s.logger.Debug("starting centrum stream", zap.String("job_main", job), zap.Int32("user_id", userId), zap.Strings("additional_jobs", additionalJobs))
+
+	meta := metadata.ExtractIncoming(ctx)
+	connID := meta.Get(grpcws.ConnectionIdHeader)
+
+	jobs := []string{job}
+	jobs = append(jobs, additionalJobs...)
+	jobs = utils.RemoveSliceDuplicates(jobs)
+
+	out := make(chan *pbcentrum.StreamResponse, 256)
+	g, ctx := errgroup.WithContext(ctx)
+
+	for _, f := range feeds {
+		g.Go(func() error {
+			durable := fmt.Sprintf("usess-%s-%d-%s", connID, userId, f.Bucket)
+
+			// Upsert **durable pull consumer** with multi-filter
+			consCfg := jetstream.ConsumerConfig{
+				Durable:        durable,
+				FilterSubjects: kvSubjects(f.Bucket, jobs),
+				DeliverPolicy:  jetstream.DeliverNewPolicy,
+				AckPolicy:      jetstream.AckNonePolicy,
+			}
+			consumer, err := s.js.CreateOrUpdateConsumer(ctx, "KV_"+f.Bucket, consCfg)
+			if err != nil {
+				return fmt.Errorf("consumer %s: %w", durable, err)
+			}
+
+			// Pull loop
+			for {
+				batch, err := consumer.Fetch(32,
+					jetstream.FetchMaxWait(2*time.Second))
+				if err != nil {
+					if errors.Is(err, context.DeadlineExceeded) ||
+						errors.Is(err, jetstream.ErrNoMessages) {
+						continue // idle
+					}
+					return err
+				}
+
+				for m := range batch.Messages() {
+					if op := m.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
+						key := strings.TrimPrefix(m.Subject(), "$KV."+f.Bucket+".")
+
+						r := f.WrapDelete(key)
+						if r == nil {
+							continue
+						}
+						select {
+						case out <- r:
+
+						case <-ctx.Done():
+							return ctx.Err()
+						}
+						continue
+					}
+
+					obj, err := f.Unmarshal(m.Data())
+					if err != nil {
+						// Bad payload – skip
+						continue
+					}
+
+					r := f.WrapPut(obj)
+					if r == nil {
+						continue
+					}
+					select {
+					case out <- r:
+
+					case <-ctx.Done():
+						return ctx.Err()
+					}
+				}
+			}
+		})
 	}
 
-	stream := broker.Subscribe()
-	defer broker.Unsubscribe(stream)
-	s.logger.Debug("starting broker watch", zap.String("job", job), zap.Int32("user_id", userId))
+	// single writer
+	g.Go(func() error {
+		for {
+			select {
+			case <-ctx.Done():
+				return ctx.Err()
 
-	// Watch for events from message queue
-	for {
-		select {
-		case <-srv.Context().Done():
-			return nil
-
-		case msg, more := <-stream:
-			if !more {
-				return errorscentrum.ErrDisabled
-			}
-
-			resp := &pbcentrum.StreamResponse{
-				Change: msg.Change,
-			}
-			if err := srv.Send(resp); err != nil {
-				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			case resp := <-out:
+				if err := srv.Send(resp); err != nil {
+					return err
+				}
 			}
 		}
-	}
+	})
+
+	return g.Wait()
 }

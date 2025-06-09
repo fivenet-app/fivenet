@@ -13,9 +13,9 @@ import (
 const (
 	BaseSubject events.Subject = "centrum"
 
-	TopicGeneral          events.Topic = "general"
-	TypeGeneralSettings   events.Type  = "settings"
-	TypeGeneralDisponents events.Type  = "disponents"
+	TopicGeneral           events.Topic = "general"
+	TypeGeneralSettings    events.Type  = "settings"
+	TypeGeneralDispatchers events.Type  = "dispatchers"
 
 	TopicDispatch       events.Topic = "dispatch"
 	TypeDispatchDeleted events.Type  = "deleted"

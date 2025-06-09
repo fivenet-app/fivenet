@@ -11,8 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Disponents } from "../../resources/centrum/disponents";
-import { Colleague } from "../../resources/jobs/colleagues";
+import { Job } from "../../resources/jobs/jobs";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
 import { DispatchStatus } from "../../resources/centrum/dispatches";
@@ -20,6 +19,7 @@ import { Dispatch } from "../../resources/centrum/dispatches";
 import { StatusDispatch } from "../../resources/centrum/dispatches";
 import { UnitStatus } from "../../resources/centrum/units";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { Dispatchers as Dispatchers$ } from "../../resources/centrum/dispatchers";
 import { Unit } from "../../resources/centrum/units";
 import { StatusUnit } from "../../resources/centrum/units";
 import { Settings } from "../../resources/centrum/settings";
@@ -187,6 +187,24 @@ export interface AssignUnitRequest {
  * @generated from protobuf message services.centrum.AssignUnitResponse
  */
 export interface AssignUnitResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateDispatchersRequest
+ */
+export interface UpdateDispatchersRequest {
+    /**
+     * @generated from protobuf field: repeated int32 to_remove = 1
+     */
+    toRemove: number[];
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateDispatchersResponse
+ */
+export interface UpdateDispatchersResponse {
+    /**
+     * @generated from protobuf field: resources.centrum.Dispatchers dispatchers = 1
+     */
+    dispatchers?: Dispatchers$;
 }
 /**
  * @generated from protobuf message services.centrum.ListUnitActivityResponse
@@ -431,6 +449,19 @@ export interface TakeDispatchRequest {
 export interface TakeDispatchResponse {
 }
 /**
+ * @generated from protobuf message services.centrum.StreamHandshake
+ */
+export interface StreamHandshake {
+    /**
+     * @generated from protobuf field: resources.centrum.Settings settings = 1
+     */
+    settings?: Settings;
+    /**
+     * @generated from protobuf field: services.centrum.JobsList jobs = 2
+     */
+    jobs?: JobsList;
+}
+/**
  * @generated from protobuf message services.centrum.LatestState
  */
 export interface LatestState {
@@ -443,9 +474,9 @@ export interface LatestState {
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: repeated resources.jobs.Colleague disponents = 3
+     * @generated from protobuf field: services.centrum.Dispatchers dispatchers = 3
      */
-    disponents: Colleague[];
+    dispatchers?: Dispatchers;
     /**
      * @generated from protobuf field: optional uint64 own_unit_id = 4
      */
@@ -474,74 +505,106 @@ export interface StreamResponse {
      * @generated from protobuf oneof: change
      */
     change: {
+        oneofKind: "handshake";
+        /**
+         * @generated from protobuf field: services.centrum.StreamHandshake handshake = 1
+         */
+        handshake: StreamHandshake;
+    } | {
         oneofKind: "latestState";
         /**
-         * @generated from protobuf field: services.centrum.LatestState latest_state = 1
+         * @generated from protobuf field: services.centrum.LatestState latest_state = 2
          */
         latestState: LatestState;
     } | {
         oneofKind: "settings";
         /**
-         * @generated from protobuf field: resources.centrum.Settings settings = 2
+         * @generated from protobuf field: resources.centrum.Settings settings = 3
          */
         settings: Settings;
     } | {
-        oneofKind: "disponents";
+        oneofKind: "jobs";
         /**
-         * @generated from protobuf field: resources.centrum.Disponents disponents = 3
+         * @generated from protobuf field: services.centrum.JobsList jobs = 4
          */
-        disponents: Disponents;
+        jobs: JobsList;
     } | {
-        oneofKind: "unitCreated";
+        oneofKind: "dispatchers";
         /**
-         * @generated from protobuf field: resources.centrum.Unit unit_created = 4
+         * @generated from protobuf field: resources.centrum.Dispatchers dispatchers = 5
          */
-        unitCreated: Unit;
+        dispatchers: Dispatchers$;
     } | {
         oneofKind: "unitDeleted";
         /**
-         * @generated from protobuf field: resources.centrum.Unit unit_deleted = 5
+         * @generated from protobuf field: uint64 unit_deleted = 6
          */
-        unitDeleted: Unit;
+        unitDeleted: number;
     } | {
         oneofKind: "unitUpdated";
         /**
-         * @generated from protobuf field: resources.centrum.Unit unit_updated = 6
+         * @generated from protobuf field: resources.centrum.Unit unit_updated = 7
          */
         unitUpdated: Unit;
     } | {
+        oneofKind: "dispatchDeleted";
+        /**
+         * @generated from protobuf field: uint64 dispatch_deleted = 8
+         */
+        dispatchDeleted: number;
+    } | {
+        oneofKind: "dispatchUpdated";
+        /**
+         * @generated from protobuf field: resources.centrum.Dispatch dispatch_updated = 9
+         */
+        dispatchUpdated: Dispatch;
+    } | {
+        oneofKind: "unitCreated";
+        // Old events
+
+        /**
+         * @generated from protobuf field: resources.centrum.Unit unit_created = 10
+         */
+        unitCreated: Unit;
+    } | {
         oneofKind: "unitStatus";
         /**
-         * @generated from protobuf field: resources.centrum.UnitStatus unit_status = 7
+         * @generated from protobuf field: resources.centrum.UnitStatus unit_status = 11
          */
         unitStatus: UnitStatus;
     } | {
         oneofKind: "dispatchCreated";
         /**
-         * @generated from protobuf field: resources.centrum.Dispatch dispatch_created = 8
+         * @generated from protobuf field: resources.centrum.Dispatch dispatch_created = 12
          */
         dispatchCreated: Dispatch;
     } | {
-        oneofKind: "dispatchDeleted";
-        /**
-         * @generated from protobuf field: resources.centrum.Dispatch dispatch_deleted = 9
-         */
-        dispatchDeleted: Dispatch;
-    } | {
-        oneofKind: "dispatchUpdated";
-        /**
-         * @generated from protobuf field: resources.centrum.Dispatch dispatch_updated = 10
-         */
-        dispatchUpdated: Dispatch;
-    } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.centrum.DispatchStatus dispatch_status = 11
+         * @generated from protobuf field: resources.centrum.DispatchStatus dispatch_status = 13
          */
         dispatchStatus: DispatchStatus;
     } | {
         oneofKind: undefined;
     };
+}
+/**
+ * @generated from protobuf message services.centrum.JobsList
+ */
+export interface JobsList {
+    /**
+     * @generated from protobuf field: repeated resources.jobs.Job dispatches = 1
+     */
+    dispatches: Job[];
+}
+/**
+ * @generated from protobuf message services.centrum.Dispatchers
+ */
+export interface Dispatchers {
+    /**
+     * @generated from protobuf field: repeated resources.centrum.Dispatchers dispatchers = 1
+     */
+    dispatchers: Dispatchers$[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityRequest> {
@@ -1330,6 +1393,107 @@ class AssignUnitResponse$Type extends MessageType<AssignUnitResponse> {
  * @generated MessageType for protobuf message services.centrum.AssignUnitResponse
  */
 export const AssignUnitResponse = new AssignUnitResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateDispatchersRequest$Type extends MessageType<UpdateDispatchersRequest> {
+    constructor() {
+        super("services.centrum.UpdateDispatchersRequest", [
+            { no: 1, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateDispatchersRequest>): UpdateDispatchersRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.toRemove = [];
+        if (value !== undefined)
+            reflectionMergePartial<UpdateDispatchersRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateDispatchersRequest): UpdateDispatchersRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int32 to_remove */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.toRemove.push(reader.int32());
+                    else
+                        message.toRemove.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateDispatchersRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int32 to_remove = 1; */
+        if (message.toRemove.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.toRemove.length; i++)
+                writer.int32(message.toRemove[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateDispatchersRequest
+ */
+export const UpdateDispatchersRequest = new UpdateDispatchersRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateDispatchersResponse$Type extends MessageType<UpdateDispatchersResponse> {
+    constructor() {
+        super("services.centrum.UpdateDispatchersResponse", [
+            { no: 1, name: "dispatchers", kind: "message", T: () => Dispatchers$ }
+        ]);
+    }
+    create(value?: PartialMessage<UpdateDispatchersResponse>): UpdateDispatchersResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpdateDispatchersResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateDispatchersResponse): UpdateDispatchersResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.centrum.Dispatchers dispatchers */ 1:
+                    message.dispatchers = Dispatchers$.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdateDispatchersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.centrum.Dispatchers dispatchers = 1; */
+        if (message.dispatchers)
+            Dispatchers$.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateDispatchersResponse
+ */
+export const UpdateDispatchersResponse = new UpdateDispatchersResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse> {
     constructor() {
@@ -2464,12 +2628,65 @@ class TakeDispatchResponse$Type extends MessageType<TakeDispatchResponse> {
  */
 export const TakeDispatchResponse = new TakeDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class StreamHandshake$Type extends MessageType<StreamHandshake> {
+    constructor() {
+        super("services.centrum.StreamHandshake", [
+            { no: 1, name: "settings", kind: "message", T: () => Settings },
+            { no: 2, name: "jobs", kind: "message", T: () => JobsList }
+        ]);
+    }
+    create(value?: PartialMessage<StreamHandshake>): StreamHandshake {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<StreamHandshake>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamHandshake): StreamHandshake {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.centrum.Settings settings */ 1:
+                    message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
+                    break;
+                case /* services.centrum.JobsList jobs */ 2:
+                    message.jobs = JobsList.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: StreamHandshake, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.centrum.Settings settings = 1; */
+        if (message.settings)
+            Settings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* services.centrum.JobsList jobs = 2; */
+        if (message.jobs)
+            JobsList.internalBinaryWrite(message.jobs, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.StreamHandshake
+ */
+export const StreamHandshake = new StreamHandshake$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class LatestState$Type extends MessageType<LatestState> {
     constructor() {
         super("services.centrum.LatestState", [
             { no: 1, name: "server_time", kind: "message", T: () => Timestamp },
             { no: 2, name: "settings", kind: "message", T: () => Settings },
-            { no: 3, name: "disponents", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Colleague },
+            { no: 3, name: "dispatchers", kind: "message", T: () => Dispatchers },
             { no: 4, name: "own_unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit },
             { no: 6, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch }
@@ -2477,7 +2694,6 @@ class LatestState$Type extends MessageType<LatestState> {
     }
     create(value?: PartialMessage<LatestState>): LatestState {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.disponents = [];
         message.units = [];
         message.dispatches = [];
         if (value !== undefined)
@@ -2495,8 +2711,8 @@ class LatestState$Type extends MessageType<LatestState> {
                 case /* resources.centrum.Settings settings */ 2:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* repeated resources.jobs.Colleague disponents */ 3:
-                    message.disponents.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
+                case /* services.centrum.Dispatchers dispatchers */ 3:
+                    message.dispatchers = Dispatchers.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
                     break;
                 case /* optional uint64 own_unit_id */ 4:
                     message.ownUnitId = reader.uint64().toNumber();
@@ -2525,9 +2741,9 @@ class LatestState$Type extends MessageType<LatestState> {
         /* resources.centrum.Settings settings = 2; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.Colleague disponents = 3; */
-        for (let i = 0; i < message.disponents.length; i++)
-            Colleague.internalBinaryWrite(message.disponents[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* services.centrum.Dispatchers dispatchers = 3; */
+        if (message.dispatchers)
+            Dispatchers.internalBinaryWrite(message.dispatchers, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* optional uint64 own_unit_id = 4; */
         if (message.ownUnitId !== undefined)
             writer.tag(4, WireType.Varint).uint64(message.ownUnitId);
@@ -2589,17 +2805,19 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.centrum.StreamResponse", [
-            { no: 1, name: "latest_state", kind: "message", oneof: "change", T: () => LatestState },
-            { no: 2, name: "settings", kind: "message", oneof: "change", T: () => Settings },
-            { no: 3, name: "disponents", kind: "message", oneof: "change", T: () => Disponents },
-            { no: 4, name: "unit_created", kind: "message", oneof: "change", T: () => Unit },
-            { no: 5, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
-            { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
-            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 8, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 9, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
+            { no: 1, name: "handshake", kind: "message", oneof: "change", T: () => StreamHandshake },
+            { no: 2, name: "latest_state", kind: "message", oneof: "change", T: () => LatestState },
+            { no: 3, name: "settings", kind: "message", oneof: "change", T: () => Settings },
+            { no: 4, name: "jobs", kind: "message", oneof: "change", T: () => JobsList },
+            { no: 5, name: "dispatchers", kind: "message", oneof: "change", T: () => Dispatchers$ },
+            { no: 6, name: "unit_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 7, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
+            { no: 8, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 9, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 10, name: "unit_created", kind: "message", oneof: "change", T: () => Unit },
+            { no: 11, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
+            { no: 12, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 13, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -2614,67 +2832,79 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* services.centrum.LatestState latest_state */ 1:
+                case /* services.centrum.StreamHandshake handshake */ 1:
+                    message.change = {
+                        oneofKind: "handshake",
+                        handshake: StreamHandshake.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).handshake)
+                    };
+                    break;
+                case /* services.centrum.LatestState latest_state */ 2:
                     message.change = {
                         oneofKind: "latestState",
                         latestState: LatestState.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).latestState)
                     };
                     break;
-                case /* resources.centrum.Settings settings */ 2:
+                case /* resources.centrum.Settings settings */ 3:
                     message.change = {
                         oneofKind: "settings",
                         settings: Settings.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).settings)
                     };
                     break;
-                case /* resources.centrum.Disponents disponents */ 3:
+                case /* services.centrum.JobsList jobs */ 4:
                     message.change = {
-                        oneofKind: "disponents",
-                        disponents: Disponents.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).disponents)
+                        oneofKind: "jobs",
+                        jobs: JobsList.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).jobs)
                     };
                     break;
-                case /* resources.centrum.Unit unit_created */ 4:
+                case /* resources.centrum.Dispatchers dispatchers */ 5:
                     message.change = {
-                        oneofKind: "unitCreated",
-                        unitCreated: Unit.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitCreated)
+                        oneofKind: "dispatchers",
+                        dispatchers: Dispatchers$.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchers)
                     };
                     break;
-                case /* resources.centrum.Unit unit_deleted */ 5:
+                case /* uint64 unit_deleted */ 6:
                     message.change = {
                         oneofKind: "unitDeleted",
-                        unitDeleted: Unit.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitDeleted)
+                        unitDeleted: reader.uint64().toNumber()
                     };
                     break;
-                case /* resources.centrum.Unit unit_updated */ 6:
+                case /* resources.centrum.Unit unit_updated */ 7:
                     message.change = {
                         oneofKind: "unitUpdated",
                         unitUpdated: Unit.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitUpdated)
                     };
                     break;
-                case /* resources.centrum.UnitStatus unit_status */ 7:
-                    message.change = {
-                        oneofKind: "unitStatus",
-                        unitStatus: UnitStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitStatus)
-                    };
-                    break;
-                case /* resources.centrum.Dispatch dispatch_created */ 8:
-                    message.change = {
-                        oneofKind: "dispatchCreated",
-                        dispatchCreated: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchCreated)
-                    };
-                    break;
-                case /* resources.centrum.Dispatch dispatch_deleted */ 9:
+                case /* uint64 dispatch_deleted */ 8:
                     message.change = {
                         oneofKind: "dispatchDeleted",
-                        dispatchDeleted: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchDeleted)
+                        dispatchDeleted: reader.uint64().toNumber()
                     };
                     break;
-                case /* resources.centrum.Dispatch dispatch_updated */ 10:
+                case /* resources.centrum.Dispatch dispatch_updated */ 9:
                     message.change = {
                         oneofKind: "dispatchUpdated",
                         dispatchUpdated: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchUpdated)
                     };
                     break;
-                case /* resources.centrum.DispatchStatus dispatch_status */ 11:
+                case /* resources.centrum.Unit unit_created */ 10:
+                    message.change = {
+                        oneofKind: "unitCreated",
+                        unitCreated: Unit.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitCreated)
+                    };
+                    break;
+                case /* resources.centrum.UnitStatus unit_status */ 11:
+                    message.change = {
+                        oneofKind: "unitStatus",
+                        unitStatus: UnitStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitStatus)
+                    };
+                    break;
+                case /* resources.centrum.Dispatch dispatch_created */ 12:
+                    message.change = {
+                        oneofKind: "dispatchCreated",
+                        dispatchCreated: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchCreated)
+                    };
+                    break;
+                case /* resources.centrum.DispatchStatus dispatch_status */ 13:
                     message.change = {
                         oneofKind: "dispatchStatus",
                         dispatchStatus: DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchStatus)
@@ -2692,39 +2922,45 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         return message;
     }
     internalBinaryWrite(message: StreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* services.centrum.LatestState latest_state = 1; */
+        /* services.centrum.StreamHandshake handshake = 1; */
+        if (message.change.oneofKind === "handshake")
+            StreamHandshake.internalBinaryWrite(message.change.handshake, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* services.centrum.LatestState latest_state = 2; */
         if (message.change.oneofKind === "latestState")
-            LatestState.internalBinaryWrite(message.change.latestState, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Settings settings = 2; */
+            LatestState.internalBinaryWrite(message.change.latestState, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.Settings settings = 3; */
         if (message.change.oneofKind === "settings")
-            Settings.internalBinaryWrite(message.change.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Disponents disponents = 3; */
-        if (message.change.oneofKind === "disponents")
-            Disponents.internalBinaryWrite(message.change.disponents, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Unit unit_created = 4; */
-        if (message.change.oneofKind === "unitCreated")
-            Unit.internalBinaryWrite(message.change.unitCreated, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Unit unit_deleted = 5; */
+            Settings.internalBinaryWrite(message.change.settings, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* services.centrum.JobsList jobs = 4; */
+        if (message.change.oneofKind === "jobs")
+            JobsList.internalBinaryWrite(message.change.jobs, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.Dispatchers dispatchers = 5; */
+        if (message.change.oneofKind === "dispatchers")
+            Dispatchers$.internalBinaryWrite(message.change.dispatchers, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 unit_deleted = 6; */
         if (message.change.oneofKind === "unitDeleted")
-            Unit.internalBinaryWrite(message.change.unitDeleted, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Unit unit_updated = 6; */
+            writer.tag(6, WireType.Varint).uint64(message.change.unitDeleted);
+        /* resources.centrum.Unit unit_updated = 7; */
         if (message.change.oneofKind === "unitUpdated")
-            Unit.internalBinaryWrite(message.change.unitUpdated, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.UnitStatus unit_status = 7; */
-        if (message.change.oneofKind === "unitStatus")
-            UnitStatus.internalBinaryWrite(message.change.unitStatus, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Dispatch dispatch_created = 8; */
-        if (message.change.oneofKind === "dispatchCreated")
-            Dispatch.internalBinaryWrite(message.change.dispatchCreated, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Dispatch dispatch_deleted = 9; */
+            Unit.internalBinaryWrite(message.change.unitUpdated, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 dispatch_deleted = 8; */
         if (message.change.oneofKind === "dispatchDeleted")
-            Dispatch.internalBinaryWrite(message.change.dispatchDeleted, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Dispatch dispatch_updated = 10; */
+            writer.tag(8, WireType.Varint).uint64(message.change.dispatchDeleted);
+        /* resources.centrum.Dispatch dispatch_updated = 9; */
         if (message.change.oneofKind === "dispatchUpdated")
-            Dispatch.internalBinaryWrite(message.change.dispatchUpdated, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.DispatchStatus dispatch_status = 11; */
+            Dispatch.internalBinaryWrite(message.change.dispatchUpdated, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.Unit unit_created = 10; */
+        if (message.change.oneofKind === "unitCreated")
+            Unit.internalBinaryWrite(message.change.unitCreated, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.UnitStatus unit_status = 11; */
+        if (message.change.oneofKind === "unitStatus")
+            UnitStatus.internalBinaryWrite(message.change.unitStatus, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.Dispatch dispatch_created = 12; */
+        if (message.change.oneofKind === "dispatchCreated")
+            Dispatch.internalBinaryWrite(message.change.dispatchCreated, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.DispatchStatus dispatch_status = 13; */
         if (message.change.oneofKind === "dispatchStatus")
-            DispatchStatus.internalBinaryWrite(message.change.dispatchStatus, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            DispatchStatus.internalBinaryWrite(message.change.dispatchStatus, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2735,6 +2971,100 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  * @generated MessageType for protobuf message services.centrum.StreamResponse
  */
 export const StreamResponse = new StreamResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobsList$Type extends MessageType<JobsList> {
+    constructor() {
+        super("services.centrum.JobsList", [
+            { no: 1, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job }
+        ]);
+    }
+    create(value?: PartialMessage<JobsList>): JobsList {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.dispatches = [];
+        if (value !== undefined)
+            reflectionMergePartial<JobsList>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsList): JobsList {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.jobs.Job dispatches */ 1:
+                    message.dispatches.push(Job.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: JobsList, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.jobs.Job dispatches = 1; */
+        for (let i = 0; i < message.dispatches.length; i++)
+            Job.internalBinaryWrite(message.dispatches[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.JobsList
+ */
+export const JobsList = new JobsList$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Dispatchers$Type extends MessageType<Dispatchers> {
+    constructor() {
+        super("services.centrum.Dispatchers", [
+            { no: 1, name: "dispatchers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatchers$ }
+        ]);
+    }
+    create(value?: PartialMessage<Dispatchers>): Dispatchers {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.dispatchers = [];
+        if (value !== undefined)
+            reflectionMergePartial<Dispatchers>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Dispatchers): Dispatchers {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.centrum.Dispatchers dispatchers */ 1:
+                    message.dispatchers.push(Dispatchers$.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Dispatchers, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.centrum.Dispatchers dispatchers = 1; */
+        for (let i = 0; i < message.dispatchers.length; i++)
+            Dispatchers$.internalBinaryWrite(message.dispatchers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.Dispatchers
+ */
+export const Dispatchers = new Dispatchers$Type();
 /**
  * @generated ServiceType for protobuf service services.centrum.CentrumService
  */
@@ -2746,6 +3076,7 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "TakeControl", options: {}, I: TakeControlRequest, O: TakeControlResponse },
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
+    { name: "UpdateDispatchers", options: {}, I: UpdateDispatchersRequest, O: UpdateDispatchersResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse },
     { name: "GetSettings", options: {}, I: GetSettingsRequest, O: GetSettingsResponse },
     { name: "JoinUnit", options: {}, I: JoinUnitRequest, O: JoinUnitResponse },

@@ -64,7 +64,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/query"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbrokers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 )
@@ -122,7 +121,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		server.HTTPEngineModule,
 		server.HTTPServerModule,
 		centrumstate.StateModule,
-		fx.Provide(centrumbrokers.New),
 		storage.Module,
 		housekeeper.Module,
 		dbsync.Module,

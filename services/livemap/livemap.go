@@ -108,34 +108,20 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 				continue
 			}
 
-			if event.Users != nil {
+			if event.UserRemoved != nil {
 				if usersJobs.Len() == 0 {
 					continue
 				}
 
-				// Send delete user markers event to client
-				deleted := []int32{}
-				for job := range usersJobs.Iter() {
-					if _, ok := (*event.Users)[job]; !ok {
-						continue
-					}
-
-					for _, um := range (*event.Users)[job] {
-						if um.Hidden || (userInfo.Superuser || !usersJobs.HasJobGrade(job, um.User.JobGrade)) {
-							continue
-						}
-
-						deleted = append(deleted, um.UserId)
-					}
-				}
-				if len(deleted) == 0 {
+				// Send delete user marker event to client
+				if event.UserRemoved.Hidden || (userInfo.Superuser || !usersJobs.HasJobGrade(event.UserRemoved.Job, event.UserRemoved.User.JobGrade)) {
 					continue
 				}
 
 				resp := &pblivemap.StreamResponse{
 					Data: &pblivemap.StreamResponse_Users{
 						Users: &pblivemap.UserMarkersUpdates{
-							Deleted: deleted,
+							Deleted: []int32{event.UserRemoved.UserId},
 							Partial: true,
 						},
 					},

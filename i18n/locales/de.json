@@ -416,8 +416,8 @@
         "member": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
         "attributes": "Attribut | Attribute",
         "last_update": "Letzte Aktualisierung",
-        "disponents": "Disponent | Disponenten",
-        "disponent": "Keine Disponenten | {n} Disponent | {n} Disponenten",
+        "dispatchers": "Dispatcher | Dispatchern",
+        "dispatcher": "Keine Dispatcher | {n} Dispatcher | {n} Dispatcher",
         "confirm": "Bestätigen | Bestätigt",
         "word": "Wort | Wörter",
         "marker": "Markierung | Markierungen",
@@ -431,7 +431,7 @@
         "expires_at": "Läuft ab am",
         "expired": "Abgelaufen",
         "conduct_register": "Führungsregister",
-        "call": "Anruf",
+        "call": "Anrufen",
         "phone_number": "Telefonnummer",
         "back": "Zurück",
         "timeclock": "Stempeluhr",
@@ -3050,6 +3050,10 @@
                 "DeleteDispatch": {
                     "key": "Einsätze löschen",
                     "description": "Erlaubt es Einsätze zu löschen."
+                },
+                "UpdateDispatchers": {
+                    "key": "Dispatcher entfernen",
+                    "description": "Erlaubt das Entfernen von Dispatchern aus der Leitstelle."
                 }
             }
         },

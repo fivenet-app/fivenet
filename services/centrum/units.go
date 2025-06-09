@@ -152,8 +152,8 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *pbcentrum.UpdateUnit
 
 	// Only check unit access when not empty
 	if unit.Access != nil && !unit.Access.IsEmpty() {
-		// Make sure requestor is not a disponent
-		if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+		// Make sure requestor is not a dispatcher
+		if !s.state.CheckIfUserIsDispatcher(ctx, userInfo.Job, userInfo.UserId) {
 			check, err := s.state.GetUnitAccess().CanUserAccessTarget(ctx, unit.Id, userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
@@ -212,8 +212,8 @@ func (s *Server) AssignUnit(ctx context.Context, req *pbcentrum.AssignUnitReques
 
 	// Only check unit access when not empty
 	if unit.Access != nil && !unit.Access.IsEmpty() {
-		// Make sure requestor is not a disponent
-		if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+		// Make sure requestor is not a dispatcher
+		if !s.state.CheckIfUserIsDispatcher(ctx, userInfo.Job, userInfo.UserId) {
 			check, err := s.state.GetUnitAccess().CanUserAccessTarget(ctx, unit.Id, userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
@@ -252,22 +252,22 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	currentUnitId, _ := s.state.GetUserUnitID(ctx, userInfo.UserId)
+	currentUnitMapping, _ := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
 
 	resp := &pbcentrum.JoinUnitResponse{}
 	// User tries to join his own unit
-	if req.UnitId != nil && *req.UnitId == currentUnitId {
+	if req.UnitId != nil && currentUnitMapping != nil && *req.UnitId == currentUnitMapping.UnitId {
 		return resp, nil
 	}
 
-	currentUnit, err := s.state.GetUnit(ctx, userInfo.Job, currentUnitId)
+	currentUnit, err := s.state.GetUnit(ctx, userInfo.Job, currentUnitMapping.UnitId)
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
-		s.logger.Debug("user joining unit", zap.String("job", userInfo.Job), zap.Int32("user_id", userInfo.UserId), zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
+		s.logger.Debug("user joining unit", zap.String("job", userInfo.Job), zap.Int32("user_id", userInfo.UserId), zap.Uint64("current_unit_id", currentUnitMapping.UnitId), zap.Uint64p("unit_id", req.UnitId))
 
 		// Remove user from his current unit
 		if currentUnit != nil {
@@ -283,8 +283,8 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 
 		// Only check unit access when not empty
 		if newUnit.Access != nil && !newUnit.Access.IsEmpty() {
-			// Make sure requestor is not a disponent
-			if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+			// Make sure requestor is not a dispatcher
+			if !s.state.CheckIfUserIsDispatcher(ctx, userInfo.Job, userInfo.UserId) {
 				check, err := s.state.GetUnitAccess().CanUserAccessTarget(ctx, newUnit.Id, userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
 				if err != nil {
 					return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
@@ -301,7 +301,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 
 		resp.Unit = newUnit
 	} else {
-		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
+		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitMapping.UnitId), zap.Uint64p("unit_id", req.UnitId))
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {

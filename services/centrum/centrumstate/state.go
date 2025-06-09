@@ -13,7 +13,6 @@ import (
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/paulmach/orb"
-	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -28,10 +27,10 @@ type State struct {
 
 	logger *zap.Logger
 
-	settings   *xsync.Map[string, *centrum.Settings]
-	disponents *store.Store[centrum.Disponents, *centrum.Disponents]
-	units      *store.Store[centrum.Unit, *centrum.Unit]
-	dispatches *store.Store[centrum.Dispatch, *centrum.Dispatch]
+	settings    *store.Store[centrum.Settings, *centrum.Settings]
+	dispatchers *store.Store[centrum.Dispatchers, *centrum.Dispatchers]
+	units       *store.Store[centrum.Unit, *centrum.Unit]
+	dispatches  *store.Store[centrum.Dispatch, *centrum.Dispatch]
 
 	dispatchLocationsMutex *sync.RWMutex
 	dispatchLocations      map[string]*coords.Coords[*centrum.Dispatch]
@@ -58,14 +57,17 @@ func New(p Params) (*State, error) {
 
 		logger: logger,
 
-		settings: xsync.NewMap[string, *centrum.Settings](),
-
 		dispatchLocationsMutex: &sync.RWMutex{},
 		dispatchLocations:      map[string]*coords.Coords[*centrum.Dispatch]{},
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		disponents, err := store.New[centrum.Disponents, *centrum.Disponents](ctxStartup, logger, p.JS, "centrum_disponents")
+		settings, err := store.New[centrum.Settings, *centrum.Settings](ctxStartup, logger, p.JS, "centrum_settings")
+		if err != nil {
+			return err
+		}
+
+		dispatchers, err := store.New[centrum.Dispatchers, *centrum.Dispatchers](ctxStartup, logger, p.JS, "centrum_dispatchers")
 		if err != nil {
 			return err
 		}
@@ -151,10 +153,15 @@ func New(p Params) (*State, error) {
 		}
 		s.userIDToUnitID = userIDToUnitID
 
-		if err := disponents.Start(ctxCancel, false); err != nil {
+		if err := settings.Start(ctxCancel, false); err != nil {
 			return err
 		}
-		s.disponents = disponents
+		s.settings = settings
+
+		if err := dispatchers.Start(ctxCancel, false); err != nil {
+			return err
+		}
+		s.dispatchers = dispatchers
 
 		if err := units.Start(ctxCancel, false); err != nil {
 			return err

@@ -2,12 +2,12 @@ syntax = "proto3";
 
 package services.centrum;
 
-import "resources/common/database/database.proto";
+import "resources/centrum/dispatchers.proto";
 import "resources/centrum/dispatches.proto";
-import "resources/centrum/disponents.proto";
 import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
-import "resources/jobs/colleagues.proto";
+import "resources/common/database/database.proto";
+import "resources/jobs/jobs.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -81,6 +81,14 @@ message AssignUnitRequest {
 }
 
 message AssignUnitResponse {}
+
+message UpdateDispatchersRequest {
+  repeated int32 to_remove = 1 [(validate.rules).repeated.max_items = 10];
+}
+
+message UpdateDispatchersResponse {
+  resources.centrum.Dispatchers dispatchers = 1;
+}
 
 message ListUnitActivityResponse {
   resources.common.database.PaginationResponse pagination = 1;
@@ -178,10 +186,15 @@ message TakeDispatchRequest {
 
 message TakeDispatchResponse {}
 
+message StreamHandshake {
+  resources.centrum.Settings settings = 1;
+  JobsList jobs = 2;
+}
+
 message LatestState {
   resources.timestamp.Timestamp server_time = 1;
   resources.centrum.Settings settings = 2;
-  repeated resources.jobs.Colleague disponents = 3;
+  Dispatchers dispatchers = 3;
   optional uint64 own_unit_id = 4;
   // Send the current units and dispatches
   repeated resources.centrum.Unit units = 5;
@@ -194,25 +207,37 @@ message StreamResponse {
   oneof change {
     option (validate.required) = true;
 
-    LatestState latest_state = 1;
+    StreamHandshake handshake = 1;
+    LatestState latest_state = 2;
 
-    resources.centrum.Settings settings = 2;
-    resources.centrum.Disponents disponents = 3;
+    resources.centrum.Settings settings = 3;
+    JobsList jobs = 4;
+    resources.centrum.Dispatchers dispatchers = 5;
 
-    resources.centrum.Unit unit_created = 4;
-    resources.centrum.Unit unit_deleted = 5;
-    resources.centrum.Unit unit_updated = 6;
-    resources.centrum.UnitStatus unit_status = 7;
+    uint64 unit_deleted = 6;
+    resources.centrum.Unit unit_updated = 7;
+    uint64 dispatch_deleted = 8;
+    resources.centrum.Dispatch dispatch_updated = 9;
 
-    resources.centrum.Dispatch dispatch_created = 8;
-    resources.centrum.Dispatch dispatch_deleted = 9;
-    resources.centrum.Dispatch dispatch_updated = 10;
-    resources.centrum.DispatchStatus dispatch_status = 11;
+    // Old events
+
+    resources.centrum.Unit unit_created = 10;
+    resources.centrum.UnitStatus unit_status = 11;
+    resources.centrum.Dispatch dispatch_created = 12;
+    resources.centrum.DispatchStatus dispatch_status = 13;
   }
 }
 
+message JobsList {
+  repeated resources.jobs.Job dispatches = 1;
+}
+
+message Dispatchers {
+  repeated resources.centrum.Dispatchers dispatchers = 1;
+}
+
 service CentrumService {
-  // @perm
+  // @perm: Attrs=Access/StringList:[]string{"Shared"}
   rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse);
 
   // @perm
@@ -228,6 +253,9 @@ service CentrumService {
   rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
   // @perm: Name=TakeControl
   rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
+
+  // @perm
+  rpc UpdateDispatchers(UpdateDispatchersRequest) returns (UpdateDispatchersResponse);
 
   // @perm
   rpc Stream(StreamRequest) returns (stream StreamResponse);

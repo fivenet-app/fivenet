@@ -6,7 +6,7 @@ import type { NotificationActionI18n } from '~/utils/notifications';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
-import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
+import { CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings';
 import type { Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -40,8 +40,8 @@ export const useCentrumStore = defineStore(
         const timeCorrection = ref<number>(0);
 
         const settings = ref<Settings | undefined>(undefined);
-        const isDisponent = ref<boolean>(false);
-        const disponents = ref<UserShort[]>([]);
+        const isDispatcher = ref<boolean>(false);
+        const dispatchers = ref<UserShort[]>([]);
         const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
         const isCenter = ref<boolean>(false);
 
@@ -72,7 +72,7 @@ export const useCentrumStore = defineStore(
 
         // Getters
         const getCurrentMode = computed<CentrumMode>(() => {
-            return disponents.value.length > 0
+            return dispatchers.value.length > 0
                 ? (settings.value?.mode ?? CentrumMode.UNSPECIFIED)
                 : (settings.value?.fallbackMode ?? CentrumMode.UNSPECIFIED);
         });
@@ -336,9 +336,9 @@ export const useCentrumStore = defineStore(
             }
         };
 
-        // Disponents
-        const checkIfDisponent = (userId?: number): boolean => {
-            return !!disponents.value.find((d) => d.userId === userId);
+        // Dispatchers
+        const checkIfDispatcher = (userId?: number): boolean => {
+            return !!dispatchers.value.find((d) => d.userId === userId);
         };
 
         // Stream
@@ -390,9 +390,9 @@ export const useCentrumStore = defineStore(
                             updateSettings(resp.change.latestState.settings);
                         }
 
-                        disponents.value.length = 0;
-                        disponents.value.push(...resp.change.latestState.disponents);
-                        isDisponent.value = checkIfDisponent(activeChar.value?.userId);
+                        dispatchers.value.length = 0;
+                        dispatchers.value.push(...resp.change.latestState.dispatchers);
+                        isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
 
                         const foundUnits: number[] = [];
                         resp.change.latestState.units.forEach((u) => {
@@ -426,13 +426,13 @@ export const useCentrumStore = defineStore(
                         logger.debug(`Removed ${removedDispatches} old dispatches`);
                     } else if (resp.change.oneofKind === 'settings') {
                         updateSettings(resp.change.settings);
-                    } else if (resp.change.oneofKind === 'disponents') {
-                        disponents.value.length = 0;
-                        disponents.value.push(...resp.change.disponents.disponents);
+                    } else if (resp.change.oneofKind === 'dispatchers') {
+                        dispatchers.value.length = 0;
+                        dispatchers.value.push(...resp.change.dispatchers.dispatchers);
 
-                        isDisponent.value = checkIfDisponent(activeChar.value?.userId);
-                        const idx = disponents.value.findIndex((d) => d.userId === activeChar.value?.userId);
-                        isDisponent.value = idx > -1;
+                        isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
+                        const idx = dispatchers.value.findIndex((d) => d.userId === activeChar.value?.userId);
+                        isDispatcher.value = idx > -1;
                     } else if (resp.change.oneofKind === 'unitCreated') {
                         addOrUpdateUnit(resp.change.unitCreated);
                     } else if (resp.change.oneofKind === 'unitDeleted') {
@@ -587,10 +587,12 @@ export const useCentrumStore = defineStore(
                 if (rpcError.code === 'INVALID_ARGUMENT' && rpcError.message.includes('CentrumService.ErrDisabled')) {
                     settings.value = {
                         enabled: false,
+                        type: CentrumType.DISPATCH,
                         mode: CentrumMode.UNSPECIFIED,
                         fallbackMode: CentrumMode.UNSPECIFIED,
                         job: '',
                         timings: undefined,
+                        public: false,
                     };
 
                     useNotificatorStore().add({
@@ -809,6 +811,18 @@ export const useCentrumStore = defineStore(
             }
         };
 
+        const updateDispatchers = async (toRemove: number[]): Promise<void> => {
+            try {
+                const call = $grpc.centrum.centrum.updateDispatchers({
+                    toRemove: toRemove,
+                });
+                await call;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        };
+
         return {
             // State
             error,
@@ -818,8 +832,8 @@ export const useCentrumStore = defineStore(
             reconnectBackoffTime,
             timeCorrection,
             settings,
-            isDisponent,
-            disponents,
+            isDispatcher,
+            dispatchers,
             feed,
             units,
             dispatches,
@@ -849,7 +863,7 @@ export const useCentrumStore = defineStore(
             handleDispatchAssignment,
             addOrUpdatePendingDispatch,
             removePendingDispatch,
-            checkIfDisponent,
+            checkIfDispatcher,
             startStream,
             stopStream,
             restartStream,
@@ -860,6 +874,7 @@ export const useCentrumStore = defineStore(
             removeDispatchAssignments,
             getNotificationActions,
             selfAssign,
+            updateDispatchers,
         };
     },
     {

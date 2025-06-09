@@ -25,9 +25,9 @@ func (s *Manager) loadData(ctx context.Context) error {
 		return fmt.Errorf("failed to load centrum settings: %w", err)
 	}
 
-	s.logger.Debug("loading disponents")
-	if err := s.LoadDisponentsFromDB(ctx, ""); err != nil {
-		return fmt.Errorf("failed to load centrum disponents: %w", err)
+	s.logger.Debug("loading dispatchers")
+	if err := s.LoadDispatchersFromDB(ctx, ""); err != nil {
+		return fmt.Errorf("failed to load centrum dispatchers: %w", err)
 	}
 
 	s.logger.Debug("loading units")
@@ -77,26 +77,19 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 		if err := s.State.UpdateSettings(ctx, settings.Job, settings); err != nil {
 			return err
 		}
-
-		// Ensure job broker(s) are created or removed based on settings
-		if settings.Enabled {
-			s.brokers.GetOrCreateJobBroker(settings.Job)
-		} else {
-			s.brokers.RemoveJobBroker(settings.Job)
-		}
 	}
 
 	return nil
 }
 
-func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
+func (s *Manager) LoadDispatchersFromDB(ctx context.Context, job string) error {
 	tColleague := tables.User().AS("colleague")
 	tAvatar := table.FivenetFiles.AS("avatar")
 
-	stmt := tCentrumDisponents.
+	stmt := tCentrumDispatchers.
 		SELECT(
-			tCentrumDisponents.Job,
-			tCentrumDisponents.UserID,
+			tCentrumDispatchers.Job,
+			tCentrumDispatchers.UserID,
 			tColleague.ID,
 			tColleague.Firstname,
 			tColleague.Lastname,
@@ -107,17 +100,16 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 			tColleagueProps.Job,
 			tColleagueProps.NamePrefix,
 			tColleagueProps.NameSuffix,
-			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
-			tAvatar.FilePath.AS("creator.avatar"),
+			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
+			tAvatar.FilePath.AS("colleague.avatar"),
 		).
 		FROM(
-			tCentrumDisponents.
+			tCentrumDispatchers.
 				INNER_JOIN(tColleague,
-					tColleague.ID.EQ(tCentrumDisponents.UserID),
+					tColleague.ID.EQ(tCentrumDispatchers.UserID),
 				).
 				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tCentrumDisponents.UserID).
-						AND(tColleague.Job.EQ(jet.String(job))),
+					tUserProps.UserID.EQ(tCentrumDispatchers.UserID),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tColleague.ID).
@@ -130,14 +122,14 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 
 	if job != "" {
 		stmt = stmt.WHERE(
-			tCentrumDisponents.Job.EQ(jet.String(job)),
+			tCentrumDispatchers.Job.EQ(jet.String(job)),
 		)
 	}
 
 	var dest []*jobs.Colleague
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query centrum disponents. %w", err)
+			return fmt.Errorf("failed to query centrum dispatchers. %w", err)
 		}
 	}
 
@@ -153,13 +145,13 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 	}
 
 	if job != "" {
-		if err := s.UpdateDisponents(ctx, job, perJob[job]); err != nil {
-			return fmt.Errorf("failed to update disponents for specific job. %w", err)
+		if err := s.UpdateDispatchers(ctx, job, perJob[job]); err != nil {
+			return fmt.Errorf("failed to update dispatchers for specific job. %w", err)
 		}
 	} else {
-		for job, disponents := range perJob {
-			if err := s.UpdateDisponents(ctx, job, disponents); err != nil {
-				return fmt.Errorf("failed to update disponents for all jobs. %w", err)
+		for job, dispatchers := range perJob {
+			if err := s.UpdateDispatchers(ctx, job, dispatchers); err != nil {
+				return fmt.Errorf("failed to update dispatchers for all jobs. %w", err)
 			}
 		}
 	}

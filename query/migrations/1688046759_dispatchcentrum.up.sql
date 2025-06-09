@@ -1,7 +1,6 @@
 BEGIN;
 
 -- Table: fivenet_centrum_settings
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_settings` (
         `job` varchar(50) NOT NULL,
@@ -14,7 +13,6 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_users
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_users` (
         `job` varchar(50) NOT NULL,
@@ -27,7 +25,6 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_units
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_units` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -45,7 +42,6 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_units_users
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_units_users` (
         `unit_id` bigint(20) unsigned NOT NULL,
@@ -58,7 +54,6 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_units_status
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_units_status` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -81,7 +76,6 @@ CREATE TABLE
     );
 
 -- Table: fivenet_centrum_dispatches
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_dispatches` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -103,7 +97,6 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_dispatches_asgmts
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_dispatches_asgmts` (
         `dispatch_id` bigint(20) unsigned NOT NULL,
@@ -118,7 +111,6 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_dispatches_status
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_dispatches_status` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -141,7 +133,6 @@ CREATE TABLE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_centrum_markers
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_markers` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,

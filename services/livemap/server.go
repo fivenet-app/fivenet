@@ -93,7 +93,7 @@ type Params struct {
 }
 
 type brokerEvent struct {
-	Users        *map[string][]*livemap.UserMarker
+	UserRemoved  *livemap.UserMarker
 	MarkerUpdate *livemap.MarkerMarker
 	MarkerDelete *uint64
 }
@@ -127,31 +127,39 @@ func NewServer(p Params) *Server {
 		}
 
 		go func() {
-			updateCh := p.Tracker.Subscribe()
-			defer p.Tracker.Unsubscribe(updateCh)
+			ctx, cancel := context.WithCancel(ctxCancel)
+			defer cancel()
 
 			for {
+				updateCh, err := p.Tracker.Subscribe(ctx)
+				if err != nil {
+					s.logger.Error("failed to subscribe to user updates", zap.Error(err))
+					time.Sleep(2 * time.Second) // Wait before retrying
+					continue
+				}
+
 				select {
 				case <-ctxCancel.Done():
 					return
 
-				case event := <-updateCh:
-					if len(event.Removed) == 0 {
+				case msg := <-updateCh:
+					if msg == nil {
+						s.logger.Warn("received nil user update event, skipping")
 						continue
 					}
 
-					// Group removed user markers by job
-					grouped := map[string][]*livemap.UserMarker{}
-					for _, um := range event.Removed {
-						if _, ok := grouped[um.Job]; !ok {
-							grouped[um.Job] = []*livemap.UserMarker{}
-						}
+					if msg.Operation() != jetstream.KeyValueDelete {
+						continue
+					}
 
-						grouped[um.Job] = append(grouped[um.Job], um)
+					userMarker, err := msg.Value()
+					if err != nil {
+						s.logger.Error("failed to unmarshal nats user update response", zap.Error(err))
+						return
 					}
 
 					s.broker.Publish(&brokerEvent{
-						Users: &grouped,
+						UserRemoved: userMarker,
 					})
 				}
 			}

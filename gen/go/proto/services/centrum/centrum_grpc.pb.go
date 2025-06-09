@@ -26,6 +26,7 @@ const (
 	CentrumService_TakeControl_FullMethodName          = "/services.centrum.CentrumService/TakeControl"
 	CentrumService_AssignDispatch_FullMethodName       = "/services.centrum.CentrumService/AssignDispatch"
 	CentrumService_AssignUnit_FullMethodName           = "/services.centrum.CentrumService/AssignUnit"
+	CentrumService_UpdateDispatchers_FullMethodName    = "/services.centrum.CentrumService/UpdateDispatchers"
 	CentrumService_Stream_FullMethodName               = "/services.centrum.CentrumService/Stream"
 	CentrumService_GetSettings_FullMethodName          = "/services.centrum.CentrumService/GetSettings"
 	CentrumService_JoinUnit_FullMethodName             = "/services.centrum.CentrumService/JoinUnit"
@@ -45,7 +46,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CentrumServiceClient interface {
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Shared"}
 	UpdateSettings(ctx context.Context, in *UpdateSettingsRequest, opts ...grpc.CallOption) (*UpdateSettingsResponse, error)
 	// @perm
 	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
@@ -59,6 +60,8 @@ type CentrumServiceClient interface {
 	AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error)
 	// @perm: Name=TakeControl
 	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
+	// @perm
+	UpdateDispatchers(ctx context.Context, in *UpdateDispatchersRequest, opts ...grpc.CallOption) (*UpdateDispatchersResponse, error)
 	// @perm
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
 	// @perm: Name=Stream
@@ -159,6 +162,16 @@ func (c *centrumServiceClient) AssignUnit(ctx context.Context, in *AssignUnitReq
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AssignUnitResponse)
 	err := c.cc.Invoke(ctx, CentrumService_AssignUnit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) UpdateDispatchers(ctx context.Context, in *UpdateDispatchersRequest, opts ...grpc.CallOption) (*UpdateDispatchersResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateDispatchersResponse)
+	err := c.cc.Invoke(ctx, CentrumService_UpdateDispatchers_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -308,7 +321,7 @@ func (c *centrumServiceClient) UpdateDispatchStatus(ctx context.Context, in *Upd
 // All implementations must embed UnimplementedCentrumServiceServer
 // for forward compatibility.
 type CentrumServiceServer interface {
-	// @perm
+	// @perm: Attrs=Access/StringList:[]string{"Shared"}
 	UpdateSettings(context.Context, *UpdateSettingsRequest) (*UpdateSettingsResponse, error)
 	// @perm
 	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)
@@ -322,6 +335,8 @@ type CentrumServiceServer interface {
 	AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error)
 	// @perm: Name=TakeControl
 	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
+	// @perm
+	UpdateDispatchers(context.Context, *UpdateDispatchersRequest) (*UpdateDispatchersResponse, error)
 	// @perm
 	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
 	// @perm: Name=Stream
@@ -378,6 +393,9 @@ func (UnimplementedCentrumServiceServer) AssignDispatch(context.Context, *Assign
 }
 func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
+}
+func (UnimplementedCentrumServiceServer) UpdateDispatchers(context.Context, *UpdateDispatchersRequest) (*UpdateDispatchersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatchers not implemented")
 }
 func (UnimplementedCentrumServiceServer) Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
@@ -561,6 +579,24 @@ func _CentrumService_AssignUnit_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CentrumServiceServer).AssignUnit(ctx, req.(*AssignUnitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_UpdateDispatchers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDispatchersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).UpdateDispatchers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CentrumService_UpdateDispatchers_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).UpdateDispatchers(ctx, req.(*UpdateDispatchersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -826,6 +862,10 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AssignUnit",
 			Handler:    _CentrumService_AssignUnit_Handler,
+		},
+		{
+			MethodName: "UpdateDispatchers",
+			Handler:    _CentrumService_UpdateDispatchers_Handler,
 		},
 		{
 			MethodName: "GetSettings",

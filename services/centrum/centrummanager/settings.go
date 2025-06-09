@@ -45,7 +45,10 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 		return nil, err
 	}
 
-	set := s.GetSettings(ctx, job)
+	set, err := s.GetSettings(ctx, job)
+	if err != nil {
+		return nil, err
+	}
 
 	data, err := proto.Marshal(set)
 	if err != nil {

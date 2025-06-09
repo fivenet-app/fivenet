@@ -18,6 +18,14 @@
     - [DispatchAttribute](#resources-centrum-DispatchAttribute)
     - [UnitAttribute](#resources-centrum-UnitAttribute)
   
+- [resources/centrum/access.proto](#resources_centrum_access-proto)
+    - [CentrumAccess](#resources-centrum-CentrumAccess)
+    - [CentrumJobAccess](#resources-centrum-CentrumJobAccess)
+    - [CentrumQualificationAccess](#resources-centrum-CentrumQualificationAccess)
+    - [CentrumUserAccess](#resources-centrum-CentrumUserAccess)
+  
+    - [CentrumAccessLevel](#resources-centrum-CentrumAccessLevel)
+  
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
     - [DispatchAssignment](#resources-centrum-DispatchAssignment)
@@ -30,11 +38,13 @@
     - [StatusDispatch](#resources-centrum-StatusDispatch)
     - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
   
-- [resources/centrum/disponents.proto](#resources_centrum_disponents-proto)
-    - [Disponents](#resources-centrum-Disponents)
+- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
+    - [Settings](#resources-centrum-Settings)
+    - [Timings](#resources-centrum-Timings)
   
-- [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
+    - [CentrumMode](#resources-centrum-CentrumMode)
+    - [CentrumType](#resources-centrum-CentrumType)
   
 - [resources/centrum/units.proto](#resources_centrum_units-proto)
     - [Unit](#resources-centrum-Unit)
@@ -52,12 +62,11 @@
   
     - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
   
-- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
-    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
-    - [Settings](#resources-centrum-Settings)
-    - [Timings](#resources-centrum-Timings)
+- [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
+    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
   
-    - [CentrumMode](#resources-centrum-CentrumMode)
+- [resources/centrum/dispatchers.proto](#resources_centrum_dispatchers-proto)
+    - [Dispatchers](#resources-centrum-Dispatchers)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
@@ -567,10 +576,12 @@
     - [DeleteDispatchResponse](#services-centrum-DeleteDispatchResponse)
     - [DeleteUnitRequest](#services-centrum-DeleteUnitRequest)
     - [DeleteUnitResponse](#services-centrum-DeleteUnitResponse)
+    - [Dispatchers](#services-centrum-Dispatchers)
     - [GetDispatchRequest](#services-centrum-GetDispatchRequest)
     - [GetDispatchResponse](#services-centrum-GetDispatchResponse)
     - [GetSettingsRequest](#services-centrum-GetSettingsRequest)
     - [GetSettingsResponse](#services-centrum-GetSettingsResponse)
+    - [JobsList](#services-centrum-JobsList)
     - [JoinUnitRequest](#services-centrum-JoinUnitRequest)
     - [JoinUnitResponse](#services-centrum-JoinUnitResponse)
     - [LatestState](#services-centrum-LatestState)
@@ -582,6 +593,7 @@
     - [ListUnitActivityResponse](#services-centrum-ListUnitActivityResponse)
     - [ListUnitsRequest](#services-centrum-ListUnitsRequest)
     - [ListUnitsResponse](#services-centrum-ListUnitsResponse)
+    - [StreamHandshake](#services-centrum-StreamHandshake)
     - [StreamRequest](#services-centrum-StreamRequest)
     - [StreamResponse](#services-centrum-StreamResponse)
     - [TakeControlRequest](#services-centrum-TakeControlRequest)
@@ -592,6 +604,8 @@
     - [UpdateDispatchResponse](#services-centrum-UpdateDispatchResponse)
     - [UpdateDispatchStatusRequest](#services-centrum-UpdateDispatchStatusRequest)
     - [UpdateDispatchStatusResponse](#services-centrum-UpdateDispatchStatusResponse)
+    - [UpdateDispatchersRequest](#services-centrum-UpdateDispatchersRequest)
+    - [UpdateDispatchersResponse](#services-centrum-UpdateDispatchersResponse)
     - [UpdateSettingsRequest](#services-centrum-UpdateSettingsRequest)
     - [UpdateSettingsResponse](#services-centrum-UpdateSettingsResponse)
     - [UpdateUnitStatusRequest](#services-centrum-UpdateUnitStatusRequest)
@@ -1252,6 +1266,93 @@
 
 
 
+<a name="resources_centrum_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/access.proto
+
+
+
+<a name="resources-centrum-CentrumAccess"></a>
+
+### CentrumAccess
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [CentrumJobAccess](#resources-centrum-CentrumJobAccess) | repeated | @gotags: alias:"job_access" |
+
+
+
+
+
+
+<a name="resources-centrum-CentrumJobAccess"></a>
+
+### CentrumJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [CentrumAccessLevel](#resources-centrum-CentrumAccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-CentrumQualificationAccess"></a>
+
+### CentrumQualificationAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+
+<a name="resources-centrum-CentrumUserAccess"></a>
+
+### CentrumUserAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-CentrumAccessLevel"></a>
+
+### CentrumAccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_VIEW` | 1 |  |
+| `ACCESS_LEVEL_PARTICIPATE` | 2 |  |
+| `ACCESS_LEVEL_DISPATCH` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_centrum_dispatches-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1271,6 +1372,7 @@
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `job` | [string](#string) |  |  |
+| `jobs` | [string](#string) | repeated |  |
 | `status` | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
 | `message` | [string](#string) |  | @sanitize |
 | `description` | [string](#string) | optional | @sanitize |
@@ -1444,23 +1546,63 @@
 
 
 
-<a name="resources_centrum_disponents-proto"></a>
+<a name="resources_centrum_settings-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/centrum/disponents.proto
+## resources/centrum/settings.proto
 
 
 
-<a name="resources-centrum-Disponents"></a>
+<a name="resources-centrum-PredefinedStatus"></a>
 
-### Disponents
+### PredefinedStatus
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-centrum-Settings"></a>
+
+### Settings
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `job` | [string](#string) |  |  |
-| `disponents` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+| `enabled` | [bool](#bool) |  |  |
+| `type` | [CentrumType](#resources-centrum-CentrumType) |  |  |
+| `public` | [bool](#bool) |  |  |
+| `mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| `fallback_mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| `predefined_status` | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+| `timings` | [Timings](#resources-centrum-Timings) |  |  |
+| `access` | [CentrumAccess](#resources-centrum-CentrumAccess) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-Timings"></a>
+
+### Timings
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatch_max_wait` | [int64](#int64) |  |  |
+| `require_unit` | [bool](#bool) |  |  |
+| `require_unit_reminder_seconds` | [int64](#int64) |  |  |
 
 
 
@@ -1468,39 +1610,33 @@
 
  <!-- end messages -->
 
- <!-- end enums -->
 
- <!-- end HasExtensions -->
+<a name="resources-centrum-CentrumMode"></a>
 
- <!-- end services -->
-
+### CentrumMode
 
 
-<a name="resources_centrum_user_unit-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/user_unit.proto
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CENTRUM_MODE_UNSPECIFIED` | 0 |  |
+| `CENTRUM_MODE_MANUAL` | 1 |  |
+| `CENTRUM_MODE_CENTRAL_COMMAND` | 2 |  |
+| `CENTRUM_MODE_AUTO_ROUND_ROBIN` | 3 |  |
+| `CENTRUM_MODE_SIMPLIFIED` | 4 |  |
 
 
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+<a name="resources-centrum-CentrumType"></a>
+
+### CentrumType
 
 
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CENTRUM_TYPE_UNSPECIFIED` | 0 |  |
+| `CENTRUM_TYPE_DISPATCH` | 1 |  |
+| `CENTRUM_TYPE_DELIVERY` | 2 |  |
 
-
-
- <!-- end messages -->
 
  <!-- end enums -->
 
@@ -1730,60 +1866,25 @@
 
 
 
-<a name="resources_centrum_settings-proto"></a>
+<a name="resources_centrum_user_unit-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/centrum/settings.proto
+## resources/centrum/user_unit.proto
 
 
 
-<a name="resources-centrum-PredefinedStatus"></a>
+<a name="resources-centrum-UserUnitMapping"></a>
 
-### PredefinedStatus
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-centrum-Settings"></a>
-
-### Settings
+### UserUnitMapping
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `unit_id` | [uint64](#uint64) |  |  |
 | `job` | [string](#string) |  |  |
-| `enabled` | [bool](#bool) |  |  |
-| `mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| `fallback_mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| `predefined_status` | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
-| `timings` | [Timings](#resources-centrum-Timings) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-Timings"></a>
-
-### Timings
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `dispatch_max_wait` | [int64](#int64) |  |  |
-| `require_unit` | [bool](#bool) |  |  |
-| `require_unit_reminder_seconds` | [int64](#int64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 
 
 
@@ -1791,20 +1892,38 @@
 
  <!-- end messages -->
 
+ <!-- end enums -->
 
-<a name="resources-centrum-CentrumMode"></a>
+ <!-- end HasExtensions -->
 
-### CentrumMode
+ <!-- end services -->
 
 
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `CENTRUM_MODE_UNSPECIFIED` | 0 |  |
-| `CENTRUM_MODE_MANUAL` | 1 |  |
-| `CENTRUM_MODE_CENTRAL_COMMAND` | 2 |  |
-| `CENTRUM_MODE_AUTO_ROUND_ROBIN` | 3 |  |
-| `CENTRUM_MODE_SIMPLIFIED` | 4 |  |
 
+<a name="resources_centrum_dispatchers-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/dispatchers.proto
+
+
+
+<a name="resources-centrum-Dispatchers"></a>
+
+### Dispatchers
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `dispatchers` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -9005,6 +9124,21 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-centrum-Dispatchers"></a>
+
+### Dispatchers
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatchers` | [resources.centrum.Dispatchers](#resources-centrum-Dispatchers) | repeated |  |
+
+
+
+
+
+
 <a name="services-centrum-GetDispatchRequest"></a>
 
 ### GetDispatchRequest
@@ -9060,6 +9194,21 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-centrum-JobsList"></a>
+
+### JobsList
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatches` | [resources.jobs.Job](#resources-jobs-Job) | repeated |  |
+
+
+
+
+
+
 <a name="services-centrum-JoinUnitRequest"></a>
 
 ### JoinUnitRequest
@@ -9100,7 +9249,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `server_time` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `settings` | [resources.centrum.Settings](#resources-centrum-Settings) |  |  |
-| `disponents` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+| `dispatchers` | [Dispatchers](#services-centrum-Dispatchers) |  |  |
 | `own_unit_id` | [uint64](#uint64) | optional |  |
 | `units` | [resources.centrum.Unit](#resources-centrum-Unit) | repeated | Send the current units and dispatches |
 | `dispatches` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) | repeated |  |
@@ -9239,6 +9388,22 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-centrum-StreamHandshake"></a>
+
+### StreamHandshake
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `settings` | [resources.centrum.Settings](#resources-centrum-Settings) |  |  |
+| `jobs` | [JobsList](#services-centrum-JobsList) |  |  |
+
+
+
+
+
+
 <a name="services-centrum-StreamRequest"></a>
 
 ### StreamRequest
@@ -9257,16 +9422,18 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `handshake` | [StreamHandshake](#services-centrum-StreamHandshake) |  |  |
 | `latest_state` | [LatestState](#services-centrum-LatestState) |  |  |
 | `settings` | [resources.centrum.Settings](#resources-centrum-Settings) |  |  |
-| `disponents` | [resources.centrum.Disponents](#resources-centrum-Disponents) |  |  |
-| `unit_created` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
-| `unit_deleted` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
+| `jobs` | [JobsList](#services-centrum-JobsList) |  |  |
+| `dispatchers` | [resources.centrum.Dispatchers](#resources-centrum-Dispatchers) |  |  |
+| `unit_deleted` | [uint64](#uint64) |  |  |
 | `unit_updated` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
+| `dispatch_deleted` | [uint64](#uint64) |  |  |
+| `dispatch_updated` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
+| `unit_created` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
 | `unit_status` | [resources.centrum.UnitStatus](#resources-centrum-UnitStatus) |  |  |
 | `dispatch_created` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
-| `dispatch_deleted` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
-| `dispatch_updated` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
 | `dispatch_status` | [resources.centrum.DispatchStatus](#resources-centrum-DispatchStatus) |  |  |
 
 
@@ -9379,6 +9546,36 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-centrum-UpdateDispatchersRequest"></a>
+
+### UpdateDispatchersRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_remove` | [int32](#int32) | repeated |  |
+
+
+
+
+
+
+<a name="services-centrum-UpdateDispatchersResponse"></a>
+
+### UpdateDispatchersResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatchers` | [resources.centrum.Dispatchers](#resources-centrum-Dispatchers) |  |  |
+
+
+
+
+
+
 <a name="services-centrum-UpdateSettingsRequest"></a>
 
 ### UpdateSettingsRequest
@@ -9450,13 +9647,14 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `UpdateSettings` | [UpdateSettingsRequest](#services-centrum-UpdateSettingsRequest) | [UpdateSettingsResponse](#services-centrum-UpdateSettingsResponse) | @perm |
+| `UpdateSettings` | [UpdateSettingsRequest](#services-centrum-UpdateSettingsRequest) | [UpdateSettingsResponse](#services-centrum-UpdateSettingsResponse) | @perm: Attrs=Access/StringList:[]string{"Shared"} |
 | `CreateDispatch` | [CreateDispatchRequest](#services-centrum-CreateDispatchRequest) | [CreateDispatchResponse](#services-centrum-CreateDispatchResponse) | @perm |
 | `UpdateDispatch` | [UpdateDispatchRequest](#services-centrum-UpdateDispatchRequest) | [UpdateDispatchResponse](#services-centrum-UpdateDispatchResponse) | @perm |
 | `DeleteDispatch` | [DeleteDispatchRequest](#services-centrum-DeleteDispatchRequest) | [DeleteDispatchResponse](#services-centrum-DeleteDispatchResponse) | @perm |
 | `TakeControl` | [TakeControlRequest](#services-centrum-TakeControlRequest) | [TakeControlResponse](#services-centrum-TakeControlResponse) | @perm |
 | `AssignDispatch` | [AssignDispatchRequest](#services-centrum-AssignDispatchRequest) | [AssignDispatchResponse](#services-centrum-AssignDispatchResponse) | @perm: Name=TakeControl |
 | `AssignUnit` | [AssignUnitRequest](#services-centrum-AssignUnitRequest) | [AssignUnitResponse](#services-centrum-AssignUnitResponse) | @perm: Name=TakeControl |
+| `UpdateDispatchers` | [UpdateDispatchersRequest](#services-centrum-UpdateDispatchersRequest) | [UpdateDispatchersResponse](#services-centrum-UpdateDispatchersResponse) | @perm |
 | `Stream` | [StreamRequest](#services-centrum-StreamRequest) | [StreamResponse](#services-centrum-StreamResponse) stream | @perm |
 | `GetSettings` | [GetSettingsRequest](#services-centrum-GetSettingsRequest) | [GetSettingsResponse](#services-centrum-GetSettingsResponse) | @perm: Name=Stream |
 | `JoinUnit` | [JoinUnitRequest](#services-centrum-JoinUnitRequest) | [JoinUnitResponse](#services-centrum-JoinUnitResponse) | @perm: Name=Stream |

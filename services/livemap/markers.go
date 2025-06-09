@@ -354,6 +354,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 		if _, ok := markers[key]; !ok {
 			s.markersCache.Delete(key)
 		}
+
 		return true
 	})
 

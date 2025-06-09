@@ -10,7 +10,7 @@ import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import DisponentsInfo from './disponents/DisponentsInfo.vue';
+import DispatchersInfo from './dispatchers/DispatchersInfo.vue';
 
 const { can } = useAuth();
 
@@ -46,7 +46,7 @@ onBeforeRouteLeave(async (to) => {
         <UDashboardNavbar :title="$t('common.dispatch_center')">
             <template #right>
                 <ClientOnly>
-                    <DisponentsInfo />
+                    <DispatchersInfo />
                 </ClientOnly>
             </template>
         </UDashboardNavbar>
