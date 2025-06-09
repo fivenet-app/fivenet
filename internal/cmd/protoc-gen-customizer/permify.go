@@ -223,7 +223,7 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 			} else {
 				perm.Name = v
 			}
-			p.Log("Parsing permission name:", v)
+			p.Debug("Parsing permission name:", v)
 
 		case "order":
 			order, err := strconv.ParseInt(v, 10, 32)
@@ -256,7 +256,7 @@ func (p *PermifyModule) parseComment(_ string, method string, comment string) (*
 			}
 		}
 		if perm.Attrs != nil {
-			p.Log("Parsing attr:", perm.Attrs)
+			p.Debug("Parsing attr:", perm.Attrs)
 		}
 	}
 

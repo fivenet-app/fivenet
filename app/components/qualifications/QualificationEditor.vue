@@ -247,7 +247,6 @@ function setFromProps(): void {
 watch(qualification, () => setFromProps());
 
 async function updateQualification(values: Schema): Promise<UpdateQualificationResponse> {
-    values.access.users.forEach((user) => user.id < 0 && (user.id = 0));
     values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
 
     const req: UpdateQualificationRequest = {

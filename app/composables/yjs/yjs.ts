@@ -26,7 +26,7 @@ type Events = {
 };
 
 export default class GrpcProvider extends ObservableV2<Events> {
-    public readonly yDoc: Y.Doc;
+    public readonly ydoc: Y.Doc;
     public readonly awareness: Awareness;
 
     private readonly opts: GrpcProviderOpts;
@@ -43,13 +43,13 @@ export default class GrpcProvider extends ObservableV2<Events> {
         super();
 
         this.opts = opts;
-        this.yDoc = doc;
+        this.ydoc = doc;
         this.awareness = new Awareness(doc);
 
         this.streamConnect = streamProvider;
 
         // Setup local listeners
-        this.yDoc.on('update', this.handleDocUpdate);
+        this.ydoc.on('update', this.handleDocUpdate);
 
         this.awareness.on('update', (changes: { added: number[]; updated: number[]; removed: number[] }, origin: unknown) =>
             this.handleAwarenessUpdate(changes, origin),
@@ -71,12 +71,12 @@ export default class GrpcProvider extends ObservableV2<Events> {
         this.clientId && removeAwarenessStates(this.awareness, [this.clientId], 'app closed');
 
         setTimeout(() => {
-            this.yDoc.off('update', this.handleDocUpdate);
+            this.ydoc.off('update', this.handleDocUpdate);
             this.awareness.off('update', this.handleAwarenessUpdate);
             this.stream?.requests.complete();
         }, 0);
 
-        logger.debug('destroyed grpc provider');
+        logger.debug('Destroyed grpc provider');
     }
 
     // Internal
@@ -111,10 +111,10 @@ export default class GrpcProvider extends ObservableV2<Events> {
                     this.synced = true;
                     this.emit('loadContent', []);
 
-                    this.yDoc.emit('sync', [true, this.yDoc]);
-                    this.emit('sync', [true, this.yDoc]);
+                    this.ydoc.emit('sync', [true, this.ydoc]);
+                    this.emit('sync', [true, this.ydoc]);
                 } else {
-                    const sv = Y.encodeStateVector(this.yDoc);
+                    const sv = Y.encodeStateVector(this.ydoc);
                     this.authorative = false;
 
                     this.send(
@@ -158,7 +158,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                         msg.msg.syncStep.data.length,
                     );
                     if (msg.msg.syncStep.step === 1) {
-                        const diff = Y.encodeStateAsUpdate(this.yDoc, msg.msg.syncStep.data);
+                        const diff = Y.encodeStateAsUpdate(this.ydoc, msg.msg.syncStep.data);
 
                         this.send({
                             msg: {
@@ -171,12 +171,12 @@ export default class GrpcProvider extends ObservableV2<Events> {
                             },
                         });
                     } else if (msg.msg.syncStep.step === 2) {
-                        Y.applyUpdate(this.yDoc, msg.msg.syncStep.data);
+                        Y.applyUpdate(this.ydoc, msg.msg.syncStep.data);
 
                         if (!this.synced) {
                             this.synced = true;
-                            this.yDoc.emit('sync', [true, this.yDoc]);
-                            this.emit('sync', [true, this.yDoc]);
+                            this.ydoc.emit('sync', [true, this.ydoc]);
+                            this.emit('sync', [true, this.ydoc]);
                         }
                     }
 
@@ -192,7 +192,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 case 'yjsUpdate': {
                     if (msg.msg.yjsUpdate.data.length > 0) {
                         logger.debug('Received Yjs update', msg.msg.yjsUpdate.data.length, 'from', msg.senderId);
-                        Y.applyUpdate(this.yDoc, msg.msg.yjsUpdate.data);
+                        Y.applyUpdate(this.ydoc, msg.msg.yjsUpdate.data);
                     }
                     break;
                 }
@@ -219,7 +219,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
             clientId: this.clientId,
         });
 
-        this.emit('sync', [false, this.yDoc]);
+        this.emit('sync', [false, this.ydoc]);
 
         const delay = this.opts.reconnectDelay?.(this.reconnectAttempt) ?? Math.min(1000 * 2 ** this.reconnectAttempt, 32000);
         this.reconnectAttempt++;

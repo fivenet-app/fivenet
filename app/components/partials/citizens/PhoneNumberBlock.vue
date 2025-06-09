@@ -61,10 +61,12 @@ async function doCall(): Promise<void> {
             </template>
         </span>
         <template v-else>
-            <UButton v-if="showIcon" class="shrink-0" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
-                <span class="sr-only">{{ $t('common.call') }}</span>
-                <span v-if="showLabel" class="truncate">{{ $t('common.call') }}</span>
-            </UButton>
+            <UTooltip v-if="showIcon" :text="$t('common.call')">
+                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
+                    <span class="sr-only">{{ $t('common.call') }}</span>
+                    <span v-if="showLabel" class="truncate">{{ $t('common.call') }}</span>
+                </UButton>
+            </UTooltip>
 
             <span v-if="!hideNumber" class="inline-flex gap-1" :class="[streamerMode ? 'blur' : '']">
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{ part }}</span>

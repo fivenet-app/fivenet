@@ -288,6 +288,11 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
             description: { key: 'notifications.document_updated.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
+
+        if (response.document) {
+            state.draft = response.document.draft;
+        }
+
         clipboardStore.clear();
     } catch (e) {
         handleGRPCError(e as RpcError);

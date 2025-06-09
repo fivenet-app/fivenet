@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
@@ -706,7 +707,11 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 }
 
 func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, unitId uint64, resp centrum.TakeDispatchResp, dispatchIds []uint64) error {
-	settings := s.GetSettings(ctx, job)
+	settings, err := s.GetSettings(ctx, job)
+	if err != nil {
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+
 	// If the dispatch center is in central command mode, units can't self assign dispatches
 	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
 		return errorscentrum.ErrModeForbidsAction
@@ -714,7 +719,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 	unit, err := s.GetUnit(ctx, job, unitId)
 	if err != nil {
-		return errorscentrum.ErrFailedQuery
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	var x, y *float64
@@ -748,7 +753,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 				if !dbutils.IsDuplicateError(err) {
-					return errorscentrum.ErrFailedQuery
+					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
 			}
 		} else {
@@ -762,7 +767,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 				if !dbutils.IsDuplicateError(err) {
-					return errorscentrum.ErrFailedQuery
+					return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 				}
 			}
 		}
@@ -848,22 +853,22 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 		}); err != nil {
 			// Ignore errors that are "okay" to encounter
 			if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
-				return err
+				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 		}
 
 		dsp, err := s.GetDispatch(ctx, job, dspId)
 		if err != nil {
-			return err
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		data, err := proto.Marshal(dsp)
 		if err != nil {
-			return err
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, job), data); err != nil {
-			return err
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
 

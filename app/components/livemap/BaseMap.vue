@@ -258,14 +258,14 @@ onBeforeUnmount(() => {
             />
 
             <LTileLayer
-                url="/images/livemap/tiles/grid/{z}/{x}/{y}.png"
-                layer-type="base"
+                url="/images/livemap/tiles/grid-overlay/{z}/{x}/{y}.png"
+                layer-type="overlay"
                 :no-wrap="true"
                 :tms="true"
+                :visible="livemapSettings.showGrid"
                 :min-zoom="1"
                 :max-zoom="7"
-                :opacity="0.75"
-                :visible="livemapSettings.showGrid"
+                :opacity="0.65"
             />
 
             <LayerControls />

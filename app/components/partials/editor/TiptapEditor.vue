@@ -114,7 +114,7 @@ const notifications = useNotificatorStore();
 
 const modal = useModal();
 
-const content = defineModel<string>({ required: true });
+const modelValue = defineModel<string>({ required: true });
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
 const extensions: Extensions = [
@@ -230,7 +230,7 @@ if (ydoc && yjsProvider && !props.disableCollab) {
             user: user,
             // Skip rendering if it's your own cursor
             render: (user): HTMLElement => {
-                if (user.id === yjsProvider.yDoc.clientID) {
+                if (user.id === yjsProvider.ydoc.clientID) {
                     // returns nothing → no widget for your own cursor
                     return new HTMLElement();
                 }
@@ -249,7 +249,7 @@ if (ydoc && yjsProvider && !props.disableCollab) {
             },
             // Same for text selections
             selectionRender: (user) => {
-                if (user.id === yjsProvider.yDoc.clientID) {
+                if (user.id === yjsProvider.ydoc.clientID) {
                     return {};
                 }
                 return {
@@ -298,7 +298,7 @@ const editor = useEditor({
     extensions: [...extensions, ...props.extensions],
     onFocus: () => focusTablet(true),
     onBlur: () => focusTablet(false),
-    onUpdate: () => (content.value = unref(editor)?.getHTML() ?? ''),
+    onUpdate: () => (modelValue.value = unref(editor)?.getHTML() ?? ''),
     editorProps: {
         attributes: {
             class: 'prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-none dark:prose-invert max-w-full break-words',
@@ -378,17 +378,18 @@ const fonts = [
 
 // If collaboration is enabled, we don't set the content directly
 // as it will be handled by the Yjs provider.
-const stopWatch = watch(content, (value) => {
+const stopWatch = watch(modelValue, (value) => {
     const isSame = unref(editor)?.getHTML() === value;
     // JSON
     // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value);
 
     if (isSame) return;
 
+    // If not authoritative, don't set the content
     if (!props.disableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
 
-    unref(editor)?.commands.setContent(value, false);
-    if (!props.disableCollab && yjsProvider && yjsProvider.isAuthoritative) {
+    unref(editor)?.commands.setContent(value, true);
+    if (!props.disableCollab && ydoc && yjsProvider && yjsProvider.isAuthoritative) {
         stopWatch();
     }
 });
@@ -406,7 +407,6 @@ function setLink(data: typeof linkState): void {
     // Empty URL
     if (url === '') {
         unref(editor)?.chain().focus().extendMarkRange('link').unsetLink().run();
-
         return;
     }
 
@@ -556,7 +556,7 @@ watch(contentRef, () => {
 
 function applyVersion(version: Version<unknown>): void {
     const v = version as Version<Content>;
-    content.value = v.content.content;
+    modelValue.value = v.content.content;
     files.value = v.content.files;
 
     notifications.add({
@@ -567,8 +567,8 @@ function applyVersion(version: Version<unknown>): void {
 }
 
 onMounted(() => {
-    if (!ydoc) {
-        unref(editor)?.commands.setContent(content.value);
+    if (ydoc === undefined) {
+        unref(editor)?.commands.setContent(modelValue.value);
     }
 });
 
@@ -1210,8 +1210,8 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             :disabled="disabled"
                             @click="
                                 modal.open(TiptapEditorSourceCodeModal, {
-                                    content: content,
-                                    'onUpdate:content': ($event) => (content = $event),
+                                    content: modelValue,
+                                    'onUpdate:content': ($event) => (modelValue = $event),
                                 })
                             "
                         />
@@ -1245,7 +1245,7 @@ onBeforeUnmount(() => unref(editor)?.destroy());
                             @click="
                                 modal.open(VersionHistoryModal, {
                                     historyType: historyType,
-                                    currentContent: { content: content, files: files },
+                                    currentContent: { content: modelValue, files: files },
                                     onApply: applyVersion,
                                 })
                             "
