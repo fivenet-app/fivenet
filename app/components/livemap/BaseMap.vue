@@ -5,6 +5,7 @@ import { CRS, extend, LatLng, latLngBounds, Projection, Transformation, type Poi
 import 'leaflet-contextmenu';
 import 'leaflet/dist/leaflet.css';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
+import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
 import { useLivemapStore } from '~/stores/livemap';
 import { backgroundColorList, tileLayers } from '~/types/livemap';
 import type { ValueOf } from '~/utils/types';
@@ -181,11 +182,27 @@ function parseLocationQuery(query: string): { latlng: L.LatLng; zoom: number } |
     };
 }
 
+const graticuleLayer = simpleGraticule({
+    interval: 200,
+    showOriginLabel: true,
+    redraw: 'moveend',
+    zoomIntervals: [
+        { start: 1, end: 1, interval: 1000 },
+        { start: 2, end: 3, interval: 500 },
+        { start: 4, end: 5, interval: 250 },
+        { start: 6, end: 7, interval: 100 },
+    ],
+});
+
 async function onMapReady(m: L.Map): Promise<void> {
     updateBackground(livemapTileLayer.value);
 
     map = m;
     map.invalidateSize();
+
+    if (livemapSettings.value.showGrid) {
+        graticuleLayer.addTo(map);
+    }
 
     const startPos = parseLocationQuery(currentLocationQuery.value as string);
     if (startPos) {
@@ -218,6 +235,19 @@ async function onMapReady(m: L.Map): Promise<void> {
 
     emit('mapReady', map);
 }
+
+watch(
+    () => livemapSettings.value.showGrid,
+    (newVal) => {
+        if (!graticuleLayer) return;
+
+        if (newVal && map) {
+            graticuleLayer.addTo(map);
+        } else {
+            graticuleLayer.remove();
+        }
+    },
+);
 
 onBeforeUnmount(() => {
     map = undefined;
@@ -255,17 +285,6 @@ onBeforeUnmount(() => {
                 :min-zoom="1"
                 :max-zoom="layer.options?.maxZoom || 7"
                 :attribution="layer.options?.attribution || ''"
-            />
-
-            <LTileLayer
-                url="/images/livemap/tiles/grid-overlay/{z}/{x}/{y}.png"
-                layer-type="overlay"
-                :no-wrap="true"
-                :tms="true"
-                :visible="livemapSettings.showGrid"
-                :min-zoom="1"
-                :max-zoom="7"
-                :opacity="0.65"
             />
 
             <LayerControls />
@@ -402,6 +421,23 @@ onBeforeUnmount(() => {
     .leaflet-contextmenu-separator {
         border-bottom: 1px solid #ccc;
         margin: 5px 0;
+    }
+
+    /* Graticle */
+    .leaflet-grid-label .gridlabel-vert {
+        margin-left: 8px;
+        -webkit-transform: rotate(90deg);
+        transform: rotate(90deg);
+    }
+
+    .leaflet-grid-label .gridlabel-vert,
+    .leaflet-grid-label .gridlabel-horiz {
+        padding-left: 2px;
+        text-shadow:
+            -1px 0 #000000,
+            0 1px #000000,
+            1px 0 #000000,
+            0 -1px #000000;
     }
 }
 </style>
