@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.7-labs
+# syntax=docker/dockerfile:1.16-labs
 
 # Frontend Build
 FROM docker.io/library/node:23.11.1-alpine3.20 AS nodebuilder
@@ -15,7 +15,7 @@ RUN apk add --no-cache git && \
     pnpm install && \
     NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
 
-# Livemap Tiles Layer for better caching
+# Livemap Tiles Layer for improved caching
 FROM docker.io/library/alpine:3.22.0 AS livemaptiles
 
 WORKDIR /app
