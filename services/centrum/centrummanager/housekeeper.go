@@ -883,42 +883,38 @@ func (s *Housekeeper) watchUserChanges() {
 						return
 					}
 				} else if event.Operation() == jetstream.KeyValueDelete || event.Operation() == jetstream.KeyValuePurge {
-					s.handleRemovedUserDispatchers(ctx, userMarker.Job, userMarker.UserId)
-					s.handleRemovedUserUnit(ctx, userMarker.Job, userMarker.UserId)
+					if err := s.handleRemovedUser(ctx, userMarker.Job, userMarker.UserId); err != nil {
+						s.logger.Error("failed to handle removed user", zap.Int32("user_id", userMarker.UserId), zap.Error(err))
+					}
 				}
 			}()
 		}
 	}
 }
 
-func (s *Housekeeper) handleRemovedUserDispatchers(ctx context.Context, job string, userId int32) {
+func (s *Housekeeper) handleRemovedUser(ctx context.Context, job string, userId int32) error {
+	var errs error
 	if s.CheckIfUserIsDispatcher(ctx, job, userId) {
 		if err := s.DispatcherSignOn(ctx, job, userId, false); err != nil {
-			s.logger.Error("failed to remove user from dispatchers", zap.Error(err))
-			return
+			errs = multierr.Append(errs, fmt.Errorf("failed to remove user from disponents. %w", err))
 		}
 	}
-}
 
-func (s *Housekeeper) handleRemovedUserUnit(ctx context.Context, job string, userId int32) bool {
-	unitMapping, ok := s.GetUserUnitMapping(ctx, userId)
+	um, ok := s.GetUserUnitMapping(ctx, userId)
 	if !ok {
-		// Nothing to do
-		return false
+		// User not in any unit, nothing to do
+		return errs
 	}
 
-	unit, err := s.GetUnit(ctx, job, unitMapping.UnitId)
-	if err != nil {
-		if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
-			s.logger.Error("failed to unset user's unit id", zap.Error(err))
+	if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
+		errs = multierr.Append(errs, fmt.Errorf("failed to unset user's unit id in removed user unit. %w", err))
+	}
+
+	if um != nil {
+		if err := s.UpdateUnitAssignments(ctx, job, &userId, um.UnitId, nil, []int32{userId}); err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("failed to remove user from unit. %w", err))
 		}
-		return false
 	}
 
-	if err := s.UpdateUnitAssignments(ctx, job, &userId, unit.Id, nil, []int32{userId}); err != nil {
-		s.logger.Error("failed to remove user from unit", zap.Error(err))
-		return false
-	}
-
-	return true
+	return errs
 }

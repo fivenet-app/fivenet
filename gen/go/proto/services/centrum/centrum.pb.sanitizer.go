@@ -280,24 +280,6 @@ func (m *LatestState) Sanitize() error {
 
 	}
 
-	// Field: ServerTime
-	if m.ServerTime != nil {
-		if v, ok := any(m.GetServerTime()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Settings
-	if m.Settings != nil {
-		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Units
 	for idx, item := range m.Units {
 		_, _ = idx, item
@@ -505,6 +487,15 @@ func (m *StreamHandshake) Sanitize() error {
 	// Field: Jobs
 	if m.Jobs != nil {
 		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: ServerTime
+	if m.ServerTime != nil {
+		if v, ok := any(m.GetServerTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

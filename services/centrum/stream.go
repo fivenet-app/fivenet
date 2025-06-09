@@ -8,7 +8,6 @@ import (
 	"time"
 
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -23,36 +22,33 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, userId int32, additionalJobs []string) error {
-	jobs := []*jobs.Job{}
-	for _, job := range additionalJobs {
-		j := s.enricher.GetJobByName(job)
-		if j == nil {
-			return errswrap.NewError(fmt.Errorf("job not found. %s", job), errorscentrum.ErrFailedQuery)
-		}
-		jobs = append(jobs, j)
-	}
-
+func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, jobs *pbcentrum.JobsList) error {
 	settings, err := s.state.GetSettings(ctx, userJob)
 	if err != nil {
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	if err := srv.Send(&pbcentrum.StreamResponse{
-		Change: &pbcentrum.StreamResponse_Jobs{
-			Jobs: &pbcentrum.JobsList{
-				Dispatches: jobs,
+		Change: &pbcentrum.StreamResponse_Handshake{
+			Handshake: &pbcentrum.StreamHandshake{
+				ServerTime: timestamp.Now(),
+				Settings:   settings,
+				Jobs:       jobs,
 			},
 		},
 	}); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, userId int32, jobs *pbcentrum.JobsList) error {
 	dispatchers := &pbcentrum.Dispatchers{}
 	dispos, _ := s.state.GetDispatchers(ctx, userJob)
 	dispatchers.Dispatchers = []*centrum.Dispatchers{dispos}
-	for _, j := range additionalJobs {
-		dispos, err := s.state.GetDispatchers(ctx, j)
+	for _, j := range jobs.Dispatches {
+		dispos, err := s.state.GetDispatchers(ctx, j.Name)
 		if err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
@@ -67,8 +63,8 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 
 	// Retrieve units and dispatches
 	units := s.state.ListUnits(ctx, userJob)
-	for _, j := range additionalJobs {
-		units = append(units, s.state.ListUnits(ctx, j)...)
+	for _, j := range jobs.Dispatches {
+		units = append(units, s.state.ListUnits(ctx, j.Name)...)
 	}
 
 	dispatchStatusFilter := []centrum.StatusDispatch{
@@ -77,16 +73,14 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 		centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 	}
 	dispatches := s.state.FilterDispatches(ctx, userJob, nil, dispatchStatusFilter)
-	for _, j := range additionalJobs {
-		dispatches = append(dispatches, s.state.FilterDispatches(ctx, j, nil, dispatchStatusFilter)...)
+	for _, j := range jobs.Dispatches {
+		dispatches = append(dispatches, s.state.FilterDispatches(ctx, j.Name, nil, dispatchStatusFilter)...)
 	}
 
 	// Send initial state to client
 	if err := srv.Send(&pbcentrum.StreamResponse{
 		Change: &pbcentrum.StreamResponse_LatestState{
 			LatestState: &pbcentrum.LatestState{
-				ServerTime:  timestamp.Now(),
-				Settings:    settings,
 				Dispatchers: dispatchers,
 				OwnUnitId:   pOwnUnitId,
 				Units:       units,
@@ -103,8 +97,22 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumService_StreamServer) error {
 	userInfo := *auth.MustGetUserInfoFromContext(srv.Context())
 
+	jobs := &pbcentrum.JobsList{}
+	additionalJobs := []string{}
+	for _, job := range additionalJobs {
+		j := s.enricher.GetJobByName(job)
+		if j == nil {
+			return errswrap.NewError(fmt.Errorf("job not found. %s", job), errorscentrum.ErrFailedQuery)
+		}
+		jobs.Dispatches = append(jobs.Dispatches, j)
+	}
+
 	for {
-		if err := s.sendLatestState(srv.Context(), srv, userInfo.Job, userInfo.UserId, []string{}); err != nil {
+		if err := s.sendHandshakre(srv.Context(), srv, userInfo.Job, jobs); err != nil {
+			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+
+		if err := s.sendLatestState(srv.Context(), srv, userInfo.Job, userInfo.UserId, jobs); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 

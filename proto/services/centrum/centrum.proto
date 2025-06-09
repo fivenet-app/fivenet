@@ -187,18 +187,17 @@ message TakeDispatchRequest {
 message TakeDispatchResponse {}
 
 message StreamHandshake {
-  resources.centrum.Settings settings = 1;
-  JobsList jobs = 2;
+  resources.timestamp.Timestamp server_time = 1;
+  resources.centrum.Settings settings = 2;
+  JobsList jobs = 3;
 }
 
 message LatestState {
-  resources.timestamp.Timestamp server_time = 1;
-  resources.centrum.Settings settings = 2;
-  Dispatchers dispatchers = 3;
-  optional uint64 own_unit_id = 4;
+  Dispatchers dispatchers = 1;
+  optional uint64 own_unit_id = 2;
   // Send the current units and dispatches
-  repeated resources.centrum.Unit units = 5;
-  repeated resources.centrum.Dispatch dispatches = 6;
+  repeated resources.centrum.Unit units = 3;
+  repeated resources.centrum.Dispatch dispatches = 4;
 }
 
 message StreamRequest {}

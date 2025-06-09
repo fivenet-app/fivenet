@@ -3,6 +3,7 @@ import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import { useNotificatorStore } from '~/stores/notificator';
 import type { NotificationActionI18n } from '~/utils/notifications';
+import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
@@ -11,7 +12,6 @@ import type { Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { StreamRequest, StreamResponse } from '~~/gen/ts/services/centrum/centrum';
 
 export const logger = useLogger('⛑️ Centrum');
@@ -41,7 +41,7 @@ export const useCentrumStore = defineStore(
 
         const settings = ref<Settings | undefined>(undefined);
         const isDispatcher = ref<boolean>(false);
-        const dispatchers = ref<UserShort[]>([]);
+        const dispatchers = ref<Dispatchers[]>([]);
         const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
         const isCenter = ref<boolean>(false);
 
@@ -338,7 +338,7 @@ export const useCentrumStore = defineStore(
 
         // Dispatchers
         const checkIfDispatcher = (userId?: number): boolean => {
-            return !!dispatchers.value.find((d) => d.userId === userId);
+            return !!dispatchers.value.find((d) => d.dispatchers.find((c) => c.userId === userId));
         };
 
         // Stream
@@ -374,24 +374,25 @@ export const useCentrumStore = defineStore(
 
                     logger.debug('Received change - oneofKind:', resp.change.oneofKind, resp.change);
 
-                    if (resp.change.oneofKind === 'latestState') {
-                        if (resp.change.latestState.serverTime) {
-                            calculateTimeCorrection(resp.change.latestState.serverTime);
+                    if (resp.change.oneofKind === 'handshake') {
+                        if (resp.change.handshake.serverTime) {
+                            calculateTimeCorrection(resp.change.handshake.serverTime);
+                        }
+                        if (resp.change.handshake.settings) {
+                            updateSettings(resp.change.handshake.settings);
                         }
 
+                        // TODO
+                    } else if (resp.change.oneofKind === 'latestState') {
                         logger.info(
                             'Latest state received. Dispatches:',
                             resp.change.latestState.dispatches.length,
-                            'units',
+                            'units:',
                             resp.change.latestState.units.length,
                         );
 
-                        if (resp.change.latestState.settings) {
-                            updateSettings(resp.change.latestState.settings);
-                        }
-
                         dispatchers.value.length = 0;
-                        dispatchers.value.push(...resp.change.latestState.dispatchers);
+                        dispatchers.value.push(...(resp.change.latestState.dispatchers?.dispatchers ?? []));
                         isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
 
                         const foundUnits: number[] = [];
@@ -427,16 +428,20 @@ export const useCentrumStore = defineStore(
                     } else if (resp.change.oneofKind === 'settings') {
                         updateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'dispatchers') {
-                        dispatchers.value.length = 0;
-                        dispatchers.value.push(...resp.change.dispatchers.dispatchers);
+                        const idx = dispatchers.value.findIndex(
+                            (d) => resp.change.oneofKind === 'dispatchers' && d.job === resp.change.dispatchers.job,
+                        );
+                        if (idx > -1) {
+                            dispatchers.value[idx] = resp.change.dispatchers;
+                        } else {
+                            dispatchers.value.push(resp.change.dispatchers);
+                        }
 
                         isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
-                        const idx = dispatchers.value.findIndex((d) => d.userId === activeChar.value?.userId);
-                        isDispatcher.value = idx > -1;
                     } else if (resp.change.oneofKind === 'unitCreated') {
                         addOrUpdateUnit(resp.change.unitCreated);
                     } else if (resp.change.oneofKind === 'unitDeleted') {
-                        removeUnit(resp.change.unitDeleted.id);
+                        removeUnit(resp.change.unitDeleted);
                     } else if (resp.change.oneofKind === 'unitUpdated') {
                         addOrUpdateUnit(resp.change.unitUpdated);
 
@@ -529,7 +534,7 @@ export const useCentrumStore = defineStore(
                             addFeedItem(resp.change.dispatchCreated.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                        removeDispatch(resp.change.dispatchDeleted.id);
+                        removeDispatch(resp.change.dispatchDeleted);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         addOrUpdateDispatch(resp.change.dispatchUpdated);
 

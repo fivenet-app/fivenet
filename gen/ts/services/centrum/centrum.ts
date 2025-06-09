@@ -453,19 +453,6 @@ export interface TakeDispatchResponse {
  */
 export interface StreamHandshake {
     /**
-     * @generated from protobuf field: resources.centrum.Settings settings = 1
-     */
-    settings?: Settings;
-    /**
-     * @generated from protobuf field: services.centrum.JobsList jobs = 2
-     */
-    jobs?: JobsList;
-}
-/**
- * @generated from protobuf message services.centrum.LatestState
- */
-export interface LatestState {
-    /**
      * @generated from protobuf field: resources.timestamp.Timestamp server_time = 1
      */
     serverTime?: Timestamp;
@@ -474,21 +461,30 @@ export interface LatestState {
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: services.centrum.Dispatchers dispatchers = 3
+     * @generated from protobuf field: services.centrum.JobsList jobs = 3
+     */
+    jobs?: JobsList;
+}
+/**
+ * @generated from protobuf message services.centrum.LatestState
+ */
+export interface LatestState {
+    /**
+     * @generated from protobuf field: services.centrum.Dispatchers dispatchers = 1
      */
     dispatchers?: Dispatchers;
     /**
-     * @generated from protobuf field: optional uint64 own_unit_id = 4
+     * @generated from protobuf field: optional uint64 own_unit_id = 2
      */
     ownUnitId?: number;
     /**
      * Send the current units and dispatches
      *
-     * @generated from protobuf field: repeated resources.centrum.Unit units = 5
+     * @generated from protobuf field: repeated resources.centrum.Unit units = 3
      */
     units: Unit[];
     /**
-     * @generated from protobuf field: repeated resources.centrum.Dispatch dispatches = 6
+     * @generated from protobuf field: repeated resources.centrum.Dispatch dispatches = 4
      */
     dispatches: Dispatch[];
 }
@@ -2631,8 +2627,9 @@ export const TakeDispatchResponse = new TakeDispatchResponse$Type();
 class StreamHandshake$Type extends MessageType<StreamHandshake> {
     constructor() {
         super("services.centrum.StreamHandshake", [
-            { no: 1, name: "settings", kind: "message", T: () => Settings },
-            { no: 2, name: "jobs", kind: "message", T: () => JobsList }
+            { no: 1, name: "server_time", kind: "message", T: () => Timestamp },
+            { no: 2, name: "settings", kind: "message", T: () => Settings },
+            { no: 3, name: "jobs", kind: "message", T: () => JobsList }
         ]);
     }
     create(value?: PartialMessage<StreamHandshake>): StreamHandshake {
@@ -2646,10 +2643,13 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.centrum.Settings settings */ 1:
+                case /* resources.timestamp.Timestamp server_time */ 1:
+                    message.serverTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.serverTime);
+                    break;
+                case /* resources.centrum.Settings settings */ 2:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* services.centrum.JobsList jobs */ 2:
+                case /* services.centrum.JobsList jobs */ 3:
                     message.jobs = JobsList.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
                     break;
                 default:
@@ -2664,12 +2664,15 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
         return message;
     }
     internalBinaryWrite(message: StreamHandshake, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.centrum.Settings settings = 1; */
+        /* resources.timestamp.Timestamp server_time = 1; */
+        if (message.serverTime)
+            Timestamp.internalBinaryWrite(message.serverTime, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.Settings settings = 2; */
         if (message.settings)
-            Settings.internalBinaryWrite(message.settings, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* services.centrum.JobsList jobs = 2; */
+            Settings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* services.centrum.JobsList jobs = 3; */
         if (message.jobs)
-            JobsList.internalBinaryWrite(message.jobs, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            JobsList.internalBinaryWrite(message.jobs, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2684,12 +2687,10 @@ export const StreamHandshake = new StreamHandshake$Type();
 class LatestState$Type extends MessageType<LatestState> {
     constructor() {
         super("services.centrum.LatestState", [
-            { no: 1, name: "server_time", kind: "message", T: () => Timestamp },
-            { no: 2, name: "settings", kind: "message", T: () => Settings },
-            { no: 3, name: "dispatchers", kind: "message", T: () => Dispatchers },
-            { no: 4, name: "own_unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 5, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit },
-            { no: 6, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch }
+            { no: 1, name: "dispatchers", kind: "message", T: () => Dispatchers },
+            { no: 2, name: "own_unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "units", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Unit },
+            { no: 4, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Dispatch }
         ]);
     }
     create(value?: PartialMessage<LatestState>): LatestState {
@@ -2705,22 +2706,16 @@ class LatestState$Type extends MessageType<LatestState> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.timestamp.Timestamp server_time */ 1:
-                    message.serverTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.serverTime);
-                    break;
-                case /* resources.centrum.Settings settings */ 2:
-                    message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
-                    break;
-                case /* services.centrum.Dispatchers dispatchers */ 3:
+                case /* services.centrum.Dispatchers dispatchers */ 1:
                     message.dispatchers = Dispatchers.internalBinaryRead(reader, reader.uint32(), options, message.dispatchers);
                     break;
-                case /* optional uint64 own_unit_id */ 4:
+                case /* optional uint64 own_unit_id */ 2:
                     message.ownUnitId = reader.uint64().toNumber();
                     break;
-                case /* repeated resources.centrum.Unit units */ 5:
+                case /* repeated resources.centrum.Unit units */ 3:
                     message.units.push(Unit.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.centrum.Dispatch dispatches */ 6:
+                case /* repeated resources.centrum.Dispatch dispatches */ 4:
                     message.dispatches.push(Dispatch.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -2735,24 +2730,18 @@ class LatestState$Type extends MessageType<LatestState> {
         return message;
     }
     internalBinaryWrite(message: LatestState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.timestamp.Timestamp server_time = 1; */
-        if (message.serverTime)
-            Timestamp.internalBinaryWrite(message.serverTime, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Settings settings = 2; */
-        if (message.settings)
-            Settings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* services.centrum.Dispatchers dispatchers = 3; */
+        /* services.centrum.Dispatchers dispatchers = 1; */
         if (message.dispatchers)
-            Dispatchers.internalBinaryWrite(message.dispatchers, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 own_unit_id = 4; */
+            Dispatchers.internalBinaryWrite(message.dispatchers, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint64 own_unit_id = 2; */
         if (message.ownUnitId !== undefined)
-            writer.tag(4, WireType.Varint).uint64(message.ownUnitId);
-        /* repeated resources.centrum.Unit units = 5; */
+            writer.tag(2, WireType.Varint).uint64(message.ownUnitId);
+        /* repeated resources.centrum.Unit units = 3; */
         for (let i = 0; i < message.units.length; i++)
-            Unit.internalBinaryWrite(message.units[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.centrum.Dispatch dispatches = 6; */
+            Unit.internalBinaryWrite(message.units[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.centrum.Dispatch dispatches = 4; */
         for (let i = 0; i < message.dispatches.length; i++)
-            Dispatch.internalBinaryWrite(message.dispatches[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            Dispatch.internalBinaryWrite(message.dispatches[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
