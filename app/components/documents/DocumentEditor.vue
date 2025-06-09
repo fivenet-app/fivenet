@@ -454,7 +454,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                 </UButton>
 
                 <UButton
-                    v-if="document?.document?.draft"
+                    v-if="state.draft"
                     type="submit"
                     color="info"
                     trailing-icon="i-mdi-publish"

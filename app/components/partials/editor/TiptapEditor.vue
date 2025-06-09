@@ -108,6 +108,8 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
+const logger = useLogger('📄 YJS');
+
 const { activeChar } = useAuth();
 
 const notifications = useNotificatorStore();
@@ -210,6 +212,7 @@ if (ydoc && yjsProvider && !props.disableCollab) {
     };
 
     const onSync = (synced: boolean) => {
+        logger.info('Yjs sync event:', synced);
         if (synced === false) {
             loading.value = true;
             return;

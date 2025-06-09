@@ -151,7 +151,7 @@ export default defineNuxtConfig({
             terserOptions: {
                 compress: {
                     // Only drop certain console log calls
-                    drop_console: ['trace', 'debug', 'info'],
+                    drop_console: false,
                     drop_debugger: true,
                 },
             },
