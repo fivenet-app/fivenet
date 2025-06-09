@@ -707,10 +707,7 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 }
 
 func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, unitId uint64, resp centrum.TakeDispatchResp, dispatchIds []uint64) error {
-	settings, err := s.GetSettings(ctx, job)
-	if err != nil {
-		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-	}
+	settings := s.GetSettings(ctx, job)
 
 	// If the dispatch center is in central command mode, units can't self assign dispatches
 	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
