@@ -59,7 +59,7 @@ defineProps<{
                         </div>
 
                         <h2
-                            class="line-clamp-2 flex-1 break-all text-lg font-medium hover:line-clamp-3 sm:text-xl md:line-clamp-1"
+                            class="line-clamp-2 flex-1 break-words break-all text-lg font-medium hover:line-clamp-3 sm:text-xl md:line-clamp-1"
                         >
                             <span v-if="!document.title" class="italic">
                                 {{ $t('common.untitled') }}

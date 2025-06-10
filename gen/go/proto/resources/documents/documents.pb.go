@@ -365,14 +365,13 @@ type DocumentShort struct {
 	CategoryId *uint64                `protobuf:"varint,5,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
 	Category   *Category              `protobuf:"bytes,6,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"` // @gotags: alias:"category"
 	// @sanitize
-	Title       string              `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
-	ContentType content.ContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	// @sanitize
-	Content         *content.Content `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
-	CreatorId       *int32           `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
-	Creator         *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
-	CreatorJob      string           `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
-	CreatorJobLabel *string          `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
+	Title           string              `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	ContentType     content.ContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
+	Content         *content.Content    `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
+	CreatorId       *int32              `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator         *users.UserShort    `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
+	CreatorJob      string              `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
+	CreatorJobLabel *string             `protobuf:"bytes,14,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
 	// @sanitize
 	State         string             `protobuf:"bytes,15,opt,name=state,proto3" json:"state,omitempty"`
 	Closed        bool               `protobuf:"varint,16,opt,name=closed,proto3" json:"closed,omitempty"`

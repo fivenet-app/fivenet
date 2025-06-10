@@ -86,6 +86,7 @@ html {
         list-style: none;
         margin-left: 0;
         padding: 0;
+        margin: 0;
 
         li {
             align-items: flex-start;
@@ -109,10 +110,6 @@ html {
         input[type='checkbox'] {
             cursor: pointer;
         }
-
-        ul[data-type='taskList'] {
-            margin: 0;
-        }
     }
 
     span[data-type='checkboxStandalone'] {
@@ -121,10 +118,10 @@ html {
 
     /* Search And Replace */
     .search-result {
-        background-color: rgba(255, 217, 0, 0.5);
+        background-color: theme('colors.warn.500')60;
 
         &-current {
-            background-color: rgba(13, 255, 0, 0.5);
+            background-color: theme('colors.info.500')60;
         }
     }
 
@@ -186,31 +183,31 @@ html {
         cursor: ew-resize;
         cursor: col-resize;
     }
-}
 
-/* Tiptap Editor Extensions */
-.template-block {
-    border-left: 1px dashed rgb(var(--color-primary-500));
-    background-color: rgb(var(--color-gray-800));
-    padding: 0.25rem;
-    margin: 0.25rem 0;
-    font-family: monospace;
-}
+    /* Tiptap Editor Extensions */
+    .template-block {
+        border-left: 1px dashed rgb(var(--color-primary-500));
+        background-color: rgb(var(--color-gray-800));
+        padding: 0.25rem;
+        margin: 0.25rem 0;
+        font-family: monospace;
+    }
 
-.template-open,
-.template-close {
-    font-weight: bold;
-    margin-bottom: 0.25rem;
-}
+    .template-open,
+    .template-close {
+        font-weight: bold;
+        margin-bottom: 0.25rem;
+    }
 
-.template-var {
-    background-color: rgb(var(--color-gray-800));
-    border-radius: 4px;
-    padding: 2px 2px;
-    font-family: monospace;
-    border: 1px dashed rgb(var(--color-primary-500));
-}
+    .template-var {
+        background-color: rgb(var(--color-gray-800));
+        border-radius: 4px;
+        padding: 2px 2px;
+        font-family: monospace;
+        border: 1px dashed rgb(var(--color-primary-500));
+    }
 
-.template-var[data-hidden="true"] {
-    display: none;
+    .template-var[data-hidden="true"] {
+        display: none;
+    }
 }

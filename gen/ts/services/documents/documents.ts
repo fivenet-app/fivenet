@@ -513,8 +513,6 @@ export interface UpdateDocumentRequest {
      */
     title: string; // @gotags: alias:"title"
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: resources.common.content.Content content = 4
      */
     content?: Content;

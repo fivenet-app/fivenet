@@ -3289,7 +3289,7 @@ Dummy - DO NOT USE!
 | `category` | [Category](#resources-documents-Category) | optional | @gotags: alias:"category" |
 | `title` | [string](#string) |  | @sanitize |
 | `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  |  |
-| `content` | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
+| `content` | [resources.common.content.Content](#resources-common-content-Content) |  |  |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
 | `creator_job` | [string](#string) |  |  |
@@ -14356,7 +14356,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `title` | [string](#string) |  | @sanitize: method=StripTags
 
 @gotags: alias:"title" |
-| `content` | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
+| `content` | [resources.common.content.Content](#resources-common-content-Content) |  |  |
 | `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  |  |
 | `data` | [string](#string) | optional |  |
 | `state` | [string](#string) |  | @sanitize |

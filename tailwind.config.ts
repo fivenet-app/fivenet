@@ -111,6 +111,16 @@ export default <Partial<Config>>{
             zIndex: {
                 '150': '150',
             },
+            typography: {
+                DEFAULT: {
+                    css: {
+                        /* for any empty <p> inside .prose, insert a non-breaking space */
+                        'p:empty::after': {
+                            content: '"\u00a0"',
+                        },
+                    },
+                },
+            },
         },
     },
 };

@@ -22,7 +22,6 @@ import { useClipboardStore } from '~/stores/clipboard';
 import { useNotificatorStore } from '~/stores/notificator';
 import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
-import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/documents/documents';
@@ -44,6 +43,8 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificatorStore();
 
+const documentsDocuments = useDocumentsDocuments();
+
 const modal = useModal();
 
 const access = ref<undefined | DocumentAccess>(undefined);
@@ -54,105 +55,11 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}`, () => getDocument(props.documentId));
-
-async function getDocument(id: number): Promise<Document> {
-    try {
-        const call = $grpc.documents.documents.getDocument({
-            documentId: id,
-        });
-        const { response } = await call;
-
-        access.value = response.access;
-
-        return response.document!;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
-
-async function deleteDocument(id: number, reason?: string): Promise<void> {
-    try {
-        await $grpc.documents.documents.deleteDocument({
-            documentId: id,
-            reason: reason,
-        });
-
-        // Navigate to document list when deletedAt timestamp is undefined
-        if (doc.value?.deletedAt === undefined) {
-            notifications.add({
-                title: { key: 'notifications.document_deleted.title', parameters: {} },
-                description: { key: 'notifications.document_deleted.content', parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
-
-            await navigateTo({ name: 'documents' });
-        } else {
-            notifications.add({
-                title: { key: 'notifications.document_restored.title', parameters: {} },
-                description: { key: 'notifications.document_restored.content', parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
-
-            await refresh();
-        }
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
-
-async function toggleDocument(id: number, closed: boolean): Promise<void> {
-    try {
-        await $grpc.documents.documents.toggleDocument({
-            documentId: id,
-            closed,
-        });
-
-        doc.value!.closed = closed;
-
-        if (!closed) {
-            notifications.add({
-                title: { key: `notifications.documents.document_toggled.open.title`, parameters: {} },
-                description: { key: `notifications.documents.document_toggled.open.content`, parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
-        } else {
-            notifications.add({
-                title: { key: `notifications.documents.document_toggled.closed.title`, parameters: {} },
-                description: { key: `notifications.documents.document_toggled.closed.content`, parameters: {} },
-                type: NotificationType.SUCCESS,
-            });
-        }
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
-
-async function changeDocumentOwner(id: number): Promise<void> {
-    try {
-        await $grpc.documents.documents.changeDocumentOwner({
-            documentId: id,
-        });
-
-        notifications.add({
-            title: { key: 'notifications.documents.document_take_ownership.title', parameters: {} },
-            description: { key: 'notifications.documents.document_take_ownership.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
-
-        await refresh();
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
+} = useLazyAsyncData(`document-${props.documentId}`, () => documentsDocuments.getDocument(props.documentId));
 
 function addToClipboard(): void {
-    if (doc.value) {
-        clipboardStore.addDocument(doc.value);
+    if (doc.value?.document) {
+        clipboardStore.addDocument(doc.value.document);
     }
 
     notifications.add({
@@ -171,13 +78,13 @@ if (hash.value !== undefined && hash.value !== null) {
 }
 
 function openRequestsModal(): void {
-    if (access.value === undefined || doc.value === undefined) {
+    if (access.value === undefined || doc.value?.document === undefined) {
         return;
     }
 
     modal.open(DocumentRequestsModal, {
         access: access.value,
-        doc: doc.value!,
+        doc: doc.value.document,
         onRefresh: () => refresh(),
     });
 }
@@ -191,8 +98,8 @@ async function togglePin(documentId: number, state: boolean, personal: boolean):
         });
         const { response } = await call;
 
-        if (doc.value) {
-            doc.value.pin = response.pin;
+        if (doc.value?.document) {
+            doc.value.document.pin = response.pin;
         }
 
         return response;
@@ -203,18 +110,18 @@ async function togglePin(documentId: number, state: boolean, personal: boolean):
 }
 
 function updateReminderTime(reminderTime?: Timestamp): void {
-    if (!doc.value) {
+    if (!doc.value?.document) {
         return;
     }
 
-    if (!doc.value.workflowUser) {
-        doc.value.workflowUser = {
+    if (!doc.value.document.workflowUser) {
+        doc.value.document.workflowUser = {
             documentId: props.documentId,
             userId: activeChar.value!.userId,
         };
     }
 
-    doc.value.workflowUser.manualReminderTime = reminderTime;
+    doc.value.document.workflowUser.manualReminderTime = reminderTime;
 }
 
 const accordionItems = computed(() =>
@@ -235,20 +142,30 @@ defineShortcuts({
             !doc.value ||
             !(
                 can('documents.DocumentsService.ToggleDocument').value &&
-                checkDocAccess(access.value, doc.value.creator, AccessLevel.STATUS, 'documents.DocumentsService.ToggleDocument')
+                checkDocAccess(
+                    access.value,
+                    doc.value.document?.creator,
+                    AccessLevel.STATUS,
+                    'documents.DocumentsService.ToggleDocument',
+                )
             )
         ) {
             return;
         }
 
-        toggleDocument(props.documentId, doc.value?.closed);
+        documentsDocuments.toggleDocument(props.documentId, !!doc.value?.document?.closed);
     },
     'd-e': () => {
         if (
             !doc.value ||
             !(
                 can('documents.DocumentsService.UpdateDocument').value &&
-                checkDocAccess(access.value, doc.value.creator, AccessLevel.EDIT, 'documents.DocumentsService.ToggleDocument')
+                checkDocAccess(
+                    access.value,
+                    doc.value.document?.creator,
+                    AccessLevel.EDIT,
+                    'documents.DocumentsService.ToggleDocument',
+                )
             )
         ) {
             return;
@@ -256,7 +173,7 @@ defineShortcuts({
 
         navigateTo({
             name: 'documents-id-edit',
-            params: { id: doc.value.id },
+            params: { id: props.documentId },
         });
     },
     'd-r': () => {
@@ -278,7 +195,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge
-                    :id="doc?.id ?? documentId"
+                    :id="doc?.document?.id ?? documentId"
                     prefix="DOC"
                     :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
                     :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
@@ -314,7 +231,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 can('documents.DocumentsService.ToggleDocument').value &&
                                 checkDocAccess(
                                     access,
-                                    doc.creator,
+                                    doc.document?.creator,
                                     AccessLevel.STATUS,
                                     'documents.DocumentsService.ToggleDocument',
                                 )
@@ -326,11 +243,11 @@ const scrollRef = useTemplateRef('scrollRef');
                             <UButton
                                 class="flex-1 flex-col"
                                 block
-                                :icon="doc.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
-                                :ui="{ icon: { base: doc.closed ? 'text-success-500' : 'text-success-500' } }"
-                                @click="toggleDocument(documentId, !doc.closed)"
+                                :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
+                                :ui="{ icon: { base: doc.document?.closed ? 'text-success-500' : 'text-success-500' } }"
+                                @click="documentsDocuments.toggleDocument(documentId, !doc.document?.closed)"
                             >
-                                <template v-if="doc.closed">
+                                <template v-if="doc.document?.closed">
                                     {{ $t('common.open', 1) }}
                                 </template>
                                 <template v-else>
@@ -344,7 +261,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 can('documents.DocumentsService.UpdateDocument').value &&
                                 checkDocAccess(
                                     access,
-                                    doc.creator,
+                                    doc.document?.creator,
                                     AccessLevel.ACCESS,
                                     'documents.DocumentsService.UpdateDocument',
                                 )
@@ -358,7 +275,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 block
                                 :to="{
                                     name: 'documents-id-edit',
-                                    params: { id: doc.id },
+                                    params: { id: doc.document?.id },
                                 }"
                                 icon="i-mdi-pencil"
                             >
@@ -375,13 +292,15 @@ const scrollRef = useTemplateRef('scrollRef');
                                 <UButton
                                     class="flex-1 flex-col"
                                     block
-                                    :color="doc.pin?.state && doc.pin?.userId ? 'error' : 'primary'"
-                                    @click="togglePin(documentId, !doc.pin?.userId, true)"
+                                    :color="doc.document?.pin?.state && doc.document?.pin?.userId ? 'error' : 'primary'"
+                                    @click="togglePin(documentId, !doc.document?.pin?.userId, true)"
                                 >
                                     <UIcon
                                         class="size-5"
                                         :name="
-                                            doc.pin?.state && doc.pin?.userId ? 'i-mdi-playlist-remove' : 'i-mdi-playlist-plus'
+                                            doc.document?.pin?.state && doc.document?.pin?.userId
+                                                ? 'i-mdi-playlist-remove'
+                                                : 'i-mdi-playlist-plus'
                                         "
                                     />
                                     {{ $t('common.personal') }}
@@ -391,12 +310,14 @@ const scrollRef = useTemplateRef('scrollRef');
                                     v-if="attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value"
                                     class="flex-1 flex-col"
                                     block
-                                    :color="doc.pin?.state && doc.pin?.job ? 'error' : 'primary'"
-                                    @click="togglePin(documentId, !doc.pin?.job, false)"
+                                    :color="doc.document?.pin?.state && doc.document?.pin?.job ? 'error' : 'primary'"
+                                    @click="togglePin(documentId, !doc.document?.pin?.job, false)"
                                 >
                                     <UIcon
                                         class="size-5"
-                                        :name="doc.pin?.state && doc.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'"
+                                        :name="
+                                            doc.document?.pin?.state && doc.document?.pin?.job ? 'i-mdi-pin-off' : 'i-mdi-pin'
+                                        "
                                     />
                                     {{ $t('common.job') }}
                                 </UButton>
@@ -431,7 +352,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 @click="
                                     modal.open(DocumentReminderModal, {
                                         documentId: documentId,
-                                        reminderTime: doc.workflowUser?.manualReminderTime ?? undefined,
+                                        reminderTime: doc.document?.workflowUser?.manualReminderTime ?? undefined,
                                         'onUpdate:reminderTime': () => updateReminderTime($event),
                                     })
                                 "
@@ -442,11 +363,11 @@ const scrollRef = useTemplateRef('scrollRef');
 
                         <UTooltip
                             v-if="
-                                (doc?.creatorJob === activeChar?.job || isSuperuser) &&
+                                (doc?.document?.creatorJob === activeChar?.job || isSuperuser) &&
                                 can('documents.DocumentsService.ChangeDocumentOwner').value &&
                                 checkDocAccess(
                                     access,
-                                    doc?.creator,
+                                    doc?.document?.creator,
                                     AccessLevel.EDIT,
                                     'documents.DocumentsService.ChangeDocumentOwner',
                                 )
@@ -457,11 +378,11 @@ const scrollRef = useTemplateRef('scrollRef');
                             <UButton
                                 class="flex-1 flex-col"
                                 block
-                                :disabled="doc?.creatorId === activeChar?.userId"
+                                :disabled="doc?.document?.creatorId === activeChar?.userId"
                                 icon="i-mdi-creation"
                                 @click="
                                     modal.open(ConfirmModal, {
-                                        confirm: async () => changeDocumentOwner(documentId),
+                                        confirm: async () => documentsDocuments.changeDocumentOwner(documentId),
                                     })
                                 "
                             >
@@ -474,7 +395,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 can('documents.DocumentsService.DeleteDocument').value &&
                                 checkDocAccess(
                                     access,
-                                    doc.creator,
+                                    doc.document?.creator,
                                     AccessLevel.EDIT,
                                     'documents.DocumentsService.DeleteDocument',
                                 )
@@ -485,12 +406,17 @@ const scrollRef = useTemplateRef('scrollRef');
                             <UButton
                                 class="flex-1 flex-col"
                                 block
-                                :color="!doc.deletedAt ? 'error' : 'success'"
-                                :icon="!doc.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
-                                :label="!doc.deletedAt ? $t('common.delete') : $t('common.restore')"
+                                :color="!doc.document?.deletedAt ? 'error' : 'success'"
+                                :icon="!doc.document?.deletedAt ? 'i-mdi-delete' : 'i-mdi-restore'"
+                                :label="!doc.document?.deletedAt ? $t('common.delete') : $t('common.restore')"
                                 @click="
-                                    modal.open(doc.deletedAt !== undefined ? ConfirmModal : ConfirmModalWithReason, {
-                                        confirm: async (reason?: string) => deleteDocument(documentId, reason),
+                                    modal.open(doc.document?.deletedAt !== undefined ? ConfirmModal : ConfirmModalWithReason, {
+                                        confirm: async (reason?: string) =>
+                                            documentsDocuments.deleteDocument(
+                                                documentId,
+                                                isSuperuser && doc?.document?.deletedAt !== undefined,
+                                                reason,
+                                            ),
                                     })
                                 "
                             />
@@ -503,24 +429,24 @@ const scrollRef = useTemplateRef('scrollRef');
                 <template #header>
                     <div class="mb-4">
                         <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                            <span v-if="!doc.title" class="italic">
+                            <span v-if="!doc.document?.title" class="italic">
                                 {{ $t('common.untitled') }}
                             </span>
                             <span v-else>
-                                {{ doc.title }}
+                                {{ doc.document?.title }}
                             </span>
                         </h1>
                     </div>
 
                     <div class="mb-2 flex gap-2">
-                        <DocumentCategoryBadge :category="doc.category" />
+                        <DocumentCategoryBadge :category="doc.document?.category" />
 
-                        <OpenClosedBadge :closed="doc.closed" size="md" />
+                        <OpenClosedBadge :closed="doc.document?.closed" size="md" />
 
-                        <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
+                        <UBadge v-if="doc.document?.state" class="inline-flex gap-1" size="md">
                             <UIcon class="size-5" name="i-mdi-note-check" />
                             <span>
-                                {{ doc.state }}
+                                {{ doc.document?.state }}
                             </span>
                         </UBadge>
 
@@ -541,7 +467,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             <UIcon class="size-5" name="i-mdi-account" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover :user="doc.creator" />
+                                <CitizenInfoPopover :user="doc.document?.creator" />
                             </span>
                         </UBadge>
 
@@ -549,27 +475,32 @@ const scrollRef = useTemplateRef('scrollRef');
                             <UIcon class="size-5" name="i-mdi-calendar" />
                             <span>
                                 {{ $t('common.created') }}
-                                <GenericTime :value="doc.createdAt" type="long" />
+                                <GenericTime :value="doc.document?.createdAt" type="long" />
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc.updatedAt" class="inline-flex gap-1" color="black" size="md">
+                        <UBadge v-if="doc.document?.updatedAt" class="inline-flex gap-1" color="black" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar-edit" />
                             <span>
                                 {{ $t('common.updated') }}
-                                <GenericTime :value="doc.updatedAt" type="long" />
+                                <GenericTime :value="doc.document?.updatedAt" type="long" />
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc.workflowState?.autoCloseTime" class="inline-flex gap-1" color="black" size="md">
+                        <UBadge
+                            v-if="doc.document?.workflowState?.autoCloseTime"
+                            class="inline-flex gap-1"
+                            color="black"
+                            size="md"
+                        >
                             <UIcon class="size-5" name="i-mdi-lock-clock" />
                             <span>
                                 {{ $t('common.auto_close', 2) }}
-                                <GenericTime :value="doc.workflowState.autoCloseTime" ago />
+                                <GenericTime :value="doc.document?.workflowState?.autoCloseTime" ago />
                             </span>
                         </UBadge>
                         <UBadge
-                            v-else-if="doc.workflowState?.nextReminderTime"
+                            v-else-if="doc.document?.workflowState?.nextReminderTime"
                             class="inline-flex gap-1"
                             color="black"
                             size="md"
@@ -577,30 +508,35 @@ const scrollRef = useTemplateRef('scrollRef');
                             <UIcon class="size-5" name="i-mdi-reminder" />
                             <span>
                                 {{ $t('common.reminder') }}
-                                <GenericTime :value="doc.workflowState.nextReminderTime" ago />
+                                <GenericTime :value="doc.document?.workflowState?.nextReminderTime" ago />
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc.workflowUser?.manualReminderTime" class="inline-flex gap-1" color="black" size="md">
+                        <UBadge
+                            v-if="doc.document?.workflowUser?.manualReminderTime"
+                            class="inline-flex gap-1"
+                            color="black"
+                            size="md"
+                        >
                             <UIcon class="size-5" name="i-mdi-reminder" />
                             <span>
                                 {{ $t('common.reminder') }}
-                                <GenericTime :value="doc.workflowUser.manualReminderTime" type="short" />
+                                <GenericTime :value="doc.document?.workflowUser?.manualReminderTime" type="short" />
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc.draft" class="inline-flex gap-1" color="info" size="md">
+                        <UBadge v-if="doc.document?.draft" class="inline-flex gap-1" color="info" size="md">
                             <UIcon class="size-5" name="i-mdi-pencil" />
                             <span>
                                 {{ $t('common.draft') }}
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc.deletedAt" class="inline-flex gap-1" color="amber" size="md">
+                        <UBadge v-if="doc.document?.deletedAt" class="inline-flex gap-1" color="amber" size="md">
                             <UIcon class="size-5" name="i-mdi-calendar-remove" />
                             <span>
                                 {{ $t('common.deleted') }}
-                                <GenericTime :value="doc.deletedAt" type="long" />
+                                <GenericTime :value="doc.document?.deletedAt" type="long" />
                             </span>
                         </UBadge>
                     </div>
@@ -612,7 +548,11 @@ const scrollRef = useTemplateRef('scrollRef');
                     </h2>
 
                     <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
-                        <HTMLContent v-if="doc.content?.content" class="px-4 py-2" :value="doc.content.content" />
+                        <HTMLContent
+                            v-if="doc.document?.content?.content"
+                            class="px-4 py-2"
+                            :value="doc.document.content.content"
+                        />
                     </div>
                 </div>
 
@@ -653,8 +593,8 @@ const scrollRef = useTemplateRef('scrollRef');
                                 <div id="comments">
                                     <DocumentComments
                                         :document-id="documentId"
-                                        :closed="doc.closed"
-                                        :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
+                                        :closed="doc.document?.closed"
+                                        :can-comment="checkDocAccess(access, doc.document?.creator, AccessLevel.COMMENT)"
                                         @counted="commentCount = $event"
                                         @new-comment="commentCount && commentCount++"
                                         @deleted-comment="commentCount && commentCount > 0 && commentCount--"

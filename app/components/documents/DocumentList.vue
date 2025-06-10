@@ -14,17 +14,20 @@ import { useSettingsStore } from '~/stores/settings';
 import type { ToggleItem } from '~/typings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Category } from '~~/gen/ts/resources/documents/category';
+import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/documents/documents';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
+
+const { can, attr, isSuperuser } = useAuth();
 
 const completorStore = useCompletorStore();
 
 const settingsStore = useSettingsStore();
 const { design } = storeToRefs(settingsStore);
+
+const documentsDocuments = useDocumentsDocuments();
 
 const openclose: ToggleItem[] = [
     { id: 0, label: t('common.not_selected'), value: undefined },
@@ -114,21 +117,77 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         req.closed = query.closed;
     }
 
-    try {
-        const call = $grpc.documents.documents.listDocuments(req);
-        const { response } = await call;
-
-        return response;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
+    return documentsDocuments.listDocuments(req);
 }
 
 watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const categoriesLoading = ref(false);
+
+const { x, y } = useMouse();
+const { y: windowY } = useWindowScroll();
+
+const isOpen = ref(false);
+const virtualElement = ref({ getBoundingClientRect: () => ({}) });
+
+const selectedDocument = ref<DocumentShort | undefined>(undefined);
+
+function onContextMenu(doc: DocumentShort) {
+    selectedDocument.value = doc;
+    const top = unref(y) - unref(windowY);
+    const left = unref(x);
+
+    virtualElement.value.getBoundingClientRect = () => ({
+        width: 0,
+        height: 0,
+        top,
+        left,
+    });
+
+    isOpen.value = true;
+}
+
+const links = computed(() => [
+    [
+        {
+            label: t('common.open'),
+            icon: 'i-mdi-eye',
+            to: {
+                name: 'documents-id',
+                params: { id: selectedDocument.value?.id ?? 0 },
+            },
+        },
+        isSuperuser.value && selectedDocument.value?.deletedAt
+            ? {
+                  label: t('common.restore'),
+                  icon: 'i-mdi-restore',
+                  to: {
+                      name: 'documents-id',
+                      params: { id: selectedDocument.value?.id ?? 0 },
+                  },
+              }
+            : undefined,
+    ].filter((l) => l != undefined),
+    [
+        ...(can('documents.DocumentsService.ToggleDocumentPin').value
+            ? [
+                  {
+                      label: `${t('common.pin')}: ${t('common.personal')}`,
+                      icon: 'i-mdi-playlist-plus',
+                      to: '/components/vertical-navigation',
+                  },
+                  attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value
+                      ? {
+                            label: `${t('common.pin')}: ${t('common.job')}`,
+                            icon: 'i-mdi-pin',
+                            to: '/components/vertical-navigation',
+                        }
+                      : undefined,
+              ].filter((l) => l != undefined)
+            : []),
+    ],
+]);
 
 const inputRef = useTemplateRef('inputRef');
 
@@ -450,9 +509,18 @@ defineShortcuts({
                 </template>
 
                 <template v-else>
-                    <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :document="doc" />
+                    <DocumentListEntry
+                        v-for="doc in data?.documents"
+                        :key="doc.id"
+                        :document="doc"
+                        @contextmenu.prevent="onContextMenu(doc)"
+                    />
                 </template>
             </ul>
+
+            <UContextMenu v-model="isOpen" :virtual-element="virtualElement">
+                <UVerticalNavigation :links="links" />
+            </UContextMenu>
         </div>
     </UDashboardPanelContent>
 

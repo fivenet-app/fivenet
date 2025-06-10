@@ -160,8 +160,6 @@ export interface DocumentShort {
      */
     contentType: ContentType;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: resources.common.content.Content content = 9
      */
     content?: Content;

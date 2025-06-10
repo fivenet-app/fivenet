@@ -20,7 +20,7 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetDocumentResponse, UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
+import type { UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
@@ -46,28 +46,14 @@ const notifications = useNotificatorStore();
 
 const historyStore = useHistoryStore();
 
+const documentsDocuments = useDocumentsDocuments();
+
 const {
     data: document,
     pending: loading,
     error,
     refresh,
-} = useLazyAsyncData(`documents-${props.documentId}-editor`, () => getDocument(props.documentId));
-
-async function getDocument(id: number): Promise<GetDocumentResponse> {
-    try {
-        const call = $grpc.documents.documents.getDocument({
-            documentId: id,
-        });
-        const { response } = await call;
-
-        return response;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-
-        await navigateTo({ name: 'documents' });
-        throw e;
-    }
-}
+} = useLazyAsyncData(`documents-${props.documentId}-editor`, () => documentsDocuments.getDocument(props.documentId));
 
 const { maxAccessEntries } = useAppConfig();
 

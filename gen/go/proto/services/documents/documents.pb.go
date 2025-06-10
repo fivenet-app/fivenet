@@ -2042,8 +2042,7 @@ type UpdateDocumentRequest struct {
 	DocumentId uint64                 `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"` // @gotags: alias:"id"
 	CategoryId *uint64                `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`
 	// @sanitize: method=StripTags
-	Title string `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"` // @gotags: alias:"title"
-	// @sanitize
+	Title       string              `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"` // @gotags: alias:"title"
 	Content     *content.Content    `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
 	ContentType content.ContentType `protobuf:"varint,5,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
 	Data        *string             `protobuf:"bytes,6,opt,name=data,proto3,oneof" json:"data,omitempty"`

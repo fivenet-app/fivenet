@@ -217,7 +217,6 @@ message UpdateDocumentRequest {
     min_len: 3,
     max_len: 255
   }]; // @gotags: alias:"title"
-  // @sanitize
   resources.common.content.Content content = 4;
   resources.common.content.ContentType content_type = 5 [(validate.rules).enum.defined_only = true];
   optional string data = 6 [(validate.rules).string = {

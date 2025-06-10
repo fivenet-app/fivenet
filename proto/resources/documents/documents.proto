@@ -60,7 +60,6 @@ message DocumentShort {
     max_len: 512
   }];
   resources.common.content.ContentType content_type = 8 [(validate.rules).enum.defined_only = true];
-  // @sanitize
   resources.common.content.Content content = 9;
   optional int32 creator_id = 11 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 12; // @gotags: alias:"creator"
