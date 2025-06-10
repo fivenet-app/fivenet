@@ -571,7 +571,8 @@ function applyVersion(version: Version<unknown>): void {
 }
 
 onMounted(() => {
-    if (ydoc === undefined) {
+    if (props.disableCollab || (!ydoc && !yjsProvider)) {
+        logger.info('Setting initial content for Tiptap editor (collab is disabled)');
         unref(editor)?.commands.setContent(modelValue.value);
     }
 });
