@@ -67,7 +67,7 @@ const target = route.query.target as string;
                             trailing-icon="i-mdi-link-variant"
                             size="lg"
                             :to="nuiEnabled ? undefined : target"
-                            :external="true"
+                            external
                             rel="noreferrer"
                             @click="nuiEnabled ? openURLInWindow(target) : undefined"
                         />

@@ -52,13 +52,7 @@ const provider = computed(() => login.providers.find((p) => p.name === props.con
     >
         <template #title>
             <div class="flex flex-1 gap-2">
-                <UButton
-                    class="inline-flex flex-1 gap-2"
-                    variant="ghost"
-                    :external="true"
-                    :to="provider?.homepage"
-                    target="_blank"
-                >
+                <UButton class="inline-flex flex-1 gap-2" variant="ghost" external :to="provider?.homepage" target="_blank">
                     <NuxtImg
                         v-if="!provider?.icon?.startsWith('i-')"
                         class="size-10"

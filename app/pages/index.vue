@@ -79,7 +79,7 @@ const links = computed(() =>
                                 class="rounded-full"
                                 color="gray"
                                 :to="`https://github.com/fivenet-app/fivenet/releases/tag/${appVersion}`"
-                                :external="true"
+                                external
                                 :label="$t('pages.index.whats_new_in', { version: appVersion })"
                                 trailing-icon="i-mdi-arrow-right"
                                 size="xs"

@@ -166,7 +166,7 @@ const faqs = [
                                     <UButton
                                         class="text-[#5865f2]"
                                         :to="discordLink"
-                                        :external="true"
+                                        external
                                         variant="outline"
                                         block
                                         icon="i-simple-icons-discord"

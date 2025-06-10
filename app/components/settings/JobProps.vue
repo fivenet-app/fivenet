@@ -509,7 +509,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         trailing-icon="i-mdi-robot"
                                         :disabled="!canSubmit || !canEdit"
                                         to="/api/discord/invite-bot"
-                                        :external="true"
+                                        external
                                     >
                                         {{ $t('components.settings.job_props.discord_sync_settings.invite_bot') }}
                                     </UButton>

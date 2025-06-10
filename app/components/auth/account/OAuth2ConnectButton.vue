@@ -7,5 +7,5 @@ defineProps<{
 </script>
 
 <template>
-    <UButton icon="i-mdi-connection" :label="$t('common.connect')" :to="generateDiscordConnectURL(provider.name)" />
+    <UButton icon="i-mdi-connection" :label="$t('common.connect')" :to="generateDiscordConnectURL(provider.name)" external />
 </template>

@@ -161,7 +161,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                     <UButton
                         variant="link"
                         icon="i-mdi-link-variant"
-                        :external="true"
+                        external
                         target="_blank"
                         :to="`/api/filestore/${file.name}`"
                     />

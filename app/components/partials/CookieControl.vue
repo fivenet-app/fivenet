@@ -43,7 +43,7 @@ const { website } = useAppConfig();
                         variant="link"
                         block
                         :to="website.links.privacyPolicy"
-                        :external="true"
+                        external
                     >
                         {{ $t('common.privacy_policy') }}
                     </UButton>
@@ -54,7 +54,7 @@ const { website } = useAppConfig();
                         variant="link"
                         block
                         :to="website.links.imprint"
-                        :external="true"
+                        external
                     >
                         {{ $t('common.imprint') }}
                     </UButton>

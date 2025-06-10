@@ -511,7 +511,7 @@ const categoriesLoading = ref(false);
                             class="my-2"
                             hint-id="template_editor_templating"
                             to="https://fivenet.app/user-guides/documents/templates"
-                            :external="true"
+                            external
                             link-target="_blank"
                         />
 

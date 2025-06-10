@@ -121,7 +121,7 @@ const modal = useModal();
                 variant="link"
                 color="white"
                 :label="$t('components.auth.OAuth2Connections.connection_website')"
-                :external="true"
+                external
                 :to="provider.homepage"
                 target="_blank"
                 trailing-icon="i-mdi-external-link"

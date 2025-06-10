@@ -114,7 +114,7 @@ function togglePasswordVisibility() {
                     <UButton
                         block
                         color="white"
-                        :external="true"
+                        external
                         :to="`/api/oauth2/login/${provider.name}`"
                         :disabled="!canSubmit"
                         :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
