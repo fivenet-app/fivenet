@@ -82,6 +82,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
     // Internal
     public connect() {
         if (this.destroyed || this.connected) return;
+        logger.info('Connecting to collab gRPC stream');
 
         try {
             this.stream = this.streamConnect({});
@@ -205,7 +206,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
             }
         });
 
-        logger.debug('connect call completed, waiting for handshake');
+        logger.debug('Connect call completed, waiting for handshake');
     }
 
     private scheduleReconnect() {

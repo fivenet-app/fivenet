@@ -73,8 +73,6 @@ const { maxAccessEntries } = useAppConfig();
 
 const { ydoc, provider } = useCollabDoc('documents', props.documentId);
 
-watchOnce(document, () => provider.connect());
-
 function setFromProps(): void {
     if (!document.value?.document) return;
 
@@ -89,7 +87,7 @@ function setFromProps(): void {
         state.access.jobs = document.value.access.jobs;
         state.access.users = document.value.access.users;
     }
-    state.files = document.value.document.files ?? [];
+    state.files = document.value.document.files;
 }
 provider.once('loadContent', () => setFromProps());
 
@@ -333,24 +331,18 @@ const selectedTab = computed({
 const categoriesLoading = ref(false);
 
 const canDo = computed(() => ({
-    edit:
-        props.documentId === undefined
-            ? true
-            : checkDocAccess(
-                  state.access,
-                  document.value?.document?.creator,
-                  AccessLevel.EDIT,
-                  'documents.DocumentsService.UpdateDocument',
-              ),
-    access:
-        props.documentId === undefined
-            ? true
-            : checkDocAccess(
-                  state.access,
-                  document.value?.document?.creator,
-                  AccessLevel.ACCESS,
-                  'documents.DocumentsService.UpdateDocument',
-              ),
+    edit: checkDocAccess(
+        state.access,
+        document.value?.document?.creator,
+        AccessLevel.EDIT,
+        'documents.DocumentsService.UpdateDocument',
+    ),
+    access: checkDocAccess(
+        state.access,
+        document.value?.document?.creator,
+        AccessLevel.ACCESS,
+        'documents.DocumentsService.UpdateDocument',
+    ),
     references: can('documents.DocumentsService.AddDocumentReference').value,
     relations: can('documents.DocumentsService.AddDocumentRelation').value,
 }));
@@ -529,6 +521,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 :search-attributes="['name']"
                                                 block
                                                 nullable
+                                                :disabled="!canDo.edit"
                                                 :searchable="
                                                     async (search: string) => {
                                                         try {
@@ -617,7 +610,6 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     </UDashboardToolbar>
 
                     <UFormGroup
-                        v-if="canDo.edit"
                         class="flex flex-1 overflow-y-hidden"
                         name="content"
                         :ui="{ container: 'flex flex-1 flex-col mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
@@ -641,12 +633,11 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     <UDashboardToolbar
                         class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
                     >
-                        <UButtonGroup v-if="canDo.edit" class="inline-flex w-full">
+                        <UButtonGroup v-if="canDo.relations || canDo.references" class="inline-flex w-full">
                             <UButton
-                                v-if="canDo.relations"
                                 class="flex-1"
                                 block
-                                :disabled="!canDo.edit"
+                                :disabled="!canDo.relations"
                                 icon="i-mdi-account-multiple"
                                 @click="
                                     modal.open(DocumentRelationManagerModal, {
@@ -660,10 +651,9 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             </UButton>
 
                             <UButton
-                                v-if="canDo.references"
                                 class="flex-1"
                                 block
-                                :disabled="!canDo.edit"
+                                :disabled="!canDo.references"
                                 icon="i-mdi-file-document"
                                 @click="
                                     modal.open(DocumentReferenceManagerModal, {
@@ -688,9 +678,9 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                         <AccessManager
                             v-model:jobs="state.access.jobs"
                             v-model:users="state.access.users"
+                            :disabled="!canDo.access"
                             :target-id="documentId ?? 0"
                             :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.documents.AccessLevel')"
-                            :disabled="!canDo.access"
                         />
                     </div>
                 </template>

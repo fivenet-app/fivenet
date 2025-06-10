@@ -31,7 +31,7 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.documents.id", int64(docId)))
 
-	check, err := s.access.CanUserAccessTarget(ctx, docId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(ctx, docId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
 	if err != nil {
 		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
 	}

@@ -18,7 +18,7 @@ import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
-import { pageToURL } from './helpers';
+import { checkPageAccess, pageToURL } from './helpers';
 
 const props = defineProps<{
     pageId: number;
@@ -68,9 +68,9 @@ const { maxAccessEntries } = useAppConfig();
 
 const { ydoc, provider } = useCollabDoc('wiki', props.pageId);
 
-watchOnce(page, () => provider.connect());
-
 const canDo = computed(() => ({
+    access: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.ACCESS),
+    edit: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.EDIT),
     public: attr('wiki.WikiService.UpdatePage', 'Fields', 'Public').value,
 }));
 
@@ -471,6 +471,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                                 class="flex-1"
                                                 value-attribute="id"
                                                 searchable-lazy
+                                                :disabled="!canDo.edit"
                                                 :options="parentPages"
                                             >
                                                 <template #label>
@@ -505,11 +506,11 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 </UFormGroup>
 
                                 <UFormGroup name="meta.title" :label="$t('common.title')">
-                                    <UInput v-model="state.meta.title" size="xl" />
+                                    <UInput v-model="state.meta.title" size="xl" :disabled="!canDo.edit" />
                                 </UFormGroup>
 
                                 <UFormGroup name="meta.description" :label="$t('common.description')">
-                                    <UTextarea v-model="state.meta.description" :rows="2" />
+                                    <UTextarea v-model="state.meta.description" :rows="2" :disabled="!canDo.edit" />
                                 </UFormGroup>
                             </div>
                         </template>
@@ -526,6 +527,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 v-model="state.content"
                                 v-model:files="state.files"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                :disabled="!canDo.edit"
                                 history-type="wiki"
                                 :saving="saving"
                                 :target-id="page?.id"
@@ -567,11 +569,11 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                     >
                         <div class="flex flex-1 gap-2">
                             <UFormGroup class="flex-1" name="public" :label="$t('common.public')">
-                                <UToggle v-model="state.meta.public" :disabled="!canDo.public" />
+                                <UToggle v-model="state.meta.public" :disabled="!canDo.edit || !canDo.public" />
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="closed" :label="`${$t('common.toc', 2)}?`">
-                                <UToggle v-model="state.meta.toc" />
+                                <UToggle v-model="state.meta.toc" :disabled="!canDo.edit" />
                             </UFormGroup>
                         </div>
                     </UDashboardToolbar>
@@ -583,6 +585,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
                                 v-model:users="state.access.users"
+                                :disabled="!canDo.access"
                                 :target-id="page.id ?? 0"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
                             />

@@ -222,6 +222,7 @@ if (ydoc && yjsProvider && !props.disableCollab) {
     };
     yjsProvider.on('sync', onSync);
     onBeforeUnmount(() => yjsProvider.off('sync', onSync));
+    onMounted(() => yjsProvider.connect());
 
     extensions.push(
         Collaboration.configure({
@@ -322,7 +323,7 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
             if (!f.type.startsWith('image/')) continue;
 
             if (files.value && files.value.length >= props.fileLimit) {
-                console.warn('File limit reached, cannot upload more files');
+                logger.warn('File limit reached, cannot upload more files');
                 notifications.add({
                     title: { key: 'components.partials.TiptapEditor.file_limit_reached.title', parameters: {} },
                     description: { key: 'components.partials.TiptapEditor.file_limit_reached.content', parameters: {} },
@@ -345,7 +346,7 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
 
                 files.value.push(resp.file!);
             } catch (e) {
-                console.warn('Image resize failed, uploading original image', e);
+                logger.warn('Image resize failed, uploading original image', e);
             }
         }
     }
