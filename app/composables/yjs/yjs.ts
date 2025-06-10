@@ -110,8 +110,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 if (msg.msg.handshake.first) {
                     this.authorative = true;
                     this.synced = true;
-
-                    this.ydoc.whenSynced.then(() => this.authorative && this.emit('loadContent', []));
+                    this.emit('loadContent', []);
 
                     this.ydoc.emit('sync', [true, this.ydoc]);
                     this.emit('sync', [true, this.ydoc]);

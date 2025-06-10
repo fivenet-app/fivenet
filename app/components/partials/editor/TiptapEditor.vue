@@ -108,7 +108,7 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
-const logger = useLogger('📄 YJS');
+const logger = useLogger('📄 Editor');
 
 const { activeChar } = useAuth();
 
@@ -222,7 +222,7 @@ if (ydoc && yjsProvider && !props.disableCollab) {
     };
     yjsProvider.on('sync', onSync);
     onBeforeUnmount(() => yjsProvider.off('sync', onSync));
-    onMounted(() => yjsProvider.connect());
+    onBeforeMount(() => yjsProvider.connect());
 
     extensions.push(
         Collaboration.configure({
@@ -298,20 +298,21 @@ let fileUploadHandler: undefined | ((files: File[]) => Promise<void>) = undefine
 
 const editor = useEditor({
     content: '',
-    editable: !disabled.value,
-    extensions: [...extensions, ...props.extensions],
-    onFocus: () => focusTablet(true),
-    onBlur: () => focusTablet(false),
-    onUpdate: () => (modelValue.value = unref(editor)?.getHTML() ?? ''),
     editorProps: {
         attributes: {
             class: 'prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-none dark:prose-invert max-w-full break-words',
         },
     },
+    editable: !disabled.value,
+    extensions: [...extensions, ...props.extensions],
+    onFocus: () => focusTablet(true),
+    onBlur: () => focusTablet(false),
+    onUpdate: () => (modelValue.value = unref(editor)?.getHTML() ?? ''),
     onCreate: () => {
         if (props.filestoreService && props.filestoreNamespace && fileUploadHandler) {
             unref(editor)?.registerPlugin(imageUploadPlugin(unref(editor)!, fileUploadHandler));
         }
+        logger.info('Editor created');
     },
 });
 
@@ -570,7 +571,7 @@ function applyVersion(version: Version<unknown>): void {
     });
 }
 
-onMounted(() => {
+onBeforeMount(() => {
     if (props.disableCollab || (!ydoc && !yjsProvider)) {
         logger.info('Setting initial content for Tiptap editor (collab is disabled)');
         unref(editor)?.commands.setContent(modelValue.value);

@@ -108,7 +108,7 @@ async function setFromProps(): Promise<void> {
 
 watch(props, () => setFromProps());
 
-onMounted(() => setFromProps());
+onBeforeMount(() => setFromProps());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {

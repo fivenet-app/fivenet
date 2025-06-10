@@ -26,7 +26,7 @@ const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () 
     }
 });
 
-onMounted(() => {
+onBeforeMount(() => {
     if (!colleagueSelf.value?.colleague?.dateofbirth) {
         return;
     }

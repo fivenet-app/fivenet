@@ -126,9 +126,8 @@ async function updateUnitInForm(): Promise<void> {
     };
 }
 
+onBeforeMount(async () => updateUnitInForm());
 watch(props, async () => updateUnitInForm());
-
-onMounted(async () => updateUnitInForm());
 </script>
 
 <template>

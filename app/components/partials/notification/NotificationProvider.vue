@@ -87,9 +87,9 @@ async function toggleStream(): Promise<void> {
 watch(username, async () => toggleStream());
 watch(activeChar, async () => toggleStream());
 
-onMounted(async () => toggleStream());
+onMounted(async () => await toggleStream());
 
-onBeforeUnmount(async () => stopStream());
+onUnmounted(async () => await stopStream());
 
 const toast = useToast();
 

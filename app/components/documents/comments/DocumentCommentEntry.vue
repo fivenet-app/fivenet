@@ -166,7 +166,7 @@ function resetForm(): void {
     state.content = comment.value.content?.rawContent ?? '';
 }
 
-onMounted(() => resetForm());
+onBeforeMount(() => resetForm());
 watch(props, () => resetForm());
 
 const canSubmit = ref(true);

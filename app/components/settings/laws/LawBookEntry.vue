@@ -137,7 +137,7 @@ function resetForm(): void {
     state.description = lawBook.value?.description;
 }
 
-onMounted(() => resetForm());
+onBeforeMount(() => resetForm());
 watch(props, () => resetForm());
 
 async function deleteLaw(id: number): Promise<void> {

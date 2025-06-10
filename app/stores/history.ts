@@ -55,7 +55,7 @@ export const useHistoryStore = defineStore(
 
         const handleRefresh = (handleAutoSave: () => void) => {
             // For refresh/close/tab close
-            onMounted(() => {
+            onBeforeMount(() => {
                 window.addEventListener('beforeunload', handleAutoSave);
             });
             onBeforeUnmount(() => {

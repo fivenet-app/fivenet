@@ -75,9 +75,8 @@ watchDebounced(query, async () => refresh(), {
     maxWait: 1250,
 });
 
-onMounted(() => {
-    showLocationMarker.value = true;
-});
+onBeforeMount(() => (showLocationMarker.value = true));
+onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 
 onBeforeUnmount(() => {
     showLocationMarker.value = false;
@@ -90,7 +89,6 @@ defineShortcuts({
 });
 
 const mount = ref(false);
-onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 </script>
 
 <template>

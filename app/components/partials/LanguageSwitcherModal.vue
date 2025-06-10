@@ -15,7 +15,7 @@ const { locale: userLocale } = storeToRefs(settings);
 
 const languages = ref<LocaleObject[]>([]);
 
-onMounted(async () => {
+onBeforeMount(async () => {
     locales.value.forEach((lang) => {
         if (typeof lang === 'string') {
             return;
