@@ -20,7 +20,6 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useNotificatorStore } from '~/stores/notificator';
-import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -47,7 +46,6 @@ const documentsDocuments = useDocumentsDocuments();
 
 const modal = useModal();
 
-const access = ref<undefined | DocumentAccess>(undefined);
 const commentCount = ref<undefined | number>();
 
 const {
@@ -78,12 +76,12 @@ if (hash.value !== undefined && hash.value !== null) {
 }
 
 function openRequestsModal(): void {
-    if (access.value === undefined || doc.value?.document === undefined) {
+    if (doc.value?.access === undefined || doc.value?.document === undefined) {
         return;
     }
 
     modal.open(DocumentRequestsModal, {
-        access: access.value,
+        access: doc.value.access,
         doc: doc.value.document,
         onRefresh: () => refresh(),
     });
@@ -143,7 +141,7 @@ defineShortcuts({
             !(
                 can('documents.DocumentsService.ToggleDocument').value &&
                 checkDocAccess(
-                    access.value,
+                    doc.value.access,
                     doc.value.document?.creator,
                     AccessLevel.STATUS,
                     'documents.DocumentsService.ToggleDocument',
@@ -161,7 +159,7 @@ defineShortcuts({
             !(
                 can('documents.DocumentsService.UpdateDocument').value &&
                 checkDocAccess(
-                    access.value,
+                    doc.value.access,
                     doc.value.document?.creator,
                     AccessLevel.EDIT,
                     'documents.DocumentsService.ToggleDocument',
@@ -230,7 +228,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             v-if="
                                 can('documents.DocumentsService.ToggleDocument').value &&
                                 checkDocAccess(
-                                    access,
+                                    doc.access,
                                     doc.document?.creator,
                                     AccessLevel.STATUS,
                                     'documents.DocumentsService.ToggleDocument',
@@ -260,7 +258,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             v-if="
                                 can('documents.DocumentsService.UpdateDocument').value &&
                                 checkDocAccess(
-                                    access,
+                                    doc.access,
                                     doc.document?.creator,
                                     AccessLevel.ACCESS,
                                     'documents.DocumentsService.UpdateDocument',
@@ -366,7 +364,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 (doc?.document?.creatorJob === activeChar?.job || isSuperuser) &&
                                 can('documents.DocumentsService.ChangeDocumentOwner').value &&
                                 checkDocAccess(
-                                    access,
+                                    doc.access,
                                     doc?.document?.creator,
                                     AccessLevel.EDIT,
                                     'documents.DocumentsService.ChangeDocumentOwner',
@@ -394,7 +392,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             v-if="
                                 can('documents.DocumentsService.DeleteDocument').value &&
                                 checkDocAccess(
-                                    access,
+                                    doc.access,
                                     doc.document?.creator,
                                     AccessLevel.EDIT,
                                     'documents.DocumentsService.DeleteDocument',
@@ -573,7 +571,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         <template #access>
                             <UContainer>
                                 <DataNoDataBlock
-                                    v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
+                                    v-if="!doc.access || (doc.access?.jobs.length === 0 && doc.access?.users.length === 0)"
                                     icon="i-mdi-file-search"
                                     :message="$t('common.not_found', [$t('common.access', 2)])"
                                 />
@@ -581,8 +579,8 @@ const scrollRef = useTemplateRef('scrollRef');
                                 <AccessBadges
                                     v-else
                                     :access-level="AccessLevel"
-                                    :jobs="access.jobs"
-                                    :users="access.users"
+                                    :jobs="doc.access.jobs"
+                                    :users="doc.access.users"
                                     i18n-key="enums.documents"
                                 />
                             </UContainer>
@@ -594,7 +592,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                     <DocumentComments
                                         :document-id="documentId"
                                         :closed="doc.document?.closed"
-                                        :can-comment="checkDocAccess(access, doc.document?.creator, AccessLevel.COMMENT)"
+                                        :can-comment="checkDocAccess(doc.access, doc.document?.creator, AccessLevel.COMMENT)"
                                         @counted="commentCount = $event"
                                         @new-comment="commentCount && commentCount++"
                                         @deleted-comment="commentCount && commentCount > 0 && commentCount--"

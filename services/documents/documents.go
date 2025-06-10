@@ -121,6 +121,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocuments.ListDocumen
 		switch req.Sort.Column {
 		case "title":
 			column = tDocumentShort.Title
+
 		case "createdAt":
 			fallthrough
 		default:
