@@ -156,6 +156,10 @@ export default defineNuxtConfig({
                 },
             },
         },
+        esbuild: {
+            // Only drop debugger statements, console logs are kept
+            drop: ['debugger'],
+        },
         server: {
             proxy: {
                 '/api/icons': {
