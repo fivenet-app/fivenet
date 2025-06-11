@@ -20,7 +20,6 @@ interface GrpcProviderOpts {
 }
 
 type Events = {
-    loadContent(): void;
     sync(synced: boolean, doc: Y.Doc): void;
     saved(): void;
 };
@@ -35,7 +34,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
     private stream: DuplexStreamingCall<ClientPacket, ServerPacket> | undefined;
     private connected = false;
     private reconnectAttempt = 0;
-    private authorative = false;
+    private authoritative = false;
     private synced = false;
     private destroyed = false;
 
@@ -50,21 +49,16 @@ export default class GrpcProvider extends ObservableV2<Events> {
 
         // Setup local listeners
         this.ydoc.on('update', this.handleDocUpdate);
-
-        this.awareness.on('update', (changes: { added: number[]; updated: number[]; removed: number[] }, origin: unknown) =>
-            this.handleAwarenessUpdate(changes, origin),
-        );
+        this.awareness.on('update', this.handleAwarenessUpdate);
     }
 
     public get isAuthoritative() {
-        return this.authorative;
+        return this.authoritative;
     }
 
     // Public helpers
     override destroy() {
         if (this.destroyed) return;
-
-        super.destroy();
 
         this.destroyed = true;
         // Clear local user state
@@ -76,6 +70,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
             this.stream?.requests.complete();
         }, 0);
 
+        super.destroy();
         logger.debug('Destroyed grpc provider');
     }
 
@@ -108,15 +103,17 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 this.connected = true;
 
                 if (msg.msg.handshake.first) {
-                    this.authorative = true;
+                    this.authoritative = true;
                     this.synced = true;
-                    this.emit('loadContent', []);
 
-                    this.ydoc.emit('sync', [true, this.ydoc]);
+                    // Emit sync event after a short delay to ensure all initial updates are processed
+                    logger.info('Provider sync emit');
                     this.emit('sync', [true, this.ydoc]);
+                    this.ydoc.emit('sync', [true, this.ydoc]);
+                    logger.info('Post sync emit');
                 } else {
                     const sv = Y.encodeStateVector(this.ydoc);
-                    this.authorative = false;
+                    this.authoritative = false;
 
                     this.send(
                         ClientPacket.create({
@@ -216,7 +213,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
             destroyed: this.destroyed,
             connected: this.connected,
             synced: this.synced,
-            authorative: this.authorative,
+            authoritative: this.authoritative,
             clientId: this.clientId,
         });
 

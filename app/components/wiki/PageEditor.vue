@@ -214,7 +214,13 @@ function setFromProps(): void {
     state.files = page.value.files;
 }
 
-provider.once('loadContent', () => setFromProps());
+const onSync = (s: boolean) => {
+    if (!s) return;
+
+    setFromProps();
+    provider.off('sync', onSync);
+};
+provider.on('sync', onSync);
 
 async function updatePage(values: Schema): Promise<void> {
     values.access.users.forEach((user) => user.id < 0 && (user.id = 0));
@@ -530,6 +536,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :disabled="!canDo.edit"
                                 history-type="wiki"
                                 :saving="saving"
+                                enable-collab
                                 :target-id="page?.id"
                                 filestore-namespace="wiki"
                                 :filestore-service="(opts) => $grpc.wiki.wiki.uploadFile(opts)"

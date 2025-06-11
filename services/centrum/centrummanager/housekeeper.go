@@ -142,8 +142,8 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.manager_housekeeper.cleanup_units",
-		Schedule: "*/5 * * * * * *", // Every 5 seconds
-		Timeout:  durationpb.New(10 * time.Second),
+		Schedule: "*/7 * * * * * *", // Every 7 seconds
+		Timeout:  durationpb.New(6 * time.Second),
 	}); err != nil {
 		return err
 	}

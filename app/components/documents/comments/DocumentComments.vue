@@ -220,7 +220,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :limit="1250"
                                         history-type="document_comments"
                                         :saving="saving"
-                                        disable-collab
                                     />
                                 </ClientOnly>
                             </UFormGroup>

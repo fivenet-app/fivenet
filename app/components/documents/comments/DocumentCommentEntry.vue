@@ -236,7 +236,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 wrapper-class="min-h-44"
                                 disable-images
                                 :limit="1250"
-                                disable-collab
                                 :saving="saving"
                                 history-type="document_comments"
                             />

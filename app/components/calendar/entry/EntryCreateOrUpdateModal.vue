@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { addHours, addMinutes, isSameDay, isSameHour, isSameMinute } from 'date-fns';
+import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -18,6 +19,8 @@ import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/cal
 const props = defineProps<{
     calendarId?: number;
     entryId?: number;
+
+    day?: CalendarDay;
 }>();
 
 const { isOpen } = useModal();
@@ -94,6 +97,12 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
 }
 
 function setFromProps(): void {
+    if (props.day) {
+        state.startTime = addHours(props.day.date, 1);
+        state.endTime = addHours(props.day.date, 2);
+        return;
+    }
+
     if (!data.value?.entry) {
         return;
     }
@@ -111,6 +120,7 @@ function setFromProps(): void {
     state.rsvpOpen = entry.rsvpOpen !== undefined;
 }
 
+setFromProps();
 watch(data, () => setFromProps());
 watch(props, async () => refresh());
 

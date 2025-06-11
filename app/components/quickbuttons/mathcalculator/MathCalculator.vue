@@ -79,7 +79,7 @@ function inputValue(val: string) {
         }
     }
 
-    nextTick(function () {
+    nextTick(() => {
         scrollRight();
     });
 }
@@ -114,7 +114,7 @@ function calculate() {
     } else {
         counted();
     }
-    nextTick(function () {
+    nextTick(() => {
         scrollDown();
     });
 }

@@ -148,46 +148,48 @@ function onContextMenu(doc: DocumentShort) {
     isOpen.value = true;
 }
 
-const links = computed(() => [
+const links = computed(() =>
     [
-        {
-            label: t('common.open'),
-            icon: 'i-mdi-eye',
-            to: {
-                name: 'documents-id',
-                params: { id: selectedDocument.value?.id ?? 0 },
+        [
+            {
+                label: t('common.open'),
+                icon: 'i-mdi-eye',
+                to: {
+                    name: 'documents-id',
+                    params: { id: selectedDocument.value?.id ?? 0 },
+                },
             },
-        },
-        isSuperuser.value && selectedDocument.value?.deletedAt
-            ? {
-                  label: t('common.restore'),
-                  icon: 'i-mdi-restore',
-                  to: {
-                      name: 'documents-id',
-                      params: { id: selectedDocument.value?.id ?? 0 },
-                  },
-              }
-            : undefined,
-    ].filter((l) => l != undefined),
-    [
-        ...(can('documents.DocumentsService.ToggleDocumentPin').value
-            ? [
-                  {
-                      label: `${t('common.pin')}: ${t('common.personal')}`,
-                      icon: 'i-mdi-playlist-plus',
-                      to: '/components/vertical-navigation',
-                  },
-                  attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value
-                      ? {
-                            label: `${t('common.pin')}: ${t('common.job')}`,
-                            icon: 'i-mdi-pin',
-                            to: '/components/vertical-navigation',
-                        }
-                      : undefined,
-              ].filter((l) => l != undefined)
-            : []),
-    ],
-]);
+            isSuperuser.value && selectedDocument.value?.deletedAt
+                ? {
+                      label: t('common.restore'),
+                      icon: 'i-mdi-restore',
+                      to: {
+                          name: 'documents-id',
+                          params: { id: selectedDocument.value?.id ?? 0 },
+                      },
+                  }
+                : undefined,
+        ].filter((l) => l != undefined),
+        [
+            ...(can('documents.DocumentsService.ToggleDocumentPin').value
+                ? [
+                      {
+                          label: `${t('common.pin')}: ${t('common.personal')}`,
+                          icon: 'i-mdi-playlist-plus',
+                          to: '/components/vertical-navigation',
+                      },
+                      attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value
+                          ? {
+                                label: `${t('common.pin')}: ${t('common.job')}`,
+                                icon: 'i-mdi-pin',
+                                to: '/components/vertical-navigation',
+                            }
+                          : undefined,
+                  ].filter((l) => l != undefined)
+                : []),
+        ],
+    ].filter((L) => L.length > 0),
+);
 
 const inputRef = useTemplateRef('inputRef');
 

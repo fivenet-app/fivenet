@@ -49,7 +49,7 @@ func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js je
 	ctx, cancel := context.WithCancel(ctx)
 
 	// Create consumer
-	subject := fmt.Sprintf("collab.%d", roomId)
+	subject := fmt.Sprintf("collab.%s.%d", category, roomId)
 
 	consumer, err := js.CreateOrUpdateConsumer(ctx, "COLLAB", jetstream.ConsumerConfig{
 		FilterSubject: subject,

@@ -71,7 +71,7 @@ const props = withDefaults(
         hideToolbar?: boolean;
         disableImages?: boolean;
         historyType?: string;
-        disableCollab?: boolean;
+        enableCollab?: boolean;
 
         extensions?: Extensions;
 
@@ -90,7 +90,7 @@ const props = withDefaults(
         hideToolbar: false,
         disableImages: false,
         historyType: undefined,
-        disableCollab: false,
+        enableCollab: false,
 
         extensions: () => [],
 
@@ -201,28 +201,15 @@ const extensions: Extensions = [
 const ydoc = inject<Y.Doc | undefined>('yjsDoc', undefined);
 const yjsProvider = inject<GrpcProvider | undefined>('yjsProvider', undefined);
 
-const loading = ref(ydoc && yjsProvider && !props.disableCollab);
+const loading = ref(props.enableCollab && ydoc !== undefined && yjsProvider !== undefined);
 
-if (ydoc && yjsProvider && !props.disableCollab) {
+if (props.enableCollab && ydoc && yjsProvider) {
     const ourName = `${activeChar.value?.firstname} ${activeChar.value?.lastname}`;
     const user = {
         id: activeChar.value!.userId,
         name: ourName,
         color: stringToColor(ourName),
     };
-
-    const onSync = (synced: boolean) => {
-        logger.info('Yjs sync event:', synced);
-        if (synced === false) {
-            loading.value = true;
-            return;
-        }
-
-        loading.value = false;
-    };
-    yjsProvider.on('sync', onSync);
-    onBeforeUnmount(() => yjsProvider.off('sync', onSync));
-    onBeforeMount(() => yjsProvider.connect());
 
     extensions.push(
         Collaboration.configure({
@@ -265,6 +252,24 @@ if (ydoc && yjsProvider && !props.disableCollab) {
             },
         }),
     );
+
+    const onSync = (synced: boolean) => {
+        logger.info('Yjs sync event:', synced);
+        if (!synced) {
+            loading.value = true;
+            return;
+        }
+
+        // Only set initial content if authoritative and Yjs doc is empty
+        if (yjsProvider.isAuthoritative) {
+            unref(editor)?.commands.setContent(modelValue.value);
+        }
+
+        setTimeout(() => (loading.value = false), 250);
+    };
+    yjsProvider.on('sync', onSync);
+    onBeforeUnmount(() => yjsProvider.off('sync', onSync));
+    onMounted(() => yjsProvider.connect());
 } else {
     extensions.push(History);
 }
@@ -307,13 +312,13 @@ const editor = useEditor({
     extensions: [...extensions, ...props.extensions],
     onFocus: () => focusTablet(true),
     onBlur: () => focusTablet(false),
-    onUpdate: () => (modelValue.value = unref(editor)?.getHTML() ?? ''),
     onCreate: () => {
         if (props.filestoreService && props.filestoreNamespace && fileUploadHandler) {
             unref(editor)?.registerPlugin(imageUploadPlugin(unref(editor)!, fileUploadHandler));
         }
         logger.info('Editor created');
     },
+    onUpdate: () => (modelValue.value = unref(editor)?.getHTML() ?? ''),
 });
 
 if (props.filestoreService && props.filestoreNamespace && props.targetId) {
@@ -330,7 +335,6 @@ if (props.filestoreService && props.filestoreNamespace && props.targetId) {
                     description: { key: 'components.partials.TiptapEditor.file_limit_reached.content', parameters: {} },
                     type: NotificationType.ERROR,
                 });
-
                 return;
             }
 
@@ -391,10 +395,10 @@ const stopWatch = watch(modelValue, (value) => {
     if (isSame) return;
 
     // If not authoritative, don't set the content
-    if (!props.disableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
+    if (props.enableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
 
     unref(editor)?.commands.setContent(value, true);
-    if (!props.disableCollab && ydoc && yjsProvider && yjsProvider.isAuthoritative) {
+    if (props.enableCollab && ydoc && yjsProvider && yjsProvider.isAuthoritative) {
         stopWatch();
     }
 });
@@ -572,7 +576,7 @@ function applyVersion(version: Version<unknown>): void {
 }
 
 onBeforeMount(() => {
-    if (props.disableCollab || (!ydoc && !yjsProvider)) {
+    if (!props.enableCollab) {
         logger.info('Setting initial content for Tiptap editor (collab is disabled)');
         unref(editor)?.commands.setContent(modelValue.value);
     }

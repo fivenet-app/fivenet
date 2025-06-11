@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref } from 'vue';
 import type { Awareness } from 'y-protocols/awareness';
 
 interface UserState {
@@ -25,8 +25,8 @@ export function useAwarenessUsers(awareness: Awareness) {
         users.value = arr; // ref assignment triggers re-render
     };
 
-    onMounted(() => {
-        rebuild(); // initial
+    onBeforeMount(() => {
+        rebuild(); // Initial
         awareness.on('change', rebuild);
     });
 

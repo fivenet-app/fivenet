@@ -2,7 +2,9 @@
 import { Calendar as VCalendar } from 'v-calendar';
 import 'v-calendar/dist/style.css';
 import type { CalendarView } from 'v-calendar/dist/types/src/use/calendar.js';
+import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import EntryCreateOrUpdateModal from '../calendar/entry/EntryCreateOrUpdateModal.vue';
 import MonthCalendarDay from './MonthCalendarDay.vue';
 
 defineOptions({
@@ -22,6 +24,13 @@ defineEmits<{
     (e: 'selected', entry: CalendarEntry): void;
 }>();
 
+const { t } = useI18n();
+
+const modal = useModal();
+
+const calendarStore = useCalendarStore();
+const { hasEditAccessToCalendar } = storeToRefs(calendarStore);
+
 const calRef = ref<InstanceType<typeof VCalendar> | null>(null);
 
 const attrs = {
@@ -38,6 +47,46 @@ const masks = {
     weekdays: 'WWW',
 };
 
+const { x, y } = useMouse();
+const { y: windowY } = useWindowScroll();
+
+const isOpen = ref(false);
+const virtualElement = ref({ getBoundingClientRect: () => ({}) });
+
+const selectedCalendarDay = ref<CalendarDay | undefined>(undefined);
+
+function onContextMenu(doc: CalendarDay) {
+    if (!hasEditAccessToCalendar.value) return;
+
+    selectedCalendarDay.value = doc;
+    const top = unref(y) - unref(windowY);
+    const left = unref(x);
+
+    virtualElement.value.getBoundingClientRect = () => ({
+        width: 0,
+        height: 0,
+        top,
+        left,
+    });
+
+    isOpen.value = true;
+}
+
+const links = computed(() =>
+    [
+        [
+            {
+                label: t('common.entry', 1),
+                icon: 'i-mdi-plus',
+                click: () =>
+                    modal.open(EntryCreateOrUpdateModal, {
+                        day: selectedCalendarDay.value!,
+                    }),
+            },
+        ].filter((l) => l != undefined),
+    ].filter((L) => L.length > 0),
+);
+
 defineExpose({
     calRef,
 });
@@ -47,9 +96,18 @@ defineExpose({
     <div class="custom-calendar" :class="$attrs.class">
         <VCalendar ref="calRef" :view="view" :columns="1" :rows="1" :masks="masks" v-bind="{ ...attrs, ...$attrs }">
             <template #day-content="{ day, attributes }">
-                <MonthCalendarDay :day="day" :attributes="attributes" @selected="$emit('selected', $event)" />
+                <MonthCalendarDay
+                    :day="day"
+                    :attributes="attributes"
+                    @selected="$emit('selected', $event)"
+                    @contextmenu.prevent="onContextMenu(day)"
+                />
             </template>
         </VCalendar>
+
+        <UContextMenu v-model="isOpen" :virtual-element="virtualElement">
+            <UVerticalNavigation :links="links" />
+        </UContextMenu>
     </div>
 </template>
 

@@ -75,7 +75,15 @@ function setFromProps(): void {
     }
     state.files = document.value.document.files;
 }
-provider.once('loadContent', () => setFromProps());
+
+const onSync = (s: boolean) => {
+    if (!s) return;
+    logger.debug('DocumentEditor - Sync received, setting state from props', s);
+
+    setFromProps();
+    provider.off('sync', onSync);
+};
+provider.on('sync', onSync);
 
 watch(document, async () => {
     const [refs, rels] = await Promise.all([
@@ -333,17 +341,6 @@ const canDo = computed(() => ({
     relations: can('documents.DocumentsService.AddDocumentRelation').value,
 }));
 
-logger.info(
-    'Editor - Can Do: Edit',
-    canDo.value.edit,
-    'Access',
-    canDo.value.access,
-    'References',
-    canDo.value.references,
-    'Relations',
-    canDo.value.relations,
-);
-
 useYText(ydoc.getText('title'), toRef(state, 'title'), { provider: provider });
 useYText(ydoc.getText('state'), toRef(state, 'state'), { provider: provider });
 const detailsYdoc = ydoc.getMap('details');
@@ -405,6 +402,17 @@ useYArrayFiltered<DocumentRelation>(
         omit: ['createdAt', 'document', 'sourceUser'],
     },
     { provider: provider },
+);
+
+logger.info(
+    'Editor - Can Do: Edit',
+    canDo.value.edit,
+    'Access',
+    canDo.value.access,
+    'References',
+    canDo.value.references,
+    'Relations',
+    canDo.value.relations,
 );
 
 provide('yjsDoc', ydoc);
@@ -609,6 +617,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                                 :disabled="!canDo.edit"
                                 history-type="document"
                                 :saving="saving"
+                                enable-collab
                                 :target-id="document.document?.id"
                                 filestore-namespace="documents"
                                 :filestore-service="(opts) => $grpc.documents.documents.uploadFile(opts)"
