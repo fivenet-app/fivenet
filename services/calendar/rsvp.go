@@ -92,6 +92,9 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *pbcalendar.List
 			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUser.ID),
+			).
+			LEFT_JOIN(tAvatar,
+				tAvatar.ID.EQ(tUserProps.AvatarFileID),
 			),
 		).
 		WHERE(condition).

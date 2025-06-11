@@ -314,8 +314,8 @@ func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.U
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
-			tUserProps.AvatarFileID.AS("colleague.avatar_file_id"),
-			tAvatar.FilePath.AS("colleague.avatar"),
+			tUserProps.AvatarFileID.AS("creator.avatar_file_id"),
+			tAvatar.FilePath.AS("creator.avatar"),
 		).
 		FROM(
 			tDComments.

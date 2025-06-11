@@ -230,49 +230,54 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
         if (canDo.value.references) {
             // Remove references that are no longer present
             const referencesToRemove: number[] = [];
-            state.references.forEach((ref) => {
-                if (!state.references.some((r) => r.id === ref.id)) {
-                    referencesToRemove.push(ref.id!);
-                }
-            });
+            state.references
+                .filter((r) => r.id !== undefined && r.id > 0)
+                .forEach((ref) => {
+                    if (!state.references.some((r) => r.id === ref.id)) {
+                        referencesToRemove.push(ref.id!);
+                    }
+                });
             referencesToRemove.forEach((id) => {
                 $grpc.documents.documents.removeDocumentReference({
                     id: id,
                 });
             });
             // Add new references
-            state.references.forEach((ref) => {
-                if (state.references.some((r) => r.id === ref.id)) {
-                    return;
-                }
-                ref.sourceDocumentId = response.document!.id!;
-                $grpc.documents.documents.addDocumentReference({
-                    reference: ref,
+            state.references
+                .filter((r) => r.id === undefined || r.id <= 0)
+                .forEach((ref) => {
+                    if (state.references.some((r) => r.id === ref.id)) {
+                        return;
+                    }
+                    ref.sourceDocumentId = response.document!.id!;
+                    $grpc.documents.documents.addDocumentReference({
+                        reference: ref,
+                    });
                 });
-            });
         }
 
         if (canDo.value.relations) {
             // Remove relations that are no longer present
             const relationsToRemove: number[] = [];
-            state.relations.forEach((rel) => {
-                if (!state.relations.some((r) => r.id === rel.id)) {
-                    relationsToRemove.push(rel.id!);
-                }
-            });
+            state.relations
+                .filter((r) => r.id !== undefined && r.id > 0)
+                .forEach((rel) => {
+                    if (!state.relations.some((r) => r.id === rel.id)) {
+                        relationsToRemove.push(rel.id!);
+                    }
+                });
             relationsToRemove.forEach((id) => {
                 $grpc.documents.documents.removeDocumentRelation({ id });
             });
             // Add new relations
-            state.relations.forEach((rel) => {
-                if (state.relations.some((r) => r.id === rel.id)) {
-                    return;
-                }
-                rel.documentId = response.document!.id;
-                $grpc.documents.documents.addDocumentRelation({
-                    relation: rel,
+            state.relations
+                .filter((r) => r.id === undefined || r.id <= 0)
+                .forEach((rel) => {
+                    rel.documentId = response.document!.id!;
+                    $grpc.documents.documents.addDocumentRelation({
+                        relation: rel,
+                    });
                 });
-            });
         }
 
         notifications.add({

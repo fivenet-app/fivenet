@@ -79,19 +79,17 @@ async function listCitizens(): Promise<User[]> {
     }
 }
 
-async function addRelation(user: User, relation: DocRelation): Promise<void> {
-    // Generate a unique id for the new relation
-    const ids = modelValue.value.map((r) => r.id ?? 0);
-    const newId = ids.length === 0 ? 1 : Math.max(...ids) + 1;
+let lastId = 0;
 
+async function addRelation(user: User, relation: DocRelation): Promise<void> {
     modelValue.value.push({
-        id: newId,
+        id: lastId--,
         documentId: props.documentId ?? 0,
         sourceUserId: activeChar.value!.userId,
         sourceUser: activeChar.value!,
         targetUserId: user.userId,
         targetUser: user,
-        relation,
+        relation: relation,
     });
 
     await refresh();
@@ -99,7 +97,7 @@ async function addRelation(user: User, relation: DocRelation): Promise<void> {
 
 async function removeRelation(id: number): Promise<void> {
     const idx = modelValue.value.findIndex((r) => r.id === id);
-    if (idx !== -1) {
+    if (idx > -1) {
         modelValue.value.splice(idx, 1);
     }
     refresh();

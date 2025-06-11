@@ -153,7 +153,7 @@ func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadPacket,
 		WHERE(tUser.ID.EQ(jet.Int32(targetUserId))).
 		LIMIT(1)
 
-	if err := stmt.QueryContext(ctx, s.db, &u); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, u); err != nil {
 		return errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 
@@ -245,7 +245,7 @@ func (s *Server) DeleteMugshot(ctx context.Context, req *pbcitizens.DeleteMugsho
 		WHERE(tUser.ID.EQ(jet.Int32(req.UserId))).
 		LIMIT(1)
 
-	if err := uStmt.QueryContext(ctx, s.db, &u); err != nil {
+	if err := uStmt.QueryContext(ctx, s.db, u); err != nil {
 		return nil, errswrap.NewError(err, errorscitizens.ErrFailedQuery)
 	}
 

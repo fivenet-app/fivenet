@@ -81,15 +81,13 @@ async function listDocuments(): Promise<DocumentShort[]> {
     }
 }
 
-async function addReference(doc: DocumentShort, reference: DocReference): Promise<void> {
-    // Generate a new id for the reference
-    const ids = modelValue.value.map((r) => r.id ?? 0);
-    const newId = ids.length === 0 ? 1 : Math.max(...ids) + 1;
+let lastId = 0;
 
+async function addReference(doc: DocumentShort, reference: DocReference): Promise<void> {
     modelValue.value.push({
-        id: newId,
+        id: lastId--,
         sourceDocumentId: props.documentId ?? 0,
-        reference,
+        reference: reference,
         targetDocumentId: doc.id,
         targetDocument: doc,
     });
@@ -103,7 +101,7 @@ function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference):
 
 function removeReference(id: number): void {
     const idx = modelValue.value.findIndex((r) => r.id === id);
-    if (idx !== -1) {
+    if (idx > -1) {
         modelValue.value.splice(idx, 1);
     }
 

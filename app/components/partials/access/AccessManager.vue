@@ -198,14 +198,14 @@ watch([jobsAccess, usersAccess, qualificationsAccess], syncAccessFromProps, { de
 // Sync from access to props when access changes
 watch(access, syncPropsFromAccess, { deep: true });
 
-const lastId = ref(0);
+let lastId = 0;
 
 function addNewEntry(): void {
     let idx = aTypes.value.findIndex((at) => at.type === props.defaultAccessType);
     if (idx === -1) idx = aTypes.value.length - 1;
 
     access.value.push({
-        id: lastId.value--,
+        id: lastId--,
         type: aTypes.value[idx]?.type ?? 'job',
         access: props.defaultAccess,
     });

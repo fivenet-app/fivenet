@@ -290,7 +290,7 @@ if (!props.disableImages) {
                 ids.forEach((id) => {
                     if (hasFileById(files.value, id)) {
                         const idx = files.value.findIndex((f) => f.id === id);
-                        if (idx !== -1) files.value.splice(idx, 1);
+                        if (idx > -1) files.value.splice(idx, 1);
                     }
                 }),
         }),
