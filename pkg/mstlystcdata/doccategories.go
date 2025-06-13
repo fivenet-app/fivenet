@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2025/pkg/nats/cache"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/trace"
@@ -25,8 +25,7 @@ type DocumentCategories struct {
 
 	tracer trace.Tracer
 
-	store *store.Store[documents.Category, *documents.Category]
-	store.StoreRO[documents.Category, *documents.Category]
+	*cache.Cache[documents.Category, *documents.Category]
 }
 
 type DocumentCategoriesResult struct {
@@ -47,15 +46,13 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		docCategories, err := store.New(ctxStartup, p.Logger, p.JS, "cache",
-			store.WithLocks[documents.Category](nil),
-			store.WithKVPrefix[documents.Category]("doc_categories"),
+		docCategories, err := cache.New(ctxStartup, p.Logger, p.JS, "cache",
+			cache.WithKVPrefix[documents.Category]("doc_categories"),
 		)
 		if err != nil {
 			return err
 		}
-		c.store = docCategories
-		c.StoreRO = docCategories
+		c.Cache = docCategories
 
 		if err := docCategories.Start(ctxCancel, false); err != nil {
 			return err
@@ -139,7 +136,7 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 	categoriesPerJob := map[string][]*documents.Category{}
 	for _, d := range dest {
 		key := strconv.FormatUint(d.Id, 10)
-		if err := c.store.Put(ctx, key, d); err != nil {
+		if err := c.Put(ctx, key, d); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 
@@ -160,8 +157,8 @@ func (c *DocumentCategories) Enrich(doc common.ICategory) {
 		return
 	}
 
-	dc, ok := c.Get(strconv.FormatUint(cId, 10))
-	if !ok {
+	dc, err := c.Get(strconv.FormatUint(cId, 10))
+	if err != nil {
 		job := NotAvailablePlaceholder
 		doc.SetCategory(&documents.Category{
 			Id:   0,

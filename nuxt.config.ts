@@ -22,6 +22,7 @@ export default defineNuxtConfig({
         'nuxt-tiptap-editor',
         '@vueuse/nuxt',
         '@vueuse/sound/nuxt',
+        '@nuxtjs/leaflet',
     ],
 
     future: {
@@ -244,7 +245,7 @@ export default defineNuxtConfig({
     },
 
     zodI18n: {
-        useModuleLocale: true,
+        useModuleLocale: false,
     },
 
     piniaPluginPersistedstate: {
@@ -263,6 +264,10 @@ export default defineNuxtConfig({
         sounds: {
             scan: true,
         },
+    },
+
+    leaflet: {
+        heat: true,
     },
 
     $production: {

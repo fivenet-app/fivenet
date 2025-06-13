@@ -26,6 +26,7 @@ const (
 	CentrumService_TakeControl_FullMethodName          = "/services.centrum.CentrumService/TakeControl"
 	CentrumService_AssignDispatch_FullMethodName       = "/services.centrum.CentrumService/AssignDispatch"
 	CentrumService_AssignUnit_FullMethodName           = "/services.centrum.CentrumService/AssignUnit"
+	CentrumService_GetDispatchHeatmap_FullMethodName   = "/services.centrum.CentrumService/GetDispatchHeatmap"
 	CentrumService_UpdateDispatchers_FullMethodName    = "/services.centrum.CentrumService/UpdateDispatchers"
 	CentrumService_Stream_FullMethodName               = "/services.centrum.CentrumService/Stream"
 	CentrumService_GetSettings_FullMethodName          = "/services.centrum.CentrumService/GetSettings"
@@ -60,6 +61,8 @@ type CentrumServiceClient interface {
 	AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error)
 	// @perm: Name=TakeControl
 	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
+	// @perm: Name=TakeControl
+	GetDispatchHeatmap(ctx context.Context, in *GetDispatchHeatmapRequest, opts ...grpc.CallOption) (*GetDispatchHeatmapResponse, error)
 	// @perm
 	UpdateDispatchers(ctx context.Context, in *UpdateDispatchersRequest, opts ...grpc.CallOption) (*UpdateDispatchersResponse, error)
 	// @perm
@@ -162,6 +165,16 @@ func (c *centrumServiceClient) AssignUnit(ctx context.Context, in *AssignUnitReq
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AssignUnitResponse)
 	err := c.cc.Invoke(ctx, CentrumService_AssignUnit_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) GetDispatchHeatmap(ctx context.Context, in *GetDispatchHeatmapRequest, opts ...grpc.CallOption) (*GetDispatchHeatmapResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDispatchHeatmapResponse)
+	err := c.cc.Invoke(ctx, CentrumService_GetDispatchHeatmap_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -335,6 +348,8 @@ type CentrumServiceServer interface {
 	AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error)
 	// @perm: Name=TakeControl
 	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
+	// @perm: Name=TakeControl
+	GetDispatchHeatmap(context.Context, *GetDispatchHeatmapRequest) (*GetDispatchHeatmapResponse, error)
 	// @perm
 	UpdateDispatchers(context.Context, *UpdateDispatchersRequest) (*UpdateDispatchersResponse, error)
 	// @perm
@@ -393,6 +408,9 @@ func (UnimplementedCentrumServiceServer) AssignDispatch(context.Context, *Assign
 }
 func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
+}
+func (UnimplementedCentrumServiceServer) GetDispatchHeatmap(context.Context, *GetDispatchHeatmapRequest) (*GetDispatchHeatmapResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDispatchHeatmap not implemented")
 }
 func (UnimplementedCentrumServiceServer) UpdateDispatchers(context.Context, *UpdateDispatchersRequest) (*UpdateDispatchersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatchers not implemented")
@@ -579,6 +597,24 @@ func _CentrumService_AssignUnit_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CentrumServiceServer).AssignUnit(ctx, req.(*AssignUnitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_GetDispatchHeatmap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDispatchHeatmapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).GetDispatchHeatmap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CentrumService_GetDispatchHeatmap_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).GetDispatchHeatmap(ctx, req.(*GetDispatchHeatmapRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -862,6 +898,10 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AssignUnit",
 			Handler:    _CentrumService_AssignUnit_Handler,
+		},
+		{
+			MethodName: "GetDispatchHeatmap",
+			Handler:    _CentrumService_GetDispatchHeatmap_Handler,
 		},
 		{
 			MethodName: "UpdateDispatchers",

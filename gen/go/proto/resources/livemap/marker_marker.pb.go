@@ -2,14 +2,12 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.30.2
-// source: resources/livemap/livemap.proto
+// source: resources/livemap/marker_marker.proto
 
 package livemap
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -62,11 +60,11 @@ func (x MarkerType) String() string {
 }
 
 func (MarkerType) Descriptor() protoreflect.EnumDescriptor {
-	return file_resources_livemap_livemap_proto_enumTypes[0].Descriptor()
+	return file_resources_livemap_marker_marker_proto_enumTypes[0].Descriptor()
 }
 
 func (MarkerType) Type() protoreflect.EnumType {
-	return &file_resources_livemap_livemap_proto_enumTypes[0]
+	return &file_resources_livemap_marker_marker_proto_enumTypes[0]
 }
 
 func (x MarkerType) Number() protoreflect.EnumNumber {
@@ -75,141 +73,7 @@ func (x MarkerType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use MarkerType.Descriptor instead.
 func (MarkerType) EnumDescriptor() ([]byte, []int) {
-	return file_resources_livemap_livemap_proto_rawDescGZIP(), []int{0}
-}
-
-type UserMarker struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	UserId    int32                  `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	X         float64                `protobuf:"fixed64,2,opt,name=x,proto3" json:"x,omitempty"`
-	Y         float64                `protobuf:"fixed64,3,opt,name=y,proto3" json:"y,omitempty"`
-	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	// @sanitize: method=StripTags
-	Postal *string `protobuf:"bytes,5,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
-	// @sanitize: method=StripTags
-	Color         *string         `protobuf:"bytes,6,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	Job           string          `protobuf:"bytes,7,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel      string          `protobuf:"bytes,8,opt,name=job_label,json=jobLabel,proto3" json:"job_label,omitempty"`
-	User          *jobs.Colleague `protobuf:"bytes,9,opt,name=user,proto3" json:"user,omitempty" alias:"user"` // @gotags: alias:"user"
-	UnitId        *uint64         `protobuf:"varint,10,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
-	Unit          *centrum.Unit   `protobuf:"bytes,11,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
-	Hidden        bool            `protobuf:"varint,12,opt,name=hidden,proto3" json:"hidden,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *UserMarker) Reset() {
-	*x = UserMarker{}
-	mi := &file_resources_livemap_livemap_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *UserMarker) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*UserMarker) ProtoMessage() {}
-
-func (x *UserMarker) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_livemap_livemap_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use UserMarker.ProtoReflect.Descriptor instead.
-func (*UserMarker) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_livemap_proto_rawDescGZIP(), []int{0}
-}
-
-func (x *UserMarker) GetUserId() int32 {
-	if x != nil {
-		return x.UserId
-	}
-	return 0
-}
-
-func (x *UserMarker) GetX() float64 {
-	if x != nil {
-		return x.X
-	}
-	return 0
-}
-
-func (x *UserMarker) GetY() float64 {
-	if x != nil {
-		return x.Y
-	}
-	return 0
-}
-
-func (x *UserMarker) GetUpdatedAt() *timestamp.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-func (x *UserMarker) GetPostal() string {
-	if x != nil && x.Postal != nil {
-		return *x.Postal
-	}
-	return ""
-}
-
-func (x *UserMarker) GetColor() string {
-	if x != nil && x.Color != nil {
-		return *x.Color
-	}
-	return ""
-}
-
-func (x *UserMarker) GetJob() string {
-	if x != nil {
-		return x.Job
-	}
-	return ""
-}
-
-func (x *UserMarker) GetJobLabel() string {
-	if x != nil {
-		return x.JobLabel
-	}
-	return ""
-}
-
-func (x *UserMarker) GetUser() *jobs.Colleague {
-	if x != nil {
-		return x.User
-	}
-	return nil
-}
-
-func (x *UserMarker) GetUnitId() uint64 {
-	if x != nil && x.UnitId != nil {
-		return *x.UnitId
-	}
-	return 0
-}
-
-func (x *UserMarker) GetUnit() *centrum.Unit {
-	if x != nil {
-		return x.Unit
-	}
-	return nil
-}
-
-func (x *UserMarker) GetHidden() bool {
-	if x != nil {
-		return x.Hidden
-	}
-	return false
+	return file_resources_livemap_marker_marker_proto_rawDescGZIP(), []int{0}
 }
 
 type MarkerMarker struct {
@@ -241,7 +105,7 @@ type MarkerMarker struct {
 
 func (x *MarkerMarker) Reset() {
 	*x = MarkerMarker{}
-	mi := &file_resources_livemap_livemap_proto_msgTypes[1]
+	mi := &file_resources_livemap_marker_marker_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -253,7 +117,7 @@ func (x *MarkerMarker) String() string {
 func (*MarkerMarker) ProtoMessage() {}
 
 func (x *MarkerMarker) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_livemap_livemap_proto_msgTypes[1]
+	mi := &file_resources_livemap_marker_marker_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -266,7 +130,7 @@ func (x *MarkerMarker) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkerMarker.ProtoReflect.Descriptor instead.
 func (*MarkerMarker) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_livemap_proto_rawDescGZIP(), []int{1}
+	return file_resources_livemap_marker_marker_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *MarkerMarker) GetId() uint64 {
@@ -402,7 +266,7 @@ type MarkerData struct {
 
 func (x *MarkerData) Reset() {
 	*x = MarkerData{}
-	mi := &file_resources_livemap_livemap_proto_msgTypes[2]
+	mi := &file_resources_livemap_marker_marker_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -414,7 +278,7 @@ func (x *MarkerData) String() string {
 func (*MarkerData) ProtoMessage() {}
 
 func (x *MarkerData) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_livemap_livemap_proto_msgTypes[2]
+	mi := &file_resources_livemap_marker_marker_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -427,7 +291,7 @@ func (x *MarkerData) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkerData.ProtoReflect.Descriptor instead.
 func (*MarkerData) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_livemap_proto_rawDescGZIP(), []int{2}
+	return file_resources_livemap_marker_marker_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *MarkerData) GetData() isMarkerData_Data {
@@ -481,7 +345,7 @@ type CircleMarker struct {
 
 func (x *CircleMarker) Reset() {
 	*x = CircleMarker{}
-	mi := &file_resources_livemap_livemap_proto_msgTypes[3]
+	mi := &file_resources_livemap_marker_marker_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -493,7 +357,7 @@ func (x *CircleMarker) String() string {
 func (*CircleMarker) ProtoMessage() {}
 
 func (x *CircleMarker) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_livemap_livemap_proto_msgTypes[3]
+	mi := &file_resources_livemap_marker_marker_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -506,7 +370,7 @@ func (x *CircleMarker) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CircleMarker.ProtoReflect.Descriptor instead.
 func (*CircleMarker) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_livemap_proto_rawDescGZIP(), []int{3}
+	return file_resources_livemap_marker_marker_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *CircleMarker) GetRadius() int32 {
@@ -533,7 +397,7 @@ type IconMarker struct {
 
 func (x *IconMarker) Reset() {
 	*x = IconMarker{}
-	mi := &file_resources_livemap_livemap_proto_msgTypes[4]
+	mi := &file_resources_livemap_marker_marker_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -545,7 +409,7 @@ func (x *IconMarker) String() string {
 func (*IconMarker) ProtoMessage() {}
 
 func (x *IconMarker) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_livemap_livemap_proto_msgTypes[4]
+	mi := &file_resources_livemap_marker_marker_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -558,7 +422,7 @@ func (x *IconMarker) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use IconMarker.ProtoReflect.Descriptor instead.
 func (*IconMarker) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_livemap_proto_rawDescGZIP(), []int{4}
+	return file_resources_livemap_marker_marker_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *IconMarker) GetIcon() string {
@@ -568,85 +432,11 @@ func (x *IconMarker) GetIcon() string {
 	return ""
 }
 
-type Coords struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	X             float64                `protobuf:"fixed64,1,opt,name=x,proto3" json:"x,omitempty"`
-	Y             float64                `protobuf:"fixed64,2,opt,name=y,proto3" json:"y,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
+var File_resources_livemap_marker_marker_proto protoreflect.FileDescriptor
 
-func (x *Coords) Reset() {
-	*x = Coords{}
-	mi := &file_resources_livemap_livemap_proto_msgTypes[5]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Coords) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Coords) ProtoMessage() {}
-
-func (x *Coords) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_livemap_livemap_proto_msgTypes[5]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Coords.ProtoReflect.Descriptor instead.
-func (*Coords) Descriptor() ([]byte, []int) {
-	return file_resources_livemap_livemap_proto_rawDescGZIP(), []int{5}
-}
-
-func (x *Coords) GetX() float64 {
-	if x != nil {
-		return x.X
-	}
-	return 0
-}
-
-func (x *Coords) GetY() float64 {
-	if x != nil {
-		return x.Y
-	}
-	return 0
-}
-
-var File_resources_livemap_livemap_proto protoreflect.FileDescriptor
-
-const file_resources_livemap_livemap_proto_rawDesc = "" +
+const file_resources_livemap_marker_marker_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/livemap/livemap.proto\x12\x11resources.livemap\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xf4\x03\n" +
-	"\n" +
-	"UserMarker\x12 \n" +
-	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12\f\n" +
-	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
-	"\x01y\x18\x03 \x01(\x01R\x01y\x12B\n" +
-	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12$\n" +
-	"\x06postal\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x180H\x01R\x06postal\x88\x01\x01\x126\n" +
-	"\x05color\x18\x06 \x01(\tB\x1b\xfaB\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aH\x02R\x05color\x88\x01\x01\x12\x19\n" +
-	"\x03job\x18\a \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12\x1b\n" +
-	"\tjob_label\x18\b \x01(\tR\bjobLabel\x12-\n" +
-	"\x04user\x18\t \x01(\v2\x19.resources.jobs.ColleagueR\x04user\x12\x1c\n" +
-	"\aunit_id\x18\n" +
-	" \x01(\x04H\x03R\x06unitId\x88\x01\x01\x120\n" +
-	"\x04unit\x18\v \x01(\v2\x17.resources.centrum.UnitH\x04R\x04unit\x88\x01\x01\x12\x16\n" +
-	"\x06hidden\x18\f \x01(\bR\x06hiddenB\r\n" +
-	"\v_updated_atB\t\n" +
-	"\a_postalB\b\n" +
-	"\x06_colorB\n" +
-	"\n" +
-	"\b_unit_idB\a\n" +
-	"\x05_unit\"\xf1\x06\n" +
+	"%resources/livemap/marker_marker.proto\x12\x11resources.livemap\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xf1\x06\n" +
 	"\fMarkerMarker\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\f\n" +
 	"\x01x\x18\x02 \x01(\x01R\x01x\x12\f\n" +
@@ -696,10 +486,7 @@ const file_resources_livemap_livemap_proto_rawDesc = "" +
 	"\b_opacity\"*\n" +
 	"\n" +
 	"IconMarker\x12\x1c\n" +
-	"\x04icon\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01R\x04icon\"$\n" +
-	"\x06Coords\x12\f\n" +
-	"\x01x\x18\x01 \x01(\x01R\x01x\x12\f\n" +
-	"\x01y\x18\x02 \x01(\x01R\x01y*l\n" +
+	"\x04icon\x18\x01 \x01(\tB\b\xfaB\x05r\x03\x18\x80\x01R\x04icon*l\n" +
 	"\n" +
 	"MarkerType\x12\x1b\n" +
 	"\x17MARKER_TYPE_UNSPECIFIED\x10\x00\x12\x13\n" +
@@ -708,80 +495,72 @@ const file_resources_livemap_livemap_proto_rawDesc = "" +
 	"\x10MARKER_TYPE_ICON\x10\x03BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
 
 var (
-	file_resources_livemap_livemap_proto_rawDescOnce sync.Once
-	file_resources_livemap_livemap_proto_rawDescData []byte
+	file_resources_livemap_marker_marker_proto_rawDescOnce sync.Once
+	file_resources_livemap_marker_marker_proto_rawDescData []byte
 )
 
-func file_resources_livemap_livemap_proto_rawDescGZIP() []byte {
-	file_resources_livemap_livemap_proto_rawDescOnce.Do(func() {
-		file_resources_livemap_livemap_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_livemap_livemap_proto_rawDesc), len(file_resources_livemap_livemap_proto_rawDesc)))
+func file_resources_livemap_marker_marker_proto_rawDescGZIP() []byte {
+	file_resources_livemap_marker_marker_proto_rawDescOnce.Do(func() {
+		file_resources_livemap_marker_marker_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_resources_livemap_marker_marker_proto_rawDesc), len(file_resources_livemap_marker_marker_proto_rawDesc)))
 	})
-	return file_resources_livemap_livemap_proto_rawDescData
+	return file_resources_livemap_marker_marker_proto_rawDescData
 }
 
-var file_resources_livemap_livemap_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_livemap_livemap_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
-var file_resources_livemap_livemap_proto_goTypes = []any{
+var file_resources_livemap_marker_marker_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_resources_livemap_marker_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_resources_livemap_marker_marker_proto_goTypes = []any{
 	(MarkerType)(0),             // 0: resources.livemap.MarkerType
-	(*UserMarker)(nil),          // 1: resources.livemap.UserMarker
-	(*MarkerMarker)(nil),        // 2: resources.livemap.MarkerMarker
-	(*MarkerData)(nil),          // 3: resources.livemap.MarkerData
-	(*CircleMarker)(nil),        // 4: resources.livemap.CircleMarker
-	(*IconMarker)(nil),          // 5: resources.livemap.IconMarker
-	(*Coords)(nil),              // 6: resources.livemap.Coords
-	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
-	(*jobs.Colleague)(nil),      // 8: resources.jobs.Colleague
-	(*centrum.Unit)(nil),        // 9: resources.centrum.Unit
-	(*users.UserShort)(nil),     // 10: resources.users.UserShort
+	(*MarkerMarker)(nil),        // 1: resources.livemap.MarkerMarker
+	(*MarkerData)(nil),          // 2: resources.livemap.MarkerData
+	(*CircleMarker)(nil),        // 3: resources.livemap.CircleMarker
+	(*IconMarker)(nil),          // 4: resources.livemap.IconMarker
+	(*timestamp.Timestamp)(nil), // 5: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),     // 6: resources.users.UserShort
 }
-var file_resources_livemap_livemap_proto_depIdxs = []int32{
-	7,  // 0: resources.livemap.UserMarker.updated_at:type_name -> resources.timestamp.Timestamp
-	8,  // 1: resources.livemap.UserMarker.user:type_name -> resources.jobs.Colleague
-	9,  // 2: resources.livemap.UserMarker.unit:type_name -> resources.centrum.Unit
-	7,  // 3: resources.livemap.MarkerMarker.created_at:type_name -> resources.timestamp.Timestamp
-	7,  // 4: resources.livemap.MarkerMarker.updated_at:type_name -> resources.timestamp.Timestamp
-	7,  // 5: resources.livemap.MarkerMarker.expires_at:type_name -> resources.timestamp.Timestamp
-	7,  // 6: resources.livemap.MarkerMarker.deleted_at:type_name -> resources.timestamp.Timestamp
-	0,  // 7: resources.livemap.MarkerMarker.type:type_name -> resources.livemap.MarkerType
-	3,  // 8: resources.livemap.MarkerMarker.data:type_name -> resources.livemap.MarkerData
-	10, // 9: resources.livemap.MarkerMarker.creator:type_name -> resources.users.UserShort
-	4,  // 10: resources.livemap.MarkerData.circle:type_name -> resources.livemap.CircleMarker
-	5,  // 11: resources.livemap.MarkerData.icon:type_name -> resources.livemap.IconMarker
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+var file_resources_livemap_marker_marker_proto_depIdxs = []int32{
+	5, // 0: resources.livemap.MarkerMarker.created_at:type_name -> resources.timestamp.Timestamp
+	5, // 1: resources.livemap.MarkerMarker.updated_at:type_name -> resources.timestamp.Timestamp
+	5, // 2: resources.livemap.MarkerMarker.expires_at:type_name -> resources.timestamp.Timestamp
+	5, // 3: resources.livemap.MarkerMarker.deleted_at:type_name -> resources.timestamp.Timestamp
+	0, // 4: resources.livemap.MarkerMarker.type:type_name -> resources.livemap.MarkerType
+	2, // 5: resources.livemap.MarkerMarker.data:type_name -> resources.livemap.MarkerData
+	6, // 6: resources.livemap.MarkerMarker.creator:type_name -> resources.users.UserShort
+	3, // 7: resources.livemap.MarkerData.circle:type_name -> resources.livemap.CircleMarker
+	4, // 8: resources.livemap.MarkerData.icon:type_name -> resources.livemap.IconMarker
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
-func init() { file_resources_livemap_livemap_proto_init() }
-func file_resources_livemap_livemap_proto_init() {
-	if File_resources_livemap_livemap_proto != nil {
+func init() { file_resources_livemap_marker_marker_proto_init() }
+func file_resources_livemap_marker_marker_proto_init() {
+	if File_resources_livemap_marker_marker_proto != nil {
 		return
 	}
-	file_resources_livemap_livemap_proto_msgTypes[0].OneofWrappers = []any{}
-	file_resources_livemap_livemap_proto_msgTypes[1].OneofWrappers = []any{}
-	file_resources_livemap_livemap_proto_msgTypes[2].OneofWrappers = []any{
+	file_resources_livemap_marker_marker_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_livemap_marker_marker_proto_msgTypes[1].OneofWrappers = []any{
 		(*MarkerData_Circle)(nil),
 		(*MarkerData_Icon)(nil),
 	}
-	file_resources_livemap_livemap_proto_msgTypes[3].OneofWrappers = []any{}
+	file_resources_livemap_marker_marker_proto_msgTypes[2].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_livemap_livemap_proto_rawDesc), len(file_resources_livemap_livemap_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_livemap_marker_marker_proto_rawDesc), len(file_resources_livemap_marker_marker_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   6,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_resources_livemap_livemap_proto_goTypes,
-		DependencyIndexes: file_resources_livemap_livemap_proto_depIdxs,
-		EnumInfos:         file_resources_livemap_livemap_proto_enumTypes,
-		MessageInfos:      file_resources_livemap_livemap_proto_msgTypes,
+		GoTypes:           file_resources_livemap_marker_marker_proto_goTypes,
+		DependencyIndexes: file_resources_livemap_marker_marker_proto_depIdxs,
+		EnumInfos:         file_resources_livemap_marker_marker_proto_enumTypes,
+		MessageInfos:      file_resources_livemap_marker_marker_proto_msgTypes,
 	}.Build()
-	File_resources_livemap_livemap_proto = out.File
-	file_resources_livemap_livemap_proto_goTypes = nil
-	file_resources_livemap_livemap_proto_depIdxs = nil
+	File_resources_livemap_marker_marker_proto = out.File
+	file_resources_livemap_marker_marker_proto_goTypes = nil
+	file_resources_livemap_marker_marker_proto_depIdxs = nil
 }

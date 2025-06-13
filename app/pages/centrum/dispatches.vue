@@ -3,12 +3,18 @@ import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import { z } from 'zod';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
+import BaseMap from '~/components/livemap/BaseMap.vue';
+import HeatmapLegend from '~/components/livemap/controls/HeatmapLegend.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/centrum';
+import type {
+    GetDispatchHeatmapResponse,
+    ListDispatchesRequest,
+    ListDispatchesResponse,
+} from '~~/gen/ts/services/centrum/centrum';
 
 useHead({
     title: 'common.dispatches',
@@ -75,6 +81,39 @@ watchDebounced(query, async () => refresh(), {
     maxWait: 1250,
 });
 
+const { data: heatmap } = useLazyAsyncData(`centrum-heatmap`, () => getDispatchHeatmap());
+
+async function getDispatchHeatmap(): Promise<GetDispatchHeatmapResponse> {
+    try {
+        const call = $grpc.centrum.centrum.getDispatchHeatmap({
+            status: [],
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+const heat = ref<L.HeatLayer | undefined>();
+
+async function onMapReady(map: L.Map): Promise<void> {
+    heat.value = await useLHeat({
+        leafletObject: map,
+        heatPoints: [],
+        radius: 10,
+    });
+}
+
+watch([heatmap, heat], () => {
+    if (!heatmap.value || !heat.value) return;
+
+    console.log('Updating heatmap with new data', heatmap.value);
+    heatmap.value?.entries.forEach((e) => unref(heat.value)?.addLatLng([e.y, e.x, e.w]));
+});
+
 onBeforeMount(() => (showLocationMarker.value = true));
 onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 
@@ -104,11 +143,13 @@ const mount = ref(false);
                 <Splitpanes v-if="mount" class="relative">
                     <Pane :min-size="25">
                         <ClientOnly>
-                            <LivemapBaseMap :map-options="{ zoomControl: false }">
-                                <template #default>
+                            <BaseMap :map-options="{ zoomControl: false }" @map-ready="onMapReady">
+                                <template #default="{ map }">
                                     <LazyLivemapMapTempMarker />
+
+                                    <HeatmapLegend :map="map!" />
                                 </template>
-                            </LivemapBaseMap>
+                            </BaseMap>
                         </ClientOnly>
                     </Pane>
 

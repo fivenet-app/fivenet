@@ -105,6 +105,26 @@ func (m *MarkerMarkersUpdates) Sanitize() error {
 	return nil
 }
 
+func (m *Snapshot) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Markers
+	for idx, item := range m.Markers {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *StreamRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -136,29 +156,17 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
-		// Field: Users
-	case *StreamResponse_Users:
+		// Field: Snapshot
+	case *StreamResponse_Snapshot:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *UserMarkersUpdates) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Updated
-	for idx, item := range m.Updated {
-		_, _ = idx, item
-
-		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+		// Field: UserUpdate
+	case *StreamResponse_UserUpdate:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

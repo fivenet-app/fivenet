@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 	"sync"
@@ -16,7 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2025/pkg/nats/cache"
 	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -31,8 +32,7 @@ type Jobs struct {
 
 	tracer trace.Tracer
 
-	store *store.Store[jobs.Job, *jobs.Job]
-	store.StoreRO[jobs.Job, *jobs.Job]
+	*cache.Cache[jobs.Job, *jobs.Job]
 
 	updateCallbacks []updateCallbackFn
 }
@@ -67,15 +67,13 @@ func NewJobs(p Params) (JobsResult, error) {
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		jobs, err := store.New(ctxStartup, p.Logger, p.JS, "cache",
-			store.WithLocks[jobs.Job](nil),
-			store.WithKVPrefix[jobs.Job]("jobs"),
+		jobs, err := cache.New(ctxStartup, p.Logger, p.JS, "cache",
+			cache.WithKVPrefix[jobs.Job]("jobs"),
 		)
 		if err != nil {
 			return err
 		}
-		c.store = jobs
-		c.StoreRO = jobs
+		c.Cache = jobs
 
 		if err := jobs.Start(ctxCancel, true); err != nil {
 			return err
@@ -165,7 +163,7 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 
 	// No jobs found in database, remove all from cache
 	if len(dest) == 0 {
-		if err := c.store.Clear(ctx); err != nil {
+		if err := c.Cache.Clear(ctx); err != nil {
 			return err
 		}
 
@@ -179,7 +177,7 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 	for _, job := range dest {
 		jobName := strings.ToLower(job.Name)
 
-		if err := c.store.Put(ctx, jobName, job); err != nil {
+		if err := c.Cache.Put(ctx, jobName, job); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 
@@ -187,11 +185,11 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 	}
 
 	// Delete non-existing jobs, based on which are in the database
-	c.Range(ctx, func(key string, value *jobs.Job) bool {
+	c.Range(func(key string, value *jobs.Job) bool {
 		if !slices.ContainsFunc(found, func(in string) bool {
 			return in == key
 		}) {
-			if err := c.store.Delete(ctx, key); err != nil {
+			if err := c.Cache.Delete(ctx, key); err != nil {
 				errs = multierr.Append(errs, err)
 			}
 		}
@@ -209,8 +207,8 @@ func (c *Jobs) addUpdateCallback(fn updateCallbackFn) {
 }
 
 func (c *Jobs) GetHighestJobGrade(job string) *jobs.JobGrade {
-	j, ok := c.Get(job)
-	if !ok {
+	j, err := c.Get(job)
+	if err != nil {
 		return nil
 	}
 
@@ -288,18 +286,18 @@ func (c *JobsSearch) loadDataIntoIndex(ctx context.Context) error {
 
 	batch := c.index.NewBatch()
 	// Fill jobs search from cache
-	c.Jobs.Range(ctx, func(key string, value *jobs.Job) bool {
+	c.Range(func(key string, value *jobs.Job) bool {
 		batch.Delete(key)
 
 		if err := batch.Index(key, value); err != nil {
-			errs = multierr.Append(errs, err)
+			errs = multierr.Append(errs, fmt.Errorf("failed to index job in search. %w", err))
 		}
 
 		return true
 	})
 
 	if err := c.index.Batch(batch); err != nil {
-		errs = multierr.Append(errs, err)
+		errs = multierr.Append(errs, fmt.Errorf("failed to batch index jobs search data. %w", err))
 	}
 
 	return errs
@@ -321,20 +319,20 @@ func (c *JobsSearch) Search(ctx context.Context, search string, exactMatch bool)
 	if exactMatch {
 		request.Size = 1
 	} else {
-		request.Size = 32
+		request.Size = 40
 	}
 	request.Fields = []string{"name", "label"}
 	request.SortBy([]string{"_score", "label", "_id"})
 
 	result, err := c.index.SearchInContext(ctx, request)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to search jobs in index. %w", err)
 	}
 
 	jobs := []*jobs.Job{}
 	for _, result := range result.Hits {
-		job, ok := c.Jobs.Get(result.ID)
-		if !ok {
+		job, err := c.Get(result.ID)
+		if err != nil {
 			c.logger.Error("no job found for search result id", zap.String("job", result.ID))
 			continue
 		}

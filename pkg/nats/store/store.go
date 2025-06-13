@@ -24,7 +24,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var ErrNotFound = errors.New("store: not found")
+// ErrPrefixAmbiguous is returned when more than one key matches the prefix.
+var ErrPrefixAmbiguous = fmt.Errorf("multiple keys found with given prefix")
 
 var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Namespace: admin.MetricsNamespace,
@@ -35,9 +36,12 @@ var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
 
 // (Mostly) Read Only store version - Technically the `Get` action can result in data being written to the store's internal cache
 type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
-	Get(key string) (U, bool)
-	Keys(ctx context.Context, prefix string) []string
+	Get(key string) (U, error)
+	GetBySegmentOne(prefix string) (U, error)
+	Keys(prefix string) []string
+	KeysFiltered(prefix string, filter func(string) bool) []string
 	List() []U
+	ListFiltered(ctx context.Context, prefix string, filter func(string) bool) []U
 	Range(ctx context.Context, fn func(key string, value U) bool)
 	Count() int
 	WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], error)
@@ -125,7 +129,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 	}
 
 	if s.prefix != "" {
-		s.prefix = s.prefix + "."
+		s.prefix = strings.TrimSuffix(s.prefix, ".") + "."
 	}
 
 	return s, nil
@@ -188,8 +192,8 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 	}
 
 	var existing U
+	var err error
 	if load {
-		var err error
 		existing, err = s.load(ctx, key)
 		if err != nil {
 			// Return if it isn't a not found value
@@ -198,15 +202,14 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 			} else if s.onNotFound != nil {
 				// Try to load value using not found method
 				existing, err = s.onNotFound(s, ctx, key)
-				if err != nil && !errors.Is(err, ErrNotFound) {
+				if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 					return err
 				}
 			}
 		}
 	} else {
-		var ok bool
-		existing, ok = s.get(key)
-		if !ok {
+		existing, err = s.get(key)
+		if err != nil {
 			return fmt.Errorf("no item for key %s found in local store", key)
 		}
 	}
@@ -235,7 +238,7 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 }
 
 // Get copy of data from local data
-func (s *Store[T, U]) Get(key string) (U, bool) {
+func (s *Store[T, U]) Get(key string) (U, error) {
 	key = s.prefix + events.SanitizeKey(key)
 
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
@@ -245,13 +248,13 @@ func (s *Store[T, U]) Get(key string) (U, bool) {
 	return s.get(key)
 }
 
-func (s *Store[T, U]) get(key string) (U, bool) {
+func (s *Store[T, U]) get(key string) (U, error) {
 	i, ok := s.data.Load(key)
 	if !ok {
-		return nil, ok
+		return nil, jetstream.ErrKeyNotFound
 	}
 
-	return proto.Clone(i).(U), true
+	return proto.Clone(i).(U), nil
 }
 
 // Load data from kv store (this will add/update any existing local data entry)
@@ -275,6 +278,46 @@ func (s *Store[T, U]) load(ctx context.Context, key string) (U, error) {
 	return s.update(entry)
 }
 
+// GetBySegmentOne finds exactly one entry whose key segments
+// start with the given prefix.  E.g. prefix="JOB.GRADE" will match
+// only "JOB.GRADE.USER_ID", not "JOB.GRADE2.X" or "JOB.GRADE_USER_ID".
+func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
+	// ensure we only match whole segments:
+	//   "JOB.GRADE" -> "JOB.GRADE."
+	//   ""           -> ""  (no prefix => match everything)
+	seg := prefix
+	if seg != "" && !strings.HasSuffix(seg, ".") {
+		seg = seg + "."
+	}
+
+	// 1) find matching keys in-memory
+	var candidates []string
+	s.data.Range(func(internalKey string, _ U) bool {
+		// strip your store.prefix to get the user-key
+		userKey := internalKey
+		if s.prefix != "" {
+			userKey = strings.TrimPrefix(internalKey, s.prefix)
+		}
+		if seg == "" || strings.HasPrefix(userKey, seg) {
+			candidates = append(candidates, userKey)
+		}
+		return true
+	})
+
+	switch len(candidates) {
+	case 0:
+		var zero U
+		return zero, jetstream.ErrKeyNotFound
+
+	case 1:
+		// delegate your normal Get (cache → KV)
+		return s.Get(candidates[0])
+
+	default:
+		return *new(U), fmt.Errorf("%w: %v", ErrPrefixAmbiguous, candidates)
+	}
+}
+
 func (s *Store[T, U]) GetOrLoad(ctx context.Context, key string) (U, error) {
 	key = s.prefix + events.SanitizeKey(key)
 
@@ -282,8 +325,8 @@ func (s *Store[T, U]) GetOrLoad(ctx context.Context, key string) (U, error) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	item, ok := s.get(key)
-	if !ok || item == nil {
+	item, err := s.get(key)
+	if err != nil || item == nil {
 		var err error
 		item, err = s.load(ctx, key)
 		if err != nil {
@@ -352,7 +395,7 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 	return nil
 }
 
-func (s *Store[T, U]) Keys(ctx context.Context, prefix string) []string {
+func (s *Store[T, U]) Keys(prefix string) []string {
 	hasPrefix := (s.prefix + prefix) != ""
 	if hasPrefix {
 		if prefix != "" {
@@ -365,12 +408,16 @@ func (s *Store[T, U]) Keys(ctx context.Context, prefix string) []string {
 	s.data.Range(func(key string, _ U) bool {
 		if hasPrefix {
 			if strings.HasPrefix(key, prefix) {
-				if s.prefix == "" {
-					keys = append(keys, key)
-				} else {
+				if s.prefix != "" {
 					after, _ := strings.CutPrefix(key, s.prefix)
-					keys = append(keys, after)
+					key = after
 				}
+
+				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+					return true
+				}
+
+				keys = append(keys, key)
 			}
 		} else {
 			keys = append(keys, key)
@@ -380,6 +427,41 @@ func (s *Store[T, U]) Keys(ctx context.Context, prefix string) []string {
 	})
 
 	return keys
+}
+
+// KeysFiltered streams directly over the cache and applies both
+// the prefix and the arbitrary filter in one pass.
+func (s *Store[T, U]) KeysFiltered(prefix string, filter func(string) bool) []string {
+	// Prepare the full internal prefix
+	full := s.prefix
+	if prefix != "" {
+		full += events.SanitizeKey(prefix) + "."
+	}
+
+	var out []string
+	s.data.Range(func(internalKey string, _ U) bool {
+		// must start with the bucket-prefix + user prefix
+		if full != "" && !strings.HasPrefix(internalKey, full) {
+			return true
+		}
+
+		// strip off store.prefix so we return the “user” key
+		userKey := internalKey
+		if s.prefix != "" {
+			userKey = strings.TrimPrefix(internalKey, s.prefix)
+		}
+
+		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, userKey) {
+			return true
+		}
+
+		if filter(userKey) {
+			out = append(out, userKey)
+		}
+		return true
+	})
+
+	return out
 }
 
 func (s *Store[T, U]) List() []U {
@@ -393,12 +475,50 @@ func (s *Store[T, U]) List() []U {
 		if s.prefix != "" {
 			key, _ = strings.CutPrefix(key, s.prefix)
 		}
-		item, ok := s.Get(key)
-		if !ok {
+
+		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+			return true
+		}
+
+		item, err := s.Get(key)
+		if err != nil {
 			return true
 		}
 
 		list = append(list, item)
+		return true
+	})
+
+	return list
+}
+
+func (s *Store[T, U]) ListFiltered(ctx context.Context, prefix string, filter func(string) bool) []U {
+	// Prepare the full internal prefix
+	full := s.prefix
+	if prefix != "" {
+		full += events.SanitizeKey(prefix) + "."
+	}
+
+	var list []U
+	s.data.Range(func(internalKey string, val U) bool {
+		// must start with the bucket-prefix + user prefix
+		if full != "" && !strings.HasPrefix(internalKey, full) {
+			return true
+		}
+
+		// strip off store.prefix so we return the “user” key
+		userKey := internalKey
+		if s.prefix != "" {
+			userKey = strings.TrimPrefix(internalKey, s.prefix)
+		}
+
+		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, userKey) {
+			return true
+		}
+
+		if filter(userKey) {
+			list = append(list, val)
+		}
 		return true
 	})
 
@@ -410,11 +530,15 @@ func (s *Store[T, U]) Count() int {
 }
 
 func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bool) {
-	keys := s.Keys(ctx, "")
+	keys := s.Keys("")
 
 	for _, key := range keys {
-		v, ok := s.Get(key)
-		if !ok {
+		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+			continue
+		}
+
+		v, err := s.Get(key)
+		if err != nil {
 			continue
 		}
 
@@ -425,10 +549,14 @@ func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bo
 }
 
 func (s *Store[T, U]) Clear(ctx context.Context) error {
-	keys := s.Keys(ctx, "")
+	keys := s.Keys("")
 
 	errs := multierr.Combine()
 	for _, key := range keys {
+		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+			continue
+		}
+
 		if err := s.Delete(ctx, key); err != nil {
 			errs = multierr.Append(errs, err)
 		}
@@ -464,10 +592,16 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], 
 				return
 
 			case entry := <-updateCh:
+				key := entry.Key()
+				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+					continue
+				}
+
 				ch <- &KeyValueEntry[T, U]{
-					key:       entry.Key(),
+					key:       key,
 					operation: entry.Operation(),
 					value:     entry.Value(),
+					revision:  entry.Revision(),
 				}
 			}
 		}
@@ -479,7 +613,7 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], 
 func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	watcher, err := s.kv.Watch(ctx, s.prefix+">")
 	if err != nil {
-		return fmt.Errorf("failed to start kv. %w", err)
+		return fmt.Errorf("failed to start store kv. %w", err)
 	}
 
 	var ready atomic.Bool
@@ -576,6 +710,7 @@ type KeyValueEntry[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	key       string
 	operation jetstream.KeyValueOp
 	value     []byte
+	revision  uint64
 }
 
 // Key is the name of the key that was retrieved.

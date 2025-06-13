@@ -2,7 +2,8 @@ syntax = "proto3";
 
 package services.livemap;
 
-import "resources/livemap/livemap.proto";
+import "resources/livemap/user_marker.proto";
+import "resources/livemap/marker_marker.proto";
 import "resources/jobs/jobs.proto";
 import "validate/validate.proto";
 
@@ -11,15 +12,17 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/
 message StreamRequest {}
 
 message StreamResponse {
+  optional bool user_on_duty = 1;
+
   oneof data {
     option (validate.required) = true;
 
-    JobsList jobs = 1;
-    MarkerMarkersUpdates markers = 2;
-    UserMarkersUpdates users = 3;
+    JobsList jobs = 2;
+    MarkerMarkersUpdates markers = 3;
+    Snapshot snapshot = 4;
+    resources.livemap.UserMarker user_update = 5;
+    int32 user_delete = 6;
   }
-
-  optional bool user_on_duty = 4;
 }
 
 message JobsList {
@@ -34,12 +37,25 @@ message MarkerMarkersUpdates {
   bool partial = 4;
 }
 
-message UserMarkersUpdates {
-  repeated resources.livemap.UserMarker updated = 1;
-  repeated int32 deleted = 2;
-  int32 part = 3;
-  bool partial = 4;
-  optional bool clear = 5;
+// A roll-up of the entire USERLOC bucket.
+// Published every N seconds on `$KV.user_locations._snapshot`
+// with the headers:
+//   Nats-Rollup: all
+//   KV-Operation: ROLLUP
+message Snapshot {
+  // All currently-known user markers, already filtered for
+  // obsolete PURGE/DELETE events.
+  repeated resources.livemap.UserMarker markers = 1;
+
+  // When the snapshot was generated (Unix epoch millis).
+  int64 generated_at = 2;
+
+  // Optional monotonic counter so a client can ignore older roll-ups
+  // that arrive out-of-order.
+  uint64 snapshot_seq = 3;
+
+  // Version in case we extend the definition later (e.g. add units).
+  uint32 schema_version = 4;
 }
 
 message CreateOrUpdateMarkerRequest {

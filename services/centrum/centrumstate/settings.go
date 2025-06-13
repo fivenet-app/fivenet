@@ -2,14 +2,21 @@ package centrumstate
 
 import (
 	"context"
+	"errors"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/nats-io/nats.go/jetstream"
 )
 
 func (s *State) GetSettings(ctx context.Context, job string) (*centrum.Settings, error) {
 	settings, err := s.settings.GetOrLoad(ctx, job)
 	if err != nil {
-		return nil, err
+		if !errors.Is(err, jetstream.ErrKeyNotFound) {
+			return nil, err
+		}
+		settings = &centrum.Settings{
+			Job: job,
+		}
 	}
 	settings.Default(job)
 

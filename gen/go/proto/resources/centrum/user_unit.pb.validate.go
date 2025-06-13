@@ -59,6 +59,17 @@ func (m *UserUnitMapping) validate(all bool) error {
 
 	// no validation rules for UnitId
 
+	if m.GetUserId() < 0 {
+		err := UserUnitMappingValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := UserUnitMappingValidationError{
 			field:  "Job",
@@ -70,9 +81,9 @@ func (m *UserUnitMapping) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetUserId() < 0 {
+	if m.GetJobGrade() < 0 {
 		err := UserUnitMappingValidationError{
-			field:  "UserId",
+			field:  "JobGrade",
 			reason: "value must be greater than or equal to 0",
 		}
 		if !all {

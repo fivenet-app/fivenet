@@ -101,6 +101,16 @@ func (ws *WebsocketChannel) poll() error {
 	stream := ws.getStream(frame.StreamId)
 
 	switch frame.Payload.(type) {
+	case *grpcws.GrpcFrame_Ping:
+		return ws.write(&grpcws.GrpcFrame{
+			StreamId: frame.StreamId,
+			Payload: &grpcws.GrpcFrame_Ping{
+				Ping: &grpcws.Ping{
+					Pong: true,
+				},
+			},
+		})
+
 	case *grpcws.GrpcFrame_Header:
 		if stream != nil {
 			return ws.writeError(frame.StreamId, "stream already exists")

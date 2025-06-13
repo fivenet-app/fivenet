@@ -20,8 +20,8 @@ type FivenetCentrumDispatches struct {
 	Description *string    `json:"description"`
 	Attributes  *string    `json:"attributes"`
 	References  *string    `json:"references"`
-	X           *float64   `json:"x"`
-	Y           *float64   `json:"y"`
+	X           float64    `json:"x"`
+	Y           float64    `json:"y"`
 	Postal      *string    `json:"postal"`
 	Anon        bool       `json:"anon"`
 	CreatorID   int32      `json:"creator_id"`

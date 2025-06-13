@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/stores/centrum';

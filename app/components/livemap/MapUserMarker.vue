@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import type { PointExpression } from 'leaflet';
 import { MapMarkerIcon } from 'mdi-vue3';
 import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
@@ -7,7 +6,7 @@ import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
 
@@ -67,7 +66,14 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
         :z-index-offset="activeChar === null || marker.user?.userId !== activeChar.userId ? 20 : 30"
         @click="$emit('selected')"
     >
-        <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
+        <LIcon
+            :icon-anchor="iconAnchor"
+            :popup-anchor="popupAnchor"
+            :icon-size="[size, size]"
+            :options="{
+                pmIgnore: true,
+            }"
+        >
             <div class="flex flex-col items-center uppercase">
                 <span
                     v-if="showUnitNames && unit"

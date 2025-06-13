@@ -8,6 +8,7 @@ import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
 import "resources/common/database/database.proto";
 import "resources/jobs/jobs.proto";
+import "resources/livemap/heatmap.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -81,6 +82,13 @@ message AssignUnitRequest {
 }
 
 message AssignUnitResponse {}
+
+message GetDispatchHeatmapRequest {}
+
+message GetDispatchHeatmapResponse {
+  int32 max_entries = 1;
+  repeated resources.livemap.HeatmapEntry entries = 2;
+}
 
 message UpdateDispatchersRequest {
   repeated int32 to_remove = 1 [(validate.rules).repeated.max_items = 10];
@@ -252,6 +260,8 @@ service CentrumService {
   rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
   // @perm: Name=TakeControl
   rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
+  // @perm: Name=TakeControl
+  rpc GetDispatchHeatmap(GetDispatchHeatmapRequest) returns (GetDispatchHeatmapResponse);
 
   // @perm
   rpc UpdateDispatchers(UpdateDispatchersRequest) returns (UpdateDispatchersResponse);

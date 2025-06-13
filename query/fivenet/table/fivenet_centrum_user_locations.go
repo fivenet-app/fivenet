@@ -19,10 +19,13 @@ type fivenetCentrumUserLocationsTable struct {
 	// Columns
 	Identifier mysql.ColumnString
 	Job        mysql.ColumnString
+	JobGrade   mysql.ColumnInteger
 	X          mysql.ColumnFloat
 	Y          mysql.ColumnFloat
 	Hidden     mysql.ColumnBool
+	OnDuty     mysql.ColumnBool
 	UpdatedAt  mysql.ColumnTimestamp
+	Data       mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,13 +69,16 @@ func newFivenetCentrumUserLocationsTableImpl(schemaName, tableName, alias string
 	var (
 		IdentifierColumn = mysql.StringColumn("identifier")
 		JobColumn        = mysql.StringColumn("job")
+		JobGradeColumn   = mysql.IntegerColumn("job_grade")
 		XColumn          = mysql.FloatColumn("x")
 		YColumn          = mysql.FloatColumn("y")
 		HiddenColumn     = mysql.BoolColumn("hidden")
+		OnDutyColumn     = mysql.BoolColumn("on_duty")
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
-		allColumns       = mysql.ColumnList{IdentifierColumn, JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
-		mutableColumns   = mysql.ColumnList{JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
-		defaultColumns   = mysql.ColumnList{HiddenColumn, UpdatedAtColumn}
+		DataColumn       = mysql.StringColumn("data")
+		allColumns       = mysql.ColumnList{IdentifierColumn, JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, OnDutyColumn, UpdatedAtColumn, DataColumn}
+		mutableColumns   = mysql.ColumnList{JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, OnDutyColumn, UpdatedAtColumn, DataColumn}
+		defaultColumns   = mysql.ColumnList{HiddenColumn, OnDutyColumn, UpdatedAtColumn}
 	)
 
 	return fivenetCentrumUserLocationsTable{
@@ -81,10 +87,13 @@ func newFivenetCentrumUserLocationsTableImpl(schemaName, tableName, alias string
 		//Columns
 		Identifier: IdentifierColumn,
 		Job:        JobColumn,
+		JobGrade:   JobGradeColumn,
 		X:          XColumn,
 		Y:          YColumn,
 		Hidden:     HiddenColumn,
+		OnDuty:     OnDutyColumn,
 		UpdatedAt:  UpdatedAtColumn,
+		Data:       DataColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

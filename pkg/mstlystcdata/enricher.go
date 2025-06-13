@@ -36,8 +36,8 @@ func NewEnricher(jobs *Jobs, appCfg appconfig.IConfig, cfg *config.Config) *Enri
 // EnrichJobInfo enriches the job information of an object that
 // implements the `common.IJobInfo` interface.
 func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
-	job, ok := e.jobs.Get(usr.GetJob())
-	if ok {
+	job, err := e.jobs.Get(usr.GetJob())
+	if err == nil {
 		usr.SetJobLabel(job.Label)
 
 		gradeIndex := max(usr.GetJobGrade()-e.jobStartIndex, 0)
@@ -59,8 +59,8 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 }
 
 func (e *Enricher) EnrichJobName(usr common.IJobName) {
-	job, ok := e.jobs.Get(usr.GetJob())
-	if ok {
+	job, err := e.jobs.Get(usr.GetJob())
+	if err == nil {
 		usr.SetJobLabel(job.Label)
 	} else {
 		usr.SetJobLabel(usr.GetJob())
@@ -68,8 +68,8 @@ func (e *Enricher) EnrichJobName(usr common.IJobName) {
 }
 
 func (e *Enricher) GetJobByName(job string) *jobs.Job {
-	j, ok := e.jobs.Get(job)
-	if !ok {
+	j, err := e.jobs.Get(job)
+	if err != nil {
 		return nil
 	}
 

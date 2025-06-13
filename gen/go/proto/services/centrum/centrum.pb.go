@@ -11,6 +11,7 @@ import (
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	livemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -756,6 +757,94 @@ func (*AssignUnitResponse) Descriptor() ([]byte, []int) {
 	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{15}
 }
 
+type GetDispatchHeatmapRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDispatchHeatmapRequest) Reset() {
+	*x = GetDispatchHeatmapRequest{}
+	mi := &file_services_centrum_centrum_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDispatchHeatmapRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDispatchHeatmapRequest) ProtoMessage() {}
+
+func (x *GetDispatchHeatmapRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_centrum_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDispatchHeatmapRequest.ProtoReflect.Descriptor instead.
+func (*GetDispatchHeatmapRequest) Descriptor() ([]byte, []int) {
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{16}
+}
+
+type GetDispatchHeatmapResponse struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	MaxEntries    int32                   `protobuf:"varint,1,opt,name=max_entries,json=maxEntries,proto3" json:"max_entries,omitempty"`
+	Entries       []*livemap.HeatmapEntry `protobuf:"bytes,2,rep,name=entries,proto3" json:"entries,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDispatchHeatmapResponse) Reset() {
+	*x = GetDispatchHeatmapResponse{}
+	mi := &file_services_centrum_centrum_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDispatchHeatmapResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDispatchHeatmapResponse) ProtoMessage() {}
+
+func (x *GetDispatchHeatmapResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_centrum_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDispatchHeatmapResponse.ProtoReflect.Descriptor instead.
+func (*GetDispatchHeatmapResponse) Descriptor() ([]byte, []int) {
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *GetDispatchHeatmapResponse) GetMaxEntries() int32 {
+	if x != nil {
+		return x.MaxEntries
+	}
+	return 0
+}
+
+func (x *GetDispatchHeatmapResponse) GetEntries() []*livemap.HeatmapEntry {
+	if x != nil {
+		return x.Entries
+	}
+	return nil
+}
+
 type UpdateDispatchersRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ToRemove      []int32                `protobuf:"varint,1,rep,packed,name=to_remove,json=toRemove,proto3" json:"to_remove,omitempty"`
@@ -765,7 +854,7 @@ type UpdateDispatchersRequest struct {
 
 func (x *UpdateDispatchersRequest) Reset() {
 	*x = UpdateDispatchersRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[16]
+	mi := &file_services_centrum_centrum_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -777,7 +866,7 @@ func (x *UpdateDispatchersRequest) String() string {
 func (*UpdateDispatchersRequest) ProtoMessage() {}
 
 func (x *UpdateDispatchersRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[16]
+	mi := &file_services_centrum_centrum_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -790,7 +879,7 @@ func (x *UpdateDispatchersRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDispatchersRequest.ProtoReflect.Descriptor instead.
 func (*UpdateDispatchersRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{16}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *UpdateDispatchersRequest) GetToRemove() []int32 {
@@ -809,7 +898,7 @@ type UpdateDispatchersResponse struct {
 
 func (x *UpdateDispatchersResponse) Reset() {
 	*x = UpdateDispatchersResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[17]
+	mi := &file_services_centrum_centrum_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -821,7 +910,7 @@ func (x *UpdateDispatchersResponse) String() string {
 func (*UpdateDispatchersResponse) ProtoMessage() {}
 
 func (x *UpdateDispatchersResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[17]
+	mi := &file_services_centrum_centrum_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -834,7 +923,7 @@ func (x *UpdateDispatchersResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDispatchersResponse.ProtoReflect.Descriptor instead.
 func (*UpdateDispatchersResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{17}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *UpdateDispatchersResponse) GetDispatchers() *centrum.Dispatchers {
@@ -854,7 +943,7 @@ type ListUnitActivityResponse struct {
 
 func (x *ListUnitActivityResponse) Reset() {
 	*x = ListUnitActivityResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[18]
+	mi := &file_services_centrum_centrum_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -866,7 +955,7 @@ func (x *ListUnitActivityResponse) String() string {
 func (*ListUnitActivityResponse) ProtoMessage() {}
 
 func (x *ListUnitActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[18]
+	mi := &file_services_centrum_centrum_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -879,7 +968,7 @@ func (x *ListUnitActivityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListUnitActivityResponse.ProtoReflect.Descriptor instead.
 func (*ListUnitActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{18}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *ListUnitActivityResponse) GetPagination() *database.PaginationResponse {
@@ -905,7 +994,7 @@ type TakeControlRequest struct {
 
 func (x *TakeControlRequest) Reset() {
 	*x = TakeControlRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[19]
+	mi := &file_services_centrum_centrum_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -917,7 +1006,7 @@ func (x *TakeControlRequest) String() string {
 func (*TakeControlRequest) ProtoMessage() {}
 
 func (x *TakeControlRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[19]
+	mi := &file_services_centrum_centrum_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -930,7 +1019,7 @@ func (x *TakeControlRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TakeControlRequest.ProtoReflect.Descriptor instead.
 func (*TakeControlRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{19}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *TakeControlRequest) GetSignon() bool {
@@ -948,7 +1037,7 @@ type TakeControlResponse struct {
 
 func (x *TakeControlResponse) Reset() {
 	*x = TakeControlResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[20]
+	mi := &file_services_centrum_centrum_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -960,7 +1049,7 @@ func (x *TakeControlResponse) String() string {
 func (*TakeControlResponse) ProtoMessage() {}
 
 func (x *TakeControlResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[20]
+	mi := &file_services_centrum_centrum_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -973,7 +1062,7 @@ func (x *TakeControlResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TakeControlResponse.ProtoReflect.Descriptor instead.
 func (*TakeControlResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{20}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{22}
 }
 
 type ListDispatchesRequest struct {
@@ -989,7 +1078,7 @@ type ListDispatchesRequest struct {
 
 func (x *ListDispatchesRequest) Reset() {
 	*x = ListDispatchesRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[21]
+	mi := &file_services_centrum_centrum_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1001,7 +1090,7 @@ func (x *ListDispatchesRequest) String() string {
 func (*ListDispatchesRequest) ProtoMessage() {}
 
 func (x *ListDispatchesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[21]
+	mi := &file_services_centrum_centrum_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1014,7 +1103,7 @@ func (x *ListDispatchesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDispatchesRequest.ProtoReflect.Descriptor instead.
 func (*ListDispatchesRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{21}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *ListDispatchesRequest) GetPagination() *database.PaginationRequest {
@@ -1062,7 +1151,7 @@ type ListDispatchesResponse struct {
 
 func (x *ListDispatchesResponse) Reset() {
 	*x = ListDispatchesResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[22]
+	mi := &file_services_centrum_centrum_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1074,7 +1163,7 @@ func (x *ListDispatchesResponse) String() string {
 func (*ListDispatchesResponse) ProtoMessage() {}
 
 func (x *ListDispatchesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[22]
+	mi := &file_services_centrum_centrum_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1087,7 +1176,7 @@ func (x *ListDispatchesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDispatchesResponse.ProtoReflect.Descriptor instead.
 func (*ListDispatchesResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{22}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *ListDispatchesResponse) GetPagination() *database.PaginationResponse {
@@ -1113,7 +1202,7 @@ type GetDispatchRequest struct {
 
 func (x *GetDispatchRequest) Reset() {
 	*x = GetDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[23]
+	mi := &file_services_centrum_centrum_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1125,7 +1214,7 @@ func (x *GetDispatchRequest) String() string {
 func (*GetDispatchRequest) ProtoMessage() {}
 
 func (x *GetDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[23]
+	mi := &file_services_centrum_centrum_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1138,7 +1227,7 @@ func (x *GetDispatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDispatchRequest.ProtoReflect.Descriptor instead.
 func (*GetDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{23}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetDispatchRequest) GetId() uint64 {
@@ -1157,7 +1246,7 @@ type GetDispatchResponse struct {
 
 func (x *GetDispatchResponse) Reset() {
 	*x = GetDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[24]
+	mi := &file_services_centrum_centrum_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1169,7 +1258,7 @@ func (x *GetDispatchResponse) String() string {
 func (*GetDispatchResponse) ProtoMessage() {}
 
 func (x *GetDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[24]
+	mi := &file_services_centrum_centrum_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1182,7 +1271,7 @@ func (x *GetDispatchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDispatchResponse.ProtoReflect.Descriptor instead.
 func (*GetDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{24}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *GetDispatchResponse) GetDispatch() *centrum.Dispatch {
@@ -1201,7 +1290,7 @@ type CreateDispatchRequest struct {
 
 func (x *CreateDispatchRequest) Reset() {
 	*x = CreateDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[25]
+	mi := &file_services_centrum_centrum_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1213,7 +1302,7 @@ func (x *CreateDispatchRequest) String() string {
 func (*CreateDispatchRequest) ProtoMessage() {}
 
 func (x *CreateDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[25]
+	mi := &file_services_centrum_centrum_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1226,7 +1315,7 @@ func (x *CreateDispatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateDispatchRequest.ProtoReflect.Descriptor instead.
 func (*CreateDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{25}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *CreateDispatchRequest) GetDispatch() *centrum.Dispatch {
@@ -1245,7 +1334,7 @@ type CreateDispatchResponse struct {
 
 func (x *CreateDispatchResponse) Reset() {
 	*x = CreateDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[26]
+	mi := &file_services_centrum_centrum_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1257,7 +1346,7 @@ func (x *CreateDispatchResponse) String() string {
 func (*CreateDispatchResponse) ProtoMessage() {}
 
 func (x *CreateDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[26]
+	mi := &file_services_centrum_centrum_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1270,7 +1359,7 @@ func (x *CreateDispatchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateDispatchResponse.ProtoReflect.Descriptor instead.
 func (*CreateDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{26}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *CreateDispatchResponse) GetDispatch() *centrum.Dispatch {
@@ -1289,7 +1378,7 @@ type UpdateDispatchRequest struct {
 
 func (x *UpdateDispatchRequest) Reset() {
 	*x = UpdateDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[27]
+	mi := &file_services_centrum_centrum_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1301,7 +1390,7 @@ func (x *UpdateDispatchRequest) String() string {
 func (*UpdateDispatchRequest) ProtoMessage() {}
 
 func (x *UpdateDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[27]
+	mi := &file_services_centrum_centrum_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1314,7 +1403,7 @@ func (x *UpdateDispatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDispatchRequest.ProtoReflect.Descriptor instead.
 func (*UpdateDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{27}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *UpdateDispatchRequest) GetDispatch() *centrum.Dispatch {
@@ -1332,7 +1421,7 @@ type UpdateDispatchResponse struct {
 
 func (x *UpdateDispatchResponse) Reset() {
 	*x = UpdateDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[28]
+	mi := &file_services_centrum_centrum_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1344,7 +1433,7 @@ func (x *UpdateDispatchResponse) String() string {
 func (*UpdateDispatchResponse) ProtoMessage() {}
 
 func (x *UpdateDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[28]
+	mi := &file_services_centrum_centrum_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1357,7 +1446,7 @@ func (x *UpdateDispatchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDispatchResponse.ProtoReflect.Descriptor instead.
 func (*UpdateDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{28}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{30}
 }
 
 type DeleteDispatchRequest struct {
@@ -1369,7 +1458,7 @@ type DeleteDispatchRequest struct {
 
 func (x *DeleteDispatchRequest) Reset() {
 	*x = DeleteDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[29]
+	mi := &file_services_centrum_centrum_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1381,7 +1470,7 @@ func (x *DeleteDispatchRequest) String() string {
 func (*DeleteDispatchRequest) ProtoMessage() {}
 
 func (x *DeleteDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[29]
+	mi := &file_services_centrum_centrum_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1394,7 +1483,7 @@ func (x *DeleteDispatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDispatchRequest.ProtoReflect.Descriptor instead.
 func (*DeleteDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{29}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *DeleteDispatchRequest) GetId() uint64 {
@@ -1412,7 +1501,7 @@ type DeleteDispatchResponse struct {
 
 func (x *DeleteDispatchResponse) Reset() {
 	*x = DeleteDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[30]
+	mi := &file_services_centrum_centrum_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1424,7 +1513,7 @@ func (x *DeleteDispatchResponse) String() string {
 func (*DeleteDispatchResponse) ProtoMessage() {}
 
 func (x *DeleteDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[30]
+	mi := &file_services_centrum_centrum_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1437,7 +1526,7 @@ func (x *DeleteDispatchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteDispatchResponse.ProtoReflect.Descriptor instead.
 func (*DeleteDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{30}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{32}
 }
 
 type UpdateDispatchStatusRequest struct {
@@ -1454,7 +1543,7 @@ type UpdateDispatchStatusRequest struct {
 
 func (x *UpdateDispatchStatusRequest) Reset() {
 	*x = UpdateDispatchStatusRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[31]
+	mi := &file_services_centrum_centrum_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1466,7 +1555,7 @@ func (x *UpdateDispatchStatusRequest) String() string {
 func (*UpdateDispatchStatusRequest) ProtoMessage() {}
 
 func (x *UpdateDispatchStatusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[31]
+	mi := &file_services_centrum_centrum_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1479,7 +1568,7 @@ func (x *UpdateDispatchStatusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDispatchStatusRequest.ProtoReflect.Descriptor instead.
 func (*UpdateDispatchStatusRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{31}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *UpdateDispatchStatusRequest) GetDispatchId() uint64 {
@@ -1518,7 +1607,7 @@ type UpdateDispatchStatusResponse struct {
 
 func (x *UpdateDispatchStatusResponse) Reset() {
 	*x = UpdateDispatchStatusResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[32]
+	mi := &file_services_centrum_centrum_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1530,7 +1619,7 @@ func (x *UpdateDispatchStatusResponse) String() string {
 func (*UpdateDispatchStatusResponse) ProtoMessage() {}
 
 func (x *UpdateDispatchStatusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[32]
+	mi := &file_services_centrum_centrum_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1543,7 +1632,7 @@ func (x *UpdateDispatchStatusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateDispatchStatusResponse.ProtoReflect.Descriptor instead.
 func (*UpdateDispatchStatusResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{32}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{34}
 }
 
 type AssignDispatchRequest struct {
@@ -1558,7 +1647,7 @@ type AssignDispatchRequest struct {
 
 func (x *AssignDispatchRequest) Reset() {
 	*x = AssignDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[33]
+	mi := &file_services_centrum_centrum_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1570,7 +1659,7 @@ func (x *AssignDispatchRequest) String() string {
 func (*AssignDispatchRequest) ProtoMessage() {}
 
 func (x *AssignDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[33]
+	mi := &file_services_centrum_centrum_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1583,7 +1672,7 @@ func (x *AssignDispatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignDispatchRequest.ProtoReflect.Descriptor instead.
 func (*AssignDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{33}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *AssignDispatchRequest) GetDispatchId() uint64 {
@@ -1622,7 +1711,7 @@ type AssignDispatchResponse struct {
 
 func (x *AssignDispatchResponse) Reset() {
 	*x = AssignDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[34]
+	mi := &file_services_centrum_centrum_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1634,7 +1723,7 @@ func (x *AssignDispatchResponse) String() string {
 func (*AssignDispatchResponse) ProtoMessage() {}
 
 func (x *AssignDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[34]
+	mi := &file_services_centrum_centrum_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1647,7 +1736,7 @@ func (x *AssignDispatchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AssignDispatchResponse.ProtoReflect.Descriptor instead.
 func (*AssignDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{34}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{36}
 }
 
 type ListDispatchActivityResponse struct {
@@ -1660,7 +1749,7 @@ type ListDispatchActivityResponse struct {
 
 func (x *ListDispatchActivityResponse) Reset() {
 	*x = ListDispatchActivityResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[35]
+	mi := &file_services_centrum_centrum_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1672,7 +1761,7 @@ func (x *ListDispatchActivityResponse) String() string {
 func (*ListDispatchActivityResponse) ProtoMessage() {}
 
 func (x *ListDispatchActivityResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[35]
+	mi := &file_services_centrum_centrum_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1685,7 +1774,7 @@ func (x *ListDispatchActivityResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDispatchActivityResponse.ProtoReflect.Descriptor instead.
 func (*ListDispatchActivityResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{35}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *ListDispatchActivityResponse) GetPagination() *database.PaginationResponse {
@@ -1711,7 +1800,7 @@ type JoinUnitRequest struct {
 
 func (x *JoinUnitRequest) Reset() {
 	*x = JoinUnitRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[36]
+	mi := &file_services_centrum_centrum_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1723,7 +1812,7 @@ func (x *JoinUnitRequest) String() string {
 func (*JoinUnitRequest) ProtoMessage() {}
 
 func (x *JoinUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[36]
+	mi := &file_services_centrum_centrum_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1736,7 +1825,7 @@ func (x *JoinUnitRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JoinUnitRequest.ProtoReflect.Descriptor instead.
 func (*JoinUnitRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{36}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{38}
 }
 
 func (x *JoinUnitRequest) GetUnitId() uint64 {
@@ -1755,7 +1844,7 @@ type JoinUnitResponse struct {
 
 func (x *JoinUnitResponse) Reset() {
 	*x = JoinUnitResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[37]
+	mi := &file_services_centrum_centrum_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1767,7 +1856,7 @@ func (x *JoinUnitResponse) String() string {
 func (*JoinUnitResponse) ProtoMessage() {}
 
 func (x *JoinUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[37]
+	mi := &file_services_centrum_centrum_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1780,7 +1869,7 @@ func (x *JoinUnitResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JoinUnitResponse.ProtoReflect.Descriptor instead.
 func (*JoinUnitResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{37}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *JoinUnitResponse) GetUnit() *centrum.Unit {
@@ -1802,7 +1891,7 @@ type TakeDispatchRequest struct {
 
 func (x *TakeDispatchRequest) Reset() {
 	*x = TakeDispatchRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[38]
+	mi := &file_services_centrum_centrum_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1814,7 +1903,7 @@ func (x *TakeDispatchRequest) String() string {
 func (*TakeDispatchRequest) ProtoMessage() {}
 
 func (x *TakeDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[38]
+	mi := &file_services_centrum_centrum_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1827,7 +1916,7 @@ func (x *TakeDispatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TakeDispatchRequest.ProtoReflect.Descriptor instead.
 func (*TakeDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{38}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *TakeDispatchRequest) GetDispatchIds() []uint64 {
@@ -1859,7 +1948,7 @@ type TakeDispatchResponse struct {
 
 func (x *TakeDispatchResponse) Reset() {
 	*x = TakeDispatchResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[39]
+	mi := &file_services_centrum_centrum_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1871,7 +1960,7 @@ func (x *TakeDispatchResponse) String() string {
 func (*TakeDispatchResponse) ProtoMessage() {}
 
 func (x *TakeDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[39]
+	mi := &file_services_centrum_centrum_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1884,7 +1973,7 @@ func (x *TakeDispatchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TakeDispatchResponse.ProtoReflect.Descriptor instead.
 func (*TakeDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{39}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{41}
 }
 
 type StreamHandshake struct {
@@ -1898,7 +1987,7 @@ type StreamHandshake struct {
 
 func (x *StreamHandshake) Reset() {
 	*x = StreamHandshake{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[40]
+	mi := &file_services_centrum_centrum_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1910,7 +1999,7 @@ func (x *StreamHandshake) String() string {
 func (*StreamHandshake) ProtoMessage() {}
 
 func (x *StreamHandshake) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[40]
+	mi := &file_services_centrum_centrum_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1923,7 +2012,7 @@ func (x *StreamHandshake) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamHandshake.ProtoReflect.Descriptor instead.
 func (*StreamHandshake) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{40}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *StreamHandshake) GetServerTime() *timestamp.Timestamp {
@@ -1960,7 +2049,7 @@ type LatestState struct {
 
 func (x *LatestState) Reset() {
 	*x = LatestState{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[41]
+	mi := &file_services_centrum_centrum_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1972,7 +2061,7 @@ func (x *LatestState) String() string {
 func (*LatestState) ProtoMessage() {}
 
 func (x *LatestState) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[41]
+	mi := &file_services_centrum_centrum_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1985,7 +2074,7 @@ func (x *LatestState) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LatestState.ProtoReflect.Descriptor instead.
 func (*LatestState) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{41}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *LatestState) GetDispatchers() *Dispatchers {
@@ -2024,7 +2113,7 @@ type StreamRequest struct {
 
 func (x *StreamRequest) Reset() {
 	*x = StreamRequest{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[42]
+	mi := &file_services_centrum_centrum_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2036,7 +2125,7 @@ func (x *StreamRequest) String() string {
 func (*StreamRequest) ProtoMessage() {}
 
 func (x *StreamRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[42]
+	mi := &file_services_centrum_centrum_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2049,7 +2138,7 @@ func (x *StreamRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
 func (*StreamRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{42}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{44}
 }
 
 type StreamResponse struct {
@@ -2076,7 +2165,7 @@ type StreamResponse struct {
 
 func (x *StreamResponse) Reset() {
 	*x = StreamResponse{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[43]
+	mi := &file_services_centrum_centrum_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2088,7 +2177,7 @@ func (x *StreamResponse) String() string {
 func (*StreamResponse) ProtoMessage() {}
 
 func (x *StreamResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[43]
+	mi := &file_services_centrum_centrum_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2101,7 +2190,7 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamResponse.ProtoReflect.Descriptor instead.
 func (*StreamResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{43}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *StreamResponse) GetChange() isStreamResponse_Change {
@@ -2319,7 +2408,7 @@ type JobsList struct {
 
 func (x *JobsList) Reset() {
 	*x = JobsList{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[44]
+	mi := &file_services_centrum_centrum_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2331,7 +2420,7 @@ func (x *JobsList) String() string {
 func (*JobsList) ProtoMessage() {}
 
 func (x *JobsList) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[44]
+	mi := &file_services_centrum_centrum_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2344,7 +2433,7 @@ func (x *JobsList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JobsList.ProtoReflect.Descriptor instead.
 func (*JobsList) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{44}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *JobsList) GetDispatches() []*jobs.Job {
@@ -2363,7 +2452,7 @@ type Dispatchers struct {
 
 func (x *Dispatchers) Reset() {
 	*x = Dispatchers{}
-	mi := &file_services_centrum_centrum_proto_msgTypes[45]
+	mi := &file_services_centrum_centrum_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2375,7 +2464,7 @@ func (x *Dispatchers) String() string {
 func (*Dispatchers) ProtoMessage() {}
 
 func (x *Dispatchers) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[45]
+	mi := &file_services_centrum_centrum_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2388,7 +2477,7 @@ func (x *Dispatchers) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Dispatchers.ProtoReflect.Descriptor instead.
 func (*Dispatchers) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{45}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{47}
 }
 
 func (x *Dispatchers) GetDispatchers() []*centrum.Dispatchers {
@@ -2402,7 +2491,7 @@ var File_services_centrum_centrum_proto protoreflect.FileDescriptor
 
 const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x85\x01\n" +
+	"\x1eservices/centrum/centrum.proto\x12\x10services.centrum\x1a#resources/centrum/dispatchers.proto\x1a\"resources/centrum/dispatches.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a(resources/common/database/database.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1fresources/livemap/heatmap.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x85\x01\n" +
 	"\x1bListDispatchActivityRequest\x12V\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
@@ -2444,7 +2533,12 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\aunit_id\x18\x01 \x01(\x04R\x06unitId\x12\x15\n" +
 	"\x06to_add\x18\x02 \x03(\x05R\x05toAdd\x12\x1b\n" +
 	"\tto_remove\x18\x03 \x03(\x05R\btoRemove\"\x14\n" +
-	"\x12AssignUnitResponse\"A\n" +
+	"\x12AssignUnitResponse\"\x1b\n" +
+	"\x19GetDispatchHeatmapRequest\"x\n" +
+	"\x1aGetDispatchHeatmapResponse\x12\x1f\n" +
+	"\vmax_entries\x18\x01 \x01(\x05R\n" +
+	"maxEntries\x129\n" +
+	"\aentries\x18\x02 \x03(\v2\x1f.resources.livemap.HeatmapEntryR\aentries\"A\n" +
 	"\x18UpdateDispatchersRequest\x12%\n" +
 	"\tto_remove\x18\x01 \x03(\x05B\b\xfaB\x05\x92\x01\x02\x10\n" +
 	"R\btoRemove\"]\n" +
@@ -2562,7 +2656,7 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"dispatches\x18\x01 \x03(\v2\x13.resources.jobs.JobR\n" +
 	"dispatches\"O\n" +
 	"\vDispatchers\x12@\n" +
-	"\vdispatchers\x18\x01 \x03(\v2\x1e.resources.centrum.DispatchersR\vdispatchers2\xae\x10\n" +
+	"\vdispatchers\x18\x01 \x03(\v2\x1e.resources.centrum.DispatchersR\vdispatchers2\x9f\x11\n" +
 	"\x0eCentrumService\x12c\n" +
 	"\x0eUpdateSettings\x12'.services.centrum.UpdateSettingsRequest\x1a(.services.centrum.UpdateSettingsResponse\x12c\n" +
 	"\x0eCreateDispatch\x12'.services.centrum.CreateDispatchRequest\x1a(.services.centrum.CreateDispatchResponse\x12c\n" +
@@ -2571,7 +2665,8 @@ const file_services_centrum_centrum_proto_rawDesc = "" +
 	"\vTakeControl\x12$.services.centrum.TakeControlRequest\x1a%.services.centrum.TakeControlResponse\x12c\n" +
 	"\x0eAssignDispatch\x12'.services.centrum.AssignDispatchRequest\x1a(.services.centrum.AssignDispatchResponse\x12W\n" +
 	"\n" +
-	"AssignUnit\x12#.services.centrum.AssignUnitRequest\x1a$.services.centrum.AssignUnitResponse\x12l\n" +
+	"AssignUnit\x12#.services.centrum.AssignUnitRequest\x1a$.services.centrum.AssignUnitResponse\x12o\n" +
+	"\x12GetDispatchHeatmap\x12+.services.centrum.GetDispatchHeatmapRequest\x1a,.services.centrum.GetDispatchHeatmapResponse\x12l\n" +
 	"\x11UpdateDispatchers\x12*.services.centrum.UpdateDispatchersRequest\x1a+.services.centrum.UpdateDispatchersResponse\x12M\n" +
 	"\x06Stream\x12\x1f.services.centrum.StreamRequest\x1a .services.centrum.StreamResponse0\x01\x12Z\n" +
 	"\vGetSettings\x12$.services.centrum.GetSettingsRequest\x1a%.services.centrum.GetSettingsResponse\x12Q\n" +
@@ -2600,7 +2695,7 @@ func file_services_centrum_centrum_proto_rawDescGZIP() []byte {
 	return file_services_centrum_centrum_proto_rawDescData
 }
 
-var file_services_centrum_centrum_proto_msgTypes = make([]protoimpl.MessageInfo, 46)
+var file_services_centrum_centrum_proto_msgTypes = make([]protoimpl.MessageInfo, 48)
 var file_services_centrum_centrum_proto_goTypes = []any{
 	(*ListDispatchActivityRequest)(nil),  // 0: services.centrum.ListDispatchActivityRequest
 	(*ListUnitActivityRequest)(nil),      // 1: services.centrum.ListUnitActivityRequest
@@ -2618,144 +2713,150 @@ var file_services_centrum_centrum_proto_goTypes = []any{
 	(*UpdateUnitStatusResponse)(nil),     // 13: services.centrum.UpdateUnitStatusResponse
 	(*AssignUnitRequest)(nil),            // 14: services.centrum.AssignUnitRequest
 	(*AssignUnitResponse)(nil),           // 15: services.centrum.AssignUnitResponse
-	(*UpdateDispatchersRequest)(nil),     // 16: services.centrum.UpdateDispatchersRequest
-	(*UpdateDispatchersResponse)(nil),    // 17: services.centrum.UpdateDispatchersResponse
-	(*ListUnitActivityResponse)(nil),     // 18: services.centrum.ListUnitActivityResponse
-	(*TakeControlRequest)(nil),           // 19: services.centrum.TakeControlRequest
-	(*TakeControlResponse)(nil),          // 20: services.centrum.TakeControlResponse
-	(*ListDispatchesRequest)(nil),        // 21: services.centrum.ListDispatchesRequest
-	(*ListDispatchesResponse)(nil),       // 22: services.centrum.ListDispatchesResponse
-	(*GetDispatchRequest)(nil),           // 23: services.centrum.GetDispatchRequest
-	(*GetDispatchResponse)(nil),          // 24: services.centrum.GetDispatchResponse
-	(*CreateDispatchRequest)(nil),        // 25: services.centrum.CreateDispatchRequest
-	(*CreateDispatchResponse)(nil),       // 26: services.centrum.CreateDispatchResponse
-	(*UpdateDispatchRequest)(nil),        // 27: services.centrum.UpdateDispatchRequest
-	(*UpdateDispatchResponse)(nil),       // 28: services.centrum.UpdateDispatchResponse
-	(*DeleteDispatchRequest)(nil),        // 29: services.centrum.DeleteDispatchRequest
-	(*DeleteDispatchResponse)(nil),       // 30: services.centrum.DeleteDispatchResponse
-	(*UpdateDispatchStatusRequest)(nil),  // 31: services.centrum.UpdateDispatchStatusRequest
-	(*UpdateDispatchStatusResponse)(nil), // 32: services.centrum.UpdateDispatchStatusResponse
-	(*AssignDispatchRequest)(nil),        // 33: services.centrum.AssignDispatchRequest
-	(*AssignDispatchResponse)(nil),       // 34: services.centrum.AssignDispatchResponse
-	(*ListDispatchActivityResponse)(nil), // 35: services.centrum.ListDispatchActivityResponse
-	(*JoinUnitRequest)(nil),              // 36: services.centrum.JoinUnitRequest
-	(*JoinUnitResponse)(nil),             // 37: services.centrum.JoinUnitResponse
-	(*TakeDispatchRequest)(nil),          // 38: services.centrum.TakeDispatchRequest
-	(*TakeDispatchResponse)(nil),         // 39: services.centrum.TakeDispatchResponse
-	(*StreamHandshake)(nil),              // 40: services.centrum.StreamHandshake
-	(*LatestState)(nil),                  // 41: services.centrum.LatestState
-	(*StreamRequest)(nil),                // 42: services.centrum.StreamRequest
-	(*StreamResponse)(nil),               // 43: services.centrum.StreamResponse
-	(*JobsList)(nil),                     // 44: services.centrum.JobsList
-	(*Dispatchers)(nil),                  // 45: services.centrum.Dispatchers
-	(*database.PaginationRequest)(nil),   // 46: resources.common.database.PaginationRequest
-	(*centrum.Settings)(nil),             // 47: resources.centrum.Settings
-	(centrum.StatusUnit)(0),              // 48: resources.centrum.StatusUnit
-	(*centrum.Unit)(nil),                 // 49: resources.centrum.Unit
-	(*centrum.Dispatchers)(nil),          // 50: resources.centrum.Dispatchers
-	(*database.PaginationResponse)(nil),  // 51: resources.common.database.PaginationResponse
-	(*centrum.UnitStatus)(nil),           // 52: resources.centrum.UnitStatus
-	(centrum.StatusDispatch)(0),          // 53: resources.centrum.StatusDispatch
-	(*centrum.Dispatch)(nil),             // 54: resources.centrum.Dispatch
-	(*centrum.DispatchStatus)(nil),       // 55: resources.centrum.DispatchStatus
-	(centrum.TakeDispatchResp)(0),        // 56: resources.centrum.TakeDispatchResp
-	(*timestamp.Timestamp)(nil),          // 57: resources.timestamp.Timestamp
-	(*jobs.Job)(nil),                     // 58: resources.jobs.Job
+	(*GetDispatchHeatmapRequest)(nil),    // 16: services.centrum.GetDispatchHeatmapRequest
+	(*GetDispatchHeatmapResponse)(nil),   // 17: services.centrum.GetDispatchHeatmapResponse
+	(*UpdateDispatchersRequest)(nil),     // 18: services.centrum.UpdateDispatchersRequest
+	(*UpdateDispatchersResponse)(nil),    // 19: services.centrum.UpdateDispatchersResponse
+	(*ListUnitActivityResponse)(nil),     // 20: services.centrum.ListUnitActivityResponse
+	(*TakeControlRequest)(nil),           // 21: services.centrum.TakeControlRequest
+	(*TakeControlResponse)(nil),          // 22: services.centrum.TakeControlResponse
+	(*ListDispatchesRequest)(nil),        // 23: services.centrum.ListDispatchesRequest
+	(*ListDispatchesResponse)(nil),       // 24: services.centrum.ListDispatchesResponse
+	(*GetDispatchRequest)(nil),           // 25: services.centrum.GetDispatchRequest
+	(*GetDispatchResponse)(nil),          // 26: services.centrum.GetDispatchResponse
+	(*CreateDispatchRequest)(nil),        // 27: services.centrum.CreateDispatchRequest
+	(*CreateDispatchResponse)(nil),       // 28: services.centrum.CreateDispatchResponse
+	(*UpdateDispatchRequest)(nil),        // 29: services.centrum.UpdateDispatchRequest
+	(*UpdateDispatchResponse)(nil),       // 30: services.centrum.UpdateDispatchResponse
+	(*DeleteDispatchRequest)(nil),        // 31: services.centrum.DeleteDispatchRequest
+	(*DeleteDispatchResponse)(nil),       // 32: services.centrum.DeleteDispatchResponse
+	(*UpdateDispatchStatusRequest)(nil),  // 33: services.centrum.UpdateDispatchStatusRequest
+	(*UpdateDispatchStatusResponse)(nil), // 34: services.centrum.UpdateDispatchStatusResponse
+	(*AssignDispatchRequest)(nil),        // 35: services.centrum.AssignDispatchRequest
+	(*AssignDispatchResponse)(nil),       // 36: services.centrum.AssignDispatchResponse
+	(*ListDispatchActivityResponse)(nil), // 37: services.centrum.ListDispatchActivityResponse
+	(*JoinUnitRequest)(nil),              // 38: services.centrum.JoinUnitRequest
+	(*JoinUnitResponse)(nil),             // 39: services.centrum.JoinUnitResponse
+	(*TakeDispatchRequest)(nil),          // 40: services.centrum.TakeDispatchRequest
+	(*TakeDispatchResponse)(nil),         // 41: services.centrum.TakeDispatchResponse
+	(*StreamHandshake)(nil),              // 42: services.centrum.StreamHandshake
+	(*LatestState)(nil),                  // 43: services.centrum.LatestState
+	(*StreamRequest)(nil),                // 44: services.centrum.StreamRequest
+	(*StreamResponse)(nil),               // 45: services.centrum.StreamResponse
+	(*JobsList)(nil),                     // 46: services.centrum.JobsList
+	(*Dispatchers)(nil),                  // 47: services.centrum.Dispatchers
+	(*database.PaginationRequest)(nil),   // 48: resources.common.database.PaginationRequest
+	(*centrum.Settings)(nil),             // 49: resources.centrum.Settings
+	(centrum.StatusUnit)(0),              // 50: resources.centrum.StatusUnit
+	(*centrum.Unit)(nil),                 // 51: resources.centrum.Unit
+	(*livemap.HeatmapEntry)(nil),         // 52: resources.livemap.HeatmapEntry
+	(*centrum.Dispatchers)(nil),          // 53: resources.centrum.Dispatchers
+	(*database.PaginationResponse)(nil),  // 54: resources.common.database.PaginationResponse
+	(*centrum.UnitStatus)(nil),           // 55: resources.centrum.UnitStatus
+	(centrum.StatusDispatch)(0),          // 56: resources.centrum.StatusDispatch
+	(*centrum.Dispatch)(nil),             // 57: resources.centrum.Dispatch
+	(*centrum.DispatchStatus)(nil),       // 58: resources.centrum.DispatchStatus
+	(centrum.TakeDispatchResp)(0),        // 59: resources.centrum.TakeDispatchResp
+	(*timestamp.Timestamp)(nil),          // 60: resources.timestamp.Timestamp
+	(*jobs.Job)(nil),                     // 61: resources.jobs.Job
 }
 var file_services_centrum_centrum_proto_depIdxs = []int32{
-	46, // 0: services.centrum.ListDispatchActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	46, // 1: services.centrum.ListUnitActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	47, // 2: services.centrum.GetSettingsResponse.settings:type_name -> resources.centrum.Settings
-	47, // 3: services.centrum.UpdateSettingsRequest.settings:type_name -> resources.centrum.Settings
-	47, // 4: services.centrum.UpdateSettingsResponse.settings:type_name -> resources.centrum.Settings
-	48, // 5: services.centrum.ListUnitsRequest.status:type_name -> resources.centrum.StatusUnit
-	49, // 6: services.centrum.ListUnitsResponse.units:type_name -> resources.centrum.Unit
-	49, // 7: services.centrum.CreateOrUpdateUnitRequest.unit:type_name -> resources.centrum.Unit
-	49, // 8: services.centrum.CreateOrUpdateUnitResponse.unit:type_name -> resources.centrum.Unit
-	48, // 9: services.centrum.UpdateUnitStatusRequest.status:type_name -> resources.centrum.StatusUnit
-	50, // 10: services.centrum.UpdateDispatchersResponse.dispatchers:type_name -> resources.centrum.Dispatchers
-	51, // 11: services.centrum.ListUnitActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	52, // 12: services.centrum.ListUnitActivityResponse.activity:type_name -> resources.centrum.UnitStatus
-	46, // 13: services.centrum.ListDispatchesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	53, // 14: services.centrum.ListDispatchesRequest.status:type_name -> resources.centrum.StatusDispatch
-	53, // 15: services.centrum.ListDispatchesRequest.not_status:type_name -> resources.centrum.StatusDispatch
-	51, // 16: services.centrum.ListDispatchesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	54, // 17: services.centrum.ListDispatchesResponse.dispatches:type_name -> resources.centrum.Dispatch
-	54, // 18: services.centrum.GetDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
-	54, // 19: services.centrum.CreateDispatchRequest.dispatch:type_name -> resources.centrum.Dispatch
-	54, // 20: services.centrum.CreateDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
-	54, // 21: services.centrum.UpdateDispatchRequest.dispatch:type_name -> resources.centrum.Dispatch
-	53, // 22: services.centrum.UpdateDispatchStatusRequest.status:type_name -> resources.centrum.StatusDispatch
-	51, // 23: services.centrum.ListDispatchActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	55, // 24: services.centrum.ListDispatchActivityResponse.activity:type_name -> resources.centrum.DispatchStatus
-	49, // 25: services.centrum.JoinUnitResponse.unit:type_name -> resources.centrum.Unit
-	56, // 26: services.centrum.TakeDispatchRequest.resp:type_name -> resources.centrum.TakeDispatchResp
-	57, // 27: services.centrum.StreamHandshake.server_time:type_name -> resources.timestamp.Timestamp
-	47, // 28: services.centrum.StreamHandshake.settings:type_name -> resources.centrum.Settings
-	44, // 29: services.centrum.StreamHandshake.jobs:type_name -> services.centrum.JobsList
-	45, // 30: services.centrum.LatestState.dispatchers:type_name -> services.centrum.Dispatchers
-	49, // 31: services.centrum.LatestState.units:type_name -> resources.centrum.Unit
-	54, // 32: services.centrum.LatestState.dispatches:type_name -> resources.centrum.Dispatch
-	40, // 33: services.centrum.StreamResponse.handshake:type_name -> services.centrum.StreamHandshake
-	41, // 34: services.centrum.StreamResponse.latest_state:type_name -> services.centrum.LatestState
-	47, // 35: services.centrum.StreamResponse.settings:type_name -> resources.centrum.Settings
-	44, // 36: services.centrum.StreamResponse.jobs:type_name -> services.centrum.JobsList
-	50, // 37: services.centrum.StreamResponse.dispatchers:type_name -> resources.centrum.Dispatchers
-	49, // 38: services.centrum.StreamResponse.unit_updated:type_name -> resources.centrum.Unit
-	54, // 39: services.centrum.StreamResponse.dispatch_updated:type_name -> resources.centrum.Dispatch
-	49, // 40: services.centrum.StreamResponse.unit_created:type_name -> resources.centrum.Unit
-	52, // 41: services.centrum.StreamResponse.unit_status:type_name -> resources.centrum.UnitStatus
-	54, // 42: services.centrum.StreamResponse.dispatch_created:type_name -> resources.centrum.Dispatch
-	55, // 43: services.centrum.StreamResponse.dispatch_status:type_name -> resources.centrum.DispatchStatus
-	58, // 44: services.centrum.JobsList.dispatches:type_name -> resources.jobs.Job
-	50, // 45: services.centrum.Dispatchers.dispatchers:type_name -> resources.centrum.Dispatchers
-	4,  // 46: services.centrum.CentrumService.UpdateSettings:input_type -> services.centrum.UpdateSettingsRequest
-	25, // 47: services.centrum.CentrumService.CreateDispatch:input_type -> services.centrum.CreateDispatchRequest
-	27, // 48: services.centrum.CentrumService.UpdateDispatch:input_type -> services.centrum.UpdateDispatchRequest
-	29, // 49: services.centrum.CentrumService.DeleteDispatch:input_type -> services.centrum.DeleteDispatchRequest
-	19, // 50: services.centrum.CentrumService.TakeControl:input_type -> services.centrum.TakeControlRequest
-	33, // 51: services.centrum.CentrumService.AssignDispatch:input_type -> services.centrum.AssignDispatchRequest
-	14, // 52: services.centrum.CentrumService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
-	16, // 53: services.centrum.CentrumService.UpdateDispatchers:input_type -> services.centrum.UpdateDispatchersRequest
-	42, // 54: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
-	2,  // 55: services.centrum.CentrumService.GetSettings:input_type -> services.centrum.GetSettingsRequest
-	36, // 56: services.centrum.CentrumService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
-	6,  // 57: services.centrum.CentrumService.ListUnits:input_type -> services.centrum.ListUnitsRequest
-	1,  // 58: services.centrum.CentrumService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
-	23, // 59: services.centrum.CentrumService.GetDispatch:input_type -> services.centrum.GetDispatchRequest
-	21, // 60: services.centrum.CentrumService.ListDispatches:input_type -> services.centrum.ListDispatchesRequest
-	0,  // 61: services.centrum.CentrumService.ListDispatchActivity:input_type -> services.centrum.ListDispatchActivityRequest
-	8,  // 62: services.centrum.CentrumService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
-	10, // 63: services.centrum.CentrumService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
-	38, // 64: services.centrum.CentrumService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
-	12, // 65: services.centrum.CentrumService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
-	31, // 66: services.centrum.CentrumService.UpdateDispatchStatus:input_type -> services.centrum.UpdateDispatchStatusRequest
-	5,  // 67: services.centrum.CentrumService.UpdateSettings:output_type -> services.centrum.UpdateSettingsResponse
-	26, // 68: services.centrum.CentrumService.CreateDispatch:output_type -> services.centrum.CreateDispatchResponse
-	28, // 69: services.centrum.CentrumService.UpdateDispatch:output_type -> services.centrum.UpdateDispatchResponse
-	30, // 70: services.centrum.CentrumService.DeleteDispatch:output_type -> services.centrum.DeleteDispatchResponse
-	20, // 71: services.centrum.CentrumService.TakeControl:output_type -> services.centrum.TakeControlResponse
-	34, // 72: services.centrum.CentrumService.AssignDispatch:output_type -> services.centrum.AssignDispatchResponse
-	15, // 73: services.centrum.CentrumService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
-	17, // 74: services.centrum.CentrumService.UpdateDispatchers:output_type -> services.centrum.UpdateDispatchersResponse
-	43, // 75: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
-	3,  // 76: services.centrum.CentrumService.GetSettings:output_type -> services.centrum.GetSettingsResponse
-	37, // 77: services.centrum.CentrumService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
-	7,  // 78: services.centrum.CentrumService.ListUnits:output_type -> services.centrum.ListUnitsResponse
-	18, // 79: services.centrum.CentrumService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
-	24, // 80: services.centrum.CentrumService.GetDispatch:output_type -> services.centrum.GetDispatchResponse
-	22, // 81: services.centrum.CentrumService.ListDispatches:output_type -> services.centrum.ListDispatchesResponse
-	35, // 82: services.centrum.CentrumService.ListDispatchActivity:output_type -> services.centrum.ListDispatchActivityResponse
-	9,  // 83: services.centrum.CentrumService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
-	11, // 84: services.centrum.CentrumService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
-	39, // 85: services.centrum.CentrumService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
-	13, // 86: services.centrum.CentrumService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
-	32, // 87: services.centrum.CentrumService.UpdateDispatchStatus:output_type -> services.centrum.UpdateDispatchStatusResponse
-	67, // [67:88] is the sub-list for method output_type
-	46, // [46:67] is the sub-list for method input_type
-	46, // [46:46] is the sub-list for extension type_name
-	46, // [46:46] is the sub-list for extension extendee
-	0,  // [0:46] is the sub-list for field type_name
+	48, // 0: services.centrum.ListDispatchActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	48, // 1: services.centrum.ListUnitActivityRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	49, // 2: services.centrum.GetSettingsResponse.settings:type_name -> resources.centrum.Settings
+	49, // 3: services.centrum.UpdateSettingsRequest.settings:type_name -> resources.centrum.Settings
+	49, // 4: services.centrum.UpdateSettingsResponse.settings:type_name -> resources.centrum.Settings
+	50, // 5: services.centrum.ListUnitsRequest.status:type_name -> resources.centrum.StatusUnit
+	51, // 6: services.centrum.ListUnitsResponse.units:type_name -> resources.centrum.Unit
+	51, // 7: services.centrum.CreateOrUpdateUnitRequest.unit:type_name -> resources.centrum.Unit
+	51, // 8: services.centrum.CreateOrUpdateUnitResponse.unit:type_name -> resources.centrum.Unit
+	50, // 9: services.centrum.UpdateUnitStatusRequest.status:type_name -> resources.centrum.StatusUnit
+	52, // 10: services.centrum.GetDispatchHeatmapResponse.entries:type_name -> resources.livemap.HeatmapEntry
+	53, // 11: services.centrum.UpdateDispatchersResponse.dispatchers:type_name -> resources.centrum.Dispatchers
+	54, // 12: services.centrum.ListUnitActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	55, // 13: services.centrum.ListUnitActivityResponse.activity:type_name -> resources.centrum.UnitStatus
+	48, // 14: services.centrum.ListDispatchesRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	56, // 15: services.centrum.ListDispatchesRequest.status:type_name -> resources.centrum.StatusDispatch
+	56, // 16: services.centrum.ListDispatchesRequest.not_status:type_name -> resources.centrum.StatusDispatch
+	54, // 17: services.centrum.ListDispatchesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	57, // 18: services.centrum.ListDispatchesResponse.dispatches:type_name -> resources.centrum.Dispatch
+	57, // 19: services.centrum.GetDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
+	57, // 20: services.centrum.CreateDispatchRequest.dispatch:type_name -> resources.centrum.Dispatch
+	57, // 21: services.centrum.CreateDispatchResponse.dispatch:type_name -> resources.centrum.Dispatch
+	57, // 22: services.centrum.UpdateDispatchRequest.dispatch:type_name -> resources.centrum.Dispatch
+	56, // 23: services.centrum.UpdateDispatchStatusRequest.status:type_name -> resources.centrum.StatusDispatch
+	54, // 24: services.centrum.ListDispatchActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	58, // 25: services.centrum.ListDispatchActivityResponse.activity:type_name -> resources.centrum.DispatchStatus
+	51, // 26: services.centrum.JoinUnitResponse.unit:type_name -> resources.centrum.Unit
+	59, // 27: services.centrum.TakeDispatchRequest.resp:type_name -> resources.centrum.TakeDispatchResp
+	60, // 28: services.centrum.StreamHandshake.server_time:type_name -> resources.timestamp.Timestamp
+	49, // 29: services.centrum.StreamHandshake.settings:type_name -> resources.centrum.Settings
+	46, // 30: services.centrum.StreamHandshake.jobs:type_name -> services.centrum.JobsList
+	47, // 31: services.centrum.LatestState.dispatchers:type_name -> services.centrum.Dispatchers
+	51, // 32: services.centrum.LatestState.units:type_name -> resources.centrum.Unit
+	57, // 33: services.centrum.LatestState.dispatches:type_name -> resources.centrum.Dispatch
+	42, // 34: services.centrum.StreamResponse.handshake:type_name -> services.centrum.StreamHandshake
+	43, // 35: services.centrum.StreamResponse.latest_state:type_name -> services.centrum.LatestState
+	49, // 36: services.centrum.StreamResponse.settings:type_name -> resources.centrum.Settings
+	46, // 37: services.centrum.StreamResponse.jobs:type_name -> services.centrum.JobsList
+	53, // 38: services.centrum.StreamResponse.dispatchers:type_name -> resources.centrum.Dispatchers
+	51, // 39: services.centrum.StreamResponse.unit_updated:type_name -> resources.centrum.Unit
+	57, // 40: services.centrum.StreamResponse.dispatch_updated:type_name -> resources.centrum.Dispatch
+	51, // 41: services.centrum.StreamResponse.unit_created:type_name -> resources.centrum.Unit
+	55, // 42: services.centrum.StreamResponse.unit_status:type_name -> resources.centrum.UnitStatus
+	57, // 43: services.centrum.StreamResponse.dispatch_created:type_name -> resources.centrum.Dispatch
+	58, // 44: services.centrum.StreamResponse.dispatch_status:type_name -> resources.centrum.DispatchStatus
+	61, // 45: services.centrum.JobsList.dispatches:type_name -> resources.jobs.Job
+	53, // 46: services.centrum.Dispatchers.dispatchers:type_name -> resources.centrum.Dispatchers
+	4,  // 47: services.centrum.CentrumService.UpdateSettings:input_type -> services.centrum.UpdateSettingsRequest
+	27, // 48: services.centrum.CentrumService.CreateDispatch:input_type -> services.centrum.CreateDispatchRequest
+	29, // 49: services.centrum.CentrumService.UpdateDispatch:input_type -> services.centrum.UpdateDispatchRequest
+	31, // 50: services.centrum.CentrumService.DeleteDispatch:input_type -> services.centrum.DeleteDispatchRequest
+	21, // 51: services.centrum.CentrumService.TakeControl:input_type -> services.centrum.TakeControlRequest
+	35, // 52: services.centrum.CentrumService.AssignDispatch:input_type -> services.centrum.AssignDispatchRequest
+	14, // 53: services.centrum.CentrumService.AssignUnit:input_type -> services.centrum.AssignUnitRequest
+	16, // 54: services.centrum.CentrumService.GetDispatchHeatmap:input_type -> services.centrum.GetDispatchHeatmapRequest
+	18, // 55: services.centrum.CentrumService.UpdateDispatchers:input_type -> services.centrum.UpdateDispatchersRequest
+	44, // 56: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
+	2,  // 57: services.centrum.CentrumService.GetSettings:input_type -> services.centrum.GetSettingsRequest
+	38, // 58: services.centrum.CentrumService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
+	6,  // 59: services.centrum.CentrumService.ListUnits:input_type -> services.centrum.ListUnitsRequest
+	1,  // 60: services.centrum.CentrumService.ListUnitActivity:input_type -> services.centrum.ListUnitActivityRequest
+	25, // 61: services.centrum.CentrumService.GetDispatch:input_type -> services.centrum.GetDispatchRequest
+	23, // 62: services.centrum.CentrumService.ListDispatches:input_type -> services.centrum.ListDispatchesRequest
+	0,  // 63: services.centrum.CentrumService.ListDispatchActivity:input_type -> services.centrum.ListDispatchActivityRequest
+	8,  // 64: services.centrum.CentrumService.CreateOrUpdateUnit:input_type -> services.centrum.CreateOrUpdateUnitRequest
+	10, // 65: services.centrum.CentrumService.DeleteUnit:input_type -> services.centrum.DeleteUnitRequest
+	40, // 66: services.centrum.CentrumService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
+	12, // 67: services.centrum.CentrumService.UpdateUnitStatus:input_type -> services.centrum.UpdateUnitStatusRequest
+	33, // 68: services.centrum.CentrumService.UpdateDispatchStatus:input_type -> services.centrum.UpdateDispatchStatusRequest
+	5,  // 69: services.centrum.CentrumService.UpdateSettings:output_type -> services.centrum.UpdateSettingsResponse
+	28, // 70: services.centrum.CentrumService.CreateDispatch:output_type -> services.centrum.CreateDispatchResponse
+	30, // 71: services.centrum.CentrumService.UpdateDispatch:output_type -> services.centrum.UpdateDispatchResponse
+	32, // 72: services.centrum.CentrumService.DeleteDispatch:output_type -> services.centrum.DeleteDispatchResponse
+	22, // 73: services.centrum.CentrumService.TakeControl:output_type -> services.centrum.TakeControlResponse
+	36, // 74: services.centrum.CentrumService.AssignDispatch:output_type -> services.centrum.AssignDispatchResponse
+	15, // 75: services.centrum.CentrumService.AssignUnit:output_type -> services.centrum.AssignUnitResponse
+	17, // 76: services.centrum.CentrumService.GetDispatchHeatmap:output_type -> services.centrum.GetDispatchHeatmapResponse
+	19, // 77: services.centrum.CentrumService.UpdateDispatchers:output_type -> services.centrum.UpdateDispatchersResponse
+	45, // 78: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
+	3,  // 79: services.centrum.CentrumService.GetSettings:output_type -> services.centrum.GetSettingsResponse
+	39, // 80: services.centrum.CentrumService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
+	7,  // 81: services.centrum.CentrumService.ListUnits:output_type -> services.centrum.ListUnitsResponse
+	20, // 82: services.centrum.CentrumService.ListUnitActivity:output_type -> services.centrum.ListUnitActivityResponse
+	26, // 83: services.centrum.CentrumService.GetDispatch:output_type -> services.centrum.GetDispatchResponse
+	24, // 84: services.centrum.CentrumService.ListDispatches:output_type -> services.centrum.ListDispatchesResponse
+	37, // 85: services.centrum.CentrumService.ListDispatchActivity:output_type -> services.centrum.ListDispatchActivityResponse
+	9,  // 86: services.centrum.CentrumService.CreateOrUpdateUnit:output_type -> services.centrum.CreateOrUpdateUnitResponse
+	11, // 87: services.centrum.CentrumService.DeleteUnit:output_type -> services.centrum.DeleteUnitResponse
+	41, // 88: services.centrum.CentrumService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
+	13, // 89: services.centrum.CentrumService.UpdateUnitStatus:output_type -> services.centrum.UpdateUnitStatusResponse
+	34, // 90: services.centrum.CentrumService.UpdateDispatchStatus:output_type -> services.centrum.UpdateDispatchStatusResponse
+	69, // [69:91] is the sub-list for method output_type
+	47, // [47:69] is the sub-list for method input_type
+	47, // [47:47] is the sub-list for extension type_name
+	47, // [47:47] is the sub-list for extension extendee
+	0,  // [0:47] is the sub-list for field type_name
 }
 
 func init() { file_services_centrum_centrum_proto_init() }
@@ -2764,13 +2865,13 @@ func file_services_centrum_centrum_proto_init() {
 		return
 	}
 	file_services_centrum_centrum_proto_msgTypes[12].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[21].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[31].OneofWrappers = []any{}
+	file_services_centrum_centrum_proto_msgTypes[23].OneofWrappers = []any{}
 	file_services_centrum_centrum_proto_msgTypes[33].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[36].OneofWrappers = []any{}
+	file_services_centrum_centrum_proto_msgTypes[35].OneofWrappers = []any{}
 	file_services_centrum_centrum_proto_msgTypes[38].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[41].OneofWrappers = []any{}
-	file_services_centrum_centrum_proto_msgTypes[43].OneofWrappers = []any{
+	file_services_centrum_centrum_proto_msgTypes[40].OneofWrappers = []any{}
+	file_services_centrum_centrum_proto_msgTypes[43].OneofWrappers = []any{}
+	file_services_centrum_centrum_proto_msgTypes[45].OneofWrappers = []any{
 		(*StreamResponse_Handshake)(nil),
 		(*StreamResponse_LatestState)(nil),
 		(*StreamResponse_Settings)(nil),
@@ -2791,7 +2892,7 @@ func file_services_centrum_centrum_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_centrum_centrum_proto_rawDesc), len(file_services_centrum_centrum_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   46,
+			NumMessages:   48,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

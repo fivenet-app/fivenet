@@ -12,6 +12,8 @@ type Config struct {
 	// Secret used to encrypt/decrypt data in, e.g., the database
 	Secret string `yaml:"secret"`
 
+	DemoMode bool `default:"false" yaml:"demoMode"`
+
 	OTLP           OTLPConfig     `yaml:"otlp"`
 	HTTP           HTTP           `yaml:"http"`
 	Database       Database       `yaml:"database"`

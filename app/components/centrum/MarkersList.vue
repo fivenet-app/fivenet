@@ -3,7 +3,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
+import { MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
 
 const { $grpc } = useNuxtApp();
 

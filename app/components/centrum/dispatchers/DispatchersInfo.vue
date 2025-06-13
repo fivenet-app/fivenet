@@ -17,7 +17,7 @@ const { $grpc } = useNuxtApp();
 const modal = useModal();
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, dispatchers, isDispatcher } = storeToRefs(centrumStore);
+const { getCurrentMode, getJobDispatchers, isDispatcher } = storeToRefs(centrumStore);
 
 async function takeControl(signon: boolean): Promise<void> {
     try {
@@ -30,6 +30,8 @@ async function takeControl(signon: boolean): Promise<void> {
         throw e;
     }
 }
+
+const dispatchers = computed(() => getJobDispatchers.value ?? { dispatchers: [] });
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
@@ -59,17 +61,21 @@ if (!props.hideJoin) {
             </UTooltip>
         </template>
 
-        <UTooltip :text="usersToLabel(dispatchers)">
+        <UTooltip :text="usersToLabel(dispatchers.dispatchers)">
             <UButton
                 :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
                 :color="
-                    getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'gray' : dispatchers.length === 0 ? 'amber' : 'success'
+                    getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
+                        ? 'gray'
+                        : dispatchers.dispatchers.length === 0
+                          ? 'amber'
+                          : 'success'
                 "
                 truncate
                 @click="modal.open(DispatchersModal, {})"
             >
                 <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                    {{ $t('common.dispatcher', dispatchers.length) }}
+                    {{ $t('common.dispatcher', dispatchers.dispatchers.length) }}
                 </template>
                 <template v-else>
                     {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useSettingsStore, type LivemapLayer } from '~/stores/settings';
 import { tileLayers } from '~/types/livemap';
 

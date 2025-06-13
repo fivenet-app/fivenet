@@ -192,6 +192,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			fx.Invoke(func(admin.AdminServer) {}),
 			fx.Invoke(func(croner.IRegistry) {}),
 			fx.Invoke(func(*croner.Scheduler) {}),
+			fx.Invoke(func(*tracker.Manager) {}),
 		)
 	}
 

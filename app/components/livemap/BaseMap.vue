@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { LControl, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import type L from 'leaflet';
-import { CRS, extend, LatLng, latLngBounds, Projection, Transformation, type PointExpression } from 'leaflet';
+import { CRS, extend, LatLng, latLngBounds, type PointExpression, Projection, Transformation } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet/dist/leaflet.css';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
@@ -41,7 +40,7 @@ function mapResize(): void {
 }
 
 const mapContainer = useTemplateRef('mapContainer');
-const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 750 });
+const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 700 });
 useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 
 const centerX = 117.3;
@@ -200,10 +199,6 @@ async function onMapReady(m: L.Map): Promise<void> {
     map = m;
     map.invalidateSize();
 
-    if (livemapSettings.value.showGrid) {
-        graticuleLayer.addTo(map);
-    }
-
     const startPos = parseLocationQuery(currentLocationQuery.value as string);
     if (startPos) {
         map.setView(startPos.latlng, startPos.zoom);
@@ -234,6 +229,10 @@ async function onMapReady(m: L.Map): Promise<void> {
     });
 
     emit('mapReady', map);
+
+    if (livemapSettings.value.showGrid) {
+        graticuleLayer.addTo(map);
+    }
 }
 
 watch(
@@ -341,14 +340,14 @@ onBeforeUnmount(() => {
     }
 
     .leaflet-popup-content-wrapper {
-        background-color: #16171a;
+        background-color: rgb(var(--ui-background)) !important;
         color: #ffffff;
     }
     .leaflet-popup-content p {
         margin: 0.25em 0;
     }
     .leaflet-popup-tip {
-        background-color: #16171a;
+        background-color: rgb(var(--ui-background)) !important;
     }
 
     .leaflet-control-layers-toggle {

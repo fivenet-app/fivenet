@@ -26,9 +26,10 @@ const (
 type UserUnitMapping struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	UnitId        uint64                 `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	Job           string                 `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
-	UserId        int32                  `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UserId        int32                  `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Job           string                 `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
+	JobGrade      int32                  `protobuf:"varint,4,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
+	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -70,6 +71,13 @@ func (x *UserUnitMapping) GetUnitId() uint64 {
 	return 0
 }
 
+func (x *UserUnitMapping) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
 func (x *UserUnitMapping) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -77,9 +85,9 @@ func (x *UserUnitMapping) GetJob() string {
 	return ""
 }
 
-func (x *UserUnitMapping) GetUserId() int32 {
+func (x *UserUnitMapping) GetJobGrade() int32 {
 	if x != nil {
-		return x.UserId
+		return x.JobGrade
 	}
 	return 0
 }
@@ -95,13 +103,14 @@ var File_resources_centrum_user_unit_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_user_unit_proto_rawDesc = "" +
 	"\n" +
-	"!resources/centrum/user_unit.proto\x12\x11resources.centrum\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xa6\x01\n" +
+	"!resources/centrum/user_unit.proto\x12\x11resources.centrum\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xcc\x01\n" +
 	"\x0fUserUnitMapping\x12\x17\n" +
-	"\aunit_id\x18\x01 \x01(\x04R\x06unitId\x12\x19\n" +
-	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12 \n" +
-	"\auser_id\x18\x03 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x12=\n" +
+	"\aunit_id\x18\x01 \x01(\x04R\x06unitId\x12 \n" +
+	"\auser_id\x18\x02 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x12\x19\n" +
+	"\x03job\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12$\n" +
+	"\tjob_grade\x18\x04 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\bjobGrade\x12=\n" +
 	"\n" +
-	"created_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAtBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"created_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAtBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_user_unit_proto_rawDescOnce sync.Once

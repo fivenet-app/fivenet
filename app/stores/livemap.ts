@@ -2,7 +2,8 @@ import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import type { Coordinate } from '~/types/livemap';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
-import type { MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { StreamRequest } from '~~/gen/ts/services/centrum/centrum';
 import type { StreamResponse } from '~~/gen/ts/services/livemap/livemap';
@@ -71,7 +72,6 @@ export const useLivemapStore = defineStore(
             reconnecting.value = false;
 
             // Tracking marker and user markers between part responses
-            const foundUsers: number[] = [];
             const foundMarkers: number[] = [];
 
             cleanupMarkerMarkers();
@@ -123,53 +123,43 @@ export const useLivemapStore = defineStore(
                                 logger.debug(`Removed ${removedMarkers} old marker markers`);
                             }
                         }
-                    } else if (resp.data.oneofKind === 'users') {
-                        if (resp.data.users.clear === true) {
-                            logger.info('Clearing all user markers');
-                            selectedMarker.value = undefined;
-                            foundUsers.length = 0;
-                            markersUsers.value.clear();
-                            continue;
-                        }
+                    } else if (resp.data.oneofKind === 'snapshot') {
+                        // Handle snapshot response
+                        const snapshot = resp.data.snapshot;
 
-                        resp.data.users.updated.forEach((v: UserMarker) => {
-                            // Only record found users for non-partial responses
-                            if (resp.data.oneofKind === 'users' && !resp.data.users.partial) {
-                                foundUsers.push(v.userId);
-                            }
+                        // Clear existing markers
+                        markersMarkers.value.clear();
+                        markersUsers.value.clear();
 
-                            addOrUpdateUserMarker(v);
-
-                            // If a marker is selected, update it
-                            if (livemap.value.centerSelectedMarker && v.userId === selectedMarker.value?.userId) {
-                                selectedMarker.value = v;
-                            }
-                            if (activeChar.value?.userId === v.userId) {
-                                ownMarker.value = v;
-                            }
+                        // Add all markers from the snapshot
+                        snapshot.markers.forEach((marker: UserMarker) => {
+                            addOrUpdateUserMarker(marker);
                         });
 
-                        resp.data.users.deleted.forEach((id: number) => markersUsers.value.delete(id));
+                        initiated.value = true;
+                    } else if (resp.data.oneofKind === 'userDelete') {
+                        // Handle user deletion
+                        const userId = resp.data.userDelete;
+                        markersUsers.value.delete(userId);
 
-                        if (!resp.data.users.partial) {
-                            if (resp.data.users.part <= 0) {
-                                // Remove user markers not found in the latest full state
-                                let removedMarkers = 0;
-                                markersUsers.value.forEach((_, id) => {
-                                    if (!foundUsers.includes(id)) {
-                                        markersUsers.value.delete(id);
+                        // If the deleted user was selected, clear the selection
+                        if (selectedMarker.value?.userId === userId) {
+                            selectedMarker.value = undefined;
+                        }
+                        if (ownMarker.value?.userId === userId) {
+                            ownMarker.value = undefined;
+                        }
 
-                                        if (id === selectedMarker.value?.userId) {
-                                            selectedMarker.value = undefined;
-                                        }
-                                        removedMarkers++;
-                                    }
-                                });
-                                foundUsers.length = 0;
-                                logger.debug(`Removed ${removedMarkers} old user markers`);
-                            }
-
-                            initiated.value = true;
+                        logger.debug('User marker deleted:', userId);
+                    } else if (resp.data.oneofKind === 'userUpdate') {
+                        const marker = resp.data.userUpdate;
+                        addOrUpdateUserMarker(marker);
+                        // If a marker is selected, update it
+                        if (livemap.value.centerSelectedMarker && marker.userId === selectedMarker.value?.userId) {
+                            selectedMarker.value = marker;
+                        }
+                        if (activeChar.value?.userId === marker.userId) {
+                            ownMarker.value = marker;
                         }
                     } else {
                         logger.warn('Unknown data received - oneofKind:' + resp.data.oneofKind);

@@ -1,4 +1,5 @@
-import L from 'leaflet';
+import type L from 'leaflet';
+import { LatLng, LayerGroup, type Marker, Polyline, Util, divIcon, marker } from 'leaflet';
 /**
  * File: L.SimpleGraticule.js
  * Desc: A graticule for Leaflet maps in the L.CRS.Simple coordinate system.
@@ -21,7 +22,7 @@ interface SimpleGraticuleOptions extends L.LayerOptions {
     zoomIntervals?: ZoomInterval[];
 }
 
-export class SimpleGraticule extends L.LayerGroup {
+export class SimpleGraticule extends LayerGroup {
     declare _map: L.Map;
     declare _bounds: L.LatLngBounds;
     override options: SimpleGraticuleOptions = {};
@@ -35,7 +36,7 @@ export class SimpleGraticule extends L.LayerGroup {
 
     constructor(options?: SimpleGraticuleOptions) {
         super();
-        L.Util.setOptions(this, options);
+        Util.setOptions(this, options);
     }
 
     override onAdd(map: L.Map): this {
@@ -129,31 +130,31 @@ export class SimpleGraticule extends L.LayerGroup {
     }
 
     buildXLine(x: number): L.Polyline {
-        const bottomLL = new L.LatLng(this._bounds.getSouth(), x);
-        const topLL = new L.LatLng(this._bounds.getNorth(), x);
-        return new L.Polyline([bottomLL, topLL], this.lineStyle);
+        const bottomLL = new LatLng(this._bounds.getSouth(), x);
+        const topLL = new LatLng(this._bounds.getNorth(), x);
+        return new Polyline([bottomLL, topLL], this.lineStyle);
     }
 
     buildYLine(y: number): L.Polyline {
-        const leftLL = new L.LatLng(y, this._bounds.getWest());
-        const rightLL = new L.LatLng(y, this._bounds.getEast());
-        return new L.Polyline([leftLL, rightLL], this.lineStyle);
+        const leftLL = new LatLng(y, this._bounds.getWest());
+        const rightLL = new LatLng(y, this._bounds.getEast());
+        return new Polyline([leftLL, rightLL], this.lineStyle);
     }
 
-    buildLabel(axis: 'gridlabel-horiz' | 'gridlabel-vert', val: number): L.Marker {
+    buildLabel(axis: 'gridlabel-horiz' | 'gridlabel-vert', val: number): Marker {
         const bounds = this._map.getBounds().pad(-0.003);
-        let latLng: L.LatLng;
+        let latLng: LatLng;
         if (axis === 'gridlabel-horiz') {
-            latLng = new L.LatLng(bounds.getNorth(), val);
+            latLng = new LatLng(bounds.getNorth(), val);
         } else {
-            latLng = new L.LatLng(val, bounds.getWest());
+            latLng = new LatLng(val, bounds.getWest());
         }
 
-        return L.marker(latLng, {
+        return marker(latLng, {
             interactive: false,
             contextmenu: false,
             contextmenuItems: [],
-            icon: L.divIcon({
+            icon: divIcon({
                 iconSize: [0, 0],
                 className: 'leaflet-grid-label',
                 html: `<div class="${axis}">${val}</div>`,
@@ -162,11 +163,11 @@ export class SimpleGraticule extends L.LayerGroup {
     }
 
     addOriginLabel(): L.Marker {
-        return L.marker([0, 0], {
+        return marker([0, 0], {
             interactive: false,
             contextmenu: false,
             contextmenuItems: [],
-            icon: L.divIcon({
+            icon: divIcon({
                 iconSize: [0, 0],
                 className: 'leaflet-grid-label',
                 html: '<div class="gridlabel-horiz">(0,0)</div>',

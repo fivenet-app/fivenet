@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package resources.livemap;
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemap";
+
+message HeatmapEntry {
+  double x = 1;
+  double y = 2;
+  double w = 3;
+}

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import type { PointExpression } from 'leaflet';
 import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';

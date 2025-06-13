@@ -416,7 +416,7 @@
         "member": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
         "attributes": "Attribut | Attribute",
         "last_update": "Letzte Aktualisierung",
-        "dispatchers": "Dispatcher | Dispatchern",
+        "dispatchers": "Dispatcher | Dispatcher",
         "dispatcher": "Keine Dispatcher | {n} Dispatcher | {n} Dispatcher",
         "confirm": "Bestätigen | Bestätigt",
         "word": "Wort | Wörter",

@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { LCircle, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
 import type { PointExpression } from 'leaflet';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
-import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { MarkerType, type MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
 
 const props = withDefaults(
     defineProps<{
@@ -21,8 +20,8 @@ defineEmits<{
 
 const { livemap } = useAppConfig();
 
-const iconAnchor = ref<PointExpression>([props.size / 2, props.size]);
-const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
+const iconAnchor = computed<PointExpression>(() => [props.size / 2, props.size]);
+const popupAnchor = computed<PointExpression>(() => [0, (props.size / 2) * -1]);
 </script>
 
 <template>

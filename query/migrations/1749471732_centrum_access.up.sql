@@ -37,4 +37,22 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_qualifications_access` (
   CONSTRAINT `fk_fivenet_centrum_qualifications_access_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
+-- Table: fivenet_centrum_user_locations
+ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `job_grade` int(11) NULL AFTER `job`;
+ALTER TABLE `fivenet_centrum_user_locations` MODIFY COLUMN `job` varchar(20) NULL;
+ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `on_duty` tinyint(1) DEFAULT 0 AFTER `hidden`;
+ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `data` text NULL AFTER `updated_at`;
+
+-- Table: `fivenet_centrum_dispatches` - Generated coord
+ALTER TABLE `fivenet_centrum_dispatches` MODIFY COLUMN `x` decimal(24,14) NOT NULL;
+ALTER TABLE `fivenet_centrum_dispatches` MODIFY COLUMN `y` decimal(24,14) NOT NULL;
+
+-- Table: `fivenet_centrum_dispatches_heatmaps`
+CREATE TABLE IF NOT EXISTS `fivenet_centrum_dispatches_heatmaps` (
+  `job` VARCHAR(20) PRIMARY KEY,
+  `heat_json` JSON NOT NULL,
+  `max` INT NOT NULL DEFAULT 0,
+  `generated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 COMMIT;

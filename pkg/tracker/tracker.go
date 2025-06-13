@@ -2,9 +2,13 @@ package tracker
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v4"
@@ -33,8 +37,9 @@ type Tracker struct {
 
 	jsCons jetstream.ConsumeContext
 
-	userStore  *store.Store[livemap.UserMarker, *livemap.UserMarker]
-	usersByJob *xsync.Map[string, *xsync.Map[int32, *livemap.UserMarker]]
+	userLocStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
+	unitMapStore *store.Store[centrum.UserUnitMapping, *centrum.UserUnitMapping]
+	usersByJob   *xsync.Map[string, *xsync.Map[int32, *livemap.UserMarker]]
 }
 
 type Params struct {
@@ -59,8 +64,9 @@ func New(p Params) (ITracker, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		userIDs, err := store.New(ctxStartup, p.Logger, p.JS, "tracker",
+		userLocStore, err := store.New(ctxStartup, p.Logger, p.JS, BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+			store.WithIgnoredKeys[livemap.UserMarker, *livemap.UserMarker]("_snapshot"),
 			store.WithOnUpdateFn(func(s *store.Store[livemap.UserMarker, *livemap.UserMarker], um *livemap.UserMarker) (*livemap.UserMarker, error) {
 				if um == nil {
 					return um, nil
@@ -92,11 +98,22 @@ func New(p Params) (ITracker, error) {
 		if err != nil {
 			return err
 		}
-
-		if err := userIDs.Start(ctxCancel, false); err != nil {
+		if err := userLocStore.Start(ctxCancel, false); err != nil {
 			return err
 		}
-		t.userStore = userIDs
+		t.userLocStore = userLocStore
+
+		unitStore, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](
+			ctxStartup, p.Logger, p.JS, BucketUnitMap,
+			store.WithLocks[centrum.UserUnitMapping, *centrum.UserUnitMapping](nil),
+		)
+		if err != nil {
+			return err
+		}
+		if err := unitStore.Start(ctxCancel, false); err != nil {
+			return err
+		}
+		t.unitMapStore = unitStore
 
 		return nil
 	}))
@@ -131,19 +148,43 @@ func (s *Tracker) ListTrackedJobs() []string {
 	return jobs
 }
 
-func (s *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
-	return s.userStore.Get(userIdKey(id))
+func (t *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
+	mapping, err := t.unitMapStore.Get(fmt.Sprint(id))
+	if err != nil {
+		return nil, false
+	}
+	key := fmt.Sprintf("%s.%d.%d", mapping.Job, mapping.JobGrade, id)
+	marker, err := t.userLocStore.Get(key)
+	return marker, err == nil
 }
 
-func (s *Tracker) IsUserOnDuty(userId int32) bool {
-	um, ok := s.userStore.Get(userIdKey(userId))
-	if !ok {
-		return false
-	}
-
-	return !um.Hidden
+func (t *Tracker) IsUserOnDuty(id int32) bool {
+	_, err := t.unitMapStore.Get(fmt.Sprint(id))
+	return err == nil
 }
 
 func (s *Tracker) Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
-	return s.userStore.WatchAll(ctx)
+	return s.userLocStore.WatchAll(ctx)
+}
+
+func FilterMarkers(markers []*livemap.UserMarker, acl *permissions.JobGradeList, userInfo *userinfo.UserInfo) []*livemap.UserMarker {
+	if len(markers) == 0 || acl == nil {
+		return markers
+	}
+
+	filtered := make([]*livemap.UserMarker, 0, len(markers))
+	for _, um := range markers {
+		jg := um.User.JobGrade
+		if um.JobGrade != nil {
+			jg = *um.JobGrade
+		}
+
+		if !userInfo.Superuser && !acl.HasJobGrade(um.Job, jg) {
+			continue
+		}
+
+		filtered = append(filtered, um)
+	}
+
+	return filtered
 }

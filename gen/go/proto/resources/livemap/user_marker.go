@@ -1,6 +1,7 @@
 package livemap
 
 import (
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
@@ -22,19 +23,19 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 	x.Y = in.Y
 
 	if in.UpdatedAt != nil {
-		x.UpdatedAt = in.UpdatedAt
+		x.UpdatedAt = proto.Clone(in.UpdatedAt).(*timestamp.Timestamp)
 	}
 
 	if in.Postal == nil {
 		x.Postal = nil
 	} else {
-		x.Postal = in.Postal
+		*x.Postal = *in.Postal
 	}
 
 	if in.Color == nil {
 		x.Color = nil
 	} else {
-		x.Color = in.Color
+		*x.Color = *in.Color
 	}
 
 	x.Job = in.Job
@@ -59,8 +60,4 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 	x.Hidden = in.Hidden
 
 	return x
-}
-
-func (x *MarkerMarker) SetJobLabel(label string) {
-	x.JobLabel = label
 }

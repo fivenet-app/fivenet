@@ -85,15 +85,15 @@ func TestRefreshUserLocations(t *testing.T) {
 	err = manager.refreshUserLocations(ctx)
 	assert.NoError(t, err)
 
-	list := manager.userStore.List()
+	list := manager.userLocStore.List()
 	assert.Len(t, list, 0)
 
 	db, err := dbServer.DB()
 	assert.NoError(t, err)
 
 	// Insert user locations
-	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4", "ambulance", 1.0, 1.0, false))
-	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 1.0, 1.0, true))
+	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4", "ambulance", 3, 1.0, 1.0, false))
+	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 3, 1.0, 1.0, true))
 
 	// Wait for users to appear (an event is sent for this)
 	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
@@ -107,28 +107,28 @@ func TestRefreshUserLocations(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	user1, ok := manager.userStore.Get(userIdKey(int32(1)))
-	assert.True(t, ok)
+	user1, err := manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
+	assert.NoError(t, err)
 	assert.NotNil(t, user1)
 	assert.Equal(t, 1.0, user1.X)
 	assert.Equal(t, 1.0, user1.Y)
 
-	user2, ok := manager.userStore.Get(userIdKey(int32(2)))
-	assert.True(t, ok)
+	user2, err := manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
+	assert.NoError(t, err)
 	assert.NotNil(t, user2)
 	assert.Equal(t, 1.0, user2.X)
 	assert.Equal(t, 1.0, user2.Y)
 
-	list = manager.userStore.List()
+	list = manager.userLocStore.List()
 	assert.Len(t, list, 2)
 
 	// Update user location (no event is sent for updates)
-	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 5.0, 5.0, true))
+	assert.NoError(t, insertCitizenLocations(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 3, 5.0, 5.0, true))
 
 	// Wait for user2 to be updated
 	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
-		user2, ok := manager.userStore.Get(userIdKey(int32(2)))
-		if !ok {
+		user2, err := manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
+		if err != nil {
 			return fmt.Errorf("user2 is nil in retry")
 		}
 
@@ -140,14 +140,14 @@ func TestRefreshUserLocations(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	user1, ok = manager.userStore.Get(userIdKey(int32(1)))
-	assert.True(t, ok)
+	user1, err = manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
+	assert.NoError(t, err)
 	assert.NotNil(t, user1)
 	assert.Equal(t, 1.0, user1.X)
 	assert.Equal(t, 1.0, user1.Y)
 
-	user2, ok = manager.userStore.Get(userIdKey(int32(2)))
-	assert.True(t, ok)
+	user2, err = manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
+	assert.NoError(t, err)
 	assert.NotNil(t, user2)
 	assert.Equal(t, 5.0, user2.X)
 	assert.Equal(t, 5.0, user2.Y)
@@ -156,7 +156,7 @@ func TestRefreshUserLocations(t *testing.T) {
 
 	// Wait for users to be removed (it takes at least 15 seconds from the updatedAt time of each user location)
 	err = retry.Do(ctx, retry.WithMaxRetries(45, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
-		list := manager.userStore.List()
+		list := manager.userLocStore.List()
 		if len(list) == 0 {
 			return nil
 		}
@@ -171,23 +171,24 @@ func TestRefreshUserLocations(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	list = manager.userStore.List()
+	list = manager.userLocStore.List()
 	assert.Len(t, list, 0)
 
-	user1, ok = manager.userStore.Get(userIdKey(int32(1)))
-	assert.False(t, ok)
+	user1, err = manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
+	assert.NoError(t, err)
 	assert.Nil(t, user1)
 
-	user2, ok = manager.userStore.Get(userIdKey(int32(2)))
-	assert.False(t, ok)
+	user2, err = manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
+	assert.NoError(t, err)
 	assert.Nil(t, user2)
 }
 
-func insertCitizenLocations(ctx context.Context, db *sql.DB, identifier string, job string, x float64, y float64, hidden bool) error {
+func insertCitizenLocations(ctx context.Context, db *sql.DB, identifier string, job string, grade int32, x float64, y float64, hidden bool) error {
 	stmt := tLocs.
 		INSERT(
 			tLocs.Identifier,
 			tLocs.Job,
+			tLocs.JobGrade,
 			tLocs.X,
 			tLocs.Y,
 			tLocs.Hidden,
@@ -195,12 +196,14 @@ func insertCitizenLocations(ctx context.Context, db *sql.DB, identifier string, 
 		VALUES(
 			identifier,
 			job,
+			grade,
 			x,
 			y,
 			hidden,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tLocs.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
+			tLocs.JobGrade.SET(jet.IntExp(jet.Raw("VALUES(`job_grade`)"))),
 			tLocs.X.SET(jet.FloatExp(jet.Raw("VALUES(`x`)"))),
 			tLocs.Y.SET(jet.FloatExp(jet.Raw("VALUES(`y`)"))),
 			tLocs.Hidden.SET(jet.BoolExp(jet.Raw("VALUES(`hidden`)"))),

@@ -48,8 +48,10 @@
 // source: resources/jobs/labels.proto
 // source: resources/jobs/timeclock.proto
 // source: resources/laws/laws.proto
-// source: resources/livemap/livemap.proto
-// source: resources/livemap/tracker.proto
+// source: resources/livemap/coords.proto
+// source: resources/livemap/heatmap.proto
+// source: resources/livemap/marker_marker.proto
+// source: resources/livemap/user_marker.proto
 // source: resources/mailer/access.proto
 // source: resources/mailer/email.proto
 // source: resources/mailer/events.proto
@@ -174,6 +176,7 @@ export const grpcMethods = [
 	'centrum.CentrumService/TakeControl',
 	'centrum.CentrumService/AssignDispatch',
 	'centrum.CentrumService/AssignUnit',
+	'centrum.CentrumService/GetDispatchHeatmap',
 	'centrum.CentrumService/UpdateDispatchers',
 	'centrum.CentrumService/Stream',
 	'centrum.CentrumService/GetSettings',

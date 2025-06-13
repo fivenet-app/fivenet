@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package resources.livemap;
 
-import "resources/centrum/units.proto";
-import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -15,29 +13,6 @@ enum MarkerType {
   MARKER_TYPE_DOT = 1;
   MARKER_TYPE_CIRCLE = 2;
   MARKER_TYPE_ICON = 3;
-}
-
-message UserMarker {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0];
-  double x = 2;
-  double y = 3;
-  optional resources.timestamp.Timestamp updated_at = 4;
-  // @sanitize: method=StripTags
-  optional string postal = 5 [(validate.rules).string.max_len = 48];
-  // @sanitize: method=StripTags
-  optional string color = 6 [(validate.rules).string = {
-    len: 7,
-    pattern: "^#[A-Fa-f0-9]{6}$",
-  }];
-
-  string job = 7 [(validate.rules).string.max_len = 20];
-  string job_label = 8;
-
-  resources.jobs.Colleague user = 9; // @gotags: alias:"user"
-  optional uint64 unit_id = 10;
-  optional resources.centrum.Unit unit = 11;
-
-  bool hidden = 12;
 }
 
 message MarkerMarker {
@@ -93,9 +68,4 @@ message CircleMarker {
 message IconMarker {
   // @sanitize: method=StripTags
   string icon = 1 [(validate.rules).string.max_len = 128];
-}
-
-message Coords {
-  double x = 1;
-  double y = 2;
 }

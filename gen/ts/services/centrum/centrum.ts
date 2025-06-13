@@ -20,6 +20,7 @@ import { StatusDispatch } from "../../resources/centrum/dispatches";
 import { UnitStatus } from "../../resources/centrum/units";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Dispatchers as Dispatchers$ } from "../../resources/centrum/dispatchers";
+import { HeatmapEntry } from "../../resources/livemap/heatmap";
 import { Unit } from "../../resources/centrum/units";
 import { StatusUnit } from "../../resources/centrum/units";
 import { Settings } from "../../resources/centrum/settings";
@@ -187,6 +188,24 @@ export interface AssignUnitRequest {
  * @generated from protobuf message services.centrum.AssignUnitResponse
  */
 export interface AssignUnitResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.GetDispatchHeatmapRequest
+ */
+export interface GetDispatchHeatmapRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.GetDispatchHeatmapResponse
+ */
+export interface GetDispatchHeatmapResponse {
+    /**
+     * @generated from protobuf field: int32 max_entries = 1
+     */
+    maxEntries: number;
+    /**
+     * @generated from protobuf field: repeated resources.livemap.HeatmapEntry entries = 2
+     */
+    entries: HeatmapEntry[];
 }
 /**
  * @generated from protobuf message services.centrum.UpdateDispatchersRequest
@@ -1389,6 +1408,99 @@ class AssignUnitResponse$Type extends MessageType<AssignUnitResponse> {
  * @generated MessageType for protobuf message services.centrum.AssignUnitResponse
  */
 export const AssignUnitResponse = new AssignUnitResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetDispatchHeatmapRequest$Type extends MessageType<GetDispatchHeatmapRequest> {
+    constructor() {
+        super("services.centrum.GetDispatchHeatmapRequest", []);
+    }
+    create(value?: PartialMessage<GetDispatchHeatmapRequest>): GetDispatchHeatmapRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetDispatchHeatmapRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetDispatchHeatmapRequest): GetDispatchHeatmapRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetDispatchHeatmapRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.GetDispatchHeatmapRequest
+ */
+export const GetDispatchHeatmapRequest = new GetDispatchHeatmapRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetDispatchHeatmapResponse$Type extends MessageType<GetDispatchHeatmapResponse> {
+    constructor() {
+        super("services.centrum.GetDispatchHeatmapResponse", [
+            { no: 1, name: "max_entries", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "entries", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => HeatmapEntry }
+        ]);
+    }
+    create(value?: PartialMessage<GetDispatchHeatmapResponse>): GetDispatchHeatmapResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.maxEntries = 0;
+        message.entries = [];
+        if (value !== undefined)
+            reflectionMergePartial<GetDispatchHeatmapResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetDispatchHeatmapResponse): GetDispatchHeatmapResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 max_entries */ 1:
+                    message.maxEntries = reader.int32();
+                    break;
+                case /* repeated resources.livemap.HeatmapEntry entries */ 2:
+                    message.entries.push(HeatmapEntry.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetDispatchHeatmapResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 max_entries = 1; */
+        if (message.maxEntries !== 0)
+            writer.tag(1, WireType.Varint).int32(message.maxEntries);
+        /* repeated resources.livemap.HeatmapEntry entries = 2; */
+        for (let i = 0; i < message.entries.length; i++)
+            HeatmapEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.GetDispatchHeatmapResponse
+ */
+export const GetDispatchHeatmapResponse = new GetDispatchHeatmapResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchersRequest$Type extends MessageType<UpdateDispatchersRequest> {
     constructor() {
@@ -3065,6 +3177,7 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "TakeControl", options: {}, I: TakeControlRequest, O: TakeControlResponse },
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
+    { name: "GetDispatchHeatmap", options: {}, I: GetDispatchHeatmapRequest, O: GetDispatchHeatmapResponse },
     { name: "UpdateDispatchers", options: {}, I: UpdateDispatchersRequest, O: UpdateDispatchersResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse },
     { name: "GetSettings", options: {}, I: GetSettingsRequest, O: GetSettingsResponse },

@@ -16,7 +16,7 @@ func (s *State) GetDispatch(ctx context.Context, job string, id uint64) (*centru
 func (s *State) ListDispatches(ctx context.Context, job string) ([]*centrum.Dispatch, bool) {
 	ds := []*centrum.Dispatch{}
 
-	ids := s.dispatches.Keys(ctx, job)
+	ids := s.dispatches.Keys(job)
 	for _, id := range ids {
 		dsp, err := s.dispatches.GetOrLoad(ctx, id)
 		if err != nil {

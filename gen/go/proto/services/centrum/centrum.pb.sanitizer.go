@@ -159,6 +159,34 @@ func (m *Dispatchers) Sanitize() error {
 	return nil
 }
 
+func (m *GetDispatchHeatmapRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetDispatchHeatmapResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Entries
+	for idx, item := range m.Entries {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *GetDispatchRequest) Sanitize() error {
 	if m == nil {
 		return nil

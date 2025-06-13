@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resources.sync;
 
-import "resources/livemap/livemap.proto";
+import "resources/livemap/coords.proto";
 import "resources/jobs/jobs.proto";
 import "resources/users/licenses.proto";
 import "resources/users/users.proto";

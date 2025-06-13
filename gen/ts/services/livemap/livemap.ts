@@ -11,9 +11,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserMarker } from "../../resources/livemap/livemap";
-import { MarkerMarker } from "../../resources/livemap/livemap";
+import { MarkerMarker } from "../../resources/livemap/marker_marker";
 import { Job } from "../../resources/jobs/jobs";
+import { UserMarker } from "../../resources/livemap/user_marker";
 /**
  * @generated from protobuf message services.livemap.StreamRequest
  */
@@ -24,33 +24,45 @@ export interface StreamRequest {
  */
 export interface StreamResponse {
     /**
+     * @generated from protobuf field: optional bool user_on_duty = 1
+     */
+    userOnDuty?: boolean;
+    /**
      * @generated from protobuf oneof: data
      */
     data: {
         oneofKind: "jobs";
         /**
-         * @generated from protobuf field: services.livemap.JobsList jobs = 1
+         * @generated from protobuf field: services.livemap.JobsList jobs = 2
          */
         jobs: JobsList;
     } | {
         oneofKind: "markers";
         /**
-         * @generated from protobuf field: services.livemap.MarkerMarkersUpdates markers = 2
+         * @generated from protobuf field: services.livemap.MarkerMarkersUpdates markers = 3
          */
         markers: MarkerMarkersUpdates;
     } | {
-        oneofKind: "users";
+        oneofKind: "snapshot";
         /**
-         * @generated from protobuf field: services.livemap.UserMarkersUpdates users = 3
+         * @generated from protobuf field: services.livemap.Snapshot snapshot = 4
          */
-        users: UserMarkersUpdates;
+        snapshot: Snapshot;
+    } | {
+        oneofKind: "userUpdate";
+        /**
+         * @generated from protobuf field: resources.livemap.UserMarker user_update = 5
+         */
+        userUpdate: UserMarker;
+    } | {
+        oneofKind: "userDelete";
+        /**
+         * @generated from protobuf field: int32 user_delete = 6
+         */
+        userDelete: number;
     } | {
         oneofKind: undefined;
     };
-    /**
-     * @generated from protobuf field: optional bool user_on_duty = 4
-     */
-    userOnDuty?: boolean;
 }
 /**
  * @generated from protobuf message services.livemap.JobsList
@@ -87,29 +99,41 @@ export interface MarkerMarkersUpdates {
     partial: boolean;
 }
 /**
- * @generated from protobuf message services.livemap.UserMarkersUpdates
+ * A roll-up of the entire USERLOC bucket.
+ * Published every N seconds on `$KV.user_locations._snapshot`
+ * with the headers:
+ *   Nats-Rollup: all
+ *   KV-Operation: ROLLUP
+ *
+ * @generated from protobuf message services.livemap.Snapshot
  */
-export interface UserMarkersUpdates {
+export interface Snapshot {
     /**
-     * @generated from protobuf field: repeated resources.livemap.UserMarker updated = 1
+     * All currently-known user markers, already filtered for
+     * obsolete PURGE/DELETE events.
+     *
+     * @generated from protobuf field: repeated resources.livemap.UserMarker markers = 1
      */
-    updated: UserMarker[];
+    markers: UserMarker[];
     /**
-     * @generated from protobuf field: repeated int32 deleted = 2
+     * When the snapshot was generated (Unix epoch millis).
+     *
+     * @generated from protobuf field: int64 generated_at = 2
      */
-    deleted: number[];
+    generatedAt: number;
     /**
-     * @generated from protobuf field: int32 part = 3
+     * Optional monotonic counter so a client can ignore older roll-ups
+     * that arrive out-of-order.
+     *
+     * @generated from protobuf field: uint64 snapshot_seq = 3
      */
-    part: number;
+    snapshotSeq: number;
     /**
-     * @generated from protobuf field: bool partial = 4
+     * Version in case we extend the definition later (e.g. add units).
+     *
+     * @generated from protobuf field: uint32 schema_version = 4
      */
-    partial: boolean;
-    /**
-     * @generated from protobuf field: optional bool clear = 5
-     */
-    clear?: boolean;
+    schemaVersion: number;
 }
 /**
  * @generated from protobuf message services.livemap.CreateOrUpdateMarkerRequest
@@ -185,10 +209,12 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.livemap.StreamResponse", [
-            { no: 1, name: "jobs", kind: "message", oneof: "data", T: () => JobsList },
-            { no: 2, name: "markers", kind: "message", oneof: "data", T: () => MarkerMarkersUpdates },
-            { no: 3, name: "users", kind: "message", oneof: "data", T: () => UserMarkersUpdates },
-            { no: 4, name: "user_on_duty", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "user_on_duty", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "jobs", kind: "message", oneof: "data", T: () => JobsList },
+            { no: 3, name: "markers", kind: "message", oneof: "data", T: () => MarkerMarkersUpdates },
+            { no: 4, name: "snapshot", kind: "message", oneof: "data", T: () => Snapshot },
+            { no: 5, name: "user_update", kind: "message", oneof: "data", T: () => UserMarker },
+            { no: 6, name: "user_delete", kind: "scalar", oneof: "data", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -203,26 +229,38 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* services.livemap.JobsList jobs */ 1:
+                case /* optional bool user_on_duty */ 1:
+                    message.userOnDuty = reader.bool();
+                    break;
+                case /* services.livemap.JobsList jobs */ 2:
                     message.data = {
                         oneofKind: "jobs",
                         jobs: JobsList.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobs)
                     };
                     break;
-                case /* services.livemap.MarkerMarkersUpdates markers */ 2:
+                case /* services.livemap.MarkerMarkersUpdates markers */ 3:
                     message.data = {
                         oneofKind: "markers",
                         markers: MarkerMarkersUpdates.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).markers)
                     };
                     break;
-                case /* services.livemap.UserMarkersUpdates users */ 3:
+                case /* services.livemap.Snapshot snapshot */ 4:
                     message.data = {
-                        oneofKind: "users",
-                        users: UserMarkersUpdates.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
+                        oneofKind: "snapshot",
+                        snapshot: Snapshot.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).snapshot)
                     };
                     break;
-                case /* optional bool user_on_duty */ 4:
-                    message.userOnDuty = reader.bool();
+                case /* resources.livemap.UserMarker user_update */ 5:
+                    message.data = {
+                        oneofKind: "userUpdate",
+                        userUpdate: UserMarker.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userUpdate)
+                    };
+                    break;
+                case /* int32 user_delete */ 6:
+                    message.data = {
+                        oneofKind: "userDelete",
+                        userDelete: reader.int32()
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -236,18 +274,24 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         return message;
     }
     internalBinaryWrite(message: StreamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* services.livemap.JobsList jobs = 1; */
-        if (message.data.oneofKind === "jobs")
-            JobsList.internalBinaryWrite(message.data.jobs, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* services.livemap.MarkerMarkersUpdates markers = 2; */
-        if (message.data.oneofKind === "markers")
-            MarkerMarkersUpdates.internalBinaryWrite(message.data.markers, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* services.livemap.UserMarkersUpdates users = 3; */
-        if (message.data.oneofKind === "users")
-            UserMarkersUpdates.internalBinaryWrite(message.data.users, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional bool user_on_duty = 4; */
+        /* optional bool user_on_duty = 1; */
         if (message.userOnDuty !== undefined)
-            writer.tag(4, WireType.Varint).bool(message.userOnDuty);
+            writer.tag(1, WireType.Varint).bool(message.userOnDuty);
+        /* services.livemap.JobsList jobs = 2; */
+        if (message.data.oneofKind === "jobs")
+            JobsList.internalBinaryWrite(message.data.jobs, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* services.livemap.MarkerMarkersUpdates markers = 3; */
+        if (message.data.oneofKind === "markers")
+            MarkerMarkersUpdates.internalBinaryWrite(message.data.markers, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* services.livemap.Snapshot snapshot = 4; */
+        if (message.data.oneofKind === "snapshot")
+            Snapshot.internalBinaryWrite(message.data.snapshot, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.livemap.UserMarker user_update = 5; */
+        if (message.data.oneofKind === "userUpdate")
+            UserMarker.internalBinaryWrite(message.data.userUpdate, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_delete = 6; */
+        if (message.data.oneofKind === "userDelete")
+            writer.tag(6, WireType.Varint).int32(message.data.userDelete);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -393,49 +437,41 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
  */
 export const MarkerMarkersUpdates = new MarkerMarkersUpdates$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
+class Snapshot$Type extends MessageType<Snapshot> {
     constructor() {
-        super("services.livemap.UserMarkersUpdates", [
-            { no: 1, name: "updated", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserMarker },
-            { no: 2, name: "deleted", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "part", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "clear", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        super("services.livemap.Snapshot", [
+            { no: 1, name: "markers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserMarker },
+            { no: 2, name: "generated_at", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "snapshot_seq", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "schema_version", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
-    create(value?: PartialMessage<UserMarkersUpdates>): UserMarkersUpdates {
+    create(value?: PartialMessage<Snapshot>): Snapshot {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.updated = [];
-        message.deleted = [];
-        message.part = 0;
-        message.partial = false;
+        message.markers = [];
+        message.generatedAt = 0;
+        message.snapshotSeq = 0;
+        message.schemaVersion = 0;
         if (value !== undefined)
-            reflectionMergePartial<UserMarkersUpdates>(this, message, value);
+            reflectionMergePartial<Snapshot>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserMarkersUpdates): UserMarkersUpdates {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Snapshot): Snapshot {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.livemap.UserMarker updated */ 1:
-                    message.updated.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.livemap.UserMarker markers */ 1:
+                    message.markers.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated int32 deleted */ 2:
-                    if (wireType === WireType.LengthDelimited)
-                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.deleted.push(reader.int32());
-                    else
-                        message.deleted.push(reader.int32());
+                case /* int64 generated_at */ 2:
+                    message.generatedAt = reader.int64().toNumber();
                     break;
-                case /* int32 part */ 3:
-                    message.part = reader.int32();
+                case /* uint64 snapshot_seq */ 3:
+                    message.snapshotSeq = reader.uint64().toNumber();
                     break;
-                case /* bool partial */ 4:
-                    message.partial = reader.bool();
-                    break;
-                case /* optional bool clear */ 5:
-                    message.clear = reader.bool();
+                case /* uint32 schema_version */ 4:
+                    message.schemaVersion = reader.uint32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -448,26 +484,19 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
         }
         return message;
     }
-    internalBinaryWrite(message: UserMarkersUpdates, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.livemap.UserMarker updated = 1; */
-        for (let i = 0; i < message.updated.length; i++)
-            UserMarker.internalBinaryWrite(message.updated[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated int32 deleted = 2; */
-        if (message.deleted.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
-            for (let i = 0; i < message.deleted.length; i++)
-                writer.int32(message.deleted[i]);
-            writer.join();
-        }
-        /* int32 part = 3; */
-        if (message.part !== 0)
-            writer.tag(3, WireType.Varint).int32(message.part);
-        /* bool partial = 4; */
-        if (message.partial !== false)
-            writer.tag(4, WireType.Varint).bool(message.partial);
-        /* optional bool clear = 5; */
-        if (message.clear !== undefined)
-            writer.tag(5, WireType.Varint).bool(message.clear);
+    internalBinaryWrite(message: Snapshot, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.livemap.UserMarker markers = 1; */
+        for (let i = 0; i < message.markers.length; i++)
+            UserMarker.internalBinaryWrite(message.markers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* int64 generated_at = 2; */
+        if (message.generatedAt !== 0)
+            writer.tag(2, WireType.Varint).int64(message.generatedAt);
+        /* uint64 snapshot_seq = 3; */
+        if (message.snapshotSeq !== 0)
+            writer.tag(3, WireType.Varint).uint64(message.snapshotSeq);
+        /* uint32 schema_version = 4; */
+        if (message.schemaVersion !== 0)
+            writer.tag(4, WireType.Varint).uint32(message.schemaVersion);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -475,9 +504,9 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.livemap.UserMarkersUpdates
+ * @generated MessageType for protobuf message services.livemap.Snapshot
  */
-export const UserMarkersUpdates = new UserMarkersUpdates$Type();
+export const Snapshot = new Snapshot$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateOrUpdateMarkerRequest$Type extends MessageType<CreateOrUpdateMarkerRequest> {
     constructor() {

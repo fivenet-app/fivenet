@@ -185,7 +185,7 @@ func New(p Params) (*State, error) {
 	return s, nil
 }
 
-// Expose the stores for deeper interaction with updates
+// Expose the stores for deeper interaction for updates
 
 func (s *State) UnitsStore() *store.Store[centrum.Unit, *centrum.Unit] {
 	return s.units

@@ -1,14 +1,19 @@
 package tracker
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
+	pblivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
@@ -21,6 +26,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/klauspost/compress/zstd"
+	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -45,9 +52,11 @@ type Manager struct {
 	state    *centrumstate.State
 	appCfg   appconfig.IConfig
 
-	refreshTimer *time.Timer
+	refreshTicker  *time.Ticker
+	snapshotTicker *time.Ticker
 
-	userStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
+	userLocStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
+	unitMapStore *store.Store[centrum.UserUnitMapping, *centrum.UserUnitMapping]
 }
 
 type ManagerParams struct {
@@ -81,7 +90,8 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		m.refreshTimer = time.NewTimer(p.AppConfig.Get().UserTracker.DbRefreshTime.AsDuration())
+		appCfg := p.AppConfig.Get()
+		m.refreshTicker = time.NewTicker(appCfg.UserTracker.DbRefreshTime.AsDuration())
 
 		go func() {
 			configUpdateCh := p.AppConfig.Subscribe()
@@ -101,17 +111,46 @@ func NewManager(p ManagerParams) (*Manager, error) {
 			}
 		}()
 
-		userStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, p.Logger, p.JS, "tracker",
+		locStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+			ctxStartup, p.Logger, p.JS, BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+			store.WithIgnoredKeys[livemap.UserMarker, *livemap.UserMarker]("_snapshot"),
 		)
 		if err != nil {
 			return err
 		}
-
-		if err := userStore.Start(ctxCancel, false); err != nil {
+		if err := locStore.Start(ctxCancel, false); err != nil {
 			return err
 		}
-		m.userStore = userStore
+		m.userLocStore = locStore
+
+		unitStore, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](
+			ctxStartup, p.Logger, p.JS, BucketUnitMap,
+			store.WithLocks[centrum.UserUnitMapping, *centrum.UserUnitMapping](nil),
+		)
+		if err != nil {
+			return err
+		}
+		if err := unitStore.Start(ctxCancel, false); err != nil {
+			return err
+		}
+		m.unitMapStore = unitStore
+
+		// Periodic snapshot publisher
+		m.snapshotTicker = time.NewTicker(defaultSnapEvery)
+		go func() {
+			for {
+				select {
+				case <-ctxCancel.Done():
+					return
+
+				case <-m.snapshotTicker.C:
+					if err := m.publishSnapshot(ctxCancel); err != nil {
+						m.logger.Error("snapshot publish failed", zap.Error(err))
+					}
+				}
+			}
+		}()
 
 		go m.start(ctxCancel)
 
@@ -121,7 +160,11 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
-		m.refreshTimer.Stop()
+		m.refreshTicker.Stop()
+
+		if m.snapshotTicker != nil {
+			m.snapshotTicker.Stop()
+		}
 
 		return nil
 	}))
@@ -131,7 +174,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 
 func (m *Manager) handleAppConfigUpdate(appCfg *appconfig.Cfg) {
 	dbRefreshTime := appCfg.UserTracker.DbRefreshTime.AsDuration()
-	m.refreshTimer.Reset(dbRefreshTime)
+	m.refreshTicker.Reset(dbRefreshTime)
 }
 
 func (m *Manager) start(ctx context.Context) {
@@ -140,7 +183,7 @@ func (m *Manager) start(ctx context.Context) {
 		case <-ctx.Done():
 			return
 
-		case <-m.refreshTimer.C:
+		case <-m.refreshTicker.C:
 			m.refreshCache(ctx)
 		}
 	}
@@ -158,56 +201,19 @@ func (m *Manager) refreshCache(ctx context.Context) {
 	}
 }
 
-func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any) (int, error) {
-	m.logger.Debug("cleaning up user IDs", zap.Int32s("found_user_ids", utils.GetMapKeys(foundUserIDs)))
-
-	var errs error
-	now := time.Now()
-	keys := m.userStore.Keys(ctx, "")
-	removed := []string{}
-	for _, key := range keys {
-		idKey, err := strconv.ParseInt(key, 10, 32)
-		if err != nil {
-			continue
-		}
-
-		if _, ok := foundUserIDs[int32(idKey)]; ok {
-			continue
-		}
-
-		marker, ok := m.userStore.Get(key)
-		if !ok {
-			continue
-		}
-
-		// Marker has been updated in the latest 30 seconds, skip it
-		if marker.UpdatedAt != nil && now.Sub(marker.UpdatedAt.AsTime()) <= 30*time.Second {
-			continue
-		}
-
-		if err := m.userStore.Delete(ctx, key); err != nil {
-			errs = multierr.Append(errs, err)
-			continue
-		}
-
-		removed = append(removed, key)
-	}
-
-	m.logger.Debug("removed user ids from tracker cache", zap.Strings("user_ids", removed))
-
-	return len(removed), errs
-}
-
 func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	m.logger.Debug("refreshing user tracker cache")
 
 	tLocs := tLocs.AS("user_marker")
 	tUsers := tables.User().AS("user")
+	tFallbackJobProps := tJobProps.AS("fallback_job_props")
+	tFallbackColleagueProps := tColleagueProps.AS("fallback_colleague_props")
 
 	stmt := tLocs.
 		SELECT(
 			tLocs.Identifier,
 			tLocs.Job,
+			tLocs.JobGrade,
 			tLocs.X,
 			tLocs.Y,
 			tLocs.UpdatedAt,
@@ -219,11 +225,26 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.PhoneNumber,
-			tColleagueProps.UserID,
-			tColleagueProps.Job,
-			tColleagueProps.NamePrefix,
-			tColleagueProps.NameSuffix,
-			tJobProps.LivemapMarkerColor.AS("user_marker.color"),
+			jet.COALESCE(
+				tColleagueProps.UserID,
+				tFallbackColleagueProps.UserID,
+			).AS("colleague_props.userid"),
+			jet.COALESCE(
+				tColleagueProps.Job,
+				tFallbackColleagueProps.Job,
+			).AS("colleague_props.job"),
+			jet.COALESCE(
+				tColleagueProps.NamePrefix,
+				tFallbackColleagueProps.NamePrefix,
+			).AS("colleague_props.name_prefix"),
+			jet.COALESCE(
+				tColleagueProps.NameSuffix,
+				tFallbackColleagueProps.NameSuffix,
+			).AS("colleague_props.name_suffix"),
+			jet.COALESCE(
+				tJobProps.LivemapMarkerColor,
+				tFallbackJobProps.LivemapMarkerColor,
+			).AS("user_marker.color"),
 		).
 		FROM(
 			tLocs.
@@ -231,11 +252,18 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 					tLocs.Identifier.EQ(tUsers.Identifier),
 				).
 				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tLocs.Job).OR(tJobProps.Job.EQ(tUsers.Job)),
+					tJobProps.Job.EQ(tLocs.Job),
+				).
+				LEFT_JOIN(tFallbackJobProps,
+					tFallbackJobProps.Job.EQ(tUsers.Job),
 				).
 				LEFT_JOIN(tColleagueProps,
 					tColleagueProps.UserID.EQ(tUsers.ID).
-						AND(tColleagueProps.Job.EQ(tLocs.Job).OR(tColleagueProps.Job.EQ(tUsers.Job))),
+						AND(tColleagueProps.Job.EQ(tLocs.Job)),
+				).
+				LEFT_JOIN(tFallbackColleagueProps,
+					tFallbackColleagueProps.UserID.EQ(tUsers.ID).
+						AND(tFallbackColleagueProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(jet.AND(
@@ -260,8 +288,18 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 
 		foundUserIds[dest[i].UserId] = nil
 
-		m.enricher.EnrichJobName(dest[i])
-		m.enricher.EnrichJobInfo(dest[i].User)
+		job := dest[i].User.Job
+		if dest[i].Job != "" {
+			dest[i].User.Job = dest[i].Job
+			job = dest[i].Job // Use the job from the marker, not the user if set
+		}
+
+		jg := dest[i].User.JobGrade
+		if dest[i].JobGrade != nil {
+			jg = *dest[i].JobGrade
+			dest[i].User.JobGrade = *dest[i].JobGrade
+			dest[i].JobGrade = nil // Clear to avoid duplication, it is just used for overriding the user job grade
+		}
 
 		if dest[i].Color == nil {
 			defaultColor := jobs.DefaultLivemapMarkerColor
@@ -276,29 +314,38 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		unitMapping, ok := m.state.GetUserUnitMapping(ctx, dest[i].UserId)
 		if ok {
 			dest[i].UnitId = &unitMapping.UnitId
-			job := dest[i].User.Job
 			if unit, err := m.state.GetUnit(ctx, job, unitMapping.UnitId); err == nil {
 				dest[i].Unit = unit
 			}
+		} else {
+			dest[i].UnitId = nil
+			dest[i].Unit = nil
 		}
 
-		userMarker, ok := m.userStore.Get(userIdKey(dest[i].UserId))
+		m.enricher.EnrichJobName(dest[i])
+		m.enricher.EnrichJobInfo(dest[i].User)
+
+		dest[i].User.JobGrade = jg
+
+		um, err := m.userLocStore.Get(userMarkerKey(dest[i].UserId, job, jg))
 		// No user marker in key value store nor locally
-		if userMarker == nil || !ok {
+		if um == nil || err != nil {
 			added++
-			if err := m.userStore.Put(ctx, userIdKey(dest[i].UserId), dest[i]); err != nil {
+			if err := m.userLocStore.Put(ctx, userMarkerKey(dest[i].UserId, job, jg), dest[i]); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
 		} else {
 			// If not equal, update marker in store
-			if !proto.Equal(userMarker, dest[i]) {
-				userMarker.Merge(dest[i])
+			if proto.Equal(um, dest[i]) {
+				continue
+			}
 
-				if err := m.userStore.Put(ctx, userIdKey(dest[i].UserId), userMarker); err != nil {
-					errs = multierr.Append(errs, err)
-					continue
-				}
+			um.Merge(dest[i])
+
+			if err := m.userLocStore.Put(ctx, userMarkerKey(dest[i].UserId, job, jg), um); err != nil {
+				errs = multierr.Append(errs, err)
+				continue
 			}
 		}
 	}
@@ -313,6 +360,104 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	return nil
 }
 
-func userIdKey(id int32) string {
-	return strconv.FormatInt(int64(id), 10)
+func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any) (int, error) {
+	m.logger.Debug("cleaning up user IDs", zap.Int32s("found_user_ids", utils.GetMapKeys(foundUserIDs)))
+
+	var errs error
+	now := time.Now()
+	keys := m.userLocStore.Keys("")
+	removed := []string{}
+	for _, key := range keys {
+		idKey, err := ExtractUserID(key)
+		if err != nil {
+			m.logger.Warn("failed to extract user ID from key", zap.String("key", key), zap.Error(err))
+			continue
+		}
+
+		if _, ok := foundUserIDs[int32(idKey)]; ok {
+			continue
+		}
+
+		marker, err := m.userLocStore.Get(key)
+		if err != nil {
+			continue
+		}
+
+		// Marker has been updated in the latest 30 seconds, skip it
+		if marker.UpdatedAt != nil && now.Sub(marker.UpdatedAt.AsTime()) <= 30*time.Second {
+			continue
+		}
+
+		if err := m.userLocStore.Delete(ctx, key); err != nil {
+			errs = multierr.Append(errs, err)
+			continue
+		}
+
+		removed = append(removed, key)
+	}
+
+	m.logger.Debug("removed user ids from tracker cache", zap.Strings("user_ids", removed))
+
+	return len(removed), errs
+}
+
+// Snapshot logic - one compressed roll-up every defaultSnapEvery
+func (m *Manager) publishSnapshot(ctx context.Context) error {
+	// build Snapshot proto
+	snap := &pblivemap.Snapshot{}
+	m.userLocStore.Range(ctx, func(_ string, um *livemap.UserMarker) bool {
+		snap.Markers = append(snap.Markers, proto.Clone(um).(*livemap.UserMarker))
+		return true
+	})
+
+	raw, err := proto.Marshal(snap)
+	if err != nil {
+		return fmt.Errorf("marshal snapshot: %w", err)
+	}
+
+	// Compress (zstd keeps CPU low and ratio high)
+	var dst bytes.Buffer
+	enc, err := zstd.NewWriter(&dst)
+	if err != nil {
+		return fmt.Errorf("create zstd writer. %w", err)
+	}
+	if _, err := enc.Write(raw); err != nil {
+		return fmt.Errorf("write snapshot to zstd writer. %w", err)
+	}
+	enc.Close()
+
+	msg := &nats.Msg{
+		Subject: SnapshotSubject,
+		Data:    dst.Bytes(),
+		Header: nats.Header{
+			"Nats-Rollup":  []string{"all"}, // Atomic replace
+			"KV-Operation": []string{"ROLLUP"},
+		},
+	}
+	_, err = m.js.PublishMsg(ctx, msg)
+	return err
+}
+
+func userMarkerKey(id int32, job string, grade int32) string {
+	return fmt.Sprintf("%s.%d.%d", job, grade, id)
+}
+
+func decodeUserMarkerKey(key string) (int32, string, int32, error) {
+	parts := strings.Split(key, ".")
+	if len(parts) != 3 {
+		return 0, "", 0, fmt.Errorf("invalid user marker key: %s", key)
+	}
+
+	id, err := strconv.ParseInt(parts[2], 10, 32)
+	if err != nil {
+		return 0, "", 0, fmt.Errorf("invalid user marker id: %s", parts[2])
+	}
+
+	job := parts[1]
+	grade, err := strconv.ParseInt(parts[0], 10, 32)
+	if err != nil {
+		return 0, "", 0, fmt.Errorf("invalid user marker grade: %s", parts[0])
+	}
+
+	return int32(id), job, int32(grade), nil
 }

@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package resources.livemap;
+
+import "resources/centrum/units.proto";
+import "resources/jobs/colleagues.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemap";
+
+message UserMarker {
+  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  double x = 2;
+  double y = 3;
+  optional resources.timestamp.Timestamp updated_at = 4;
+  // @sanitize: method=StripTags
+  optional string postal = 5 [(validate.rules).string.max_len = 48];
+  // @sanitize: method=StripTags
+  optional string color = 6 [(validate.rules).string = {
+    len: 7,
+    pattern: "^#[A-Fa-f0-9]{6}$",
+  }];
+  string job = 7 [(validate.rules).string.max_len = 20];
+  string job_label = 8;
+  optional int32 job_grade = 13;
+
+  resources.jobs.Colleague user = 9; // @gotags: alias:"user"
+  optional uint64 unit_id = 10;
+  optional resources.centrum.Unit unit = 11;
+
+  bool hidden = 12;
+}

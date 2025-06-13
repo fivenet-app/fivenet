@@ -77,6 +77,19 @@ export const useCentrumStore = defineStore(
                 : (settings.value?.fallbackMode ?? CentrumMode.UNSPECIFIED);
         });
 
+        const getJobDispatchers = computed((): Dispatchers | undefined => {
+            const { activeChar } = useAuth();
+            return dispatchers.value.find((d) => d.job === activeChar.value?.job);
+        });
+
+        const anyDispatchersActive = computed(() => {
+            return (
+                dispatchers.value !== undefined &&
+                dispatchers.value.length > 0 &&
+                dispatchers.value.map((d) => d.dispatchers.length).reduce((sum, d) => d + sum) > 0
+            );
+        });
+
         const getOwnUnit = computed<Unit | undefined>(() => {
             return ownUnitId.value !== undefined ? units.value.get(ownUnitId.value) : undefined;
         });
@@ -104,7 +117,7 @@ export const useCentrumStore = defineStore(
         // Actions
 
         // General
-        const updateSettings = (newSettings: Settings): void => {
+        const setOrUpdateSettings = (newSettings: Settings): void => {
             if (settings.value !== undefined) {
                 settings.value.enabled = newSettings.enabled;
                 settings.value.job = newSettings.job;
@@ -379,7 +392,7 @@ export const useCentrumStore = defineStore(
                             calculateTimeCorrection(resp.change.handshake.serverTime);
                         }
                         if (resp.change.handshake.settings) {
-                            updateSettings(resp.change.handshake.settings);
+                            setOrUpdateSettings(resp.change.handshake.settings);
                         }
 
                         // TODO
@@ -426,7 +439,7 @@ export const useCentrumStore = defineStore(
                         });
                         logger.debug(`Removed ${removedDispatches} old dispatches`);
                     } else if (resp.change.oneofKind === 'settings') {
-                        updateSettings(resp.change.settings);
+                        setOrUpdateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'dispatchers') {
                         const idx = dispatchers.value.findIndex(
                             (d) => resp.change.oneofKind === 'dispatchers' && d.job === resp.change.dispatchers.job,
@@ -849,13 +862,15 @@ export const useCentrumStore = defineStore(
 
             // Getters
             getCurrentMode,
+            getJobDispatchers,
+            anyDispatchersActive,
             getOwnUnit,
             getSortedUnits,
             getSortedDispatches,
             getSortedOwnDispatches,
 
             // Actions
-            updateSettings,
+            setOrUpdateSettings,
             addOrUpdateUnit,
             updateUnitStatus,
             setOwnUnit,

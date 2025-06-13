@@ -1,18 +1,13 @@
 <script lang="ts" setup>
-import ColleagueName from '~/components/jobs/colleagues/ColleagueName.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
 const { isOpen } = useModal();
 
-const { can } = useAuth();
-
 const centrumStore = useCentrumStore();
-const { updateDispatchers } = centrumStore;
-const { dispatchers, getCurrentMode } = storeToRefs(centrumStore);
+const { dispatchers, anyDispatchersActive, getCurrentMode } = storeToRefs(centrumStore);
 </script>
 
 <template>
@@ -32,43 +27,24 @@ const { dispatchers, getCurrentMode } = storeToRefs(centrumStore);
             </template>
 
             <DataNoDataBlock
-                v-if="dispatchers && dispatchers.length === 0"
-                class="mt-5"
+                v-if="!dispatchers || !anyDispatchersActive"
                 icon="i-mdi-monitor"
-                :type="$t('common.dispatchers', 2)"
+                :type="$t('common.dispatcher')"
             />
-            <UPageGrid v-else>
-                <UPageCard
-                    v-for="dispatcher in dispatchers"
-                    :key="dispatcher.userId"
-                    :ui="{
-                        title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
-                    }"
-                >
-                    <template #title>
-                        <div class="flex flex-1 items-center gap-2">
-                            <ProfilePictureImg
-                                :src="dispatcher.avatar"
-                                :name="`${dispatcher.firstname} ${dispatcher.lastname}`"
-                            />
-                            <ColleagueName :colleague="dispatcher" />
-                        </div>
-                    </template>
-
-                    <div class="flex items-center justify-between gap-2">
+            <template v-else>
+                <UPageGrid v-for="dispas in dispatchers" :key="dispas.job" class="gap-4 p-4" :cols="2">
+                    <UPageCard
+                        v-for="dispatcher in dispas.dispatchers"
+                        :key="dispatcher.userId"
+                        :title="`${dispatcher.firstname} ${dispatcher.lastname}`"
+                        :ui="{
+                            title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
+                        }"
+                    >
                         <PhoneNumberBlock :number="dispatcher.phoneNumber" />
-
-                        <UTooltip v-if="can('centrum.CentrumService.UpdateDispatchers').value" :text="$t('common.remove')">
-                            <UButton
-                                variant="ghost"
-                                icon="i-mdi-trash"
-                                color="error"
-                                @click="updateDispatchers([dispatcher.userId])"
-                            />
-                        </UTooltip>
-                    </div>
-                </UPageCard>
-            </UPageGrid>
+                    </UPageCard>
+                </UPageGrid>
+            </template>
 
             <template #footer>
                 <UButton class="flex-1" color="black" block @click="isOpen = false">

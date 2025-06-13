@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import MapUserMarker from '~/components/livemap/MapUserMarker.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import { useSettingsStore } from '~/stores/settings';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
 
 withDefaults(
     defineProps<{

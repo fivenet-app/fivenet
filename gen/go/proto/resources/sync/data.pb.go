@@ -466,7 +466,7 @@ var File_resources_sync_data_proto protoreflect.FileDescriptor
 
 const file_resources_sync_data_proto_rawDesc = "" +
 	"\n" +
-	"\x19resources/sync/data.proto\x12\x0eresources.sync\x1a\x1fresources/livemap/livemap.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x17validate/validate.proto\"\"\n" +
+	"\x19resources/sync/data.proto\x12\x0eresources.sync\x1a\x1eresources/livemap/coords.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1eresources/users/licenses.proto\x1a\x1bresources/users/users.proto\x1a!resources/vehicles/vehicles.proto\x1a\x17validate/validate.proto\"\"\n" +
 	"\n" +
 	"DataStatus\x12\x14\n" +
 	"\x05count\x18\x01 \x01(\x03R\x05count\">\n" +

@@ -34,9 +34,6 @@
   
     - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
   
-- [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
 - [resources/centrum/access.proto](#resources_centrum_access-proto)
     - [CentrumAccess](#resources-centrum-CentrumAccess)
     - [CentrumJobAccess](#resources-centrum-CentrumJobAccess)
@@ -67,6 +64,9 @@
   
     - [CentrumMode](#resources-centrum-CentrumMode)
     - [CentrumType](#resources-centrum-CentrumType)
+  
+- [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
+    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
@@ -235,18 +235,22 @@
     - [Law](#resources-laws-Law)
     - [LawBook](#resources-laws-LawBook)
   
-- [resources/livemap/livemap.proto](#resources_livemap_livemap-proto)
-    - [CircleMarker](#resources-livemap-CircleMarker)
+- [resources/livemap/coords.proto](#resources_livemap_coords-proto)
     - [Coords](#resources-livemap-Coords)
+  
+- [resources/livemap/marker_marker.proto](#resources_livemap_marker_marker-proto)
+    - [CircleMarker](#resources-livemap-CircleMarker)
     - [IconMarker](#resources-livemap-IconMarker)
     - [MarkerData](#resources-livemap-MarkerData)
     - [MarkerMarker](#resources-livemap-MarkerMarker)
-    - [UserMarker](#resources-livemap-UserMarker)
   
     - [MarkerType](#resources-livemap-MarkerType)
   
-- [resources/livemap/tracker.proto](#resources_livemap_tracker-proto)
-    - [UsersUpdateEvent](#resources-livemap-UsersUpdateEvent)
+- [resources/livemap/user_marker.proto](#resources_livemap_user_marker-proto)
+    - [UserMarker](#resources-livemap-UserMarker)
+  
+- [resources/livemap/heatmap.proto](#resources_livemap_heatmap-proto)
+    - [HeatmapEntry](#resources-livemap-HeatmapEntry)
   
 - [resources/notifications/notifications.proto](#resources_notifications_notifications-proto)
     - [CalendarData](#resources-notifications-CalendarData)
@@ -577,6 +581,8 @@
     - [DeleteUnitRequest](#services-centrum-DeleteUnitRequest)
     - [DeleteUnitResponse](#services-centrum-DeleteUnitResponse)
     - [Dispatchers](#services-centrum-Dispatchers)
+    - [GetDispatchHeatmapRequest](#services-centrum-GetDispatchHeatmapRequest)
+    - [GetDispatchHeatmapResponse](#services-centrum-GetDispatchHeatmapResponse)
     - [GetDispatchRequest](#services-centrum-GetDispatchRequest)
     - [GetDispatchResponse](#services-centrum-GetDispatchResponse)
     - [GetSettingsRequest](#services-centrum-GetSettingsRequest)
@@ -980,9 +986,9 @@
     - [DeleteMarkerResponse](#services-livemap-DeleteMarkerResponse)
     - [JobsList](#services-livemap-JobsList)
     - [MarkerMarkersUpdates](#services-livemap-MarkerMarkersUpdates)
+    - [Snapshot](#services-livemap-Snapshot)
     - [StreamRequest](#services-livemap-StreamRequest)
     - [StreamResponse](#services-livemap-StreamResponse)
-    - [UserMarkersUpdates](#services-livemap-UserMarkersUpdates)
   
     - [LivemapService](#services-livemap-LivemapService)
   
@@ -1486,40 +1492,6 @@
 
 
 
-<a name="resources_centrum_user_unit-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/user_unit.proto
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_centrum_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1924,6 +1896,41 @@ Dummy - DO NOT USE!
 | `CENTRUM_TYPE_DISPATCH` | 1 |  |
 | `CENTRUM_TYPE_DELIVERY` | 2 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_user_unit-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/user_unit.proto
+
+
+
+<a name="resources-centrum-UserUnitMapping"></a>
+
+### UserUnitMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_id` | [uint64](#uint64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -4293,26 +4300,10 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_livemap_livemap-proto"></a>
+<a name="resources_livemap_coords-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/livemap/livemap.proto
-
-
-
-<a name="resources-livemap-CircleMarker"></a>
-
-### CircleMarker
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `radius` | [int32](#int32) |  |  |
-| `opacity` | [float](#float) | optional |  |
-
-
-
+## resources/livemap/coords.proto
 
 
 
@@ -4326,6 +4317,38 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `x` | [double](#double) |  |  |
 | `y` | [double](#double) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_livemap_marker_marker-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/livemap/marker_marker.proto
+
+
+
+<a name="resources-livemap-CircleMarker"></a>
+
+### CircleMarker
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `radius` | [int32](#int32) |  |  |
+| `opacity` | [float](#float) | optional |  |
 
 
 
@@ -4393,32 +4416,6 @@ Dummy - DO NOT USE!
 
 
 
-
-<a name="resources-livemap-UserMarker"></a>
-
-### UserMarker
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `x` | [double](#double) |  |  |
-| `y` | [double](#double) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) |  |  |
-| `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"user" |
-| `unit_id` | [uint64](#uint64) | optional |  |
-| `unit` | [resources.centrum.Unit](#resources-centrum-Unit) | optional |  |
-| `hidden` | [bool](#bool) |  |  |
-
-
-
-
-
  <!-- end messages -->
 
 
@@ -4443,23 +4440,67 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_livemap_tracker-proto"></a>
+<a name="resources_livemap_user_marker-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/livemap/tracker.proto
+## resources/livemap/user_marker.proto
 
 
 
-<a name="resources-livemap-UsersUpdateEvent"></a>
+<a name="resources-livemap-UserMarker"></a>
 
-### UsersUpdateEvent
+### UserMarker
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `added` | [UserMarker](#resources-livemap-UserMarker) | repeated |  |
-| `removed` | [UserMarker](#resources-livemap-UserMarker) | repeated |  |
+| `user_id` | [int32](#int32) |  |  |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) |  |  |
+| `job_grade` | [int32](#int32) | optional |  |
+| `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"user" |
+| `unit_id` | [uint64](#uint64) | optional |  |
+| `unit` | [resources.centrum.Unit](#resources-centrum-Unit) | optional |  |
+| `hidden` | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_livemap_heatmap-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/livemap/heatmap.proto
+
+
+
+<a name="resources-livemap-HeatmapEntry"></a>
+
+### HeatmapEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+| `w` | [double](#double) |  |  |
 
 
 
@@ -9139,6 +9180,32 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services-centrum-GetDispatchHeatmapRequest"></a>
+
+### GetDispatchHeatmapRequest
+
+
+
+
+
+
+
+<a name="services-centrum-GetDispatchHeatmapResponse"></a>
+
+### GetDispatchHeatmapResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `max_entries` | [int32](#int32) |  |  |
+| `entries` | [resources.livemap.HeatmapEntry](#resources-livemap-HeatmapEntry) | repeated |  |
+
+
+
+
+
+
 <a name="services-centrum-GetDispatchRequest"></a>
 
 ### GetDispatchRequest
@@ -9653,6 +9720,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `TakeControl` | [TakeControlRequest](#services-centrum-TakeControlRequest) | [TakeControlResponse](#services-centrum-TakeControlResponse) | @perm |
 | `AssignDispatch` | [AssignDispatchRequest](#services-centrum-AssignDispatchRequest) | [AssignDispatchResponse](#services-centrum-AssignDispatchResponse) | @perm: Name=TakeControl |
 | `AssignUnit` | [AssignUnitRequest](#services-centrum-AssignUnitRequest) | [AssignUnitResponse](#services-centrum-AssignUnitResponse) | @perm: Name=TakeControl |
+| `GetDispatchHeatmap` | [GetDispatchHeatmapRequest](#services-centrum-GetDispatchHeatmapRequest) | [GetDispatchHeatmapResponse](#services-centrum-GetDispatchHeatmapResponse) | @perm: Name=TakeControl |
 | `UpdateDispatchers` | [UpdateDispatchersRequest](#services-centrum-UpdateDispatchersRequest) | [UpdateDispatchersResponse](#services-centrum-UpdateDispatchersResponse) | @perm |
 | `Stream` | [StreamRequest](#services-centrum-StreamRequest) | [StreamResponse](#services-centrum-StreamResponse) stream | @perm |
 | `GetSettings` | [GetSettingsRequest](#services-centrum-GetSettingsRequest) | [GetSettingsResponse](#services-centrum-GetSettingsResponse) | @perm: Name=Stream |
@@ -14764,6 +14832,24 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
+<a name="services-livemap-Snapshot"></a>
+
+### Snapshot
+A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_locations._snapshot` with the headers: Nats-Rollup: all KV-Operation: ROLLUP
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `markers` | [resources.livemap.UserMarker](#resources-livemap-UserMarker) | repeated | All currently-known user markers, already filtered for obsolete PURGE/DELETE events. |
+| `generated_at` | [int64](#int64) |  | When the snapshot was generated (Unix epoch millis). |
+| `snapshot_seq` | [uint64](#uint64) |  | Optional monotonic counter so a client can ignore older roll-ups that arrive out-of-order. |
+| `schema_version` | [uint32](#uint32) |  | Version in case we extend the definition later (e.g. add units). |
+
+
+
+
+
+
 <a name="services-livemap-StreamRequest"></a>
 
 ### StreamRequest
@@ -14782,29 +14868,12 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `user_on_duty` | [bool](#bool) | optional |  |
 | `jobs` | [JobsList](#services-livemap-JobsList) |  |  |
 | `markers` | [MarkerMarkersUpdates](#services-livemap-MarkerMarkersUpdates) |  |  |
-| `users` | [UserMarkersUpdates](#services-livemap-UserMarkersUpdates) |  |  |
-| `user_on_duty` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-livemap-UserMarkersUpdates"></a>
-
-### UserMarkersUpdates
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `updated` | [resources.livemap.UserMarker](#resources-livemap-UserMarker) | repeated |  |
-| `deleted` | [int32](#int32) | repeated |  |
-| `part` | [int32](#int32) |  |  |
-| `partial` | [bool](#bool) |  |  |
-| `clear` | [bool](#bool) | optional |  |
+| `snapshot` | [Snapshot](#services-livemap-Snapshot) |  |  |
+| `user_update` | [resources.livemap.UserMarker](#resources-livemap-UserMarker) |  |  |
+| `user_delete` | [int32](#int32) |  |  |
 
 
 

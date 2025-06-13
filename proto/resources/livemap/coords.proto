@@ -2,11 +2,9 @@ syntax = "proto3";
 
 package resources.livemap;
 
-import "resources/livemap/livemap.proto";
-
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemap";
 
-message UsersUpdateEvent {
-  repeated UserMarker added = 1;
-  repeated UserMarker removed = 2;
+message Coords {
+  double x = 1;
+  double y = 2;
 }

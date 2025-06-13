@@ -18,6 +18,7 @@ import {
 } from '@protobuf-ts/runtime-rpc';
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { Metadata } from '~/composables/grpc/grpcws/metadata';
+import { Ping } from '~~/gen/ts/resources/common/grpcws/grpcws';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
 import { errInternal, errTimeout, errUnavailable } from '../errors';
 import type { Transport, TransportFactory } from '../transports/transport';
@@ -25,6 +26,12 @@ import { WebsocketChannelTransport } from '../transports/websocket/websocketChan
 import { constructWebSocketAddress, createGrpcStatus, createGrpcTrailers } from './utils';
 
 const logger = useLogger('📡 GRPC-WS');
+
+const pingBinaryMsg = Ping.toBinary({ pong: false });
+const heartbeatMsg = pingBinaryMsg.buffer.slice(
+    pingBinaryMsg.byteOffset,
+    pingBinaryMsg.byteOffset + pingBinaryMsg.byteLength,
+) as ArrayBuffer;
 
 export const webSocket = useWebSocket(
     constructWebSocketAddress(
@@ -36,6 +43,11 @@ export const webSocket = useWebSocket(
             delay: 350,
         },
         protocols: ['grpc-websocket-channel'],
+        heartbeat: {
+            message: heartbeatMsg,
+            interval: 45_000,
+            pongTimeout: 1_500,
+        },
 
         onConnected(ws) {
             ws.binaryType = 'arraybuffer';

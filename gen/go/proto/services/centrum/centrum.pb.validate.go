@@ -2007,6 +2007,246 @@ var _ interface {
 	ErrorName() string
 } = AssignUnitResponseValidationError{}
 
+// Validate checks the field values on GetDispatchHeatmapRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDispatchHeatmapRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDispatchHeatmapRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDispatchHeatmapRequestMultiError, or nil if none found.
+func (m *GetDispatchHeatmapRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDispatchHeatmapRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetDispatchHeatmapRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDispatchHeatmapRequestMultiError is an error wrapping multiple validation
+// errors returned by GetDispatchHeatmapRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetDispatchHeatmapRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDispatchHeatmapRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDispatchHeatmapRequestMultiError) AllErrors() []error { return m }
+
+// GetDispatchHeatmapRequestValidationError is the validation error returned by
+// GetDispatchHeatmapRequest.Validate if the designated constraints aren't met.
+type GetDispatchHeatmapRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDispatchHeatmapRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDispatchHeatmapRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDispatchHeatmapRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDispatchHeatmapRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDispatchHeatmapRequestValidationError) ErrorName() string {
+	return "GetDispatchHeatmapRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDispatchHeatmapRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDispatchHeatmapRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDispatchHeatmapRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDispatchHeatmapRequestValidationError{}
+
+// Validate checks the field values on GetDispatchHeatmapResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetDispatchHeatmapResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetDispatchHeatmapResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetDispatchHeatmapResponseMultiError, or nil if none found.
+func (m *GetDispatchHeatmapResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetDispatchHeatmapResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for MaxEntries
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetDispatchHeatmapResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetDispatchHeatmapResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetDispatchHeatmapResponseValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetDispatchHeatmapResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetDispatchHeatmapResponseMultiError is an error wrapping multiple
+// validation errors returned by GetDispatchHeatmapResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetDispatchHeatmapResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetDispatchHeatmapResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetDispatchHeatmapResponseMultiError) AllErrors() []error { return m }
+
+// GetDispatchHeatmapResponseValidationError is the validation error returned
+// by GetDispatchHeatmapResponse.Validate if the designated constraints aren't met.
+type GetDispatchHeatmapResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetDispatchHeatmapResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetDispatchHeatmapResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetDispatchHeatmapResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetDispatchHeatmapResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetDispatchHeatmapResponseValidationError) ErrorName() string {
+	return "GetDispatchHeatmapResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetDispatchHeatmapResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetDispatchHeatmapResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetDispatchHeatmapResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetDispatchHeatmapResponseValidationError{}
+
 // Validate checks the field values on UpdateDispatchersRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

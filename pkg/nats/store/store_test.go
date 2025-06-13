@@ -34,8 +34,8 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	assert.NotNil(t, kv)
 
 	// Retrieve a non-existant key
-	val, ok := store.Get("non-existant-key")
-	assert.False(t, ok)
+	val, err := store.Get("non-existant-key")
+	assert.Error(t, err)
 	assert.Nil(t, val)
 
 	// Create and ensure two values are stored
@@ -53,15 +53,15 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	err = store.Put(ctx, "second", second)
 	assert.NoError(t, err)
 
-	keys := store.Keys(ctx, "")
+	keys := store.Keys("")
 	assert.Len(t, keys, 2)
 
 	list := store.List()
 	assert.Len(t, list, 2)
 
 	// Retrieved values are **always clones** so compare exported values
-	firstRetrieved, ok := store.Get("first")
-	assert.True(t, ok)
+	firstRetrieved, err := store.Get("first")
+	assert.NoError(t, err)
 	assert.NotNil(t, firstRetrieved)
 
 	assert.EqualExportedValues(t, firstRetrieved, first)
@@ -82,8 +82,8 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	})
 	assert.NoError(t, err)
 
-	secondRetrieved, ok = store.Get("second")
-	assert.True(t, ok)
+	secondRetrieved, err = store.Get("second")
+	assert.NoError(t, err)
 	assert.NotNil(t, secondRetrieved)
 
 	if secondRetrieved != nil {

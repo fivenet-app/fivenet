@@ -19,13 +19,17 @@ import (
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	jsoniter "github.com/json-iterator/go"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
 
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
 var (
-	tDispatch       = table.FivenetCentrumDispatches.AS("dispatch")
-	tDispatchStatus = table.FivenetCentrumDispatchesStatus.AS("dispatchstatus")
+	tDispatch        = table.FivenetCentrumDispatches.AS("dispatch")
+	tDispatchStatus  = table.FivenetCentrumDispatchesStatus.AS("dispatchstatus")
+	tDispatchHeatmap = table.FivenetCentrumDispatchesHeatmaps.AS("heatmap")
 )
 
 func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatchesRequest) (*pbcentrum.ListDispatchesResponse, error) {
@@ -626,4 +630,50 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *pbcentrum.DeleteDispat
 	auditEntry.State = audit.EventType_EVENT_TYPE_DELETED
 
 	return &pbcentrum.DeleteDispatchResponse{}, nil
+}
+
+func (s *Server) GetDispatchHeatmap(ctx context.Context, req *pbcentrum.GetDispatchHeatmapRequest) (*pbcentrum.GetDispatchHeatmapResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &audit.AuditEntry{
+		Service: pbcentrum.CentrumService_ServiceDesc.ServiceName,
+		Method:  "GetDispatchHeatmap",
+		UserId:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   audit.EventType_EVENT_TYPE_ERRORED,
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	resp := &pbcentrum.GetDispatchHeatmapResponse{}
+
+	tDispatchHeatmap := tDispatchHeatmap.AS("coords")
+	stmt := tDispatchHeatmap.
+		SELECT(
+			tDispatchHeatmap.Max.AS("max"),
+			tDispatchHeatmap.HeatJSON.AS("data"),
+		).
+		FROM(tDispatchHeatmap).
+		WHERE(
+			tDispatchHeatmap.Job.EQ(jet.String(userInfo.Job)),
+		).
+		LIMIT(1)
+
+	var raw struct {
+		Max  int32
+		Data []byte
+	}
+	if err := stmt.QueryContext(ctx, s.db, &raw); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+	}
+
+	resp.MaxEntries = raw.Max
+	if err := json.Unmarshal(raw.Data, &resp.Entries); err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+
+	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
+
+	return resp, nil
 }

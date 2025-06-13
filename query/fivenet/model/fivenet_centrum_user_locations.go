@@ -13,9 +13,12 @@ import (
 
 type FivenetCentrumUserLocations struct {
 	Identifier string     `sql:"primary_key" json:"identifier"`
-	Job        string     `json:"job"`
+	Job        *string    `json:"job"`
+	JobGrade   *int32     `json:"job_grade"`
 	X          *float64   `json:"x"`
 	Y          *float64   `json:"y"`
 	Hidden     *bool      `json:"hidden"`
+	OnDuty     *bool      `json:"on_duty"`
 	UpdatedAt  *time.Time `json:"updated_at"`
+	Data       *string    `json:"data"`
 }

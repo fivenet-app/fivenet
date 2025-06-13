@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { LPopup } from '@vue-leaflet/vue-leaflet';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/stores/livemap';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
 import { availableIcons, fallbackIcon } from '../partials/icons';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 
