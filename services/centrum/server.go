@@ -4,11 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"sync"
+	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
+	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
@@ -19,9 +22,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 func init() {
@@ -55,6 +60,7 @@ type Server struct {
 	pbcentrum.CentrumServiceServer
 
 	logger *zap.Logger
+	tracer trace.Tracer
 	wg     sync.WaitGroup
 	ctx    context.Context
 	jsCons jetstream.ConsumeContext
@@ -90,11 +96,19 @@ type Params struct {
 	Enricher  *mstlystcdata.UserAwareEnricher
 }
 
+type Result struct {
+	fx.Out
+
+	Server       *Server
+	CronRegister croner.CronRegister `group:"cronjobregister"`
+}
+
 func NewServer(p Params) (*Server, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Server{
 		logger: p.Logger.Named("centrum"),
+		tracer: p.TP.Tracer("mstlystcdata-cache"),
 		wg:     sync.WaitGroup{},
 		ctx:    ctxCancel,
 
@@ -124,6 +138,34 @@ func NewServer(p Params) (*Server, error) {
 	}))
 
 	return s, nil
+}
+
+func (s *Server) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.dispatch.heatmap",
+		Schedule: "*/15 * * * *", // Every 15 minutes
+		Timeout:  durationpb.New(3 * time.Minute),
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) RegisterCronjobHandlers(hand *croner.Handlers) error {
+	hand.Add("centrum.dispatch.heatmap", func(ctx context.Context, data *cron.CronjobData) error {
+		ctx, span := s.tracer.Start(ctx, "centrum.dispatch.heatmap")
+		defer span.End()
+
+		if err := s.generateDispatchHeatmaps(ctx); err != nil {
+			s.logger.Error("failed to generate centrum dispatch heatmaps for jobs", zap.Error(err))
+			return err
+		}
+
+		return nil
+	})
+
+	return nil
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

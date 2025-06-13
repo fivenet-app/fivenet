@@ -110,7 +110,6 @@ async function onMapReady(map: L.Map): Promise<void> {
 watch([heatmap, heat], () => {
     if (!heatmap.value || !heat.value) return;
 
-    console.log('Updating heatmap with new data', heatmap.value);
     heatmap.value?.entries.forEach((e) => unref(heat.value)?.addLatLng([e.y, e.x, e.w]));
 });
 
