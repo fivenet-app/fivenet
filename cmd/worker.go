@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/pkg/demo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
@@ -22,6 +23,7 @@ type WorkerCmd struct {
 
 func (c *WorkerCmd) Run(ctx *Context) error {
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
+	fxOpts = append(fxOpts, fx.Invoke(func(*demo.Demo) {}))
 
 	if c.ModuleCentrumBot {
 		fxOpts = append(fxOpts, fx.Invoke(func(*centrumbot.Manager) {}))

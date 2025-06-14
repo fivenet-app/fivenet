@@ -292,6 +292,8 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		if dest[i].Job != "" {
 			dest[i].User.Job = dest[i].Job
 			job = dest[i].Job // Use the job from the marker, not the user if set
+		} else {
+			dest[i].Job = job
 		}
 
 		jg := dest[i].User.JobGrade

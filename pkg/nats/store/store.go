@@ -135,6 +135,100 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 	return s, nil
 }
 
+func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
+	watcher, err := s.kv.Watch(ctx, s.prefix+">")
+	if err != nil {
+		return fmt.Errorf("failed to start store kv. %w", err)
+	}
+
+	var ready atomic.Bool
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+	go func() {
+		updateCh := watcher.Updates()
+		for {
+			select {
+			case <-ctx.Done():
+				if err := watcher.Stop(); err != nil {
+					if !errors.Is(err, nats.ErrConsumerNotFound) {
+						s.logger.Error("error while stopping watcher", zap.Error(err))
+					}
+				} else {
+					s.logger.Debug("store watcher done")
+				}
+				return
+
+			case entry := <-updateCh:
+				// After all initial keys have been received, a nil entry is returned
+				if entry == nil {
+					if !ready.Swap(true) {
+						wg.Done()
+					}
+					continue
+				}
+
+				key := entry.Key()
+				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
+					continue
+				}
+
+				switch entry.Operation() {
+				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
+					// Handle delete and purge operations
+					func() {
+						mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+						mu.Lock()
+						defer mu.Unlock()
+
+						if s.onDelete != nil {
+							item, _ := s.data.LoadAndDelete(key)
+							if err := s.onDelete(s, entry, item); err != nil {
+								s.logger.Error("failed to run on delete logic in store watcher", zap.String("key", key), zap.Error(err))
+							}
+						}
+
+						s.mu.Delete(key)
+					}()
+
+				case jetstream.KeyValuePut:
+					// Parse and set value "locally"
+					func() {
+						mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
+						mu.Lock()
+						defer mu.Unlock()
+
+						if _, err := s.update(entry); err != nil {
+							s.logger.Error("failed to run on update logic in store watcher", zap.String("key", key), zap.Error(err))
+						}
+					}()
+
+				default:
+					s.logger.Warn("unknown key operation received", zap.String("key", key), zap.Uint8("op", uint8(entry.Operation())))
+				}
+			}
+		}
+	}()
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-time.After(15 * time.Second):
+				metricDataMapCount.WithLabelValues(s.bucket).Set(float64(s.data.Size()))
+			}
+		}
+	}()
+
+	if wait {
+		wg.Wait()
+	}
+
+	return nil
+}
+
 // Put upload the message to kv and local
 func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 	key = s.prefix + events.SanitizeKey(key)
@@ -608,102 +702,6 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], 
 	}()
 
 	return ch, nil
-}
-
-func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
-	watcher, err := s.kv.Watch(ctx, s.prefix+">")
-	if err != nil {
-		return fmt.Errorf("failed to start store kv. %w", err)
-	}
-
-	var ready atomic.Bool
-	var wg sync.WaitGroup
-
-	wg.Add(1)
-	go func() {
-		updateCh := watcher.Updates()
-		for {
-			select {
-			case <-ctx.Done():
-				if err := watcher.Stop(); err != nil {
-					if !errors.Is(err, nats.ErrConsumerNotFound) {
-						s.logger.Error("error while stopping watcher", zap.Error(err))
-					}
-				} else {
-					s.logger.Debug("store watcher done")
-				}
-				return
-
-			case entry := <-updateCh:
-				// After all initial keys have been received, a nil entry is returned
-				if entry == nil {
-					if !ready.Swap(true) {
-						wg.Done()
-					}
-					continue
-				}
-
-				key := entry.Key()
-				if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
-					continue
-				}
-
-				s.logger.Debug("key update received via watcher", zap.String("key", key), zap.Uint64("delta", entry.Delta()), zap.Uint8("op", uint8(entry.Operation())))
-
-				switch entry.Operation() {
-				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
-					// Handle delete and purge operations
-					func() {
-						mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
-						mu.Lock()
-						defer mu.Unlock()
-
-						if s.onDelete != nil {
-							item, _ := s.data.LoadAndDelete(key)
-							if err := s.onDelete(s, entry, item); err != nil {
-								s.logger.Error("failed to run on delete logic in store watcher", zap.String("key", key), zap.Error(err))
-							}
-						}
-
-						s.mu.Delete(key)
-					}()
-
-				case jetstream.KeyValuePut:
-					// Handle put operations
-					func() {
-						mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
-						mu.Lock()
-						defer mu.Unlock()
-
-						if _, err := s.update(entry); err != nil {
-							s.logger.Error("failed to run on update logic in store watcher", zap.String("key", key), zap.Error(err))
-						}
-					}()
-
-				default:
-					s.logger.Warn("unknown key operation received", zap.String("key", key), zap.Uint8("op", uint8(entry.Operation())))
-				}
-			}
-		}
-	}()
-
-	go func() {
-		for {
-			select {
-			case <-ctx.Done():
-				return
-
-			case <-time.After(15 * time.Second):
-				metricDataMapCount.WithLabelValues(s.bucket).Set(float64(s.data.Size()))
-			}
-		}
-	}()
-
-	if wait {
-		wg.Wait()
-	}
-
-	return nil
 }
 
 type KeyValueEntry[T any, U protoutils.ProtoMessageWithMerge[T]] struct {

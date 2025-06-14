@@ -346,7 +346,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 			return err
 		}
 
-		if dsps[i].CreatorId != nil {
+		if dsps[i].CreatorId != nil && *dsps[i].CreatorId > 0 {
 			dsps[i].Creator, err = s.RetrieveUserById(ctx, *dsps[i].CreatorId)
 			if err != nil {
 				return err

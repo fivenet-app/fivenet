@@ -127,8 +127,7 @@ export const useLivemapStore = defineStore(
                         // Handle snapshot response
                         const snapshot = resp.data.snapshot;
 
-                        // Clear existing markers
-                        markersMarkers.value.clear();
+                        // Clear existing user markers
                         markersUsers.value.clear();
 
                         // Add all markers from the snapshot

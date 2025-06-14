@@ -43,9 +43,17 @@ ALTER TABLE `fivenet_centrum_user_locations` MODIFY COLUMN `job` varchar(20) NUL
 ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `on_duty` tinyint(1) DEFAULT 0 AFTER `hidden`;
 ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `data` text NULL AFTER `updated_at`;
 
--- Table: `fivenet_centrum_dispatches` - Generated coord
+-- Table: `fivenet_centrum_dispatches` - Coords can't be null
 ALTER TABLE `fivenet_centrum_dispatches` MODIFY COLUMN `x` decimal(24,14) NOT NULL;
 ALTER TABLE `fivenet_centrum_dispatches` MODIFY COLUMN `y` decimal(24,14) NOT NULL;
+
+-- Remove any dispatches with "invalid" creator_ids and allow creator_id to be null
+ALTER TABLE `fivenet_centrum_dispatches` MODIFY COLUMN `creator_id` int NULL;
+DELETE FROM `fivenet_centrum_dispatches` WHERE `creator_id` NOT IN (SELECT id FROM `{{.UsersTableName}}`);
+ALTER TABLE `fivenet_centrum_dispatches` ADD CONSTRAINT `fk_fivenet_centrum_dispatches_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- Add index on postal column
+ALTER TABLE `fivenet_centrum_dispatches` ADD KEY `idx_fivenet_centrum_dispatches_postal` (`postal`);
 
 -- Table: `fivenet_centrum_dispatches_heatmaps`
 CREATE TABLE IF NOT EXISTS `fivenet_centrum_dispatches_heatmaps` (

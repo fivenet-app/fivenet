@@ -209,92 +209,78 @@ const footerLinks = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const groups = computed(() => [
-    {
-        key: 'links',
-        label: t('common.goto'),
-        commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
-    },
-    {
-        key: 'ids',
-        label: t('common.id', 2),
-        commands: [
+const groups = computed(
+    () =>
+        [
             {
-                id: 'cit',
-                prefix: 'CIT-',
-                icon: 'i-mdi-account-multiple-outline',
+                key: 'links',
+                label: t('common.goto'),
+                commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
             },
             {
-                id: 'doc',
-                prefix: 'DOC-',
-                icon: 'i-mdi-file-document-box-multiple-outline',
-            },
-        ],
-        search: async (q?: string) => {
-            const defaultCommands = [
-                {
-                    id: 'id-doc',
-                    label: `DOC-...`,
-                },
-                {
-                    id: 'id-citizen',
-                    label: `CIT-...`,
-                },
-            ];
-
-            if (!q || (!q.startsWith('CIT') && !q.startsWith('DOC'))) {
-                if (q && (q.startsWith('@') || q.startsWith('#'))) {
-                    return [];
-                }
-
-                return defaultCommands.filter((c) => !q || c.label.includes(q));
-            }
-
-            const prefix = q.substring(0, q.indexOf('-')).toUpperCase();
-            const id = q.substring(q.indexOf('-') + 1).trim();
-            if (id.length > 0 && isNumber(id)) {
-                if (prefix === 'CIT') {
-                    return [
-                        {
-                            id: 'id-citizen',
-                            label: `CIT-${id}`,
-                            to: `/citizens/${id}`,
-                        },
-                    ];
-                } else if (prefix === 'DOC') {
-                    return [
+                key: 'ids',
+                label: t('common.id', 2),
+                commands: [
+                    {
+                        id: 'cit',
+                        prefix: 'CIT-',
+                        icon: 'i-mdi-account-multiple-outline',
+                    },
+                    {
+                        id: 'doc',
+                        prefix: 'DOC-',
+                        icon: 'i-mdi-file-document-box-multiple-outline',
+                    },
+                ],
+                search: async (q?: string) => {
+                    const defaultCommands = [
                         {
                             id: 'id-doc',
-                            label: `DOC-${id}`,
-                            to: `/documents/${id}`,
+                            label: `DOC-...`,
+                        },
+                        {
+                            id: 'id-citizen',
+                            label: `CIT-...`,
                         },
                     ];
-                }
-            }
 
-            return defaultCommands;
-        },
-    },
-    {
-        key: 'search',
-        label: t('common.search'),
-        commands: [
-            {
-                id: 'cit',
-                label: t('common.citizen', 2),
-                prefix: '@',
-                icon: 'i-mdi-account-multiple-outline',
+                    if (!q || (!q.startsWith('CIT') && !q.startsWith('DOC'))) {
+                        if (q && (q.startsWith('@') || q.startsWith('#'))) {
+                            return [];
+                        }
+
+                        return defaultCommands.filter((c) => !q || c.label.includes(q));
+                    }
+
+                    const prefix = q.substring(0, q.indexOf('-')).toUpperCase();
+                    const id = q.substring(q.indexOf('-') + 1).trim();
+                    if (id.length > 0 && isNumber(id)) {
+                        if (prefix === 'CIT') {
+                            return [
+                                {
+                                    id: 'id-citizen',
+                                    label: `CIT-${id}`,
+                                    to: `/citizens/${id}`,
+                                },
+                            ];
+                        } else if (prefix === 'DOC') {
+                            return [
+                                {
+                                    id: 'id-doc',
+                                    label: `DOC-${id}`,
+                                    to: `/documents/${id}`,
+                                },
+                            ];
+                        }
+                    }
+
+                    return defaultCommands;
+                },
             },
             {
-                id: 'doc',
-                label: t('common.document', 2),
-                prefix: '#',
-                icon: 'i-mdi-file-document-box-multiple-outline',
-            },
-        ],
-        search: async (q?: string) => {
-            if (!q || (!q.startsWith('@') && !q.startsWith('#'))) {
-                return [
+                key: 'search',
+                label: t('common.search'),
+                commands: [
                     {
                         id: 'cit',
                         label: t('common.citizen', 2),
@@ -307,65 +293,82 @@ const groups = computed(() => [
                         prefix: '#',
                         icon: 'i-mdi-file-document-box-multiple-outline',
                     },
-                ].filter((c) => !q || c.label.includes(q));
-            }
-
-            const searchType = q[0];
-            const query = q.substring(1).trim();
-            switch (searchType) {
-                case '#': {
-                    try {
-                        const call = $grpc.documents.documents.listDocuments({
-                            pagination: {
-                                offset: 0,
-                                pageSize: 10,
+                ],
+                search: async (q?: string) => {
+                    if (!q || (!q.startsWith('@') && !q.startsWith('#'))) {
+                        return [
+                            {
+                                id: 'cit',
+                                label: t('common.citizen', 2),
+                                prefix: '@',
+                                icon: 'i-mdi-account-multiple-outline',
                             },
-                            search: query,
-                            categoryIds: [],
-                            creatorIds: [],
-                            documentIds: [],
-                        });
-                        const { response } = await call;
-
-                        return response.documents.map((d) => ({
-                            id: d.id,
-                            label: d.title,
-                            suffix: d.state,
-                            to: `/documents/${d.id}`,
-                        }));
-                    } catch (e) {
-                        handleGRPCError(e as RpcError);
-                        throw e;
-                    }
-                }
-
-                case '@':
-                default: {
-                    try {
-                        const call = $grpc.citizens.citizens.listCitizens({
-                            pagination: {
-                                offset: 0,
-                                pageSize: 10,
+                            {
+                                id: 'doc',
+                                label: t('common.document', 2),
+                                prefix: '#',
+                                icon: 'i-mdi-file-document-box-multiple-outline',
                             },
-                            search: query,
-                        });
-                        const { response } = await call;
-
-                        return response.users.map((u) => ({
-                            id: u.userId,
-                            label: `${u.firstname} ${u.lastname}`,
-                            suffix: u.dateofbirth,
-                            to: `/citizens/${u.userId}`,
-                        }));
-                    } catch (e) {
-                        handleGRPCError(e as RpcError);
-                        throw e;
+                        ].filter((c) => !q || c.label.includes(q));
                     }
-                }
-            }
-        },
-    },
-]);
+
+                    const searchType = q[0];
+                    const query = q.substring(1).trim();
+                    switch (searchType) {
+                        case '#': {
+                            try {
+                                const call = $grpc.documents.documents.listDocuments({
+                                    pagination: {
+                                        offset: 0,
+                                        pageSize: 10,
+                                    },
+                                    search: query,
+                                    categoryIds: [],
+                                    creatorIds: [],
+                                    documentIds: [],
+                                });
+                                const { response } = await call;
+
+                                return response.documents.map((d) => ({
+                                    id: d.id,
+                                    label: d.title,
+                                    suffix: d.state,
+                                    to: `/documents/${d.id}`,
+                                }));
+                            } catch (e) {
+                                handleGRPCError(e as RpcError);
+                                throw e;
+                            }
+                        }
+
+                        case '@':
+                        default: {
+                            try {
+                                const call = $grpc.citizens.citizens.listCitizens({
+                                    pagination: {
+                                        offset: 0,
+                                        pageSize: 10,
+                                    },
+                                    search: query,
+                                });
+                                const { response } = await call;
+
+                                return response.users.map((u) => ({
+                                    id: u.userId,
+                                    label: `${u.firstname} ${u.lastname}`,
+                                    suffix: u.dateofbirth,
+                                    to: `/citizens/${u.userId}`,
+                                }));
+                            } catch (e) {
+                                handleGRPCError(e as RpcError);
+                                throw e;
+                            }
+                        }
+                    }
+                },
+            },
+        ] as Group[],
+);
 
 const clipboardLink = computed(() =>
     [
@@ -473,7 +476,7 @@ const quickAccessButtons = computed(() =>
                     queryLabel: $t('commandpalette.empty.title'),
                 }"
                 :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
-                :groups="groups as Group[]"
+                :groups="groups"
             />
         </ClientOnly>
     </UDashboardLayout>

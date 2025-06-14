@@ -122,23 +122,23 @@ func (c *Cache[T, U]) Start(ctx context.Context, wait bool) error {
 
 				switch entry.Operation() {
 				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
-					// Value is deleted
-					c.data.Delete(entry.Key())
+					// Handle delete and purge operations
+					c.data.Delete(key)
 
 				case jetstream.KeyValuePut:
 					// Parse and set value "locally"
 					data := U(new(T))
 					if err := proto.Unmarshal(entry.Value(), data); err != nil {
-						c.logger.Error("failed to unmarshal store watcher update", zap.String("key", entry.Key()), zap.Error(err))
+						c.logger.Error("failed to unmarshal store watcher update", zap.String("key", key), zap.Error(err))
 					}
 
-					c.data.Store(entry.Key(), &EntryWrapper[T, U]{
+					c.data.Store(key, &EntryWrapper[T, U]{
 						Data:    data,
 						Created: entry.Created(),
 					})
 
 				default:
-					c.logger.Error("unknown key operation received", zap.String("key", entry.Key()), zap.Uint8("op", uint8(entry.Operation())))
+					c.logger.Error("unknown key operation received", zap.String("key", key), zap.Uint8("op", uint8(entry.Operation())))
 				}
 			}
 		}

@@ -1,8 +1,16 @@
 <script setup lang="ts">
-const props = defineProps<{
-    // Optional colour ramp; keys 0‒1 → colour strings
-    gradient?: Record<number, string>;
-}>();
+const props = withDefaults(
+    defineProps<{
+        // Whether to show the legend
+        show?: boolean;
+        // Optional colour ramp; keys 0‒1 → colour strings
+        gradient?: Record<number, string>;
+    }>(),
+    {
+        show: true,
+        gradient: undefined,
+    },
+);
 
 // Default ramp resembles the example used for L.heatLayer
 const gradient = computed<Record<number, string>>(
@@ -23,7 +31,7 @@ const barStyle = computed(() => {
 
 <template>
     <LControl position="bottomright">
-        <div class="bg-background space-y-1 rounded-md p-1 text-xs font-medium shadow-md">
+        <div v-if="show" class="bg-background space-y-1 rounded-md p-1 text-xs font-medium shadow-md">
             <!-- Gradient bar -->
             <div class="h-2 w-32 rounded" :style="barStyle" />
             <!-- Captions -->

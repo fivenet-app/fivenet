@@ -44,6 +44,7 @@ func init() {
 
 		MinDays: 5,
 	})
+
 	// User locations - Make sure to delete them after 1 day when not updated (buggy events from server)
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetCentrumUserLocations,
@@ -68,6 +69,7 @@ type Server struct {
 	tracker  tracker.ITracker
 	aud      audit.IAuditer
 	appCfg   appconfig.IConfig
+	stream   jetstream.Stream
 
 	markersCache        *xsync.Map[string, []*livemap.MarkerMarker]
 	markersDeletedCache *xsync.Map[string, []uint64]
@@ -93,7 +95,6 @@ type Params struct {
 }
 
 type brokerEvent struct {
-	UserRemoved  *livemap.UserMarker
 	MarkerUpdate *livemap.MarkerMarker
 	MarkerDelete *uint64
 }
@@ -126,44 +127,11 @@ func NewServer(p Params) *Server {
 			return err
 		}
 
-		go func() {
-			ctx, cancel := context.WithCancel(ctxCancel)
-			defer cancel()
-
-			for {
-				updateCh, err := p.Tracker.Subscribe(ctx)
-				if err != nil {
-					s.logger.Error("failed to subscribe to user updates", zap.Error(err))
-					time.Sleep(2 * time.Second) // Wait before retrying
-					continue
-				}
-
-				select {
-				case <-ctxCancel.Done():
-					return
-
-				case msg := <-updateCh:
-					if msg == nil {
-						s.logger.Warn("received nil user update event, skipping")
-						continue
-					}
-
-					if msg.Operation() != jetstream.KeyValueDelete {
-						continue
-					}
-
-					userMarker, err := msg.Value()
-					if err != nil {
-						s.logger.Error("failed to unmarshal nats user update response", zap.Error(err))
-						return
-					}
-
-					s.broker.Publish(&brokerEvent{
-						UserRemoved: userMarker,
-					})
-				}
-			}
-		}()
+		stream, err := s.js.Stream(ctxStartup, "KV_"+tracker.BucketUserLoc)
+		if err != nil {
+			return err
+		}
+		s.stream = stream
 
 		go func() {
 			for {

@@ -569,7 +569,8 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 		WHERE(jet.AND(
 			tDispatch.Job.EQ(jet.String(userJob)),
 			tDispatch.ID.EQ(jet.Uint64(dsp.Id)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err

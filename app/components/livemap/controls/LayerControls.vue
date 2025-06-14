@@ -93,6 +93,8 @@ const groupedLayers = computed(() => {
                                 </div>
                             </div>
                         </div>
+
+                        <slot />
                     </div>
                 </template>
             </UPopover>

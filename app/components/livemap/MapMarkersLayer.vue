@@ -47,7 +47,7 @@ onBeforeMount(async () =>
         :key="job.name"
         :name="`${$t('common.marker', 2)} ${job.label}`"
         layer-type="overlay"
-        :visible="livemapLayers.find((l) => l.key === `markers_${job.name}`)?.visible"
+        :visible="livemapLayers.find((l) => l.key === `markers_${job.name}`)?.visible === true"
     >
         <MapMarkerMarker
             v-for="marker in [...markersMarkers.values()].filter((p) => p.job === job.name)"

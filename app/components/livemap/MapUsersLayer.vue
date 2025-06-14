@@ -65,9 +65,7 @@ onBeforeMount(async () => {
 
 onBeforeRouteLeave(async (to) => {
     // Don't end livemap stream if user is switching to livemap/centrum page
-    if (to.path.startsWith('/livemap') || to.path.startsWith('/centrum')) {
-        return;
-    }
+    if (to.path.startsWith('/livemap') || to.path === '/centrum') return;
 
     await stopStream();
 });
@@ -89,7 +87,7 @@ const playerMarkersFiltered = computedAsync(async () =>
         :key="job.name"
         :name="`${$t('common.employee', 2)} ${job.label}`"
         layer-type="overlay"
-        :visible="livemapLayers.find((l) => l.key === `users_${job.name}`)?.visible"
+        :visible="livemapLayers.find((l) => l.key === `users_${job.name}`)?.visible === true"
     >
         <MapUserMarker
             v-for="marker in playerMarkersFiltered?.filter((m) => m.job === job.name)"

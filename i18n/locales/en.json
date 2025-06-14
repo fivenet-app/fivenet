@@ -671,7 +671,8 @@
         "first_citizen": "First Citizen",
         "auto_save": "Auto Save",
         "discord_guild": "Discord Guild | Discord Guilds",
-        "no_versions": "No versions available."
+        "no_versions": "No versions available.",
+        "heatmap": "Heatmap"
     },
     "components": {
         "partials": {

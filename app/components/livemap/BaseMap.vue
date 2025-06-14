@@ -1,14 +1,15 @@
 <script lang="ts" setup>
-import type L from 'leaflet';
+import type * as L from 'leaflet';
 import { CRS, extend, LatLng, latLngBounds, type PointExpression, Projection, Transformation } from 'leaflet';
 import 'leaflet-contextmenu';
-import 'leaflet/dist/leaflet.css';
+import 'leaflet.heat';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { simpleGraticule } from '~/composables/leaflet/L.SimpleGraticule';
 import { useLivemapStore } from '~/stores/livemap';
 import { backgroundColorList, tileLayers } from '~/types/livemap';
 import type { ValueOf } from '~/utils/types';
 import LayerControls from './controls/LayerControls.vue';
+import HeatmapLayer from './HeatmapLayer.vue';
 
 defineProps<{
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -22,6 +23,8 @@ const emit = defineEmits<{
 }>();
 
 const slideover = useSlideover();
+
+const { can } = useAuth();
 
 const settingsStore = useSettingsStore();
 const { livemapTileLayer, livemap: livemapSettings } = storeToRefs(settingsStore);
@@ -77,9 +80,7 @@ const mouseLong = ref<number>(0);
 const currentLocationQuery = useRouteQuery<string>('loc', '');
 
 function getZoomOffset(zoom: number): number {
-    if (!slideover.isOpen.value) {
-        return 0;
-    }
+    if (!slideover.isOpen.value) return 0;
 
     switch (zoom) {
         case 1:
@@ -102,9 +103,7 @@ function getZoomOffset(zoom: number): number {
 }
 
 watch(selectedMarker, async () => {
-    if (map === undefined || selectedMarker.value === undefined) {
-        return;
-    }
+    if (map === undefined || selectedMarker.value === undefined) return;
 
     map?.panTo([selectedMarker.value.y, selectedMarker.value.x + getZoomOffset(zoom.value)], {
         animate: true,
@@ -113,9 +112,7 @@ watch(selectedMarker, async () => {
 });
 
 watch(location, async () => {
-    if (map === undefined || location.value === undefined) {
-        return;
-    }
+    if (map === undefined || location.value === undefined) return;
 
     map.setView([location.value.y, location.value.x + getZoomOffset(zoom.value)], zoom.value, {
         animate: false,
@@ -171,9 +168,7 @@ function parseLocationQuery(query: string): { latlng: L.LatLng; zoom: number } |
     const lat = args[1] ? parseFloat(args[1]) : 0;
     const lng = args[2] ? parseFloat(args[2]) : 0;
 
-    if (isNaN(zoom) || isNaN(lat) || isNaN(lng)) {
-        return;
-    }
+    if (isNaN(zoom) || isNaN(lat) || isNaN(lng)) return;
 
     return {
         latlng: new LatLng(lat, lng),
@@ -193,6 +188,8 @@ const graticuleLayer = simpleGraticule({
     ],
 });
 
+const heat = ref<L.HeatLayer | undefined>(undefined);
+
 async function onMapReady(m: L.Map): Promise<void> {
     updateBackground(livemapTileLayer.value);
 
@@ -204,17 +201,13 @@ async function onMapReady(m: L.Map): Promise<void> {
         map.setView(startPos.latlng, startPos.zoom);
     }
 
-    map.on('baselayerchange', async (event: L.LayersControlEvent) => {
-        updateBackground(event.name);
-    });
+    map.on('baselayerchange', async (event: L.LayersControlEvent) => updateBackground(event.name));
 
     map.on('overlayadd', (event) => emit('overlayadd', event));
     map.on('overlayremove', (event) => emit('overlayremove', event));
 
     map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
-        if (!event.latlng) {
-            return;
-        }
+        if (!event.latlng) return;
 
         mouseLat.value = Math.round(event.latlng.lat * 100000) / 100000;
         mouseLong.value = Math.round(event.latlng.lng * 100000) / 100000;
@@ -230,10 +223,18 @@ async function onMapReady(m: L.Map): Promise<void> {
 
     emit('mapReady', map);
 
+    heat.value = await useLHeat({
+        leafletObject: map,
+        heatPoints: [],
+        radius: 10,
+    });
+
     if (livemapSettings.value.showGrid) {
         graticuleLayer.addTo(map);
     }
 }
+
+provide('heat', heat);
 
 watch(
     () => livemapSettings.value.showGrid,
@@ -270,8 +271,6 @@ onBeforeUnmount(() => {
             @click="selectedMarker = undefined"
             @ready="onMapReady($event)"
         >
-            <ZoomControls />
-
             <LTileLayer
                 v-for="layer in tileLayers"
                 :key="layer.key"
@@ -286,7 +285,18 @@ onBeforeUnmount(() => {
                 :attribution="layer.options?.attribution || ''"
             />
 
-            <LayerControls />
+            <ZoomControls />
+
+            <LayerControls>
+                <div v-if="can('centrum.CentrumService.TakeControl').value">
+                    <div class="mt-1 inline-flex gap-1 overflow-y-hidden px-1">
+                        <UToggle v-model="livemapSettings.showHeatmap" />
+                        <span class="truncate hover:line-clamp-2">{{ $t('common.heatmap') }}</span>
+                    </div>
+                </div>
+
+                <slot name="layerControls" />
+            </LayerControls>
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
             <LControl class="leaflet-control-attribution" position="bottomleft">
@@ -295,6 +305,8 @@ onBeforeUnmount(() => {
             </LControl>
 
             <slot />
+
+            <HeatmapLayer :show="livemapSettings.showHeatmap" />
         </LMap>
 
         <slot name="afterMap" />
@@ -314,6 +326,9 @@ onBeforeUnmount(() => {
 
     .leaflet-map-pane {
         z-index: 0;
+    }
+    .leaflet-overlay-pane {
+        z-index: 400;
     }
 
     .leaflet-div-icon {

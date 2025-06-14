@@ -252,7 +252,7 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarke
 	return &dest, nil
 }
 
-func (s *Server) getMarkerMarkers(jobs *permissions.StringList, updatedAt time.Time) ([]*livemap.MarkerMarker, []uint64, error) {
+func (s *Server) getMarkerMarkers(jobs *permissions.StringList) ([]*livemap.MarkerMarker, []uint64, error) {
 	updated := []*livemap.MarkerMarker{}
 	deleted := []uint64{}
 
@@ -260,14 +260,12 @@ func (s *Server) getMarkerMarkers(jobs *permissions.StringList, updatedAt time.T
 		markers, _ := s.markersCache.Load(job)
 
 		for _, marker := range markers {
-			if updatedAt.IsZero() || marker.UpdatedAt != nil && updatedAt.Sub(marker.UpdatedAt.AsTime()) < 0 {
-				// Make sure marker isn't expired if expiresAt is set
-				if marker.ExpiresAt == nil || time.Since(marker.ExpiresAt.AsTime()) < 0 {
-					updated = append(updated, marker)
-				} else {
-					// Just to be sure in regards to cleaning up the client side, add marker id to deleted list
-					deleted = append(deleted, marker.Id)
-				}
+			// Make sure marker isn't expired if expiresAt is set
+			if marker.ExpiresAt == nil || time.Since(marker.ExpiresAt.AsTime()) < 0 {
+				updated = append(updated, marker)
+			} else {
+				// Just to be sure in regards to cleaning up the client side, add marker id to deleted list
+				deleted = append(deleted, marker.Id)
 			}
 		}
 

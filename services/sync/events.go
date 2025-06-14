@@ -38,8 +38,8 @@ func (s *Server) registerStream(ctx context.Context, js *events.JSWrapper) (jets
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,
 		Storage:     jetstream.MemoryStorage,
-		MaxAge:      300 * time.Second, // 5 minutes
-		Duplicates:  15 * time.Second,
+		MaxAge:      5 * time.Minute, // 5 minutes
+		Duplicates:  5 * time.Second,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return cfg, fmt.Errorf("failed to create or update stream: %w", err)

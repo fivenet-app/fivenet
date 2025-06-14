@@ -39,6 +39,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/crypt"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbsync"
+	"github.com/fivenet-app/fivenet/v2025/pkg/demo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
@@ -126,6 +127,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		dbsync.Module,
 		fx.Provide(pkgfilestore.NewHousekeeper),
 		fx.Provide(crypt.New),
+		fx.Provide(demo.New),
 		// Discord Bot
 		discord.StateModule,
 		discord.BotModule,
@@ -192,7 +194,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			fx.Invoke(func(admin.AdminServer) {}),
 			fx.Invoke(func(croner.IRegistry) {}),
 			fx.Invoke(func(*croner.Scheduler) {}),
-			fx.Invoke(func(*tracker.Manager) {}),
 		)
 	}
 

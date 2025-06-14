@@ -72,8 +72,6 @@ WITH bins AS (
         ROUND(y / ?) * ? AS y_bin,
         COUNT(*)         AS w
     FROM fivenet_centrum_dispatches
-    WHERE x IS NOT NULL
-      AND y IS NOT NULL
     GROUP BY job, x_bin, y_bin
 ),
 maxw AS (

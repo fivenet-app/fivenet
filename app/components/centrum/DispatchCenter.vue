@@ -33,9 +33,7 @@ onBeforeRouteLeave(async (to) => {
     isCenter.value = false;
 
     // Don't end centrum stream if user is switching to livemap page
-    if (to.path.startsWith('/livemap')) {
-        return;
-    }
+    if (to.path.startsWith('/livemap')) return;
 
     await stopStream();
 });

@@ -53,7 +53,7 @@ func RegisterStream(ctx context.Context, js *events.JSWrapper) (jetstream.Stream
 		Discard:     jetstream.DiscardOld,
 		MaxAge:      60 * time.Second,
 		Storage:     jetstream.MemoryStorage,
-		Duplicates:  10 * time.Second,
+		Duplicates:  5 * time.Second,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return cfg, err

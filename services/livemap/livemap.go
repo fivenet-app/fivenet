@@ -66,16 +66,17 @@ func (s *Server) getAndSendACL(srv pblivemap.LivemapService_StreamServer, userIn
 	// Prepare js for client response
 	js := &pblivemap.StreamResponse_Jobs{
 		Jobs: &pblivemap.JobsList{
-			Markers: make([]*jobs.Job, markerJobs.Len()),
+			Markers: []*jobs.Job{},
 			Users:   []*jobs.Job{},
 		},
 	}
 
 	for i := range markerJobs.Strings {
-		js.Jobs.Markers[i] = &jobs.Job{
+		jm := &jobs.Job{
 			Name: markerJobs.Strings[i],
 		}
-		s.enricher.EnrichJobName(js.Jobs.Markers[i])
+		s.enricher.EnrichJobName(jm)
+		js.Jobs.Markers = append(js.Jobs.Markers, jm)
 	}
 	for job := range usersJobs.Iter() {
 		j := &jobs.Job{
@@ -123,7 +124,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 		return err
 	}
 
-	if end, err := s.sendMarkerMarkers(srv, markerJobs, time.Time{}); end || err != nil {
+	if end, err := s.sendMarkerMarkers(srv, markerJobs); end || err != nil {
 		return err
 	}
 
@@ -153,12 +154,13 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 
 	// Central pipe: all feeds push messages into outCh
 	outCh := make(chan *pblivemap.StreamResponse, 1024)
-	g, gctx := errgroup.WithContext(srv.Context())
+	defer close(outCh)
+	g, gctx := errgroup.WithContext(ctx)
 
 	g.Go(func() error {
 		for {
 			select {
-			case <-srv.Context().Done():
+			case <-gctx.Done():
 				return nil
 
 			case event := <-markerUpdateCh:
@@ -194,15 +196,16 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 
 	// Writer goroutine – single gRPC send loop
 	g.Go(func() error {
-		defer close(outCh)
 		for {
 			select {
 			case <-gctx.Done():
-				return gctx.Err()
+				return nil
+
 			case msg := <-outCh:
 				if msg == nil {
 					return nil
 				}
+
 				if err := srv.Send(msg); err != nil {
 					return err
 				}
@@ -222,12 +225,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 			FilterSubjects: buildFilters(usersJobs),
 		}
 
-		stream, err := s.js.Stream(ctx, "KV_"+tracker.BucketUserLoc)
-		if err != nil {
-			return err
-		}
-
-		cons, err := stream.CreateConsumer(ctx, cc)
+		cons, err := s.stream.CreateConsumer(ctx, cc)
 		if err != nil {
 			return err
 		}
@@ -251,14 +249,14 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 					}
 
 					select {
+					case <-gctx.Done():
+						return nil
+
 					case outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_UserDelete{
 							UserDelete: userId,
 						},
 					}:
-
-					case <-ctx.Done():
-						return nil
 					}
 					continue
 				}
@@ -275,14 +273,14 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 					}
 
 					select {
+					case <-gctx.Done():
+						return nil
+
 					case outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_UserUpdate{
 							UserUpdate: um,
 						},
 					}:
-
-					case <-ctx.Done():
-						return nil
 					}
 				}
 			}
@@ -293,15 +291,10 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 }
 
 // Send out chunked current marker markers
-func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jobs *permissions.StringList, updatedAt time.Time) (bool, error) {
-	updatedMarkers, deletedMarkers, err := s.getMarkerMarkers(jobs, updatedAt)
+func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jobs *permissions.StringList) (bool, error) {
+	updatedMarkers, deletedMarkers, err := s.getMarkerMarkers(jobs)
 	if err != nil {
 		return true, errswrap.NewError(err, errorslivemap.ErrStreamFailed)
-	}
-
-	// UpdatedAt is zero and no user updates or deletions? Early return
-	if !updatedAt.IsZero() && len(updatedMarkers) == 0 && len(deletedMarkers) == 0 {
-		return false, nil
 	}
 
 	// Less than chunk size or no markers, no need to chunk the response early return
@@ -312,7 +305,7 @@ func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jo
 					Updated: updatedMarkers,
 					Deleted: deletedMarkers,
 					Part:    0,
-					Partial: !updatedAt.IsZero(),
+					Partial: false,
 				},
 			},
 		}
@@ -330,7 +323,7 @@ func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jo
 		markerUpdates := &pblivemap.MarkerMarkersUpdates{
 			Updated: updatedMarkers[0:markerMarkerChunkSize:markerMarkerChunkSize],
 			Part:    currentPart,
-			Partial: !updatedAt.IsZero(),
+			Partial: false,
 		}
 
 		if totalParts == currentPart {
@@ -364,7 +357,7 @@ func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jo
 				Markers: &pblivemap.MarkerMarkersUpdates{
 					Updated: updatedMarkers,
 					Part:    0,
-					Partial: !updatedAt.IsZero(),
+					Partial: false,
 				},
 			},
 		}

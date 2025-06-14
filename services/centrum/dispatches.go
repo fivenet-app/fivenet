@@ -292,7 +292,7 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	if resp.Dispatch.CreatorId != nil {
+	if resp.Dispatch.CreatorId != nil && *resp.Dispatch.CreatorId > 0 {
 		creator, err := s.state.RetrieveUserById(ctx, *resp.Dispatch.CreatorId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
