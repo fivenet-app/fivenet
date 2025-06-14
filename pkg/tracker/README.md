@@ -6,7 +6,7 @@ It relies on **two NATS Key-Value buckets** so look-ups and fan-out are both *O(
 | Bucket | Stream name (backing) | Key format | Stored value (protobuf) | Purpose |
 |--------|-----------------------|------------|-------------------------|---------|
 | **USERLOC** | `user_locations` | `JOB.GRADE.USER_ID` | [`UserMarker`](../../proto/resources/livemap/user_marker.proto) – lat/lon, heading, timestamp, … | Large, chatty dataset used by the live map. Keys embed *job* and *grade* so JetStream can filter by ACL. |
-| **UNITMAP** | `user_mappings` | `USER_ID` | [`UserUnitMapping`](../../proto/resources/centrum/user_unit.proto) – unit_id, job, grade, created_at | Small index that answers: “Which unit / job / grade does user 123 belong to?” |
+| **UNITMAP** | `user_mappings` | `USER_ID` | [`UserMapping`](../../proto/resources/centrum/user_unit.proto) – unit_id, job, grade, created_at | Small index that answers: “Which unit / job / grade does user 123 belong to?” |
 
 All updates go through the KV API, so you still get atomic `Put`, `Delete`, history, and conditional updates.
 
@@ -27,7 +27,7 @@ writers ──► KV/JetStream ──► fan-out deltas ──► clients
 * **Bootstraps** with an *ephemeral* consumer using `DeliverLastPerSubjectPolicy` on **both** buckets → exactly one message per key, regardless of churn.
 * Maintains two in-memory maps:
   * `locs  map[key]*UserMarker`
-  * `units map[user_id]*UserUnitMapping`
+  * `units map[user_id]*UserMapping`
 * Every *N* seconds it publishes a **roll-up** message (`Nats-Rollup: all`, `KV-Operation: ROLLUP`) on a special subject inside `user_locations`. A late-joining client downloads only this one compressed blob.
 
 ### 2 — Client session

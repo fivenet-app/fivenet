@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -57,18 +58,24 @@ func TestRefreshUserLocations(t *testing.T) {
 	require.NotNil(t, manager)
 
 	msgCh := make(chan int)
-	consumer, err := manager.js.CreateConsumer(ctx, "KV_tracker", jetstream.ConsumerConfig{
+	consumer, err := manager.js.CreateConsumer(ctx, "KV_"+BucketUserLoc, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverLastPerSubjectPolicy,
 		AckPolicy:     jetstream.AckNonePolicy,
-		FilterSubject: "$KV.tracker.>",
+		FilterSubject: "$KV." + BucketUserLoc + ".>",
 	})
 	if err != nil {
 		require.NoError(t, err)
 	}
 	assert.NotNil(t, consumer)
 
+	snapshotReceived := false
 	eventCount := 0
 	jsCons, err := consumer.Consume(func(msg jetstream.Msg) {
+		if strings.Contains(msg.Subject(), "_snapshot") {
+			snapshotReceived = true
+			return
+		}
+
 		eventCount++
 
 		if err := msg.Ack(); err != nil {
@@ -98,7 +105,10 @@ func TestRefreshUserLocations(t *testing.T) {
 	// Wait for users to appear (an event is sent for this)
 	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
 		select {
-		case <-msgCh:
+		case count := <-msgCh:
+			if count < 2 {
+				return retry.RetryableError(fmt.Errorf("not enough user events received"))
+			}
 			return nil
 
 		case <-time.After(1 * time.Second):
@@ -175,12 +185,14 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.Len(t, list, 0)
 
 	user1, err = manager.userLocStore.Get(userMarkerKey(int32(1), "ambulance", 3))
-	assert.NoError(t, err)
+	assert.Error(t, err)
 	assert.Nil(t, user1)
 
 	user2, err = manager.userLocStore.Get(userMarkerKey(int32(2), "ambulance", 3))
-	assert.NoError(t, err)
+	assert.Error(t, err)
 	assert.Nil(t, user2)
+
+	assert.True(t, snapshotReceived, "snapshot event was not received")
 }
 
 func insertCitizenLocations(ctx context.Context, db *sql.DB, identifier string, job string, grade int32, x float64, y float64, hidden bool) error {

@@ -10,9 +10,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/tracker"
 	pblivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
@@ -28,6 +29,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/klauspost/compress/zstd"
 	"github.com/nats-io/nats.go"
+	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -55,8 +57,9 @@ type Manager struct {
 	refreshTicker  *time.Ticker
 	snapshotTicker *time.Ticker
 
-	userLocStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
-	unitMapStore *store.Store[centrum.UserUnitMapping, *centrum.UserUnitMapping]
+	userLocStore      *store.Store[livemap.UserMarker, *livemap.UserMarker]
+	byIDStore         *store.Store[livemap.UserMarker, *livemap.UserMarker]
+	userMappingsStore *store.Store[tracker.UserMapping, *tracker.UserMapping]
 }
 
 type ManagerParams struct {
@@ -111,43 +114,91 @@ func NewManager(p ManagerParams) (*Manager, error) {
 			}
 		}()
 
-		locStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+		userMappingsStore, err := store.New[tracker.UserMapping, *tracker.UserMapping](
+			ctxStartup, p.Logger, p.JS, BucketUserMappingsMap,
+			store.WithLocks[tracker.UserMapping, *tracker.UserMapping](nil),
+		)
+		if err != nil {
+			return err
+		}
+		if err := userMappingsStore.Start(ctxCancel, false); err != nil {
+			return err
+		}
+		m.userMappingsStore = userMappingsStore
+
+		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+			ctxStartup, p.Logger, p.JS, BucketUserLocByID,
+			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+		)
+		if err != nil {
+			return err
+		}
+		if err := byID.Start(ctxCancel, false); err != nil {
+			return err
+		}
+		m.byIDStore = byID
+
+		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](
 			ctxStartup, p.Logger, p.JS, BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 			store.WithIgnoredKeys[livemap.UserMarker, *livemap.UserMarker]("_snapshot"),
-		)
-		if err != nil {
-			return err
-		}
-		if err := locStore.Start(ctxCancel, false); err != nil {
-			return err
-		}
-		m.userLocStore = locStore
+			store.WithOnUpdateFn(func(_ *store.Store[livemap.UserMarker, *livemap.UserMarker],
+				um *livemap.UserMarker,
+			) (*livemap.UserMarker, error) {
+				if um == nil {
+					return nil, nil
+				}
 
-		unitStore, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](
-			ctxStartup, p.Logger, p.JS, BucketUnitMap,
-			store.WithLocks[centrum.UserUnitMapping, *centrum.UserUnitMapping](nil),
+				// Upsert mapping (unit_id may be 0 = no unit)
+				if err := m.userMappingsStore.Put(ctxCancel, userIdKey(um.UserId), &tracker.UserMapping{
+					UserId:    um.UserId,
+					UnitId:    um.UnitId,
+					CreatedAt: timestamp.Now(),
+				}); err != nil {
+					return nil, fmt.Errorf("failed to upsert user unit mapping. %w", err)
+				}
+
+				// Mirror latest marker by USER_ID (idempotent)
+				_ = m.byIDStore.Put(ctxCancel, userIdKey(um.UserId), um)
+
+				return um, nil
+			}),
+			store.WithOnDeleteFn(func(_ *store.Store[livemap.UserMarker, *livemap.UserMarker],
+				entry jetstream.KeyValueEntry, um *livemap.UserMarker,
+			) error {
+				if um == nil {
+					return nil
+				}
+
+				// Remove mapping
+				if err := m.userMappingsStore.Delete(ctxCancel, userIdKey(um.UserId)); err != nil {
+					m.logger.Error("failed to remove user unit mapping", zap.Error(err))
+				}
+
+				return nil
+			}),
 		)
 		if err != nil {
 			return err
 		}
-		if err := unitStore.Start(ctxCancel, false); err != nil {
+		if err := userLocStore.Start(ctxCancel, false); err != nil {
 			return err
 		}
-		m.unitMapStore = unitStore
+		m.userLocStore = userLocStore
 
 		// Periodic snapshot publisher
 		m.snapshotTicker = time.NewTicker(defaultSnapEvery)
 		go func() {
+			if err := m.publishSnapshot(ctxCancel); err != nil {
+				m.logger.Error("snapshot publish failed", zap.Error(err))
+			}
+
 			for {
 				select {
 				case <-ctxCancel.Done():
 					return
 
 				case <-m.snapshotTicker.C:
-					if err := m.publishSnapshot(ctxCancel); err != nil {
-						m.logger.Error("snapshot publish failed", zap.Error(err))
-					}
 				}
 			}
 		}()
@@ -313,10 +364,10 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			dest[i].Postal = postal.Code
 		}
 
-		unitMapping, ok := m.state.GetUserUnitMapping(ctx, dest[i].UserId)
-		if ok {
-			dest[i].UnitId = &unitMapping.UnitId
-			if unit, err := m.state.GetUnit(ctx, job, unitMapping.UnitId); err == nil {
+		unitMapping, err := m.userMappingsStore.Get(userIdKey(dest[i].UserId))
+		if err == nil && unitMapping.UnitId != nil && *unitMapping.UnitId > 0 {
+			dest[i].UnitId = unitMapping.UnitId
+			if unit, err := m.state.GetUnit(ctx, job, *unitMapping.UnitId); err == nil {
 				dest[i].Unit = unit
 			}
 		} else {
@@ -344,6 +395,18 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			}
 
 			um.Merge(dest[i])
+
+			oldKey := userMarkerKey(dest[i].UserId, job, jg) // job/jg are the *previous* ones
+			ujg := jg
+			if um.JobGrade != nil {
+				ujg = *um.JobGrade // Use the job grade from the existing marker
+			}
+			newKey := userMarkerKey(dest[i].UserId, um.Job, ujg)
+			if oldKey != newKey {
+				if err := m.userLocStore.Delete(ctx, oldKey); err != nil {
+					errs = multierr.Append(errs, err)
+				}
+			}
 
 			if err := m.userLocStore.Put(ctx, userMarkerKey(dest[i].UserId, job, jg), um); err != nil {
 				errs = multierr.Append(errs, err)
@@ -407,14 +470,18 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any
 func (m *Manager) publishSnapshot(ctx context.Context) error {
 	// build Snapshot proto
 	snap := &pblivemap.Snapshot{}
-	m.userLocStore.Range(ctx, func(_ string, um *livemap.UserMarker) bool {
-		snap.Markers = append(snap.Markers, proto.Clone(um).(*livemap.UserMarker))
+	m.userLocStore.Range(func(_ string, um *livemap.UserMarker) bool {
+		if um.Hidden {
+			return true // Skip hidden markers
+		}
+
+		snap.Markers = append(snap.Markers, um)
 		return true
 	})
 
 	raw, err := proto.Marshal(snap)
 	if err != nil {
-		return fmt.Errorf("marshal snapshot: %w", err)
+		return fmt.Errorf("marshal snapshot. %w", err)
 	}
 
 	// Compress (zstd keeps CPU low and ratio high)

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
-import { dispatchStatusToBGColor, dispatchTimeToTextColorSidebar } from '~/components/centrum/helpers';
+import { dispatchStatusToBadgeColor, dispatchTimeToTextColorSidebar } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
@@ -58,6 +58,7 @@ useIntervalFn(
         >
             <UButton
                 class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
+                block
                 color="error"
                 :padded="false"
                 @click="
@@ -66,42 +67,51 @@ useIntervalFn(
                     })
                 "
             >
-                <span class="mb-0.5 inline-flex w-full flex-col place-content-between items-center md:flex-row md:gap-1">
-                    <span class="inline-flex items-center font-bold md:gap-1">
-                        <UIcon class="hidden h-3 w-auto md:block" name="i-mdi-car-emergency" />
-                        DSP-{{ dispatch.id }}
-                    </span>
-                    <span>
-                        <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal }}
-                    </span>
-                </span>
+                <!-- Row 1: ID + Postal -->
+                <div class="flex w-full items-center justify-between">
+                    <div class="flex items-center space-x-2 text-sm font-bold">
+                        <Icon class="h-4 w-4" name="mdi-car-emergency" />
+                        <span>DSP-{{ dispatch.id }}</span>
+                    </div>
+                    <div class="text-sm">
+                        <span class="font-medium">{{ $t('common.postal') }}:</span>
+                        <span>{{ dispatch.postal }}</span>
+                    </div>
+                </div>
 
-                <span class="mb-0.5 inline-flex flex-col place-content-between items-center md:flex-row md:gap-1">
-                    <span class="font-semibold">{{ $t('common.status') }}:</span>
-                    <span class="line-clamp-2 break-words" :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
-                        $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
-                    }}</span>
-                </span>
+                <!-- Row 2: Grid of Status & Sent By, plus full-width Sent At -->
+                <div class="grid w-full grid-cols-2 gap-1 text-xs">
+                    <div class="inline-flex flex-col items-center">
+                        <span class="font-medium">{{ $t('common.status') }}:</span>
+                        <UBadge
+                            class="line-clamp-2 break-words px-px py-0.5"
+                            variant="subtle"
+                            :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
+                        >
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
+                        </UBadge>
+                    </div>
 
-                <span class="line-clamp-2 inline-flex flex-col md:flex-row md:gap-1">
-                    <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
-                    <span class="truncate">
-                        <template v-if="dispatch.anon">
-                            {{ $t('common.anon') }}
-                        </template>
-                        <template v-else-if="dispatch.creator">
-                            {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }}
-                        </template>
-                        <template v-else>
-                            {{ $t('common.unknown') }}
-                        </template>
-                    </span>
-                </span>
+                    <div class="inline-flex flex-col items-center">
+                        <span class="font-medium">{{ $t('common.sent_by') }}:</span>
+                        <span class="truncate">
+                            <template v-if="dispatch.anon">
+                                {{ $t('common.anon') }}
+                            </template>
+                            <template v-else-if="dispatch.creator">
+                                {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }}
+                            </template>
+                            <template v-else>
+                                {{ $t('common.unknown') }}
+                            </template>
+                        </span>
+                    </div>
 
-                <span class="inline-flex flex-col items-center md:flex-row md:gap-1">
-                    <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
-                    <GenericTime :value="dispatch.createdAt" type="compact" />
-                </span>
+                    <div class="col-span-2">
+                        <span class="font-medium">{{ $t('common.sent_at') }}:</span>
+                        <GenericTime class="ml-1" :value="dispatch.createdAt" type="compact" />
+                    </div>
+                </div>
             </UButton>
         </UChip>
     </li>

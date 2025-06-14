@@ -59,15 +59,15 @@ func (c *FilestoreCmd) Run() error {
 func (c *FilestoreCmd) run(ctx context.Context) error {
 	var errs error
 	if err := c.migrateJobLogos(ctx); err != nil {
-		errs = multierr.Append(errs, fmt.Errorf("failed to migrate job logos: %w", err))
+		errs = multierr.Append(errs, fmt.Errorf("failed to migrate job logos. %w", err))
 	}
 
 	if err := c.migrateAvatars(ctx); err != nil {
-		errs = multierr.Append(errs, fmt.Errorf("failed to migrate avatars: %w", err))
+		errs = multierr.Append(errs, fmt.Errorf("failed to migrate avatars. %w", err))
 	}
 
 	if err := c.migrateMugshots(ctx); err != nil {
-		errs = multierr.Append(errs, fmt.Errorf("failed to migrate mugshots: %w", err))
+		errs = multierr.Append(errs, fmt.Errorf("failed to migrate mugshots. %w", err))
 	}
 
 	return errs

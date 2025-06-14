@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_qualifications_access` (
 -- Table: fivenet_centrum_user_locations
 ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `job_grade` int(11) NULL AFTER `job`;
 ALTER TABLE `fivenet_centrum_user_locations` MODIFY COLUMN `job` varchar(20) NULL;
-ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `on_duty` tinyint(1) DEFAULT 0 AFTER `hidden`;
 ALTER TABLE `fivenet_centrum_user_locations` ADD COLUMN `data` text NULL AFTER `updated_at`;
 
 -- Table: `fivenet_centrum_dispatches` - Coords can't be null

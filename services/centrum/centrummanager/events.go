@@ -16,7 +16,7 @@ import (
 func (s *Manager) registerStream(ctx context.Context) (jetstream.StreamConfig, error) {
 	streamCfg, err := eventscentrum.RegisterStream(ctx, s.js)
 	if err != nil {
-		return streamCfg, fmt.Errorf("failed to register stream: %w", err)
+		return streamCfg, fmt.Errorf("failed to register stream. %w", err)
 	}
 
 	return streamCfg, nil

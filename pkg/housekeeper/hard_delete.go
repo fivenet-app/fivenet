@@ -65,7 +65,7 @@ func (h *Housekeeper) HardDelete(ctx context.Context, table *Table) (int64, erro
 	for _, dep := range table.DependantTables {
 		r, err := h.hardDelete(ctx, table, dep, table.MinDays)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to hard delete rows from dependant table %s: %w", dep.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to hard delete rows from dependant table %s. %w", dep.Table.TableName(), err)
 		}
 		rowsAffected += r
 	}
@@ -73,7 +73,7 @@ func (h *Housekeeper) HardDelete(ctx context.Context, table *Table) (int64, erro
 	// Mark rows as deleted in the current table for the given job
 	r, err := h.deleteRows(ctx, nil, table, table.MinDays)
 	if err != nil {
-		return rowsAffected, fmt.Errorf("failed to hard delete rows from main table %s: %w", table.Table.TableName(), err)
+		return rowsAffected, fmt.Errorf("failed to hard delete rows from main table %s. %w", table.Table.TableName(), err)
 	}
 	rowsAffected += r
 
@@ -88,7 +88,7 @@ func (h *Housekeeper) hardDelete(ctx context.Context, parent *Table, table *Tabl
 	for _, child := range table.DependantTables {
 		r, err := h.deleteRows(ctx, table, child, minDays)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to hard delete dependant rows from dependant table %s: %w", child.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to hard delete dependant rows from dependant table %s. %w", child.Table.TableName(), err)
 		}
 		rowsAffected += r
 	}
@@ -96,7 +96,7 @@ func (h *Housekeeper) hardDelete(ctx context.Context, parent *Table, table *Tabl
 	// Mark rows as deleted in the current table for the given job
 	r, err := h.deleteRows(ctx, parent, table, minDays)
 	if err != nil {
-		return rowsAffected, fmt.Errorf("failed to hard delete rows from dependant table %s: %w", parent.Table.TableName(), err)
+		return rowsAffected, fmt.Errorf("failed to hard delete rows from dependant table %s. %w", parent.Table.TableName(), err)
 	}
 	rowsAffected += r
 

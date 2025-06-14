@@ -107,7 +107,7 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSy
 
 		m, err := modules.GetModule(module, g.base, g.events)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("%s: %w", module, err))
+			errs = multierr.Append(errs, fmt.Errorf("%s. %w", module, err))
 			continue
 		}
 
@@ -203,7 +203,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 
 		s, mLogs, err := module.Plan(g.ctx)
 		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("%s: %w", module, err))
+			errs = multierr.Append(errs, fmt.Errorf("%s. %w", module, err))
 			continue
 		}
 

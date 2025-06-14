@@ -65,9 +65,6 @@
     - [CentrumMode](#resources-centrum-CentrumMode)
     - [CentrumType](#resources-centrum-CentrumType)
   
-- [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
@@ -540,6 +537,9 @@
 - [resources/file/meta.proto](#resources_file_meta-proto)
     - [FileMeta](#resources-file-FileMeta)
     - [ImageMeta](#resources-file-ImageMeta)
+  
+- [resources/tracker/mapping.proto](#resources_tracker_mapping-proto)
+    - [UserMapping](#resources-tracker-UserMapping)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -1896,41 +1896,6 @@ Dummy - DO NOT USE!
 | `CENTRUM_TYPE_DISPATCH` | 1 |  |
 | `CENTRUM_TYPE_DELIVERY` | 2 |  |
 
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_centrum_user_unit-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/user_unit.proto
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_grade` | [int32](#int32) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
- <!-- end messages -->
 
  <!-- end enums -->
 
@@ -8619,6 +8584,40 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----- | ---- | ----- | ----------- |
 | `width` | [int64](#int64) |  |  |
 | `height` | [int64](#int64) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_tracker_mapping-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/tracker/mapping.proto
+
+
+
+<a name="resources-tracker-UserMapping"></a>
+
+### UserMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `unit_id` | [uint64](#uint64) | optional |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `hidden` | [bool](#bool) |  |  |
 
 
 

@@ -67,7 +67,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 			return nil, err
 		}
 
-		if um, ok := s.tracker.GetUserById(*in.UserId); ok {
+		if um, ok := s.tracker.GetUserMarkerById(*in.UserId); ok {
 			in.X = &um.X
 			in.Y = &um.Y
 			in.Postal = um.Postal
@@ -122,7 +122,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 	}
 
 	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
-		return nil, fmt.Errorf("failed to publish dispatch status event (size: %d, message: '%+v'): %w", len(data), in, err)
+		return nil, fmt.Errorf("failed to publish dispatch status event (size: %d, message: '%+v'). %w", len(data), in, err)
 	}
 
 	return in, nil
@@ -138,7 +138,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	var x, y *float64
 	var postal *string
 	if userId != nil {
-		if um, ok := s.tracker.GetUserById(*userId); ok {
+		if um, ok := s.tracker.GetUserMarkerById(*userId); ok {
 			x = &um.X
 			y = &um.Y
 			postal = um.Postal
@@ -725,7 +725,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 	var x, y *float64
 	var postal *string
-	if um, ok := s.tracker.GetUserById(userId); ok {
+	if um, ok := s.tracker.GetUserMarkerById(userId); ok {
 		x = &um.X
 		y = &um.Y
 		postal = um.Postal

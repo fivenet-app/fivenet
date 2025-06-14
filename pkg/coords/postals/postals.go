@@ -35,7 +35,7 @@ func New(cfg *config.Config) (Postals, error) {
 
 	cs, err := coords.NewReadOnly(codes)
 	if err != nil {
-		return nil, fmt.Errorf("failed to add postals to postals coords map: %w", err)
+		return nil, fmt.Errorf("failed to add postals to postals coords map. %w", err)
 	}
 
 	for k := range codes {

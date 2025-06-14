@@ -42,7 +42,7 @@ func (s *Server) registerStream(ctx context.Context, js *events.JSWrapper) (jets
 		Duplicates:  5 * time.Second,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, cfg); err != nil {
-		return cfg, fmt.Errorf("failed to create or update stream: %w", err)
+		return cfg, fmt.Errorf("failed to create or update stream. %w", err)
 	}
 
 	return cfg, nil

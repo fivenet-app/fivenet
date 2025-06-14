@@ -118,7 +118,7 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 		// Mark rows as deleted in the current table for the given job
 		r, err := h.markRowsAsDeletedInJob(ctx, table, jobName)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to soft delete rows from main table %s: %w", table.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to soft delete rows from main table %s. %w", table.Table.TableName(), err)
 		}
 		rowsAffected += r
 	}
@@ -131,7 +131,7 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 
 		r, err := h.softDeleteJobData(ctx, table, dep, jobName)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to soft delete rows from dependant table %s: %w", dep.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to soft delete rows from dependant table %s. %w", dep.Table.TableName(), err)
 		}
 		rowsAffected += r
 	}
@@ -147,7 +147,7 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 		// Mark rows as deleted in the current table for the given job
 		r, err := h.markRowsAsDeleted(ctx, parent, table, jobName)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to soft delete rows from dependant table %s: %w", parent.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to soft delete rows from dependant table %s. %w", parent.Table.TableName(), err)
 		}
 		rowsAffected += r
 	}
@@ -160,7 +160,7 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 
 		r, err := h.markRowsAsDeleted(ctx, table, child, jobName)
 		if err != nil {
-			return rowsAffected, fmt.Errorf("failed to soft delete dependant rows from dependant table %s: %w", child.Table.TableName(), err)
+			return rowsAffected, fmt.Errorf("failed to soft delete dependant rows from dependant table %s. %w", child.Table.TableName(), err)
 		}
 		rowsAffected += r
 	}

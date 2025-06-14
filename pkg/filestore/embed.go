@@ -17,7 +17,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/proto"
 )
 
 var tFiles = table.FivenetFiles
@@ -162,18 +161,16 @@ func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, siz
 		return nil, err
 	}
 
-	info := &file.File{
-		Id:          fileID,
-		FilePath:    key,
-		ContentType: ctype,
-		ByteSize:    bytes,
-		CreatedAt:   timestamp.Now(),
-	}
-
 	resp := &file.UploadResponse{
-		Id:   fileID,
-		Url:  full,
-		File: proto.Clone(info).(*file.File),
+		Id:  fileID,
+		Url: full,
+		File: &file.File{
+			Id:          fileID,
+			FilePath:    key,
+			ContentType: ctype,
+			ByteSize:    bytes,
+			CreatedAt:   timestamp.Now(),
+		},
 	}
 	return resp, srv.SendAndClose(resp)
 }

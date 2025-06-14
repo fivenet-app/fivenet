@@ -11,7 +11,6 @@
 // source: resources/centrum/settings.proto
 // source: resources/centrum/units.proto
 // source: resources/centrum/units_access.proto
-// source: resources/centrum/user_unit.proto
 // source: resources/collab/collab.proto
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto
@@ -73,6 +72,7 @@
 // source: resources/sync/activity.proto
 // source: resources/sync/data.proto
 // source: resources/timestamp/timestamp.proto
+// source: resources/tracker/mapping.proto
 // source: resources/users/activity.proto
 // source: resources/users/labels.proto
 // source: resources/users/licenses.proto

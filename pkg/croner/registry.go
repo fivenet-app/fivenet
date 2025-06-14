@@ -135,7 +135,7 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 func (r *Registry) ListCronjobs(ctx context.Context) []*cron.Cronjob {
 	cj := []*cron.Cronjob{}
 
-	r.store.Range(ctx, func(_ string, entry *cron.Cronjob) bool {
+	r.store.Range(func(_ string, entry *cron.Cronjob) bool {
 		cj = append(cj, entry)
 
 		return true

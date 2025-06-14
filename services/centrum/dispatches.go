@@ -378,12 +378,16 @@ func (s *Server) TakeDispatch(ctx context.Context, req *pbcentrum.TakeDispatchRe
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	unitMapping, ok := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
-	if !ok {
+	unitMapping, err := s.tracker.GetUserMapping(userInfo.UserId)
+	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, unitMapping.UnitId, req.Resp, req.DispatchIds); err != nil {
+	if unitMapping == nil || unitMapping.UnitId == nil || *unitMapping.UnitId <= 0 {
+		return nil, errorscentrum.ErrNotOnDuty
+	}
+
+	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, *unitMapping.UnitId, req.Resp, req.DispatchIds); err != nil {
 		return nil, err
 	}
 
@@ -414,13 +418,13 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *pbcentrum.Update
 	}
 
 	var statusUnitId *uint64
-	userMapping, ok := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
-	if !ok {
+	userMapping, err := s.tracker.GetUserMapping(userInfo.UserId)
+	if err != nil {
 		if !s.state.CheckIfUserIsDispatcher(ctx, userInfo.Job, userInfo.UserId) {
 			return nil, errorscentrum.ErrNotPartOfDispatch
 		}
 	} else {
-		statusUnitId = &userMapping.UnitId
+		statusUnitId = userMapping.UnitId
 	}
 
 	if _, err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp.Id, &centrum.DispatchStatus{

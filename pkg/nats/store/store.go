@@ -42,7 +42,7 @@ type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
 	KeysFiltered(prefix string, filter func(string) bool) []string
 	List() []U
 	ListFiltered(ctx context.Context, prefix string, filter func(string) bool) []U
-	Range(ctx context.Context, fn func(key string, value U) bool)
+	Range(fn func(key string, value U) bool)
 	Count() int
 	WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], error)
 }
@@ -436,7 +436,7 @@ func (s *Store[T, U]) GetOrLoad(ctx context.Context, key string) (U, error) {
 func (s *Store[T, U]) update(entry jetstream.KeyValueEntry) (U, error) {
 	data := U(new(T))
 	if err := proto.Unmarshal(entry.Value(), data); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal store watcher update: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal store watcher update. %w", err)
 	}
 
 	var err error
@@ -448,18 +448,18 @@ func (s *Store[T, U]) update(entry jetstream.KeyValueEntry) (U, error) {
 	return proto.Clone(item).(U), err
 }
 
-func (s *Store[T, U]) updateFromType(key string, updated U) U {
-	current, loaded := s.data.LoadOrStore(key, updated)
+func (s *Store[T, U]) updateFromType(key string, incoming U) U {
+	current, loaded := s.data.LoadOrStore(key, incoming)
 	if loaded && current != nil {
 		// Compare using protobuf magic and merge if not equal
-		if !proto.Equal(current, updated) {
-			current.Merge(updated)
+		if !proto.Equal(current, incoming) {
+			current.Merge(incoming)
 		}
 
 		return current
 	}
 
-	return updated
+	return incoming
 }
 
 func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
@@ -623,23 +623,38 @@ func (s *Store[T, U]) Count() int {
 	return s.data.Size()
 }
 
-func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bool) {
-	keys := s.Keys("")
+// Range calls fn on each cached value that passes the ignore/prefix check.
+// It touches every entry exactly once and never clones unless the caller asks.
+func (s *Store[T, U]) Range(fn func(key string, value U) bool) {
+	if s.data == nil {
+		return
+	}
 
-	for _, key := range keys {
-		if s.ignoredKeys != nil && slices.Contains(s.ignoredKeys, key) {
-			continue
-		}
-
-		v, err := s.Get(key)
-		if err != nil {
-			continue
-		}
-
-		if !fn(key, v) {
-			break
+	var skip map[string]struct{}
+	if len(s.ignoredKeys) > 0 {
+		skip = make(map[string]struct{}, len(s.ignoredKeys))
+		for _, k := range s.ignoredKeys {
+			skip[k] = struct{}{}
 		}
 	}
+
+	s.data.Range(func(internalKey string, _ U) bool {
+		// strip store prefix so we expose the “user key”
+		userKey := internalKey
+		if s.prefix != "" {
+			userKey = strings.TrimPrefix(internalKey, s.prefix)
+		}
+		if _, ok := skip[userKey]; ok {
+			return true // ignore
+		}
+		v, err := s.Get(internalKey)
+		if err != nil {
+			return true // ignore errors, just skip this entry
+		}
+
+		// Clone the value to ensure no parallel access issues
+		return fn(userKey, proto.Clone(v).(U))
+	})
 }
 
 func (s *Store[T, U]) Clear(ctx context.Context) error {
@@ -725,7 +740,7 @@ func (k *KeyValueEntry[T, U]) Operation() jetstream.KeyValueOp {
 func (k *KeyValueEntry[T, U]) Value() (U, error) {
 	data := U(new(T))
 	if err := proto.Unmarshal(k.value, data); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal store watcher update: %w", err)
+		return nil, fmt.Errorf("failed to unmarshal store watcher update. %w", err)
 	}
 
 	return data, nil

@@ -244,30 +244,34 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Check if user is on duty, if not make sure to unset any unit id
-	if um, ok := s.tracker.GetUserById(userInfo.UserId); !ok || um.Hidden {
-		if err := s.state.UnsetUnitIDForUser(ctx, userInfo.UserId); err != nil {
+	if um, ok := s.tracker.GetUserMarkerById(userInfo.UserId); !ok || um.Hidden {
+		if err := s.tracker.SetUserMappingForUser(ctx, userInfo.UserId, nil); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	currentUnitMapping, _ := s.state.GetUserUnitMapping(ctx, userInfo.UserId)
+	currentUnitMapping, _ := s.tracker.GetUserMapping(userInfo.UserId)
 
 	resp := &pbcentrum.JoinUnitResponse{}
 	// User tries to join his own unit
-	if req.UnitId != nil && currentUnitMapping != nil && *req.UnitId == currentUnitMapping.UnitId {
+	if req.UnitId != nil && currentUnitMapping != nil && currentUnitMapping.UnitId != nil && *req.UnitId == *currentUnitMapping.UnitId {
 		return resp, nil
 	}
 
-	currentUnit, err := s.state.GetUnit(ctx, userInfo.Job, currentUnitMapping.UnitId)
-	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		return nil, errorscentrum.ErrNotOnDuty
+	var currentUnit *centrum.Unit
+	if currentUnitMapping.UnitId != nil && *currentUnitMapping.UnitId > 0 {
+		var err error
+		currentUnit, err = s.state.GetUnit(ctx, userInfo.Job, *currentUnitMapping.UnitId)
+		if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+			return nil, errorscentrum.ErrNotOnDuty
+		}
 	}
 
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
-		s.logger.Debug("user joining unit", zap.String("job", userInfo.Job), zap.Int32("user_id", userInfo.UserId), zap.Uint64("current_unit_id", currentUnitMapping.UnitId), zap.Uint64p("unit_id", req.UnitId))
+		s.logger.Debug("user joining unit", zap.String("job", userInfo.Job), zap.Int32("user_id", userInfo.UserId), zap.Uint64p("current_unit_id", currentUnitMapping.UnitId), zap.Uint64p("unit_id", req.UnitId))
 
 		// Remove user from his current unit
 		if currentUnit != nil {
@@ -301,7 +305,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *pbcentrum.JoinUnitRequest) (
 
 		resp.Unit = newUnit
 	} else {
-		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitMapping.UnitId), zap.Uint64p("unit_id", req.UnitId))
+		s.logger.Debug("user leaving unit", zap.Uint64p("current_unit_id", currentUnitMapping.UnitId), zap.Uint64p("unit_id", req.UnitId))
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {

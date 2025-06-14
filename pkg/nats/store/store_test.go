@@ -93,7 +93,7 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 
 	// Check that range runs the callback 2 times
 	runCount := 0
-	store.Range(ctx, func(key string, value *tests.SimpleObject) bool {
+	store.Range(func(key string, value *tests.SimpleObject) bool {
 		runCount++
 		return true
 	})

@@ -89,7 +89,7 @@ func (p *DBScannerModule) generate(fs []pgs.File) {
 
 			dbscanner, err := p.parseComment(mName, comment)
 			if err != nil {
-				p.Failf("failed to parse comment for %s message in file %s (comment: '%s'), error: %w", mName, f.InputPath(), comment, err)
+				p.Failf("failed to parse comment for %s message in file %s (comment: '%s'), error. %w", mName, f.InputPath(), comment, err)
 				return
 			}
 			if dbscanner == nil {

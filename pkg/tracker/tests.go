@@ -15,6 +15,7 @@ type TestTracker struct {
 
 	broker *broker.Broker[*store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker]]
 
+	jobs       []string
 	usersCache *xsync.Map[string, *xsync.Map[int32, *livemap.UserMarker]]
 	usersIDs   *xsync.Map[int32, *livemap.UserMarker]
 }
@@ -49,8 +50,8 @@ func NewForTests(p TestParams) ITracker {
 	return t
 }
 
-func (s *TestTracker) GetUsersByJob(job string) (*xsync.Map[int32, *livemap.UserMarker], bool) {
-	return s.usersCache.Load(job)
+func (s *TestTracker) ListTrackedJobs() []string {
+	return s.jobs
 }
 
 func (s *TestTracker) GetUserByJobAndID(job string, userId int32) (*livemap.UserMarker, bool) {
@@ -75,7 +76,7 @@ func (s *TestTracker) IsUserOnDuty(userId int32) bool {
 	return true
 }
 
-func (s *TestTracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
+func (s *TestTracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
 	info, ok := s.usersIDs.Load(id)
 	if !ok {
 		return nil, false

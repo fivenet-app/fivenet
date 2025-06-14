@@ -45,19 +45,19 @@ func Load() (Result, error) {
 	res := Result{}
 	// Find and read the config file
 	if err := v.ReadInConfig(); err != nil {
-		return res, fmt.Errorf("fatal error config file: %w", err)
+		return res, fmt.Errorf("fatal error config file. %w", err)
 	}
 
 	c := &Config{}
 	if err := defaults.Set(c); err != nil {
-		return res, fmt.Errorf("failed to set config defaults: %w", err)
+		return res, fmt.Errorf("failed to set config defaults. %w", err)
 	}
 	res.Config = c
 
 	res.DiscordConfig = &c.Discord
 
 	if err := v.Unmarshal(c); err != nil {
-		return res, fmt.Errorf("failed to unmarshal config: %w", err)
+		return res, fmt.Errorf("failed to unmarshal config. %w", err)
 	}
 
 	// Handle non-DSN database connection details
@@ -89,7 +89,7 @@ var TestModule = fx.Module("config_test",
 func LoadTestConfig() (*Config, error) {
 	c := &Config{}
 	if err := defaults.Set(c); err != nil {
-		return nil, fmt.Errorf("failed to set config defaults: %w", err)
+		return nil, fmt.Errorf("failed to set config defaults. %w", err)
 	}
 
 	// Set audit log retention days high so they won't run in "short" tests

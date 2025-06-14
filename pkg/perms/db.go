@@ -263,11 +263,11 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 func (p *Perms) loadJobRoles(ctx context.Context, job string) error {
 	if job == "" {
 		if err := p.loadRolePermissions(ctx, 0); err != nil {
-			return fmt.Errorf("failed to load roles permissions for job %s: %w", job, err)
+			return fmt.Errorf("failed to load roles permissions for job %s. %w", job, err)
 		}
 
 		if err := p.loadRoleAttributes(ctx, 0); err != nil {
-			return fmt.Errorf("failed to load role attributes for job %s: %w", job, err)
+			return fmt.Errorf("failed to load role attributes for job %s. %w", job, err)
 		}
 
 		return nil
@@ -280,11 +280,11 @@ func (p *Perms) loadJobRoles(ctx context.Context, job string) error {
 
 	for _, role := range roles {
 		if err := p.loadRolePermissions(ctx, role.Id); err != nil {
-			return fmt.Errorf("failed to load role permissions for job %s, role %d: %w", job, role.Id, err)
+			return fmt.Errorf("failed to load role permissions for job %s, role %d. %w", job, role.Id, err)
 		}
 
 		if err := p.loadRoleAttributes(ctx, role.Id); err != nil {
-			return fmt.Errorf("failed to load role attributes for job %s, role %d: %w", job, role.Id, err)
+			return fmt.Errorf("failed to load role attributes for job %s, role %d. %w", job, role.Id, err)
 		}
 	}
 

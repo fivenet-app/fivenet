@@ -265,7 +265,7 @@ func (s *Scheduler) start(ctx context.Context) {
 
 				wg := sync.WaitGroup{}
 
-				s.registry.store.Range(ctx, func(key string, value *cron.Cronjob) bool {
+				s.registry.store.Range(func(key string, value *cron.Cronjob) bool {
 					job, err := s.registry.store.GetOrLoad(ctx, key)
 					if err != nil {
 						s.logger.Error("failed to load cron job", zap.String("job_name", key))

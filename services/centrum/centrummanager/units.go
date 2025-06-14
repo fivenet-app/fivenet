@@ -58,7 +58,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 			return nil, err
 		}
 
-		if um, ok := s.tracker.GetUserById(*in.UserId); ok {
+		if um, ok := s.tracker.GetUserMarkerById(*in.UserId); ok {
 			in.X = &um.X
 			in.Y = &um.Y
 			in.Postal = um.Postal
@@ -123,7 +123,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 	}
 
 	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
-		return nil, fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'): %w", len(data), in, err)
+		return nil, fmt.Errorf("failed to publish unit status event (size: %d, message: '%+v'). %w", len(data), in, err)
 	}
 
 	return in, nil
@@ -139,7 +139,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	var x, y *float64
 	var postal *string
 	if userId != nil {
-		if um, ok := s.tracker.GetUserById(*userId); ok {
+		if um, ok := s.tracker.GetUserMarkerById(*userId); ok {
 			x = &um.X
 			y = &um.Y
 			postal = um.Postal
@@ -177,7 +177,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	if len(toAdd) > 0 {
 		addIds := []jet.IntegerExpression{}
 		for i := range toAdd {
-			if um, ok := s.tracker.GetUserById(toAdd[i]); !ok || um.Hidden {
+			if um, ok := s.tracker.GetUserMarkerById(toAdd[i]); !ok || um.Hidden {
 				continue
 			}
 
@@ -262,7 +262,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					return nil, false, err
 				}
 
-				if err := s.UnsetUnitIDForUser(ctx, user); err != nil {
+				if err := s.tracker.UnsetUnitIDForUser(ctx, user); err != nil {
 					return nil, false, err
 				}
 			}
@@ -271,7 +271,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		if len(toAdd) > 0 {
 			notFound := []int32{}
 			for i := range toAdd {
-				if um, ok := s.tracker.GetUserById(toAdd[i]); !ok || um.Hidden {
+				if um, ok := s.tracker.GetUserMarkerById(toAdd[i]); !ok || um.Hidden {
 					continue
 				}
 
@@ -312,7 +312,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					return nil, false, err
 				}
 
-				if err := s.SetUnitForUser(ctx, user.Job, user.UserId, unit.Id); err != nil {
+				if err := s.tracker.SetUserMappingForUser(ctx, user.UserId, &unit.Id); err != nil {
 					return nil, false, err
 				}
 			}

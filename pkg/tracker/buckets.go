@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	BucketUserLoc = "user_locations" // Holds UserMarker (JOB.GRADE.USER_ID)
-	BucketUnitMap = "user_mappings"  // Holds UserUnitMapping (USER_ID)
+	BucketUserLoc         = "user_locations" // JOB.GRADE.USER_ID → UserMarker
+	BucketUserMappingsMap = "user_mappings"  // USER_ID           → UserMapping
+	BucketUserLocByID     = "userloc_by_id"  // USER_ID           → UserMapping (no Job/Grade)
 
 	SnapshotSubject = "$KV." + BucketUserLoc + "._snapshot"
 
@@ -25,7 +26,11 @@ func ExtractUserID(key string) (int32, error) {
 
 	id, err := strconv.ParseInt(key[idx+1:], 10, 32)
 	if err != nil {
-		return 0, fmt.Errorf("key %q does not contain a valid numeric suffix: %w", key, err)
+		return 0, fmt.Errorf("key %q does not contain a valid numeric suffix. %w", key, err)
 	}
 	return int32(id), nil
+}
+
+func userIdKey(id int32) string {
+	return strconv.FormatInt(int64(id), 10)
 }

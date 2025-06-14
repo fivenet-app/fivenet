@@ -29,16 +29,16 @@ func (s *Sync) loadConfig(shutdowner fx.Shutdowner) error {
 	loadConfig := func() error {
 		// Find and read the dbsync config file
 		if err := v.ReadInConfig(); err != nil {
-			return fmt.Errorf("fatal error config file: %w", err)
+			return fmt.Errorf("fatal error config file. %w", err)
 		}
 
 		c := &DBSyncConfig{}
 		if err := defaults.Set(c); err != nil {
-			return fmt.Errorf("failed to set config defaults: %w", err)
+			return fmt.Errorf("failed to set config defaults. %w", err)
 		}
 
 		if err := v.Unmarshal(c); err != nil {
-			return fmt.Errorf("failed to unmarshal config: %w", err)
+			return fmt.Errorf("failed to unmarshal config. %w", err)
 		}
 
 		s.cfg.Store(c)

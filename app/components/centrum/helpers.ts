@@ -1,3 +1,4 @@
+import type { BadgeColor } from '#ui/types';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
@@ -58,6 +59,32 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
     }
 }
 
+export function dispatchStatusToBadgeColor(status: StatusDispatch | undefined): BadgeColor {
+    switch (status) {
+        case StatusDispatch.UNSPECIFIED:
+        case StatusDispatch.NEW:
+        case StatusDispatch.UNASSIGNED:
+        case StatusDispatch.UNIT_DECLINED:
+            return 'error';
+        case StatusDispatch.EN_ROUTE:
+            return 'info';
+        case StatusDispatch.ON_SCENE:
+            return 'info';
+        case StatusDispatch.NEED_ASSISTANCE:
+            return 'warn';
+        case StatusDispatch.COMPLETED:
+            return 'success';
+        case StatusDispatch.CANCELLED:
+            return 'success';
+        case StatusDispatch.ARCHIVED:
+            return 'white';
+        case StatusDispatch.UNIT_ACCEPTED:
+            return 'info';
+        default:
+            return 'info';
+    }
+}
+
 export const animateStates = [
     StatusDispatch.NEW.valueOf(),
     StatusDispatch.UNASSIGNED.valueOf(),
@@ -114,7 +141,7 @@ export const dispatchStatuses: {
     status?: StatusDispatch;
 }[] = [
     { icon: 'i-mdi-car-back', name: 'En Route', status: StatusDispatch.EN_ROUTE },
-    { icon: 'i-mdi-marker-check', name: 'On Scene', status: StatusDispatch.ON_SCENE },
+    { icon: 'i-mdi-map-marker-check', name: 'On Scene', status: StatusDispatch.ON_SCENE },
     { icon: 'i-mdi-help-circle', name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
     { icon: 'i-mdi-check-bold', name: 'Completed', status: StatusDispatch.COMPLETED },
     { icon: 'i-mdi-cancel', name: 'Cancelled', status: StatusDispatch.CANCELLED },

@@ -86,7 +86,7 @@ func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs
 
 					perm, err := p.parseComment(mName, comment)
 					if err != nil {
-						p.Failf("failed to parse comment in %s method %s (comment: '%s'), error: %w", f.InputPath(), mName, comment, err)
+						p.Failf("failed to parse comment in %s method %s (comment: '%s'), error. %w", f.InputPath(), mName, comment, err)
 						return nil
 					}
 					if perm == nil {

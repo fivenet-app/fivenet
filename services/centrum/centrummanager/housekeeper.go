@@ -3,6 +3,7 @@ package centrummanager
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"slices"
 	"sync"
@@ -89,7 +90,7 @@ func NewHousekeeper(p HousekeeperParams) HousekeeperResult {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.watchUserChanges()
+			s.runUserChangesWatch()
 		}()
 
 		s.wg.Add(1)
@@ -782,9 +783,9 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 					continue
 				}
 
-				unitMapping, found := s.GetUserUnitMapping(ctx, userId)
+				unitMapping, err := s.tracker.GetUserMapping(userId)
 				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-				if found && unit.Id == unitMapping.UnitId && s.tracker.IsUserOnDuty(userId) {
+				if err == nil && unitMapping.UnitId != nil && unit.Id == *unitMapping.UnitId && s.tracker.IsUserOnDuty(userId) {
 					foundUserIds = append(foundUserIds, userId)
 					continue
 				}
@@ -804,7 +805,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 		}
 	}
 
-	userUnitIds, err := s.State.ListUserUnitMappings(ctx)
+	userUnitIds, err := s.tracker.ListUserMappings(ctx)
 	if err != nil {
 		return err
 	}
@@ -821,7 +822,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 		// TODO this isn't working as intended at the moment..
 		/*
 			// Unset unit id for user when user is not in any unit
-			if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
+			if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -831,18 +832,34 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 	return errs
 }
 
-func (s *Housekeeper) watchUserChanges() {
+func (s *Housekeeper) runUserChangesWatch() {
 	for {
-		userCh, err := s.tracker.Subscribe(s.ctx)
-		if err != nil {
-			s.logger.Error("failed to subscribe to user changes", zap.Error(err))
-			time.Sleep(2 * time.Second) // Wait before retrying
-			continue
+		if err := s.watchUserChanges(s.ctx); err != nil {
+			if !errors.Is(err, context.Canceled) {
+				s.logger.Error("failed to watch user changes", zap.Error(err))
+			}
 		}
 
 		select {
 		case <-s.ctx.Done():
+			s.logger.Info("stopping user changes watcher")
 			return
+
+		case <-time.After(2 * time.Second):
+		}
+	}
+}
+
+func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
+	userCh, err := s.tracker.Subscribe(ctx)
+	if err != nil {
+		return err
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
 
 		case event := <-userCh:
 			if event == nil {
@@ -851,7 +868,7 @@ func (s *Housekeeper) watchUserChanges() {
 			}
 
 			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum.watch-users")
+				ctx, span := s.tracer.Start(ctx, "centrum.watch-users")
 				defer span.End()
 
 				userMarker, err := event.Value()
@@ -861,7 +878,7 @@ func (s *Housekeeper) watchUserChanges() {
 				}
 
 				if event.Operation() == jetstream.KeyValuePut {
-					if _, ok := s.GetUserUnitMapping(ctx, userMarker.UserId); ok {
+					if _, err := s.tracker.GetUserMapping(userMarker.UserId); err != nil {
 						return
 					}
 
@@ -871,14 +888,7 @@ func (s *Housekeeper) watchUserChanges() {
 						return
 					}
 
-					if unitId == 0 {
-						if err := s.UnsetUnitIDForUser(ctx, userMarker.UserId); err != nil {
-							s.logger.Error("failed to unset user's unit id", zap.Error(err))
-						}
-						return
-					}
-
-					if err := s.SetUnitForUser(ctx, userMarker.Job, userMarker.UserId, unitId); err != nil {
+					if err := s.tracker.SetUserMappingForUser(ctx, userMarker.UserId, &unitId); err != nil {
 						s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
 						return
 					}
@@ -900,18 +910,19 @@ func (s *Housekeeper) handleRemovedUser(ctx context.Context, job string, userId 
 		}
 	}
 
-	um, ok := s.GetUserUnitMapping(ctx, userId)
-	if !ok {
+	um, err := s.tracker.GetUserMapping(userId)
+	if err != nil {
+		errs = multierr.Append(errs, fmt.Errorf("failed to get user unit mapping. %w", err))
 		// User not in any unit, nothing to do
 		return errs
 	}
 
-	if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
+	if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("failed to unset user's unit id in removed user unit. %w", err))
 	}
 
-	if um != nil {
-		if err := s.UpdateUnitAssignments(ctx, job, &userId, um.UnitId, nil, []int32{userId}); err != nil {
+	if um != nil && um.UnitId != nil && *um.UnitId > 0 {
+		if err := s.UpdateUnitAssignments(ctx, job, &userId, *um.UnitId, nil, []int32{userId}); err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to remove user from unit. %w", err))
 		}
 	}

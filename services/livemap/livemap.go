@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"time"
 
@@ -17,11 +18,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorslivemap "github.com/fivenet-app/fivenet/v2025/services/livemap/errors"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/klauspost/compress/zstd"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
@@ -32,8 +31,7 @@ import (
 const (
 	markerMarkerChunkSize = 75
 
-	feedFetch = 128
-	feedWait  = 2 * time.Second
+	feedFetch = 32
 )
 
 func (s *Server) getAndSendACL(srv pblivemap.LivemapService_StreamServer, userInfo *userinfo.UserInfo) (*permissions.StringList, *permissions.JobGradeList, error) {
@@ -137,6 +135,16 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 	// Apply ACL from the request
 	markers = tracker.FilterMarkers(markers, usersJobs, userInfo)
 
+	markers = slices.DeleteFunc(markers, func(v *livemap.UserMarker) bool {
+		// Ensure that all users from the snapshot are still on duty
+		if um, ok := s.tracker.GetUserMarkerById(v.UserId); !ok || um.Hidden {
+			// If the user is not on duty or hidden, remove the marker
+			return true
+		}
+
+		return false
+	})
+
 	// Send initial payload
 	if err := srv.Send(&pblivemap.StreamResponse{
 		Data: &pblivemap.StreamResponse_Snapshot{
@@ -149,15 +157,34 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 		return err
 	}
 
-	markerUpdateCh := s.broker.Subscribe()
-	defer s.broker.Unsubscribe(markerUpdateCh)
-
 	// Central pipe: all feeds push messages into outCh
 	outCh := make(chan *pblivemap.StreamResponse, 1024)
 	defer close(outCh)
 	g, gctx := errgroup.WithContext(ctx)
 
+	// Writer goroutine – single gRPC send loop
 	g.Go(func() error {
+		for {
+			select {
+			case <-gctx.Done():
+				return nil
+
+			case msg := <-outCh:
+				if msg == nil {
+					return nil
+				}
+
+				if err := srv.Send(msg); err != nil {
+					return err
+				}
+			}
+		}
+	})
+
+	g.Go(func() error {
+		markerUpdateCh := s.broker.Subscribe()
+		defer s.broker.Unsubscribe(markerUpdateCh)
+
 		for {
 			select {
 			case <-gctx.Done():
@@ -194,44 +221,22 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 		}
 	})
 
-	// Writer goroutine – single gRPC send loop
 	g.Go(func() error {
-		for {
-			select {
-			case <-gctx.Done():
-				return nil
-
-			case msg := <-outCh:
-				if msg == nil {
-					return nil
-				}
-
-				if err := srv.Send(msg); err != nil {
-					return err
-				}
-			}
-		}
-	})
-
-	g.Go(func() error {
-		meta := metadata.ExtractIncoming(ctx)
-		connID := meta.Get(grpcws.ConnectionIdHeader)
-
-		// Create / bind consumer
-		cc := jetstream.ConsumerConfig{
+		// Upsert **durable pull consumer** with multi-filter
+		consCfg := jetstream.ConsumerConfig{
+			FilterSubjects: buildFilters(usersJobs),
 			DeliverPolicy:  jetstream.DeliverNewPolicy,
 			AckPolicy:      jetstream.AckNonePolicy,
-			Durable:        "lm_userloc-deltas" + connID,
-			FilterSubjects: buildFilters(usersJobs),
+			MaxWaiting:     8,
 		}
-
-		cons, err := s.stream.CreateConsumer(ctx, cc)
+		cons, err := s.js.CreateConsumer(ctx, "KV_"+tracker.BucketUserLoc, consCfg)
 		if err != nil {
-			return err
+			return fmt.Errorf("consumer. %w", err)
 		}
 
 		for {
-			msgs, err := cons.Fetch(feedFetch, jetstream.FetchMaxWait(feedWait))
+			batch, err := cons.Fetch(feedFetch,
+				jetstream.FetchMaxWait(2*time.Second))
 			if err != nil {
 				if errors.Is(err, context.DeadlineExceeded) ||
 					errors.Is(err, jetstream.ErrNoMessages) {
@@ -239,8 +244,9 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 				}
 				return err
 			}
-			for m := range msgs.Messages() {
-				if op := m.Headers().Get("KV-Operation"); op == "DEL" || op == "PURGE" {
+			for m := range batch.Messages() {
+				op := m.Headers().Get("KV-Operation")
+				if op == "DEL" || op == "PURGE" {
 					key := strings.TrimPrefix(m.Subject(), "$KV."+tracker.BucketUserLoc+".")
 
 					userId, err := tracker.ExtractUserID(key)
@@ -262,27 +268,49 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 				}
 
 				um := &livemap.UserMarker{}
-				if err := proto.Unmarshal(m.Data(), um); err == nil {
-					jg := um.User.JobGrade
-					if um.JobGrade != nil {
-						jg = *um.JobGrade
-					}
+				if err := proto.Unmarshal(m.Data(), um); err != nil {
+					continue
+				}
 
-					if !userInfo.Superuser && !usersJobs.HasJobGrade(um.Job, jg) {
-						continue
-					}
-
+				// Marker is hidden, send delete event
+				if um.Hidden {
 					select {
 					case <-gctx.Done():
 						return nil
 
 					case outCh <- &pblivemap.StreamResponse{
-						Data: &pblivemap.StreamResponse_UserUpdate{
-							UserUpdate: um,
+						Data: &pblivemap.StreamResponse_UserDelete{
+							UserDelete: um.UserId,
 						},
 					}:
 					}
+					continue
 				}
+
+				job := um.Job
+				if um.Job == "" {
+					job = um.User.Job
+				}
+				jg := um.User.JobGrade
+				if um.JobGrade != nil {
+					jg = *um.JobGrade
+				}
+
+				if !userInfo.Superuser && !usersJobs.HasJobGrade(job, jg) {
+					continue
+				}
+
+				select {
+				case <-gctx.Done():
+					return nil
+
+				case outCh <- &pblivemap.StreamResponse{
+					Data: &pblivemap.StreamResponse_UserUpdate{
+						UserUpdate: um,
+					},
+				}:
+				}
+
 			}
 		}
 	})
@@ -370,37 +398,17 @@ func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jo
 }
 
 func (s *Server) fetchSnapshot(ctx context.Context) ([]*livemap.UserMarker, int64, error) {
-	stream, err := s.js.Stream(ctx, "KV_"+tracker.BucketUserLoc)
+	msg, err := s.stream.GetLastMsgForSubject(ctx, "$KV."+tracker.BucketUserLoc+"._snapshot")
 	if err != nil {
-		return nil, 0, err
-	}
-	cons, err := stream.CreateConsumer(ctx, jetstream.ConsumerConfig{
-		DeliverPolicy:  jetstream.DeliverLastPolicy, // Newest snapshot only
-		AckPolicy:      jetstream.AckNonePolicy,
-		FilterSubjects: []string{tracker.SnapshotSubject},
-	})
-	if err != nil {
-		return nil, 0, err
-	}
-
-	msgs, err := cons.Fetch(1, jetstream.FetchMaxWait(2*time.Second))
-	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) ||
-			errors.Is(err, jetstream.ErrNoMessages) {
-			return nil, 0, nil // no snapshot yet
+		if !errors.Is(err, jetstream.ErrMsgNotFound) {
+			return nil, 0, err
 		}
-		return nil, 0, err
 	}
-	var msg jetstream.Msg
-	for m := range msgs.Messages() {
-		msg = m
-	}
-
 	if msg == nil {
 		return nil, 0, nil
 	}
 
-	zr, err := zstd.NewReader(bytes.NewReader(msg.Data()))
+	zr, err := zstd.NewReader(bytes.NewReader(msg.Data))
 	if err != nil {
 		return nil, 0, err
 	}

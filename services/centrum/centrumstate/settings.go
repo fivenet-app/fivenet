@@ -40,7 +40,7 @@ func (s *State) UpdateSettings(ctx context.Context, job string, in *centrum.Sett
 func (s *State) ListSettings(ctx context.Context) []*centrum.Settings {
 	list := []*centrum.Settings{}
 
-	s.settings.Range(ctx, func(_ string, settings *centrum.Settings) bool {
+	s.settings.Range(func(_ string, settings *centrum.Settings) bool {
 		list = append(list, settings)
 		return true
 	})
@@ -51,7 +51,7 @@ func (s *State) ListSettings(ctx context.Context) []*centrum.Settings {
 func (s *State) ListSettingsFunc(ctx context.Context, fn func(*centrum.Settings) bool) []*centrum.Settings {
 	list := []*centrum.Settings{}
 
-	s.settings.Range(ctx, func(_ string, settings *centrum.Settings) bool {
+	s.settings.Range(func(_ string, settings *centrum.Settings) bool {
 		if fn(settings) {
 			list = append(list, settings)
 		}

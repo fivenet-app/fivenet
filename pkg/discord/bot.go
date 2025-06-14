@@ -257,7 +257,7 @@ func (b *Bot) start(ctx context.Context) error {
 	for {
 		if b.dc.Ready().Version > 0 && ready.Load() {
 			if _, err := b.dc.Me(); err != nil {
-				return fmt.Errorf("failed to obtain bot account details: %w", err)
+				return fmt.Errorf("failed to obtain bot account details. %w", err)
 			}
 
 			break

@@ -61,7 +61,7 @@ func NewServer(p Params) *Server {
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		if _, err := s.registerStream(ctxStartup, s.js); err != nil {
-			return fmt.Errorf("failed to register stream: %w", err)
+			return fmt.Errorf("failed to register stream. %w", err)
 		}
 
 		return nil

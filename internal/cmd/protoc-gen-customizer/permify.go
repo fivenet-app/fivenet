@@ -129,7 +129,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 
 				perm, err := p.parseComment(sName, mName, comment)
 				if err != nil {
-					p.Failf("failed to parse comment in %s method %s (comment: '%s'), error: %w", f.InputPath(), mName, comment, err)
+					p.Failf("failed to parse comment in %s method %s (comment: '%s'), error. %w", f.InputPath(), mName, comment, err)
 					return
 				}
 				if perm == nil {

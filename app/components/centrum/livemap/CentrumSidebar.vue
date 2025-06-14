@@ -372,17 +372,26 @@ defineShortcuts({
                             />
 
                             <LControl position="bottomright">
-                                <UButton
+                                <UChip
                                     v-if="settings?.enabled"
-                                    class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
-                                    size="2xs"
-                                    :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
-                                    @click="open = !open"
+                                    :show="getSortedOwnDispatches.length > 0"
+                                    :text="getSortedOwnDispatches.length"
+                                    color="error"
+                                    size="lg"
+                                    position="top-left"
                                 >
-                                    <span v-if="!open" class="inline-flex items-center justify-center">
-                                        {{ $t('common.unit', 2) }}
-                                    </span>
-                                </UButton>
+                                    <UButton
+                                        class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
+                                        size="2xs"
+                                        :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
+                                        :color="!getOwnUnit ? 'primary' : 'black'"
+                                        @click="open = !open"
+                                    >
+                                        <span v-if="!open" class="inline-flex items-center justify-center">
+                                            {{ !getOwnUnit ? $t('common.unit', 2) : $t('common.your_dispatches') }}
+                                        </span>
+                                    </UButton>
+                                </UChip>
                             </LControl>
                         </template>
 
@@ -396,89 +405,80 @@ defineShortcuts({
                                     leave-from-class="translate-x-0"
                                     leave-to-class="translate-x-full"
                                 >
-                                    <div
-                                        v-if="open"
-                                        class="bg-background flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden py-1"
-                                        :class="open || getOwnUnit !== undefined ? 'px-2' : ''"
-                                    >
-                                        <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
+                                    <div v-if="open" class="bg-background h-full">
+                                        <UDashboardToolbar :ui="{ wrapper: 'px-1 py-0.5' }">
+                                            <template #default>
+                                                <div class="flex flex-1 flex-col items-center">
+                                                    <UButton
+                                                        v-if="getOwnUnit !== undefined"
+                                                        class="inline-flex flex-col"
+                                                        :class="ownUnitStatus"
+                                                        icon="i-mdi-information-outline"
+                                                        block
+                                                        @click="
+                                                            slideover.open(UnitDetailsSlideover, {
+                                                                unit: getOwnUnit,
+                                                            })
+                                                        "
+                                                    >
+                                                        <span class="truncate">
+                                                            <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
+                                                            {{ getOwnUnit.name }}</span
+                                                        >
+                                                        <span class="truncate text-xs">
+                                                            <span class="font-semibold">{{ $t('common.status') }}:</span>
+                                                            {{
+                                                                $t(
+                                                                    `enums.centrum.StatusUnit.${
+                                                                        StatusUnit[getOwnUnit.status?.status ?? 0]
+                                                                    }`,
+                                                                )
+                                                            }}
+                                                        </span>
+                                                    </UButton>
+
+                                                    <UButtonGroup class="w-full" orientation="vertical">
+                                                        <UButton
+                                                            variant="soft"
+                                                            color="primary"
+                                                            size="xs"
+                                                            block
+                                                            :icon="
+                                                                getOwnUnit === undefined
+                                                                    ? 'i-mdi-information-outline'
+                                                                    : undefined
+                                                            "
+                                                            @click="slideover.open(JoinUnitSlideover, {})"
+                                                        >
+                                                            <template v-if="getOwnUnit === undefined">
+                                                                <span class="truncate">{{ $t('common.no_own_unit') }}</span>
+                                                            </template>
+                                                            <template v-else>
+                                                                <span class="truncate">{{ $t('common.leave_unit') }}</span>
+                                                            </template>
+                                                        </UButton>
+
+                                                        <UButton
+                                                            v-if="getOwnUnit === undefined"
+                                                            variant="solid"
+                                                            color="green"
+                                                            size="xs"
+                                                            block
+                                                            icon="i-mdi-account-plus"
+                                                            @click="slideover.open(JoinUnitSlideover, {})"
+                                                        >
+                                                            <span class="truncate">{{ $t('common.join_unit') }}</span>
+                                                        </UButton>
+                                                    </UButtonGroup>
+                                                </div>
+                                            </template>
+                                        </UDashboardToolbar>
+
+                                        <nav
+                                            class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64"
+                                            :class="open || getOwnUnit !== undefined ? 'px-2' : ''"
+                                        >
                                             <ul class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400" role="list">
-                                                <li>
-                                                    <ul class="-mx-1 space-y-0.5" role="list">
-                                                        <li>
-                                                            <UButton
-                                                                v-if="getOwnUnit !== undefined"
-                                                                class="flex flex-col"
-                                                                :class="ownUnitStatus"
-                                                                icon="i-mdi-information-outline"
-                                                                block
-                                                                @click="
-                                                                    slideover.open(UnitDetailsSlideover, {
-                                                                        unit: getOwnUnit,
-                                                                    })
-                                                                "
-                                                            >
-                                                                <span class="truncate">
-                                                                    <span class="font-semibold"
-                                                                        >{{ getOwnUnit.initials }}:</span
-                                                                    >
-                                                                    {{ getOwnUnit.name }}</span
-                                                                >
-                                                                <span class="truncate text-xs">
-                                                                    <span class="font-semibold"
-                                                                        >{{ $t('common.status') }}:</span
-                                                                    >
-                                                                    {{
-                                                                        $t(
-                                                                            `enums.centrum.StatusUnit.${
-                                                                                StatusUnit[getOwnUnit.status?.status ?? 0]
-                                                                            }`,
-                                                                        )
-                                                                    }}
-                                                                </span>
-                                                            </UButton>
-
-                                                            <UButtonGroup class="w-full" orientation="vertical">
-                                                                <UButton
-                                                                    variant="soft"
-                                                                    color="primary"
-                                                                    size="xs"
-                                                                    block
-                                                                    :icon="
-                                                                        getOwnUnit === undefined
-                                                                            ? 'i-mdi-information-outline'
-                                                                            : undefined
-                                                                    "
-                                                                    @click="slideover.open(JoinUnitSlideover, {})"
-                                                                >
-                                                                    <template v-if="getOwnUnit === undefined">
-                                                                        <span class="truncate">{{
-                                                                            $t('common.no_own_unit')
-                                                                        }}</span>
-                                                                    </template>
-                                                                    <template v-else>
-                                                                        <span class="truncate">{{
-                                                                            $t('common.leave_unit')
-                                                                        }}</span>
-                                                                    </template>
-                                                                </UButton>
-
-                                                                <UButton
-                                                                    v-if="getOwnUnit === undefined"
-                                                                    variant="solid"
-                                                                    color="green"
-                                                                    size="xs"
-                                                                    block
-                                                                    icon="i-mdi-account-plus"
-                                                                    @click="slideover.open(JoinUnitSlideover, {})"
-                                                                >
-                                                                    <span class="truncate">{{ $t('common.join_unit') }}</span>
-                                                                </UButton>
-                                                            </UButtonGroup>
-                                                        </li>
-                                                    </ul>
-                                                </li>
-
                                                 <template v-if="getOwnUnit !== undefined">
                                                     <li>
                                                         <ul class="-mx-1 space-y-0.5" role="list">
@@ -646,6 +646,7 @@ defineShortcuts({
                                                                     variant="soft"
                                                                     color="white"
                                                                     icon="i-mdi-car-emergency"
+                                                                    size="xs"
                                                                     block
                                                                 >
                                                                     {{ $t('common.no_assigned_dispatches') }}

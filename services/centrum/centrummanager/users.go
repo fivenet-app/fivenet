@@ -56,7 +56,7 @@ func (s *Manager) RetrieveUserById(ctx context.Context, u int32) (*users.User, e
 	dest := users.User{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, fmt.Errorf("failed to retrieve user by id %d: %w", u, err)
+			return nil, fmt.Errorf("failed to retrieve user by id %d. %w", u, err)
 		}
 
 		return nil, nil
@@ -128,7 +128,7 @@ func (s *Manager) retrieveColleagueById(ctx context.Context, u ...int32) ([]*job
 
 	dest := []*jobs.Colleague{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, fmt.Errorf("failed to retrieve colleagues by ids %+v: %w", u, err)
+		return nil, fmt.Errorf("failed to retrieve colleagues by ids %+v. %w", u, err)
 	}
 	for i := range dest {
 		if dest[i] != nil {

@@ -22,22 +22,22 @@ func (s *Manager) loadData(ctx context.Context) error {
 
 	s.logger.Debug("loading settings")
 	if err := s.LoadSettingsFromDB(ctx, ""); err != nil {
-		return fmt.Errorf("failed to load centrum settings: %w", err)
+		return fmt.Errorf("failed to load centrum settings. %w", err)
 	}
 
 	s.logger.Debug("loading dispatchers")
 	if err := s.LoadDispatchersFromDB(ctx, ""); err != nil {
-		return fmt.Errorf("failed to load centrum dispatchers: %w", err)
+		return fmt.Errorf("failed to load centrum dispatchers. %w", err)
 	}
 
 	s.logger.Debug("loading units")
 	if err := s.LoadUnitsFromDB(ctx, 0); err != nil {
-		return fmt.Errorf("failed to load centrum units: %w", err)
+		return fmt.Errorf("failed to load centrum units. %w", err)
 	}
 
 	s.logger.Debug("loading dispatches")
 	if err := s.LoadDispatchesFromDB(ctx, nil); err != nil {
-		return fmt.Errorf("failed to load centrum dispatches: %w", err)
+		return fmt.Errorf("failed to load centrum dispatches. %w", err)
 	}
 
 	s.logger.Debug("loaded all centrum data")
@@ -224,7 +224,7 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		}
 
 		for _, user := range units[i].Users {
-			if err := s.SetUnitForUser(ctx, user.User.Job, user.UserId, units[i].Id); err != nil {
+			if err := s.tracker.SetUserMappingForUser(ctx, user.UserId, &units[i].Id); err != nil {
 				s.logger.Error("failed to set user's unit id", zap.Error(err))
 			}
 		}

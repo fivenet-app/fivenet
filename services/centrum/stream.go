@@ -12,10 +12,8 @@ import (
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -55,10 +53,10 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 		dispatchers.Dispatchers = append(dispatchers.Dispatchers, dispos)
 	}
 
-	ownUnitMapping, _ := s.state.GetUserUnitMapping(ctx, userId)
+	ownUnitMapping, _ := s.tracker.GetUserMapping(userId)
 	var pOwnUnitId *uint64
-	if ownUnitMapping != nil && ownUnitMapping.UnitId > 0 {
-		pOwnUnitId = &ownUnitMapping.UnitId
+	if ownUnitMapping != nil && ownUnitMapping.UnitId != nil && *ownUnitMapping.UnitId > 0 {
+		pOwnUnitId = ownUnitMapping.UnitId
 	}
 
 	// Retrieve units and dispatches
@@ -206,9 +204,6 @@ var feeds = []feedCfg{
 func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, job string, userId int32, additionalJobs []string) error {
 	s.logger.Debug("starting centrum stream", zap.String("job_main", job), zap.Int32("user_id", userId), zap.Strings("additional_jobs", additionalJobs))
 
-	meta := metadata.ExtractIncoming(ctx)
-	connID := meta.Get(grpcws.ConnectionIdHeader)
-
 	jobs := []string{job}
 	jobs = append(jobs, additionalJobs...)
 	jobs = utils.RemoveSliceDuplicates(jobs)
@@ -218,18 +213,15 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 
 	for _, f := range feeds {
 		g.Go(func() error {
-			durable := fmt.Sprintf("usess-%s-%d-%s", connID, userId, f.Bucket)
-
-			// Upsert **durable pull consumer** with multi-filter
+			// Create consumer with multi-filter
 			consCfg := jetstream.ConsumerConfig{
-				Durable:        durable,
 				FilterSubjects: kvSubjects(f.Bucket, jobs),
 				DeliverPolicy:  jetstream.DeliverNewPolicy,
 				AckPolicy:      jetstream.AckNonePolicy,
 			}
-			consumer, err := s.js.CreateOrUpdateConsumer(ctx, "KV_"+f.Bucket, consCfg)
+			consumer, err := s.js.CreateConsumer(ctx, "KV_"+f.Bucket, consCfg)
 			if err != nil {
-				return fmt.Errorf("consumer %s: %w", durable, err)
+				return fmt.Errorf("consumer. %w", err)
 			}
 
 			// Pull loop
@@ -282,7 +274,7 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 		})
 	}
 
-	// single writer
+	// Single writer
 	g.Go(func() error {
 		for {
 			select {

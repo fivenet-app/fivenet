@@ -17,7 +17,7 @@ import (
 func NewInProcessNATSServer() (conn *nats.Conn, js *events.JSWrapper, cleanup func(), err error) {
 	tmp, err := os.MkdirTemp("", "nats_test")
 	if err != nil {
-		err = fmt.Errorf("failed to create temp directory for NATS storage: %w", err)
+		err = fmt.Errorf("failed to create temp directory for NATS storage. %w", err)
 		return
 	}
 	server, err := server.NewServer(&server.Options{
@@ -26,7 +26,7 @@ func NewInProcessNATSServer() (conn *nats.Conn, js *events.JSWrapper, cleanup fu
 		StoreDir:   tmp,
 	})
 	if err != nil {
-		err = fmt.Errorf("failed to create NATS server: %w", err)
+		err = fmt.Errorf("failed to create NATS server. %w", err)
 		return
 	}
 	// Add logs to stdout.
@@ -45,14 +45,14 @@ func NewInProcessNATSServer() (conn *nats.Conn, js *events.JSWrapper, cleanup fu
 	// Create a connection.
 	conn, err = nats.Connect("", nats.InProcessServer(server))
 	if err != nil {
-		err = fmt.Errorf("failed to connect to server: %w", err)
+		err = fmt.Errorf("failed to connect to server. %w", err)
 		return
 	}
 
 	// Create a JetStream client.
 	rawJs, err := jetstream.New(conn)
 	if err != nil {
-		err = fmt.Errorf("failed to create jetstream: %w", err)
+		err = fmt.Errorf("failed to create jetstream. %w", err)
 		return
 	}
 

@@ -129,7 +129,7 @@ func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, bool, erro
 func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId int32, clientId uint64, role collab.ClientRole, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
 	room, created, err := s.getOrCreateRoom(targetId)
 	if err != nil {
-		return fmt.Errorf("get or create room: %w", err)
+		return fmt.Errorf("get or create room. %w", err)
 	}
 
 	if err := s.sendHelloResponse(clientId, created, stream); err != nil {

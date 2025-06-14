@@ -34,8 +34,6 @@ type State struct {
 
 	dispatchLocationsMutex *sync.RWMutex
 	dispatchLocations      map[string]*coords.Coords[*centrum.Dispatch]
-
-	userIDToUnitID *store.Store[centrum.UserUnitMapping, *centrum.UserUnitMapping]
 }
 
 type Params struct {
@@ -73,11 +71,6 @@ func New(p Params) (*State, error) {
 		}
 
 		units, err := store.New[centrum.Unit, *centrum.Unit](ctxStartup, logger, p.JS, "centrum_units")
-		if err != nil {
-			return err
-		}
-
-		userIDToUnitID, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](ctxStartup, logger, p.JS, "centrum_usersunits")
 		if err != nil {
 			return err
 		}
@@ -147,11 +140,6 @@ func New(p Params) (*State, error) {
 		if err != nil {
 			return err
 		}
-
-		if err := userIDToUnitID.Start(ctxCancel, false); err != nil {
-			return err
-		}
-		s.userIDToUnitID = userIDToUnitID
 
 		if err := settings.Start(ctxCancel, false); err != nil {
 			return err
