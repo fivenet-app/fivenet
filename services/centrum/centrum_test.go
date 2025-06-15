@@ -49,8 +49,8 @@ func TestBasicCentrumFlow(t *testing.T) {
 			centrummanager.Module,
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) (*Server, error) {
-				srv, err = NewServer(p)
-				return srv, err
+				r, err := NewServer(p)
+				return r.Server, err
 			})),
 
 			fx.Invoke(func(*grpc.Server) {}),

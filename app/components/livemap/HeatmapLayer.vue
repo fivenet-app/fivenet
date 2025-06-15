@@ -55,5 +55,5 @@ onBeforeMount(() => handleProps(props.show));
 </script>
 
 <template>
-    <HeatmapLegend :show="show" />
+    <HeatmapLegend :show="show" :max="heatmap?.maxEntries" />
 </template>

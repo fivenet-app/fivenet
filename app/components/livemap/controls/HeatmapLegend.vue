@@ -3,11 +3,13 @@ const props = withDefaults(
     defineProps<{
         // Whether to show the legend
         show?: boolean;
+        max?: number;
         // Optional colour ramp; keys 0‒1 → colour strings
         gradient?: Record<number, string>;
     }>(),
     {
         show: true,
+        max: 0,
         gradient: undefined,
     },
 );
@@ -37,7 +39,7 @@ const barStyle = computed(() => {
             <!-- Captions -->
             <div class="flex justify-between text-gray-900 dark:text-gray-400">
                 <span>{{ $t('common.min') }}</span>
-                <span>{{ $t('common.max') }}</span>
+                <span>{{ $t('common.max') }} {{ max }}</span>
             </div>
         </div>
     </LControl>

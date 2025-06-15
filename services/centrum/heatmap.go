@@ -50,9 +50,11 @@ func (s *Server) GetDispatchHeatmap(ctx context.Context, req *pbcentrum.GetDispa
 		}
 	}
 
-	resp.MaxEntries = raw.Max
-	if err := json.Unmarshal(raw.Data, &resp.Entries); err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	if len(raw.Data) > 0 {
+		resp.MaxEntries = raw.Max
+		if err := json.Unmarshal(raw.Data, &resp.Entries); err != nil {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
 	}
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED

@@ -110,6 +110,7 @@ func (d *Demo) Start(ctx context.Context) error {
 		WHERE(
 			tUsers.Job.EQ(jet.String(d.targetJob)),
 		).
+		ORDER_BY(tUsers.ID.ASC()).
 		LIMIT(20)
 
 	var users []string
