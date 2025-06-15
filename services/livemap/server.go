@@ -3,6 +3,7 @@ package livemap
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
@@ -124,12 +125,12 @@ func NewServer(p Params) *Server {
 		go s.broker.Start(ctxCancel)
 
 		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
-			return err
+			return fmt.Errorf("failed to register subscriptions. %w", err)
 		}
 
 		stream, err := s.js.Stream(ctxStartup, "KV_"+tracker.BucketUserLoc)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get user location stream. %w", err)
 		}
 		s.stream = stream
 

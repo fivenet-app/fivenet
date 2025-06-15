@@ -119,10 +119,10 @@ func NewManager(p ManagerParams) (*Manager, error) {
 			store.WithLocks[tracker.UserMapping, *tracker.UserMapping](nil),
 		)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create user mappings store. %w", err)
 		}
 		if err := userMappingsStore.Start(ctxCancel, false); err != nil {
-			return err
+			return fmt.Errorf("failed to start user mappings store. %w", err)
 		}
 		m.userMappingsStore = userMappingsStore
 
@@ -131,10 +131,10 @@ func NewManager(p ManagerParams) (*Manager, error) {
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create user location by ID store. %w", err)
 		}
 		if err := byID.Start(ctxCancel, false); err != nil {
-			return err
+			return fmt.Errorf("failed to start user location by ID store. %w", err)
 		}
 		m.byIDStore = byID
 
@@ -159,7 +159,9 @@ func NewManager(p ManagerParams) (*Manager, error) {
 				}
 
 				// Mirror latest marker by USER_ID (idempotent)
-				_ = m.byIDStore.Put(ctxCancel, userIdKey(um.UserId), um)
+				if err := m.byIDStore.Put(ctxCancel, userIdKey(um.UserId), um); err != nil {
+					return nil, fmt.Errorf("failed to upsert user location by ID. %w", err)
+				}
 
 				return um, nil
 			}),
@@ -179,10 +181,10 @@ func NewManager(p ManagerParams) (*Manager, error) {
 			}),
 		)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create user location store. %w", err)
 		}
 		if err := userLocStore.Start(ctxCancel, false); err != nil {
-			return err
+			return fmt.Errorf("failed to start user location store. %w", err)
 		}
 		m.userLocStore = userLocStore
 
