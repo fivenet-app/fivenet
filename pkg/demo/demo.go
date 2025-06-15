@@ -4,15 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"math/rand"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -51,9 +54,9 @@ type Demo struct {
 	logger *zap.Logger
 	db     *sql.DB
 	cs     *centrummanager.Manager
+	cfg    *config.Config
 
-	targetJob string
-	users     []string
+	users []string
 }
 
 type Params struct {
@@ -68,7 +71,7 @@ type Params struct {
 }
 
 func New(p Params) *Demo {
-	if !p.Cfg.DemoMode {
+	if !p.Cfg.Demo.Enabled {
 		return nil
 	}
 
@@ -78,8 +81,7 @@ func New(p Params) *Demo {
 		logger: p.Logger.Named("demo"),
 		db:     p.DB,
 		cs:     p.CentrumManager,
-
-		targetJob: "police", // Default job for demo mode
+		cfg:    p.Cfg,
 	}
 
 	d.logger.Warn("Demo mode is enabled. This will generate random dispatches and user locations!!!")
@@ -108,28 +110,30 @@ func (d *Demo) Start(ctx context.Context) error {
 		).
 		FROM(tUsers).
 		WHERE(
-			tUsers.Job.EQ(jet.String(d.targetJob)),
+			tUsers.Job.EQ(jet.String(d.cfg.Demo.TargetJob)),
 		).
 		ORDER_BY(tUsers.ID.ASC()).
 		LIMIT(20)
 
 	var users []string
 	if err := stmt.QueryContext(ctx, d.db, &users); err != nil {
-		if !errors.Is(err, sql.ErrNoRows) {
-			return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return fmt.Errorf("failed to query users. %w", err)
 		}
 	}
-	d.users = users
+	d.users = append(users, d.cfg.Demo.Users...)
+	utils.RemoveSliceDuplicates(d.users)
 
 	go d.moveUserMarkers(ctx)
 
 	for {
+		d.logger.Info("Running demo dispatch generation cycle...")
 		if err := d.updateDispatches(ctx); err != nil {
-			return err
+			d.logger.Error("failed to update dispatches", zap.Error(err))
 		}
 
 		if err := d.generateDispatches(ctx); err != nil {
-			return err
+			d.logger.Error("failed to generate dispatches", zap.Error(err))
 		}
 
 		randWait := rand.Intn(300) + 30 // Random wait between 30 and 270 seconds
@@ -152,8 +156,8 @@ func (d *Demo) generateDispatches(ctx context.Context) error {
 		desc := dispatchDescriptions[rand.Intn(len(dispatchDescriptions))]
 		msg := dispatchMessages[rand.Intn(len(dispatchMessages))]
 		if _, err := d.cs.CreateDispatch(ctx, &centrum.Dispatch{
-			Job:         d.targetJob,
-			Jobs:        []string{d.targetJob},
+			Job:         d.cfg.Demo.TargetJob,
+			Jobs:        []string{d.cfg.Demo.TargetJob},
 			Message:     msg,
 			Description: &desc,
 			X:           x,
@@ -168,7 +172,7 @@ func (d *Demo) generateDispatches(ctx context.Context) error {
 }
 
 func (d *Demo) updateDispatches(ctx context.Context) error {
-	dsps, _ := d.cs.ListDispatches(ctx, d.targetJob)
+	dsps, _ := d.cs.ListDispatches(ctx, d.cfg.Demo.TargetJob)
 
 	if len(dsps) == 0 {
 		return nil
@@ -236,8 +240,9 @@ func (d *Demo) moveUserMarkers(ctx context.Context) error {
 				LIMIT(1)
 
 			err := stmt.QueryContext(ctx, d.db, &curr)
-			if err != nil && !errors.Is(err, sql.ErrNoRows) {
-				return err
+			if err != nil && !errors.Is(err, qrm.ErrNoRows) {
+				d.logger.Error("failed to select user location", zap.String("user", user), zap.Error(err))
+				continue
 			}
 
 			var newX, newY float64
@@ -246,7 +251,7 @@ func (d *Demo) moveUserMarkers(ctx context.Context) error {
 				// Always randomize initial position on first run
 				newX = rand.Float64()*(xBounds[1]-xBounds[0]) + xBounds[0]
 				newY = rand.Float64()*(yBounds[1]-yBounds[0]) + yBounds[0]
-			} else if errors.Is(err, sql.ErrNoRows) {
+			} else if errors.Is(err, qrm.ErrNoRows) {
 				// No previous location, randomize
 				newX = rand.Float64()*(xBounds[1]-xBounds[0]) + xBounds[0]
 				newY = rand.Float64()*(yBounds[1]-yBounds[0]) + yBounds[0]
@@ -291,7 +296,8 @@ func (d *Demo) moveUserMarkers(ctx context.Context) error {
 				)
 
 			if _, err := insertStmt.ExecContext(ctx, d.db); err != nil {
-				return err
+				d.logger.Error("failed to update user location", zap.String("user", user), zap.Error(err))
+				continue
 			}
 		}
 

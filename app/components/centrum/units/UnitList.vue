@@ -58,10 +58,10 @@ const grouped = computedAsync(async () => {
                 </UTooltip>
             </h2>
         </div>
-        <div class="@container flex-1">
+        <div class="@container/unitlist flex-1">
             <div
                 v-if="abort === undefined && !reconnecting"
-                class="@md:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2"
+                class="@md/unitlist:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2"
             >
                 <USkeleton v-for="idx in 8" :key="idx" class="h-9 w-full" />
             </div>

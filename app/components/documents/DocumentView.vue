@@ -191,6 +191,8 @@ const scrollRef = useTemplateRef('scrollRef');
         <template #right>
             <PartialsBackButton to="/documents" />
 
+            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" @click="refresh" />
+
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge
                     :id="doc?.document?.id ?? documentId"

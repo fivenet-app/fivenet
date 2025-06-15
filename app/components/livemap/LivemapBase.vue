@@ -105,9 +105,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
 
         <BaseMap :map-options="mapOptions">
             <template #default>
-                <LControl position="bottomright">
-                    <SettingsButton />
-                </LControl>
+                <SettingsButton />
 
                 <template v-if="can('livemap.LivemapService.Stream').value">
                     <MapUsersLayer

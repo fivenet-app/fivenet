@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	pkggrpc "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
@@ -102,6 +103,7 @@ type Result struct {
 	fx.Out
 
 	Server       *Server
+	Service      pkggrpc.Service     `group:"grpcservices"`
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
@@ -149,6 +151,7 @@ func NewServer(p Params) (Result, error) {
 
 	return Result{
 		Server:       s,
+		Service:      s,
 		CronRegister: s,
 	}, nil
 }

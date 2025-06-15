@@ -188,18 +188,20 @@ const columns = [
                     </template>
 
                     <template #createdAt-data="{ row: dispatch }">
-                        <GenericTime
-                            :value="dispatch.createdAt"
-                            type="compact"
-                            :update-callback="
-                                () =>
-                                    dispatchTimeToTextColor(
-                                        dispatch.createdAt,
-                                        dispatch.status.status,
-                                        settings?.timings?.dispatchMaxWait,
-                                    )
-                            "
-                        />
+                        <span class="text-gray-900 dark:text-white">
+                            <GenericTime
+                                :value="dispatch.createdAt"
+                                type="compact"
+                                :update-callback="
+                                    () =>
+                                        dispatchTimeToTextColor(
+                                            dispatch.createdAt,
+                                            dispatch.status.status,
+                                            settings?.timings?.dispatchMaxWait,
+                                        )
+                                "
+                            />
+                        </span>
                     </template>
 
                     <template #status-data="{ row: dispatch }">

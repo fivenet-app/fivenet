@@ -84,15 +84,15 @@ function onClickNext() {
 </script>
 
 <template>
-    <div class="@container">
+    <div class="@container/pagination">
         <div
-            class="@md:flex-row flex justify-between gap-1 px-3 py-3 md:items-center"
+            class="@md/pagination:flex-row flex justify-between gap-1 px-3 py-3 md:items-center"
             :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
         >
             <div v-if="!hideText" class="flex flex-col items-center gap-2">
                 <I18nT
                     v-if="!isInfinite"
-                    class="@md:block hidden truncate text-sm"
+                    class="@md/pagination:block hidden truncate text-sm"
                     keypath="components.partials.table_pagination.page_count_with_total"
                     tag="p"
                 >
@@ -119,7 +119,7 @@ function onClickNext() {
                 </I18nT>
                 <I18nT
                     v-else
-                    class="@md:block hidden truncate text-sm"
+                    class="@md/pagination:block hidden truncate text-sm"
                     keypath="components.partials.table_pagination.page_count"
                     tag="p"
                 >
@@ -146,7 +146,7 @@ function onClickNext() {
                     :loading="loading || loadingState"
                     @click="refresh()"
                 >
-                    <span class="@md:block hidden">
+                    <span class="@md/pagination:block hidden">
                         {{ $t('common.refresh') }}
                     </span>
                 </UButton>

@@ -12,7 +12,7 @@ type Config struct {
 	// Secret used to encrypt/decrypt data in, e.g., the database
 	Secret string `yaml:"secret"`
 
-	DemoMode bool `default:"false" yaml:"demoMode"`
+	Demo Demo `yaml:"demo"`
 
 	OTLP           OTLPConfig     `yaml:"otlp"`
 	HTTP           HTTP           `yaml:"http"`
@@ -29,6 +29,12 @@ type Config struct {
 	Discord        Discord        `yaml:"discord"`
 	Game           Game           `yaml:"game"`
 	Sync           Sync           `yaml:"sync"`
+}
+
+type Demo struct {
+	Enabled   bool     `default:"false" yaml:"enabled"`
+	TargetJob string   `default:"police" yaml:"targetJob"`
+	Users     []string `yaml:"users"`
 }
 
 type OtelExporter string
