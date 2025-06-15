@@ -248,7 +248,7 @@ const { goto } = useLivemapStore();
         </template>
         <template v-else-if="item.status === StatusDispatch.NEED_ASSISTANCE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <UIcon class="text-primary-500 size-5" name="i-mdi-help" />
+                <UIcon class="text-primary-500 size-5" name="i-mdi-help-circle" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">

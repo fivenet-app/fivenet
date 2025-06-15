@@ -2,7 +2,7 @@
 import DispatchAssignModal from '~/components/centrum/dispatches/DispatchAssignModal.vue';
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches/DispatchDetailsByIDSlideover.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchTimeToTextColor } from '~/components/centrum/helpers';
+import { dispatchStatusAnimate, dispatchStatusToBadgeColor, dispatchTimeToTextColor } from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchStatusBreakdown from '~/components/centrum/partials/DispatchStatusBreakdown.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
@@ -106,7 +106,7 @@ const columns = [
 </script>
 
 <template>
-    <div class="flex size-full grow flex-col overflow-y-auto px-1">
+    <div class="flex h-full flex-1 grow flex-col px-1">
         <div class="flex justify-between">
             <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6">
                 {{ $t('common.dispatches') }}
@@ -116,10 +116,10 @@ const columns = [
                 </UTooltip>
             </h2>
 
-            <DispatchStatusBreakdown v-if="dispatches === undefined" class="font-semibold text-gray-100" />
+            <DispatchStatusBreakdown v-if="dispatches === undefined" class="justify-end font-semibold text-gray-100" />
         </div>
 
-        <div class="flex-1">
+        <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">
             <div v-if="!dispatches && abort === undefined && !reconnecting" class="space-y-1">
                 <USkeleton v-for="idx in 7" :key="idx" class="h-9 w-full" />
             </div>
@@ -127,6 +127,7 @@ const columns = [
             <template v-for="(group, idx) in grouped" v-else :key="group.key">
                 <h3 v-if="alwaysShowDay || idx !== 0"><GenericTime :value="group.date" type="date" /></h3>
                 <UTable
+                    class="overflow-x-visible"
                     :columns="columns"
                     :rows="group.dispatches"
                     :empty-state="{
@@ -161,7 +162,7 @@ const columns = [
                             <UTooltip v-if="!hideActions" :text="$t('common.status')">
                                 <UButton
                                     variant="link"
-                                    icon="i-mdi-close-octagon"
+                                    icon="i-mdi-refresh"
                                     @click="
                                         () =>
                                             modal.open(DispatchStatusUpdateModal, {
@@ -185,6 +186,7 @@ const columns = [
                             </UTooltip>
                         </div>
                     </template>
+
                     <template #createdAt-data="{ row: dispatch }">
                         <GenericTime
                             :value="dispatch.createdAt"
@@ -199,20 +201,22 @@ const columns = [
                             "
                         />
                     </template>
+
                     <template #status-data="{ row: dispatch }">
-                        <span
+                        <UBadge
                             class="text-gray-900 dark:text-white"
-                            :class="[
-                                dispatchStatusToBGColor(dispatch.status?.status),
-                                dispatchStatusAnimate(dispatch.status?.status) ? 'animate-pulse' : '',
-                            ]"
+                            :class="dispatchStatusAnimate(dispatch.status?.status) ? 'animate-pulse' : ''"
+                            :color="dispatchStatusToBadgeColor(dispatch.status?.status)"
+                            size="xs"
                         >
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                        </span>
+                        </UBadge>
                     </template>
+
                     <template #postal-data="{ row: dispatch }">
                         {{ dispatch.postal ?? $t('common.na') }}
                     </template>
+
                     <template #units-data="{ row: dispatch }">
                         <span v-if="dispatch.units.length === 0" class="italic">{{
                             $t('enums.centrum.StatusDispatch.UNASSIGNED')
@@ -228,6 +232,7 @@ const columns = [
                             />
                         </span>
                     </template>
+
                     <template #creator-data="{ row: dispatch }">
                         <span v-if="dispatch.anon">
                             {{ $t('common.anon') }}
@@ -239,9 +244,11 @@ const columns = [
                             {{ $t('common.unknown') }}
                         </span>
                     </template>
+
                     <template #attributes-data="{ row: dispatch }">
                         <DispatchAttributes :attributes="dispatch.attributes" />
                     </template>
+
                     <template #message-data="{ row: dispatch }">
                         <p class="line-clamp-2 hover:line-clamp-6">
                             {{ dispatch.message }}
@@ -249,6 +256,8 @@ const columns = [
                     </template>
                 </UTable>
             </template>
+
+            <div class="flex-1" />
         </div>
     </div>
 </template>

@@ -19,19 +19,11 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 	}
 
 	if in.CreatedAt != nil {
-		if x.CreatedAt == nil {
-			x.CreatedAt = in.CreatedAt
-		} else {
-			proto.Merge(x.CreatedAt, in.CreatedAt)
-		}
+		x.CreatedAt = in.CreatedAt
 	}
 
 	if in.UpdatedAt != nil {
-		if x.UpdatedAt == nil {
-			x.UpdatedAt = in.UpdatedAt
-		} else {
-			proto.Merge(x.UpdatedAt, in.UpdatedAt)
-		}
+		x.UpdatedAt = in.UpdatedAt
 	}
 
 	if x.Job != in.Job {

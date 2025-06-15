@@ -51,7 +51,7 @@ importers:
         specifier: 0.202.0
         version: 0.202.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation-document-load':
-        specifier: ^0.47.0
+        specifier: 0.47.0
         version: 0.47.0(@opentelemetry/api@1.9.0)
       '@opentelemetry/instrumentation-fetch':
         specifier: 0.202.0
@@ -171,7 +171,7 @@ importers:
         specifier: 1.4.0
         version: 1.4.0
       leaflet.heat:
-        specifier: ^0.2.0
+        specifier: 0.2.0
         version: 0.2.0
       maska:
         specifier: 3.1.1
@@ -180,8 +180,8 @@ importers:
         specifier: 7.4.47
         version: 7.4.47(vue@3.5.16(typescript@5.8.3))
       nuxt-zod-i18n:
-        specifier: 1.11.5
-        version: 1.11.5(magicast@0.3.5)(typescript@5.8.3)
+        specifier: 1.12.0
+        version: 1.12.0(magicast@0.3.5)(typescript@5.8.3)
       pica:
         specifier: 9.0.1
         version: 9.0.1
@@ -271,7 +271,7 @@ importers:
         specifier: 1.4.3
         version: 1.4.3
       '@types/leaflet.heat':
-        specifier: ^0.2.4
+        specifier: 0.2.4
         version: 0.2.4
       '@types/node':
         specifier: 22.15.30
@@ -6053,8 +6053,8 @@ packages:
     peerDependencies:
       prettier: ^2.5.x || 3.x
 
-  nuxt-zod-i18n@1.11.5:
-    resolution: {integrity: sha512-0XR7DLLR7JGSKxhxdOOFduLvjfPIeNfXpaWxQHBnwPg/zQjL2VuhlBuq1ltZioRw4f1Wfpy5+MwPyjK3PrmY0g==}
+  nuxt-zod-i18n@1.12.0:
+    resolution: {integrity: sha512-oUPfjwDUuSrvhDd6SPGSR4THTwGk0OXJ+BCpt12RtwFMRU/rpi2zwBizs/LvuVrf/EpgKmQLVnGuPM/cUyEufQ==}
 
   nuxt@3.17.5:
     resolution: {integrity: sha512-HWTWpM1/RDcCt9DlnzrPcNvUmGqc62IhlZJvr7COSfnJq2lKYiBKIIesEaOF+57Qjw7TfLPc1DQVBNtxfKBxEw==}
@@ -15129,7 +15129,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  nuxt-zod-i18n@1.11.5(magicast@0.3.5)(typescript@5.8.3):
+  nuxt-zod-i18n@1.12.0(magicast@0.3.5)(typescript@5.8.3):
     dependencies:
       '@intlify/shared': 11.1.5
       '@nuxt/kit': 3.17.5(magicast@0.3.5)

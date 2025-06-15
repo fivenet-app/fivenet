@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import type { PointExpression } from 'leaflet';
+import type { LeafletMouseEvent, PointExpression } from 'leaflet';
 import { MapMarkerIcon } from 'mdi-vue3';
-import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
-import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/user_marker';
+import UnitDetailsSlideover from '../centrum/units/UnitDetailsSlideover.vue';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
+import PhoneNumberBlock from '../partials/citizens/PhoneNumberBlock.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -25,7 +25,7 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    (e: 'selected'): void;
+    (e: 'selected', event: LeafletMouseEvent): void;
 }>();
 
 const { can, activeChar } = useAuth();
@@ -57,14 +57,17 @@ const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, 
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status ?? 0));
+
+const markerRef = useTemplateRef('markerRef');
 </script>
 
 <template>
     <LMarker
         :key="`user_${marker.userId}`"
+        ref="markerRef"
         :lat-lng="[marker.y, marker.x]"
         :z-index-offset="activeChar === null || marker.user?.userId !== activeChar.userId ? 20 : 30"
-        @click="$emit('selected')"
+        @click="$emit('selected', $event)"
     >
         <LIcon
             :icon-anchor="iconAnchor"
@@ -95,74 +98,84 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
             </div>
         </LIcon>
 
-        <LPopup :options="{ closeButton: true }">
-            <div class="flex flex-col gap-2">
-                <div class="grid grid-cols-2 gap-2">
-                    <UButton
-                        v-if="marker.x !== undefined && marker.y !== undefined"
-                        variant="link"
-                        icon="i-mdi-map-marker"
-                        :padded="false"
-                        @click="goto({ x: marker.x, y: marker.y })"
-                    >
-                        <span class="truncate">
-                            {{ $t('common.mark') }}
-                        </span>
-                    </UButton>
+        <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
+            <UCard
+                class="-my-[13px] -ml-[20px] -mr-[24px] flex flex-col"
+                :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
+            >
+                <template #header>
+                    <div class="grid grid-cols-2 gap-2">
+                        <UButton
+                            v-if="marker.x !== undefined && marker.y !== undefined"
+                            variant="link"
+                            icon="i-mdi-map-marker"
+                            :padded="false"
+                            block
+                            @click="goto({ x: marker.x, y: marker.y })"
+                        >
+                            <span class="truncate">
+                                {{ $t('common.mark') }}
+                            </span>
+                        </UButton>
 
-                    <UButton
-                        v-if="can('citizens.CitizensService.ListCitizens').value"
-                        variant="link"
-                        icon="i-mdi-account"
-                        :padded="false"
-                        :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
-                    >
-                        <span class="truncate">
-                            {{ $t('common.profile') }}
-                        </span>
-                    </UButton>
+                        <UButton
+                            v-if="can('citizens.CitizensService.ListCitizens').value"
+                            variant="link"
+                            icon="i-mdi-account"
+                            :padded="false"
+                            block
+                            :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
+                        >
+                            <span class="truncate">
+                                {{ $t('common.profile') }}
+                            </span>
+                        </UButton>
 
-                    <UButton
-                        v-if="
-                            can('jobs.JobsService.GetColleague').value &&
-                            marker.user &&
-                            marker.user?.job === activeChar?.job &&
-                            checkIfCanAccessColleague(marker.user, 'jobs.JobsService.GetColleague')
-                        "
-                        variant="link"
-                        icon="i-mdi-briefcase"
-                        :padded="false"
-                        :to="{ name: 'jobs-colleagues-id-info', params: { id: marker.user?.userId ?? 0 } }"
-                    >
-                        <span class="truncate">
-                            {{ $t('common.colleague') }}
-                        </span>
-                    </UButton>
+                        <UButton
+                            v-if="
+                                can('jobs.JobsService.GetColleague').value &&
+                                marker.user &&
+                                marker.user?.job === activeChar?.job &&
+                                checkIfCanAccessColleague(marker.user, 'jobs.JobsService.GetColleague')
+                            "
+                            variant="link"
+                            icon="i-mdi-briefcase"
+                            :padded="false"
+                            block
+                            :to="{ name: 'jobs-colleagues-id-info', params: { id: marker.user?.userId ?? 0 } }"
+                        >
+                            <span class="truncate">
+                                {{ $t('common.colleague') }}
+                            </span>
+                        </UButton>
 
-                    <PhoneNumberBlock
-                        v-if="marker.user?.phoneNumber"
-                        :number="marker.user?.phoneNumber"
-                        :hide-number="true"
-                        :show-label="true"
-                        :padded="false"
-                    />
+                        <PhoneNumberBlock
+                            v-if="marker.user?.phoneNumber"
+                            :number="marker.user?.phoneNumber"
+                            :hide-number="true"
+                            :show-label="true"
+                            :padded="false"
+                            block
+                        />
 
-                    <UButton
-                        v-if="hasUnit && unit"
-                        variant="link"
-                        icon="i-mdi-group"
-                        :padded="false"
-                        @click="
-                            slideover.open(UnitDetailsSlideover, {
-                                unit: unit,
-                            })
-                        "
-                    >
-                        <span class="truncate">
-                            {{ $t('common.unit') }}
-                        </span>
-                    </UButton>
-                </div>
+                        <UButton
+                            v-if="hasUnit && unit"
+                            variant="link"
+                            icon="i-mdi-group"
+                            :padded="false"
+                            block
+                            @click="
+                                slideover.open(UnitDetailsSlideover, {
+                                    unit: unit,
+                                })
+                            "
+                        >
+                            <span class="truncate">
+                                {{ $t('common.unit') }}
+                            </span>
+                        </UButton>
+                    </div>
+                </template>
 
                 <p class="inline-flex items-center gap-1">
                     <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
@@ -182,7 +195,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                         <span class="font-semibold">{{ $t('common.units') }}:</span> {{ unit.name }} ({{ unit.initials }})
                     </li>
                 </ul>
-            </div>
+            </UCard>
         </LPopup>
     </LMarker>
 </template>

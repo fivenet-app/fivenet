@@ -69,19 +69,21 @@ const columns = [
 </script>
 
 <template>
-    <div class="flex size-full grow flex-col overflow-y-auto px-1">
+    <div class="flex h-full grow flex-col px-1">
         <div class="flex justify-between">
             <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6 text-gray-100">
                 {{ $t('common.marker', 2) }}
             </h2>
+
             <h2 class="text-base font-semibold text-gray-100">
                 {{ $t('common.count') }}:
                 {{ [...markersMarkers.values()].length }}
             </h2>
         </div>
 
-        <div class="flex-1">
+        <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">
             <UTable
+                class="overflow-x-visible"
                 :columns="columns"
                 :rows="Array.from(markersMarkers.values())"
                 :empty-state="{
@@ -132,7 +134,7 @@ const columns = [
                 </template>
 
                 <template #description-data="{ row: marker }">
-                    <p class="max-h-14 overflow-y-scroll break-words">
+                    <p class="max-h-14 overflow-y-scroll truncate break-words">
                         {{ marker.description ?? $t('common.na') }}
                     </p>
                 </template>
@@ -150,6 +152,8 @@ const columns = [
                     {{ marker.creator?.jobLabel ?? $t('common.na') }}
                 </template>
             </UTable>
+
+            <div class="flex-1" />
         </div>
     </div>
 </template>

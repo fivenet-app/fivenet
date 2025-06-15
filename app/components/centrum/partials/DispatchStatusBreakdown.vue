@@ -3,6 +3,10 @@ import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
+defineProps<{
+    popoverClass?: string;
+}>();
+
 const centrumStore = useCentrumStore();
 const { dispatches } = storeToRefs(centrumStore);
 
@@ -61,13 +65,12 @@ defineOptions({
 </script>
 
 <template>
-    <UPopover class="flex-1">
+    <UPopover :class="popoverClass">
         <UButton
             class="items-center"
             :ui="{ icon: { base: 'max-md:!hidden' } }"
             variant="ghost"
             trailing-icon="i-mdi-chevron-down"
-            block
             v-bind="$attrs"
         >
             {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
@@ -83,30 +86,35 @@ defineOptions({
                         </UBadge>
                         <p class="font-semibold">{{ counts?.unassigned }}</p>
                     </div>
+
                     <div class="inline-flex justify-between gap-1.5">
                         <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.EN_ROUTE)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.EN_ROUTE]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts.enRoute }}</p>
                     </div>
+
                     <div class="inline-flex justify-between gap-1.5">
                         <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.ON_SCENE)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.ON_SCENE]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts.onScene }}</p>
                     </div>
+
                     <div class="inline-flex justify-between gap-1.5">
                         <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.NEED_ASSISTANCE)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.NEED_ASSISTANCE]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts.needAssistance }}</p>
                     </div>
+
                     <div class="inline-flex justify-between gap-1.5">
                         <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.COMPLETED)" size="sm">
                             {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.COMPLETED]}`) }}
                         </UBadge>
                         <p class="font-semibold">{{ counts.completed }}</p>
                     </div>
+
                     <div class="flex justify-between font-semibold">
                         <span>{{ $t('common.total_count') }}</span>
                         <span>{{ dispatches.size }}</span>

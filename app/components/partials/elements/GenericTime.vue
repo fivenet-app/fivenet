@@ -29,6 +29,7 @@ const tooltipTypeMap: Partial<{ [key in dateTimeFormats]: dateTimeFormats }> = {
     date: 'longDate',
     shortDate: 'longDate',
     short: 'long',
+    compact: 'long',
 };
 
 const date = computed<Date>(() => (props.value instanceof Date ? props.value : (toDate(props.value) ?? new Date())));

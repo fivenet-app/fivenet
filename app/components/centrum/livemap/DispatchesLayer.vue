@@ -3,9 +3,11 @@ import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDe
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useSettingsStore } from '~/stores/settings';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
     showAllDispatches?: boolean;
+    dispatchList?: Dispatch[];
 }>();
 
 const { t } = useI18n();
@@ -23,7 +25,7 @@ const dispatchQueryRaw = ref<string>('');
 const dispatchQuery = computed(() => dispatchQueryRaw.value.trim().toLowerCase());
 
 const dispatchesFiltered = computedAsync(async () =>
-    [...(dispatches.value.values() ?? [])].filter(
+    [...(props.dispatchList ?? dispatches.value.values() ?? [])].filter(
         (m) =>
             !ownDispatches.value.includes(m.id) &&
             (m.id.toString().startsWith(dispatchQuery.value) ||

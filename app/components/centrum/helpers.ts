@@ -151,6 +151,21 @@ export function isStatusDispatchCompleted(status: StatusDispatch): boolean {
     return status === StatusDispatch.ARCHIVED || status === StatusDispatch.CANCELLED || status === StatusDispatch.COMPLETED;
 }
 
+// "Color stops" with optional ping
+const steps: { class: string; animation?: string; ping: boolean }[] = [
+    { class: '', ping: false }, // 0–10%
+    { class: '!bg-green-200', ping: false }, // 10–20%
+    { class: '!bg-yellow-200', ping: false }, // 20–30%
+    { class: '!bg-yellow-400', ping: false }, // 30–40%
+    { class: '!bg-orange-300', ping: false }, // 40–50%
+    { class: '!bg-orange-500', ping: false }, // 50–60%
+    { class: '!bg-red-400', ping: true }, // 60–70%
+    { class: '!bg-red-600', ping: true }, // 70–80%
+    { class: '!bg-red-700', ping: true }, // 80–90%
+    { class: '!bg-red-800', ping: true }, // 90–100%
+    { class: '!bg-red-700', animation: 'animate-bounce', ping: true }, // caps at 100%
+];
+
 export function dispatchTimeToTextColor(
     date: Timestamp | undefined,
     status: StatusDispatch = StatusDispatch.UNSPECIFIED,
@@ -160,25 +175,18 @@ export function dispatchTimeToTextColor(
         return 'text-success-300';
     }
 
-    // Get passed time in minutes
-    const time = (Date.now() - toDate(date).getTime()) / 1000;
+    // Elapsed time in seconds since dispatch
+    const elapsed = (Date.now() - toDate(date).getTime()) / 1000;
+    // Fraction of max elapsed (clamped 0…1)
+    const over = Math.min(Math.max(elapsed / maxTime, 0), 1);
 
-    const over = time / maxTime;
-    if (over >= 0.85) {
-        return 'text-red-700 animate-bounce';
-    } else if (over >= 0.7) {
-        return 'text-red-400';
-    } else if (over >= 0.55) {
-        return 'text-orange-400';
-    } else if (over >= 0.35) {
-        return 'text-orange-300';
-    } else if (over >= 0.2) {
-        return 'text-yellow-300';
-    } else if (over >= 0.1) {
-        return 'text-yellow-100';
+    // Pick one of the above based on over ∈ [0,1]
+    const idx = Math.floor(over * (steps.length - 1));
+    const step = steps[idx] ?? steps[steps.length - 1]!;
+    if (step.animation) {
+        return `${step.class} ${step.animation}`;
     }
-
-    return '';
+    return step.class;
 }
 
 export function dispatchTimeToTextColorSidebar(
@@ -186,26 +194,18 @@ export function dispatchTimeToTextColorSidebar(
     status: StatusDispatch = StatusDispatch.UNSPECIFIED,
     maxTime: number = 900,
 ): { ping: boolean; class: string } {
-    const time = (Date.now() - toDate(date).getTime()) / 1000;
-
     if (isStatusDispatchCompleted(status)) {
         return { ping: false, class: '' };
     }
 
-    const over = time / maxTime;
-    if (over <= 0.15) {
-        return { ping: false, class: '' };
-    } else if (over <= 0.2) {
-        return { ping: false, class: '!bg-orange-300' };
-    } else if (over <= 0.3) {
-        return { ping: false, class: '!bg-yellow-300' };
-    } else if (over <= 0.5) {
-        return { ping: false, class: '!bg-orange-500' };
-    } else if (over <= 0.8) {
-        return { ping: true, class: '!bg-red-400' };
-    }
+    // elapsed time in seconds since dispatch
+    const elapsed = (Date.now() - toDate(date).getTime()) / 1000;
+    // fraction of max elapsed (clamped 0…1)
+    const over = Math.min(Math.max(elapsed / maxTime, 0), 1);
 
-    return { ping: true, class: '!bg-red-700' };
+    // Pick the right stop
+    const idx = Math.floor(over * (steps.length - 1));
+    return steps[idx] ?? steps[steps.length - 1]!;
 }
 
 export function checkUnitAccess(unitAccess: UnitAccess | undefined, level: UnitAccessLevel): boolean {

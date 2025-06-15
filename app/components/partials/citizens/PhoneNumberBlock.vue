@@ -10,18 +10,22 @@ const props = withDefaults(
         showIcon?: boolean;
         hideNumber?: boolean;
         showLabel?: boolean;
-        width?: string;
         padded?: boolean;
         hideNaText?: boolean;
+        disableTruncate?: boolean;
     }>(),
     {
         showIcon: true,
         hideNumber: false,
         showLabel: false,
-        width: 'w-6',
         hideNaText: false,
+        disableTruncate: false,
     },
 );
+
+defineOptions({
+    inheritAttrs: false,
+});
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled, streamerMode } = storeToRefs(settingsStore);
@@ -54,23 +58,21 @@ async function doCall(): Promise<void> {
 </script>
 
 <template>
-    <div class="inline-flex items-center" :class="!padded && 'gap-1'">
-        <span v-if="number === undefined">
-            <template v-if="!hideNaText">
-                {{ $t('common.na') }}
-            </template>
-        </span>
-        <template v-else>
-            <UTooltip v-if="showIcon" :text="$t('common.call')">
-                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
+    <div class="inline-flex flex-1 items-center" :class="!padded && 'gap-1'">
+        <template v-if="number">
+            <UTooltip v-if="showIcon" class="w-full" :text="$t('common.call')">
+                <UButton class="shrink-0" variant="link" icon="i-mdi-phone" :padded="padded" v-bind="$attrs" @click="doCall">
                     <span class="sr-only">{{ $t('common.call') }}</span>
-                    <span v-if="showLabel" class="truncate">{{ $t('common.call') }}</span>
+                    <span v-if="showLabel" :class="!disableTruncate && 'truncate'">{{ $t('common.call') }}</span>
                 </UButton>
             </UTooltip>
 
             <span v-if="!hideNumber" class="inline-flex gap-1" :class="[streamerMode ? 'blur' : '']">
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{ part }}</span>
             </span>
+        </template>
+        <template v-else-if="!hideNaText">
+            {{ $t('common.na') }}
         </template>
     </div>
 </template>

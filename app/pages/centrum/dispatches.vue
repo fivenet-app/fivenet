@@ -3,6 +3,7 @@ import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import { z } from 'zod';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
+import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -108,6 +109,8 @@ const mount = ref(false);
                             <BaseMap :map-options="{ zoomControl: false }">
                                 <template #default>
                                     <LazyLivemapMapTempMarker />
+
+                                    <DispatchesLayer show-all-dispatches :dispatch-list="data?.dispatches ?? []" />
                                 </template>
                             </BaseMap>
                         </ClientOnly>

@@ -26,7 +26,6 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -73,7 +72,7 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 }
 
 func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.LoginResponse, error) {
-	req.Username = strings.TrimSpace(req.Username)
+	req.Username = normalizeUsername(req.Username)
 
 	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.username", req.Username))
 
@@ -92,7 +91,8 @@ func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.L
 	}
 
 	// Password check logic
-	if err := bcrypt.CompareHashAndPassword([]byte(*account.Password), []byte(req.Password)); err != nil {
+
+	if err := checkPassword(*account.Password, req.Password); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrInvalidLogin)
 	}
 
@@ -149,9 +149,9 @@ func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountReq
 		return nil, errorsauth.ErrAccountExistsFailed
 	}
 
-	req.Username = strings.TrimSpace(req.Username)
+	req.Username = normalizeUsername(req.Username)
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 14)
+	hashedPassword, err := hashPassword(req.Password)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
@@ -164,7 +164,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountReq
 		).
 		SET(
 			tAccounts.Username.SET(jet.String(req.Username)),
-			tAccounts.Password.SET(jet.String(string(hashedPassword))),
+			tAccounts.Password.SET(jet.String(hashedPassword)),
 			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
 		).
 		WHERE(jet.AND(
@@ -197,8 +197,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordR
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
-		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
+	acc, err := s.getAccountFromClaims(ctx, claims)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
@@ -209,11 +208,12 @@ func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordR
 	}
 
 	// Password check logic
-	if err := bcrypt.CompareHashAndPassword([]byte(*acc.Password), []byte(req.Current)); err != nil {
+
+	if err := checkPassword(*acc.Password, req.Current); err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
+	hashedPassword, err := hashPassword(req.New)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrAccountCreateFailed)
 	}
@@ -226,7 +226,7 @@ func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordR
 		}
 	}
 
-	pass := string(hashedPassword)
+	pass := hashedPassword
 	acc.Password = &pass
 
 	stmt := tAccounts.
@@ -269,8 +269,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *pbauth.ChangeUsernameR
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
-		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
+	acc, err := s.getAccountFromClaims(ctx, claims)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
@@ -285,7 +284,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *pbauth.ChangeUsernameR
 		return nil, errorsauth.ErrBadUsername
 	}
 
-	req.New = strings.TrimSpace(req.New)
+	req.New = normalizeUsername(req.New)
 	username := req.New
 
 	// New username is same as current username.. just return here.
@@ -340,12 +339,12 @@ func (s *Server) ForgotPassword(ctx context.Context, req *pbauth.ForgotPasswordR
 		return nil, errorsauth.ErrNoAccount
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.New), 14)
+	hashedPassword, err := hashPassword(req.New)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrForgotPassword)
 	}
 
-	pass := string(hashedPassword)
+	pass := hashedPassword
 	acc.Password = &pass
 
 	stmt := tAccounts.
@@ -380,8 +379,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
-		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
+	acc, err := s.getAccountFromClaims(ctx, claims)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
@@ -391,8 +389,6 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 
 	// Load chars from database
 	tUsers := tables.User().AS("user")
-	tJobs := tables.Jobs()
-	tJobsGrades := tables.JobsGrades()
 	tAvatar := table.FivenetFiles.AS("avatar")
 
 	stmt := tUsers.
@@ -401,9 +397,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 			dbutils.Columns{
 				tUsers.Identifier,
 				tUsers.Job,
-				tJobs.Label.AS("user.job_label"),
 				tUsers.JobGrade,
-				tJobsGrades.Label.AS("user.job_grade_label"),
 				tUsers.Firstname,
 				tUsers.Lastname,
 				tUsers.Dateofbirth,
@@ -418,15 +412,6 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 			}.Get()...,
 		).
 		FROM(tUsers.
-			LEFT_JOIN(tJobs,
-				tJobs.Name.EQ(tUsers.Job),
-			).
-			LEFT_JOIN(tJobsGrades,
-				jet.AND(
-					tJobsGrades.Grade.EQ(tUsers.JobGrade),
-					tJobsGrades.JobName.EQ(tUsers.Job),
-				),
-			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUsers.ID),
 			).
@@ -452,6 +437,8 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 	// If last char lock is enabled ensure to mark the one char as available only
 	if s.appCfg.Get().Auth.LastCharLock && acc.LastChar != nil {
 		for i := range resp.Chars {
+			s.enricher.EnrichJobInfo(resp.Chars[i].Char)
+
 			if resp.Chars[i].Char.UserId == *acc.LastChar ||
 				slices.Contains(s.superuserGroups, resp.Chars[i].Group) || slices.Contains(s.superuserUsers, claims.Subject) {
 				resp.Chars[i].Available = true
@@ -472,6 +459,8 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 		})
 	} else {
 		for i := range resp.Chars {
+			s.enricher.EnrichJobInfo(resp.Chars[i].Char)
+
 			resp.Chars[i].Available = true
 		}
 	}
@@ -485,8 +474,6 @@ func buildCharSearchIdentifier(license string) string {
 
 func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
 	tUsers := tables.User().AS("user")
-	tJobs := tables.Jobs()
-	tJobsGrades := tables.JobsGrades()
 	tLogo := table.FivenetFiles.AS("logo_file")
 	tAvatar := table.FivenetFiles.AS("avatar")
 
@@ -502,8 +489,6 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 			tUserProps.AvatarFileID.AS("user.avatar_file_id"),
 			tAvatar.FilePath.AS("user.avatar"),
 			tUsers.Group.AS("group"),
-			tJobs.Label.AS("user.job_label"),
-			tJobsGrades.Label.AS("user.job_grade_label"),
 			tJobProps.Job,
 			tJobProps.DeletedAt,
 			tJobProps.LivemapMarkerColor,
@@ -515,17 +500,8 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 		).
 		FROM(
 			tUsers.
-				LEFT_JOIN(tJobs,
-					tJobs.Name.EQ(tUsers.Job),
-				).
-				LEFT_JOIN(tJobsGrades,
-					jet.AND(
-						tJobsGrades.Grade.EQ(tUsers.JobGrade),
-						tJobsGrades.JobName.EQ(tUsers.Job),
-					),
-				).
 				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tJobs.Name),
+					tJobProps.Job.EQ(tUsers.Job),
 				).
 				LEFT_JOIN(tLogo,
 					tLogo.ID.EQ(tJobProps.LogoFileID),
@@ -543,7 +519,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 		LIMIT(1)
 
 	var dest struct {
-		users.User
+		*users.User
 		Group    string
 		JobProps *jobs.JobProps
 	}
@@ -558,7 +534,9 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 		s.enricher.EnrichJobName(dest.JobProps)
 	}
 
-	return &dest.User, dest.JobProps, dest.Group, nil
+	s.enricher.EnrichJobInfo(dest.User)
+
+	return dest.User, dest.JobProps, dest.Group, nil
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacterRequest) (*pbauth.ChooseCharacterResponse, error) {
@@ -575,8 +553,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
-		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
+	account, err := s.getAccountFromClaims(ctx, claims)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
@@ -602,30 +579,11 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		return nil, errorsauth.ErrCharLock
 	}
 
-	// Reset override jobs when char is not a superuser but has an override set..
-	if !isSuperuser &&
-		((account.Superuser != nil && *account.Superuser) ||
-			account.OverrideJob != nil) {
-		account.OverrideJob = nil
-		account.OverrideJobGrade = nil
-
-		if err := s.ui.SetUserInfo(ctx, claims.AccID, false, account.OverrideJob, account.OverrideJobGrade); err != nil {
-			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
-		}
-
-		not := false
-		account.Superuser = &not
-	} else if isSuperuser &&
-		(account.Superuser != nil && *account.Superuser) && account.OverrideJob != nil && account.OverrideJobGrade != nil {
-		char.Job = *account.OverrideJob
-		char.JobGrade = *account.OverrideJobGrade
-
-		s.enricher.EnrichJobInfo(char)
-
-		_, _, jProps, err = s.getJobWithProps(ctx, char.Job)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
-		}
+	// Centralized superuser/override logic
+	if jPropsOverride, err := s.handleSuperuserOverride(ctx, account, char, claims, isSuperuser); err != nil {
+		return nil, err
+	} else if jPropsOverride != nil {
+		jProps = jPropsOverride
 	}
 
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)
@@ -727,20 +685,26 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 	var jobProps *jobs.JobProps
 	var ps []string
 
-	// Reset override job when switching off superuser mode
+	// Reset override job when switching off superuser mode using centralized helper
 	if !req.Superuser {
+		// Fetch the account for the current user
+		account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
+		if err != nil {
+			return nil, errswrap.NewError(fmt.Errorf("failed to get account from db. %w", err), errorsauth.ErrGenericLogin)
+		}
+
+		jPropsOverride, err := s.handleSuperuserOverride(ctx, account, char, claims, false)
+		if err != nil {
+			return nil, err
+		}
+		if jPropsOverride != nil {
+			jobProps = jPropsOverride
+		}
+
 		userInfo.Job = char.Job
 		userInfo.JobGrade = char.JobGrade
-
 		userInfo.OverrideJob = nil
 		userInfo.OverrideJobGrade = nil
-
-		// Send original char job props to user
-		_, _, jProps, err := s.getJobWithProps(ctx, char.Job)
-		if err != nil {
-			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for '%s' job. %w", char.Job, err), errorsauth.ErrGenericLogin)
-		}
-		jobProps = jProps
 
 		not := false
 		ps, err = s.listUserPerms(&model.FivenetAccounts{

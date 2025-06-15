@@ -76,58 +76,63 @@ const zIndexOffset = computed(() => {
             </div>
         </LIcon>
 
-        <LPopup :options="{ closeButton: true }">
-            <div class="flex flex-col gap-2">
-                <div class="grid grid-cols-2 gap-2">
-                    <UButton
-                        v-if="dispatch?.x !== undefined && dispatch?.y !== undefined"
-                        variant="link"
-                        icon="i-mdi-map-marker"
-                        :padded="false"
-                        @click="goto({ x: dispatch?.x, y: dispatch?.y })"
-                    >
-                        <span class="truncate">
-                            {{ $t('common.mark') }}
-                        </span>
-                    </UButton>
+        <LPopup class="min-w-[175px]" :options="{ closeButton: false }">
+            <UCard
+                class="-my-[13px] -ml-[20px] -mr-[24px] flex min-w-[200px] flex-col"
+                :ui="{ body: { padding: 'px-2 py-2 sm:px-4 sm:p-2' } }"
+            >
+                <template #header>
+                    <div class="grid grid-cols-2 gap-2">
+                        <UButton
+                            v-if="dispatch?.x !== undefined && dispatch?.y !== undefined"
+                            variant="link"
+                            icon="i-mdi-map-marker"
+                            :padded="false"
+                            @click="goto({ x: dispatch?.x, y: dispatch?.y })"
+                        >
+                            <span class="truncate">
+                                {{ $t('common.mark') }}
+                            </span>
+                        </UButton>
 
-                    <UButton variant="link" icon="i-mdi-car-emergency" :padded="false" @click="selected(dispatch.id)">
-                        <span class="truncate">
-                            {{ $t('common.detail', 2) }}
-                        </span>
-                    </UButton>
+                        <UButton variant="link" icon="i-mdi-car-emergency" :padded="false" @click="selected(dispatch.id)">
+                            <span class="truncate">
+                                {{ $t('common.detail', 2) }}
+                            </span>
+                        </UButton>
 
-                    <UButton
-                        v-if="canDo('TakeControl')"
-                        class="truncate"
-                        icon="i-mdi-account-multiple-plus"
-                        variant="link"
-                        :padded="false"
-                        truncate
-                        @click="
-                            modal.open(DispatchAssignModal, {
-                                dispatchId: dispatch.id,
-                            })
-                        "
-                    >
-                        {{ $t('common.assign') }}
-                    </UButton>
+                        <UButton
+                            v-if="canDo('TakeControl')"
+                            class="truncate"
+                            icon="i-mdi-account-multiple-plus"
+                            variant="link"
+                            :padded="false"
+                            truncate
+                            @click="
+                                modal.open(DispatchAssignModal, {
+                                    dispatchId: dispatch.id,
+                                })
+                            "
+                        >
+                            {{ $t('common.assign') }}
+                        </UButton>
 
-                    <UButton
-                        v-if="canDo('TakeDispatch')"
-                        icon="i-mdi-plus"
-                        variant="link"
-                        :padded="false"
-                        @click="selfAssign(dispatch.id)"
-                    >
-                        {{ $t('common.self_assign') }}
-                    </UButton>
-                </div>
+                        <UButton
+                            v-if="canDo('TakeDispatch')"
+                            icon="i-mdi-plus"
+                            variant="link"
+                            :padded="false"
+                            @click="selfAssign(dispatch.id)"
+                        >
+                            {{ $t('common.self_assign') }}
+                        </UButton>
+                    </div>
+                </template>
 
                 <p class="inline-flex items-center gap-1">
-                    <span class="font-semibold">{{ $t('common.dispatch') }}:</span>
+                    <span class="font-semibold">{{ $t('common.dispatch', 1) }}</span>
                     <UButton
-                        class="font-bold"
+                        class="font-semibold"
                         :label="`DSP-${dispatch.id}`"
                         variant="link"
                         :padded="false"
@@ -192,7 +197,7 @@ const zIndexOffset = computed(() => {
                         </span>
                     </li>
                 </ul>
-            </div>
+            </UCard>
         </LPopup>
     </LMarker>
 </template>

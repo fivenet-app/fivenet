@@ -17,5 +17,5 @@ func (x *Dispatchers) Merge(in *Dispatchers) *Dispatchers {
 }
 
 func (x *Dispatchers) IsEmpty() bool {
-	return len(x.Dispatchers) == 0
+	return x == nil || len(x.Dispatchers) == 0
 }

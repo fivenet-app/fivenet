@@ -651,7 +651,7 @@ defineShortcuts({
 
                                                 <li>
                                                     <div class="mb-0.5 mt-1 flex w-full">
-                                                        <DispatchStatusBreakdown size="xs" />
+                                                        <DispatchStatusBreakdown block popover-class="w-full" size="xs" />
                                                     </div>
                                                 </li>
                                             </template>
