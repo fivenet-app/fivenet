@@ -3,6 +3,7 @@ package centrummanager
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
@@ -13,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
+	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -129,8 +131,8 @@ func New(p Params) *Manager {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if _, err := s.registerStream(ctxStartup); err != nil {
-			return err
+		if _, err := eventscentrum.RegisterStream(ctxStartup, s.js); err != nil {
+			return fmt.Errorf("failed to register stream. %w", err)
 		}
 
 		go func() {

@@ -398,7 +398,12 @@ func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jo
 }
 
 func (s *Server) fetchSnapshot(ctx context.Context) ([]*livemap.UserMarker, int64, error) {
-	msg, err := s.stream.GetLastMsgForSubject(ctx, "$KV."+tracker.BucketUserLoc+"._snapshot")
+	stream, err := s.js.Stream(ctx, "KV_"+tracker.BucketUserLoc)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	msg, err := stream.GetLastMsgForSubject(ctx, "$KV."+tracker.BucketUserLoc+"._snapshot")
 	if err != nil {
 		if !errors.Is(err, jetstream.ErrMsgNotFound) {
 			return nil, 0, err

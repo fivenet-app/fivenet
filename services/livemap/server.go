@@ -70,7 +70,6 @@ type Server struct {
 	tracker  tracker.ITracker
 	aud      audit.IAuditer
 	appCfg   appconfig.IConfig
-	stream   jetstream.Stream
 
 	markersCache        *xsync.Map[string, []*livemap.MarkerMarker]
 	markersDeletedCache *xsync.Map[string, []uint64]
@@ -127,12 +126,6 @@ func NewServer(p Params) *Server {
 		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return fmt.Errorf("failed to register subscriptions. %w", err)
 		}
-
-		stream, err := s.js.Stream(ctxStartup, "KV_"+tracker.BucketUserLoc)
-		if err != nil {
-			return fmt.Errorf("failed to get user location stream. %w", err)
-		}
-		s.stream = stream
 
 		go func() {
 			for {
