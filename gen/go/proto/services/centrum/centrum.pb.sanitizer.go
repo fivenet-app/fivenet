@@ -555,17 +555,9 @@ func (m *StreamResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: DispatchCreated
+	// Field: DispatchStatus
 	switch v := m.Change.(type) {
 
-	case *StreamResponse_DispatchCreated:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: DispatchStatus
 	case *StreamResponse_DispatchStatus:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
@@ -615,14 +607,6 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: Settings
 	case *StreamResponse_Settings:
-		if v, ok := any(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: UnitCreated
-	case *StreamResponse_UnitCreated:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

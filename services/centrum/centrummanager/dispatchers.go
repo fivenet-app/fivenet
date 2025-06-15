@@ -6,9 +6,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
-	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"google.golang.org/protobuf/proto"
 )
 
 func (s *Manager) DispatcherSignOn(ctx context.Context, job string, userId int32, signon bool) error {
@@ -48,20 +46,6 @@ func (s *Manager) DispatcherSignOn(ctx context.Context, job string, userId int32
 
 	// Load updated dispatchers into state
 	if err := s.LoadDispatchersFromDB(ctx, job); err != nil {
-		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-	}
-
-	dispatchers, err := s.GetDispatchers(ctx, job)
-	if err != nil {
-		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-	}
-
-	data, err := proto.Marshal(dispatchers)
-	if err != nil {
-		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDispatchers, job), data); err != nil {
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 

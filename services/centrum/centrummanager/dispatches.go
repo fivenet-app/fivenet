@@ -365,34 +365,11 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		}
 	}
 
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return err
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, job), data); err != nil {
-		return err
-	}
-
 	return nil
 }
 
 func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, allTheWay bool) error {
-	dsp, err := s.GetDispatch(ctx, job, id)
-	if err != nil {
-		return nil
-	}
-
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return errorscentrum.ErrFailedQuery
-	}
-
 	if err := s.State.DeleteDispatch(ctx, job, id); err != nil {
-		return err
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job), data); err != nil {
 		return err
 	}
 
@@ -525,15 +502,6 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		return nil, err
 	}
 
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchCreated, dsp.Job), data); err != nil {
-		return nil, err
-	}
-
 	return dsp, nil
 }
 
@@ -578,17 +546,6 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 
 	if err := s.State.UpdateDispatch(ctx, dsp.Job, dsp.Id, dsp); err != nil {
 		return nil, err
-	}
-
-	if publish {
-		data, err := proto.Marshal(dsp)
-		if err != nil {
-			return nil, err
-		}
-
-		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, userJob), data); err != nil {
-			return nil, err
-		}
 	}
 
 	return dsp, nil
@@ -856,20 +813,6 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 			if !errors.Is(err, errorscentrum.ErrDispatchAlreadyCompleted) {
 				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
-		}
-
-		dsp, err := s.GetDispatch(ctx, job, dspId)
-		if err != nil {
-			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-		}
-
-		data, err := proto.Marshal(dsp)
-		if err != nil {
-			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-		}
-
-		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, job), data); err != nil {
-			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
 

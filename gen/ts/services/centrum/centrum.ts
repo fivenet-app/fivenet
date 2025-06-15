@@ -562,41 +562,27 @@ export interface StreamResponse {
          */
         unitUpdated: Unit;
     } | {
+        oneofKind: "unitStatus";
+        /**
+         * @generated from protobuf field: resources.centrum.UnitStatus unit_status = 8
+         */
+        unitStatus: UnitStatus;
+    } | {
         oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: uint64 dispatch_deleted = 8
+         * @generated from protobuf field: uint64 dispatch_deleted = 9
          */
         dispatchDeleted: number;
     } | {
         oneofKind: "dispatchUpdated";
         /**
-         * @generated from protobuf field: resources.centrum.Dispatch dispatch_updated = 9
+         * @generated from protobuf field: resources.centrum.Dispatch dispatch_updated = 10
          */
         dispatchUpdated: Dispatch;
     } | {
-        oneofKind: "unitCreated";
-        // Old events
-
-        /**
-         * @generated from protobuf field: resources.centrum.Unit unit_created = 10
-         */
-        unitCreated: Unit;
-    } | {
-        oneofKind: "unitStatus";
-        /**
-         * @generated from protobuf field: resources.centrum.UnitStatus unit_status = 11
-         */
-        unitStatus: UnitStatus;
-    } | {
-        oneofKind: "dispatchCreated";
-        /**
-         * @generated from protobuf field: resources.centrum.Dispatch dispatch_created = 12
-         */
-        dispatchCreated: Dispatch;
-    } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.centrum.DispatchStatus dispatch_status = 13
+         * @generated from protobuf field: resources.centrum.DispatchStatus dispatch_status = 11
          */
         dispatchStatus: DispatchStatus;
     } | {
@@ -2913,12 +2899,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 5, name: "dispatchers", kind: "message", oneof: "change", T: () => Dispatchers$ },
             { no: 6, name: "unit_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 7, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
-            { no: 8, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 9, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 10, name: "unit_created", kind: "message", oneof: "change", T: () => Unit },
-            { no: 11, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 12, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 13, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
+            { no: 8, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
+            { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -2975,37 +2959,25 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         unitUpdated: Unit.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitUpdated)
                     };
                     break;
-                case /* uint64 dispatch_deleted */ 8:
-                    message.change = {
-                        oneofKind: "dispatchDeleted",
-                        dispatchDeleted: reader.uint64().toNumber()
-                    };
-                    break;
-                case /* resources.centrum.Dispatch dispatch_updated */ 9:
-                    message.change = {
-                        oneofKind: "dispatchUpdated",
-                        dispatchUpdated: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchUpdated)
-                    };
-                    break;
-                case /* resources.centrum.Unit unit_created */ 10:
-                    message.change = {
-                        oneofKind: "unitCreated",
-                        unitCreated: Unit.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitCreated)
-                    };
-                    break;
-                case /* resources.centrum.UnitStatus unit_status */ 11:
+                case /* resources.centrum.UnitStatus unit_status */ 8:
                     message.change = {
                         oneofKind: "unitStatus",
                         unitStatus: UnitStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).unitStatus)
                     };
                     break;
-                case /* resources.centrum.Dispatch dispatch_created */ 12:
+                case /* uint64 dispatch_deleted */ 9:
                     message.change = {
-                        oneofKind: "dispatchCreated",
-                        dispatchCreated: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchCreated)
+                        oneofKind: "dispatchDeleted",
+                        dispatchDeleted: reader.uint64().toNumber()
                     };
                     break;
-                case /* resources.centrum.DispatchStatus dispatch_status */ 13:
+                case /* resources.centrum.Dispatch dispatch_updated */ 10:
+                    message.change = {
+                        oneofKind: "dispatchUpdated",
+                        dispatchUpdated: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchUpdated)
+                    };
+                    break;
+                case /* resources.centrum.DispatchStatus dispatch_status */ 11:
                     message.change = {
                         oneofKind: "dispatchStatus",
                         dispatchStatus: DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).dispatchStatus)
@@ -3044,24 +3016,18 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.centrum.Unit unit_updated = 7; */
         if (message.change.oneofKind === "unitUpdated")
             Unit.internalBinaryWrite(message.change.unitUpdated, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 dispatch_deleted = 8; */
-        if (message.change.oneofKind === "dispatchDeleted")
-            writer.tag(8, WireType.Varint).uint64(message.change.dispatchDeleted);
-        /* resources.centrum.Dispatch dispatch_updated = 9; */
-        if (message.change.oneofKind === "dispatchUpdated")
-            Dispatch.internalBinaryWrite(message.change.dispatchUpdated, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Unit unit_created = 10; */
-        if (message.change.oneofKind === "unitCreated")
-            Unit.internalBinaryWrite(message.change.unitCreated, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.UnitStatus unit_status = 11; */
+        /* resources.centrum.UnitStatus unit_status = 8; */
         if (message.change.oneofKind === "unitStatus")
-            UnitStatus.internalBinaryWrite(message.change.unitStatus, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.Dispatch dispatch_created = 12; */
-        if (message.change.oneofKind === "dispatchCreated")
-            Dispatch.internalBinaryWrite(message.change.dispatchCreated, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.DispatchStatus dispatch_status = 13; */
+            UnitStatus.internalBinaryWrite(message.change.unitStatus, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 dispatch_deleted = 9; */
+        if (message.change.oneofKind === "dispatchDeleted")
+            writer.tag(9, WireType.Varint).uint64(message.change.dispatchDeleted);
+        /* resources.centrum.Dispatch dispatch_updated = 10; */
+        if (message.change.oneofKind === "dispatchUpdated")
+            Dispatch.internalBinaryWrite(message.change.dispatchUpdated, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.DispatchStatus dispatch_status = 11; */
         if (message.change.oneofKind === "dispatchStatus")
-            DispatchStatus.internalBinaryWrite(message.change.dispatchStatus, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+            DispatchStatus.internalBinaryWrite(message.change.dispatchStatus, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

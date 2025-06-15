@@ -4,9 +4,7 @@ import (
 	"context"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"google.golang.org/protobuf/proto"
 )
 
 func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *centrum.Settings) (*centrum.Settings, error) {
@@ -47,15 +45,6 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 
 	set, err := s.GetSettings(ctx, job)
 	if err != nil {
-		return nil, err
-	}
-
-	data, err := proto.Marshal(set)
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job), data); err != nil {
 		return nil, err
 	}
 

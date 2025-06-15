@@ -339,20 +339,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		return err
 	}
 
-	unit, err := s.GetUnit(ctx, job, unitId)
-	if err != nil {
-		return err
-	}
-
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return err
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -425,15 +411,6 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, err
 	}
 
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job), data); err != nil {
-		return nil, err
-	}
-
 	return unit, nil
 }
 
@@ -497,15 +474,6 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 	}
 
 	if err := s.State.UpdateUnit(ctx, unit.Job, unit.Id, unit); err != nil {
-		return nil, err
-	}
-
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return nil, err
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job), data); err != nil {
 		return nil, err
 	}
 
@@ -711,16 +679,7 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 		return errorscentrum.ErrFailedQuery
 	}
 
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return err
-	}
-
 	if err := s.State.DeleteUnit(ctx, job, id); err != nil {
-		return err
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job), data); err != nil {
 		return err
 	}
 

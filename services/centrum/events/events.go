@@ -13,21 +13,11 @@ import (
 const (
 	BaseSubject events.Subject = "centrum"
 
-	TopicGeneral           events.Topic = "general"
-	TypeGeneralSettings    events.Type  = "settings"
-	TypeGeneralDispatchers events.Type  = "dispatchers"
+	TopicDispatch      events.Topic = "dispatch"
+	TypeDispatchStatus events.Type  = "status"
 
-	TopicDispatch       events.Topic = "dispatch"
-	TypeDispatchDeleted events.Type  = "deleted"
-	TypeDispatchCreated events.Type  = "created"
-	TypeDispatchUpdated events.Type  = "updated"
-	TypeDispatchStatus  events.Type  = "status"
-
-	TopicUnit       events.Topic = "unit"
-	TypeUnitCreated events.Type  = "created"
-	TypeUnitDeleted events.Type  = "deleted"
-	TypeUnitUpdated events.Type  = "updated"
-	TypeUnitStatus  events.Type  = "status"
+	TopicUnit      events.Topic = "unit"
+	TypeUnitStatus events.Type  = "status"
 )
 
 func SplitSubject(subject string) (string, events.Topic, events.Type) {

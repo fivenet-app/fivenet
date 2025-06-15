@@ -223,15 +223,11 @@ message StreamResponse {
 
     uint64 unit_deleted = 6;
     resources.centrum.Unit unit_updated = 7;
-    uint64 dispatch_deleted = 8;
-    resources.centrum.Dispatch dispatch_updated = 9;
+    resources.centrum.UnitStatus unit_status = 8;
 
-    // Old events
-
-    resources.centrum.Unit unit_created = 10;
-    resources.centrum.UnitStatus unit_status = 11;
-    resources.centrum.Dispatch dispatch_created = 12;
-    resources.centrum.DispatchStatus dispatch_status = 13;
+    uint64 dispatch_deleted = 9;
+    resources.centrum.Dispatch dispatch_updated = 10;
+    resources.centrum.DispatchStatus dispatch_status = 11;
   }
 }
 

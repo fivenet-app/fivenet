@@ -6067,6 +6067,48 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
+	case *StreamResponse_UnitStatus:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofChangePresent = true
+
+		if all {
+			switch v := interface{}(m.GetUnitStatus()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "UnitStatus",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "UnitStatus",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUnitStatus()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "UnitStatus",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *StreamResponse_DispatchDeleted:
 		if v == nil {
 			err := StreamResponseValidationError{
@@ -6116,132 +6158,6 @@ func (m *StreamResponse) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
 					field:  "DispatchUpdated",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *StreamResponse_UnitCreated:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofChangePresent = true
-
-		if all {
-			switch v := interface{}(m.GetUnitCreated()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitCreated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitCreated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUnitCreated()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "UnitCreated",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *StreamResponse_UnitStatus:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofChangePresent = true
-
-		if all {
-			switch v := interface{}(m.GetUnitStatus()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitStatus",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitStatus",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUnitStatus()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "UnitStatus",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *StreamResponse_DispatchCreated:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofChangePresent = true
-
-		if all {
-			switch v := interface{}(m.GetDispatchCreated()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchCreated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchCreated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetDispatchCreated()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "DispatchCreated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

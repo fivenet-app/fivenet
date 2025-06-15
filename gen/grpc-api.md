@@ -9494,11 +9494,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `dispatchers` | [resources.centrum.Dispatchers](#resources-centrum-Dispatchers) |  |  |
 | `unit_deleted` | [uint64](#uint64) |  |  |
 | `unit_updated` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
+| `unit_status` | [resources.centrum.UnitStatus](#resources-centrum-UnitStatus) |  |  |
 | `dispatch_deleted` | [uint64](#uint64) |  |  |
 | `dispatch_updated` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
-| `unit_created` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
-| `unit_status` | [resources.centrum.UnitStatus](#resources-centrum-UnitStatus) |  |  |
-| `dispatch_created` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
 | `dispatch_status` | [resources.centrum.DispatchStatus](#resources-centrum-DispatchStatus) |  |  |
 
 

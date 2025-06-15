@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
+	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -211,6 +212,85 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 	out := make(chan *pbcentrum.StreamResponse, 256)
 	g, ctx := errgroup.WithContext(ctx)
 
+	// Centrum Events (e.g., dispatch and unit status updates)
+	g.Go(func() error {
+		// Create consumer with multi-filter
+		consCfg := jetstream.ConsumerConfig{
+			FilterSubjects: centrumSubjects(jobs),
+			DeliverPolicy:  jetstream.DeliverNewPolicy,
+			AckPolicy:      jetstream.AckNonePolicy,
+		}
+		consumer, err := s.js.CreateConsumer(ctx, "CENTRUM", consCfg)
+		if err != nil {
+			return fmt.Errorf("consumer. %w", err)
+		}
+
+		// Pull loop
+		for {
+			batch, err := consumer.Fetch(32,
+				jetstream.FetchMaxWait(2*time.Second))
+			if err != nil {
+				if errors.Is(err, context.DeadlineExceeded) ||
+					errors.Is(err, jetstream.ErrNoMessages) {
+					continue // idle
+				}
+				return err
+			}
+
+			for m := range batch.Messages() {
+				_, topic, tType := eventscentrum.SplitSubject(m.Subject())
+
+				var r *pbcentrum.StreamResponse
+
+				switch topic {
+				case eventscentrum.TopicDispatch:
+					if tType != eventscentrum.TypeDispatchStatus {
+						continue
+					}
+
+					var d centrum.DispatchStatus
+					if err := proto.Unmarshal(m.Data(), &d); err != nil {
+						s.logger.Error("failed to unmarshal dispatch status", zap.Error(err), zap.String("subject", m.Subject()))
+					}
+
+					r = &pbcentrum.StreamResponse{
+						Change: &pbcentrum.StreamResponse_DispatchStatus{
+							DispatchStatus: &d,
+						},
+					}
+
+				case eventscentrum.TopicUnit:
+					if tType != eventscentrum.TypeUnitStatus {
+						continue
+					}
+					var u centrum.UnitStatus
+					if err := proto.Unmarshal(m.Data(), &u); err != nil {
+						s.logger.Error("failed to unmarshal unit status", zap.Error(err), zap.String("subject", m.Subject()))
+					}
+
+					r = &pbcentrum.StreamResponse{
+						Change: &pbcentrum.StreamResponse_UnitStatus{
+							UnitStatus: &u,
+						},
+					}
+				}
+
+				if r == nil {
+					s.logger.Warn("received unknown centrum event", zap.String("subject", m.Subject()), zap.String("type", string(tType)))
+					continue
+				}
+
+				select {
+				case out <- r:
+
+				case <-ctx.Done():
+					return ctx.Err()
+				}
+			}
+		}
+	})
+
+	// Setup feeds for each bucket
 	for _, f := range feeds {
 		g.Go(func() error {
 			// Create consumer with multi-filter

@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
-	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -27,7 +26,6 @@ var Module = fx.Module("centrum_manager",
 
 type Manager struct {
 	logger *zap.Logger
-	jsCons jetstream.ConsumeContext
 
 	tracer   trace.Tracer
 	db       *sql.DB
@@ -142,20 +140,11 @@ func New(p Params) *Manager {
 			}
 		}()
 
-		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
-			return err
-		}
-
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
-
-		if s.jsCons != nil {
-			s.jsCons.Stop()
-			s.jsCons = nil
-		}
 
 		return nil
 	}))

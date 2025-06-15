@@ -451,8 +451,6 @@ export const useCentrumStore = defineStore(
                         }
 
                         isDispatcher.value = checkIfDispatcher(activeChar.value?.userId);
-                    } else if (resp.change.oneofKind === 'unitCreated') {
-                        addOrUpdateUnit(resp.change.unitCreated);
                     } else if (resp.change.oneofKind === 'unitDeleted') {
                         removeUnit(resp.change.unitDeleted);
                     } else if (resp.change.oneofKind === 'unitUpdated') {
@@ -539,12 +537,6 @@ export const useCentrumStore = defineStore(
                             setOwnUnit(undefined);
                             ownDispatches.value.length = 0;
                             pendingDispatches.value.length = 0;
-                        }
-                    } else if (resp.change.oneofKind === 'dispatchCreated') {
-                        addOrUpdateDispatch(resp.change.dispatchCreated);
-
-                        if (isCenter.value && resp.change.dispatchCreated.status) {
-                            addFeedItem(resp.change.dispatchCreated.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
                         removeDispatch(resp.change.dispatchDeleted);
