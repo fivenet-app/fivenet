@@ -19,12 +19,12 @@ const { error, abort, reconnecting, feed, isCenter } = storeToRefs(centrumStore)
 const { startStream, stopStream } = centrumStore;
 
 onBeforeMount(async () => {
+    isCenter.value = true;
     useTimeoutFn(async () => {
         try {
-            isCenter.value = true;
             startStream();
         } catch (e) {
-            logger.error('exception during centrum stream', e);
+            logger.error('exception during start of centrum stream', e);
         }
     }, 500);
 });

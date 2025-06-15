@@ -270,12 +270,15 @@ onBeforeMount(async () => {
         try {
             startStream();
         } catch (e) {
-            logger.error('exception during centrum stream', e);
+            logger.error('exception during start of centrum stream', e);
         }
     }, 400);
 });
 
-onBeforeRouteLeave(async () => {
+onBeforeRouteLeave(async (to) => {
+    // Don't end centrum stream if user is switching to center or livemap page
+    if (to.path.startsWith('/livemap') || to.path === '/centrum') return;
+
     await stopStream();
 });
 
