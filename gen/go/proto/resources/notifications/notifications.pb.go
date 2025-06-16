@@ -139,13 +139,13 @@ type Notification struct {
 	ReadAt    *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty"`
 	UserId    int32                  `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	// @sanitize
-	Title *common.TranslateItem `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	Type  NotificationType      `protobuf:"varint,6,opt,name=type,proto3,enum=resources.notifications.NotificationType" json:"type,omitempty"`
+	Title *common.I18NItem `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	Type  NotificationType `protobuf:"varint,6,opt,name=type,proto3,enum=resources.notifications.NotificationType" json:"type,omitempty"`
 	// @sanitize
-	Content       *common.TranslateItem `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
-	Category      NotificationCategory  `protobuf:"varint,8,opt,name=category,proto3,enum=resources.notifications.NotificationCategory" json:"category,omitempty"`
-	Data          *Data                 `protobuf:"bytes,9,opt,name=data,proto3,oneof" json:"data,omitempty"`
-	Starred       *bool                 `protobuf:"varint,10,opt,name=starred,proto3,oneof" json:"starred,omitempty"`
+	Content       *common.I18NItem     `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
+	Category      NotificationCategory `protobuf:"varint,8,opt,name=category,proto3,enum=resources.notifications.NotificationCategory" json:"category,omitempty"`
+	Data          *Data                `protobuf:"bytes,9,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	Starred       *bool                `protobuf:"varint,10,opt,name=starred,proto3,oneof" json:"starred,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -208,7 +208,7 @@ func (x *Notification) GetUserId() int32 {
 	return 0
 }
 
-func (x *Notification) GetTitle() *common.TranslateItem {
+func (x *Notification) GetTitle() *common.I18NItem {
 	if x != nil {
 		return x.Title
 	}
@@ -222,7 +222,7 @@ func (x *Notification) GetType() NotificationType {
 	return NotificationType_NOTIFICATION_TYPE_UNSPECIFIED
 }
 
-func (x *Notification) GetContent() *common.TranslateItem {
+func (x *Notification) GetContent() *common.I18NItem {
 	if x != nil {
 		return x.Content
 	}
@@ -427,16 +427,16 @@ var File_resources_notifications_notifications_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xb4\x04\n" +
+	"+resources/notifications/notifications.proto\x12\x17resources.notifications\x1a\x1bresources/common/i18n.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xaa\x04\n" +
 	"\fNotification\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12=\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x127\n" +
 	"\aread_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampR\x06readAt\x12 \n" +
-	"\auser_id\x18\x04 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x125\n" +
-	"\x05title\x18\x05 \x01(\v2\x1f.resources.common.TranslateItemR\x05title\x12G\n" +
-	"\x04type\x18\x06 \x01(\x0e2).resources.notifications.NotificationTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\x04type\x129\n" +
-	"\acontent\x18\a \x01(\v2\x1f.resources.common.TranslateItemR\acontent\x12S\n" +
+	"\auser_id\x18\x04 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x120\n" +
+	"\x05title\x18\x05 \x01(\v2\x1a.resources.common.I18NItemR\x05title\x12G\n" +
+	"\x04type\x18\x06 \x01(\x0e2).resources.notifications.NotificationTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\x04type\x124\n" +
+	"\acontent\x18\a \x01(\v2\x1a.resources.common.I18NItemR\acontent\x12S\n" +
 	"\bcategory\x18\b \x01(\x0e2-.resources.notifications.NotificationCategoryB\b\xfaB\x05\x82\x01\x02\x10\x01R\bcategory\x126\n" +
 	"\x04data\x18\t \x01(\v2\x1d.resources.notifications.DataH\x00R\x04data\x88\x01\x01\x12\x1d\n" +
 	"\astarred\x18\n" +
@@ -491,22 +491,22 @@ func file_resources_notifications_notifications_proto_rawDescGZIP() []byte {
 var file_resources_notifications_notifications_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_notifications_notifications_proto_goTypes = []any{
-	(NotificationType)(0),        // 0: resources.notifications.NotificationType
-	(NotificationCategory)(0),    // 1: resources.notifications.NotificationCategory
-	(*Notification)(nil),         // 2: resources.notifications.Notification
-	(*Data)(nil),                 // 3: resources.notifications.Data
-	(*Link)(nil),                 // 4: resources.notifications.Link
-	(*CalendarData)(nil),         // 5: resources.notifications.CalendarData
-	(*timestamp.Timestamp)(nil),  // 6: resources.timestamp.Timestamp
-	(*common.TranslateItem)(nil), // 7: resources.common.TranslateItem
-	(*users.UserShort)(nil),      // 8: resources.users.UserShort
+	(NotificationType)(0),       // 0: resources.notifications.NotificationType
+	(NotificationCategory)(0),   // 1: resources.notifications.NotificationCategory
+	(*Notification)(nil),        // 2: resources.notifications.Notification
+	(*Data)(nil),                // 3: resources.notifications.Data
+	(*Link)(nil),                // 4: resources.notifications.Link
+	(*CalendarData)(nil),        // 5: resources.notifications.CalendarData
+	(*timestamp.Timestamp)(nil), // 6: resources.timestamp.Timestamp
+	(*common.I18NItem)(nil),     // 7: resources.common.I18NItem
+	(*users.UserShort)(nil),     // 8: resources.users.UserShort
 }
 var file_resources_notifications_notifications_proto_depIdxs = []int32{
 	6,  // 0: resources.notifications.Notification.created_at:type_name -> resources.timestamp.Timestamp
 	6,  // 1: resources.notifications.Notification.read_at:type_name -> resources.timestamp.Timestamp
-	7,  // 2: resources.notifications.Notification.title:type_name -> resources.common.TranslateItem
+	7,  // 2: resources.notifications.Notification.title:type_name -> resources.common.I18NItem
 	0,  // 3: resources.notifications.Notification.type:type_name -> resources.notifications.NotificationType
-	7,  // 4: resources.notifications.Notification.content:type_name -> resources.common.TranslateItem
+	7,  // 4: resources.notifications.Notification.content:type_name -> resources.common.I18NItem
 	1,  // 5: resources.notifications.Notification.category:type_name -> resources.notifications.NotificationCategory
 	3,  // 6: resources.notifications.Notification.data:type_name -> resources.notifications.Data
 	4,  // 7: resources.notifications.Data.link:type_name -> resources.notifications.Link

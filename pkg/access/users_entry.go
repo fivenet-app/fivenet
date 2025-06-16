@@ -9,6 +9,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+// GetEntry retrieves a single user access entry by its ID, joining with user_short for additional user info.
 func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id uint64) (T, error) {
 	tUsers := tables.User().AS("user_short")
 
@@ -47,6 +48,7 @@ func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id u
 	return dest, nil
 }
 
+// CreateEntry inserts a new user access entry for a given targetId and entry.
 func (a *Users[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
 	stmt := a.table.
 		INSERT(
@@ -67,6 +69,7 @@ func (a *Users[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, t
 	return nil
 }
 
+// UpdateEntry updates an existing user access entry for a given targetId and entry.
 func (a *Users[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
 	stmt := a.table.
 		UPDATE(
@@ -89,6 +92,7 @@ func (a *Users[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, t
 	return nil
 }
 
+// DeleteEntry deletes a user access entry by its ID and targetId.
 func (a *Users[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, targetId uint64, id uint64) error {
 	stmt := a.table.
 		DELETE().
@@ -107,6 +111,7 @@ func (a *Users[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, t
 	return nil
 }
 
+// DeleteEntryWithCondition deletes a user access entry matching a custom condition and targetId.
 func (a *Users[U, T, AccessLevel]) DeleteEntryWithCondition(ctx context.Context, tx qrm.DB, condition jet.BoolExpression, targetId uint64) error {
 	stmt := a.table.
 		DELETE().

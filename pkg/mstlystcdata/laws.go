@@ -20,31 +20,38 @@ import (
 	"go.uber.org/zap"
 )
 
+// Laws provides methods for loading, caching, and refreshing law books from the database.
 type Laws struct {
+	// logger for logging
 	logger *zap.Logger
-	db     *sql.DB
+	// db is the database connection
+	db *sql.DB
 
+	// tracer is the OpenTelemetry tracer for this component
 	tracer trace.Tracer
 
+	// lawBooks is a concurrent map of law book IDs to LawBook structs
 	lawBooks *xsync.Map[uint64, *laws.LawBook]
 }
 
+// LawsResult is the output struct for NewLaws, providing Laws and a cronjob register.
 type LawsResult struct {
 	fx.Out
 
-	Laws         *Laws
+	// Laws is the main Laws instance
+	Laws *Laws
+	// CronRegister is used to register cronjobs for law updates
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
+// NewLaws creates a new Laws instance, sets up lifecycle hooks, and returns a LawsResult.
 func NewLaws(p Params) LawsResult {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	c := &Laws{
-		logger: p.Logger,
-		db:     p.DB,
-
-		tracer: p.TP.Tracer("mstlystcdata.laws"),
-
+		logger:   p.Logger,
+		db:       p.DB,
+		tracer:   p.TP.Tracer("mstlystcdata.laws"),
 		lawBooks: xsync.NewMap[uint64, *laws.LawBook](),
 	}
 
@@ -53,13 +60,11 @@ func NewLaws(p Params) LawsResult {
 			c.logger.Error("failed to loads laws into cache", zap.Error(err))
 			return err
 		}
-
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
-
 		return nil
 	}))
 
@@ -69,6 +74,7 @@ func NewLaws(p Params) LawsResult {
 	}
 }
 
+// RegisterCronjobs registers the law refresh cronjob with the given registry.
 func (c *Laws) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "mstlystcdata.laws",
@@ -76,10 +82,10 @@ func (c *Laws) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) 
 	}); err != nil {
 		return err
 	}
-
 	return nil
 }
 
+// RegisterCronjobHandlers adds the handler for the law refresh cronjob.
 func (c *Laws) RegisterCronjobHandlers(h *croner.Handlers) error {
 	h.Add("mstlystcdata.laws", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := c.tracer.Start(ctx, "mstlystcdata-laws")
@@ -89,13 +95,13 @@ func (c *Laws) RegisterCronjobHandlers(h *croner.Handlers) error {
 			c.logger.Error("failed to refresh laws in cache", zap.Error(err))
 			return err
 		}
-
 		return nil
 	})
-
 	return nil
 }
 
+// loadLaws loads law books and their laws from the database into the cache.
+// If lawBookId is 0, loads all law books; otherwise, loads only the specified law book.
 func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {
 	tLawBooks := table.FivenetLawbooks.AS("lawbook")
 	tLaws := table.FivenetLawbooksLaws.AS("law")
@@ -168,6 +174,7 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {
 	return nil
 }
 
+// GetLawBooks returns all cached law books, sorted by name using natural order.
 func (c *Laws) GetLawBooks() []*laws.LawBook {
 	lawBooks := []*laws.LawBook{}
 	c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
@@ -182,10 +189,10 @@ func (c *Laws) GetLawBooks() []*laws.LawBook {
 	return lawBooks
 }
 
+// Refresh reloads the specified law book (or all if lawBookId is 0) from the database.
 func (c *Laws) Refresh(ctx context.Context, lawBookId uint64) error {
 	if err := c.loadLaws(ctx, lawBookId); err != nil {
 		return err
 	}
-
 	return nil
 }

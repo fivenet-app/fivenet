@@ -10,12 +10,17 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+// json is a jsoniter instance configured to be compatible with the standard library.
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
+// Postals is a type alias for a read-only coordinate store of Postal pointers.
 type Postals = *coords.CoordsRO[*Postal]
 
+// postalCodesMap maps postal codes to their corresponding Postal struct.
 var postalCodesMap = map[string]*Postal{}
 
+// New loads postal codes from the configured file and returns a read-only coordinate store.
+// Returns an error if the file cannot be read or parsed, or if the points cannot be added.
 func New(cfg *config.Config) (Postals, error) {
 	file, err := os.Open(cfg.PostalsFile)
 	if err != nil {
@@ -38,6 +43,7 @@ func New(cfg *config.Config) (Postals, error) {
 		return nil, fmt.Errorf("failed to add postals to postals coords map. %w", err)
 	}
 
+	// Populate the postalCodesMap for fast lookup by code
 	for k := range codes {
 		if codes[k].Code != nil {
 			postalCodesMap[*codes[k].Code] = codes[k]
@@ -47,6 +53,7 @@ func New(cfg *config.Config) (Postals, error) {
 	return cs, nil
 }
 
+// ByCode returns the Postal struct for a given code, if it exists.
 func ByCode(code string) (*Postal, bool) {
 	postalCode, ok := postalCodesMap[code]
 	return postalCode, ok

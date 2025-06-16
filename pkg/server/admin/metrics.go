@@ -20,6 +20,7 @@ const (
 	MetricsNamespace = "fivenet"
 )
 
+// Module provides the metrics server as an fx module.
 var Module = fx.Module("metricsserver",
 	fx.Provide(
 		NewServer,
@@ -27,27 +28,36 @@ var Module = fx.Module("metricsserver",
 	fx.Decorate(wrapLogger),
 )
 
+// wrapLogger returns a logger named "metrics_server" for metrics server logging.
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("metrics_server")
 }
 
+// AdminServer is a type alias for *http.Server, representing the admin HTTP server.
 type AdminServer *http.Server
 
+// Params contains dependencies for constructing the metrics server.
 type Params struct {
 	fx.In
 
+	// LC is the fx lifecycle for managing server start/stop hooks.
 	LC fx.Lifecycle
 
+	// Logger is the zap logger instance for logging.
 	Logger *zap.Logger
+	// Config is the application configuration.
 	Config *config.Config
 }
 
+// Result is the output struct for the metrics server constructor.
 type Result struct {
 	fx.Out
 
+	// Server is the constructed admin HTTP server.
 	Server AdminServer
 }
 
+// NewServer creates and configures the metrics (admin) HTTP server with Prometheus metrics, readiness, and pprof endpoints.
 func NewServer(p Params) (Result, error) {
 	// Gin HTTP Server
 	gin.SetMode(gin.ReleaseMode)
@@ -65,10 +75,12 @@ func NewServer(p Params) (Result, error) {
 		}),
 	)))
 
+	// Readiness probe endpoint
 	e.GET("/readiness", func(c *gin.Context) {
 		c.String(http.StatusOK, "OK")
 	})
 
+	// Register pprof endpoints for profiling
 	pprof.Register(e)
 
 	// Create HTTP Server for graceful shutdown handling
@@ -77,6 +89,7 @@ func NewServer(p Params) (Result, error) {
 		Handler: e,
 	}
 
+	// Register lifecycle hooks for server start and stop
 	p.LC.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
 			ln, err := net.Listen("tcp", srv.Addr)

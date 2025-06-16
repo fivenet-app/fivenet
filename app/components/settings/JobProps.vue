@@ -521,19 +521,23 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :label="$t('components.settings.job_props.discord_sync_settings.discord_guild_id')"
                                     :ui="{ container: '' }"
                                 >
-                                    <NotSupportedTabletBlock v-if="nuiEnabled" />
-                                    <UButton
-                                        v-else-if="dcConnectRequired"
-                                        icon="i-mdi-connection"
-                                        :label="$t('common.connect')"
-                                        @click="
-                                            async () =>
-                                                await navigateTo(
-                                                    generateDiscordConnectURL('discord', '/settings/props?tab=discord#'),
-                                                    { external: true },
-                                                )
-                                        "
-                                    />
+                                    <template v-if="nuiEnabled || dcConnectRequired">
+                                        <NotSupportedTabletBlock v-if="nuiEnabled" />
+                                        <UButton
+                                            v-else-if="dcConnectRequired"
+                                            icon="i-mdi-connection"
+                                            :label="$t('common.connect')"
+                                            @click="
+                                                async () =>
+                                                    await navigateTo(
+                                                        generateDiscordConnectURL('discord', '/settings/props?tab=discord#'),
+                                                        { external: true },
+                                                    )
+                                            "
+                                        />
+
+                                        <span v-if="state.discordGuildId"> {{ state.discordGuildId }}</span>
+                                    </template>
                                     <USelectMenu
                                         v-else
                                         v-model="state.discordGuildId"
@@ -544,16 +548,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             $t('components.settings.job_props.discord_sync_settings.discord_guild_id')
                                         "
                                         value-attribute="id"
-                                        :disabled="!canSubmit || !canEdit"
+                                        :disabled="!canSubmit || !canEdit || userGuilds?.length === 0"
                                         size="lg"
                                     >
                                         <template #label="{ selected }">
                                             <div class="inline-flex items-center gap-2">
-                                                <template v-if="selected">
-                                                    <UAvatar :src="selected?.icon" :alt="selected?.name" />
-                                                    <span class="truncate">{{ selected?.name ?? '&nbsp;' }}</span>
-                                                </template>
-                                                <span class="truncate">{{ state.discordGuildId }}</span>
+                                                <UAvatar :src="selected?.icon" :alt="selected?.name" />
+                                                <span class="truncate">{{
+                                                    selected?.name ??
+                                                    (state.discordGuildId !== '' ? state.discordGuildId : '&nbsp;')
+                                                }}</span>
                                             </div>
                                         </template>
 
@@ -618,6 +622,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         searchable-lazy
                                         :searchable-placeholder="$t('common.search_field')"
                                         value-attribute="id"
+                                        nullable
                                         :placeholder="
                                             $t(
                                                 'components.settings.job_props.discord_sync_settings.status_log_settings.channel_id',
@@ -625,11 +630,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                     >
                                         <template #label="{ selected }">
-                                            <span v-if="selected" class="truncate">{{
-                                                selected ? `${selected.name} (${selected.id})` : '&nbsp;'
-                                            }}</span>
-                                            <span v-else class="truncate">{{
-                                                state.discordSyncSettings.statusLogSettings!.channelId
+                                            <span class="truncate">{{
+                                                selected
+                                                    ? `${selected.name} (${selected.id})`
+                                                    : state.discordSyncSettings.statusLogSettings!.channelId !== ''
+                                                      ? state.discordSyncSettings.statusLogSettings!.channelId
+                                                      : '&nbsp;'
                                             }}</span>
                                         </template>
 

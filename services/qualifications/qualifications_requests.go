@@ -295,10 +295,10 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *pb
 		if request == nil || request.Status == nil || request.Status.Enum() != req.Request.Status.Enum() {
 			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 				UserId: request.UserId,
-				Title: &common.TranslateItem{
+				Title: &common.I18NItem{
 					Key: "notifications.qualifications.request_updated.title",
 				},
-				Content: &common.TranslateItem{
+				Content: &common.I18NItem{
 					Key:        "notifications.qualifications.request_updated.content",
 					Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
 				},

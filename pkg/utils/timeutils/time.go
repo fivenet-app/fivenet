@@ -14,7 +14,6 @@ func EndOfDay(t time.Time) time.Time {
 }
 
 // Based upon https://stackoverflow.com/a/55093788 from `Kamil Dziedzic`
-
 func InTimeSpan(start time.Time, end time.Time, current time.Time) bool {
 	if start.After(end) {
 		return !current.Before(end) && !current.After(start)

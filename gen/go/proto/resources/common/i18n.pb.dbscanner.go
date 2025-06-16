@@ -10,8 +10,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-// Scan implements driver.Valuer for protobuf TranslateItem.
-func (x *TranslateItem) Scan(value any) error {
+// Scan implements driver.Valuer for protobuf I18NItem.
+func (x *I18NItem) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
@@ -21,12 +21,12 @@ func (x *TranslateItem) Scan(value any) error {
 	return nil
 }
 
-// Value marshals the TranslateItem value into driver.Valuer.
-func (x *TranslateItem) Value() (driver.Value, error) {
+// Value marshals the I18NItem value into driver.Valuer.
+func (x *I18NItem) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}
 
-	out, err := protoutils.Marshal(x)
+	out, err := protoutils.MarshalToPJSON(x)
 	return string(out), err
 }

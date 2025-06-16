@@ -174,14 +174,14 @@ func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32,
 	for _, newUser := range targetCitizens {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 			UserId: newUser,
-			Title: &common.TranslateItem{
+			Title: &common.I18NItem{
 				Key: "notifications.calendar.entry_shared_with_you.title",
 				Parameters: map[string]string{
 					"title": entry.Title,
 					"name":  fmt.Sprintf("%s %s", sourceUser.Firstname, sourceUser.Lastname),
 				},
 			},
-			Content: &common.TranslateItem{
+			Content: &common.I18NItem{
 				Key:        "notifications.calendar.entry_shared_with_you.content",
 				Parameters: map[string]string{"title": entry.Title},
 			},

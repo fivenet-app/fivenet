@@ -405,10 +405,10 @@ func (s *Server) createOrUpdateQualificationResult(ctx context.Context, tx qrm.D
 	if status != qualifications.ResultStatus_RESULT_STATUS_PENDING && (result == nil || (result.Status == qualifications.ResultStatus_RESULT_STATUS_PENDING || (result.Score == nil && score != nil))) {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 			UserId: userId,
-			Title: &common.TranslateItem{
+			Title: &common.I18NItem{
 				Key: "notifications.qualifications.result_updated.title",
 			},
-			Content: &common.TranslateItem{
+			Content: &common.I18NItem{
 				Key:        "notifications.qualifications.result_updated.content",
 				Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
 			},

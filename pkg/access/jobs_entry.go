@@ -8,6 +8,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+// GetEntry retrieves a single job access entry by its ID.
 func (a *Jobs[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id uint64) (T, error) {
 	stmt := a.selectTable.
 		SELECT(
@@ -33,6 +34,7 @@ func (a *Jobs[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id ui
 	return dest, nil
 }
 
+// CreateEntry inserts a new job access entry for a given targetId and entry.
 func (a *Jobs[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
 	stmt := a.table.
 		INSERT(
@@ -55,6 +57,7 @@ func (a *Jobs[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, ta
 	return nil
 }
 
+// UpdateEntry updates an existing job access entry for a given targetId and entry.
 func (a *Jobs[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
 	stmt := a.table.
 		UPDATE(
@@ -79,6 +82,7 @@ func (a *Jobs[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, ta
 	return nil
 }
 
+// DeleteEntry deletes a job access entry by its ID and targetId.
 func (a *Jobs[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, targetId uint64, id uint64) error {
 	stmt := a.table.
 		DELETE().

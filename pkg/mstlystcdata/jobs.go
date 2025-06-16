@@ -26,17 +26,24 @@ import (
 	"go.uber.org/zap"
 )
 
+// Jobs provides methods for loading, caching, searching, and updating job data.
 type Jobs struct {
+	// logger for logging
 	logger *zap.Logger
-	db     *sql.DB
+	// db is the database connection
+	db *sql.DB
 
+	// tracer is the OpenTelemetry tracer for this component
 	tracer trace.Tracer
 
+	// Cache is the in-memory and NATS-backed cache for jobs
 	*cache.Cache[jobs.Job, *jobs.Job]
 
+	// updateCallbacks is a list of functions to call after jobs are updated
 	updateCallbacks []updateCallbackFn
 }
 
+// Params contains dependencies for constructing a Jobs instance.
 type Params struct {
 	fx.In
 
@@ -48,13 +55,17 @@ type Params struct {
 	Config *config.Config
 }
 
+// JobsResult is the output struct for NewJobs, providing Jobs and a cronjob register.
 type JobsResult struct {
 	fx.Out
 
-	Jobs         *Jobs
+	// Jobs is the main Jobs instance
+	Jobs *Jobs
+	// CronRegister is used to register cronjobs for job updates
 	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
+// NewJobs creates a new Jobs instance, sets up lifecycle hooks, and returns a JobsResult.
 func NewJobs(p Params) (JobsResult, error) {
 	c := &Jobs{
 		logger: p.Logger,
@@ -98,6 +109,7 @@ func NewJobs(p Params) (JobsResult, error) {
 	}, nil
 }
 
+// RegisterCronjobs registers the job refresh cronjob with the given registry.
 func (c *Jobs) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "mstlystcdata.jobs",
@@ -109,6 +121,7 @@ func (c *Jobs) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) 
 	return nil
 }
 
+// RegisterCronjobHandlers adds the handler for the job refresh cronjob.
 func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {
 	h.Add("mstlystcdata.jobs", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := c.tracer.Start(ctx, "mstlystcdata-jobs")
@@ -131,6 +144,7 @@ func (c *Jobs) RegisterCronjobHandlers(h *croner.Handlers) error {
 	return nil
 }
 
+// loadJobs loads jobs and their grades from the database into the cache.
 func (c *Jobs) loadJobs(ctx context.Context) error {
 	tJobs := tables.Jobs().AS("job")
 	tJobsGrades := tables.JobsGrades().AS("job_grade")
@@ -201,11 +215,13 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 
 type updateCallbackFn func(ctx context.Context) error
 
+// addUpdateCallback registers a callback to be called after jobs are updated.
 // Only call during init/fx startup hooks!
 func (c *Jobs) addUpdateCallback(fn updateCallbackFn) {
 	c.updateCallbacks = append(c.updateCallbacks, fn)
 }
 
+// GetHighestJobGrade returns the highest job grade for a given job, or nil if not found.
 func (c *Jobs) GetHighestJobGrade(job string) *jobs.JobGrade {
 	j, err := c.Get(job)
 	if err != nil {
@@ -219,6 +235,7 @@ func (c *Jobs) GetHighestJobGrade(job string) *jobs.JobGrade {
 	return j.Grades[len(j.Grades)-1]
 }
 
+// JobsSearchParams contains dependencies for constructing a JobsSearch instance.
 type JobsSearchParams struct {
 	fx.In
 
@@ -229,15 +246,21 @@ type JobsSearchParams struct {
 	Jobs *Jobs
 }
 
+// JobsSearch provides full-text search capabilities for jobs using Bleve.
 type JobsSearch struct {
+	// logger for logging
 	logger *zap.Logger
 
-	mu    sync.Mutex
+	// mu protects concurrent access to the Bleve index
+	mu sync.Mutex
+	// index is the Bleve search index
 	index bleve.Index
 
+	// Jobs is the underlying Jobs instance
 	*Jobs
 }
 
+// NewJobsSearch creates a new JobsSearch instance and sets up lifecycle hooks.
 func NewJobsSearch(p JobsSearchParams) (*JobsSearch, error) {
 	c := &JobsSearch{
 		logger: p.Logger,
@@ -267,6 +290,7 @@ func NewJobsSearch(p JobsSearchParams) (*JobsSearch, error) {
 	return c, nil
 }
 
+// newSearchIndex creates a new in-memory Bleve index for jobs.
 func (c *JobsSearch) newSearchIndex() (bleve.Index, error) {
 	indexMapping := bleve.NewIndexMapping()
 
@@ -278,6 +302,7 @@ func (c *JobsSearch) newSearchIndex() (bleve.Index, error) {
 	return bleve.NewMemOnly(indexMapping)
 }
 
+// loadDataIntoIndex loads all jobs from the cache into the Bleve search index.
 func (c *JobsSearch) loadDataIntoIndex(ctx context.Context) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -303,6 +328,7 @@ func (c *JobsSearch) loadDataIntoIndex(ctx context.Context) error {
 	return errs
 }
 
+// Search performs a full-text search for jobs using the given query string and match mode.
 func (c *JobsSearch) Search(ctx context.Context, search string, exactMatch bool) ([]*jobs.Job, error) {
 	var searchQuery query.Query
 	if search == "" {

@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -871,13 +872,13 @@ func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
 				ctx, span := s.tracer.Start(ctx, "centrum.watch-users")
 				defer span.End()
 
-				userMarker, err := event.Value()
-				if err != nil {
-					s.logger.Error("failed to get user marker from event", zap.Error(err))
-					return
-				}
-
 				if event.Operation() == jetstream.KeyValuePut {
+					userMarker, err := event.Value()
+					if err != nil {
+						s.logger.Error("failed to get user marker from event", zap.Error(err))
+						return
+					}
+
 					if _, err := s.tracker.GetUserMapping(userMarker.UserId); err != nil {
 						return
 					}
@@ -893,8 +894,14 @@ func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
 						return
 					}
 				} else if event.Operation() == jetstream.KeyValueDelete || event.Operation() == jetstream.KeyValuePurge {
-					if err := s.handleRemovedUser(ctx, userMarker.Job, userMarker.UserId); err != nil {
-						s.logger.Error("failed to handle removed user", zap.Int32("user_id", userMarker.UserId), zap.Error(err))
+					userId, job, _, err := tracker.DecodeUserMarkerKey(event.Key())
+					if err != nil {
+						s.logger.Error("failed to decode user marker key", zap.Error(err), zap.String("key", string(event.Key())))
+						return
+					}
+
+					if err := s.handleRemovedUser(ctx, job, userId); err != nil {
+						s.logger.Error("failed to handle removed user", zap.Int32("user_id", userId), zap.Error(err))
 					}
 				}
 			}()
@@ -915,10 +922,6 @@ func (s *Housekeeper) handleRemovedUser(ctx context.Context, job string, userId 
 		errs = multierr.Append(errs, fmt.Errorf("failed to get user unit mapping. %w", err))
 		// User not in any unit, nothing to do
 		return errs
-	}
-
-	if err := s.tracker.UnsetUnitIDForUser(ctx, userId); err != nil {
-		errs = multierr.Append(errs, fmt.Errorf("failed to unset user's unit id in removed user unit. %w", err))
 	}
 
 	if um != nil && um.UnitId != nil && *um.UnitId > 0 {

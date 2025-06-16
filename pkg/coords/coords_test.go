@@ -53,11 +53,11 @@ func TestBasicFunctionality(t *testing.T) {
 		Y: -780.0,
 	}
 	// Radius is 1, no points should be returned
-	closeBys := cs.KNearest(point3, 3, nil, 1)
+	closeBys := cs.KNearest(point3.Point(), 3, nil, 1)
 	assert.Nil(t, closeBys)
 	assert.Len(t, closeBys, 0)
 	// Just crank up the radius, so we should get all 2 added points back
-	closeBys = cs.KNearest(point3, 3, nil, 1500)
+	closeBys = cs.KNearest(point3.Point(), 3, nil, 1500)
 	assert.NotNil(t, closeBys)
 	assert.Len(t, closeBys, 2)
 
@@ -68,7 +68,7 @@ func TestBasicFunctionality(t *testing.T) {
 	assert.True(t, result)
 
 	// We should get 2 points back
-	closeBys = cs.KNearest(point3, 3, nil, 150)
+	closeBys = cs.KNearest(point3.Point(), 3, nil, 150)
 	assert.NotNil(t, closeBys)
 	assert.Len(t, closeBys, 2)
 }

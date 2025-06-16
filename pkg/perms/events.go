@@ -109,7 +109,7 @@ func (p *Perms) handleMessageFunc(ctx context.Context) nats.MsgHandler {
 }
 
 func (p *Perms) publishMessage(_ context.Context, subj events.Type, msg proto.Message) error {
-	out, err := protoutils.Marshal(msg)
+	out, err := protoutils.MarshalToPJSON(msg)
 	if err != nil {
 		return fmt.Errorf("failed to marshal data. %w", err)
 	}

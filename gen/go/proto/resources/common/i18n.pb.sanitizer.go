@@ -7,7 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
-func (m *TranslateItem) Sanitize() error {
+func (m *I18NItem) Sanitize() error {
 	if m == nil {
 		return nil
 	}

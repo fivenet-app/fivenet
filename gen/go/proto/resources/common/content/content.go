@@ -97,7 +97,7 @@ func (x *Content) Value() (driver.Value, error) {
 		}
 	}
 
-	return protoutils.Marshal(&Content{
+	return protoutils.MarshalToPJSON(&Content{
 		Version: x.Version,
 		Content: x.Content,
 	})

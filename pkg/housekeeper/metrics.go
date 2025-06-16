@@ -1,3 +1,4 @@
+// Package housekeeper provides metrics for tracking housekeeping job results.
 package housekeeper
 
 import (
@@ -7,6 +8,7 @@ import (
 )
 
 var (
+	// metricSoftDeleteAffectedRows tracks the number of rows affected by the soft delete operation.
 	metricSoftDeleteAffectedRows = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "housekeeper",
@@ -14,6 +16,7 @@ var (
 		Help:      "Number of rows affected by the soft delete operation.",
 	})
 
+	// metricHardDeleteAffectedRows tracks the number of rows affected by the hard delete operation, labeled by table name.
 	metricHardDeleteAffectedRows = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "housekeeper",

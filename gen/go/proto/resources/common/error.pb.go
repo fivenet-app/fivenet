@@ -23,8 +23,8 @@ const (
 
 type Error struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Title         *TranslateItem         `protobuf:"bytes,1,opt,name=title,proto3,oneof" json:"title,omitempty"`
-	Content       *TranslateItem         `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
+	Title         *I18NItem              `protobuf:"bytes,1,opt,name=title,proto3,oneof" json:"title,omitempty"`
+	Content       *I18NItem              `protobuf:"bytes,2,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -59,14 +59,14 @@ func (*Error) Descriptor() ([]byte, []int) {
 	return file_resources_common_error_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *Error) GetTitle() *TranslateItem {
+func (x *Error) GetTitle() *I18NItem {
 	if x != nil {
 		return x.Title
 	}
 	return nil
 }
 
-func (x *Error) GetContent() *TranslateItem {
+func (x *Error) GetContent() *I18NItem {
 	if x != nil {
 		return x.Content
 	}
@@ -77,10 +77,10 @@ var File_resources_common_error_proto protoreflect.FileDescriptor
 
 const file_resources_common_error_proto_rawDesc = "" +
 	"\n" +
-	"\x1cresources/common/error.proto\x12\x10resources.common\x1a\x1bresources/common/i18n.proto\"\x88\x01\n" +
-	"\x05Error\x12:\n" +
-	"\x05title\x18\x01 \x01(\v2\x1f.resources.common.TranslateItemH\x00R\x05title\x88\x01\x01\x129\n" +
-	"\acontent\x18\x02 \x01(\v2\x1f.resources.common.TranslateItemR\acontentB\b\n" +
+	"\x1cresources/common/error.proto\x12\x10resources.common\x1a\x1bresources/common/i18n.proto\"~\n" +
+	"\x05Error\x125\n" +
+	"\x05title\x18\x01 \x01(\v2\x1a.resources.common.I18NItemH\x00R\x05title\x88\x01\x01\x124\n" +
+	"\acontent\x18\x02 \x01(\v2\x1a.resources.common.I18NItemR\acontentB\b\n" +
 	"\x06_titleBKZIgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;commonb\x06proto3"
 
 var (
@@ -97,12 +97,12 @@ func file_resources_common_error_proto_rawDescGZIP() []byte {
 
 var file_resources_common_error_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_resources_common_error_proto_goTypes = []any{
-	(*Error)(nil),         // 0: resources.common.Error
-	(*TranslateItem)(nil), // 1: resources.common.TranslateItem
+	(*Error)(nil),    // 0: resources.common.Error
+	(*I18NItem)(nil), // 1: resources.common.I18NItem
 }
 var file_resources_common_error_proto_depIdxs = []int32{
-	1, // 0: resources.common.Error.title:type_name -> resources.common.TranslateItem
-	1, // 1: resources.common.Error.content:type_name -> resources.common.TranslateItem
+	1, // 0: resources.common.Error.title:type_name -> resources.common.I18NItem
+	1, // 1: resources.common.Error.content:type_name -> resources.common.I18NItem
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

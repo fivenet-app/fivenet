@@ -27,6 +27,6 @@ func (x *FileMeta) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	out, err := protoutils.Marshal(x)
+	out, err := protoutils.MarshalToPJSON(x)
 	return string(out), err
 }

@@ -6,18 +6,18 @@ import (
 )
 
 var (
-	ErrFailedQuery        = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.JobsService.ErrFailedQuery"}, nil)
-	ErrPropsAbsenceDenied = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrPropsAbsenceDenied"}, nil)
-	ErrPropsNoteDenied    = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrPropsNoteDenied"}, nil)
-	ErrPropsLabelsDenied  = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrPropsLabelsDenied"}, nil)
-	ErrPropsNameDenied    = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrPropsNameDenied"}, nil)
-	ErrReasonRequired     = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrReasonRequired"}, nil)
-	ErrNotFoundOrNoPerms  = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrNotFoundOrNoPerms"}, nil)
+	ErrFailedQuery        = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.JobsService.ErrFailedQuery"}, nil)
+	ErrPropsAbsenceDenied = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.JobsService.ErrPropsAbsenceDenied"}, nil)
+	ErrPropsNoteDenied    = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.JobsService.ErrPropsNoteDenied"}, nil)
+	ErrPropsLabelsDenied  = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.JobsService.ErrPropsLabelsDenied"}, nil)
+	ErrPropsNameDenied    = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.JobsService.ErrPropsNameDenied"}, nil)
+	ErrReasonRequired     = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.JobsService.ErrReasonRequired"}, nil)
+	ErrNotFoundOrNoPerms  = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.JobsService.ErrNotFoundOrNoPerms"}, nil)
 
-	ErrAbsenceBeginOutOfRange = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrAbsenceBeginOutOfRange"}, nil)
-	ErrAbsenceEndOutOfRange   = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrAbsenceEndOutOfRange"}, nil)
+	ErrAbsenceBeginOutOfRange = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.JobsService.ErrAbsenceBeginOutOfRange"}, nil)
+	ErrAbsenceEndOutOfRange   = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.JobsService.ErrAbsenceEndOutOfRange"}, nil)
 
-	ErrTimeclockOutOfRange = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrTimeclockOutOfRange"}, nil)
+	ErrTimeclockOutOfRange = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.JobsService.ErrTimeclockOutOfRange"}, nil)
 
-	ErrLabelsNoPerms = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrLabelsNoPerms.content"}, &common.TranslateItem{Key: "errors.JobsService.ErrLabelsNoPerms.title"})
+	ErrLabelsNoPerms = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.JobsService.ErrLabelsNoPerms.content"}, &common.I18NItem{Key: "errors.JobsService.ErrLabelsNoPerms.title"})
 )

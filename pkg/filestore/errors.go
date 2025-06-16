@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	ErrInvalidUploadMeta = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.Filestore.ErrInvalidUploadMeta"}, nil)
+	ErrInvalidUploadMeta = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.Filestore.ErrInvalidUploadMeta"}, nil)
 	// Has param `maxSize`
-	ErrUploadFileTooLarge = common.I18nErr(codes.ResourceExhausted, &common.TranslateItem{Key: "errors.Filestore.ErrUploadFileTooLarge"}, nil)
+	ErrUploadFileTooLarge = common.NewI18nErrFunc(codes.ResourceExhausted, &common.I18NItem{Key: "errors.Filestore.ErrUploadFileTooLarge"}, nil)
 )

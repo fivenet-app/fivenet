@@ -8,6 +8,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+// GetEntry retrieves a single qualification access entry by its ID, joining with the qualifications table for additional info.
 func (a *Qualifications[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id uint64) (T, error) {
 	stmt := a.selectTable.
 		SELECT(
@@ -42,6 +43,7 @@ func (a *Qualifications[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm
 	return dest, nil
 }
 
+// CreateEntry inserts a new qualification access entry for a given targetId and entry.
 func (a *Qualifications[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
 	stmt := a.table.
 		INSERT(
@@ -62,6 +64,7 @@ func (a *Qualifications[U, T, AccessLevel]) CreateEntry(ctx context.Context, tx 
 	return nil
 }
 
+// UpdateEntry updates an existing qualification access entry for a given targetId and entry.
 func (a *Qualifications[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, targetId uint64, entry T) error {
 	stmt := a.table.
 		UPDATE(
@@ -84,6 +87,7 @@ func (a *Qualifications[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx 
 	return nil
 }
 
+// DeleteEntry deletes a qualification access entry by its ID and targetId.
 func (a *Qualifications[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, targetId uint64, id uint64) error {
 	stmt := a.table.
 		DELETE().
@@ -102,6 +106,7 @@ func (a *Qualifications[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx 
 	return nil
 }
 
+// DeleteEntryWithCondition deletes a qualification access entry matching a custom condition and targetId.
 func (a *Qualifications[U, T, AccessLevel]) DeleteEntryWithCondition(ctx context.Context, tx qrm.DB, condition jet.BoolExpression, targetId uint64) error {
 	stmt := a.table.
 		DELETE().

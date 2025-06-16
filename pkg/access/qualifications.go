@@ -12,11 +12,15 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+// tQualifications is the table alias for qualifications.
 var (
 	tQualifications = table.FivenetQualifications.AS("qualification_short")
-	tQualiResults   = table.FivenetQualificationsResults
+	// tQualiResults is the table for qualification results.
+	tQualiResults = table.FivenetQualificationsResults
 )
 
+// QualificationsAccessProtoMessage defines the interface for qualification access proto messages.
+// It extends ProtoMessage and provides accessors for qualification and access fields.
 type QualificationsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]
 
@@ -29,13 +33,19 @@ type QualificationsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	SetAccess(V)
 }
 
+// Qualifications provides access control logic for qualification-based permissions.
 type Qualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutils.ProtoEnum] struct {
-	table         jet.Table
-	columns       *QualificationAccessColumns
-	selectTable   jet.Table
+	// table is the main table for qualification access entries.
+	table jet.Table
+	// columns holds column references for the main table.
+	columns *QualificationAccessColumns
+	// selectTable is the table used for select queries (may be aliased).
+	selectTable jet.Table
+	// selectColumns holds column references for select queries (may be aliased).
 	selectColumns *QualificationAccessColumns
 }
 
+// NewQualifications creates a new Qualifications instance for qualification-based access control.
 func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutils.ProtoEnum](table jet.Table, columns *QualificationAccessColumns, tableAlias jet.Table, columnsAlias *QualificationAccessColumns) *Qualifications[U, T, V] {
 	return &Qualifications[U, T, V]{
 		table:         table,
@@ -45,6 +55,8 @@ func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protou
 	}
 }
 
+// List returns all qualification access entries for a given targetId.
+// If user info is present in context, also joins with qualification results for that user.
 func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
 	tQualiResults := tQualiResults.AS("qualification_result")
 
@@ -116,6 +128,7 @@ func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId 
 	return dest, nil
 }
 
+// Clear deletes all qualification access entries for a given targetId.
 func (a *Qualifications[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (T, error) {
 	stmt := a.table.
 		DELETE().
@@ -133,6 +146,8 @@ func (a *Qualifications[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId
 	return dest, nil
 }
 
+// Compare compares the current qualification access entries in the database with the provided input.
+// Returns slices of entries to create, update, and delete.
 func (a *Qualifications[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64, in []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
 	current, err := a.List(ctx, tx, targetId)
 	if err != nil {
@@ -143,6 +158,8 @@ func (a *Qualifications[U, T, V]) Compare(ctx context.Context, tx qrm.DB, target
 	return toCreate, toUpdate, toDelete, nil
 }
 
+// compare performs a comparison between current and input qualification access entries.
+// Returns entries to create, update, and delete. Handles matching by qualification ID and access level.
 func (a *Qualifications[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, toDelete []T) {
 	toCreate = []T{}
 	toUpdate = []T{}
@@ -171,7 +188,7 @@ func (a *Qualifications[U, T, V]) compare(current, in []T) (toCreate []T, toUpda
 				foundIdx = i
 				break
 			}
-			// No match in incoming job access, needs to be deleted
+			// No match in incoming qualification access, needs to be deleted
 			if found == nil {
 				toDelete = append(toDelete, cj)
 				continue
@@ -201,6 +218,8 @@ func (a *Qualifications[U, T, V]) compare(current, in []T) (toCreate []T, toUpda
 	return
 }
 
+// HandleAccessChanges applies the necessary create, update, and delete operations for qualification access entries.
+// Returns the created, updated, and deleted entries, or an error if any operation fails.
 func (a *Qualifications[U, T, AccessLevel]) HandleAccessChanges(ctx context.Context, tx qrm.DB, targetId uint64, access []T) ([]T, []T, []T, error) {
 	toCreate, toUpdate, toDelete, err := a.Compare(ctx, tx, targetId, access)
 	if err != nil {

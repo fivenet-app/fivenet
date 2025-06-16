@@ -6,6 +6,7 @@ import (
 	"unicode/utf8"
 )
 
+// StringFirstN returns the first n runes of a string, handling multi-byte characters safely.
 // Taken from "KAdot" here: https://stackoverflow.com/a/41604514
 func StringFirstN(s string, n int) string {
 	i := 0
@@ -18,6 +19,7 @@ func StringFirstN(s string, n int) string {
 	return s
 }
 
+// StringFirstToLower lowercases the first rune of a string, if possible.
 // Taken from "rocka2q" here: https://stackoverflow.com/a/75989905
 func StringFirstToLower(s string) string {
 	r, size := utf8.DecodeRuneInString(s)
@@ -31,12 +33,14 @@ func StringFirstToLower(s string) string {
 	return string(lc) + s[size:]
 }
 
+// commonTitlePrefixes is a list of common title prefixes to remove from names.
 var commonTitlePrefixes = []string{
 	"prof.", "prof ",
 	"dr.", "dr ",
 	"sr.", "sr ",
 }
 
+// RemoveTitlePrefixes removes known title prefixes from the start of a string.
 func RemoveTitlePrefixes(s string) string {
 	s = strings.TrimSpace(s)
 	prefixes := commonTitlePrefixes

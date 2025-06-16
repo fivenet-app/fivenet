@@ -109,8 +109,8 @@
     - [Error](#resources-common-Error)
   
 - [resources/common/i18n.proto](#resources_common_i18n-proto)
-    - [TranslateItem](#resources-common-TranslateItem)
-    - [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry)
+    - [I18NItem](#resources-common-I18NItem)
+    - [I18NItem.ParametersEntry](#resources-common-I18NItem-ParametersEntry)
   
 - [resources/common/uuid.proto](#resources_common_uuid-proto)
     - [UUID](#resources-common-UUID)
@@ -231,23 +231,6 @@
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
     - [LawBook](#resources-laws-LawBook)
-  
-- [resources/livemap/coords.proto](#resources_livemap_coords-proto)
-    - [Coords](#resources-livemap-Coords)
-  
-- [resources/livemap/marker_marker.proto](#resources_livemap_marker_marker-proto)
-    - [CircleMarker](#resources-livemap-CircleMarker)
-    - [IconMarker](#resources-livemap-IconMarker)
-    - [MarkerData](#resources-livemap-MarkerData)
-    - [MarkerMarker](#resources-livemap-MarkerMarker)
-  
-    - [MarkerType](#resources-livemap-MarkerType)
-  
-- [resources/livemap/user_marker.proto](#resources_livemap_user_marker-proto)
-    - [UserMarker](#resources-livemap-UserMarker)
-  
-- [resources/livemap/heatmap.proto](#resources_livemap_heatmap-proto)
-    - [HeatmapEntry](#resources-livemap-HeatmapEntry)
   
 - [resources/notifications/notifications.proto](#resources_notifications_notifications-proto)
     - [CalendarData](#resources-notifications-CalendarData)
@@ -537,6 +520,23 @@
 - [resources/file/meta.proto](#resources_file_meta-proto)
     - [FileMeta](#resources-file-FileMeta)
     - [ImageMeta](#resources-file-ImageMeta)
+  
+- [resources/livemap/coords.proto](#resources_livemap_coords-proto)
+    - [Coords](#resources-livemap-Coords)
+  
+- [resources/livemap/heatmap.proto](#resources_livemap_heatmap-proto)
+    - [HeatmapEntry](#resources-livemap-HeatmapEntry)
+  
+- [resources/livemap/marker_marker.proto](#resources_livemap_marker_marker-proto)
+    - [CircleMarker](#resources-livemap-CircleMarker)
+    - [IconMarker](#resources-livemap-IconMarker)
+    - [MarkerData](#resources-livemap-MarkerData)
+    - [MarkerMarker](#resources-livemap-MarkerMarker)
+  
+    - [MarkerType](#resources-livemap-MarkerType)
+  
+- [resources/livemap/user_marker.proto](#resources_livemap_user_marker-proto)
+    - [UserMarker](#resources-livemap-UserMarker)
   
 - [resources/tracker/mapping.proto](#resources_tracker_mapping-proto)
     - [UserMapping](#resources-tracker-UserMapping)
@@ -989,6 +989,7 @@
     - [Snapshot](#services-livemap-Snapshot)
     - [StreamRequest](#services-livemap-StreamRequest)
     - [StreamResponse](#services-livemap-StreamResponse)
+    - [UserDelete](#services-livemap-UserDelete)
   
     - [LivemapService](#services-livemap-LivemapService)
   
@@ -2455,8 +2456,8 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `title` | [TranslateItem](#resources-common-TranslateItem) | optional |  |
-| `content` | [TranslateItem](#resources-common-TranslateItem) |  |  |
+| `title` | [I18NItem](#resources-common-I18NItem) | optional |  |
+| `content` | [I18NItem](#resources-common-I18NItem) |  |  |
 
 
 
@@ -2479,25 +2480,25 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
-<a name="resources-common-TranslateItem"></a>
+<a name="resources-common-I18NItem"></a>
 
-### TranslateItem
+### I18NItem
 Wrapped translated message for the client @dbscanner: json
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `key` | [string](#string) |  | @sanitize: method=StripTags |
-| `parameters` | [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry) | repeated | @sanitize: method=StripTags |
+| `parameters` | [I18NItem.ParametersEntry](#resources-common-I18NItem-ParametersEntry) | repeated | @sanitize: method=StripTags |
 
 
 
 
 
 
-<a name="resources-common-TranslateItem-ParametersEntry"></a>
+<a name="resources-common-I18NItem-ParametersEntry"></a>
 
-### TranslateItem.ParametersEntry
+### I18NItem.ParametersEntry
 
 
 
@@ -4265,222 +4266,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_livemap_coords-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/livemap/coords.proto
-
-
-
-<a name="resources-livemap-Coords"></a>
-
-### Coords
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `x` | [double](#double) |  |  |
-| `y` | [double](#double) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_livemap_marker_marker-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/livemap/marker_marker.proto
-
-
-
-<a name="resources-livemap-CircleMarker"></a>
-
-### CircleMarker
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `radius` | [int32](#int32) |  |  |
-| `opacity` | [float](#float) | optional |  |
-
-
-
-
-
-
-<a name="resources-livemap-IconMarker"></a>
-
-### IconMarker
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `icon` | [string](#string) |  | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-livemap-MarkerData"></a>
-
-### MarkerData
-@dbscanner
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `circle` | [CircleMarker](#resources-livemap-CircleMarker) |  |  |
-| `icon` | [IconMarker](#resources-livemap-IconMarker) |  |  |
-
-
-
-
-
-
-<a name="resources-livemap-MarkerMarker"></a>
-
-### MarkerMarker
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `x` | [double](#double) |  |  |
-| `y` | [double](#double) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `name` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize |
-| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) |  |  |
-| `type` | [MarkerType](#resources-livemap-MarkerType) |  | @gotags: alias:"markerType" |
-| `data` | [MarkerData](#resources-livemap-MarkerData) |  | @gotags: alias:"markerData" |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-livemap-MarkerType"></a>
-
-### MarkerType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `MARKER_TYPE_UNSPECIFIED` | 0 |  |
-| `MARKER_TYPE_DOT` | 1 |  |
-| `MARKER_TYPE_CIRCLE` | 2 |  |
-| `MARKER_TYPE_ICON` | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_livemap_user_marker-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/livemap/user_marker.proto
-
-
-
-<a name="resources-livemap-UserMarker"></a>
-
-### UserMarker
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `x` | [double](#double) |  |  |
-| `y` | [double](#double) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) |  |  |
-| `job_grade` | [int32](#int32) | optional |  |
-| `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"user" |
-| `unit_id` | [uint64](#uint64) | optional |  |
-| `unit` | [resources.centrum.Unit](#resources-centrum-Unit) | optional |  |
-| `hidden` | [bool](#bool) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_livemap_heatmap-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/livemap/heatmap.proto
-
-
-
-<a name="resources-livemap-HeatmapEntry"></a>
-
-### HeatmapEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `x` | [double](#double) |  |  |
-| `y` | [double](#double) |  |  |
-| `w` | [double](#double) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_notifications_notifications-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4550,9 +4335,9 @@ Dummy - DO NOT USE!
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `read_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `user_id` | [int32](#int32) |  |  |
-| `title` | [resources.common.TranslateItem](#resources-common-TranslateItem) |  | @sanitize |
+| `title` | [resources.common.I18NItem](#resources-common-I18NItem) |  | @sanitize |
 | `type` | [NotificationType](#resources-notifications-NotificationType) |  |  |
-| `content` | [resources.common.TranslateItem](#resources-common-TranslateItem) |  | @sanitize |
+| `content` | [resources.common.I18NItem](#resources-common-I18NItem) |  | @sanitize |
 | `category` | [NotificationCategory](#resources-notifications-NotificationCategory) |  |  |
 | `data` | [Data](#resources-notifications-Data) | optional |  |
 | `starred` | [bool](#bool) | optional |  |
@@ -8584,6 +8369,222 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----- | ---- | ----- | ----------- |
 | `width` | [int64](#int64) |  |  |
 | `height` | [int64](#int64) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_livemap_coords-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/livemap/coords.proto
+
+
+
+<a name="resources-livemap-Coords"></a>
+
+### Coords
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_livemap_heatmap-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/livemap/heatmap.proto
+
+
+
+<a name="resources-livemap-HeatmapEntry"></a>
+
+### HeatmapEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+| `w` | [double](#double) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_livemap_marker_marker-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/livemap/marker_marker.proto
+
+
+
+<a name="resources-livemap-CircleMarker"></a>
+
+### CircleMarker
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `radius` | [int32](#int32) |  |  |
+| `opacity` | [float](#float) | optional |  |
+
+
+
+
+
+
+<a name="resources-livemap-IconMarker"></a>
+
+### IconMarker
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `icon` | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-livemap-MarkerData"></a>
+
+### MarkerData
+@dbscanner
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `circle` | [CircleMarker](#resources-livemap-CircleMarker) |  |  |
+| `icon` | [IconMarker](#resources-livemap-IconMarker) |  |  |
+
+
+
+
+
+
+<a name="resources-livemap-MarkerMarker"></a>
+
+### MarkerMarker
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `name` | [string](#string) |  | @sanitize |
+| `description` | [string](#string) | optional | @sanitize |
+| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) |  |  |
+| `type` | [MarkerType](#resources-livemap-MarkerType) |  | @gotags: alias:"markerType" |
+| `data` | [MarkerData](#resources-livemap-MarkerData) |  | @gotags: alias:"markerData" |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-livemap-MarkerType"></a>
+
+### MarkerType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `MARKER_TYPE_UNSPECIFIED` | 0 |  |
+| `MARKER_TYPE_DOT` | 1 |  |
+| `MARKER_TYPE_CIRCLE` | 2 |  |
+| `MARKER_TYPE_ICON` | 3 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_livemap_user_marker-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/livemap/user_marker.proto
+
+
+
+<a name="resources-livemap-UserMarker"></a>
+
+### UserMarker
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) |  |  |
+| `job_grade` | [int32](#int32) | optional |  |
+| `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"user" |
+| `unit_id` | [uint64](#uint64) | optional |  |
+| `unit` | [resources.centrum.Unit](#resources-centrum-Unit) | optional |  |
+| `hidden` | [bool](#bool) |  |  |
 
 
 
@@ -14870,7 +14871,23 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `markers` | [MarkerMarkersUpdates](#services-livemap-MarkerMarkersUpdates) |  |  |
 | `snapshot` | [Snapshot](#services-livemap-Snapshot) |  |  |
 | `user_update` | [resources.livemap.UserMarker](#resources-livemap-UserMarker) |  |  |
-| `user_delete` | [int32](#int32) |  |  |
+| `user_delete` | [UserDelete](#services-livemap-UserDelete) |  |  |
+
+
+
+
+
+
+<a name="services-livemap-UserDelete"></a>
+
+### UserDelete
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [int32](#int32) |  | The user ID of the user that was deleted. |
+| `job` | [string](#string) |  | The job of the user that was deleted. |
 
 
 

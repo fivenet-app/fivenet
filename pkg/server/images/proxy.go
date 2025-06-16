@@ -11,12 +11,16 @@ import (
 	"willnorris.com/go/imageproxy"
 )
 
+// ImageProxy provides an HTTP image proxy handler using the imageproxy package.
 type ImageProxy struct {
+	// logger is used for logging proxy activity and errors.
 	logger *zap.Logger
 
+	// config holds the image proxy configuration options.
 	config config.ImageProxy
 }
 
+// New creates a new ImageProxy instance with the provided logger and configuration.
 func New(logger *zap.Logger, cfg *config.Config) *ImageProxy {
 	ip := &ImageProxy{
 		logger: logger,
@@ -26,12 +30,15 @@ func New(logger *zap.Logger, cfg *config.Config) *ImageProxy {
 	return ip
 }
 
+// RegisterHTTP registers the image proxy HTTP handler on the provided Gin engine.
+// If the proxy is not enabled in the config, this function does nothing.
+// The handler proxies image requests and applies restrictions from the config.
 func (p *ImageProxy) RegisterHTTP(e *gin.Engine) {
 	if !p.config.Enabled {
 		return
 	}
 
-	// Image Proxy
+	// Image Proxy setup
 	proxy := imageproxy.NewProxy(http.DefaultTransport, imageproxy.NopCache)
 	proxy.Logger = zap.NewStdLog(p.logger.Named("image_proxy"))
 

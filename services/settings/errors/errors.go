@@ -6,14 +6,14 @@ import (
 )
 
 var (
-	ErrFailedQuery       = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.SettingsService.ErrFailedQuery"}, nil)
-	ErrInvalidRequest    = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrInvalidRequest"}, nil)
-	ErrNoPermission      = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.SettingsService.ErrNoPermission"}, nil)
-	ErrRoleAlreadyExists = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrRoleAlreadyExists"}, nil)
-	ErrOwnRoleDeletion   = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrOwnRoleDeletion"}, nil)
-	ErrInvalidAttrs      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrInvalidAttrs"}, nil)
-	ErrInvalidPerms      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrInvalidPerms"}, nil)
+	ErrFailedQuery       = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.SettingsService.ErrFailedQuery"}, nil)
+	ErrInvalidRequest    = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.SettingsService.ErrInvalidRequest"}, nil)
+	ErrNoPermission      = common.NewI18nErr(codes.PermissionDenied, &common.I18NItem{Key: "errors.SettingsService.ErrNoPermission"}, nil)
+	ErrRoleAlreadyExists = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.SettingsService.ErrRoleAlreadyExists"}, nil)
+	ErrOwnRoleDeletion   = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.SettingsService.ErrOwnRoleDeletion"}, nil)
+	ErrInvalidAttrs      = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.SettingsService.ErrInvalidAttrs"}, nil)
+	ErrInvalidPerms      = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.SettingsService.ErrInvalidPerms"}, nil)
 
-	ErrDiscordNotEnabled      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrDiscordNotEnabled"}, nil)
-	ErrDiscordConnectRequired = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.content"}, &common.TranslateItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.title"})
+	ErrDiscordNotEnabled      = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.SettingsService.ErrDiscordNotEnabled"}, nil)
+	ErrDiscordConnectRequired = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.content"}, &common.I18NItem{Key: "errors.SettingsService.ErrDiscordConnectRequired.title"})
 )

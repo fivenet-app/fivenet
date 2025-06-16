@@ -10,26 +10,26 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { TranslateItem } from "./i18n";
+import { I18NItem } from "./i18n";
 /**
  * @generated from protobuf message resources.common.Error
  */
 export interface Error {
     /**
-     * @generated from protobuf field: optional resources.common.TranslateItem title = 1
+     * @generated from protobuf field: optional resources.common.I18NItem title = 1
      */
-    title?: TranslateItem;
+    title?: I18NItem;
     /**
-     * @generated from protobuf field: resources.common.TranslateItem content = 2
+     * @generated from protobuf field: resources.common.I18NItem content = 2
      */
-    content?: TranslateItem;
+    content?: I18NItem;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Error$Type extends MessageType<Error> {
     constructor() {
         super("resources.common.Error", [
-            { no: 1, name: "title", kind: "message", T: () => TranslateItem },
-            { no: 2, name: "content", kind: "message", T: () => TranslateItem }
+            { no: 1, name: "title", kind: "message", T: () => I18NItem },
+            { no: 2, name: "content", kind: "message", T: () => I18NItem }
         ]);
     }
     create(value?: PartialMessage<Error>): Error {
@@ -43,11 +43,11 @@ class Error$Type extends MessageType<Error> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional resources.common.TranslateItem title */ 1:
-                    message.title = TranslateItem.internalBinaryRead(reader, reader.uint32(), options, message.title);
+                case /* optional resources.common.I18NItem title */ 1:
+                    message.title = I18NItem.internalBinaryRead(reader, reader.uint32(), options, message.title);
                     break;
-                case /* resources.common.TranslateItem content */ 2:
-                    message.content = TranslateItem.internalBinaryRead(reader, reader.uint32(), options, message.content);
+                case /* resources.common.I18NItem content */ 2:
+                    message.content = I18NItem.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -61,12 +61,12 @@ class Error$Type extends MessageType<Error> {
         return message;
     }
     internalBinaryWrite(message: Error, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional resources.common.TranslateItem title = 1; */
+        /* optional resources.common.I18NItem title = 1; */
         if (message.title)
-            TranslateItem.internalBinaryWrite(message.title, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.common.TranslateItem content = 2; */
+            I18NItem.internalBinaryWrite(message.title, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.common.I18NItem content = 2; */
         if (message.content)
-            TranslateItem.internalBinaryWrite(message.content, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            I18NItem.internalBinaryWrite(message.content, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -127,9 +127,7 @@ export const useLivemapStore = defineStore(
                         // Handle snapshot response
                         const snapshot = resp.data.snapshot;
 
-                        // Clear existing user markers
                         markersUsers.value.clear();
-
                         // Add all markers from the snapshot
                         snapshot.markers.forEach((marker: UserMarker) => {
                             addOrUpdateUserMarker(marker);
@@ -138,7 +136,14 @@ export const useLivemapStore = defineStore(
                         initiated.value = true;
                     } else if (resp.data.oneofKind === 'userDelete') {
                         // Handle user deletion
-                        const userId = resp.data.userDelete;
+                        const userDelete = resp.data.userDelete;
+                        const userId = userDelete.id;
+
+                        const um = markersUsers.value.get(userId);
+                        if (!um || um.job !== userDelete.job) {
+                            continue; // Skip if the user marker does not match the job
+                        }
+
                         markersUsers.value.delete(userId);
 
                         // If the deleted user was selected, clear the selection
@@ -162,6 +167,11 @@ export const useLivemapStore = defineStore(
                         }
                     } else {
                         logger.warn('Unknown data received - oneofKind:' + resp.data.oneofKind);
+                    }
+
+                    if (!userOnDuty.value) {
+                        if (markersUsers.value.size > 0) markersUsers.value.clear();
+                        logger.info('User is not on duty, clearing user markers');
                     }
                 }
             } catch (e) {

@@ -39,7 +39,7 @@ func (c *SyncStatusCmd) Run(_ *kong.Context) error {
 		return err
 	}
 
-	out, err := protoutils.MarshalPretty(resp)
+	out, err := protoutils.MarshalToPrettyJSON(resp)
 	if err != nil {
 		return err
 	}

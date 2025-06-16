@@ -12,32 +12,37 @@ import (
 )
 
 var (
-	ErrNotFound    = errors.New("file not found")
+	// ErrNotFound is returned when a file is not found in storage.
+	ErrNotFound = errors.New("file not found")
+	// ErrInvalidPath is returned when a file path is invalid.
 	ErrInvalidPath = errors.New("invalid file path")
 )
 
+// IStorage defines the interface for a storage backend.
 type IStorage interface {
-	// Return storage with prefix transparently added to the calls
+	// WithPrefix returns a storage instance with the given prefix transparently added to all calls.
 	WithPrefix(prefix string) (IStorage, error)
 
-	// Get return object contents and info
+	// Get returns the object contents and info for the given key.
 	Get(ctx context.Context, key string) (IObject, IObjectInfo, error)
-	// Return object info
+	// Stat returns object info for the given key.
 	Stat(ctx context.Context, key string) (IObjectInfo, error)
-	// Upload file, size and content type must be accurate
+	// Put uploads a file; size and content type must be accurate.
 	Put(ctx context.Context, key string, reader io.Reader, size int64, contentType string) (string, error)
-	// Delete file
+	// Delete removes a file from storage.
 	Delete(ctx context.Context, key string) error
 
-	// List files by offset and page size
+	// List returns a list of files by offset and page size.
 	List(ctx context.Context, key string, offset int, pageSize int) ([]*FileInfo, error)
 }
 
+// IObject defines the interface for a storage object, supporting read, seek, and random access.
 type IObject interface {
 	io.ReadSeekCloser
 	io.ReaderAt
 }
 
+// IObjectInfo defines the interface for object metadata in storage.
 type IObjectInfo interface {
 	GetName() string
 	GetExtension() string
@@ -47,39 +52,53 @@ type IObjectInfo interface {
 	GetExpiration() time.Time
 }
 
+// ObjectInfo implements IObjectInfo and holds metadata about a storage object.
 type ObjectInfo struct {
-	name         string
-	extension    string
-	contentType  string
-	size         int64
+	// The object's name
+	name string
+	// The object's file extension
+	extension string
+	// The object's MIME content type
+	contentType string
+	// The object's size in bytes
+	size int64
+	// The object's last modification time
 	lastModified time.Time
-	expiration   time.Time
+	// The object's expiration time
+	expiration time.Time
 }
 
+// GetName returns the object's name.
 func (o *ObjectInfo) GetName() string {
 	return o.name
 }
 
+// GetExtension returns the object's file extension.
 func (o *ObjectInfo) GetExtension() string {
 	return o.extension
 }
 
+// GetContentType returns the object's MIME content type.
 func (o *ObjectInfo) GetContentType() string {
 	return o.contentType
 }
 
+// GetSize returns the object's size in bytes.
 func (o *ObjectInfo) GetSize() int64 {
 	return o.size
 }
 
+// GetExpiration returns the object's expiration time.
 func (o *ObjectInfo) GetExpiration() time.Time {
 	return o.expiration
 }
 
+// GetLastModified returns the object's last modification time.
 func (o *ObjectInfo) GetLastModified() time.Time {
 	return o.lastModified
 }
 
+// GetFileInfo returns a FileInfo struct populated from the ObjectInfo.
 func (o *ObjectInfo) GetFileInfo() *FileInfo {
 	return &FileInfo{
 		Name:         o.name,
@@ -89,13 +108,20 @@ func (o *ObjectInfo) GetFileInfo() *FileInfo {
 	}
 }
 
+// FileInfo holds basic file metadata for listing operations.
 type FileInfo struct {
-	Name         string
+	// The file's name
+	Name string
+	// The file's last modification time
 	LastModified time.Time
-	Size         int64
-	ContentType  string
+	// The file's size in bytes
+	Size int64
+	// The file's MIME content type
+	ContentType string
 }
 
+// GetFilename generates a deterministic storage filename based on user ID, file name, and extension.
+// The file is sharded by a hash of the file name for better distribution.
 func GetFilename(uid string, fileName string, fileExtension string) string {
 	hasher := sha1.New()
 	hasher.Write([]byte(fileName))
@@ -106,6 +132,8 @@ func GetFilename(uid string, fileName string, fileExtension string) string {
 	return fmt.Sprintf("%s/%s-%s.%s", directory, uid, fileHash, fileExtension)
 }
 
+// FileNameSplitter splits a file name for sharding/storage purposes.
+// If the file name is less than 2 characters, it is padded with '0'.
 func FileNameSplitter(fileName string) string {
 	if len(fileName) < 2 {
 		fileName = "0" + fileName

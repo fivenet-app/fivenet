@@ -16,5 +16,9 @@ func (s *State) GetDispatchLocations(job string) (*coords.Coords[*centrum.Dispat
 	defer s.dispatchLocationsMutex.RUnlock()
 
 	locations, ok := s.dispatchLocations[job]
+	if !ok {
+		locations = coords.New[*centrum.Dispatch]()
+		s.dispatchLocations[job] = locations
+	}
 	return locations, ok
 }

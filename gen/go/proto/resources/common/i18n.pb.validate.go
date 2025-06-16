@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on TranslateItem with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on I18NItem with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *TranslateItem) Validate() error {
+func (m *I18NItem) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on TranslateItem with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in TranslateItemMultiError, or
-// nil if none found.
-func (m *TranslateItem) ValidateAll() error {
+// ValidateAll checks the field values on I18NItem with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in I18NItemMultiError, or nil
+// if none found.
+func (m *I18NItem) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *TranslateItem) validate(all bool) error {
+func (m *I18NItem) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -62,19 +62,18 @@ func (m *TranslateItem) validate(all bool) error {
 	// no validation rules for Parameters
 
 	if len(errors) > 0 {
-		return TranslateItemMultiError(errors)
+		return I18NItemMultiError(errors)
 	}
 
 	return nil
 }
 
-// TranslateItemMultiError is an error wrapping multiple validation errors
-// returned by TranslateItem.ValidateAll() if the designated constraints
-// aren't met.
-type TranslateItemMultiError []error
+// I18NItemMultiError is an error wrapping multiple validation errors returned
+// by I18NItem.ValidateAll() if the designated constraints aren't met.
+type I18NItemMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m TranslateItemMultiError) Error() string {
+func (m I18NItemMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -83,11 +82,11 @@ func (m TranslateItemMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m TranslateItemMultiError) AllErrors() []error { return m }
+func (m I18NItemMultiError) AllErrors() []error { return m }
 
-// TranslateItemValidationError is the validation error returned by
-// TranslateItem.Validate if the designated constraints aren't met.
-type TranslateItemValidationError struct {
+// I18NItemValidationError is the validation error returned by
+// I18NItem.Validate if the designated constraints aren't met.
+type I18NItemValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -95,22 +94,22 @@ type TranslateItemValidationError struct {
 }
 
 // Field function returns field value.
-func (e TranslateItemValidationError) Field() string { return e.field }
+func (e I18NItemValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e TranslateItemValidationError) Reason() string { return e.reason }
+func (e I18NItemValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e TranslateItemValidationError) Cause() error { return e.cause }
+func (e I18NItemValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e TranslateItemValidationError) Key() bool { return e.key }
+func (e I18NItemValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e TranslateItemValidationError) ErrorName() string { return "TranslateItemValidationError" }
+func (e I18NItemValidationError) ErrorName() string { return "I18NItemValidationError" }
 
 // Error satisfies the builtin error interface
-func (e TranslateItemValidationError) Error() string {
+func (e I18NItemValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -122,14 +121,14 @@ func (e TranslateItemValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sTranslateItem.%s: %s%s",
+		"invalid %sI18NItem.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = TranslateItemValidationError{}
+var _ error = I18NItemValidationError{}
 
 var _ interface {
 	Field() string
@@ -137,4 +136,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = TranslateItemValidationError{}
+} = I18NItemValidationError{}

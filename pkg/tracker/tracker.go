@@ -43,8 +43,8 @@ type Tracker struct {
 
 	jsCons jetstream.ConsumeContext
 
+	userByIDStore     *store.Store[livemap.UserMarker, *livemap.UserMarker]
 	userLocStore      *store.Store[livemap.UserMarker, *livemap.UserMarker]
-	byIDStore         *store.Store[livemap.UserMarker, *livemap.UserMarker]
 	userMappingsStore *store.Store[tracker.UserMapping, *tracker.UserMapping]
 }
 
@@ -80,34 +80,9 @@ func New(p Params) (ITracker, error) {
 		}
 		t.userMappingsStore = userMappingsStore
 
-		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
-			ctxStartup, p.Logger, p.JS, BucketUserLocByID,
-		)
-		if err != nil {
-			return err
-		}
-		if err := byID.Start(ctxCancel, false); err != nil {
-			return err
-		}
-		t.byIDStore = byID
-
 		userLocStore, err := store.New(ctxStartup, p.Logger, p.JS, BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 			store.WithIgnoredKeys[livemap.UserMarker, *livemap.UserMarker]("_snapshot"),
-			store.WithOnUpdateFn(func(_ *store.Store[livemap.UserMarker, *livemap.UserMarker],
-				um *livemap.UserMarker,
-			) (*livemap.UserMarker, error) {
-				if um == nil {
-					return nil, nil
-				}
-
-				// Upsert mapping (unit_id may be 0 = no unit)
-				if err := t.SetUserMappingForUser(ctxCancel, um.UserId, um.UnitId); err != nil {
-					return nil, fmt.Errorf("failed to upsert user unit mapping. %w", err)
-				}
-
-				return um, nil
-			}),
 		)
 		if err != nil {
 			return err
@@ -116,6 +91,18 @@ func New(p Params) (ITracker, error) {
 			return err
 		}
 		t.userLocStore = userLocStore
+
+		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+			ctxStartup, p.Logger, p.JS, BucketUserLocByID,
+			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+		)
+		if err != nil {
+			return err
+		}
+		if err := byID.Start(ctxCancel, false); err != nil {
+			return err
+		}
+		t.userByIDStore = byID
 
 		return nil
 	}))
@@ -159,16 +146,16 @@ func (t *Tracker) ListTrackedJobs() []string {
 }
 
 func (t *Tracker) GetUserMarkerById(id int32) (*livemap.UserMarker, bool) {
-	mapping, err := t.byIDStore.Get(fmt.Sprint(id))
+	marker, err := t.userByIDStore.Get(fmt.Sprint(id))
 	if err != nil {
 		return nil, false
 	}
-	return mapping, err == nil
+	return marker, err == nil
 }
 
 func (t *Tracker) IsUserOnDuty(id int32) bool {
-	_, err := t.userMappingsStore.Get(fmt.Sprint(id))
-	return err == nil
+	um, err := t.userByIDStore.Get(fmt.Sprint(id))
+	return err == nil && um != nil && !um.Hidden
 }
 
 func (s *Tracker) Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {

@@ -37,7 +37,7 @@ import (
 	"google.golang.org/grpc/stats/opentelemetry"
 )
 
-var ErrInternalServer = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.general.internal_error.content"}, &common.TranslateItem{Key: "errors.general.internal_error.title"})
+var ErrInternalServer = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.general.internal_error.content"}, &common.I18NItem{Key: "errors.general.internal_error.title"})
 
 // Setup metric for panic recoveries
 var panicsTotal = promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{

@@ -6,6 +6,8 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+// PrepareDSN parses a MySQL DSN string, applies additional options, and ensures parse time is enabled.
+// Returns the formatted DSN string or an error if parsing or applying options fails.
 func PrepareDSN(inDSN string, opts ...mysql.Option) (string, error) {
 	dsn, err := mysql.ParseDSN(inDSN)
 	if err != nil {
@@ -22,6 +24,7 @@ func PrepareDSN(inDSN string, opts ...mysql.Option) (string, error) {
 	return dsn.FormatDSN(), nil
 }
 
+// WithMultiStatements returns a MySQL config option that enables multi-statement execution.
 func WithMultiStatements() func(c *mysql.Config) error {
 	return func(c *mysql.Config) error {
 		c.MultiStatements = true

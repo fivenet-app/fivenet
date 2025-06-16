@@ -12,19 +12,25 @@ import (
 	"go.uber.org/fx"
 )
 
+// Module is the Fx module for providing the application config.
 var Module = fx.Module("config",
 	fx.Provide(
 		Load,
 	),
 )
 
+// Result is the output struct for the Load function, containing the main config and Discord config.
 type Result struct {
 	fx.Out
 
-	Config        *Config
+	// Config is the main application configuration
+	Config *Config
+	// DiscordConfig is a pointer to the Discord configuration
 	DiscordConfig *Discord
 }
 
+// Load reads the application configuration from file and environment variables, sets defaults, and returns a Result.
+// Returns an error if the config cannot be loaded, parsed, or defaults cannot be set.
 func Load() (Result, error) {
 	v := viper.NewWithOptions(viper.ExperimentalBindStruct())
 	// Viper config reading setup
@@ -53,7 +59,6 @@ func Load() (Result, error) {
 		return res, fmt.Errorf("failed to set config defaults. %w", err)
 	}
 	res.Config = c
-
 	res.DiscordConfig = &c.Discord
 
 	if err := v.Unmarshal(c); err != nil {
@@ -82,10 +87,13 @@ func Load() (Result, error) {
 	return res, nil
 }
 
+// TestModule is the Fx module for providing a test config.
 var TestModule = fx.Module("config_test",
 	fx.Provide(LoadTestConfig),
 )
 
+// LoadTestConfig returns a config with defaults set for testing.
+// Sets audit log retention days high so they won't run in "short" tests.
 func LoadTestConfig() (*Config, error) {
 	c := &Config{}
 	if err := defaults.Set(c); err != nil {

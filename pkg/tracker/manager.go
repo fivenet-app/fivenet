@@ -22,7 +22,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -57,8 +56,8 @@ type Manager struct {
 	refreshTicker  *time.Ticker
 	snapshotTicker *time.Ticker
 
+	userByIDStore     *store.Store[livemap.UserMarker, *livemap.UserMarker]
 	userLocStore      *store.Store[livemap.UserMarker, *livemap.UserMarker]
-	byIDStore         *store.Store[livemap.UserMarker, *livemap.UserMarker]
 	userMappingsStore *store.Store[tracker.UserMapping, *tracker.UserMapping]
 }
 
@@ -126,22 +125,22 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		}
 		m.userMappingsStore = userMappingsStore
 
-		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
-			ctxStartup, p.Logger, p.JS, BucketUserLocByID,
-			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
-		)
-		if err != nil {
-			return fmt.Errorf("failed to create user location by ID store. %w", err)
-		}
-		if err := byID.Start(ctxCancel, false); err != nil {
-			return fmt.Errorf("failed to start user location by ID store. %w", err)
-		}
-		m.byIDStore = byID
-
 		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](
 			ctxStartup, p.Logger, p.JS, BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 			store.WithIgnoredKeys[livemap.UserMarker, *livemap.UserMarker]("_snapshot"),
+		)
+		if err != nil {
+			return fmt.Errorf("failed to create user location store. %w", err)
+		}
+		if err := userLocStore.Start(ctxCancel, false); err != nil {
+			return fmt.Errorf("failed to start user location store. %w", err)
+		}
+		m.userLocStore = userLocStore
+
+		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
+			ctxStartup, p.Logger, p.JS, BucketUserLocByID,
+			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 			store.WithOnUpdateFn(func(_ *store.Store[livemap.UserMarker, *livemap.UserMarker],
 				um *livemap.UserMarker,
 			) (*livemap.UserMarker, error) {
@@ -158,15 +157,17 @@ func NewManager(p ManagerParams) (*Manager, error) {
 					return nil, fmt.Errorf("failed to upsert user unit mapping. %w", err)
 				}
 
-				// Mirror latest marker by USER_ID (idempotent)
-				if err := m.byIDStore.Put(ctxCancel, userIdKey(um.UserId), um); err != nil {
-					return nil, fmt.Errorf("failed to upsert user location by ID. %w", err)
+				if um.JobGrade != nil {
+					// Mirror latest marker by JOB.GRADE.USER_ID (idempotent)
+					if err := m.userLocStore.Put(ctxCancel, userMarkerKey(um.UserId, um.Job, *um.JobGrade), um); err != nil {
+						return nil, fmt.Errorf("failed to upsert user location by ID. %w", err)
+					}
 				}
 
 				return um, nil
 			}),
 			store.WithOnDeleteFn(func(_ *store.Store[livemap.UserMarker, *livemap.UserMarker],
-				entry jetstream.KeyValueEntry, um *livemap.UserMarker,
+				_ string, um *livemap.UserMarker,
 			) error {
 				if um == nil {
 					return nil
@@ -177,16 +178,23 @@ func NewManager(p ManagerParams) (*Manager, error) {
 					m.logger.Error("failed to remove user unit mapping", zap.Error(err))
 				}
 
+				// Remove user marker if we have the info we need
+				if um.JobGrade != nil {
+					if err := m.userLocStore.Delete(ctxCancel, userMarkerKey(um.UserId, um.Job, *um.JobGrade)); err != nil {
+						m.logger.Error("failed to remove user marker from store", zap.Error(err))
+					}
+				}
+
 				return nil
 			}),
 		)
 		if err != nil {
-			return fmt.Errorf("failed to create user location store. %w", err)
+			return fmt.Errorf("failed to create user location by ID store. %w", err)
 		}
-		if err := userLocStore.Start(ctxCancel, false); err != nil {
-			return fmt.Errorf("failed to start user location store. %w", err)
+		if err := byID.Start(ctxCancel, false); err != nil {
+			return fmt.Errorf("failed to start user location by ID store. %w", err)
 		}
-		m.userLocStore = userLocStore
+		m.userByIDStore = byID
 
 		// Periodic snapshot publisher
 		m.snapshotTicker = time.NewTicker(defaultSnapEvery)
@@ -332,6 +340,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 
 	foundUserIds := map[int32]any{}
 	added := 0
+	updated := 0
 
 	errs := multierr.Combine()
 	for i := range dest {
@@ -341,19 +350,20 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 
 		foundUserIds[dest[i].UserId] = nil
 
+		// Use (override) job and job grade if set
 		job := dest[i].User.Job
 		if dest[i].Job != "" {
-			dest[i].User.Job = dest[i].Job
 			job = dest[i].Job // Use the job from the marker, not the user if set
+			dest[i].User.Job = dest[i].Job
 		} else {
 			dest[i].Job = job
 		}
-
 		jg := dest[i].User.JobGrade
 		if dest[i].JobGrade != nil {
 			jg = *dest[i].JobGrade
 			dest[i].User.JobGrade = *dest[i].JobGrade
-			dest[i].JobGrade = nil // Clear to avoid duplication, it is just used for overriding the user job grade
+		} else {
+			dest[i].JobGrade = &jg // Ensure JobGrade is set, even if it is 0
 		}
 
 		if dest[i].Color == nil {
@@ -380,13 +390,11 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		m.enricher.EnrichJobName(dest[i])
 		m.enricher.EnrichJobInfo(dest[i].User)
 
-		dest[i].User.JobGrade = jg
-
-		um, err := m.userLocStore.Get(userMarkerKey(dest[i].UserId, job, jg))
+		um, err := m.userByIDStore.Get(userIdKey(dest[i].UserId))
 		// No user marker in key value store nor locally
 		if um == nil || err != nil {
 			added++
-			if err := m.userLocStore.Put(ctx, userMarkerKey(dest[i].UserId, job, jg), dest[i]); err != nil {
+			if err := m.userByIDStore.Put(ctx, userIdKey(dest[i].UserId), dest[i]); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -395,22 +403,27 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			if proto.Equal(um, dest[i]) {
 				continue
 			}
+			updated++
 
-			um.Merge(dest[i])
-
-			oldKey := userMarkerKey(dest[i].UserId, job, jg) // job/jg are the *previous* ones
-			ujg := jg
+			uj := um.User.Job
+			if um.Job != "" {
+				uj = um.Job
+			}
+			ujg := um.User.JobGrade
 			if um.JobGrade != nil {
 				ujg = *um.JobGrade // Use the job grade from the existing marker
 			}
-			newKey := userMarkerKey(dest[i].UserId, um.Job, ujg)
+			oldKey := userMarkerKey(dest[i].UserId, uj, ujg) // job/jg are the *previous* ones
+			newKey := userMarkerKey(dest[i].UserId, job, jg)
 			if oldKey != newKey {
 				if err := m.userLocStore.Delete(ctx, oldKey); err != nil {
 					errs = multierr.Append(errs, err)
 				}
 			}
 
-			if err := m.userLocStore.Put(ctx, userMarkerKey(dest[i].UserId, job, jg), um); err != nil {
+			um.Merge(dest[i])
+
+			if err := m.userByIDStore.Put(ctx, userIdKey(dest[i].UserId), um); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -422,40 +435,58 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		return err
 	}
 
-	m.logger.Debug("completed user tracker cache refresh", zap.Int("added", added), zap.Int("removed", removed))
+	m.logger.Debug("completed user tracker cache refresh", zap.Int("added", added), zap.Int("updated", updated), zap.Int("removed", removed))
 
 	return nil
 }
 
-func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any) (int, error) {
-	m.logger.Debug("cleaning up user IDs", zap.Int32s("found_user_ids", utils.GetMapKeys(foundUserIDs)))
-
+func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIds map[int32]any) (int, error) {
 	var errs error
-	now := time.Now()
 	keys := m.userLocStore.Keys("")
 	removed := []string{}
 	for _, key := range keys {
-		idKey, err := ExtractUserID(key)
+		userIdKey, err := ExtractUserID(key)
 		if err != nil {
 			m.logger.Warn("failed to extract user ID from key", zap.String("key", key), zap.Error(err))
 			continue
 		}
 
-		if _, ok := foundUserIDs[int32(idKey)]; ok {
-			continue
+		// If the user ID is not in the foundUserIds map, we can remove it
+		if _, ok := foundUserIds[userIdKey]; !ok {
+			if err := m.userByIDStore.Delete(ctx, strconv.FormatInt(int64(userIdKey), 10)); err == nil {
+				continue
+			} else {
+				errs = multierr.Append(errs, err)
+			}
 		}
 
-		marker, err := m.userLocStore.Get(key)
+		// Lookup user by id
+		marker, err := m.userByIDStore.Get(strconv.FormatInt(int64(userIdKey), 10))
 		if err != nil {
+			if !errors.Is(err, jetstream.ErrKeyNotFound) {
+				continue
+			}
+		}
+		// Short path if marker by id is not nil, we can remove the key
+		if marker != nil {
+			jg := int32(0)
+			if marker.JobGrade != nil {
+				jg = *marker.JobGrade
+			}
+			oldKey := userMarkerKey(marker.UserId, marker.Job, jg)
+			if key == oldKey {
+				continue
+			}
+
+			if err := m.userLocStore.Delete(ctx, oldKey); err != nil {
+				errs = multierr.Append(errs, err)
+				continue
+			}
+
 			continue
 		}
 
-		// Marker has been updated in the latest 30 seconds, skip it
-		if marker.UpdatedAt != nil && now.Sub(marker.UpdatedAt.AsTime()) <= 30*time.Second {
-			continue
-		}
-
-		if err := m.userLocStore.Delete(ctx, key); err != nil {
+		if err := m.userByIDStore.Delete(ctx, key); err != nil {
 			errs = multierr.Append(errs, err)
 			continue
 		}
@@ -513,7 +544,7 @@ func userMarkerKey(id int32, job string, grade int32) string {
 	return fmt.Sprintf("%s.%d.%d", job, grade, id)
 }
 
-func decodeUserMarkerKey(key string) (int32, string, int32, error) {
+func DecodeUserMarkerKey(key string) (int32, string, int32, error) {
 	parts := strings.Split(key, ".")
 	if len(parts) != 3 {
 		return 0, "", 0, fmt.Errorf("invalid user marker key: %s", key)
@@ -524,10 +555,10 @@ func decodeUserMarkerKey(key string) (int32, string, int32, error) {
 		return 0, "", 0, fmt.Errorf("invalid user marker id: %s", parts[2])
 	}
 
-	job := parts[1]
-	grade, err := strconv.ParseInt(parts[0], 10, 32)
+	job := parts[0]
+	grade, err := strconv.ParseInt(parts[1], 10, 32)
 	if err != nil {
-		return 0, "", 0, fmt.Errorf("invalid user marker grade: %s", parts[0])
+		return 0, "", 0, fmt.Errorf("invalid user marker grade: %s", parts[1])
 	}
 
 	return int32(id), job, int32(grade), nil

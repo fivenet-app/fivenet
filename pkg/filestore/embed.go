@@ -21,29 +21,43 @@ import (
 
 var tFiles = table.FivenetFiles
 
+// ParentID is a type constraint that matches any type that can be a parent ID.
+// It can be an unsigned 64-bit integer, a 32-bit integer, or a string.
 type ParentID interface {
 	~uint64 | ~int32 | ~string
 	comparable
 }
 
+// ParentColBoolExpFn is a function type that returns a Jet boolean expression for a given parent ID.
 type ParentColBoolExpFn[P ParentID] func(parentId P) jet.BoolExpression
 
+// JoinRowInserterFn is a function type for inserting a join row into a table linking parent and file.
 type JoinRowInserterFn[P ParentID] func(ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, _ jet.BoolExpression, fileID uint64) error
 
 // Generic, embeddable file‑upload helper.
 type Handler[P ParentID] struct {
-	store     storage.IStorage // Storage adapter (e.g. S3, FS)
-	db        *sql.DB
+	// store is the storage adapter (e.g. S3, filesystem).
+	store storage.IStorage
+	// db is the SQL database connection.
+	db *sql.DB
+	// joinTable is the table that joins parent and file.
 	joinTable jet.Table
-	parentCol jet.Column // May be ColumnInteger or ColumnString
-	fileCol   jet.ColumnInteger
+	// parentCol is the column in joinTable for the parent (may be integer or string).
+	parentCol jet.Column
+	// fileCol is the column in joinTable for the file ID.
+	fileCol jet.ColumnInteger
+	// sizeLimit is the maximum allowed file size in bytes.
 	sizeLimit int64
 
-	parentColBoolExp  ParentColBoolExpFn[P]
-	joinRowInserter   JoinRowInserterFn[P]
+	// parentColBoolExp is a function that converts the parent ID to a Jet boolean expression.
+	parentColBoolExp ParentColBoolExpFn[P]
+	// joinRowInserter is a function for inserting a join row.
+	joinRowInserter JoinRowInserterFn[P]
+	// nullOnlyParentRow indicates if only the parent row should be nulled instead of deleted.
 	nullOnlyParentRow bool
 }
 
+// NewHandler creates a new Handler for file uploads and associations.
 func NewHandler[P ParentID](
 	st storage.IStorage,
 	db *sql.DB,
@@ -74,9 +88,7 @@ func NewHandler[P ParentID](
 	}
 }
 
-// AwaitHandshake is a no-op for the filestore handler, as it does not require any
-// special handshake logic. It simply reads the first packet to extract metadata
-// for the upload.
+// AwaitHandshake reads the first upload packet to extract metadata. No handshake logic is required for this handler.
 func (h *Handler[P]) AwaitHandshake(srv pbfilestore.FilestoreService_UploadServer) (*file.UploadMeta, error) {
 	// First packet must be metadata
 	first, err := srv.Recv()
@@ -95,9 +107,10 @@ func (h *Handler[P]) AwaitHandshake(srv pbfilestore.FilestoreService_UploadServe
 	return meta, nil
 }
 
+// UploadFile streams file data from the gRPC server to storage, then records metadata and associations in the database.
 func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, size int64, ctype string, srv pbfilestore.FilestoreService_UploadServer) (*file.UploadResponse, error) {
 	if h.sizeLimit > 0 && size > h.sizeLimit {
-		return nil, status.Errorf(codes.ResourceExhausted, "file too large: %d > %d", size, h.sizeLimit)
+		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / 8}) // Convert bytes to megabytes
 	}
 
 	// pipe chunks to the storage backend
@@ -175,8 +188,7 @@ func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, siz
 	return resp, srv.SendAndClose(resp)
 }
 
-// UploadFromMeta streams the remainder of the gRPC Upload after the caller
-// has read & validated the first UploadMeta packet.
+// UploadFromMeta streams the remainder of the gRPC Upload after the caller has read & validated the first UploadMeta packet.
 func (h *Handler[P]) UploadFromMeta(
 	ctx context.Context,
 	meta *file.UploadMeta,
@@ -189,6 +201,7 @@ func (h *Handler[P]) UploadFromMeta(
 	return h.UploadFile(ctx, parentID, key, meta.GetSize(), ctype, srv)
 }
 
+// GetFileByPath retrieves the file ID and path for a given file path string.
 func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (uint64, string, error) {
 	path = strings.TrimPrefix(path, FilestoreURLPrefix)
 
@@ -222,6 +235,7 @@ func (h *Handler[P]) GetFileByPath(ctx context.Context, path string) (uint64, st
 	return f.ID, f.FilePath, nil
 }
 
+// deleteJoinRow removes or nulls the join row for a parent/file association, depending on nullOnlyParentRow.
 func (h *Handler[P]) deleteJoinRow(ctx context.Context, tx *sql.Tx, parentID P, fileID uint64) error {
 	if h.nullOnlyParentRow {
 		_, err := h.joinTable.
@@ -251,7 +265,7 @@ func (h *Handler[P]) deleteJoinRow(ctx context.Context, tx *sql.Tx, parentID P, 
 	return err
 }
 
-// Delete (unary)
+// Delete removes the association between a parent and a file, and deletes the file if it is orphaned.
 func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) error {
 	tx, err := h.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -311,6 +325,7 @@ func (h *Handler[P]) Delete(ctx context.Context, parentID P, fileID uint64) erro
 	return tx.Commit()
 }
 
+// DeleteFileByPath deletes a file by its path and parent ID, if it exists.
 func (h *Handler[P]) DeleteFileByPath(ctx context.Context, parentId P, path string) error {
 	fileId, _, err := h.GetFileByPath(ctx, path)
 	if err != nil {
@@ -328,8 +343,7 @@ func (h *Handler[P]) DeleteFileByPath(ctx context.Context, parentId P, path stri
 	return nil
 }
 
-// Helpers
-
+// upsertFileRow inserts or updates a file row in the database, returning the file ID.
 func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int64) (uint64, error) {
 	// 1. Try to lock an existing row via the UNIQUE(file_path) index
 	var fileId struct {
@@ -379,6 +393,7 @@ func upsertFileRow(ctx context.Context, tx *sql.Tx, key, ctype string, size int6
 	}
 }
 
+// InsertJoinRow inserts a new join row for a parent and file.
 func InsertJoinRow[P ParentID](ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, _ jet.BoolExpression, fileID uint64) error {
 	_, err := join.
 		INSERT(
@@ -393,6 +408,7 @@ func InsertJoinRow[P ParentID](ctx context.Context, tx *sql.Tx, join jet.Table, 
 	return err
 }
 
+// UpdateJoinRow updates the join row for a parent and file.
 func UpdateJoinRow[P ParentID](ctx context.Context, tx *sql.Tx, join jet.Table, parentCol jet.Column, fileCol jet.ColumnInteger, parentId P, parentIdBoolExp jet.BoolExpression, fileID uint64) error {
 	_, err := join.
 		UPDATE(
@@ -407,6 +423,7 @@ func UpdateJoinRow[P ParentID](ctx context.Context, tx *sql.Tx, join jet.Table, 
 	return err
 }
 
+// putToStorage writes file data to the storage backend and returns the key and size.
 func putToStorage(ctx context.Context, st storage.IStorage, key string, r io.Reader, ctype string, userSize int64) (url string, size int64, err error) {
 	cr := &countingReader{Reader: r}
 
@@ -423,6 +440,7 @@ func putToStorage(ctx context.Context, st storage.IStorage, key string, r io.Rea
 	return key, cr.n, nil
 }
 
+// CountFilesForParentID returns the number of files associated with a given parent ID.
 func (h *Handler[P]) CountFilesForParentID(ctx context.Context, parentID P) (int64, error) {
 	stmt := h.joinTable.
 		SELECT(jet.COUNT(h.fileCol).AS("count")).
@@ -439,6 +457,7 @@ func (h *Handler[P]) CountFilesForParentID(ctx context.Context, parentID P) (int
 	return count.Count, nil
 }
 
+// ListFilesForParentID returns a list of files associated with a given parent ID.
 func (h *Handler[P]) ListFilesForParentID(ctx context.Context, parentID P) ([]*file.File, error) {
 	stmt := h.joinTable.
 		SELECT(
@@ -468,6 +487,8 @@ func (h *Handler[P]) ListFilesForParentID(ctx context.Context, parentID P) ([]*f
 	return files, nil
 }
 
+// HandleFileChangesForParent synchronizes the join table for a parent with the provided list of files.
+// It deletes associations for files no longer present and returns the number of added and deleted files.
 func (h *Handler[P]) HandleFileChangesForParent(ctx context.Context, tx *sql.Tx, parentID P, updatedFiles []*file.File) (int64, int64, error) {
 	current, err := h.ListFilesForParentID(ctx, parentID)
 	if err != nil {

@@ -50,18 +50,26 @@ var (
 	}
 )
 
+// Demo provides demo mode functionality for generating random dispatches and user locations.
 type Demo struct {
+	// logger for demo operations
 	logger *zap.Logger
-	db     *sql.DB
-	cs     *centrummanager.Manager
-	cfg    *config.Config
+	// database connection
+	db *sql.DB
+	// centrum manager for dispatch operations
+	cs *centrummanager.Manager
+	// application configuration
+	cfg *config.Config
 
+	// users is a list of user identifiers for demo operations
 	users []string
 }
 
+// Params contains dependencies for constructing a Demo instance.
 type Params struct {
 	fx.In
 
+	// LC is the Fx lifecycle for registering hooks
 	LC fx.Lifecycle
 
 	Logger         *zap.Logger
@@ -70,6 +78,8 @@ type Params struct {
 	CentrumManager *centrummanager.Manager
 }
 
+// New creates a new Demo instance if demo mode is enabled in the config.
+// Registers lifecycle hooks for starting and stopping demo mode.
 func New(p Params) *Demo {
 	if !p.Cfg.Demo.Enabled {
 		return nil
@@ -101,6 +111,7 @@ func New(p Params) *Demo {
 	return d
 }
 
+// Start runs the main demo loop, periodically generating and updating dispatches and moving user markers.
 func (d *Demo) Start(ctx context.Context) error {
 	tUsers := tables.User()
 
@@ -147,6 +158,7 @@ func (d *Demo) Start(ctx context.Context) error {
 	}
 }
 
+// generateDispatches creates up to 2 random dispatches per run with random positions and messages.
 func (d *Demo) generateDispatches(ctx context.Context) error {
 	numDispatches := rand.Intn(2) // Up to 2 dispatches per run
 
@@ -171,6 +183,7 @@ func (d *Demo) generateDispatches(ctx context.Context) error {
 	return nil
 }
 
+// updateDispatches randomly updates the status and position of up to 2 existing dispatches.
 func (d *Demo) updateDispatches(ctx context.Context) error {
 	dsps, _ := d.cs.ListDispatches(ctx, d.cfg.Demo.TargetJob)
 
@@ -213,6 +226,7 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 	return nil
 }
 
+// moveUserMarkers periodically updates user locations, randomizing or moving them within bounds.
 func (d *Demo) moveUserMarkers(ctx context.Context) error {
 	firstRun := true
 

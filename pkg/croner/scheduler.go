@@ -212,7 +212,7 @@ func (s *Scheduler) createOrUpdateLock(ctx context.Context) error {
 		}
 	}()
 
-	out, err := protoutils.Marshal(&cron.CronjobLockOwnerState{
+	out, err := protoutils.MarshalToPJSON(&cron.CronjobLockOwnerState{
 		Hostname:  s.nodeName,
 		UpdatedAt: timestamp.Now(),
 	})

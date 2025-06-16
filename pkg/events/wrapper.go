@@ -125,7 +125,7 @@ func (j *JSWrapper) consumeErrHandlerWithRestart(ctxCancel context.Context, logg
 }
 
 func (j *JSWrapper) PublishProto(ctx context.Context, subject string, msg proto.Message, opts ...jetstream.PublishOpt) (*jetstream.PubAck, error) {
-	data, err := protoutils.Marshal(msg)
+	data, err := protoutils.MarshalToPJSON(msg)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +134,7 @@ func (j *JSWrapper) PublishProto(ctx context.Context, subject string, msg proto.
 }
 
 func (j *JSWrapper) PublishAsyncProto(ctx context.Context, subject string, msg proto.Message, opts ...jetstream.PublishOpt) (jetstream.PubAckFuture, error) {
-	data, err := protoutils.Marshal(msg)
+	data, err := protoutils.MarshalToPJSON(msg)
 	if err != nil {
 		return nil, err
 	}

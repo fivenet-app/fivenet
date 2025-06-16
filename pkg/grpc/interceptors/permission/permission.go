@@ -19,26 +19,30 @@ import (
 // Please make sure you use `codes.Unauthenticated` (lacking auth) and `codes.PermissionDenied`
 // (authed, but lacking perms) appropriately.
 type (
-	PermissionUnaryFunc  func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error)
+	// PermissionUnaryFunc is a pluggable function that performs authentication and permission checks for unary RPCs.
+	// The returned context will be propagated to handlers. Return an error with codes.Unauthenticated or codes.PermissionDenied as appropriate.
+	PermissionUnaryFunc func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error)
+	// PermissionStreamFunc is a pluggable function that performs authentication and permission checks for streaming RPCs.
 	PermissionStreamFunc func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error)
 )
 
-// ServiceUnaryPermissionFuncOverride
+// ServiceUnaryPermissionFuncOverride allows a service to override the default unary permission check.
 type ServiceUnaryPermissionFuncOverride interface {
 	PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error)
 }
 
-// ServiceStreamPermissionFuncOverride
+// ServiceStreamPermissionFuncOverride allows a service to override the default stream permission check.
 type ServiceStreamPermissionFuncOverride interface {
 	PermissionStreamFuncOverride(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error)
 }
 
-// GetPermsRemap
+// GetPermsRemapFunc allows a service to remap permission names for custom logic.
 type GetPermsRemapFunc interface {
 	GetPermsRemap() map[string]string
 }
 
-// UnaryServerInterceptor returns a new unary server interceptors that performs per-request permission checks.
+// UnaryServerInterceptor returns a new unary server interceptor that performs per-request permission checks.
+// If the service implements ServiceUnaryPermissionFuncOverride, it is used instead of the default function.
 func UnaryServerInterceptor(permissionFunc PermissionUnaryFunc) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		var newCtx context.Context
@@ -55,7 +59,8 @@ func UnaryServerInterceptor(permissionFunc PermissionUnaryFunc) grpc.UnaryServer
 	}
 }
 
-// StreamServerInterceptor returns a new unary server interceptors that performs per-request permission checks.
+// StreamServerInterceptor returns a new stream server interceptor that performs per-request permission checks.
+// If the service implements ServiceStreamPermissionFuncOverride, it is used instead of the default function.
 func StreamServerInterceptor(permissionFunc PermissionStreamFunc) grpc.StreamServerInterceptor {
 	return func(srv any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		var newCtx context.Context

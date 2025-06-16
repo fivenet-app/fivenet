@@ -8,6 +8,8 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+// UnaryServerInterceptor returns a gRPC UnaryServerInterceptor that injects trace information into the response trailer
+// and records errors on the current span if present. This enables trace propagation and error reporting for unary RPCs.
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		if span := trace.SpanContextFromContext(ctx); span.IsSampled() {
@@ -25,6 +27,8 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	}
 }
 
+// StreamServerInterceptor returns a gRPC StreamServerInterceptor that injects trace information into the response trailer
+// and records errors on the current span if present. This enables trace propagation and error reporting for streaming RPCs.
 func StreamServerInterceptor() grpc.StreamServerInterceptor {
 	return func(srv any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		if span := trace.SpanContextFromContext(stream.Context()); span.IsSampled() {

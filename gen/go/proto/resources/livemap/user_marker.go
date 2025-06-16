@@ -40,6 +40,12 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 
 	x.Job = in.Job
 	x.JobLabel = in.JobLabel
+	if in.JobGrade == nil {
+		x.JobGrade = nil
+	} else {
+		val := *in.JobGrade
+		x.JobGrade = &val
+	}
 
 	if in.User != nil {
 		if x.User == nil {

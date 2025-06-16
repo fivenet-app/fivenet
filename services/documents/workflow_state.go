@@ -438,11 +438,11 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 
 	not := &notifications.Notification{
 		UserId: userInfo.UserId,
-		Title: &common.TranslateItem{
+		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_auto_closed.title",
 			Parameters: map[string]string{"id": strconv.FormatUint(state.DocumentId, 10)},
 		},
-		Content: &common.TranslateItem{
+		Content: &common.I18NItem{
 			Key: "notifications.documents.document_auto_closed.content",
 			Parameters: map[string]string{
 				"id":      strconv.FormatUint(state.DocumentId, 10),
@@ -488,11 +488,11 @@ func (w *Workflow) sendDocumentReminder(ctx context.Context, documentId uint64, 
 
 	not := &notifications.Notification{
 		UserId: userId,
-		Title: &common.TranslateItem{
+		Title: &common.I18NItem{
 			Key:        "notifications.documents.document_reminder.title",
 			Parameters: map[string]string{"id": strconv.FormatUint(documentId, 10)},
 		},
-		Content: &common.TranslateItem{
+		Content: &common.I18NItem{
 			Key: "notifications.documents.document_reminder.content",
 			Parameters: map[string]string{
 				"id":    strconv.FormatUint(documentId, 10),

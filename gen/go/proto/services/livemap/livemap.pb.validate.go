@@ -339,7 +339,36 @@ func (m *StreamResponse) validate(all bool) error {
 			errors = append(errors, err)
 		}
 		oneofDataPresent = true
-		// no validation rules for UserDelete
+
+		if all {
+			switch v := interface{}(m.GetUserDelete()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "UserDelete",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "UserDelete",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserDelete()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "UserDelete",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}
@@ -881,6 +910,109 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SnapshotValidationError{}
+
+// Validate checks the field values on UserDelete with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserDelete) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserDelete with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserDeleteMultiError, or
+// nil if none found.
+func (m *UserDelete) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserDelete) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Job
+
+	if len(errors) > 0 {
+		return UserDeleteMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserDeleteMultiError is an error wrapping multiple validation errors
+// returned by UserDelete.ValidateAll() if the designated constraints aren't met.
+type UserDeleteMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserDeleteMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserDeleteMultiError) AllErrors() []error { return m }
+
+// UserDeleteValidationError is the validation error returned by
+// UserDelete.Validate if the designated constraints aren't met.
+type UserDeleteValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserDeleteValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserDeleteValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserDeleteValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserDeleteValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserDeleteValidationError) ErrorName() string { return "UserDeleteValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserDeleteValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserDelete.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserDeleteValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserDeleteValidationError{}
 
 // Validate checks the field values on CreateOrUpdateMarkerRequest with the
 // rules defined in the proto definition for this message. If any rules are

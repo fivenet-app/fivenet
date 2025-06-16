@@ -25,14 +25,20 @@ func init() {
 	storageFactories[config.StorageTypeS3] = NewS3
 }
 
+// S3 implements IStorage for S3-compatible object storage backends (e.g., MinIO, AWS S3).
 type S3 struct {
 	IStorage
 
-	s3         *minio.Client
+	// s3 is the MinIO client instance for S3 operations.
+	s3 *minio.Client
+	// bucketName is the S3 bucket used for storage.
 	bucketName string
-	prefix     string
+	// prefix is an optional prefix for namespacing objects in the bucket.
+	prefix string
 }
 
+// NewS3 creates a new S3 storage backend using the provided parameters and MinIO client.
+// It optionally checks bucket existence on startup and registers a start hook for lifecycle management.
 func NewS3(p Params) (IStorage, error) {
 	transport := otelhttp.NewTransport(
 		http.DefaultClient.Transport,
@@ -76,6 +82,7 @@ func NewS3(p Params) (IStorage, error) {
 	return s, nil
 }
 
+// WithPrefix returns a new S3 instance with the given prefix, sharing the same client and bucket.
 func (s *S3) WithPrefix(prefix string) (IStorage, error) {
 	return &S3{
 		s3:         s.s3,
@@ -84,6 +91,8 @@ func (s *S3) WithPrefix(prefix string) (IStorage, error) {
 	}, nil
 }
 
+// Get retrieves an object and its metadata from S3 storage.
+// Returns an open object and ObjectInfo, or an error if not found or invalid.
 func (s *S3) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
@@ -119,6 +128,7 @@ func (s *S3) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error
 	}, nil
 }
 
+// Stat returns metadata for an object in S3 storage, or an error if not found or invalid.
 func (s *S3) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
@@ -144,11 +154,12 @@ func (s *S3) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
 	}, nil
 }
 
-// Put the file path must end with a file extension (e.g., `jpg`, `png`)
+// Put uploads an object to S3 storage. The file path must end with a file extension (e.g., `jpg`, `png`).
 func (s *S3) Put(ctx context.Context, keyIn string, reader io.Reader, size int64, contentType string) (string, error) {
 	return s.PutWithTTL(ctx, keyIn, reader, size, contentType, time.Time{})
 }
 
+// PutWithTTL uploads an object to S3 storage with an optional expiration time (TTL).
 func (s *S3) PutWithTTL(ctx context.Context, keyIn string, reader io.Reader, size int64, contentType string, ttl time.Time) (string, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
@@ -172,6 +183,7 @@ func (s *S3) PutWithTTL(ctx context.Context, keyIn string, reader io.Reader, siz
 	return strings.TrimPrefix(info.Key, s.prefix), nil
 }
 
+// Delete removes an object from S3 storage. Returns nil if the object does not exist.
 func (s *S3) Delete(ctx context.Context, keyIn string) error {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
@@ -186,6 +198,8 @@ func (s *S3) Delete(ctx context.Context, keyIn string) error {
 	return nil
 }
 
+// List returns a list of objects and their metadata from S3 storage, supporting offset and page size.
+// Returns an error if the prefix is invalid or listing fails.
 func (s *S3) List(ctx context.Context, keyIn string, offset int, pageSize int) ([]*FileInfo, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {

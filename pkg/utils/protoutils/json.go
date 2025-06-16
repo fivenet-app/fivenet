@@ -5,18 +5,18 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func UnmarshalPartial(b []byte, m proto.Message) error {
+func UnmarshalPartialPJSON(b []byte, m proto.Message) error {
 	return protojson.UnmarshalOptions{
 		AllowPartial:   true,
 		DiscardUnknown: true,
 	}.Unmarshal(b, m)
 }
 
-func Marshal(m proto.Message) ([]byte, error) {
+func MarshalToPJSON(m proto.Message) ([]byte, error) {
 	return protojson.MarshalOptions{}.Marshal(m)
 }
 
-func MarshalPretty(m proto.Message) ([]byte, error) {
+func MarshalToPrettyJSON(m proto.Message) ([]byte, error) {
 	return protojson.MarshalOptions{
 		Multiline: true,
 		Indent:    "    ",

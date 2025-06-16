@@ -16,7 +16,7 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-var ErrGenericAccount = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.AuthService.ErrGenericAccount"}, nil)
+var ErrGenericAccount = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.AuthService.ErrGenericAccount"}, nil)
 
 func (s *Server) GetAccountInfo(ctx context.Context, req *pbauth.GetAccountInfoRequest) (*pbauth.GetAccountInfoResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)

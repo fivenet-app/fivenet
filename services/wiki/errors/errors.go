@@ -6,11 +6,11 @@ import (
 )
 
 var (
-	ErrFailedQuery  = common.I18nErr(codes.Internal, common.NewTranslateItem("errors.WikiService.ErrFailedQuery"), nil)
-	ErrPageDenied   = common.I18nErr(codes.InvalidArgument, common.NewTranslateItem("errors.WikiService.ErrPageDenied"), nil)
-	ErrPageNotFound = common.I18nErr(codes.NotFound, common.NewTranslateItem("errors.WikiService.ErrPageNotFound.content"), common.NewTranslateItem("errors.WikiService.ErrPageNotFound.title"))
+	ErrFailedQuery  = common.NewI18nErr(codes.Internal, common.NewI18NItem("errors.WikiService.ErrFailedQuery"), nil)
+	ErrPageDenied   = common.NewI18nErr(codes.InvalidArgument, common.NewI18NItem("errors.WikiService.ErrPageDenied"), nil)
+	ErrPageNotFound = common.NewI18nErr(codes.NotFound, common.NewI18NItem("errors.WikiService.ErrPageNotFound.content"), common.NewI18NItem("errors.WikiService.ErrPageNotFound.title"))
 
-	ErrPageHasChildren = common.I18nErr(codes.InvalidArgument, common.NewTranslateItem("errors.WikiService.ErrPageHasChildren.content"), common.NewTranslateItem("errors.WikiService.ErrPageHasChildren.title"))
+	ErrPageHasChildren = common.NewI18nErr(codes.InvalidArgument, common.NewI18NItem("errors.WikiService.ErrPageHasChildren.content"), common.NewI18NItem("errors.WikiService.ErrPageHasChildren.title"))
 
-	ErrMaxFilesReached = common.I18nErr(codes.InvalidArgument, common.NewTranslateItem("errors.WikiService.ErrMaxFilesReached.content"), common.NewTranslateItem("errors.WikiService.ErrMaxFilesReached.title"))
+	ErrMaxFilesReached = common.NewI18nErr(codes.InvalidArgument, common.NewI18NItem("errors.WikiService.ErrMaxFilesReached.content"), common.NewI18NItem("errors.WikiService.ErrMaxFilesReached.title"))
 )

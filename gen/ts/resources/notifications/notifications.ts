@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
-import { TranslateItem } from "../common/i18n";
+import { I18NItem } from "../common/i18n";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.notifications.Notification
@@ -36,9 +36,9 @@ export interface Notification {
     /**
      * @sanitize
      *
-     * @generated from protobuf field: resources.common.TranslateItem title = 5
+     * @generated from protobuf field: resources.common.I18NItem title = 5
      */
-    title?: TranslateItem;
+    title?: I18NItem;
     /**
      * @generated from protobuf field: resources.notifications.NotificationType type = 6
      */
@@ -46,9 +46,9 @@ export interface Notification {
     /**
      * @sanitize
      *
-     * @generated from protobuf field: resources.common.TranslateItem content = 7
+     * @generated from protobuf field: resources.common.I18NItem content = 7
      */
-    content?: TranslateItem;
+    content?: I18NItem;
     /**
      * @generated from protobuf field: resources.notifications.NotificationCategory category = 8
      */
@@ -165,9 +165,9 @@ class Notification$Type extends MessageType<Notification> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "read_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
-            { no: 5, name: "title", kind: "message", T: () => TranslateItem },
+            { no: 5, name: "title", kind: "message", T: () => I18NItem },
             { no: 6, name: "type", kind: "enum", T: () => ["resources.notifications.NotificationType", NotificationType, "NOTIFICATION_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 7, name: "content", kind: "message", T: () => TranslateItem },
+            { no: 7, name: "content", kind: "message", T: () => I18NItem },
             { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "data", kind: "message", T: () => Data },
             { no: 10, name: "starred", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
@@ -200,14 +200,14 @@ class Notification$Type extends MessageType<Notification> {
                 case /* int32 user_id */ 4:
                     message.userId = reader.int32();
                     break;
-                case /* resources.common.TranslateItem title */ 5:
-                    message.title = TranslateItem.internalBinaryRead(reader, reader.uint32(), options, message.title);
+                case /* resources.common.I18NItem title */ 5:
+                    message.title = I18NItem.internalBinaryRead(reader, reader.uint32(), options, message.title);
                     break;
                 case /* resources.notifications.NotificationType type */ 6:
                     message.type = reader.int32();
                     break;
-                case /* resources.common.TranslateItem content */ 7:
-                    message.content = TranslateItem.internalBinaryRead(reader, reader.uint32(), options, message.content);
+                case /* resources.common.I18NItem content */ 7:
+                    message.content = I18NItem.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* resources.notifications.NotificationCategory category */ 8:
                     message.category = reader.int32();
@@ -242,15 +242,15 @@ class Notification$Type extends MessageType<Notification> {
         /* int32 user_id = 4; */
         if (message.userId !== 0)
             writer.tag(4, WireType.Varint).int32(message.userId);
-        /* resources.common.TranslateItem title = 5; */
+        /* resources.common.I18NItem title = 5; */
         if (message.title)
-            TranslateItem.internalBinaryWrite(message.title, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+            I18NItem.internalBinaryWrite(message.title, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* resources.notifications.NotificationType type = 6; */
         if (message.type !== 0)
             writer.tag(6, WireType.Varint).int32(message.type);
-        /* resources.common.TranslateItem content = 7; */
+        /* resources.common.I18NItem content = 7; */
         if (message.content)
-            TranslateItem.internalBinaryWrite(message.content, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            I18NItem.internalBinaryWrite(message.content, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* resources.notifications.NotificationCategory category = 8; */
         if (message.category !== 0)
             writer.tag(8, WireType.Varint).int32(message.category);

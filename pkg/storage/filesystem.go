@@ -3,12 +3,10 @@ package storage
 import (
 	"context"
 	"io"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
@@ -20,13 +18,18 @@ func init() {
 	storageFactories[config.StorageTypeFilesystem] = NewFilesystem
 }
 
+// Filesystem implements IStorage for local filesystem-based storage.
 type Filesystem struct {
 	IStorage
 
+	// basePath is the root directory for all stored files.
 	basePath string
-	prefix   string
+	// prefix is an optional subdirectory prefix for namespacing.
+	prefix string
 }
 
+// NewFilesystem creates a new Filesystem storage backend using the provided parameters.
+// It ensures the base path exists and registers a start hook for lifecycle management.
 func NewFilesystem(p Params) (IStorage, error) {
 	f := &Filesystem{
 		basePath: p.Cfg.Storage.Filesystem.Path,
@@ -44,6 +47,7 @@ func NewFilesystem(p Params) (IStorage, error) {
 	return f, nil
 }
 
+// WithPrefix returns a new Filesystem instance with the given prefix, ensuring the directory exists.
 func (s *Filesystem) WithPrefix(prefix string) (IStorage, error) {
 	if err := os.MkdirAll(filepath.Join(s.basePath, prefix), 0o770); err != nil {
 		return nil, err
@@ -55,6 +59,8 @@ func (s *Filesystem) WithPrefix(prefix string) (IStorage, error) {
 	}, nil
 }
 
+// Get retrieves a file and its metadata from the filesystem.
+// Returns an open file and ObjectInfo, or an error if not found or invalid.
 func (s *Filesystem) Get(ctx context.Context, keyIn string) (IObject, IObjectInfo, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
@@ -82,10 +88,7 @@ func (s *Filesystem) Get(ctx context.Context, keyIn string) (IObject, IObjectInf
 	}, nil
 }
 
-func (s *Filesystem) GetURL(ctx context.Context, key string, expires time.Duration, reqParams url.Values) (*string, error) {
-	return nil, nil
-}
-
+// Stat returns metadata for a file in the filesystem, or an error if not found or invalid.
 func (s *Filesystem) Stat(ctx context.Context, keyIn string) (IObjectInfo, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
@@ -104,6 +107,8 @@ func (s *Filesystem) Stat(ctx context.Context, keyIn string) (IObjectInfo, error
 	}, nil
 }
 
+// Put writes a file to the filesystem, creating directories as needed.
+// Returns the relative path or an error.
 func (s *Filesystem) Put(ctx context.Context, keyIn string, reader io.Reader, size int64, contentType string) (string, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
@@ -129,6 +134,7 @@ func (s *Filesystem) Put(ctx context.Context, keyIn string, reader io.Reader, si
 	return filepath.Join(s.prefix, keyIn), nil
 }
 
+// Delete removes a file from the filesystem. Returns nil if the file does not exist.
 func (s *Filesystem) Delete(ctx context.Context, keyIn string) error {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {
@@ -146,6 +152,8 @@ func (s *Filesystem) Delete(ctx context.Context, keyIn string) error {
 	return nil
 }
 
+// List returns a list of files and their metadata in the given directory.
+// Returns an error if the directory is invalid or cannot be read.
 func (s *Filesystem) List(ctx context.Context, keyIn string, offset int, pageSize int) ([]*FileInfo, error) {
 	key, ok := utils.CleanFilePath(keyIn)
 	if !ok {

@@ -16,6 +16,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// metricTotalConnectedClients tracks the number of connected clients by category for Prometheus monitoring.
 var metricTotalConnectedClients = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Namespace: admin.MetricsNamespace,
 	Subsystem: "collab",
@@ -23,28 +24,35 @@ var metricTotalConnectedClients = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Help:      "Number of connected clients by category.",
 }, []string{"category"})
 
-// CollabRoom – one collaborative doc, served by this process
+// CollabRoom represents a single collaborative document room served by this process.
 type CollabRoom struct {
-	logger   *zap.Logger
+	// logger is the zap logger for this room instance.
+	logger *zap.Logger
+	// category is the logical category for this room (used for metrics and stream subjects).
 	category string
 
+	// Id is the unique identifier for this room.
 	Id uint64
 
-	// > runtime
-	mu      sync.RWMutex
+	// mu protects the clients map.
+	mu sync.RWMutex
+	// clients maps client IDs to active Client instances in this room.
 	clients map[uint64]*Client
 
-	// > JetStream handles
-	js       jetstream.JetStream
-	subject  string
+	// js is the JetStream instance for event streaming.
+	js jetstream.JetStream
+	// subject is the JetStream subject for this room.
+	subject string
+	// consumer is the JetStream consumer for this room.
 	consumer jetstream.Consumer
 
-	// > lifecycle
-	ctx    context.Context
+	// ctx is the context for the room's lifecycle.
+	ctx context.Context
+	// cancel is the cancel function for the room's context.
 	cancel context.CancelFunc
 }
 
-// NewCollabRoom wires the room to NATS JetStream using the *modern* API.
+// NewCollabRoom wires the room to NATS JetStream using the modern API and starts the consume loop.
 func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js jetstream.JetStream, category string) (*CollabRoom, error) {
 	ctx, cancel := context.WithCancel(ctx)
 
@@ -78,7 +86,7 @@ func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js je
 	return room, nil
 }
 
-// Client management
+// Join adds a client to the room and increments the connected client metric.
 func (r *CollabRoom) Join(c *Client) {
 	r.mu.Lock()
 	r.clients[c.Id] = c
@@ -88,6 +96,8 @@ func (r *CollabRoom) Join(c *Client) {
 	r.logger.Debug("client joined", zap.Uint64("client_id", c.Id), zap.Int("clients", clientCount))
 }
 
+// Leave removes a client from the room, closes its send channel, and decrements the metric.
+// If the room becomes empty, it is shut down. Returns true if the room is now empty.
 func (r *CollabRoom) Leave(clientId uint64) bool {
 	r.mu.Lock()
 	if c, ok := r.clients[clientId]; ok {
@@ -109,7 +119,8 @@ func (r *CollabRoom) Leave(clientId uint64) bool {
 	return empty
 }
 
-// Broadcast – publish to JetStream (everyone, every instance)
+// Broadcast publishes a message to JetStream and forwards it to all local clients except the sender.
+// Ignores packets with no useful data.
 func (r *CollabRoom) Broadcast(fromId uint64, msg *collab.ServerPacket) {
 	// Ignore "hello" packets that carry no useful data
 	if (msg.GetYjsUpdate() != nil && len(msg.GetYjsUpdate().Data) == 0) || (msg.GetAwareness() != nil && len(msg.GetAwareness().Data) == 0) {
@@ -132,6 +143,8 @@ func (r *CollabRoom) Broadcast(fromId uint64, msg *collab.ServerPacket) {
 	r.forwardToLocal(fromId, msg)
 }
 
+// SendToClient sends a message to a specific client in the room, if present.
+// Ignores packets with no useful data.
 func (r *CollabRoom) SendToClient(fromId uint64, toId uint64, msg *collab.ServerPacket) {
 	// Ignore "hello" packets that carry no useful data
 	if (msg.GetYjsUpdate() != nil && len(msg.GetYjsUpdate().Data) == 0) || (msg.GetAwareness() != nil && len(msg.GetAwareness().Data) == 0) {
@@ -151,7 +164,7 @@ func (r *CollabRoom) SendToClient(fromId uint64, toId uint64, msg *collab.Server
 	client.Send(msg)
 }
 
-// JetStream pull loop
+// consumeLoop is the JetStream pull loop for receiving and forwarding messages to local clients.
 func (r *CollabRoom) consumeLoop() {
 	for {
 		batch, err := r.consumer.Fetch(32,
@@ -186,7 +199,7 @@ func (r *CollabRoom) consumeLoop() {
 	}
 }
 
-// forwardToLocal delivers to all *local* clients except the sender.
+// forwardToLocal delivers a message to all local clients except the sender.
 func (r *CollabRoom) forwardToLocal(fromId uint64, cm *collab.ServerPacket) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
@@ -200,6 +213,7 @@ func (r *CollabRoom) forwardToLocal(fromId uint64, cm *collab.ServerPacket) {
 	}
 }
 
+// BroadcastSyncStep1 broadcasts a sync step 1 message to all clients in the room.
 func (r *CollabRoom) BroadcastSyncStep1(fromId uint64, data []byte) {
 	pkt := &collab.ServerPacket{
 		SenderId: fromId,
@@ -213,6 +227,7 @@ func (r *CollabRoom) BroadcastSyncStep1(fromId uint64, data []byte) {
 	r.Broadcast(fromId, pkt)
 }
 
+// ForwardSyncStep2ToClient forwards a sync step 2 message to a specific client in the room.
 func (r *CollabRoom) ForwardSyncStep2ToClient(fromId uint64, toId uint64, data []byte) {
 	pkt := &collab.ServerPacket{
 		SenderId: fromId,
@@ -227,6 +242,7 @@ func (r *CollabRoom) ForwardSyncStep2ToClient(fromId uint64, toId uint64, data [
 	r.SendToClient(fromId, toId, pkt)
 }
 
+// BroadcastYjs broadcasts a Yjs update to all clients in the room.
 func (r *CollabRoom) BroadcastYjs(fromId uint64, data []byte) {
 	pkt := &collab.ServerPacket{
 		SenderId: fromId,
@@ -237,6 +253,7 @@ func (r *CollabRoom) BroadcastYjs(fromId uint64, data []byte) {
 	r.Broadcast(fromId, pkt)
 }
 
+// BroadcastAwareness broadcasts an awareness update to all clients in the room.
 func (r *CollabRoom) BroadcastAwareness(fromId uint64, data []byte) {
 	pkt := &collab.ServerPacket{
 		SenderId: fromId,
@@ -247,6 +264,7 @@ func (r *CollabRoom) BroadcastAwareness(fromId uint64, data []byte) {
 	r.Broadcast(fromId, pkt)
 }
 
+// SendTargetSaved notifies all clients in the room that the target has been saved.
 func (r *CollabRoom) SendTargetSaved() {
 	r.Broadcast(0, &collab.ServerPacket{
 		Msg: &collab.ServerPacket_TargetSaved{
@@ -257,7 +275,7 @@ func (r *CollabRoom) SendTargetSaved() {
 	})
 }
 
-// Shutdown graceful teardown of room
+// shutdown gracefully tears down the room and stops the consume loop.
 func (r *CollabRoom) shutdown() {
 	r.logger.Debug("shutting down")
 	r.cancel() // Stop consumeLoop

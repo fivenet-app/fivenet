@@ -30,7 +30,7 @@ var RegistryModule = fx.Module("cron_registry",
 
 var ErrInvalidCronSyntax = errors.New("invalid cron syntax")
 
-var reservedCronjobNames = []string{
+var reservedCronjobKeys = []string{
 	OwnerKey,
 	locks.KeyPrefix + OwnerKey,
 }
@@ -90,7 +90,7 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 		storeKV, err := r.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
 			Bucket:      bucket,
 			Description: fmt.Sprintf("%s Store", bucket),
-			History:     1,
+			History:     2,
 			Storage:     jetstream.MemoryStorage,
 		})
 		if err != nil {
@@ -100,7 +100,7 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 
 		st, err := store.New[cron.Cronjob, *cron.Cronjob](ctxStartup, p.Logger, p.JS, bucket,
 			store.WithJetstreamKV[cron.Cronjob, *cron.Cronjob](storeKV),
-			store.WithIgnoredKeys[cron.Cronjob, *cron.Cronjob](reservedCronjobNames...),
+			store.WithIgnoredKeys[cron.Cronjob, *cron.Cronjob](reservedCronjobKeys...),
 		)
 		if err != nil {
 			return err
@@ -145,7 +145,7 @@ func (r *Registry) ListCronjobs(ctx context.Context) []*cron.Cronjob {
 }
 
 func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
-	if job.Name == "" || slices.Contains(reservedCronjobNames, job.Name) {
+	if job.Name == "" || slices.Contains(reservedCronjobKeys, job.Name) {
 		return fmt.Errorf("cron job name is required or uses reserved name: %s", job.Name)
 	}
 
@@ -155,45 +155,35 @@ func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error
 	}
 
 	r.logger.Debug("registering cronjob", zap.String("name", job.Name))
-	cj, err := r.store.GetOrLoad(ctx, job.Name)
-	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		return fmt.Errorf("failed to load existing cron job %s. %w", job.Name, err)
-	}
-	if cj != nil {
-		// Merge with existing cronjob data
-		cj.Merge(job)
-	} else {
-		cj = job
-	}
 
-	if cj.Timeout == nil {
-		cj.Timeout = durationpb.New(DefaultCronjobTimeout)
+	if job.Timeout == nil {
+		job.Timeout = durationpb.New(DefaultCronjobTimeout)
 	} else {
 		// Ensure the timeout is not negative and not bigger than 30 minutes
-		if cj.Timeout.AsDuration() < 0 || cj.Timeout.AsDuration() > 30*time.Minute {
+		if job.Timeout.AsDuration() < 0 || job.Timeout.AsDuration() > 30*time.Minute {
 			return fmt.Errorf("cron job %s has negative timeout", job.Name)
 		}
 	}
 
-	if cj.State == cron.CronjobState_CRONJOB_STATE_UNSPECIFIED {
-		cj.State = cron.CronjobState_CRONJOB_STATE_WAITING
+	if job.State == cron.CronjobState_CRONJOB_STATE_UNSPECIFIED {
+		job.State = cron.CronjobState_CRONJOB_STATE_WAITING
 	}
 
-	nextTime, err := gronx.NextTick(cj.Schedule, false)
+	nextTime, err := gronx.NextTick(job.Schedule, false)
 	if err != nil {
 		return err
 	}
 
-	if cj.NextScheduleTime == nil || cj.NextScheduleTime.AsTime() != nextTime {
-		cj.NextScheduleTime = timestamp.New(nextTime)
+	if job.NextScheduleTime == nil || job.NextScheduleTime.AsTime() != nextTime {
+		job.NextScheduleTime = timestamp.New(nextTime)
 	}
 
 	if err := r.store.ComputeUpdate(ctx, strings.ToLower(job.Name), true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 		if existing == nil {
-			return cj, true, nil
+			return job, true, nil
 		}
 
-		existing.Merge(cj)
+		existing.Merge(job)
 
 		return existing, true, nil
 	}); err != nil {

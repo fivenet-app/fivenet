@@ -21,8 +21,8 @@ import (
 var tNotifications = table.FivenetNotifications
 
 var (
-	ErrFailedRequest = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.NotificatorService.ErrFailedRequest"}, nil)
-	ErrFailedStream  = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.NotificatorService.ErrFailedStream"}, nil)
+	ErrFailedRequest = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.NotificatorService.ErrFailedRequest"}, nil)
+	ErrFailedStream  = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.NotificatorService.ErrFailedStream"}, nil)
 )
 
 func (s *Server) GetNotifications(ctx context.Context, req *pbnotificator.GetNotificationsRequest) (*pbnotificator.GetNotificationsResponse, error) {

@@ -2,6 +2,7 @@ package centrumstate
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -75,68 +76,7 @@ func New(p Params) (*State, error) {
 			return err
 		}
 
-		dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](ctxCancel, logger, p.JS, "centrum_dispatches",
-			store.WithOnUpdateFn(func(_ *store.Store[centrum.Dispatch, *centrum.Dispatch], dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
-				if dsp == nil {
-					logger.Warn("unable to update dispatch location, got nil dispatch")
-					return dsp, nil
-				}
-
-				if locs, ok := s.GetDispatchLocations(dsp.Job); ok && locs != nil {
-					if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-						if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
-							locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
-						}
-					} else {
-						if err := locs.Replace(dsp, func(p orb.Pointer) bool {
-							return p.(*centrum.Dispatch).Id == dsp.Id
-						}, func(p1, p2 orb.Pointer) bool {
-							return p1.Point().Equal(p2.Point())
-						}); err != nil {
-							logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
-						}
-					}
-				}
-
-				return dsp, nil
-			}),
-
-			store.WithOnDeleteFn(func(_ *store.Store[centrum.Dispatch, *centrum.Dispatch], entry jetstream.KeyValueEntry, dsp *centrum.Dispatch) error {
-				key := entry.Key()
-				if dsp == nil && key == "" {
-					logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
-					return nil
-				}
-
-				var job string
-				var dspId uint64
-				if dsp != nil {
-					job = dsp.Job
-					dspId = dsp.Id
-				} else {
-					split := strings.Split(key, ".")
-					if len(split) < 2 {
-						logger.Warn("unable to delete dispatch location, invalid key", zap.String("store_dispatch_key", entry.Key()))
-						return nil
-					}
-
-					job = split[0]
-					dspId, err = strconv.ParseUint(split[1], 10, 64)
-					if err != nil {
-						logger.Warn("unable to delete dispatch location, fallback to key failed", zap.String("store_dispatch_key", entry.Key()))
-						return nil
-					}
-				}
-
-				if locs, ok := s.GetDispatchLocations(job); ok && locs != nil {
-					if locs.Has(dsp, centrum.DispatchPointMatchFn(dspId)) {
-						locs.Remove(dsp, centrum.DispatchPointMatchFn(dspId))
-					}
-				}
-
-				return nil
-			}),
-		)
+		dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](ctxCancel, logger, p.JS, "centrum_dispatches")
 		if err != nil {
 			return err
 		}
@@ -161,6 +101,10 @@ func New(p Params) (*State, error) {
 		}
 		s.dispatches = dispatches
 
+		if err := s.runWatchKV(ctxCancel); err != nil {
+			return fmt.Errorf("failed to run watch KV. %w", err)
+		}
+
 		return nil
 	}))
 
@@ -171,6 +115,78 @@ func New(p Params) (*State, error) {
 	}))
 
 	return s, nil
+}
+
+func (s *State) runWatchKV(ctx context.Context) error {
+	watchCh, err := s.dispatches.WatchAll(ctx)
+	if err != nil {
+		return err
+	}
+
+	go s.watchKV(ctx, watchCh)
+	return nil
+}
+
+func (s *State) watchKV(ctx context.Context, watchCh <-chan *store.KeyValueEntry[centrum.Dispatch, *centrum.Dispatch]) {
+	for {
+		select {
+		case <-ctx.Done():
+			return
+
+		case event := <-watchCh:
+			if event == nil {
+				s.logger.Error("received nil user changes event, skipping")
+				continue
+			}
+
+			if event.Operation() == jetstream.KeyValuePut {
+				dsp, err := event.Value()
+				if err != nil {
+					s.logger.Error("failed to get dispatch from store event", zap.Error(err))
+					continue
+				}
+
+				if locs, ok := s.GetDispatchLocations(dsp.Job); ok && locs != nil {
+					if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+						if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
+							locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
+						}
+					} else {
+						if err := locs.Replace(dsp, func(p orb.Pointer) bool {
+							return p.(*centrum.Dispatch).Id == dsp.Id
+						}, func(p1, p2 orb.Pointer) bool {
+							return p1.Point().Equal(p2.Point())
+						}); err != nil {
+							s.logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
+						}
+					}
+				}
+			} else if event.Operation() == jetstream.KeyValueDelete || event.Operation() == jetstream.KeyValuePurge {
+				key := event.Key()
+				if key == "" {
+					s.logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", key))
+					continue
+				}
+
+				split := strings.Split(key, ".")
+				if len(split) < 2 {
+					s.logger.Warn("unable to delete dispatch location, invalid key", zap.String("store_dispatch_key", key))
+					continue
+				}
+
+				job := split[0]
+				dspId, err := strconv.ParseUint(split[1], 10, 64)
+				if err != nil {
+					s.logger.Warn("unable to delete dispatch location, fallback to key failed", zap.String("store_dispatch_key", key))
+					continue
+				}
+
+				if locs, ok := s.GetDispatchLocations(job); ok && locs != nil {
+					locs.Remove(nil, centrum.DispatchPointMatchFn(dspId))
+				}
+			}
+		}
+	}
 }
 
 // Expose the stores for deeper interaction for updates

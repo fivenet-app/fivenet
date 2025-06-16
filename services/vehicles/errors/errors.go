@@ -5,4 +5,4 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-var ErrFailedQuery = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.VehiclesService.ErrFailedQuery"}, nil)
+var ErrFailedQuery = common.NewI18nErr(codes.Internal, &common.I18NItem{Key: "errors.VehiclesService.ErrFailedQuery"}, nil)

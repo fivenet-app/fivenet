@@ -10,6 +10,8 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+// JobsAccessProtoMessage defines the interface for job access proto messages.
+// It extends ProtoMessage and provides accessors for job and access fields.
 type JobsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]
 
@@ -23,13 +25,19 @@ type JobsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	SetAccess(V)
 }
 
+// Jobs provides access control logic for job-based permissions.
 type Jobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum] struct {
-	table         jet.Table
-	columns       *JobAccessColumns
-	selectTable   jet.Table
+	// table is the main table for job access entries.
+	table jet.Table
+	// columns holds column references for the main table.
+	columns *JobAccessColumns
+	// selectTable is the table used for select queries (may be aliased).
+	selectTable jet.Table
+	// selectColumns holds column references for select queries (may be aliased).
 	selectColumns *JobAccessColumns
 }
 
+// NewJobs creates a new Jobs instance for job-based access control.
 func NewJobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum](table jet.Table, columns *JobAccessColumns, tableAlias jet.Table, columnsAlias *JobAccessColumns) *Jobs[U, T, V] {
 	return &Jobs[U, T, V]{
 		table:         table,
@@ -39,6 +47,7 @@ func NewJobs[U any, T JobsAccessProtoMessage[U, V], V protoutils.ProtoEnum](tabl
 	}
 }
 
+// List returns all job access entries for a given targetId.
 func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
 	stmt := a.selectTable.
 		SELECT(
@@ -65,6 +74,7 @@ func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([
 	return dest, nil
 }
 
+// Clear deletes all job access entries for a given targetId.
 func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (T, error) {
 	stmt := a.table.
 		DELETE().
@@ -82,6 +92,8 @@ func (a *Jobs[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (
 	return dest, nil
 }
 
+// Compare compares the current job access entries in the database with the provided input.
+// Returns slices of entries to create, update, and delete.
 func (a *Jobs[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64, in []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
 	current, err := a.List(ctx, tx, targetId)
 	if err != nil {
@@ -92,6 +104,8 @@ func (a *Jobs[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64,
 	return toCreate, toUpdate, toDelete, nil
 }
 
+// compare performs a comparison between current and input job access entries.
+// Returns entries to create, update, and delete. Handles matching by job and minimum grade.
 func (a *Jobs[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, toDelete []T) {
 	toCreate = []T{}
 	toUpdate = []T{}
@@ -157,6 +171,8 @@ func (a *Jobs[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, to
 	return
 }
 
+// HandleAccessChanges applies the necessary create, update, and delete operations for job access entries.
+// Returns the created, updated, and deleted entries, or an error if any operation fails.
 func (a *Jobs[U, T, AccessLevel]) HandleAccessChanges(ctx context.Context, tx qrm.DB, targetId uint64, access []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
 	toCreate, toUpdate, toDelete, err = a.Compare(ctx, tx, targetId, access)
 	if err != nil {

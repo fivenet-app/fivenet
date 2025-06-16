@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+// RefreshDiscordAccessToken refreshes a Discord OAuth2 access token using the provided credentials and refresh token.
+// Returns the new access token, new refresh token, expiration (in seconds), or an error if the refresh fails.
 func RefreshDiscordAccessToken(ctx context.Context, clientID, clientSecret, refreshToken, redirectURI string) (newAccessToken, newRefreshToken string, expiresIn int32, err error) {
 	data := url.Values{}
 	data.Set("client_id", clientID)
@@ -35,6 +37,7 @@ func RefreshDiscordAccessToken(ctx context.Context, clientID, clientSecret, refr
 		return "", "", 0, fmt.Errorf("discord token refresh error %d: %s", resp.StatusCode, string(body))
 	}
 
+	// Inline struct for decoding Discord's token response
 	var respData struct {
 		AccessToken  string `json:"access_token"`
 		RefreshToken string `json:"refresh_token"`

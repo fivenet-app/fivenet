@@ -1,6 +1,6 @@
-export type TranslateItemParamters = { [key: string]: string };
+export type I18NItemParamters = { [key: string]: string };
 
-export type TranslateItem = {
+export type I18NItem = {
     key: string;
-    parameters?: TranslateItemParamters;
+    parameters?: I18NItemParamters;
 };

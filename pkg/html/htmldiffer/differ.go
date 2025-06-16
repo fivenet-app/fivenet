@@ -10,18 +10,23 @@ import (
 	"go.uber.org/fx"
 )
 
+// Module provides the Fx module for the HTML differ, wiring up dependency injection.
 var Module = fx.Module("htmldiffer",
 	fx.Provide(
 		New,
 	),
 )
 
+// brFixer is a regexp that normalizes multiple <br> tags and whitespace into a single <br/>.
 var brFixer = regexp.MustCompile(`(?m)(<br>)+([ \n]*)(<br>)+`)
 
+// Differ wraps the html-diff configuration for HTML diffing operations.
 type Differ struct {
+	// htmldiff is the configuration for the html-diff library.
 	htmldiff *htmldiff.Config
 }
 
+// New creates a new Differ instance with default configuration for HTML diffing.
 func New() *Differ {
 	return &Differ{
 		htmldiff: &htmldiff.Config{
@@ -34,6 +39,8 @@ func New() *Differ {
 	}
 }
 
+// FancyDiff computes a highlighted HTML diff between oldContent and newContent.
+// If no changes are detected, returns an empty string. Falls back to newContent on error.
 func (d *Differ) FancyDiff(oldContent string, newContent string) (string, error) {
 	oldContent = brFixer.ReplaceAllString(oldContent, "<br/>")
 	newContent = brFixer.ReplaceAllString(newContent, "<br/>")
@@ -52,8 +59,11 @@ func (d *Differ) FancyDiff(oldContent string, newContent string) (string, error)
 	return out, nil
 }
 
+// removeImgData is a regexp that strips inline image data from HTML for diffing.
 var removeImgData = regexp.MustCompile(`(?i)data:image/[^"']+`)
 
+// PatchDiff computes a unified diff (udiff) between two HTML strings, omitting image data and normalizing <br> tags.
+// Returns an empty string if the normalized HTML is equal.
 func (d *Differ) PatchDiff(old string, new string) string {
 	old = removeImgData.ReplaceAllString(old, "IMAGE_DATA_OMITTED")
 	old = strings.ReplaceAll(old, "<br/>", "<br>")

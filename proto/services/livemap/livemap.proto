@@ -21,7 +21,7 @@ message StreamResponse {
     MarkerMarkersUpdates markers = 3;
     Snapshot snapshot = 4;
     resources.livemap.UserMarker user_update = 5;
-    int32 user_delete = 6;
+    UserDelete user_delete = 6;
   }
 }
 
@@ -56,6 +56,14 @@ message Snapshot {
 
   // Version in case we extend the definition later (e.g. add units).
   uint32 schema_version = 4;
+}
+
+message UserDelete {
+  // The user ID of the user that was deleted.
+  int32 id = 1;
+
+  // The job of the user that was deleted.
+  string job = 2;
 }
 
 message CreateOrUpdateMarkerRequest {

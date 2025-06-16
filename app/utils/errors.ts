@@ -1,7 +1,7 @@
-import type { TranslateItem } from '~/types/i18n';
+import type { I18NItem } from '~/types/i18n';
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 
-export function getErrorMessage(err: RpcError): TranslateItem {
+export function getErrorMessage(err: RpcError): I18NItem {
     if (isTranslatedError(err.message)) {
         const parsed = parseError(err.message);
         if (parsed?.content) {

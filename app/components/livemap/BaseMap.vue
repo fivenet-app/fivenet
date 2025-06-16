@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type * as L from 'leaflet';
-import { CRS, extend, LatLng, latLngBounds, type PointExpression, Projection, Transformation } from 'leaflet';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import L, { CRS, extend, LatLng, latLngBounds, type PointExpression, Projection, Transformation } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet.heat';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';

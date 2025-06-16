@@ -1,15 +1,15 @@
 import type { NotificationAction } from '#ui/types';
-import type { TranslateItem } from '~/types/i18n';
+import type { I18NItem } from '~/types/i18n';
 import type { Data, NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export interface NotificationActionI18n extends Omit<NotificationAction, 'label'> {
-    label: TranslateItem;
+    label: I18NItem;
 }
 
 export interface Notification {
     id?: number;
-    title: TranslateItem;
-    description: TranslateItem;
+    title: I18NItem;
+    description: I18NItem;
     timeout?: number;
     type?: NotificationType;
     category?: NotificationCategory;

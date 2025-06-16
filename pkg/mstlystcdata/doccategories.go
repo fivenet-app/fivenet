@@ -19,22 +19,33 @@ import (
 	"go.uber.org/zap"
 )
 
+// DocumentCategories manages document category data, including caching and enrichment.
 type DocumentCategories struct {
+	// logger is used for logging within the DocumentCategories service.
 	logger *zap.Logger
-	db     *sql.DB
+	// db is the SQL database connection used for queries.
+	db *sql.DB
 
+	// tracer is used for distributed tracing of operations.
 	tracer trace.Tracer
 
+	// Cache provides a cache for document categories keyed by string.
 	*cache.Cache[documents.Category, *documents.Category]
 }
 
+// DocumentCategoriesResult is the result struct for dependency injection, providing
+// both the DocumentCategories service and a cron job registration.
 type DocumentCategoriesResult struct {
 	fx.Out
 
+	// DocumentCategories is the main service for document category management.
 	DocumentCategories *DocumentCategories
-	CronRegister       croner.CronRegister `group:"cronjobregister"`
+	// CronRegister registers cron jobs for document category refresh.
+	CronRegister croner.CronRegister `group:"cronjobregister"`
 }
 
+// NewDocumentCategories constructs a new DocumentCategories service, sets up cache,
+// and registers lifecycle hooks for startup and shutdown.
 func NewDocumentCategories(p Params) DocumentCategoriesResult {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
@@ -46,6 +57,7 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		// Initialize the document categories cache with a key-value prefix.
 		docCategories, err := cache.New(ctxStartup, p.Logger, p.JS, "cache",
 			cache.WithKVPrefix[documents.Category]("doc_categories"),
 		)
@@ -54,6 +66,7 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 		}
 		c.Cache = docCategories
 
+		// Start the cache and load categories into it.
 		if err := docCategories.Start(ctxCancel, false); err != nil {
 			return err
 		}
@@ -66,6 +79,7 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		// Cancel the context on shutdown.
 		cancel()
 
 		return nil
@@ -77,6 +91,7 @@ func NewDocumentCategories(p Params) DocumentCategoriesResult {
 	}
 }
 
+// RegisterCronjobs registers the cron job for refreshing document categories.
 func (c *DocumentCategories) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "mstlystcdata.doccategories",
@@ -88,6 +103,7 @@ func (c *DocumentCategories) RegisterCronjobs(ctx context.Context, registry cron
 	return nil
 }
 
+// RegisterCronjobHandlers registers the handler for the document categories cron job.
 func (c *DocumentCategories) RegisterCronjobHandlers(h *croner.Handlers) error {
 	h.Add("mstlystcdata.doccategories", func(ctx context.Context, data *cron.CronjobData) error {
 		ctx, span := c.tracer.Start(ctx, "mstlystcdata-doccategories")
@@ -104,6 +120,8 @@ func (c *DocumentCategories) RegisterCronjobHandlers(h *croner.Handlers) error {
 	return nil
 }
 
+// loadCategories loads all document categories from the database into the cache.
+// It also builds a map of categories per job for potential future use.
 func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 	tDCategory := table.FivenetDocumentsCategories.AS("category")
 
@@ -149,6 +167,8 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 	return errs
 }
 
+// Enrich sets the full category object on the given ICategory if available in the cache.
+// If the category is not found, it sets a placeholder category.
 func (c *DocumentCategories) Enrich(doc common.ICategory) {
 	cId := doc.GetCategoryId()
 

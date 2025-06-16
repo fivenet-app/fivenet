@@ -229,3 +229,5 @@ require (
 	nhooyr.io/websocket v1.8.17 // indirect
 	willnorris.com/go/gifresize v1.0.0 // indirect
 )
+
+replace github.com/paulmach/orb => github.com/galexrt/orb v0.0.0-20250616102655-267a700ff290

@@ -125,18 +125,17 @@ func (p *DBScannerModule) parseComment(_ string, comment string) (*DBScannerInfo
 	split := strings.Split(comment, ",")
 
 	for i := range split {
-		k, v, _ := strings.Cut(split[i], "=")
-		_ = v
+		k, _, _ := strings.Cut(split[i], "=")
 
 		switch strings.ToLower(k) {
 		case "json":
 			perm.Unmarshal = "protojson.Unmarshal"
-			perm.Marshal = "protoutils.Marshal"
+			perm.Marshal = "protoutils.MarshalToPJSON"
 			continue
 
 		case "partial":
-			perm.Unmarshal = "protoutils.UnmarshalPartial"
-			perm.Marshal = "protoutils.Marshal"
+			perm.Unmarshal = "protoutils.UnmarshalPartialPJSON"
+			perm.Marshal = "protoutils.MarshalToPJSON"
 			continue
 		}
 	}

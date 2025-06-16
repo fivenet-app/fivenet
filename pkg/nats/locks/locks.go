@@ -12,34 +12,66 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
 )
 
 const (
+	// LockTimeout is the default timeout for acquiring a lock
 	LockTimeout = 750 * time.Millisecond
 
+	// KeyPrefix is the prefix used for all lock keys in the KV store
 	KeyPrefix = "LOCK."
 )
 
-type Locks struct {
-	logger *zap.Logger
-	kv     jetstream.KeyValue
+var (
+	// Prometheus metric: total number of lock acquisition attempts
+	lockAcquireTotal = promauto.NewCounterVec(prometheus.CounterOpts{
+		Namespace: "nats_locks",
+		Name:      "acquire_total",
+		Help:      "Total number of lock acquisition attempts.",
+	}, []string{"bucket", "result"})
 
+	// Prometheus metric: histogram of lock held durations
+	lockHeldDuration = promauto.NewHistogramVec(prometheus.HistogramOpts{
+		Namespace: "nats_locks",
+		Name:      "held_duration_seconds",
+		Help:      "Histogram of lock held durations.",
+		Buckets:   prometheus.ExponentialBuckets(0.001, 2, 15),
+	}, []string{"bucket"})
+)
+
+// Locks provides distributed locking using NATS JetStream KeyValue store
+// with lock expiration and metrics.
+type Locks struct {
+	// logger instance
+	logger *zap.Logger
+	// NATS JetStream KeyValue store
+	kv jetstream.KeyValue
+	// bucket name for locks
+	bucket string
+
+	// maximum age for a lock before considered stale
 	maxLockAge time.Duration
 
-	revMap  map[string]uint64
-	maplock sync.Mutex
+	// map of lock key to last revision
+	revMap map[string]uint64
+	// mutex for revMap
+	maplock sync.RWMutex
 }
 
+// New creates a new Locks instance for a given bucket and max lock age.
 func New(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge time.Duration) (*Locks, error) {
 	l := &Locks{
 		logger: logger.Named("locks").With(zap.String("bucket", bucket)),
 		kv:     kv,
+		bucket: bucket,
 
 		maxLockAge: maxLockAge,
 
 		revMap:  map[string]uint64{},
-		maplock: sync.Mutex{},
+		maplock: sync.RWMutex{},
 	}
 
 	return l, nil
@@ -63,8 +95,9 @@ func New(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge ti
 // case Unlock is unable to be called due to some sort of network
 // failure or system crash.
 func (l *Locks) Lock(ctx context.Context, key string) error {
-	l.logger.Debug("lock", zap.String("key", key))
-	lockKey := KeyPrefix + key
+	start := time.Now()
+	lockKey := makeLockKey(key)
+	l.logger.Debug("lock", zap.String("key", lockKey))
 
 loop:
 	for {
@@ -75,11 +108,12 @@ loop:
 		}
 
 		if revision == nil {
-			break
+			break // no lock exists, proceed to create
 		}
 
+		// If lock is too old, clean it up
 		if time.Since(revision.Created()) > l.maxLockAge {
-			l.logger.Warn("cleaning up old lock", zap.String("key", key))
+			l.logger.Warn("cleaning up old lock", zap.String("key", lockKey))
 			if err := l.kv.Delete(ctx, lockKey, jetstream.LastRevision(revision.Revision())); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 				return err
 			}
@@ -104,8 +138,9 @@ loop:
 
 		select {
 		// retry after a short period of time
-		case <-time.After(time.Duration(50+rand.Float64()*(200-50+1)) * time.Millisecond):
+		case <-time.After(jitterDelay()):
 		case <-ctx.Done():
+			lockAcquireTotal.WithLabelValues(l.bucket, "fail").Inc()
 			return ctx.Err()
 		}
 	}
@@ -121,21 +156,53 @@ loop:
 	}
 
 	if err != nil {
+		lockAcquireTotal.WithLabelValues(l.bucket, "fail").Inc()
 		return err
 	}
 
 	l.setRev(lockKey, nrev)
+
+	lockAcquireTotal.WithLabelValues(l.bucket, "success").Inc()
+	lockHeldDuration.WithLabelValues(l.bucket).Observe(time.Since(start).Seconds())
 	return nil
 }
 
+// TryLock attempts to acquire the lock for key without blocking.
+// Returns true if the lock was acquired, false otherwise.
+func (l *Locks) TryLock(ctx context.Context, key string) (bool, error) {
+	lockKey := makeLockKey(key)
+
+	revision, err := l.kv.Get(ctx, lockKey)
+	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+		return false, err
+	}
+	if revision != nil {
+		return false, nil // lock already exists
+	}
+
+	contents := make([]byte, 8)
+	binary.LittleEndian.PutUint64(contents, uint64(time.Now().Add(5*time.Minute).UnixNano()))
+	nrev, err := l.kv.Create(ctx, lockKey, contents)
+	if err != nil {
+		if isWrongSequence(err) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	l.setRev(lockKey, nrev)
+	return true, nil
+}
+
+// IsLocked checks if the lock for key currently exists.
 func (l *Locks) IsLocked(ctx context.Context, key string) (bool, error) {
 	// Check for existing lock
-	revision, err := l.kv.Get(ctx, key)
+	revision, err := l.kv.Get(ctx, makeLockKey(key))
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		return false, err
 	}
 
-	return revision == nil, nil
+	return revision != nil, nil
 }
 
 // Unlock releases the lock for key. This method must ONLY be
@@ -143,23 +210,26 @@ func (l *Locks) IsLocked(ctx context.Context, key string) (bool, error) {
 // critical section is finished, even if it errored or timed
 // out. Unlock cleans up any resources allocated during Lock.
 func (l *Locks) Unlock(ctx context.Context, key string) error {
-	l.logger.Debug("unlock", zap.String("key", key))
-	lockKey := KeyPrefix + key
+	lockKey := makeLockKey(key)
+	l.logger.Debug("unlock", zap.String("key", lockKey))
 	return l.kv.Delete(ctx, lockKey, jetstream.LastRevision(l.getRev(lockKey)))
 }
 
+// setRev stores the last revision for a lock key.
 func (l *Locks) setRev(key string, value uint64) {
 	l.maplock.Lock()
 	defer l.maplock.Unlock()
 	l.revMap[key] = value
 }
 
+// getRev retrieves the last revision for a lock key.
 func (l *Locks) getRev(key string) uint64 {
-	l.maplock.Lock()
-	defer l.maplock.Unlock()
+	l.maplock.RLock()
+	defer l.maplock.RUnlock()
 	return l.revMap[key]
 }
 
+// isWrongSequence checks if the error is due to a wrong last sequence in JetStream.
 func isWrongSequence(err error) bool {
 	if err, ok := err.(*jetstream.APIError); ok {
 		if err.ErrorCode == jetstream.JSErrCodeStreamWrongLastSequence {
@@ -169,4 +239,14 @@ func isWrongSequence(err error) bool {
 
 	// Fallback to checking the error message contents
 	return strings.Contains(err.Error(), "wrong last sequence")
+}
+
+// makeLockKey returns the full key for a lock.
+func makeLockKey(key string) string {
+	return KeyPrefix + key
+}
+
+// jitterDelay returns a random delay for lock retry backoff.
+func jitterDelay() time.Duration {
+	return time.Duration(50+rand.Float64()*150) * time.Millisecond
 }

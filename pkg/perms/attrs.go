@@ -817,7 +817,7 @@ func (p *Perms) UpdateJobAttributes(ctx context.Context, job string, attrs ...*p
 		if attr.MaxValues != nil {
 			attr.MaxValues.Default(permissions.AttributeTypes(a.Type))
 
-			out, err := protoutils.Marshal(attr.MaxValues)
+			out, err := protoutils.MarshalToPJSON(attr.MaxValues)
 			if err != nil {
 				return fmt.Errorf("failed to marshal max values. %w", err)
 			}

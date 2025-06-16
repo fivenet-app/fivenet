@@ -30,10 +30,10 @@ message Notification {
   resources.timestamp.Timestamp read_at = 3;
   int32 user_id = 4 [(validate.rules).int32.gte = 0];
   // @sanitize
-  resources.common.TranslateItem title = 5;
+  resources.common.I18NItem title = 5;
   NotificationType type = 6 [(validate.rules).enum.defined_only = true];
   // @sanitize
-  resources.common.TranslateItem content = 7;
+  resources.common.I18NItem content = 7;
   NotificationCategory category = 8 [(validate.rules).enum.defined_only = true];
   optional Data data = 9;
   optional bool starred = 10;

@@ -155,13 +155,13 @@ func (x *StreamResponse) GetUserUpdate() *livemap.UserMarker {
 	return nil
 }
 
-func (x *StreamResponse) GetUserDelete() int32 {
+func (x *StreamResponse) GetUserDelete() *UserDelete {
 	if x != nil {
 		if x, ok := x.Data.(*StreamResponse_UserDelete); ok {
 			return x.UserDelete
 		}
 	}
-	return 0
+	return nil
 }
 
 type isStreamResponse_Data interface {
@@ -185,7 +185,7 @@ type StreamResponse_UserUpdate struct {
 }
 
 type StreamResponse_UserDelete struct {
-	UserDelete int32 `protobuf:"varint,6,opt,name=user_delete,json=userDelete,proto3,oneof"`
+	UserDelete *UserDelete `protobuf:"bytes,6,opt,name=user_delete,json=userDelete,proto3,oneof"`
 }
 
 func (*StreamResponse_Jobs) isStreamResponse_Data() {}
@@ -398,6 +398,60 @@ func (x *Snapshot) GetSchemaVersion() uint32 {
 	return 0
 }
 
+type UserDelete struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The user ID of the user that was deleted.
+	Id int32 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// The job of the user that was deleted.
+	Job           string `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UserDelete) Reset() {
+	*x = UserDelete{}
+	mi := &file_services_livemap_livemap_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserDelete) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserDelete) ProtoMessage() {}
+
+func (x *UserDelete) ProtoReflect() protoreflect.Message {
+	mi := &file_services_livemap_livemap_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserDelete.ProtoReflect.Descriptor instead.
+func (*UserDelete) Descriptor() ([]byte, []int) {
+	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UserDelete) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UserDelete) GetJob() string {
+	if x != nil {
+		return x.Job
+	}
+	return ""
+}
+
 type CreateOrUpdateMarkerRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Marker        *livemap.MarkerMarker  `protobuf:"bytes,1,opt,name=marker,proto3" json:"marker,omitempty"`
@@ -407,7 +461,7 @@ type CreateOrUpdateMarkerRequest struct {
 
 func (x *CreateOrUpdateMarkerRequest) Reset() {
 	*x = CreateOrUpdateMarkerRequest{}
-	mi := &file_services_livemap_livemap_proto_msgTypes[5]
+	mi := &file_services_livemap_livemap_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -419,7 +473,7 @@ func (x *CreateOrUpdateMarkerRequest) String() string {
 func (*CreateOrUpdateMarkerRequest) ProtoMessage() {}
 
 func (x *CreateOrUpdateMarkerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_livemap_livemap_proto_msgTypes[5]
+	mi := &file_services_livemap_livemap_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -432,7 +486,7 @@ func (x *CreateOrUpdateMarkerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateMarkerRequest.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateMarkerRequest) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{5}
+	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *CreateOrUpdateMarkerRequest) GetMarker() *livemap.MarkerMarker {
@@ -451,7 +505,7 @@ type CreateOrUpdateMarkerResponse struct {
 
 func (x *CreateOrUpdateMarkerResponse) Reset() {
 	*x = CreateOrUpdateMarkerResponse{}
-	mi := &file_services_livemap_livemap_proto_msgTypes[6]
+	mi := &file_services_livemap_livemap_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -463,7 +517,7 @@ func (x *CreateOrUpdateMarkerResponse) String() string {
 func (*CreateOrUpdateMarkerResponse) ProtoMessage() {}
 
 func (x *CreateOrUpdateMarkerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_livemap_livemap_proto_msgTypes[6]
+	mi := &file_services_livemap_livemap_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -476,7 +530,7 @@ func (x *CreateOrUpdateMarkerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateOrUpdateMarkerResponse.ProtoReflect.Descriptor instead.
 func (*CreateOrUpdateMarkerResponse) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{6}
+	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *CreateOrUpdateMarkerResponse) GetMarker() *livemap.MarkerMarker {
@@ -495,7 +549,7 @@ type DeleteMarkerRequest struct {
 
 func (x *DeleteMarkerRequest) Reset() {
 	*x = DeleteMarkerRequest{}
-	mi := &file_services_livemap_livemap_proto_msgTypes[7]
+	mi := &file_services_livemap_livemap_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -507,7 +561,7 @@ func (x *DeleteMarkerRequest) String() string {
 func (*DeleteMarkerRequest) ProtoMessage() {}
 
 func (x *DeleteMarkerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_livemap_livemap_proto_msgTypes[7]
+	mi := &file_services_livemap_livemap_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -520,7 +574,7 @@ func (x *DeleteMarkerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMarkerRequest.ProtoReflect.Descriptor instead.
 func (*DeleteMarkerRequest) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{7}
+	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *DeleteMarkerRequest) GetId() uint64 {
@@ -538,7 +592,7 @@ type DeleteMarkerResponse struct {
 
 func (x *DeleteMarkerResponse) Reset() {
 	*x = DeleteMarkerResponse{}
-	mi := &file_services_livemap_livemap_proto_msgTypes[8]
+	mi := &file_services_livemap_livemap_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -550,7 +604,7 @@ func (x *DeleteMarkerResponse) String() string {
 func (*DeleteMarkerResponse) ProtoMessage() {}
 
 func (x *DeleteMarkerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_livemap_livemap_proto_msgTypes[8]
+	mi := &file_services_livemap_livemap_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -563,7 +617,7 @@ func (x *DeleteMarkerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMarkerResponse.ProtoReflect.Descriptor instead.
 func (*DeleteMarkerResponse) Descriptor() ([]byte, []int) {
-	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{8}
+	return file_services_livemap_livemap_proto_rawDescGZIP(), []int{9}
 }
 
 var File_services_livemap_livemap_proto protoreflect.FileDescriptor
@@ -571,7 +625,7 @@ var File_services_livemap_livemap_proto protoreflect.FileDescriptor
 const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\n" +
 	"\x1eservices/livemap/livemap.proto\x12\x10services.livemap\x1a#resources/livemap/user_marker.proto\x1a%resources/livemap/marker_marker.proto\x1a\x19resources/jobs/jobs.proto\x1a\x17validate/validate.proto\"\x0f\n" +
-	"\rStreamRequest\"\xea\x02\n" +
+	"\rStreamRequest\"\x88\x03\n" +
 	"\x0eStreamResponse\x12%\n" +
 	"\fuser_on_duty\x18\x01 \x01(\bH\x01R\n" +
 	"userOnDuty\x88\x01\x01\x120\n" +
@@ -579,8 +633,8 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\amarkers\x18\x03 \x01(\v2&.services.livemap.MarkerMarkersUpdatesH\x00R\amarkers\x128\n" +
 	"\bsnapshot\x18\x04 \x01(\v2\x1a.services.livemap.SnapshotH\x00R\bsnapshot\x12@\n" +
 	"\vuser_update\x18\x05 \x01(\v2\x1d.resources.livemap.UserMarkerH\x00R\n" +
-	"userUpdate\x12!\n" +
-	"\vuser_delete\x18\x06 \x01(\x05H\x00R\n" +
+	"userUpdate\x12?\n" +
+	"\vuser_delete\x18\x06 \x01(\v2\x1c.services.livemap.UserDeleteH\x00R\n" +
 	"userDeleteB\v\n" +
 	"\x04data\x12\x03\xf8B\x01B\x0f\n" +
 	"\r_user_on_duty\"d\n" +
@@ -596,7 +650,11 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\amarkers\x18\x01 \x03(\v2\x1d.resources.livemap.UserMarkerR\amarkers\x12!\n" +
 	"\fgenerated_at\x18\x02 \x01(\x03R\vgeneratedAt\x12!\n" +
 	"\fsnapshot_seq\x18\x03 \x01(\x04R\vsnapshotSeq\x12%\n" +
-	"\x0eschema_version\x18\x04 \x01(\rR\rschemaVersion\"`\n" +
+	"\x0eschema_version\x18\x04 \x01(\rR\rschemaVersion\".\n" +
+	"\n" +
+	"UserDelete\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x10\n" +
+	"\x03job\x18\x02 \x01(\tR\x03job\"`\n" +
 	"\x1bCreateOrUpdateMarkerRequest\x12A\n" +
 	"\x06marker\x18\x01 \x01(\v2\x1f.resources.livemap.MarkerMarkerB\b\xfaB\x05\x8a\x01\x02\x10\x01R\x06marker\"W\n" +
 	"\x1cCreateOrUpdateMarkerResponse\x127\n" +
@@ -621,43 +679,45 @@ func file_services_livemap_livemap_proto_rawDescGZIP() []byte {
 	return file_services_livemap_livemap_proto_rawDescData
 }
 
-var file_services_livemap_livemap_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_services_livemap_livemap_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_services_livemap_livemap_proto_goTypes = []any{
 	(*StreamRequest)(nil),                // 0: services.livemap.StreamRequest
 	(*StreamResponse)(nil),               // 1: services.livemap.StreamResponse
 	(*JobsList)(nil),                     // 2: services.livemap.JobsList
 	(*MarkerMarkersUpdates)(nil),         // 3: services.livemap.MarkerMarkersUpdates
 	(*Snapshot)(nil),                     // 4: services.livemap.Snapshot
-	(*CreateOrUpdateMarkerRequest)(nil),  // 5: services.livemap.CreateOrUpdateMarkerRequest
-	(*CreateOrUpdateMarkerResponse)(nil), // 6: services.livemap.CreateOrUpdateMarkerResponse
-	(*DeleteMarkerRequest)(nil),          // 7: services.livemap.DeleteMarkerRequest
-	(*DeleteMarkerResponse)(nil),         // 8: services.livemap.DeleteMarkerResponse
-	(*livemap.UserMarker)(nil),           // 9: resources.livemap.UserMarker
-	(*jobs.Job)(nil),                     // 10: resources.jobs.Job
-	(*livemap.MarkerMarker)(nil),         // 11: resources.livemap.MarkerMarker
+	(*UserDelete)(nil),                   // 5: services.livemap.UserDelete
+	(*CreateOrUpdateMarkerRequest)(nil),  // 6: services.livemap.CreateOrUpdateMarkerRequest
+	(*CreateOrUpdateMarkerResponse)(nil), // 7: services.livemap.CreateOrUpdateMarkerResponse
+	(*DeleteMarkerRequest)(nil),          // 8: services.livemap.DeleteMarkerRequest
+	(*DeleteMarkerResponse)(nil),         // 9: services.livemap.DeleteMarkerResponse
+	(*livemap.UserMarker)(nil),           // 10: resources.livemap.UserMarker
+	(*jobs.Job)(nil),                     // 11: resources.jobs.Job
+	(*livemap.MarkerMarker)(nil),         // 12: resources.livemap.MarkerMarker
 }
 var file_services_livemap_livemap_proto_depIdxs = []int32{
 	2,  // 0: services.livemap.StreamResponse.jobs:type_name -> services.livemap.JobsList
 	3,  // 1: services.livemap.StreamResponse.markers:type_name -> services.livemap.MarkerMarkersUpdates
 	4,  // 2: services.livemap.StreamResponse.snapshot:type_name -> services.livemap.Snapshot
-	9,  // 3: services.livemap.StreamResponse.user_update:type_name -> resources.livemap.UserMarker
-	10, // 4: services.livemap.JobsList.users:type_name -> resources.jobs.Job
-	10, // 5: services.livemap.JobsList.markers:type_name -> resources.jobs.Job
-	11, // 6: services.livemap.MarkerMarkersUpdates.updated:type_name -> resources.livemap.MarkerMarker
-	9,  // 7: services.livemap.Snapshot.markers:type_name -> resources.livemap.UserMarker
-	11, // 8: services.livemap.CreateOrUpdateMarkerRequest.marker:type_name -> resources.livemap.MarkerMarker
-	11, // 9: services.livemap.CreateOrUpdateMarkerResponse.marker:type_name -> resources.livemap.MarkerMarker
-	0,  // 10: services.livemap.LivemapService.Stream:input_type -> services.livemap.StreamRequest
-	5,  // 11: services.livemap.LivemapService.CreateOrUpdateMarker:input_type -> services.livemap.CreateOrUpdateMarkerRequest
-	7,  // 12: services.livemap.LivemapService.DeleteMarker:input_type -> services.livemap.DeleteMarkerRequest
-	1,  // 13: services.livemap.LivemapService.Stream:output_type -> services.livemap.StreamResponse
-	6,  // 14: services.livemap.LivemapService.CreateOrUpdateMarker:output_type -> services.livemap.CreateOrUpdateMarkerResponse
-	8,  // 15: services.livemap.LivemapService.DeleteMarker:output_type -> services.livemap.DeleteMarkerResponse
-	13, // [13:16] is the sub-list for method output_type
-	10, // [10:13] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	10, // 3: services.livemap.StreamResponse.user_update:type_name -> resources.livemap.UserMarker
+	5,  // 4: services.livemap.StreamResponse.user_delete:type_name -> services.livemap.UserDelete
+	11, // 5: services.livemap.JobsList.users:type_name -> resources.jobs.Job
+	11, // 6: services.livemap.JobsList.markers:type_name -> resources.jobs.Job
+	12, // 7: services.livemap.MarkerMarkersUpdates.updated:type_name -> resources.livemap.MarkerMarker
+	10, // 8: services.livemap.Snapshot.markers:type_name -> resources.livemap.UserMarker
+	12, // 9: services.livemap.CreateOrUpdateMarkerRequest.marker:type_name -> resources.livemap.MarkerMarker
+	12, // 10: services.livemap.CreateOrUpdateMarkerResponse.marker:type_name -> resources.livemap.MarkerMarker
+	0,  // 11: services.livemap.LivemapService.Stream:input_type -> services.livemap.StreamRequest
+	6,  // 12: services.livemap.LivemapService.CreateOrUpdateMarker:input_type -> services.livemap.CreateOrUpdateMarkerRequest
+	8,  // 13: services.livemap.LivemapService.DeleteMarker:input_type -> services.livemap.DeleteMarkerRequest
+	1,  // 14: services.livemap.LivemapService.Stream:output_type -> services.livemap.StreamResponse
+	7,  // 15: services.livemap.LivemapService.CreateOrUpdateMarker:output_type -> services.livemap.CreateOrUpdateMarkerResponse
+	9,  // 16: services.livemap.LivemapService.DeleteMarker:output_type -> services.livemap.DeleteMarkerResponse
+	14, // [14:17] is the sub-list for method output_type
+	11, // [11:14] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_services_livemap_livemap_proto_init() }
@@ -678,7 +738,7 @@ func file_services_livemap_livemap_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_livemap_livemap_proto_rawDesc), len(file_services_livemap_livemap_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

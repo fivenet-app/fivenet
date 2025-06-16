@@ -14,11 +14,16 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// MigrateLogger implements the migrate.Logger interface using zap.Logger for logging migration output.
 type MigrateLogger struct {
-	logger  *zap.Logger
+	// logger is the zap logger instance used for migration logs.
+	logger *zap.Logger
+	// verbose indicates if verbose logging is enabled.
 	verbose bool
 }
 
+// NewMigrateLogger creates a new MigrateLogger with the given zap.Logger.
+// The logger is named "migrate" and verbosity is set based on the logger's level.
 func NewMigrateLogger(logger *zap.Logger) *MigrateLogger {
 	return &MigrateLogger{
 		logger:  logger.Named("migrate"),
@@ -26,15 +31,18 @@ func NewMigrateLogger(logger *zap.Logger) *MigrateLogger {
 	}
 }
 
+// Printf logs formatted migration output using zap at Info level.
 func (l *MigrateLogger) Printf(format string, v ...any) {
 	l.logger.Info(fmt.Sprintf(strings.TrimRight(format, "\n"), v...))
 }
 
-// Verbose should return true when verbose logging output is wanted
+// Verbose returns true if verbose logging output is wanted for migrations.
 func (l *MigrateLogger) Verbose() bool {
 	return false
 }
 
+// NewMigrate creates a new migrate.Migrate instance for the given DB and ESX compatibility flag.
+// It sets up the migration source and driver, and injects template data for migration scripts.
 func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
 	// FiveNet's own users/chars table
 	tableName := "fivenet_user"
@@ -43,7 +51,7 @@ func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
 		tableName = "users"
 	}
 
-	// Setup migrate source and driver
+	// Setup migrate source and driver with template data for, e.g., ESX compatibility.
 	source, err := iofs.New(&templateFS{
 		data: map[string]any{
 			"ESXCompat":      esxCompat,
@@ -72,6 +80,8 @@ func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
 	return m, nil
 }
 
+// MigrateDB runs database migrations using golang-migrate, logging progress and errors.
+// It prepares the DSN, connects to the DB, runs migrations, and logs the result.
 func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool) error {
 	logger.Info("starting database migrations")
 
@@ -92,7 +102,7 @@ func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool) error {
 	}
 	m.Log = NewMigrateLogger(logger)
 
-	// Run migrations
+	// Run migrations and handle "no change" as a non-error.
 	if err := m.Up(); err != nil {
 		if !errors.Is(err, migrate.ErrNoChange) {
 			return err

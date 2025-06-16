@@ -23,7 +23,7 @@ const (
 
 // Wrapped translated message for the client
 // @dbscanner: json
-type TranslateItem struct {
+type I18NItem struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// @sanitize: method=StripTags
 	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
@@ -33,20 +33,20 @@ type TranslateItem struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *TranslateItem) Reset() {
-	*x = TranslateItem{}
+func (x *I18NItem) Reset() {
+	*x = I18NItem{}
 	mi := &file_resources_common_i18n_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *TranslateItem) String() string {
+func (x *I18NItem) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*TranslateItem) ProtoMessage() {}
+func (*I18NItem) ProtoMessage() {}
 
-func (x *TranslateItem) ProtoReflect() protoreflect.Message {
+func (x *I18NItem) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_common_i18n_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -58,19 +58,19 @@ func (x *TranslateItem) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use TranslateItem.ProtoReflect.Descriptor instead.
-func (*TranslateItem) Descriptor() ([]byte, []int) {
+// Deprecated: Use I18NItem.ProtoReflect.Descriptor instead.
+func (*I18NItem) Descriptor() ([]byte, []int) {
 	return file_resources_common_i18n_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *TranslateItem) GetKey() string {
+func (x *I18NItem) GetKey() string {
 	if x != nil {
 		return x.Key
 	}
 	return ""
 }
 
-func (x *TranslateItem) GetParameters() map[string]string {
+func (x *I18NItem) GetParameters() map[string]string {
 	if x != nil {
 		return x.Parameters
 	}
@@ -81,11 +81,11 @@ var File_resources_common_i18n_proto protoreflect.FileDescriptor
 
 const file_resources_common_i18n_proto_rawDesc = "" +
 	"\n" +
-	"\x1bresources/common/i18n.proto\x12\x10resources.common\"\xb1\x01\n" +
-	"\rTranslateItem\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12O\n" +
+	"\x1bresources/common/i18n.proto\x12\x10resources.common\"\xa7\x01\n" +
+	"\bI18NItem\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12J\n" +
 	"\n" +
-	"parameters\x18\x02 \x03(\v2/.resources.common.TranslateItem.ParametersEntryR\n" +
+	"parameters\x18\x02 \x03(\v2*.resources.common.I18NItem.ParametersEntryR\n" +
 	"parameters\x1a=\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
@@ -105,11 +105,11 @@ func file_resources_common_i18n_proto_rawDescGZIP() []byte {
 
 var file_resources_common_i18n_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_common_i18n_proto_goTypes = []any{
-	(*TranslateItem)(nil), // 0: resources.common.TranslateItem
-	nil,                   // 1: resources.common.TranslateItem.ParametersEntry
+	(*I18NItem)(nil), // 0: resources.common.I18NItem
+	nil,              // 1: resources.common.I18NItem.ParametersEntry
 }
 var file_resources_common_i18n_proto_depIdxs = []int32{
-	1, // 0: resources.common.TranslateItem.parameters:type_name -> resources.common.TranslateItem.ParametersEntry
+	1, // 0: resources.common.I18NItem.parameters:type_name -> resources.common.I18NItem.ParametersEntry
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

@@ -13,6 +13,8 @@ import (
 	"go.uber.org/zap"
 )
 
+// runJobSoftDelete executes the soft delete cronjob logic for the housekeeper.
+// It processes jobs marked for deletion, iterates over tables, and updates the cron data.
 func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCronData) error {
 	tJobProps := table.FivenetJobProps
 
@@ -108,7 +110,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 }
 
 // SoftDeleteJobData marks rows as deleted in the main table and its dependant tables
-// by setting the DeletedAt column to the current timestamp.
+// by setting the DeletedAt column to the current timestamp for the given job.
 func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobName string) (int64, error) {
 	h.logger.Debug("starting soft delete", zap.String("table", table.Table.TableName()), zap.String("job", jobName))
 
@@ -123,7 +125,7 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 		rowsAffected += r
 	}
 
-	// Traverse dependencies
+	// Traverse dependencies and soft delete in dependant tables.
 	for _, dep := range table.DependantTables {
 		if dep.DeletedAtColumn == nil && table.JobColumn == nil {
 			continue
@@ -140,6 +142,7 @@ func (h *Housekeeper) SoftDeleteJobData(ctx context.Context, table *Table, jobNa
 	return rowsAffected, nil
 }
 
+// softDeleteJobData recursively marks rows as deleted in dependant tables for the given job.
 func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, table *Table, jobName string) (int64, error) {
 	rowsAffected := int64(0)
 
@@ -152,7 +155,7 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 		rowsAffected += r
 	}
 
-	// Traverse dependencies
+	// Traverse dependencies and soft delete in child tables.
 	for _, child := range table.DependantTables {
 		if table.JobColumn == nil || child.DeletedAtColumn == nil {
 			continue
@@ -168,6 +171,8 @@ func (h *Housekeeper) softDeleteJobData(ctx context.Context, parent *Table, tabl
 	return rowsAffected, nil
 }
 
+// markRowsAsDeletedInJob sets the DeletedAt column to the current timestamp for all rows in the table
+// matching the given job name and not already deleted.
 func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, jobName string) (rowsAffected int64, err error) {
 	condition := jet.AND(
 		table.JobColumn.EQ(jet.String(jobName)),
@@ -200,6 +205,8 @@ func (h *Housekeeper) markRowsAsDeletedInJob(ctx context.Context, table *Table, 
 	return rowsAffected, nil
 }
 
+// markRowsAsDeleted sets the DeletedAt column to the current timestamp for all rows in the table
+// matching the given job name and not already deleted, filtered by parent table.
 func (h *Housekeeper) markRowsAsDeleted(ctx context.Context, parentTable *Table, table *Table, jobName string) (rowsAffected int64, err error) {
 	var condition jet.BoolExpression
 	if table.JobColumn != nil {

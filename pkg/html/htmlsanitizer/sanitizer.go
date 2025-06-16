@@ -13,29 +13,39 @@ import (
 )
 
 var (
+	// stripTagsOnce ensures the stripTags policy is initialized only once.
 	stripTagsOnce sync.Once
-	stripTags     *bluemonday.Policy
+	// stripTags is a bluemonday policy for strict tag stripping.
+	stripTags *bluemonday.Policy
 
+	// sanitizerOnce ensures the sanitizer policy is initialized only once.
 	sanitizerOnce sync.Once
-	sanitizer     *bluemonday.Policy
+	// sanitizer is the main bluemonday policy for HTML sanitization.
+	sanitizer *bluemonday.Policy
 )
 
 var (
-	colorRegex            = regexp.MustCompile(`(?mi)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
+	// colorRegex matches valid color values for style attributes.
+	colorRegex = regexp.MustCompile(`(?mi)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
+	// prosemirrorClassRegex matches ProseMirror class names for editor compatibility.
 	prosemirrorClassRegex = regexp.MustCompile(`(?m)^ProseMirror-[A-Za-z]+$`)
 
+	// boolFalseRegex matches the string "false" (case-insensitive).
 	boolFalseRegex = regexp.MustCompile(`(?i)^false$`)
-	// Includes "checked" because it seems some browsers use it
-	boolTrueRegex     = regexp.MustCompile(`(?i)^(true|checked)$`)
+	// boolTrueRegex matches the string "true" or "checked" (case-insensitive).
+	boolTrueRegex = regexp.MustCompile(`(?i)^(true|checked)$`)
+	// inputTypeCheckbox matches the string "checkbox" (case-insensitive).
 	inputTypeCheckbox = regexp.MustCompile(`(?i)checkbox`)
 )
 
+// Module provides the Fx module for the HTML sanitizer, wiring up dependency injection.
 var Module = fx.Module("htmlsanitizer",
 	fx.Provide(
 		New,
 	),
 )
 
+// setupSanitizer initializes the main bluemonday sanitizer policy with custom rules for UGC, images, styles, links, and editor compatibility.
 func setupSanitizer() {
 	// Custom UGC Policy
 	sanitizer = bluemonday.UGCPolicy()
@@ -107,6 +117,7 @@ func setupSanitizer() {
 	sanitizer.AllowAttrs("data-type").OnElements("ul", "ol", "li", "span")
 }
 
+// New creates and returns a new bluemonday.Policy for HTML sanitization, optionally enabling image proxy rewriting if configured.
 func New(cfg *config.Config) (*bluemonday.Policy, error) {
 	sanitizerOnce.Do(setupSanitizer)
 
@@ -141,6 +152,7 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 	return sanitizer, nil
 }
 
+// Sanitize applies the main HTML sanitizer policy to the input string and trims trailing empty paragraphs.
 func Sanitize(in string) string {
 	sanitizerOnce.Do(setupSanitizer)
 
@@ -148,6 +160,7 @@ func Sanitize(in string) string {
 	return strings.TrimSuffix(out, "<p><br></p>")
 }
 
+// StripTags removes all HTML tags from the input string using a strict bluemonday policy and returns the unescaped result.
 func StripTags(in string) string {
 	stripTagsOnce.Do(func() {
 		stripTags = bluemonday.StrictPolicy()

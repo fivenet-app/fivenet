@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import type { ButtonSize, ButtonVariant } from '#ui/types';
 import { useNotificatorStore } from '~/stores/notificator';
-import type { TranslateItem } from '~/types/i18n';
+import type { I18NItem } from '~/types/i18n';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
         id: number | number | string;
         prefix?: string;
-        title?: TranslateItem;
-        content?: TranslateItem;
+        title?: I18NItem;
+        content?: I18NItem;
         action?: (id: number | number | string) => void;
         hideIcon?: boolean;
         variant?: ButtonVariant;

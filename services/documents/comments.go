@@ -497,10 +497,10 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 
 		not := &notifications.Notification{
 			UserId: targetUserId,
-			Title: &common.TranslateItem{
+			Title: &common.I18NItem{
 				Key: "notifications.documents.document_comment_added.title",
 			},
-			Content: &common.TranslateItem{
+			Content: &common.I18NItem{
 				Key:        "notifications.documents.document_comment_added.content",
 				Parameters: map[string]string{"title": doc.Title},
 			},

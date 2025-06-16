@@ -14,9 +14,9 @@ import { MessageType } from "@protobuf-ts/runtime";
  * Wrapped translated message for the client
  * @dbscanner: json
  *
- * @generated from protobuf message resources.common.TranslateItem
+ * @generated from protobuf message resources.common.I18NItem
  */
-export interface TranslateItem {
+export interface I18NItem {
     /**
      * @sanitize: method=StripTags
      *
@@ -33,22 +33,22 @@ export interface TranslateItem {
     };
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class TranslateItem$Type extends MessageType<TranslateItem> {
+class I18NItem$Type extends MessageType<I18NItem> {
     constructor() {
-        super("resources.common.TranslateItem", [
+        super("resources.common.I18NItem", [
             { no: 1, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "parameters", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
         ]);
     }
-    create(value?: PartialMessage<TranslateItem>): TranslateItem {
+    create(value?: PartialMessage<I18NItem>): I18NItem {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.key = "";
         message.parameters = {};
         if (value !== undefined)
-            reflectionMergePartial<TranslateItem>(this, message, value);
+            reflectionMergePartial<I18NItem>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TranslateItem): TranslateItem {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: I18NItem): I18NItem {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -70,8 +70,8 @@ class TranslateItem$Type extends MessageType<TranslateItem> {
         }
         return message;
     }
-    private binaryReadMap2(map: TranslateItem["parameters"], reader: IBinaryReader, options: BinaryReadOptions): void {
-        let len = reader.uint32(), end = reader.pos + len, key: keyof TranslateItem["parameters"] | undefined, val: TranslateItem["parameters"][any] | undefined;
+    private binaryReadMap2(map: I18NItem["parameters"], reader: IBinaryReader, options: BinaryReadOptions): void {
+        let len = reader.uint32(), end = reader.pos + len, key: keyof I18NItem["parameters"] | undefined, val: I18NItem["parameters"][any] | undefined;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
@@ -81,12 +81,12 @@ class TranslateItem$Type extends MessageType<TranslateItem> {
                 case 2:
                     val = reader.string();
                     break;
-                default: throw new globalThis.Error("unknown map entry field for resources.common.TranslateItem.parameters");
+                default: throw new globalThis.Error("unknown map entry field for resources.common.I18NItem.parameters");
             }
         }
         map[key ?? ""] = val ?? "";
     }
-    internalBinaryWrite(message: TranslateItem, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: I18NItem, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string key = 1; */
         if (message.key !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.key);
@@ -100,6 +100,6 @@ class TranslateItem$Type extends MessageType<TranslateItem> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.common.TranslateItem
+ * @generated MessageType for protobuf message resources.common.I18NItem
  */
-export const TranslateItem = new TranslateItem$Type();
+export const I18NItem = new I18NItem$Type();

@@ -57,9 +57,9 @@ export interface StreamResponse {
     } | {
         oneofKind: "userDelete";
         /**
-         * @generated from protobuf field: int32 user_delete = 6
+         * @generated from protobuf field: services.livemap.UserDelete user_delete = 6
          */
-        userDelete: number;
+        userDelete: UserDelete;
     } | {
         oneofKind: undefined;
     };
@@ -134,6 +134,23 @@ export interface Snapshot {
      * @generated from protobuf field: uint32 schema_version = 4
      */
     schemaVersion: number;
+}
+/**
+ * @generated from protobuf message services.livemap.UserDelete
+ */
+export interface UserDelete {
+    /**
+     * The user ID of the user that was deleted.
+     *
+     * @generated from protobuf field: int32 id = 1
+     */
+    id: number;
+    /**
+     * The job of the user that was deleted.
+     *
+     * @generated from protobuf field: string job = 2
+     */
+    job: string;
 }
 /**
  * @generated from protobuf message services.livemap.CreateOrUpdateMarkerRequest
@@ -214,7 +231,7 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 3, name: "markers", kind: "message", oneof: "data", T: () => MarkerMarkersUpdates },
             { no: 4, name: "snapshot", kind: "message", oneof: "data", T: () => Snapshot },
             { no: 5, name: "user_update", kind: "message", oneof: "data", T: () => UserMarker },
-            { no: 6, name: "user_delete", kind: "scalar", oneof: "data", T: 5 /*ScalarType.INT32*/ }
+            { no: 6, name: "user_delete", kind: "message", oneof: "data", T: () => UserDelete }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -256,10 +273,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         userUpdate: UserMarker.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userUpdate)
                     };
                     break;
-                case /* int32 user_delete */ 6:
+                case /* services.livemap.UserDelete user_delete */ 6:
                     message.data = {
                         oneofKind: "userDelete",
-                        userDelete: reader.int32()
+                        userDelete: UserDelete.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userDelete)
                     };
                     break;
                 default:
@@ -289,9 +306,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.livemap.UserMarker user_update = 5; */
         if (message.data.oneofKind === "userUpdate")
             UserMarker.internalBinaryWrite(message.data.userUpdate, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_delete = 6; */
+        /* services.livemap.UserDelete user_delete = 6; */
         if (message.data.oneofKind === "userDelete")
-            writer.tag(6, WireType.Varint).int32(message.data.userDelete);
+            UserDelete.internalBinaryWrite(message.data.userDelete, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -507,6 +524,61 @@ class Snapshot$Type extends MessageType<Snapshot> {
  * @generated MessageType for protobuf message services.livemap.Snapshot
  */
 export const Snapshot = new Snapshot$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserDelete$Type extends MessageType<UserDelete> {
+    constructor() {
+        super("services.livemap.UserDelete", [
+            { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UserDelete>): UserDelete {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.job = "";
+        if (value !== undefined)
+            reflectionMergePartial<UserDelete>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserDelete): UserDelete {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 id */ 1:
+                    message.id = reader.int32();
+                    break;
+                case /* string job */ 2:
+                    message.job = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserDelete, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).int32(message.id);
+        /* string job = 2; */
+        if (message.job !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemap.UserDelete
+ */
+export const UserDelete = new UserDelete$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateOrUpdateMarkerRequest$Type extends MessageType<CreateOrUpdateMarkerRequest> {
     constructor() {

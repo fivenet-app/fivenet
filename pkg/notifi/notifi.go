@@ -13,27 +13,40 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// tNots is a reference to the notifications table in the database.
 var tNots = table.FivenetNotifications
 
+// INotifi defines the interface for sending notifications to users.
 type INotifi interface {
+	// NotifyUser inserts a notification for a user and publishes it asynchronously.
 	NotifyUser(ctx context.Context, not *notifications.Notification) error
 }
 
+// Notifi implements the INotifi interface for managing user notifications.
 type Notifi struct {
+	// logger is used for logging errors and information.
 	logger *zap.Logger
-	db     *sql.DB
-	js     *events.JSWrapper
+	// db is the database connection used for storing notifications.
+	db *sql.DB
+	// js is the event system wrapper for publishing notifications.
+	js *events.JSWrapper
 }
 
+// Params contains dependencies for constructing a Notifi instance.
 type Params struct {
 	fx.In
 
-	LC     fx.Lifecycle
+	// LC is the application lifecycle for registering hooks.
+	LC fx.Lifecycle
+	// Logger is the logger instance for logging.
 	Logger *zap.Logger
-	DB     *sql.DB
-	JS     *events.JSWrapper
+	// DB is the database connection.
+	DB *sql.DB
+	// JS is the event system wrapper.
+	JS *events.JSWrapper
 }
 
+// New creates a new Notifi instance and registers event hooks.
 func New(p Params) INotifi {
 	n := &Notifi{
 		logger: p.Logger,
@@ -41,6 +54,7 @@ func New(p Params) INotifi {
 		js:     p.JS,
 	}
 
+	// Register event hooks on application start.
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
 		return n.registerEvents(ctx)
 	}))
@@ -48,6 +62,7 @@ func New(p Params) INotifi {
 	return n
 }
 
+// NotifyUser inserts a notification for a user and publishes it asynchronously.
 func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification) error {
 	nId, err := n.insertNotification(ctx, not)
 	if err != nil {
@@ -74,6 +89,7 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 	return nil
 }
 
+// insertNotification inserts a notification into the database and returns the new notification ID.
 func (n *Notifi) insertNotification(ctx context.Context, not *notifications.Notification) (int64, error) {
 	stmt := tNots.
 		INSERT(

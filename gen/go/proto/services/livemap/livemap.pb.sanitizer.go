@@ -164,6 +164,14 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
+		// Field: UserDelete
+	case *StreamResponse_UserDelete:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: UserUpdate
 	case *StreamResponse_UserUpdate:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
@@ -172,6 +180,14 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *UserDelete) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

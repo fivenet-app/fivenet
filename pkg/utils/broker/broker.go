@@ -5,15 +5,19 @@ import (
 	"sync/atomic"
 )
 
-// Tweaked version of https://stackoverflow.com/a/49877632 CC-BY-SA 4.0 [icza](https://stackoverflow.com/users/1705598/icza)
-
+// Broker provides a simple publish/subscribe message broker for generic types.
 type Broker[T any] struct {
-	subs      atomic.Int64
+	// number of active subscribers
+	subs atomic.Int64
+	// channel for publishing messages
 	publishCh chan T
-	subCh     chan chan T
-	unsubCh   chan chan T
+	// channel for new subscriptions
+	subCh chan chan T
+	// channel for unsubscriptions
+	unsubCh chan chan T
 }
 
+// New creates a new Broker instance.
 func New[T any]() *Broker[T] {
 	return &Broker[T]{
 		publishCh: make(chan T, 1),
@@ -22,11 +26,13 @@ func New[T any]() *Broker[T] {
 	}
 }
 
+// Start runs the broker event loop, handling subscriptions, unsubscriptions, and publishing.
 func (b *Broker[T]) Start(ctx context.Context) {
 	subs := map[chan T]struct{}{}
 	for {
 		select {
 		case <-ctx.Done():
+			// Close all subscriber channels on shutdown
 			for msgCh := range subs {
 				close(msgCh)
 			}
@@ -43,7 +49,7 @@ func (b *Broker[T]) Start(ctx context.Context) {
 
 		case msg := <-b.publishCh:
 			for msgCh := range subs {
-				// msgCh is buffered, use non-blocking send to protect the broker:
+				// Non-blocking send to avoid blocking the broker if a subscriber is slow
 				select {
 				case msgCh <- msg:
 				default:
@@ -53,20 +59,24 @@ func (b *Broker[T]) Start(ctx context.Context) {
 	}
 }
 
+// Subscribe registers a new subscriber and returns its message channel.
 func (b *Broker[T]) Subscribe() chan T {
 	msgCh := make(chan T, 7)
 	b.subCh <- msgCh
 	return msgCh
 }
 
+// Unsubscribe removes a subscriber and closes its channel.
 func (b *Broker[T]) Unsubscribe(msgCh chan T) {
 	b.unsubCh <- msgCh
 }
 
+// Publish sends a message to all subscribers.
 func (b *Broker[T]) Publish(msg T) {
 	b.publishCh <- msg
 }
 
+// SubCount returns the current number of subscribers.
 func (b *Broker[T]) SubCount() int64 {
 	return b.subs.Load()
 }

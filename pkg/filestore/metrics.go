@@ -1,3 +1,4 @@
+// Package filestore provides file storage utilities and related metrics.
 package filestore
 
 import (
@@ -6,6 +7,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
+// metricDeletedFiles tracks the number of files deleted by the filestore housekeeper.
+// This metric is registered as a Prometheus gauge and is labeled under the
+// 'filestore_housekeeper' subsystem.
 var metricDeletedFiles = promauto.NewGauge(prometheus.GaugeOpts{
 	Namespace: admin.MetricsNamespace,
 	Subsystem: "filestore_housekeeper",

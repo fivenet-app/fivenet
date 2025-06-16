@@ -6,7 +6,7 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 
 // Wrapped translated message for the client
 // @dbscanner: json
-message TranslateItem {
+message I18NItem {
   // @sanitize: method=StripTags
   string key = 1;
   // @sanitize: method=StripTags

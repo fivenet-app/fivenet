@@ -19,6 +19,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// metricTotalCollabRooms tracks the number of active collaborative rooms for Prometheus monitoring.
 var metricTotalCollabRooms = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Namespace: admin.MetricsNamespace,
 	Subsystem: "collab",
@@ -26,17 +27,26 @@ var metricTotalCollabRooms = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Help:      "Number of active collaborative rooms.",
 }, []string{"category"})
 
+// CollabServer manages collaborative editing rooms and client connections.
 type CollabServer struct {
-	ctx    context.Context
+	// ctx is the base context for the server and rooms.
+	ctx context.Context
+	// logger is the zap logger for this server instance.
 	logger *zap.Logger
-	js     *events.JSWrapper
+	// js is the JetStream wrapper for event streaming.
+	js *events.JSWrapper
 
+	// category is the logical category for this server (used for stream subjects and metrics).
 	category string
 
-	mu    sync.Mutex
+	// mu protects the rooms map.
+	mu sync.Mutex
+	// rooms maps target IDs to active CollabRoom instances.
 	rooms map[uint64]*CollabRoom
 }
 
+// New creates and returns a new CollabServer for the given category, logger, and JetStream wrapper.
+// Panics if the category is empty.
 func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, category string) *CollabServer {
 	if category == "" {
 		panic("collab category must not be empty")
@@ -54,6 +64,7 @@ func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, category
 	}
 }
 
+// Start creates or updates the JetStream stream for collaborative editing events for this server's category.
 func (s *CollabServer) Start(ctx context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:       "COLLAB",
@@ -72,6 +83,8 @@ func (s *CollabServer) Start(ctx context.Context) error {
 	return nil
 }
 
+// HandleFirstMsg waits for the first message from a client to determine the target ID.
+// Returns the target ID or an error if the message is invalid.
 func (s *CollabServer) HandleFirstMsg(ctx context.Context, clientId uint64, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) (uint64, error) {
 	// Wait for the first message to determine client/target id
 	firstMsg, err := stream.Recv()
@@ -89,6 +102,7 @@ func (s *CollabServer) HandleFirstMsg(ctx context.Context, clientId uint64, stre
 	return hello.TargetId, nil
 }
 
+// sendHelloResponse sends a handshake response to the client with its client ID and whether it is the first in the room.
 func (s *CollabServer) sendHelloResponse(clientId uint64, first bool, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
 	if err := stream.Send(&collab.ServerPacket{
 		SenderId: clientId,
@@ -105,6 +119,8 @@ func (s *CollabServer) sendHelloResponse(clientId uint64, first bool, stream grp
 	return nil
 }
 
+// getOrCreateRoom retrieves an existing CollabRoom for the target or creates a new one if needed.
+// Returns the room, a boolean indicating if it was created, and any error.
 func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, bool, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -126,6 +142,8 @@ func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, bool, erro
 	return room, false, nil
 }
 
+// HandleClient manages the lifecycle and message handling for a single collaborative client connection.
+// It joins the client to the room, handles sending and receiving, and cleans up when the client leaves.
 func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId int32, clientId uint64, role collab.ClientRole, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error {
 	room, created, err := s.getOrCreateRoom(targetId)
 	if err != nil {
@@ -196,6 +214,7 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 	}
 }
 
+// SendTargetSaved notifies the room for the given targetId that the target has been saved.
 func (s *CollabServer) SendTargetSaved(ctx context.Context, targetId uint64) {
 	s.mu.Lock()
 	room, exists := s.rooms[targetId]

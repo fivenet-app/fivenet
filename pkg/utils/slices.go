@@ -1,5 +1,6 @@
 package utils
 
+// RemoveSliceDuplicates returns a new slice with duplicate values removed, preserving order.
 func RemoveSliceDuplicates[T comparable](in []T) []T {
 	allKeys := make(map[T]struct{}, len(in))
 	list := make([]T, 0, len(in))
@@ -14,7 +15,8 @@ func RemoveSliceDuplicates[T comparable](in []T) []T {
 	return list
 }
 
-// SlicesDifference duplicates of values are ignored
+// SlicesDifference returns the values added and removed between two slices, ignoring duplicates.
+// Duplicates of values are ignored.
 func SlicesDifference[T comparable](a, b []T) ([]T, []T) {
 	temp := map[T]int{}
 	for _, s := range a {
@@ -42,7 +44,8 @@ func SlicesDifference[T comparable](a, b []T) ([]T, []T) {
 	return added, removed
 }
 
-// Doesn't handle multiple additions of the same value as the values are basically de-duplicated
+// SlicesDifferenceFunc returns the values added and removed between two slices, using a key function for comparison.
+// Does not handle multiple additions of the same value as values are de-duplicated.
 func SlicesDifferenceFunc[T comparable, S comparable](a, b []T, keyFn func(in T) S) (added []T, removed []T) {
 	temp := map[S]int{}
 	vals := map[S]T{}
