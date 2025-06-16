@@ -152,6 +152,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 				if err := m.userMappingsStore.Put(ctxCancel, userIdKey(um.UserId), &tracker.UserMapping{
 					UserId:    um.UserId,
 					UnitId:    um.UnitId,
+					Hidden:    um.Hidden,
 					CreatedAt: timestamp.Now(),
 				}); err != nil {
 					return nil, fmt.Errorf("failed to upsert user unit mapping. %w", err)

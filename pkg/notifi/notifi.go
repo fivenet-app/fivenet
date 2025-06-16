@@ -66,8 +66,7 @@ func New(p Params) INotifi {
 func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification) error {
 	nId, err := n.insertNotification(ctx, not)
 	if err != nil {
-		n.logger.Error("failed to insert notification into database", zap.Error(err))
-		return err
+		return fmt.Errorf("failed to insert notification into database. %w", err)
 	}
 
 	not.Id = uint64(nId)
@@ -77,13 +76,11 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 		},
 	})
 	if err != nil {
-		n.logger.Error("failed to proto marshal notification", zap.Error(err))
-		return err
+		return fmt.Errorf("failed to proto marshal notification. %w", err)
 	}
 
 	if _, err := n.js.PublishAsync(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, not.UserId), data); err != nil {
-		n.logger.Error("failed to publish notification message", zap.Error(err))
-		return err
+		return fmt.Errorf("failed to publish notification message. %w", err)
 	}
 
 	return nil
@@ -111,12 +108,12 @@ func (n *Notifi) insertNotification(ctx context.Context, not *notifications.Noti
 
 	res, err := stmt.ExecContext(ctx, n.db)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to insert notification into database. %w", err)
 	}
 
 	id, err := res.LastInsertId()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to get last insert ID of notification. %w", err)
 	}
 
 	return id, nil

@@ -596,13 +596,10 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 	}
 
 	item := s.updateFromType(key, msg, true)
-
-	if rev == 1 {
-		if s.onCreated != nil {
-			// assume revision==1 means brand new key created
-			if err := s.onCreated(s, key, item); err != nil {
-				s.logger.Error("onCreated hook failed", zap.String("key", key), zap.Error(err))
-			}
+	// revision == 1 means brand new key created
+	if rev == 1 && s.onCreated != nil {
+		if err := s.onCreated(s, key, item); err != nil {
+			s.logger.Error("onCreated hook failed", zap.String("key", key), zap.Error(err))
 		}
 	} else {
 		if s.onUpdate != nil {
@@ -730,7 +727,7 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], 
 		return nil, fmt.Errorf("failed to start kv watch in store. %w", err)
 	}
 
-	ch := make(chan *KeyValueEntry[T, U], 100)
+	ch := make(chan *KeyValueEntry[T, U], 128)
 
 	go func() {
 		updateCh := watcher.Updates()

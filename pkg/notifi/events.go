@@ -40,7 +40,7 @@ func (n *Notifi) registerEvents(ctx context.Context) error {
 		MaxAge:      30 * time.Minute,
 	}
 	if _, err := n.js.CreateOrUpdateStream(ctx, cfg); err != nil {
-		return err
+		return fmt.Errorf("failed to create/update stream for notification events. %w", err)
 	}
 
 	return nil

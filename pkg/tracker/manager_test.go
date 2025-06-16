@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -15,13 +14,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/nats-io/nats.go/jetstream"
 	"github.com/sethvargo/go-retry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxtest"
-	"go.uber.org/zap"
 )
 
 func TestMain(m *testing.M) {
@@ -58,35 +55,26 @@ func TestRefreshUserLocations(t *testing.T) {
 	require.NotNil(t, manager)
 
 	msgCh := make(chan int)
-	consumer, err := manager.js.CreateConsumer(ctx, "KV_"+BucketUserLoc, jetstream.ConsumerConfig{
-		DeliverPolicy: jetstream.DeliverLastPerSubjectPolicy,
-		AckPolicy:     jetstream.AckNonePolicy,
-		FilterSubject: "$KV." + BucketUserLoc + ".>",
-	})
-	if err != nil {
-		require.NoError(t, err)
-	}
-	assert.NotNil(t, consumer)
 
-	snapshotReceived := false
-	eventCount := 0
-	jsCons, err := consumer.Consume(func(msg jetstream.Msg) {
-		if strings.Contains(msg.Subject(), "_snapshot") {
-			snapshotReceived = true
-			return
-		}
-
-		eventCount++
-
-		if err := msg.Ack(); err != nil {
-			manager.logger.Error("failed to ack message", zap.Error(err))
-		}
-
-		msgCh <- eventCount
-	})
+	watchCh, err := manager.userLocStore.WatchAll(ctx)
 	require.NoError(t, err)
-	require.NotNil(t, jsCons)
-	defer jsCons.Stop()
+	assert.NotNil(t, watchCh)
+
+	eventCount := 0
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-watchCh:
+			}
+
+			eventCount++
+
+			msgCh <- eventCount
+		}
+	}()
 
 	// Run the refreshUserLocations method to make sure the database state has been loaded
 	err = manager.refreshUserLocations(ctx)
@@ -112,7 +100,8 @@ func TestRefreshUserLocations(t *testing.T) {
 			return nil
 
 		case <-time.After(1 * time.Second):
-			return retry.RetryableError(fmt.Errorf("no user event received"))
+			list := manager.userLocStore.List()
+			return retry.RetryableError(fmt.Errorf("no user event received. %v", list))
 		}
 	})
 	require.NoError(t, err)
@@ -192,7 +181,14 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, user2)
 
-	assert.True(t, snapshotReceived, "snapshot event was not received")
+	// Check that a snapshot entry exists in the KeyValue store
+	kv, err := manager.js.KeyValue(ctx, BucketUserLoc)
+	assert.NoError(t, err)
+	assert.NotNil(t, kv)
+
+	entry, err := kv.Get(ctx, "_snapshot")
+	assert.NoError(t, err)
+	assert.NotNil(t, entry)
 }
 
 func insertCitizenLocations(ctx context.Context, db *sql.DB, identifier string, job string, grade int32, x float64, y float64, hidden bool) error {

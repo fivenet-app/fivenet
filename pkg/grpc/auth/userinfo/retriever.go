@@ -29,10 +29,17 @@ type UserInfoRetriever interface {
 	SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error
 }
 
+// UIRetriever implements UserInfoRetriever and provides user info retrieval with caching.
+type userAccountKey struct {
+	UserID    int32
+	AccountID uint64
+}
+
 type UIRetriever struct {
 	db *sql.DB
 
-	userCache    *cache.Cache[int32, *UserInfo]
+	// userCache caches user info by userAccountKey (userId+accountId)
+	userCache    *cache.Cache[userAccountKey, *UserInfo]
 	userCacheTTL time.Duration
 
 	superuserGroups []string
@@ -47,42 +54,38 @@ type Params struct {
 	Config *config.Config
 }
 
+// NewUIRetriever creates a new UIRetriever with LRU cache and configures lifecycle hooks.
 func NewUIRetriever(p Params) UserInfoRetriever {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	userCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[int32, *UserInfo](lru.WithCapacity(350)),
-		cache.WithJanitorInterval[int32, *UserInfo](cacheTTL),
+		cache.AsLRU[userAccountKey, *UserInfo](lru.WithCapacity(350)),
+		cache.WithJanitorInterval[userAccountKey, *UserInfo](cacheTTL),
 	)
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
-
 		return nil
 	}))
 
 	return &UIRetriever{
-		db: p.DB,
-
-		userCache:    userCache,
-		userCacheTTL: cacheTTL,
-
+		db:              p.DB,
+		userCache:       userCache,
+		userCacheTTL:    cacheTTL,
 		superuserGroups: p.Config.Auth.SuperuserGroups,
 		superuserUsers:  p.Config.Auth.SuperuserUsers,
 	}
 }
 
+// GetUserInfo retrieves user info for a given userId and accountId, using cache for performance.
 func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*UserInfo, error) {
-	var dest *UserInfo
-	var ok bool
-	if dest, ok = ui.userCache.Get(userId); ok {
+	key := userAccountKey{UserID: userId, AccountID: accountId}
+	if dest, ok := ui.userCache.Get(key); ok {
 		return dest, nil
 	}
-	if dest == nil {
-		dest = &UserInfo{}
-	}
 
+	dest := &UserInfo{}
 	tUsers := tables.User().AS("user_info")
 
 	stmt := tUsers.
@@ -118,21 +121,15 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 		return nil, ErrAccountError
 	}
 
-	// Check if user is superuser
-	if slices.Contains(ui.superuserGroups, dest.Group) || slices.Contains(ui.superuserUsers, dest.License) {
-		dest.CanBeSuper = true
+	// Set superuser status and override job/grade if applicable
+	ui.setSuperuserStatus(dest)
 
-		if dest.OverrideJob != nil && *dest.OverrideJob != "" {
-			dest.Job = *dest.OverrideJob
-			dest.JobGrade = *dest.OverrideJobGrade
-		}
-	}
-
-	ui.userCache.Set(userId, dest, cache.WithExpiration(ui.userCacheTTL))
+	ui.userCache.Set(key, dest, cache.WithExpiration(ui.userCacheTTL))
 
 	return dest, nil
 }
 
+// GetUserInfoWithoutAccountId retrieves user info for a userId without account context.
 func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error) {
 	tUsers := tables.User().AS("user_info")
 
@@ -154,12 +151,28 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 		return nil, errswrap.NewError(err, ErrAccountError)
 	}
 
-	// Check if user is superuser
-	if slices.Contains(ui.superuserGroups, dest.Group) {
-		dest.CanBeSuper = true
-	}
+	// Set superuser status (without license check)
+	ui.setSuperuserStatus(dest)
 
 	return dest, nil
+}
+
+// setSuperuserStatus sets CanBeSuper and applies override job/grade if user is a superuser.
+func (ui *UIRetriever) setSuperuserStatus(dest *UserInfo) {
+	// Defensive nil check for dest
+	if dest == nil {
+		return
+	}
+	// Check if user is superuser by group or license (license may be nil)
+	isSuperGroup := slices.Contains(ui.superuserGroups, dest.Group)
+	if isSuperGroup || slices.Contains(ui.superuserUsers, dest.License) {
+		dest.CanBeSuper = true
+		// Only override if both are non-nil and OverrideJob is not empty
+		if dest.OverrideJob != nil && *dest.OverrideJob != "" && dest.OverrideJobGrade != nil {
+			dest.Job = *dest.OverrideJob
+			dest.JobGrade = *dest.OverrideJobGrade
+		}
+	}
 }
 
 func (ui *UIRetriever) SetUserInfo(ctx context.Context, accountId uint64, superuser bool, job *string, jobGrade *int32) error {

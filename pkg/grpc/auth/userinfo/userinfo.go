@@ -1,9 +1,10 @@
 package userinfo
 
+// UserInfo holds information about a user and their account.
 type UserInfo struct {
 	Enabled   bool
 	AccountId uint64
-	License   string
+	License   string // License is a string, not a pointer
 	LastChar  *int32
 
 	UserId   int32
@@ -18,6 +19,7 @@ type UserInfo struct {
 	OverrideJobGrade *int32
 }
 
+// Equal returns true if all fields of u and in are equal.
 func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u == nil || in == nil {
 		return false
@@ -32,12 +34,9 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u.License != in.License {
 		return false
 	}
-	if (u.LastChar == nil && in.LastChar != nil) ||
-		(u.LastChar != nil && in.LastChar == nil) ||
-		(u.LastChar != nil && in.LastChar != nil && *u.LastChar != *in.LastChar) {
+	if !equalInt32Ptr(u.LastChar, in.LastChar) {
 		return false
 	}
-
 	if u.UserId != in.UserId {
 		return false
 	}
@@ -47,7 +46,6 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u.JobGrade != in.JobGrade {
 		return false
 	}
-
 	if u.Group != in.Group {
 		return false
 	}
@@ -57,37 +55,61 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u.Superuser != in.Superuser {
 		return false
 	}
-
-	if (u.OverrideJob == nil && in.OverrideJob != nil) ||
-		(u.OverrideJob != nil && in.OverrideJob == nil) ||
-		(u.OverrideJob != nil && in.OverrideJob != nil && *u.OverrideJob != *in.OverrideJob) {
+	if !equalStringPtr(u.OverrideJob, in.OverrideJob) {
 		return false
 	}
-	if (u.OverrideJobGrade == nil && in.OverrideJobGrade != nil) ||
-		(u.OverrideJobGrade != nil && in.OverrideJobGrade == nil) ||
-		(u.OverrideJobGrade != nil && in.OverrideJobGrade != nil && *u.OverrideJobGrade != *in.OverrideJobGrade) {
+	if !equalInt32Ptr(u.OverrideJobGrade, in.OverrideJobGrade) {
 		return false
 	}
-
 	return true
 }
 
-func (u *UserInfo) Clone() UserInfo {
-	return UserInfo{
-		Enabled:   u.Enabled,
-		AccountId: u.AccountId,
-		License:   u.License,
+// equalInt32Ptr compares two *int32 pointers for equality.
+func equalInt32Ptr(a, b *int32) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil || b == nil {
+		return false
+	}
+	return *a == *b
+}
 
-		LastChar:   u.LastChar,
+// equalStringPtr compares two *string pointers for equality.
+func equalStringPtr(a, b *string) bool {
+	if a == nil && b == nil {
+		return true
+	}
+	if a == nil || b == nil {
+		return false
+	}
+	return *a == *b
+}
+
+// Clone returns a deep copy of the UserInfo struct.
+func (u *UserInfo) Clone() UserInfo {
+	clone := UserInfo{
+		Enabled:    u.Enabled,
+		AccountId:  u.AccountId,
+		License:    u.License,
+		UserId:     u.UserId,
+		Job:        u.Job,
+		JobGrade:   u.JobGrade,
 		Group:      u.Group,
 		CanBeSuper: u.CanBeSuper,
 		Superuser:  u.Superuser,
-
-		UserId:   u.UserId,
-		Job:      u.Job,
-		JobGrade: u.JobGrade,
-
-		OverrideJob:      u.OverrideJob,
-		OverrideJobGrade: u.OverrideJobGrade,
 	}
+	if u.LastChar != nil {
+		val := *u.LastChar
+		clone.LastChar = &val
+	}
+	if u.OverrideJob != nil {
+		val := *u.OverrideJob
+		clone.OverrideJob = &val
+	}
+	if u.OverrideJobGrade != nil {
+		val := *u.OverrideJobGrade
+		clone.OverrideJobGrade = &val
+	}
+	return clone
 }

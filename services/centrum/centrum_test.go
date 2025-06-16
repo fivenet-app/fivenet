@@ -9,7 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/internal/modules"
 	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	grpcserver "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
@@ -48,10 +47,11 @@ func TestBasicCentrumFlow(t *testing.T) {
 			centrumstate.StateModule,
 			centrummanager.Module,
 			fx.Provide(grpcSrvModule),
-			fx.Provide(grpcserver.AsService(func(p Params) (*Server, error) {
+			fx.Provide(func(p Params) (Result, error) {
 				r, err := NewServer(p)
-				return r.Server, err
-			})),
+				srv = r.Server
+				return r, err
+			}),
 
 			fx.Invoke(func(*grpc.Server) {}),
 		)...,

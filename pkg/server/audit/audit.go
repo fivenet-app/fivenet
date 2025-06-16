@@ -149,6 +149,7 @@ func (a *AuditStorer) Log(in *audit.AuditEntry, data any, callbacks ...FilterFn)
 	select {
 	case a.input <- in:
 		// sent successfully
+
 	default:
 		// channel full, drop or log warning
 		a.logger.Warn("audit log channel full, dropping entry")
