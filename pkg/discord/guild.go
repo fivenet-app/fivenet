@@ -27,10 +27,11 @@ import (
 
 const (
 	minimumSyncWaitTime       = 30 * time.Second
-	discordLogsEmbedChunkSize = 5
+	discordLogsEmbedChunkSize = 10
+	maxErrs                   = 12
 )
 
-var SyncCooldownTimeErr = errors.New("guild still in sync cooldown time")
+var ErrSyncCooldownTime = errors.New("guild still in sync cooldown time")
 
 type Guild struct {
 	initiated atomic.Bool
@@ -157,7 +158,7 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 
 	// Make sure that the minimum wait time is over
 	if !ignoreCooldown && time.Since(g.lastSync) <= minimumSyncWaitTime {
-		return SyncCooldownTimeErr
+		return ErrSyncCooldownTime
 	}
 
 	start := time.Now()
@@ -313,11 +314,29 @@ func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Dura
 
 	logs := []discord.Embed{}
 	if errs != nil {
+		// Collect up to maxErrs error messages as fields in the embed
+		var fields []discord.EmbedField
+		errList := multierr.Errors(errs)
+		totalErrs := len(errList)
+		for i, err := range errList {
+			if i >= maxErrs {
+				break
+			}
+
+			fields = append(fields, discord.EmbedField{
+				Name:   fmt.Sprintf("Error %d", i+1),
+				Value:  err.Error(),
+				Inline: false,
+			})
+		}
+
 		logs = append(logs, discord.Embed{
 			Title:       "Errors during sync",
-			Description: fmt.Sprintf("Following errors occured during sync:\n```\n%v\n```", errs),
+			Description: fmt.Sprintf("Following errors occurred during sync (%d total):", totalErrs),
 			Author:      embeds.EmbedAuthor,
 			Color:       embeds.ColorError,
+			Fields:      fields,
+			Footer:      embeds.EmbedFooterVersion,
 		})
 	}
 

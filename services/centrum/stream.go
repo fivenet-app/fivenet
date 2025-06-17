@@ -21,7 +21,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, jobs *pbcentrum.JobsList) error {
+func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, jobs *pbcentrum.JobAccess) error {
 	settings, err := s.state.GetSettings(ctx, userJob)
 	if err != nil {
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
@@ -32,7 +32,7 @@ func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumServic
 			Handshake: &pbcentrum.StreamHandshake{
 				ServerTime: timestamp.Now(),
 				Settings:   settings,
-				Jobs:       jobs,
+				JobAccess:  jobs,
 			},
 		},
 	}); err != nil {
@@ -42,12 +42,12 @@ func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumServic
 	return nil
 }
 
-func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, userId int32, jobs *pbcentrum.JobsList) error {
+func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, userId int32, jobs *pbcentrum.JobAccess) error {
 	dispatchers := &pbcentrum.Dispatchers{}
 	dispos, _ := s.state.GetDispatchers(ctx, userJob)
 	dispatchers.Dispatchers = []*centrum.Dispatchers{dispos}
 	for _, j := range jobs.Dispatches {
-		dispos, err := s.state.GetDispatchers(ctx, j.Name)
+		dispos, err := s.state.GetDispatchers(ctx, j.Job.Name)
 		if err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
@@ -63,7 +63,7 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 	// Retrieve units and dispatches
 	units := s.state.ListUnits(ctx, userJob)
 	for _, j := range jobs.Dispatches {
-		units = append(units, s.state.ListUnits(ctx, j.Name)...)
+		units = append(units, s.state.ListUnits(ctx, j.Job.Name)...)
 	}
 
 	dispatchStatusFilter := []centrum.StatusDispatch{
@@ -73,7 +73,7 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 	}
 	dispatches := s.state.FilterDispatches(ctx, userJob, nil, dispatchStatusFilter)
 	for _, j := range jobs.Dispatches {
-		dispatches = append(dispatches, s.state.FilterDispatches(ctx, j.Name, nil, dispatchStatusFilter)...)
+		dispatches = append(dispatches, s.state.FilterDispatches(ctx, j.Job.Name, nil, dispatchStatusFilter)...)
 	}
 
 	// Send initial state to client
@@ -96,14 +96,17 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumService_StreamServer) error {
 	userInfo := *auth.MustGetUserInfoFromContext(srv.Context())
 
-	jobs := &pbcentrum.JobsList{}
+	jobs := &pbcentrum.JobAccess{}
 	additionalJobs := []string{}
 	for _, job := range additionalJobs {
 		j := s.enricher.GetJobByName(job)
 		if j == nil {
 			return errswrap.NewError(fmt.Errorf("job not found. %s", job), errorscentrum.ErrFailedQuery)
 		}
-		jobs.Dispatches = append(jobs.Dispatches, j)
+		jobs.Dispatches = append(jobs.Dispatches, &pbcentrum.JobAccessEntry{
+			Job:    j,
+			Access: centrum.CentrumAccessLevel_ACCESS_LEVEL_DISPATCH,
+		})
 	}
 
 	for {
@@ -210,7 +213,7 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 	jobs = utils.RemoveSliceDuplicates(jobs)
 
 	out := make(chan *pbcentrum.StreamResponse, 256)
-	g, ctx := errgroup.WithContext(ctx)
+	g, gctx := errgroup.WithContext(ctx)
 
 	// Centrum Events (e.g., dispatch and unit status updates)
 	g.Go(func() error {
@@ -220,9 +223,9 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 			DeliverPolicy:  jetstream.DeliverNewPolicy,
 			AckPolicy:      jetstream.AckNonePolicy,
 		}
-		consumer, err := s.js.CreateConsumer(ctx, "CENTRUM", consCfg)
+		consumer, err := s.js.CreateConsumer(gctx, "CENTRUM", consCfg)
 		if err != nil {
-			return fmt.Errorf("consumer. %w", err)
+			return fmt.Errorf("failed to create consumer. %w", err)
 		}
 
 		// Pull loop
@@ -283,8 +286,8 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 				select {
 				case out <- r:
 
-				case <-ctx.Done():
-					return ctx.Err()
+				case <-gctx.Done():
+					return gctx.Err()
 				}
 			}
 		}
@@ -299,9 +302,9 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 				DeliverPolicy:  jetstream.DeliverNewPolicy,
 				AckPolicy:      jetstream.AckNonePolicy,
 			}
-			consumer, err := s.js.CreateConsumer(ctx, "KV_"+f.Bucket, consCfg)
+			consumer, err := s.js.CreateConsumer(gctx, "KV_"+f.Bucket, consCfg)
 			if err != nil {
-				return fmt.Errorf("consumer. %w", err)
+				return fmt.Errorf("failed to create consumer. %w", err)
 			}
 
 			// Pull loop
@@ -327,8 +330,8 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 						select {
 						case out <- r:
 
-						case <-ctx.Done():
-							return ctx.Err()
+						case <-gctx.Done():
+							return gctx.Err()
 						}
 						continue
 					}
@@ -346,8 +349,8 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 					select {
 					case out <- r:
 
-					case <-ctx.Done():
-						return ctx.Err()
+					case <-gctx.Done():
+						return gctx.Err()
 					}
 				}
 			}
@@ -358,8 +361,8 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 	g.Go(func() error {
 		for {
 			select {
-			case <-ctx.Done():
-				return ctx.Err()
+			case <-gctx.Done():
+				return gctx.Err()
 
 			case resp := <-out:
 				if err := srv.Send(resp); err != nil {

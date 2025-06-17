@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { v4 as uuidv4 } from 'uuid';
-import { notificationTypeToColor, notificationTypeToIcon } from '~/components/partials/notification/helpers';
+import { notificationTypeToColor, notificationTypeToIcon } from '~/components/notifications/helpers';
 import { useCalendarStore } from '~/stores/calendar';
 import { useMailerStore } from '~/stores/mailer';
 import { useSettingsStore } from '~/stores/settings';

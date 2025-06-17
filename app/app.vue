@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
+import NotificationProvider from '~/components/notifications/NotificationProvider.vue';
 import CookieControl from '~/components/partials/CookieControl.vue';
-import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useSettingsStore } from '~/stores/settings';

@@ -237,7 +237,7 @@ func (m *GetSettingsResponse) Sanitize() error {
 	return nil
 }
 
-func (m *JobsList) Sanitize() error {
+func (m *JobAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -252,6 +252,23 @@ func (m *JobsList) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *JobAccessEntry) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		if v, ok := any(m.GetJob()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
@@ -512,9 +529,9 @@ func (m *StreamHandshake) Sanitize() error {
 		return nil
 	}
 
-	// Field: Jobs
-	if m.Jobs != nil {
-		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
+	// Field: JobAccess
+	if m.JobAccess != nil {
+		if v, ok := any(m.GetJobAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -589,8 +606,8 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
-		// Field: Jobs
-	case *StreamResponse_Jobs:
+		// Field: JobAccess
+	case *StreamResponse_JobAccess:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

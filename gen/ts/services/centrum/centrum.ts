@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { CentrumAccessLevel } from "../../resources/centrum/access";
 import { Job } from "../../resources/jobs/jobs";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
@@ -480,9 +481,9 @@ export interface StreamHandshake {
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: services.centrum.JobsList jobs = 3
+     * @generated from protobuf field: services.centrum.JobAccess job_access = 3
      */
-    jobs?: JobsList;
+    jobAccess?: JobAccess;
 }
 /**
  * @generated from protobuf message services.centrum.LatestState
@@ -538,11 +539,11 @@ export interface StreamResponse {
          */
         settings: Settings;
     } | {
-        oneofKind: "jobs";
+        oneofKind: "jobAccess";
         /**
-         * @generated from protobuf field: services.centrum.JobsList jobs = 4
+         * @generated from protobuf field: services.centrum.JobAccess job_access = 4
          */
-        jobs: JobsList;
+        jobAccess: JobAccess;
     } | {
         oneofKind: "dispatchers";
         /**
@@ -590,13 +591,26 @@ export interface StreamResponse {
     };
 }
 /**
- * @generated from protobuf message services.centrum.JobsList
+ * @generated from protobuf message services.centrum.JobAccess
  */
-export interface JobsList {
+export interface JobAccess {
     /**
-     * @generated from protobuf field: repeated resources.jobs.Job dispatches = 1
+     * @generated from protobuf field: repeated services.centrum.JobAccessEntry dispatches = 1
      */
-    dispatches: Job[];
+    dispatches: JobAccessEntry[];
+}
+/**
+ * @generated from protobuf message services.centrum.JobAccessEntry
+ */
+export interface JobAccessEntry {
+    /**
+     * @generated from protobuf field: resources.jobs.Job job = 1
+     */
+    job?: Job;
+    /**
+     * @generated from protobuf field: resources.centrum.CentrumAccessLevel access = 2
+     */
+    access: CentrumAccessLevel;
 }
 /**
  * @generated from protobuf message services.centrum.Dispatchers
@@ -2727,7 +2741,7 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
         super("services.centrum.StreamHandshake", [
             { no: 1, name: "server_time", kind: "message", T: () => Timestamp },
             { no: 2, name: "settings", kind: "message", T: () => Settings },
-            { no: 3, name: "jobs", kind: "message", T: () => JobsList }
+            { no: 3, name: "job_access", kind: "message", T: () => JobAccess }
         ]);
     }
     create(value?: PartialMessage<StreamHandshake>): StreamHandshake {
@@ -2747,8 +2761,8 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
                 case /* resources.centrum.Settings settings */ 2:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* services.centrum.JobsList jobs */ 3:
-                    message.jobs = JobsList.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
+                case /* services.centrum.JobAccess job_access */ 3:
+                    message.jobAccess = JobAccess.internalBinaryRead(reader, reader.uint32(), options, message.jobAccess);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2768,9 +2782,9 @@ class StreamHandshake$Type extends MessageType<StreamHandshake> {
         /* resources.centrum.Settings settings = 2; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* services.centrum.JobsList jobs = 3; */
-        if (message.jobs)
-            JobsList.internalBinaryWrite(message.jobs, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* services.centrum.JobAccess job_access = 3; */
+        if (message.jobAccess)
+            JobAccess.internalBinaryWrite(message.jobAccess, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2895,7 +2909,7 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 1, name: "handshake", kind: "message", oneof: "change", T: () => StreamHandshake },
             { no: 2, name: "latest_state", kind: "message", oneof: "change", T: () => LatestState },
             { no: 3, name: "settings", kind: "message", oneof: "change", T: () => Settings },
-            { no: 4, name: "jobs", kind: "message", oneof: "change", T: () => JobsList },
+            { no: 4, name: "job_access", kind: "message", oneof: "change", T: () => JobAccess },
             { no: 5, name: "dispatchers", kind: "message", oneof: "change", T: () => Dispatchers$ },
             { no: 6, name: "unit_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 7, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
@@ -2935,10 +2949,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         settings: Settings.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).settings)
                     };
                     break;
-                case /* services.centrum.JobsList jobs */ 4:
+                case /* services.centrum.JobAccess job_access */ 4:
                     message.change = {
-                        oneofKind: "jobs",
-                        jobs: JobsList.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).jobs)
+                        oneofKind: "jobAccess",
+                        jobAccess: JobAccess.internalBinaryRead(reader, reader.uint32(), options, (message.change as any).jobAccess)
                     };
                     break;
                 case /* resources.centrum.Dispatchers dispatchers */ 5:
@@ -3004,9 +3018,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.centrum.Settings settings = 3; */
         if (message.change.oneofKind === "settings")
             Settings.internalBinaryWrite(message.change.settings, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* services.centrum.JobsList jobs = 4; */
-        if (message.change.oneofKind === "jobs")
-            JobsList.internalBinaryWrite(message.change.jobs, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* services.centrum.JobAccess job_access = 4; */
+        if (message.change.oneofKind === "jobAccess")
+            JobAccess.internalBinaryWrite(message.change.jobAccess, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* resources.centrum.Dispatchers dispatchers = 5; */
         if (message.change.oneofKind === "dispatchers")
             Dispatchers$.internalBinaryWrite(message.change.dispatchers, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -3039,26 +3053,26 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  */
 export const StreamResponse = new StreamResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class JobsList$Type extends MessageType<JobsList> {
+class JobAccess$Type extends MessageType<JobAccess> {
     constructor() {
-        super("services.centrum.JobsList", [
-            { no: 1, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job }
+        super("services.centrum.JobAccess", [
+            { no: 1, name: "dispatches", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => JobAccessEntry }
         ]);
     }
-    create(value?: PartialMessage<JobsList>): JobsList {
+    create(value?: PartialMessage<JobAccess>): JobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.dispatches = [];
         if (value !== undefined)
-            reflectionMergePartial<JobsList>(this, message, value);
+            reflectionMergePartial<JobAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsList): JobsList {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccess): JobAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.jobs.Job dispatches */ 1:
-                    message.dispatches.push(Job.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated services.centrum.JobAccessEntry dispatches */ 1:
+                    message.dispatches.push(JobAccessEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3071,10 +3085,10 @@ class JobsList$Type extends MessageType<JobsList> {
         }
         return message;
     }
-    internalBinaryWrite(message: JobsList, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.jobs.Job dispatches = 1; */
+    internalBinaryWrite(message: JobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated services.centrum.JobAccessEntry dispatches = 1; */
         for (let i = 0; i < message.dispatches.length; i++)
-            Job.internalBinaryWrite(message.dispatches[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            JobAccessEntry.internalBinaryWrite(message.dispatches[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3082,9 +3096,63 @@ class JobsList$Type extends MessageType<JobsList> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.JobsList
+ * @generated MessageType for protobuf message services.centrum.JobAccess
  */
-export const JobsList = new JobsList$Type();
+export const JobAccess = new JobAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobAccessEntry$Type extends MessageType<JobAccessEntry> {
+    constructor() {
+        super("services.centrum.JobAccessEntry", [
+            { no: 1, name: "job", kind: "message", T: () => Job },
+            { no: 2, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel], options: { "validate.rules": { enum: { definedOnly: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<JobAccessEntry>): JobAccessEntry {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.access = 0;
+        if (value !== undefined)
+            reflectionMergePartial<JobAccessEntry>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccessEntry): JobAccessEntry {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.Job job */ 1:
+                    message.job = Job.internalBinaryRead(reader, reader.uint32(), options, message.job);
+                    break;
+                case /* resources.centrum.CentrumAccessLevel access */ 2:
+                    message.access = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: JobAccessEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.Job job = 1; */
+        if (message.job)
+            Job.internalBinaryWrite(message.job, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.CentrumAccessLevel access = 2; */
+        if (message.access !== 0)
+            writer.tag(2, WireType.Varint).int32(message.access);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.JobAccessEntry
+ */
+export const JobAccessEntry = new JobAccessEntry$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatchers$Type extends MessageType<Dispatchers> {
     constructor() {

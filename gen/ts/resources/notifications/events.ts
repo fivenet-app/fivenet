@@ -13,9 +13,9 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { BannerMessage } from "../settings/banner";
 import { JobProps } from "../jobs/job_props";
 import { Notification } from "./notifications";
-// User Events
-
 /**
+ * User related events
+ *
  * @generated from protobuf message resources.notifications.UserEvent
  */
 export interface UserEvent {
@@ -46,9 +46,9 @@ export interface UserEvent {
         oneofKind: undefined;
     };
 }
-// Job Events
-
 /**
+ * Job related events
+ *
  * @generated from protobuf message resources.notifications.JobEvent
  */
 export interface JobEvent {
@@ -65,9 +65,9 @@ export interface JobEvent {
         oneofKind: undefined;
     };
 }
-// Job Grade Events
-
 /**
+ * Job grade events
+ *
  * @generated from protobuf message resources.notifications.JobGradeEvent
  */
 export interface JobGradeEvent {
@@ -84,9 +84,9 @@ export interface JobGradeEvent {
         oneofKind: undefined;
     };
 }
-// System Events
-
 /**
+ * System related events
+ *
  * @generated from protobuf message resources.notifications.SystemEvent
  */
 export interface SystemEvent {

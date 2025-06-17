@@ -157,7 +157,6 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 	roles := types.Roles{}
 	settings := g.settings.Load()
 
-	g.employeeRole = nil
 	if settings.UserInfoSyncSettings.EmployeeRoleEnabled {
 		g.employeeRole = &types.Role{
 			Name:   strings.ReplaceAll(strings.ReplaceAll(settings.UserInfoSyncSettings.EmployeeRoleFormat, "%job%", job.Label), "%s", job.Name),
@@ -165,9 +164,10 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 			Job:    g.job,
 		}
 		roles = append(roles, g.employeeRole)
+	} else {
+		g.employeeRole = nil
 	}
 
-	g.unemployedRole = nil
 	if settings.UserInfoSyncSettings.UnemployedEnabled {
 		g.unemployedRole = &types.Role{
 			Name:   settings.UserInfoSyncSettings.UnemployedRoleName,
@@ -177,9 +177,10 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 			KeepIfJobDifferent: true,
 		}
 		roles = append(roles, g.unemployedRole)
+	} else {
+		g.unemployedRole = nil
 	}
 
-	g.absenceRole = nil
 	if settings.JobsAbsence {
 		g.absenceRole = &types.Role{
 			Name:   settings.JobsAbsenceSettings.AbsenceRole,
@@ -187,16 +188,15 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 			Job:    g.job,
 		}
 		roles = append(roles, g.absenceRole)
+	} else {
+		g.absenceRole = nil
 	}
 
+	g.jobGradeRoles = make(map[int32]*types.Role, len(job.Grades))
 	for _, grade := range slices.Backward(job.Grades) {
 		name := strings.ReplaceAll(settings.UserInfoSyncSettings.GradeRoleFormat, "%grade_label%", grade.Label)
 		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.Grade))
 		name = strings.ReplaceAll(name, "%grade_single%", fmt.Sprintf("%d", grade.Grade))
-
-		if _, ok := g.jobGradeRoles[grade.Grade]; ok {
-			continue
-		}
 
 		role := &types.Role{
 			Name:   name,
@@ -207,7 +207,7 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 		roles = append(roles, role)
 	}
 
-	g.groupRoles = map[string]*types.Role{}
+	g.groupRoles = make(map[string]*types.Role, len(settings.UserInfoSyncSettings.GroupMapping))
 	for i, mapping := range settings.UserInfoSyncSettings.GroupMapping {
 		role := &types.Role{
 			Name:   mapping.Name,

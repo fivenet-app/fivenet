@@ -604,31 +604,89 @@ var _ interface {
 	ErrorName() string
 } = MarkNotificationsResponseValidationError{}
 
-// Validate checks the field values on StreamRequest with the rules defined in
+// Validate checks the field values on StreamMessage with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *StreamRequest) Validate() error {
+func (m *StreamMessage) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on StreamRequest with the rules defined
+// ValidateAll checks the field values on StreamMessage with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in StreamRequestMultiError, or
+// result is a list of violation errors wrapped in StreamMessageMultiError, or
 // nil if none found.
-func (m *StreamRequest) ValidateAll() error {
+func (m *StreamMessage) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *StreamRequest) validate(all bool) error {
+func (m *StreamMessage) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if m.GetClientView() == nil {
-		err := StreamRequestValidationError{
-			field:  "ClientView",
+	oneofDataPresent := false
+	switch v := m.Data.(type) {
+	case *StreamMessage_ClientView:
+		if v == nil {
+			err := StreamMessageValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if m.GetClientView() == nil {
+			err := StreamMessageValidationError{
+				field:  "ClientView",
+				reason: "value is required",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetClientView()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamMessageValidationError{
+						field:  "ClientView",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamMessageValidationError{
+						field:  "ClientView",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetClientView()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamMessageValidationError{
+					field:  "ClientView",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := StreamMessageValidationError{
+			field:  "Data",
 			reason: "value is required",
 		}
 		if !all {
@@ -637,49 +695,20 @@ func (m *StreamRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if all {
-		switch v := interface{}(m.GetClientView()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, StreamRequestValidationError{
-					field:  "ClientView",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, StreamRequestValidationError{
-					field:  "ClientView",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetClientView()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return StreamRequestValidationError{
-				field:  "ClientView",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if len(errors) > 0 {
-		return StreamRequestMultiError(errors)
+		return StreamMessageMultiError(errors)
 	}
 
 	return nil
 }
 
-// StreamRequestMultiError is an error wrapping multiple validation errors
-// returned by StreamRequest.ValidateAll() if the designated constraints
+// StreamMessageMultiError is an error wrapping multiple validation errors
+// returned by StreamMessage.ValidateAll() if the designated constraints
 // aren't met.
-type StreamRequestMultiError []error
+type StreamMessageMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m StreamRequestMultiError) Error() string {
+func (m StreamMessageMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -688,11 +717,11 @@ func (m StreamRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m StreamRequestMultiError) AllErrors() []error { return m }
+func (m StreamMessageMultiError) AllErrors() []error { return m }
 
-// StreamRequestValidationError is the validation error returned by
-// StreamRequest.Validate if the designated constraints aren't met.
-type StreamRequestValidationError struct {
+// StreamMessageValidationError is the validation error returned by
+// StreamMessage.Validate if the designated constraints aren't met.
+type StreamMessageValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -700,22 +729,22 @@ type StreamRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e StreamRequestValidationError) Field() string { return e.field }
+func (e StreamMessageValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e StreamRequestValidationError) Reason() string { return e.reason }
+func (e StreamMessageValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e StreamRequestValidationError) Cause() error { return e.cause }
+func (e StreamMessageValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e StreamRequestValidationError) Key() bool { return e.key }
+func (e StreamMessageValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e StreamRequestValidationError) ErrorName() string { return "StreamRequestValidationError" }
+func (e StreamMessageValidationError) ErrorName() string { return "StreamMessageValidationError" }
 
 // Error satisfies the builtin error interface
-func (e StreamRequestValidationError) Error() string {
+func (e StreamMessageValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -727,14 +756,14 @@ func (e StreamRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sStreamRequest.%s: %s%s",
+		"invalid %sStreamMessage.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = StreamRequestValidationError{}
+var _ error = StreamMessageValidationError{}
 
 var _ interface {
 	Field() string
@@ -742,110 +771,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = StreamRequestValidationError{}
-
-// Validate checks the field values on ClientView with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *ClientView) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on ClientView with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in ClientViewMultiError, or
-// nil if none found.
-func (m *ClientView) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *ClientView) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for ObjectType
-
-	// no validation rules for ObjectId
-
-	if len(errors) > 0 {
-		return ClientViewMultiError(errors)
-	}
-
-	return nil
-}
-
-// ClientViewMultiError is an error wrapping multiple validation errors
-// returned by ClientView.ValidateAll() if the designated constraints aren't met.
-type ClientViewMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m ClientViewMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m ClientViewMultiError) AllErrors() []error { return m }
-
-// ClientViewValidationError is the validation error returned by
-// ClientView.Validate if the designated constraints aren't met.
-type ClientViewValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ClientViewValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ClientViewValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ClientViewValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ClientViewValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ClientViewValidationError) ErrorName() string { return "ClientViewValidationError" }
-
-// Error satisfies the builtin error interface
-func (e ClientViewValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sClientView.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ClientViewValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ClientViewValidationError{}
+} = StreamMessageValidationError{}
 
 // Validate checks the field values on StreamResponse with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

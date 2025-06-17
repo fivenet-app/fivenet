@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.centrum;
 
+import "resources/centrum/access.proto";
 import "resources/centrum/dispatchers.proto";
 import "resources/centrum/dispatches.proto";
 import "resources/centrum/settings.proto";
@@ -197,7 +198,7 @@ message TakeDispatchResponse {}
 message StreamHandshake {
   resources.timestamp.Timestamp server_time = 1;
   resources.centrum.Settings settings = 2;
-  JobsList jobs = 3;
+  JobAccess job_access = 3;
 }
 
 message LatestState {
@@ -218,7 +219,7 @@ message StreamResponse {
     LatestState latest_state = 2;
 
     resources.centrum.Settings settings = 3;
-    JobsList jobs = 4;
+    JobAccess job_access = 4;
     resources.centrum.Dispatchers dispatchers = 5;
 
     uint64 unit_deleted = 6;
@@ -231,8 +232,13 @@ message StreamResponse {
   }
 }
 
-message JobsList {
-  repeated resources.jobs.Job dispatches = 1;
+message JobAccess {
+  repeated JobAccessEntry dispatches = 1;
+}
+
+message JobAccessEntry {
+  resources.jobs.Job job = 1;
+  resources.centrum.CentrumAccessLevel access = 2 [(validate.rules).enum.defined_only = true];
 }
 
 message Dispatchers {

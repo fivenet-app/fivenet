@@ -248,6 +248,11 @@
     - [SystemEvent](#resources-notifications-SystemEvent)
     - [UserEvent](#resources-notifications-UserEvent)
   
+- [resources/notifications/client_view.proto](#resources_notifications_client_view-proto)
+    - [ClientView](#resources-notifications-ClientView)
+  
+    - [ObjectType](#resources-notifications-ObjectType)
+  
 - [resources/permissions/attributes.proto](#resources_permissions_attributes-proto)
     - [AttributeValues](#resources-permissions-AttributeValues)
     - [JobGradeList](#resources-permissions-JobGradeList)
@@ -587,7 +592,8 @@
     - [GetDispatchResponse](#services-centrum-GetDispatchResponse)
     - [GetSettingsRequest](#services-centrum-GetSettingsRequest)
     - [GetSettingsResponse](#services-centrum-GetSettingsResponse)
-    - [JobsList](#services-centrum-JobsList)
+    - [JobAccess](#services-centrum-JobAccess)
+    - [JobAccessEntry](#services-centrum-JobAccessEntry)
     - [JoinUnitRequest](#services-centrum-JoinUnitRequest)
     - [JoinUnitResponse](#services-centrum-JoinUnitResponse)
     - [LatestState](#services-centrum-LatestState)
@@ -1076,12 +1082,11 @@
     - [FilestoreService](#services-filestore-FilestoreService)
   
 - [services/notifications/notifications.proto](#services_notifications_notifications-proto)
-    - [ClientView](#services-notifications-ClientView)
     - [GetNotificationsRequest](#services-notifications-GetNotificationsRequest)
     - [GetNotificationsResponse](#services-notifications-GetNotificationsResponse)
     - [MarkNotificationsRequest](#services-notifications-MarkNotificationsRequest)
     - [MarkNotificationsResponse](#services-notifications-MarkNotificationsResponse)
-    - [StreamRequest](#services-notifications-StreamRequest)
+    - [StreamMessage](#services-notifications-StreamMessage)
     - [StreamResponse](#services-notifications-StreamResponse)
   
     - [NotificationsService](#services-notifications-NotificationsService)
@@ -4412,7 +4417,7 @@ Dummy - DO NOT USE!
 <a name="resources-notifications-JobEvent"></a>
 
 ### JobEvent
-
+Job related events
 
 
 | Field | Type | Label | Description |
@@ -4427,7 +4432,7 @@ Dummy - DO NOT USE!
 <a name="resources-notifications-JobGradeEvent"></a>
 
 ### JobGradeEvent
-
+Job grade events
 
 
 | Field | Type | Label | Description |
@@ -4442,7 +4447,7 @@ Dummy - DO NOT USE!
 <a name="resources-notifications-SystemEvent"></a>
 
 ### SystemEvent
-
+System related events
 
 
 | Field | Type | Label | Description |
@@ -4458,7 +4463,7 @@ Dummy - DO NOT USE!
 <a name="resources-notifications-UserEvent"></a>
 
 ### UserEvent
-
+User related events
 
 
 | Field | Type | Label | Description |
@@ -4472,6 +4477,52 @@ Dummy - DO NOT USE!
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_notifications_client_view-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/notifications/client_view.proto
+
+
+
+<a name="resources-notifications-ClientView"></a>
+
+### ClientView
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [ObjectType](#resources-notifications-ObjectType) |  |  |
+| `id` | [uint64](#uint64) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-notifications-ObjectType"></a>
+
+### ObjectType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `OBJECT_TYPE_UNSPECIFIED` | 0 |  |
+| `OBJECT_TYPE_CITIZEN` | 1 |  |
+| `OBJECT_TYPE_DOCUMENTS` | 2 |  |
+| `OBJECT_TYPE_WIKI_PAGE` | 3 |  |
+
 
  <!-- end enums -->
 
@@ -9262,15 +9313,31 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services-centrum-JobsList"></a>
+<a name="services-centrum-JobAccess"></a>
 
-### JobsList
+### JobAccess
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatches` | [resources.jobs.Job](#resources-jobs-Job) | repeated |  |
+| `dispatches` | [JobAccessEntry](#services-centrum-JobAccessEntry) | repeated |  |
+
+
+
+
+
+
+<a name="services-centrum-JobAccessEntry"></a>
+
+### JobAccessEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [resources.jobs.Job](#resources-jobs-Job) |  |  |
+| `access` | [resources.centrum.CentrumAccessLevel](#resources-centrum-CentrumAccessLevel) |  |  |
 
 
 
@@ -9464,7 +9531,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `server_time` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `settings` | [resources.centrum.Settings](#resources-centrum-Settings) |  |  |
-| `jobs` | [JobsList](#services-centrum-JobsList) |  |  |
+| `job_access` | [JobAccess](#services-centrum-JobAccess) |  |  |
 
 
 
@@ -9492,7 +9559,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `handshake` | [StreamHandshake](#services-centrum-StreamHandshake) |  |  |
 | `latest_state` | [LatestState](#services-centrum-LatestState) |  |  |
 | `settings` | [resources.centrum.Settings](#resources-centrum-Settings) |  |  |
-| `jobs` | [JobsList](#services-centrum-JobsList) |  |  |
+| `job_access` | [JobAccess](#services-centrum-JobAccess) |  |  |
 | `dispatchers` | [resources.centrum.Dispatchers](#resources-centrum-Dispatchers) |  |  |
 | `unit_deleted` | [uint64](#uint64) |  |  |
 | `unit_updated` | [resources.centrum.Unit](#resources-centrum-Unit) |  |  |
@@ -15925,22 +15992,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-<a name="services-notifications-ClientView"></a>
-
-### ClientView
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `object_type` | [string](#string) |  |  |
-| `object_id` | [string](#string) |  |  |
-
-
-
-
-
-
 <a name="services-notifications-GetNotificationsRequest"></a>
 
 ### GetNotificationsRequest
@@ -16006,15 +16057,15 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
-<a name="services-notifications-StreamRequest"></a>
+<a name="services-notifications-StreamMessage"></a>
 
-### StreamRequest
+### StreamMessage
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `client_view` | [ClientView](#services-notifications-ClientView) |  |  |
+| `client_view` | [resources.notifications.ClientView](#resources-notifications-ClientView) |  |  |
 
 
 
@@ -16057,7 +16108,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | ----------- | ------------ | ------------- | ------------|
 | `GetNotifications` | [GetNotificationsRequest](#services-notifications-GetNotificationsRequest) | [GetNotificationsResponse](#services-notifications-GetNotificationsResponse) | @perm: Name=Any |
 | `MarkNotifications` | [MarkNotificationsRequest](#services-notifications-MarkNotificationsRequest) | [MarkNotificationsResponse](#services-notifications-MarkNotificationsResponse) | @perm: Name=Any |
-| `Stream` | [StreamRequest](#services-notifications-StreamRequest) stream | [StreamResponse](#services-notifications-StreamResponse) stream | @perm: Name=Any |
+| `Stream` | [StreamMessage](#services-notifications-StreamMessage) stream | [StreamResponse](#services-notifications-StreamResponse) stream | @perm: Name=Any |
 
  <!-- end services -->
 

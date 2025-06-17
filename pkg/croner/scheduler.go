@@ -17,7 +17,6 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var SchedulerModule = fx.Module("cron_scheduler",
@@ -188,7 +187,7 @@ func (s *Scheduler) getLockState(ctx context.Context) (*cron.CronjobLockOwnerSta
 	if entry != nil {
 		// Make sure the owner state is really expired and not just a "hiccup" of our nats lock logic
 		state := &cron.CronjobLockOwnerState{}
-		if err := protojson.Unmarshal(entry.Value(), state); err != nil {
+		if err := protoutils.UnmarshalPartialPJSON(entry.Value(), state); err != nil {
 			s.logger.Warn("failed to unmarshal owner lock entry", zap.Error(err))
 		}
 
@@ -363,7 +362,7 @@ func (s *Scheduler) registerSubscriptions(ctxStartup context.Context, ctxCancel 
 
 func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 	event := &cron.CronjobCompletedEvent{}
-	if err := protojson.Unmarshal(msg.Data(), event); err != nil {
+	if err := protoutils.UnmarshalPartialPJSON(msg.Data(), event); err != nil {
 		s.logger.Error("failed to unmarshal cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
 
 		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {

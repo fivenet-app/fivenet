@@ -26,7 +26,6 @@ type GrpcStream struct {
 	bytesToWrite      uint32
 	writeBuffer       []byte
 	inputClosed       bool
-	// TODO add a context to return to close the connection
 }
 
 func newGrpcStream(streamId uint32, channel *WebsocketChannel, streamBufferSize int) *GrpcStream {

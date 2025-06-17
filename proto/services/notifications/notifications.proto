@@ -4,6 +4,7 @@ package services.notifications;
 
 import "resources/common/database/database.proto";
 import "resources/mailer/events.proto";
+import "resources/notifications/client_view.proto";
 import "resources/notifications/events.proto";
 import "resources/notifications/notifications.proto";
 import "validate/validate.proto";
@@ -42,13 +43,12 @@ message MarkNotificationsResponse {
   uint64 updated = 1;
 }
 
-message StreamRequest {
-  ClientView client_view = 1 [(validate.rules).message.required = true];
-}
+message StreamMessage {
+  oneof data {
+    option (validate.required) = true;
 
-message ClientView {
-  string object_type = 1;
-  string object_id = 2;
+    resources.notifications.ClientView client_view = 1 [(validate.rules).message.required = true];
+  }
 }
 
 message StreamResponse {
@@ -73,5 +73,5 @@ service NotificationsService {
   rpc MarkNotifications(MarkNotificationsRequest) returns (MarkNotificationsResponse);
 
   // @perm: Name=Any
-  rpc Stream(stream StreamRequest) returns (stream StreamResponse);
+  rpc Stream(stream StreamMessage) returns (stream StreamResponse);
 }

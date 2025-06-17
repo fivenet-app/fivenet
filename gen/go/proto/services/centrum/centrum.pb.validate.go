@@ -5372,11 +5372,11 @@ func (m *StreamHandshake) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetJobs()).(type) {
+		switch v := interface{}(m.GetJobAccess()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, StreamHandshakeValidationError{
-					field:  "Jobs",
+					field:  "JobAccess",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -5384,16 +5384,16 @@ func (m *StreamHandshake) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, StreamHandshakeValidationError{
-					field:  "Jobs",
+					field:  "JobAccess",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetJobAccess()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return StreamHandshakeValidationError{
-				field:  "Jobs",
+				field:  "JobAccess",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -5928,7 +5928,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_Jobs:
+	case *StreamResponse_JobAccess:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -5942,11 +5942,11 @@ func (m *StreamResponse) validate(all bool) error {
 		oneofChangePresent = true
 
 		if all {
-			switch v := interface{}(m.GetJobs()).(type) {
+			switch v := interface{}(m.GetJobAccess()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "Jobs",
+						field:  "JobAccess",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -5954,16 +5954,16 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "Jobs",
+						field:  "JobAccess",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetJobAccess()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "Jobs",
+					field:  "JobAccess",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -6298,22 +6298,22 @@ var _ interface {
 	ErrorName() string
 } = StreamResponseValidationError{}
 
-// Validate checks the field values on JobsList with the rules defined in the
+// Validate checks the field values on JobAccess with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *JobsList) Validate() error {
+func (m *JobAccess) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on JobsList with the rules defined in
+// ValidateAll checks the field values on JobAccess with the rules defined in
 // the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in JobsListMultiError, or nil
+// result is a list of violation errors wrapped in JobAccessMultiError, or nil
 // if none found.
-func (m *JobsList) ValidateAll() error {
+func (m *JobAccess) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *JobsList) validate(all bool) error {
+func (m *JobAccess) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -6327,7 +6327,7 @@ func (m *JobsList) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, JobsListValidationError{
+					errors = append(errors, JobAccessValidationError{
 						field:  fmt.Sprintf("Dispatches[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -6335,7 +6335,7 @@ func (m *JobsList) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, JobsListValidationError{
+					errors = append(errors, JobAccessValidationError{
 						field:  fmt.Sprintf("Dispatches[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -6344,7 +6344,7 @@ func (m *JobsList) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return JobsListValidationError{
+				return JobAccessValidationError{
 					field:  fmt.Sprintf("Dispatches[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -6355,18 +6355,18 @@ func (m *JobsList) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return JobsListMultiError(errors)
+		return JobAccessMultiError(errors)
 	}
 
 	return nil
 }
 
-// JobsListMultiError is an error wrapping multiple validation errors returned
-// by JobsList.ValidateAll() if the designated constraints aren't met.
-type JobsListMultiError []error
+// JobAccessMultiError is an error wrapping multiple validation errors returned
+// by JobAccess.ValidateAll() if the designated constraints aren't met.
+type JobAccessMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m JobsListMultiError) Error() string {
+func (m JobAccessMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -6375,11 +6375,11 @@ func (m JobsListMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m JobsListMultiError) AllErrors() []error { return m }
+func (m JobAccessMultiError) AllErrors() []error { return m }
 
-// JobsListValidationError is the validation error returned by
-// JobsList.Validate if the designated constraints aren't met.
-type JobsListValidationError struct {
+// JobAccessValidationError is the validation error returned by
+// JobAccess.Validate if the designated constraints aren't met.
+type JobAccessValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -6387,22 +6387,22 @@ type JobsListValidationError struct {
 }
 
 // Field function returns field value.
-func (e JobsListValidationError) Field() string { return e.field }
+func (e JobAccessValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e JobsListValidationError) Reason() string { return e.reason }
+func (e JobAccessValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e JobsListValidationError) Cause() error { return e.cause }
+func (e JobAccessValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e JobsListValidationError) Key() bool { return e.key }
+func (e JobAccessValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e JobsListValidationError) ErrorName() string { return "JobsListValidationError" }
+func (e JobAccessValidationError) ErrorName() string { return "JobAccessValidationError" }
 
 // Error satisfies the builtin error interface
-func (e JobsListValidationError) Error() string {
+func (e JobAccessValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -6414,14 +6414,14 @@ func (e JobsListValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sJobsList.%s: %s%s",
+		"invalid %sJobAccess.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = JobsListValidationError{}
+var _ error = JobAccessValidationError{}
 
 var _ interface {
 	Field() string
@@ -6429,7 +6429,147 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = JobsListValidationError{}
+} = JobAccessValidationError{}
+
+// Validate checks the field values on JobAccessEntry with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JobAccessEntry) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JobAccessEntry with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JobAccessEntryMultiError,
+// or nil if none found.
+func (m *JobAccessEntry) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JobAccessEntry) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetJob()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, JobAccessEntryValidationError{
+					field:  "Job",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, JobAccessEntryValidationError{
+					field:  "Job",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetJob()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return JobAccessEntryValidationError{
+				field:  "Job",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if _, ok := centrum.CentrumAccessLevel_name[int32(m.GetAccess())]; !ok {
+		err := JobAccessEntryValidationError{
+			field:  "Access",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return JobAccessEntryMultiError(errors)
+	}
+
+	return nil
+}
+
+// JobAccessEntryMultiError is an error wrapping multiple validation errors
+// returned by JobAccessEntry.ValidateAll() if the designated constraints
+// aren't met.
+type JobAccessEntryMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JobAccessEntryMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JobAccessEntryMultiError) AllErrors() []error { return m }
+
+// JobAccessEntryValidationError is the validation error returned by
+// JobAccessEntry.Validate if the designated constraints aren't met.
+type JobAccessEntryValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JobAccessEntryValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JobAccessEntryValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JobAccessEntryValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JobAccessEntryValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JobAccessEntryValidationError) ErrorName() string { return "JobAccessEntryValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JobAccessEntryValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJobAccessEntry.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JobAccessEntryValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JobAccessEntryValidationError{}
 
 // Validate checks the field values on Dispatchers with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

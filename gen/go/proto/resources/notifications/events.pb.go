@@ -24,6 +24,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// User related events
 type UserEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -123,6 +124,7 @@ func (*UserEvent_Notification) isUserEvent_Data() {}
 
 func (*UserEvent_NotificationsReadCount) isUserEvent_Data() {}
 
+// Job related events
 type JobEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -189,6 +191,7 @@ type JobEvent_JobProps struct {
 
 func (*JobEvent_JobProps) isJobEvent_Data() {}
 
+// Job grade events
 type JobGradeEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -255,6 +258,7 @@ type JobGradeEvent_RefreshToken struct {
 
 func (*JobGradeEvent_RefreshToken) isJobGradeEvent_Data() {}
 
+// System related events
 type SystemEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:

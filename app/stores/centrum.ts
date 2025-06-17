@@ -11,7 +11,7 @@ import type { Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { StreamRequest, StreamResponse } from '~~/gen/ts/services/centrum/centrum';
+import type { JobAccess, StreamRequest, StreamResponse } from '~~/gen/ts/services/centrum/centrum';
 
 export const logger = useLogger('⛑️ Centrum');
 
@@ -40,6 +40,7 @@ export const useCentrumStore = defineStore(
         const timeCorrection = ref<number>(0);
 
         const settings = ref<Settings | undefined>(undefined);
+        const dispatchesJobs = ref<JobAccess | undefined>(undefined);
         const isDispatcher = ref<boolean>(false);
         const dispatchers = ref<Dispatchers[]>([]);
         const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
@@ -394,7 +395,7 @@ export const useCentrumStore = defineStore(
                             setOrUpdateSettings(resp.change.handshake.settings);
                         }
 
-                        // TODO
+                        dispatchesJobs.value = resp.change.handshake.jobAccess;
                     } else if (resp.change.oneofKind === 'latestState') {
                         logger.info(
                             'Latest state received. Dispatches:',
@@ -841,6 +842,7 @@ export const useCentrumStore = defineStore(
             reconnectBackoffTime,
             timeCorrection,
             settings,
+            dispatchesJobs,
             isDispatcher,
             dispatchers,
             feed,

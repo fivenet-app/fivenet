@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import DNBToggle from '~/components/partials/notification/DNBToggle.vue';
-import NotificationsList from '~/components/partials/notification/NotificationsList.vue';
+import DNBToggle from '~/components/notifications/DNBToggle.vue';
+import NotificationsList from '~/components/notifications/NotificationsList.vue';
 
 useHead({
     title: 'components.notifications.title',

@@ -253,9 +253,9 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 			AckPolicy:      jetstream.AckNonePolicy,
 			MaxWaiting:     8,
 		}
-		cons, err := s.js.CreateConsumer(ctx, "KV_"+tracker.BucketUserLoc, consCfg)
+		cons, err := s.js.CreateConsumer(gctx, "KV_"+tracker.BucketUserLoc, consCfg)
 		if err != nil {
-			return fmt.Errorf("consumer. %w", err)
+			return fmt.Errorf("failed to create consumer. %w", err)
 		}
 
 		for {
@@ -339,7 +339,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 					if um.UserId == userInfo.UserId {
 						userOnDuty = true
 						// If the user is (back) on duty, we send the user markers snapshot
-						if err := s.sendUserMarkers(srv, ctx, usersJobs, userInfo); err != nil {
+						if err := s.sendUserMarkers(srv, gctx, usersJobs, userInfo); err != nil {
 							return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 						}
 					} else {

@@ -16,6 +16,7 @@ import { SystemEvent } from "../../resources/notifications/events";
 import { JobGradeEvent } from "../../resources/notifications/events";
 import { JobEvent } from "../../resources/notifications/events";
 import { UserEvent } from "../../resources/notifications/events";
+import { ClientView } from "../../resources/notifications/client_view";
 import { Notification } from "../../resources/notifications/notifications";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { NotificationCategory } from "../../resources/notifications/notifications";
@@ -77,26 +78,21 @@ export interface MarkNotificationsResponse {
     updated: number;
 }
 /**
- * @generated from protobuf message services.notifications.StreamRequest
+ * @generated from protobuf message services.notifications.StreamMessage
  */
-export interface StreamRequest {
+export interface StreamMessage {
     /**
-     * @generated from protobuf field: services.notifications.ClientView client_view = 1
+     * @generated from protobuf oneof: data
      */
-    clientView?: ClientView;
-}
-/**
- * @generated from protobuf message services.notifications.ClientView
- */
-export interface ClientView {
-    /**
-     * @generated from protobuf field: string object_type = 1
-     */
-    objectType: string;
-    /**
-     * @generated from protobuf field: string object_id = 2
-     */
-    objectId: string;
+    data: {
+        oneofKind: "clientView";
+        /**
+         * @generated from protobuf field: resources.notifications.ClientView client_view = 1
+         */
+        clientView: ClientView;
+    } | {
+        oneofKind: undefined;
+    };
 }
 /**
  * @generated from protobuf message services.notifications.StreamResponse
@@ -388,25 +384,29 @@ class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsRespon
  */
 export const MarkNotificationsResponse = new MarkNotificationsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class StreamRequest$Type extends MessageType<StreamRequest> {
+class StreamMessage$Type extends MessageType<StreamMessage> {
     constructor() {
-        super("services.notifications.StreamRequest", [
-            { no: 1, name: "client_view", kind: "message", T: () => ClientView, options: { "validate.rules": { message: { required: true } } } }
+        super("services.notifications.StreamMessage", [
+            { no: 1, name: "client_view", kind: "message", oneof: "data", T: () => ClientView, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
-    create(value?: PartialMessage<StreamRequest>): StreamRequest {
+    create(value?: PartialMessage<StreamMessage>): StreamMessage {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.data = { oneofKind: undefined };
         if (value !== undefined)
-            reflectionMergePartial<StreamRequest>(this, message, value);
+            reflectionMergePartial<StreamMessage>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamRequest): StreamRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: StreamMessage): StreamMessage {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* services.notifications.ClientView client_view */ 1:
-                    message.clientView = ClientView.internalBinaryRead(reader, reader.uint32(), options, message.clientView);
+                case /* resources.notifications.ClientView client_view */ 1:
+                    message.data = {
+                        oneofKind: "clientView",
+                        clientView: ClientView.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).clientView)
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -419,10 +419,10 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: StreamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* services.notifications.ClientView client_view = 1; */
-        if (message.clientView)
-            ClientView.internalBinaryWrite(message.clientView, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: StreamMessage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.notifications.ClientView client_view = 1; */
+        if (message.data.oneofKind === "clientView")
+            ClientView.internalBinaryWrite(message.data.clientView, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -430,64 +430,9 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.notifications.StreamRequest
+ * @generated MessageType for protobuf message services.notifications.StreamMessage
  */
-export const StreamRequest = new StreamRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ClientView$Type extends MessageType<ClientView> {
-    constructor() {
-        super("services.notifications.ClientView", [
-            { no: 1, name: "object_type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "object_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<ClientView>): ClientView {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.objectType = "";
-        message.objectId = "";
-        if (value !== undefined)
-            reflectionMergePartial<ClientView>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ClientView): ClientView {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string object_type */ 1:
-                    message.objectType = reader.string();
-                    break;
-                case /* string object_id */ 2:
-                    message.objectId = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: ClientView, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string object_type = 1; */
-        if (message.objectType !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.objectType);
-        /* string object_id = 2; */
-        if (message.objectId !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.objectId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.notifications.ClientView
- */
-export const ClientView = new ClientView$Type();
+export const StreamMessage = new StreamMessage$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
@@ -599,5 +544,5 @@ export const StreamResponse = new StreamResponse$Type();
 export const NotificationsService = new ServiceType("services.notifications.NotificationsService", [
     { name: "GetNotifications", options: {}, I: GetNotificationsRequest, O: GetNotificationsResponse },
     { name: "MarkNotifications", options: {}, I: MarkNotificationsRequest, O: MarkNotificationsResponse },
-    { name: "Stream", serverStreaming: true, clientStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
+    { name: "Stream", serverStreaming: true, clientStreaming: true, options: {}, I: StreamMessage, O: StreamResponse }
 ]);

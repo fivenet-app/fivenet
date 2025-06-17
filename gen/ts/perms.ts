@@ -58,6 +58,7 @@
 // source: resources/mailer/settings.proto
 // source: resources/mailer/template.proto
 // source: resources/mailer/thread.proto
+// source: resources/notifications/client_view.proto
 // source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/attributes.proto

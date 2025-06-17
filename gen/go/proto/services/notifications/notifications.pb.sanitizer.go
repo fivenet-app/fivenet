@@ -3,14 +3,6 @@
 
 package notifications
 
-func (m *ClientView) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
 func (m *GetNotificationsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -79,18 +71,21 @@ func (m *MarkNotificationsResponse) Sanitize() error {
 	return nil
 }
 
-func (m *StreamRequest) Sanitize() error {
+func (m *StreamMessage) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
 	// Field: ClientView
-	if m.ClientView != nil {
-		if v, ok := any(m.GetClientView()).(interface{ Sanitize() error }); ok {
+	switch v := m.Data.(type) {
+
+	case *StreamMessage_ClientView:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	return nil

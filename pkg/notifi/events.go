@@ -27,17 +27,22 @@ const (
 	SystemTopic events.Topic = "sys"
 	// MailerTopic is the topic for mailer event notifications.
 	MailerTopic events.Topic = "mailer"
+
+	// ObjectTopic is the topic for object event notifications (e.g., document updated).
+	ObjectTopic events.Topic = "obj"
 )
 
 // registerEvents creates or updates the JetStream stream for notification events.
 func (n *Notifi) registerEvents(ctx context.Context) error {
 	cfg := jetstream.StreamConfig{
-		Name:        StreamName,
-		Description: "User and System Notification events",
-		Retention:   jetstream.InterestPolicy,
-		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
-		Discard:     jetstream.DiscardOld,
-		MaxAge:      30 * time.Minute,
+		Name:              StreamName,
+		Description:       "User, Job, Object and System notification events",
+		Subjects:          []string{fmt.Sprintf("%s.>", BaseSubject)},
+		Retention:         jetstream.InterestPolicy,
+		Discard:           jetstream.DiscardOld,
+		MaxAge:            15 * time.Minute,
+		MaxMsgsPerSubject: 3,
+		Duplicates:        time.Minute,
 	}
 	if _, err := n.js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return fmt.Errorf("failed to create/update stream for notification events. %w", err)
@@ -48,14 +53,14 @@ func (n *Notifi) registerEvents(ctx context.Context) error {
 
 // SplitSubject splits a subject string into its base subject, topic, and any additional parts.
 // Returns the subject, topic, and a slice of remaining parts (if any).
-func SplitSubject(in string) (events.Subject, events.Topic, []string) {
+func SplitSubject(in string) (events.Topic, []string) {
 	parts := strings.Split(in, ".")
 
-	if len(parts) >= 3 {
-		return events.Subject(parts[0]), events.Topic(parts[1]), parts[2:]
-	} else if len(parts) == 2 {
-		return events.Subject(parts[0]), events.Topic(parts[1]), nil
+	if len(parts) == 2 {
+		return events.Topic(parts[1]), nil
+	} else if len(parts) >= 3 {
+		return events.Topic(parts[1]), parts[2:]
 	}
 
-	return events.Subject(""), events.Topic(""), nil
+	return events.Topic(""), nil
 }

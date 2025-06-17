@@ -5,7 +5,7 @@ import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { NotificationsService } from "./notifications";
 import type { StreamResponse } from "./notifications";
-import type { StreamRequest } from "./notifications";
+import type { StreamMessage } from "./notifications";
 import type { DuplexStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { MarkNotificationsResponse } from "./notifications";
 import type { MarkNotificationsRequest } from "./notifications";
@@ -35,7 +35,7 @@ export interface INotificationsServiceClient {
      *
      * @generated from protobuf rpc: Stream
      */
-    stream(options?: RpcOptions): DuplexStreamingCall<StreamRequest, StreamResponse>;
+    stream(options?: RpcOptions): DuplexStreamingCall<StreamMessage, StreamResponse>;
 }
 /**
  * @generated from protobuf service services.notifications.NotificationsService
@@ -69,8 +69,8 @@ export class NotificationsServiceClient implements INotificationsServiceClient, 
      *
      * @generated from protobuf rpc: Stream
      */
-    stream(options?: RpcOptions): DuplexStreamingCall<StreamRequest, StreamResponse> {
+    stream(options?: RpcOptions): DuplexStreamingCall<StreamMessage, StreamResponse> {
         const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<StreamRequest, StreamResponse>("duplex", this._transport, method, opt);
+        return stackIntercept<StreamMessage, StreamResponse>("duplex", this._transport, method, opt);
     }
 }
