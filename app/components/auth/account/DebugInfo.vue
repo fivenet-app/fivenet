@@ -6,7 +6,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -18,7 +17,7 @@ const authStore = useAuthStore();
 const { activeChar, permissions, accessTokenExpiration, isSuperuser } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { webSocket } = useGRPCWebsocketTransport();
 

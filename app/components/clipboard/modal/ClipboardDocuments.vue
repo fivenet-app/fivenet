@@ -2,7 +2,6 @@
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import type { ClipboardDocument } from '~/stores/clipboard';
 import { useClipboardStore } from '~/stores/clipboard';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -27,7 +26,7 @@ const emit = defineEmits<{
 }>();
 
 const clipboardStore = useClipboardStore();
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { documents } = storeToRefs(clipboardStore);
 

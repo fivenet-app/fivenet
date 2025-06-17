@@ -6,7 +6,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import AttrViewAttr from '~/components/settings/attrs/AttrViewAttr.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
@@ -28,7 +27,7 @@ const { isSuperuser } = useAuth();
 
 const modal = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const {
     data: jobLimits,

@@ -8,7 +8,6 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { useNotificatorStore } from '~/stores/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -32,7 +31,7 @@ const modal = useModal();
 
 const { can, isSuperuser } = useAuth();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const mailerStore = useMailerStore();
 const { draft: state, addressBook, messages, selectedEmail, selectedThread } = storeToRefs(mailerStore);

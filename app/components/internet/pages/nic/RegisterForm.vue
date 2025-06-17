@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CheckDomainAvailabilityResponse, RegisterDomainResponse } from '~~/gen/ts/services/internet/domain';
 
@@ -16,7 +15,7 @@ defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     transferCode: z.string().length(6).optional(),

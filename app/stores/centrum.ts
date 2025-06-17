@@ -1,7 +1,6 @@
 import type { RpcError, ServerStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { NotificationActionI18n } from '~/utils/notifications';
 import type { Dispatchers } from '~~/gen/ts/resources/centrum/dispatchers';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
@@ -29,6 +28,7 @@ export const useCentrumStore = defineStore(
     'centrum',
     () => {
         const { $grpc } = useNuxtApp();
+        const notifications = useNotificationsStore();
 
         // State
         const error = ref<RpcError | undefined>(undefined);
@@ -338,7 +338,7 @@ export const useCentrumStore = defineStore(
         const addOrUpdatePendingDispatch = (id: number): void => {
             if (!pendingDispatches.value.includes(id)) {
                 pendingDispatches.value.push(id);
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: {} },
                     description: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: {} },
                     type: NotificationType.INFO,
@@ -367,7 +367,6 @@ export const useCentrumStore = defineStore(
             }
 
             const { activeChar } = useAuth();
-            const notifications = useNotificatorStore();
 
             abort.value = new AbortController();
             error.value = undefined;
@@ -605,7 +604,7 @@ export const useCentrumStore = defineStore(
                         public: false,
                     };
 
-                    useNotificatorStore().add({
+                    notifications.add({
                         title: { key: 'notifications.centrum.disabled.title', parameters: {} },
                         description: { key: 'notifications.centrum.disabled.content', parameters: {} },
                         type: NotificationType.INFO,
@@ -800,7 +799,7 @@ export const useCentrumStore = defineStore(
 
         const selfAssign = async (id: number): Promise<void> => {
             if (ownUnitId.value === undefined) {
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
                     description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
                     type: NotificationType.ERROR,

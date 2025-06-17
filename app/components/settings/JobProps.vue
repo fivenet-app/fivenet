@@ -9,7 +9,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useAuthStore } from '~/stores/auth';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/jobs/job_settings';
@@ -31,7 +30,7 @@ const appConfig = useAppConfig();
 
 const authStore = useAuthStore();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     livemapMarkerColor: z.string().length(7),

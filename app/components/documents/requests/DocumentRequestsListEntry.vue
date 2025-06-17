@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { DocRequest } from '~~/gen/ts/resources/documents/requests';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -18,7 +17,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 async function updateDocumentReq(documentId: number, requestId: number, accepted: boolean): Promise<void> {
     try {

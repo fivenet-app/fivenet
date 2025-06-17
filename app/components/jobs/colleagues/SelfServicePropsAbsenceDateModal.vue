@@ -4,7 +4,6 @@ import { addDays, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useAuthStore } from '~/stores/auth';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -22,7 +21,7 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const authStore = useAuthStore();
 const { jobProps } = storeToRefs(authStore);

@@ -26,7 +26,7 @@ async function listCronjobs(): Promise<ListCronjobsResponse> {
 
 const { t } = useI18n();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 function copyLinkToClipboard(text: string): void {
     copyToClipboardWrapper(text);

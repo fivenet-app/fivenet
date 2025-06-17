@@ -26,7 +26,6 @@ import type {
     SetEmailSettingsRequest,
     SetEmailSettingsResponse,
 } from '~~/gen/ts/services/mailer/mailer';
-import { useNotificatorStore } from './notificator';
 
 const logger = useLogger('💬 Mailer');
 
@@ -34,6 +33,7 @@ export const useMailerStore = defineStore(
     'mailer',
     () => {
         const { $grpc } = useNuxtApp();
+        const notifications = useNotificationsStore();
 
         // State
         const loaded = ref<boolean>(false);
@@ -128,7 +128,7 @@ export const useMailerStore = defineStore(
                     threads.value!.threads.unshift(thread);
                 }
 
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.mailer.new_email.title', parameters: {} },
                     description: {
                         key: 'notifications.mailer.new_email.content',
@@ -196,7 +196,7 @@ export const useMailerStore = defineStore(
                     return;
                 }
 
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.mailer.new_email.title', parameters: {} },
                     description: {
                         key: 'notifications.mailer.new_email.content',
@@ -407,9 +407,9 @@ export const useMailerStore = defineStore(
                     emails.value.splice(idx, 1);
                 }
 
-                useNotificatorStore().restartStream();
+                notifications.restartStream();
 
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.action_successful.title', parameters: {} },
                     description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
@@ -538,7 +538,7 @@ export const useMailerStore = defineStore(
                     selectedThread.value = undefined;
                 }
 
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.action_successful.title', parameters: {} },
                     description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
@@ -610,7 +610,7 @@ export const useMailerStore = defineStore(
             }
 
             if (notify) {
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.action_successful.title', parameters: {} },
                     description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
@@ -669,7 +669,7 @@ export const useMailerStore = defineStore(
                 const call = $grpc.mailer.mailer.deleteMessage(req);
                 const { response } = await call;
 
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.action_successful.title', parameters: {} },
                     description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,
@@ -708,7 +708,7 @@ export const useMailerStore = defineStore(
                     selectedEmail.value.settings = response.settings;
                 }
 
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.action_successful.title', parameters: {} },
                     description: { key: 'notifications.action_successful.content', parameters: {} },
                     type: NotificationType.SUCCESS,

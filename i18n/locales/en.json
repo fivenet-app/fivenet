@@ -1993,7 +1993,7 @@
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"
         },
-        "NotificatorService": {
+        "NotificationsService": {
             "ErrFailedRequest": "Failed to load notifications data!",
             "ErrFailedStream": "Failed to stream notifications!"
         },

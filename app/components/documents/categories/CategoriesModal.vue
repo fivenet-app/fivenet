@@ -4,7 +4,6 @@ import { ShapeIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -22,7 +21,7 @@ const { can } = useAuth();
 
 const { fallbackColor } = useAppConfig();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { isOpen } = useModal();
 

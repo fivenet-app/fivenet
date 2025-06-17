@@ -12,7 +12,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import { useNotificatorStore } from '~/stores/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import EntryRSVPList from './EntryRSVPList.vue';
@@ -29,7 +28,7 @@ const { can } = useAuth();
 const calendarStore = useCalendarStore();
 const { calendars } = storeToRefs(calendarStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const w = window;
 

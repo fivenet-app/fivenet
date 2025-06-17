@@ -25,8 +25,6 @@ import type {
     RSVPCalendarEntryResponse,
     UpdateCalendarResponse,
 } from '~~/gen/ts/services/calendar/calendar';
-import { useNotificatorStore } from './notificator';
-import { useSettingsStore } from './settings';
 
 const logger = useLogger('📅 Calendar');
 
@@ -34,6 +32,7 @@ export const useCalendarStore = defineStore(
     'calendar',
     () => {
         const { $grpc } = useNuxtApp();
+        const notifications = useNotificationsStore();
 
         // State
         const activeCalendarIds = ref<number[]>([]);
@@ -81,7 +80,7 @@ export const useCalendarStore = defineStore(
                         eventReminders.value.set(entry.id, closestTime);
                     }
 
-                    useNotificatorStore().add({
+                    notifications.add({
                         title: {
                             key: 'notifications.calendar.event_starting.title',
                             parameters: {

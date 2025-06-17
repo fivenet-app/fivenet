@@ -3,7 +3,6 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
@@ -19,7 +18,7 @@ const { $grpc } = useNuxtApp();
 
 const canSubmit = useVModel(props, 'modelValue', emit);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const accountError = ref<RpcError | undefined>();
 

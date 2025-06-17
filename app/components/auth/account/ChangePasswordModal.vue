@@ -3,14 +3,13 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/stores/auth';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const authStore = useAuthStore();
 const { setAccessTokenExpiration } = authStore;

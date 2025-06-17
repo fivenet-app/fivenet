@@ -4,7 +4,6 @@ import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrU
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 
@@ -16,7 +15,7 @@ const { can } = useAuth();
 
 const modal = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { data: units, pending: loading, refresh, error } = useLazyAsyncData('centrum-units', () => listUnits());
 

@@ -6,7 +6,6 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Content } from '~/types/history';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -41,7 +40,7 @@ const modal = useModal();
 
 const { attr, can, activeChar } = useAuth();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
 

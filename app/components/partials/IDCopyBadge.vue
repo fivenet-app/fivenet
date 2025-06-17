@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { ButtonSize, ButtonVariant } from '#ui/types';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { I18NItem } from '~/types/i18n';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -30,7 +29,7 @@ const props = withDefaults(
     },
 );
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 function copyDocumentIDToClipboard(): void {
     copyToClipboardWrapper(props.prefix ? props.prefix + '-' + props.id : props.id.toString());

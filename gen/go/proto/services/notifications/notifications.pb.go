@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.6
 // 	protoc        v6.30.2
-// source: services/notificator/notificator.proto
+// source: services/notifications/notifications.proto
 
-package notificator
+package notifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
@@ -36,7 +36,7 @@ type GetNotificationsRequest struct {
 
 func (x *GetNotificationsRequest) Reset() {
 	*x = GetNotificationsRequest{}
-	mi := &file_services_notificator_notificator_proto_msgTypes[0]
+	mi := &file_services_notifications_notifications_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -48,7 +48,7 @@ func (x *GetNotificationsRequest) String() string {
 func (*GetNotificationsRequest) ProtoMessage() {}
 
 func (x *GetNotificationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_notificator_notificator_proto_msgTypes[0]
+	mi := &file_services_notifications_notifications_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -61,7 +61,7 @@ func (x *GetNotificationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNotificationsRequest.ProtoReflect.Descriptor instead.
 func (*GetNotificationsRequest) Descriptor() ([]byte, []int) {
-	return file_services_notificator_notificator_proto_rawDescGZIP(), []int{0}
+	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *GetNotificationsRequest) GetPagination() *database.PaginationRequest {
@@ -95,7 +95,7 @@ type GetNotificationsResponse struct {
 
 func (x *GetNotificationsResponse) Reset() {
 	*x = GetNotificationsResponse{}
-	mi := &file_services_notificator_notificator_proto_msgTypes[1]
+	mi := &file_services_notifications_notifications_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -107,7 +107,7 @@ func (x *GetNotificationsResponse) String() string {
 func (*GetNotificationsResponse) ProtoMessage() {}
 
 func (x *GetNotificationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_notificator_notificator_proto_msgTypes[1]
+	mi := &file_services_notifications_notifications_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -120,7 +120,7 @@ func (x *GetNotificationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNotificationsResponse.ProtoReflect.Descriptor instead.
 func (*GetNotificationsResponse) Descriptor() ([]byte, []int) {
-	return file_services_notificator_notificator_proto_rawDescGZIP(), []int{1}
+	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *GetNotificationsResponse) GetPagination() *database.PaginationResponse {
@@ -148,7 +148,7 @@ type MarkNotificationsRequest struct {
 
 func (x *MarkNotificationsRequest) Reset() {
 	*x = MarkNotificationsRequest{}
-	mi := &file_services_notificator_notificator_proto_msgTypes[2]
+	mi := &file_services_notifications_notifications_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -160,7 +160,7 @@ func (x *MarkNotificationsRequest) String() string {
 func (*MarkNotificationsRequest) ProtoMessage() {}
 
 func (x *MarkNotificationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_notificator_notificator_proto_msgTypes[2]
+	mi := &file_services_notifications_notifications_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -173,7 +173,7 @@ func (x *MarkNotificationsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkNotificationsRequest.ProtoReflect.Descriptor instead.
 func (*MarkNotificationsRequest) Descriptor() ([]byte, []int) {
-	return file_services_notificator_notificator_proto_rawDescGZIP(), []int{2}
+	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *MarkNotificationsRequest) GetUnread() bool {
@@ -206,7 +206,7 @@ type MarkNotificationsResponse struct {
 
 func (x *MarkNotificationsResponse) Reset() {
 	*x = MarkNotificationsResponse{}
-	mi := &file_services_notificator_notificator_proto_msgTypes[3]
+	mi := &file_services_notifications_notifications_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -218,7 +218,7 @@ func (x *MarkNotificationsResponse) String() string {
 func (*MarkNotificationsResponse) ProtoMessage() {}
 
 func (x *MarkNotificationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_notificator_notificator_proto_msgTypes[3]
+	mi := &file_services_notifications_notifications_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -231,7 +231,7 @@ func (x *MarkNotificationsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use MarkNotificationsResponse.ProtoReflect.Descriptor instead.
 func (*MarkNotificationsResponse) Descriptor() ([]byte, []int) {
-	return file_services_notificator_notificator_proto_rawDescGZIP(), []int{3}
+	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *MarkNotificationsResponse) GetUpdated() uint64 {
@@ -243,13 +243,14 @@ func (x *MarkNotificationsResponse) GetUpdated() uint64 {
 
 type StreamRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	ClientView    *ClientView            `protobuf:"bytes,1,opt,name=client_view,json=clientView,proto3" json:"client_view,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *StreamRequest) Reset() {
 	*x = StreamRequest{}
-	mi := &file_services_notificator_notificator_proto_msgTypes[4]
+	mi := &file_services_notifications_notifications_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -261,7 +262,7 @@ func (x *StreamRequest) String() string {
 func (*StreamRequest) ProtoMessage() {}
 
 func (x *StreamRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_notificator_notificator_proto_msgTypes[4]
+	mi := &file_services_notifications_notifications_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -274,7 +275,66 @@ func (x *StreamRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamRequest.ProtoReflect.Descriptor instead.
 func (*StreamRequest) Descriptor() ([]byte, []int) {
-	return file_services_notificator_notificator_proto_rawDescGZIP(), []int{4}
+	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *StreamRequest) GetClientView() *ClientView {
+	if x != nil {
+		return x.ClientView
+	}
+	return nil
+}
+
+type ClientView struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ObjectType    string                 `protobuf:"bytes,1,opt,name=object_type,json=objectType,proto3" json:"object_type,omitempty"`
+	ObjectId      string                 `protobuf:"bytes,2,opt,name=object_id,json=objectId,proto3" json:"object_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientView) Reset() {
+	*x = ClientView{}
+	mi := &file_services_notifications_notifications_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientView) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientView) ProtoMessage() {}
+
+func (x *ClientView) ProtoReflect() protoreflect.Message {
+	mi := &file_services_notifications_notifications_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientView.ProtoReflect.Descriptor instead.
+func (*ClientView) Descriptor() ([]byte, []int) {
+	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *ClientView) GetObjectType() string {
+	if x != nil {
+		return x.ObjectType
+	}
+	return ""
+}
+
+func (x *ClientView) GetObjectId() string {
+	if x != nil {
+		return x.ObjectId
+	}
+	return ""
 }
 
 type StreamResponse struct {
@@ -295,7 +355,7 @@ type StreamResponse struct {
 
 func (x *StreamResponse) Reset() {
 	*x = StreamResponse{}
-	mi := &file_services_notificator_notificator_proto_msgTypes[5]
+	mi := &file_services_notifications_notifications_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -307,7 +367,7 @@ func (x *StreamResponse) String() string {
 func (*StreamResponse) ProtoMessage() {}
 
 func (x *StreamResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_notificator_notificator_proto_msgTypes[5]
+	mi := &file_services_notifications_notifications_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -320,7 +380,7 @@ func (x *StreamResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StreamResponse.ProtoReflect.Descriptor instead.
 func (*StreamResponse) Descriptor() ([]byte, []int) {
-	return file_services_notificator_notificator_proto_rawDescGZIP(), []int{5}
+	return file_services_notifications_notifications_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *StreamResponse) GetNotificationCount() int32 {
@@ -423,11 +483,11 @@ func (*StreamResponse_SystemEvent) isStreamResponse_Data() {}
 
 func (*StreamResponse_MailerEvent) isStreamResponse_Data() {}
 
-var File_services_notificator_notificator_proto protoreflect.FileDescriptor
+var File_services_notifications_notifications_proto protoreflect.FileDescriptor
 
-const file_services_notificator_notificator_proto_rawDesc = "" +
+const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\n" +
-	"&services/notificator/notificator.proto\x12\x14services.notificator\x1a(resources/common/database/database.proto\x1a\x1dresources/mailer/events.proto\x1a$resources/notifications/events.proto\x1a+resources/notifications/notifications.proto\x1a\x17validate/validate.proto\"\x8a\x02\n" +
+	"*services/notifications/notifications.proto\x12\x16services.notifications\x1a(resources/common/database/database.proto\x1a\x1dresources/mailer/events.proto\x1a$resources/notifications/events.proto\x1a+resources/notifications/notifications.proto\x1a\x17validate/validate.proto\"\x8a\x02\n" +
 	"\x17GetNotificationsRequest\x12V\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
@@ -448,8 +508,15 @@ const file_services_notificator_notificator_proto_rawDesc = "" +
 	"\x03all\x18\x03 \x01(\bH\x00R\x03all\x88\x01\x01B\x06\n" +
 	"\x04_all\"5\n" +
 	"\x19MarkNotificationsResponse\x12\x18\n" +
-	"\aupdated\x18\x01 \x01(\x04R\aupdated\"\x0f\n" +
-	"\rStreamRequest\"\xdf\x03\n" +
+	"\aupdated\x18\x01 \x01(\x04R\aupdated\"^\n" +
+	"\rStreamRequest\x12M\n" +
+	"\vclient_view\x18\x01 \x01(\v2\".services.notifications.ClientViewB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
+	"clientView\"J\n" +
+	"\n" +
+	"ClientView\x12\x1f\n" +
+	"\vobject_type\x18\x01 \x01(\tR\n" +
+	"objectType\x12\x1b\n" +
+	"\tobject_id\x18\x02 \x01(\tR\bobjectId\"\xdf\x03\n" +
 	"\x0eStreamResponse\x12-\n" +
 	"\x12notification_count\x18\x01 \x01(\x05R\x11notificationCount\x12\x1d\n" +
 	"\arestart\x18\x02 \x01(\bH\x01R\arestart\x88\x01\x01\x12C\n" +
@@ -461,73 +528,75 @@ const file_services_notificator_notificator_proto_rawDesc = "" +
 	"\fmailer_event\x18\x06 \x01(\v2\x1d.resources.mailer.MailerEventH\x00R\vmailerEventB\v\n" +
 	"\x04data\x12\x03\xf8B\x01B\n" +
 	"\n" +
-	"\b_restart2\xd4\x02\n" +
-	"\x12NotificatorService\x12q\n" +
-	"\x10GetNotifications\x12-.services.notificator.GetNotificationsRequest\x1a..services.notificator.GetNotificationsResponse\x12t\n" +
-	"\x11MarkNotifications\x12..services.notificator.MarkNotificationsRequest\x1a/.services.notificator.MarkNotificationsResponse\x12U\n" +
-	"\x06Stream\x12#.services.notificator.StreamRequest\x1a$.services.notificator.StreamResponse0\x01BTZRgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notificator;notificatorb\x06proto3"
+	"\b_restart2\xe4\x02\n" +
+	"\x14NotificationsService\x12u\n" +
+	"\x10GetNotifications\x12/.services.notifications.GetNotificationsRequest\x1a0.services.notifications.GetNotificationsResponse\x12x\n" +
+	"\x11MarkNotifications\x120.services.notifications.MarkNotificationsRequest\x1a1.services.notifications.MarkNotificationsResponse\x12[\n" +
+	"\x06Stream\x12%.services.notifications.StreamRequest\x1a&.services.notifications.StreamResponse(\x010\x01BXZVgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications;notificationsb\x06proto3"
 
 var (
-	file_services_notificator_notificator_proto_rawDescOnce sync.Once
-	file_services_notificator_notificator_proto_rawDescData []byte
+	file_services_notifications_notifications_proto_rawDescOnce sync.Once
+	file_services_notifications_notifications_proto_rawDescData []byte
 )
 
-func file_services_notificator_notificator_proto_rawDescGZIP() []byte {
-	file_services_notificator_notificator_proto_rawDescOnce.Do(func() {
-		file_services_notificator_notificator_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_notificator_notificator_proto_rawDesc), len(file_services_notificator_notificator_proto_rawDesc)))
+func file_services_notifications_notifications_proto_rawDescGZIP() []byte {
+	file_services_notifications_notifications_proto_rawDescOnce.Do(func() {
+		file_services_notifications_notifications_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_services_notifications_notifications_proto_rawDesc), len(file_services_notifications_notifications_proto_rawDesc)))
 	})
-	return file_services_notificator_notificator_proto_rawDescData
+	return file_services_notifications_notifications_proto_rawDescData
 }
 
-var file_services_notificator_notificator_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
-var file_services_notificator_notificator_proto_goTypes = []any{
-	(*GetNotificationsRequest)(nil),         // 0: services.notificator.GetNotificationsRequest
-	(*GetNotificationsResponse)(nil),        // 1: services.notificator.GetNotificationsResponse
-	(*MarkNotificationsRequest)(nil),        // 2: services.notificator.MarkNotificationsRequest
-	(*MarkNotificationsResponse)(nil),       // 3: services.notificator.MarkNotificationsResponse
-	(*StreamRequest)(nil),                   // 4: services.notificator.StreamRequest
-	(*StreamResponse)(nil),                  // 5: services.notificator.StreamResponse
-	(*database.PaginationRequest)(nil),      // 6: resources.common.database.PaginationRequest
-	(notifications.NotificationCategory)(0), // 7: resources.notifications.NotificationCategory
-	(*database.PaginationResponse)(nil),     // 8: resources.common.database.PaginationResponse
-	(*notifications.Notification)(nil),      // 9: resources.notifications.Notification
-	(*notifications.UserEvent)(nil),         // 10: resources.notifications.UserEvent
-	(*notifications.JobEvent)(nil),          // 11: resources.notifications.JobEvent
-	(*notifications.JobGradeEvent)(nil),     // 12: resources.notifications.JobGradeEvent
-	(*notifications.SystemEvent)(nil),       // 13: resources.notifications.SystemEvent
-	(*mailer.MailerEvent)(nil),              // 14: resources.mailer.MailerEvent
+var file_services_notifications_notifications_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_services_notifications_notifications_proto_goTypes = []any{
+	(*GetNotificationsRequest)(nil),         // 0: services.notifications.GetNotificationsRequest
+	(*GetNotificationsResponse)(nil),        // 1: services.notifications.GetNotificationsResponse
+	(*MarkNotificationsRequest)(nil),        // 2: services.notifications.MarkNotificationsRequest
+	(*MarkNotificationsResponse)(nil),       // 3: services.notifications.MarkNotificationsResponse
+	(*StreamRequest)(nil),                   // 4: services.notifications.StreamRequest
+	(*ClientView)(nil),                      // 5: services.notifications.ClientView
+	(*StreamResponse)(nil),                  // 6: services.notifications.StreamResponse
+	(*database.PaginationRequest)(nil),      // 7: resources.common.database.PaginationRequest
+	(notifications.NotificationCategory)(0), // 8: resources.notifications.NotificationCategory
+	(*database.PaginationResponse)(nil),     // 9: resources.common.database.PaginationResponse
+	(*notifications.Notification)(nil),      // 10: resources.notifications.Notification
+	(*notifications.UserEvent)(nil),         // 11: resources.notifications.UserEvent
+	(*notifications.JobEvent)(nil),          // 12: resources.notifications.JobEvent
+	(*notifications.JobGradeEvent)(nil),     // 13: resources.notifications.JobGradeEvent
+	(*notifications.SystemEvent)(nil),       // 14: resources.notifications.SystemEvent
+	(*mailer.MailerEvent)(nil),              // 15: resources.mailer.MailerEvent
 }
-var file_services_notificator_notificator_proto_depIdxs = []int32{
-	6,  // 0: services.notificator.GetNotificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	7,  // 1: services.notificator.GetNotificationsRequest.categories:type_name -> resources.notifications.NotificationCategory
-	8,  // 2: services.notificator.GetNotificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	9,  // 3: services.notificator.GetNotificationsResponse.notifications:type_name -> resources.notifications.Notification
-	10, // 4: services.notificator.StreamResponse.user_event:type_name -> resources.notifications.UserEvent
-	11, // 5: services.notificator.StreamResponse.job_event:type_name -> resources.notifications.JobEvent
-	12, // 6: services.notificator.StreamResponse.job_grade_event:type_name -> resources.notifications.JobGradeEvent
-	13, // 7: services.notificator.StreamResponse.system_event:type_name -> resources.notifications.SystemEvent
-	14, // 8: services.notificator.StreamResponse.mailer_event:type_name -> resources.mailer.MailerEvent
-	0,  // 9: services.notificator.NotificatorService.GetNotifications:input_type -> services.notificator.GetNotificationsRequest
-	2,  // 10: services.notificator.NotificatorService.MarkNotifications:input_type -> services.notificator.MarkNotificationsRequest
-	4,  // 11: services.notificator.NotificatorService.Stream:input_type -> services.notificator.StreamRequest
-	1,  // 12: services.notificator.NotificatorService.GetNotifications:output_type -> services.notificator.GetNotificationsResponse
-	3,  // 13: services.notificator.NotificatorService.MarkNotifications:output_type -> services.notificator.MarkNotificationsResponse
-	5,  // 14: services.notificator.NotificatorService.Stream:output_type -> services.notificator.StreamResponse
-	12, // [12:15] is the sub-list for method output_type
-	9,  // [9:12] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+var file_services_notifications_notifications_proto_depIdxs = []int32{
+	7,  // 0: services.notifications.GetNotificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	8,  // 1: services.notifications.GetNotificationsRequest.categories:type_name -> resources.notifications.NotificationCategory
+	9,  // 2: services.notifications.GetNotificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	10, // 3: services.notifications.GetNotificationsResponse.notifications:type_name -> resources.notifications.Notification
+	5,  // 4: services.notifications.StreamRequest.client_view:type_name -> services.notifications.ClientView
+	11, // 5: services.notifications.StreamResponse.user_event:type_name -> resources.notifications.UserEvent
+	12, // 6: services.notifications.StreamResponse.job_event:type_name -> resources.notifications.JobEvent
+	13, // 7: services.notifications.StreamResponse.job_grade_event:type_name -> resources.notifications.JobGradeEvent
+	14, // 8: services.notifications.StreamResponse.system_event:type_name -> resources.notifications.SystemEvent
+	15, // 9: services.notifications.StreamResponse.mailer_event:type_name -> resources.mailer.MailerEvent
+	0,  // 10: services.notifications.NotificationsService.GetNotifications:input_type -> services.notifications.GetNotificationsRequest
+	2,  // 11: services.notifications.NotificationsService.MarkNotifications:input_type -> services.notifications.MarkNotificationsRequest
+	4,  // 12: services.notifications.NotificationsService.Stream:input_type -> services.notifications.StreamRequest
+	1,  // 13: services.notifications.NotificationsService.GetNotifications:output_type -> services.notifications.GetNotificationsResponse
+	3,  // 14: services.notifications.NotificationsService.MarkNotifications:output_type -> services.notifications.MarkNotificationsResponse
+	6,  // 15: services.notifications.NotificationsService.Stream:output_type -> services.notifications.StreamResponse
+	13, // [13:16] is the sub-list for method output_type
+	10, // [10:13] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
-func init() { file_services_notificator_notificator_proto_init() }
-func file_services_notificator_notificator_proto_init() {
-	if File_services_notificator_notificator_proto != nil {
+func init() { file_services_notifications_notifications_proto_init() }
+func file_services_notifications_notifications_proto_init() {
+	if File_services_notifications_notifications_proto != nil {
 		return
 	}
-	file_services_notificator_notificator_proto_msgTypes[0].OneofWrappers = []any{}
-	file_services_notificator_notificator_proto_msgTypes[2].OneofWrappers = []any{}
-	file_services_notificator_notificator_proto_msgTypes[5].OneofWrappers = []any{
+	file_services_notifications_notifications_proto_msgTypes[0].OneofWrappers = []any{}
+	file_services_notifications_notifications_proto_msgTypes[2].OneofWrappers = []any{}
+	file_services_notifications_notifications_proto_msgTypes[6].OneofWrappers = []any{
 		(*StreamResponse_UserEvent)(nil),
 		(*StreamResponse_JobEvent)(nil),
 		(*StreamResponse_JobGradeEvent)(nil),
@@ -538,17 +607,17 @@ func file_services_notificator_notificator_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_notificator_notificator_proto_rawDesc), len(file_services_notificator_notificator_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_notifications_notifications_proto_rawDesc), len(file_services_notifications_notifications_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_services_notificator_notificator_proto_goTypes,
-		DependencyIndexes: file_services_notificator_notificator_proto_depIdxs,
-		MessageInfos:      file_services_notificator_notificator_proto_msgTypes,
+		GoTypes:           file_services_notifications_notifications_proto_goTypes,
+		DependencyIndexes: file_services_notifications_notifications_proto_depIdxs,
+		MessageInfos:      file_services_notifications_notifications_proto_msgTypes,
 	}.Build()
-	File_services_notificator_notificator_proto = out.File
-	file_services_notificator_notificator_proto_goTypes = nil
-	file_services_notificator_notificator_proto_depIdxs = nil
+	File_services_notifications_notifications_proto = out.File
+	file_services_notifications_notifications_proto_goTypes = nil
+	file_services_notifications_notifications_proto_depIdxs = nil
 }

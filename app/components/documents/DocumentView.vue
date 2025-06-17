@@ -19,7 +19,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { useNotificatorStore } from '~/stores/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -40,7 +39,7 @@ const { attr, can, activeChar, isSuperuser } = useAuth();
 
 const clipboardStore = useClipboardStore();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const documentsDocuments = useDocumentsDocuments();
 

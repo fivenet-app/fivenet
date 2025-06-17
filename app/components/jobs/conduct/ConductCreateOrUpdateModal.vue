@@ -4,7 +4,6 @@ import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -31,7 +30,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const completorStore = useCompletorStore();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const usersLoading = ref(false);
 

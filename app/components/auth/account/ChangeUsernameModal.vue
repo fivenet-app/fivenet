@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     currentUsername: z

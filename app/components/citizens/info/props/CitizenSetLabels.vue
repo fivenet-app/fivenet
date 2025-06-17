@@ -2,7 +2,6 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Labels } from '~~/gen/ts/resources/users/labels';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
@@ -22,7 +21,7 @@ const { attr, can } = useAuth();
 
 const labels = useVModel(props, 'modelValue', emit);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const completorStore = useCompletorStore();
 

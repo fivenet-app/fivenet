@@ -13,7 +13,7 @@ const { isOpen } = useModal();
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const appConfig = useAppConfig();
 

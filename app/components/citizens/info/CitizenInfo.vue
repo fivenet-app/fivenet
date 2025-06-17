@@ -11,7 +11,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Perms } from '~~/gen/ts/perms';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
@@ -29,7 +28,7 @@ const { t } = useI18n();
 const { attr, can } = useAuth();
 
 const clipboardStore = useClipboardStore();
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const items: TabItem[] = [
     {

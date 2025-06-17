@@ -3,7 +3,6 @@ import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { webSocket } from '~/composables/grpc/grpcws/bridge';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
@@ -17,6 +16,7 @@ export const useAuthStore = defineStore(
     'auth',
     () => {
         const { $grpc } = useNuxtApp();
+        const notifications = useNotificationsStore();
 
         // State
         const accessTokenExpiration = ref<Date | null>(null);
@@ -147,7 +147,7 @@ export const useAuthStore = defineStore(
                 clearAuthInfo();
                 handleGRPCError(e as RpcError);
 
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.auth.error_logout.title', parameters: {} },
                     description: {
                         key: 'notifications.auth.error_logout.content',
@@ -233,7 +233,7 @@ export const useAuthStore = defineStore(
                     permissions.value = permissions.value.filter((p) => p !== 'superuser');
                 }
 
-                useNotificatorStore().add({
+                notifications.add({
                     title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
                     description: {
                         key: 'notifications.superuser_menu.setsuperusermode.content',

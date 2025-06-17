@@ -6,7 +6,6 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Content } from '~/types/history';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -35,7 +34,7 @@ const modal = useModal();
 
 const { can, activeChar, isSuperuser } = useAuth();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
 

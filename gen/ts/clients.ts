@@ -17,7 +17,7 @@ import { JobsServiceClient as jobsJobsServiceClient } from '~~/gen/ts/services/j
 import { TimeclockServiceClient as jobsTimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.client';
 import { LivemapServiceClient as livemapLivemapServiceClient } from '~~/gen/ts/services/livemap/livemap.client';
 import { MailerServiceClient as mailerMailerServiceClient } from '~~/gen/ts/services/mailer/mailer.client';
-import { NotificatorServiceClient as notificatorNotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
+import { NotificationsServiceClient as notificationsNotificationsServiceClient } from '~~/gen/ts/services/notifications/notifications.client';
 import { QualificationsServiceClient as qualificationsQualificationsServiceClient } from '~~/gen/ts/services/qualifications/qualifications.client';
 import { AccountsServiceClient as settingsAccountsServiceClient } from '~~/gen/ts/services/settings/accounts.client';
 import { ConfigServiceClient as settingsConfigServiceClient } from '~~/gen/ts/services/settings/config.client';
@@ -69,8 +69,8 @@ export class GRPCClients {
     public mailer: {
         mailer: mailerMailerServiceClient;
     };
-    public notificator: {
-        notificator: notificatorNotificatorServiceClient;
+    public notifications: {
+        notifications: notificationsNotificationsServiceClient;
     };
     public qualifications: {
         qualifications: qualificationsQualificationsServiceClient;
@@ -135,8 +135,8 @@ export class GRPCClients {
         this.mailer = {
             mailer: new mailerMailerServiceClient(transport),
         };
-        this.notificator = {
-            notificator: new notificatorNotificatorServiceClient(transport),
+        this.notifications = {
+            notifications: new notificationsNotificationsServiceClient(transport),
         };
         this.qualifications = {
             qualifications: new qualificationsQualificationsServiceClient(transport),

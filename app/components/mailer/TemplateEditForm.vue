@@ -3,7 +3,6 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Template } from '~~/gen/ts/resources/mailer/template';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/mailer';
@@ -19,7 +18,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useNotificatorStore } from '~/stores/notificator';
 import type { BannerMessage } from '~~/gen/ts/resources/settings/banner';
 
 const props = defineProps<{
@@ -10,7 +9,7 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
-const notificationStore = useNotificatorStore();
+const notificationStore = useNotificationsStore();
 const { dismissedBannerMessageID } = storeToRefs(notificationStore);
 
 const now = new Date();

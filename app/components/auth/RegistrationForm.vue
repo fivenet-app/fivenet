@@ -5,13 +5,12 @@ import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { openTokenMgmt } from '~/composables/nui';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);

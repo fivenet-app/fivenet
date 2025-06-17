@@ -8,7 +8,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -25,7 +24,7 @@ const { can } = useAuth();
 
 const modal = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const reqs = ref<undefined | TemplateRequirements>();
 

@@ -14,7 +14,6 @@ import { TemplateBlock } from '~/composables/tiptap/extensions/TemplateBlock';
 import { TemplateVar } from '~/composables/tiptap/extensions/TemplateVar';
 import { useAuthStore } from '~/stores/auth';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
@@ -37,7 +36,7 @@ const { game } = useAppConfig();
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const completorStore = useCompletorStore();
 

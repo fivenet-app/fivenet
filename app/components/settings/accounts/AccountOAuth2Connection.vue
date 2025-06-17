@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { NuxtImg } from '#components';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { OAuth2Account } from '~~/gen/ts/resources/accounts/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -15,7 +14,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 async function disconnectOAuth2Connection(accountId: number, providerName: string): Promise<void> {
     try {

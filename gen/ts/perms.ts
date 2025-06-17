@@ -98,7 +98,7 @@
 // source: services/jobs/timeclock.proto
 // source: services/livemap/livemap.proto
 // source: services/mailer/mailer.proto
-// source: services/notificator/notificator.proto
+// source: services/notifications/notifications.proto
 // source: services/qualifications/qualifications.proto
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto

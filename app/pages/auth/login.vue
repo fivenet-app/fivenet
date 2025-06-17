@@ -3,7 +3,6 @@ import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/stores/auth';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 useHead({
@@ -25,7 +24,7 @@ const authStore = useAuthStore();
 const { setAccessTokenExpiration } = authStore;
 const { username } = storeToRefs(authStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const logger = useLogger('🔑 Auth');
 

@@ -2,7 +2,6 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
@@ -22,7 +21,7 @@ const { isOpen } = useModal();
 
 const { game } = useAppConfig();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const completorStore = useCompletorStore();
 

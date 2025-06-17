@@ -2,7 +2,6 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Account } from '~~/gen/ts/resources/accounts/accounts';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UpdateAccountResponse } from '~~/gen/ts/services/settings/accounts';
@@ -22,7 +21,7 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     enabled: z.boolean(),

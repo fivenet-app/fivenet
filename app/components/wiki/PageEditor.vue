@@ -5,7 +5,6 @@ import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Content } from '~/types/history';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
@@ -62,7 +61,7 @@ async function getPage(id: number): Promise<Page | undefined> {
     }
 }
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
 

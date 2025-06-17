@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import { useLivemapStore } from '~/stores/livemap';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 defineOptions({
     inheritAttrs: false,
 });
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);

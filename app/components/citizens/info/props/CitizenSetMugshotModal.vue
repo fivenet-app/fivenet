@@ -21,7 +21,7 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const appConfig = useAppConfig();
 

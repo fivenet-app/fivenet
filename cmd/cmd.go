@@ -22,7 +22,7 @@ import (
 	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	pblivemap "github.com/fivenet-app/fivenet/v2025/services/livemap"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
-	pbnotificator "github.com/fivenet-app/fivenet/v2025/services/notificator"
+	pbnotifications "github.com/fivenet-app/fivenet/v2025/services/notifications"
 	pbqualifications "github.com/fivenet-app/fivenet/v2025/services/qualifications"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/services/settings"
 	pbstats "github.com/fivenet-app/fivenet/v2025/services/stats"
@@ -176,7 +176,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			grpc.AsService(pbjobs.NewServer),
 			grpc.AsService(pblivemap.NewServer),
 			grpc.AsService(pbmailer.NewServer),
-			grpc.AsService(pbnotificator.NewServer),
+			grpc.AsService(pbnotifications.NewServer),
 			grpc.AsService(pbqualifications.NewServer),
 			grpc.AsService(pbsettings.NewServer),
 			grpc.AsService(pbstats.NewServer),

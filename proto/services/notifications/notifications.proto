@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package services.notificator;
+package services.notifications;
 
 import "resources/common/database/database.proto";
 import "resources/mailer/events.proto";
@@ -8,7 +8,7 @@ import "resources/notifications/events.proto";
 import "resources/notifications/notifications.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notificator;notificator";
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications;notifications";
 
 message GetNotificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
@@ -42,7 +42,14 @@ message MarkNotificationsResponse {
   uint64 updated = 1;
 }
 
-message StreamRequest {}
+message StreamRequest {
+  ClientView client_view = 1 [(validate.rules).message.required = true];
+}
+
+message ClientView {
+  string object_type = 1;
+  string object_id = 2;
+}
 
 message StreamResponse {
   int32 notification_count = 1;
@@ -59,12 +66,12 @@ message StreamResponse {
   }
 }
 
-service NotificatorService {
+service NotificationsService {
   // @perm: Name=Any
   rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse);
   // @perm: Name=Any
   rpc MarkNotifications(MarkNotificationsRequest) returns (MarkNotificationsResponse);
 
   // @perm: Name=Any
-  rpc Stream(StreamRequest) returns (stream StreamResponse);
+  rpc Stream(stream StreamRequest) returns (stream StreamResponse);
 }

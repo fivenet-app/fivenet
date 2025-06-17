@@ -1,5 +1,4 @@
 import { useAuthStore } from '~/stores/auth';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Notification } from '~/utils/notifications';
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -24,7 +23,8 @@ function addCopyActionToNotification(notification: Notification, err: RpcError, 
 **TraceID**: \`${traceId}\``,
             );
 
-            useNotificatorStore().add({
+            const notifications = useNotificationsStore();
+            notifications.add({
                 title: { key: 'notifications.clipboard.copied.title', parameters: {} },
                 description: { key: 'notifications.clipboard.copied.content', parameters: {} },
                 timeout: 3250,
@@ -153,7 +153,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         }
     }
 
-    const notifications = useNotificatorStore();
+    const notifications = useNotificationsStore();
     notifications.add({
         type: notification.type,
         title: notification.title,

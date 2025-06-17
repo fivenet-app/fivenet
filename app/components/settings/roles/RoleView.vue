@@ -6,7 +6,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/settings/roles/RoleViewAttr.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
 import type { Permission, Role } from '~~/gen/ts/resources/permissions/permissions';
@@ -32,7 +31,7 @@ const modal = useModal();
 
 const slideover = useSlideover();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const {
     data: role,

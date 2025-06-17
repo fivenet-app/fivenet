@@ -19,7 +19,6 @@ import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
@@ -42,7 +41,7 @@ const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingD
 const livemapStore = useLivemapStore();
 const { userOnDuty } = storeToRefs(livemapStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
@@ -335,7 +334,7 @@ function sendRequireUnitNotification(): void {
         return;
     }
 
-    useNotificatorStore().add({
+    notifications.add({
         title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
         description: { key: 'notifications.centrum.unitUpdated.require_unit.content', parameters: {} },
         type: NotificationType.WARNING,

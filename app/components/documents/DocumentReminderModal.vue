@@ -3,7 +3,6 @@ import type { FormSubmitEvent } from '#ui/types';
 import { subDays } from 'date-fns';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { SetDocumentReminderResponse } from '~~/gen/ts/services/documents/documents';
@@ -23,7 +22,7 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     message: z.string().min(1).max(64),

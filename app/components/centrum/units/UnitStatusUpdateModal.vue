@@ -3,7 +3,6 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/stores/centrum';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Coordinate } from '~/types/livemap';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
@@ -22,7 +21,7 @@ const { isOpen } = useModal();
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     status: z.nativeEnum(StatusUnit),

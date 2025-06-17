@@ -5,7 +5,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import LicensePlate from '~/components/partials/LicensePlate.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
@@ -104,7 +103,7 @@ watchDebounced(query, async () => refresh(), {
 
 const clipboardStore = useClipboardStore();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 function addToClipboard(vehicle: Vehicle): void {
     clipboardStore.addVehicle(vehicle);

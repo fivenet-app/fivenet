@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { LocaleObject } from '@nuxtjs/i18n';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -8,7 +7,7 @@ const { locale, locales } = useI18n();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const settings = useSettingsStore();
 const { locale: userLocale } = storeToRefs(settings);

@@ -10,7 +10,7 @@ import type {
 export function useDocumentsDocuments() {
     const { $grpc } = useNuxtApp();
 
-    const notifications = useNotificatorStore();
+    const notifications = useNotificationsStore();
 
     const clipboardStore = useClipboardStore();
     const { getTemplateData } = clipboardStore;

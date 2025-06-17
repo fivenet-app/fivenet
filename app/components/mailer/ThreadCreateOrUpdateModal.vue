@@ -3,7 +3,6 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { defaultEmptyContent } from './helpers';
@@ -14,7 +13,7 @@ const { isOpen } = useModal();
 
 const { can, activeChar, isSuperuser } = useAuth();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const mailerStore = useMailerStore();
 const { draft: state, addressBook, emails, selectedEmail } = storeToRefs(mailerStore);

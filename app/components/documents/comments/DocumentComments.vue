@@ -6,7 +6,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Content } from '~/types/history';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -33,7 +32,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
 

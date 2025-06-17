@@ -7,7 +7,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { jsonNodeToTocLinks } from '~/utils/content';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
@@ -33,7 +32,7 @@ const { can } = useAuth();
 
 const modal = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const breadcrumbs = computed(() => [
     {

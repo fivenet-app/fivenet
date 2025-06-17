@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     value: string | number;
 }>();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 function addToClipboard(): void {
     copyToClipboardWrapper(props.value.toString());

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { phoneCallNumber } from '~/composables/nui';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -30,7 +29,7 @@ defineOptions({
 const settingsStore = useSettingsStore();
 const { nuiEnabled, streamerMode } = storeToRefs(settingsStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 async function doCall(): Promise<void> {
     if (props.number === undefined) {

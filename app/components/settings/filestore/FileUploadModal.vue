@@ -2,7 +2,6 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { UploadResponse } from '~~/gen/ts/resources/file/filestore';
@@ -18,7 +17,7 @@ const { fileUpload } = useAppConfig();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);

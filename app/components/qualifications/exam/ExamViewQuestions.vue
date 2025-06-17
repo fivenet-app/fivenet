@@ -2,7 +2,6 @@
 import type { Form, FormSubmitEvent } from '#ui/types';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -19,7 +18,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     responses: z.custom<ExamResponse>().array().max(50),

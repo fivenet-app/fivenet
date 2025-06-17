@@ -2,7 +2,6 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamGrading } from '~~/gen/ts/resources/qualifications/exam';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -39,7 +38,7 @@ const { activeChar } = useAuth();
 
 const completorStore = useCompletorStore();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const availableStatus = [
     { status: ResultStatus.SUCCESSFUL },

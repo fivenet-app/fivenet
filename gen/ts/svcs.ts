@@ -98,7 +98,7 @@
 // source: services/jobs/timeclock.proto
 // source: services/livemap/livemap.proto
 // source: services/mailer/mailer.proto
-// source: services/notificator/notificator.proto
+// source: services/notifications/notifications.proto
 // source: services/qualifications/qualifications.proto
 // source: services/settings/accounts.proto
 // source: services/settings/config.proto
@@ -128,7 +128,7 @@ export const grpcServices = [
     'jobs.TimeclockService',
     'livemap.LivemapService',
     'mailer.MailerService',
-    'notificator.NotificatorService',
+    'notifications.NotificationsService',
     'qualifications.QualificationsService',
     'settings.AccountsService',
     'settings.ConfigService',
@@ -296,9 +296,9 @@ export const grpcMethods = [
 	'mailer.MailerService/DeleteMessage',
 	'mailer.MailerService/GetEmailSettings',
 	'mailer.MailerService/SetEmailSettings',
-	'notificator.NotificatorService/GetNotifications',
-	'notificator.NotificatorService/MarkNotifications',
-	'notificator.NotificatorService/Stream',
+	'notifications.NotificationsService/GetNotifications',
+	'notifications.NotificationsService/MarkNotifications',
+	'notifications.NotificationsService/Stream',
 	'qualifications.QualificationsService/ListQualifications',
 	'qualifications.QualificationsService/GetQualification',
 	'qualifications.QualificationsService/CreateQualification',

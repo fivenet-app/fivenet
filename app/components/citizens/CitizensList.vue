@@ -8,7 +8,6 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/stores/clipboard';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizens/citizens';
@@ -93,7 +92,7 @@ watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const clipboardStore = useClipboardStore();
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 function addToClipboard(user: User): void {
     clipboardStore.addUser({

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { SetColleaguePropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
@@ -20,7 +19,7 @@ const { modelValue } = useVModels(props, emit);
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     reason: z.string().min(3).max(255),

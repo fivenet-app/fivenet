@@ -1,4 +1,4 @@
-package notificator
+package notifications
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	pbnotificator "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notificator"
+	pbnotifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
@@ -21,11 +21,11 @@ import (
 var tNotifications = table.FivenetNotifications
 
 var (
-	ErrFailedRequest = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.NotificatorService.ErrFailedRequest"}, nil)
-	ErrFailedStream  = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.NotificatorService.ErrFailedStream"}, nil)
+	ErrFailedRequest = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.NotificationsService.ErrFailedRequest"}, nil)
+	ErrFailedStream  = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.NotificationsService.ErrFailedStream"}, nil)
 )
 
-func (s *Server) GetNotifications(ctx context.Context, req *pbnotificator.GetNotificationsRequest) (*pbnotificator.GetNotificationsResponse, error) {
+func (s *Server) GetNotifications(ctx context.Context, req *pbnotifications.GetNotificationsRequest) (*pbnotifications.GetNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tNotifications := tNotifications.AS("notification")
@@ -58,7 +58,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *pbnotificator.GetNot
 	}
 
 	pag, limit := req.Pagination.GetResponse(count.Total)
-	resp := &pbnotificator.GetNotificationsResponse{
+	resp := &pbnotifications.GetNotificationsResponse{
 		Pagination: pag,
 	}
 	if count.Total <= 0 {
@@ -96,7 +96,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *pbnotificator.GetNot
 	return resp, nil
 }
 
-func (s *Server) MarkNotifications(ctx context.Context, req *pbnotificator.MarkNotificationsRequest) (*pbnotificator.MarkNotificationsResponse, error) {
+func (s *Server) MarkNotifications(ctx context.Context, req *pbnotifications.MarkNotificationsRequest) (*pbnotifications.MarkNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tNotifications.UserID.EQ(
@@ -112,7 +112,7 @@ func (s *Server) MarkNotifications(ctx context.Context, req *pbnotificator.MarkN
 		}
 		condition = condition.AND(tNotifications.ID.IN(ids...))
 	} else if req.All == nil || !*req.All {
-		return &pbnotificator.MarkNotificationsResponse{}, nil
+		return &pbnotifications.MarkNotificationsResponse{}, nil
 	}
 
 	readAt := jet.CURRENT_TIMESTAMP()
@@ -154,7 +154,7 @@ func (s *Server) MarkNotifications(ctx context.Context, req *pbnotificator.MarkN
 		)
 	}
 
-	return &pbnotificator.MarkNotificationsResponse{
+	return &pbnotifications.MarkNotificationsResponse{
 		Updated: uint64(affected),
 	}, nil
 }

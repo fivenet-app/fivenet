@@ -7,7 +7,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import { toDuration } from '~/utils/duration';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -26,7 +25,7 @@ const { game } = useAppConfig();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { data: config, pending: loading, refresh, error } = useLazyAsyncData(`settings-appconfig`, () => getAppConfig());
 

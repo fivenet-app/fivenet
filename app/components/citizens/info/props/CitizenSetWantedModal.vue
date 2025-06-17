@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
 import type { User } from '~~/gen/ts/resources/users/users';
@@ -18,7 +17,7 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     reason: z.string().min(3).max(255),

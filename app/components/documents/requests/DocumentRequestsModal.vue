@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { AccessLevel, type DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
@@ -27,7 +26,7 @@ const { isOpen } = useModal();
 
 const { attr, can, activeChar } = useAuth();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 type RequestType = { key: DocActivityType; attrKey: string };
 const requestTypes = [

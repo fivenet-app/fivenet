@@ -1,9 +1,9 @@
-package notificator
+package notifications
 
 import (
 	"database/sql"
 
-	pbnotificator "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notificator"
+	pbnotifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -28,7 +28,7 @@ func init() {
 }
 
 type Server struct {
-	pbnotificator.NotificatorServiceServer
+	pbnotifications.NotificationsServiceServer
 
 	logger   *zap.Logger
 	db       *sql.DB
@@ -71,9 +71,9 @@ func NewServer(p Params) *Server {
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
-	pbnotificator.RegisterNotificatorServiceServer(srv, s)
+	pbnotifications.RegisterNotificationsServiceServer(srv, s)
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
-	return pbnotificator.PermsRemap
+	return pbnotifications.PermsRemap
 }

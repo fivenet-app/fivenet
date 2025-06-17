@@ -5,7 +5,6 @@ import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
 
@@ -13,7 +12,7 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     labels: z

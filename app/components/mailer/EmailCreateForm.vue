@@ -5,7 +5,6 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useMailerStore } from '~/stores/mailer';
-import { useNotificatorStore } from '~/stores/notificator';
 import { type Access, AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -37,7 +36,7 @@ const { t } = useI18n();
 
 const { activeChar, isSuperuser } = useAuth();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const mailerStore = useMailerStore();
 const { selectedEmail, emails } = storeToRefs(mailerStore);

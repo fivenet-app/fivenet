@@ -5,12 +5,11 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import PenaltyStats from '~/components/quickbuttons/penaltycalculator/PenaltyStats.vue';
 import PenaltySummaryTable from '~/components/quickbuttons/penaltycalculator/PenaltySummaryTable.vue';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const completorStore = useCompletorStore();
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { t, d, n } = useI18n();
 

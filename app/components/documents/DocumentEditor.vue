@@ -11,7 +11,6 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Content } from '~/types/history';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
@@ -42,7 +41,7 @@ const clipboardStore = useClipboardStore();
 
 const completorStore = useCompletorStore();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const historyStore = useHistoryStore();
 

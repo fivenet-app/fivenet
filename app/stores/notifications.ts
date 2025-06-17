@@ -3,7 +3,7 @@ import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/utils/notifications';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
+import type { MarkNotificationsRequest } from '~~/gen/ts/services/notifications/notifications';
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';
 
@@ -13,7 +13,7 @@ const logger = useLogger('📣 Notificator');
 const maxBackoffTime = 20;
 const initialReconnectBackoffTime = 2;
 
-export const useNotificatorStore = defineStore(
+export const useNotificationsStore = defineStore(
     'notifications',
     () => {
         const { $grpc } = useNuxtApp();
@@ -61,7 +61,7 @@ export const useNotificatorStore = defineStore(
             const { can } = useAuth();
 
             try {
-                const call = $grpc.notificator.notificator.stream({}, { abort: abort.value.signal });
+                const call = $grpc.notifications.notifications.stream({ abort: abort.value.signal });
 
                 for await (const resp of call.responses) {
                     notificationsCount.value = resp.notificationCount;
@@ -225,7 +225,7 @@ export const useNotificatorStore = defineStore(
 
         const markNotifications = async (req: MarkNotificationsRequest): Promise<void> => {
             try {
-                await $grpc.notificator.notificator.markNotifications(req);
+                await $grpc.notifications.notifications.markNotifications(req);
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
@@ -267,5 +267,5 @@ export const useNotificatorStore = defineStore(
 );
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useNotificatorStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useNotificationsStore, import.meta.hot));
 }

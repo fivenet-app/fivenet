@@ -1,4 +1,4 @@
-package notificator
+package notifications
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
 	notifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
-	pbnotificator "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notificator"
+	pbnotifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -19,7 +19,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.NotificatorService_StreamServer) error {
+func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) error {
 	ctx := srv.Context()
 	userInfo, ok := auth.GetUserInfoFromContext(ctx)
 	if !ok {
@@ -41,7 +41,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 	cloned.Superuser = false
 	emails, err := pbmailer.ListUserEmails(ctx, s.db, &cloned, nil, false)
 	if err != nil {
-		return ErrFailedStream
+		return errswrap.NewError(err, ErrFailedStream)
 	}
 
 	for _, email := range emails {
@@ -91,7 +91,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 		return errswrap.NewError(err, ErrFailedStream)
 	}
 
-	if err := srv.Send(&pbnotificator.StreamResponse{
+	if err := srv.Send(&pbnotifications.StreamResponse{
 		NotificationCount: notificationCount,
 		Data:              data,
 		Restart:           &stop,
@@ -111,7 +111,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 				return err
 			}
 			if data != nil {
-				resp := &pbnotificator.StreamResponse{
+				resp := &pbnotifications.StreamResponse{
 					Data: data,
 				}
 				if err := srv.Send(resp); err != nil {
@@ -161,9 +161,9 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 					}
 				}
 
-				resp := &pbnotificator.StreamResponse{
+				resp := &pbnotifications.StreamResponse{
 					NotificationCount: notificationCount,
-					Data: &pbnotificator.StreamResponse_UserEvent{
+					Data: &pbnotifications.StreamResponse_UserEvent{
 						UserEvent: &dest,
 					},
 				}
@@ -178,9 +178,9 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				resp := &pbnotificator.StreamResponse{
+				resp := &pbnotifications.StreamResponse{
 					NotificationCount: notificationCount,
-					Data: &pbnotificator.StreamResponse_JobEvent{
+					Data: &pbnotifications.StreamResponse_JobEvent{
 						JobEvent: &dest,
 					},
 				}
@@ -206,9 +206,9 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				resp := &pbnotificator.StreamResponse{
+				resp := &pbnotifications.StreamResponse{
 					NotificationCount: notificationCount,
-					Data: &pbnotificator.StreamResponse_JobGradeEvent{
+					Data: &pbnotifications.StreamResponse_JobGradeEvent{
 						JobGradeEvent: &dest,
 					},
 				}
@@ -223,9 +223,9 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				resp := &pbnotificator.StreamResponse{
+				resp := &pbnotifications.StreamResponse{
 					NotificationCount: notificationCount,
-					Data: &pbnotificator.StreamResponse_SystemEvent{
+					Data: &pbnotifications.StreamResponse_SystemEvent{
 						SystemEvent: &dest,
 					},
 				}
@@ -240,9 +240,9 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				resp := &pbnotificator.StreamResponse{
+				resp := &pbnotifications.StreamResponse{
 					NotificationCount: notificationCount,
-					Data: &pbnotificator.StreamResponse_MailerEvent{
+					Data: &pbnotifications.StreamResponse_MailerEvent{
 						MailerEvent: &dest,
 					},
 				}
@@ -255,7 +255,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 	}
 }
 
-func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInfo) (*pbnotificator.StreamResponse_UserEvent, bool, error) {
+func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInfo) (*pbnotifications.StreamResponse_UserEvent, bool, error) {
 	newUserInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccountId)
 	if err != nil {
 		return nil, true, errswrap.NewError(err, ErrFailedStream)
@@ -280,7 +280,7 @@ func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInf
 	// Either token should be renewed or new user info is not equal
 	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime || !currentUserInfo.Equal(newUserInfo) {
 		// Cause client to refresh token
-		return &pbnotificator.StreamResponse_UserEvent{UserEvent: &notifications.UserEvent{
+		return &pbnotifications.StreamResponse_UserEvent{UserEvent: &notifications.UserEvent{
 			Data: &notifications.UserEvent_RefreshToken{
 				RefreshToken: true,
 			},

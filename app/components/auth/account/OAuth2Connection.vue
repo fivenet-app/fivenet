@@ -3,7 +3,6 @@ import { NuxtImg } from '#components';
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -19,7 +18,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);

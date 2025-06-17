@@ -4,7 +4,6 @@ import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UnitAccessLevel, type UnitJobAccess, type UnitQualificationAccess } from '~~/gen/ts/resources/centrum/units_access';
@@ -23,7 +22,7 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const availableAttributes = ref<{ type: UnitAttribute }[]>([
     { type: UnitAttribute.STATIC },

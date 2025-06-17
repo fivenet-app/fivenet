@@ -112,7 +112,7 @@ const logger = useLogger('📄 Editor');
 
 const { activeChar } = useAuth();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const modal = useModal();
 

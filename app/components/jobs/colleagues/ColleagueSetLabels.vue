@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { ColleagueProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Labels } from '~~/gen/ts/resources/jobs/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -21,7 +20,7 @@ const labels = useVModel(props, 'modelValue', emit);
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {

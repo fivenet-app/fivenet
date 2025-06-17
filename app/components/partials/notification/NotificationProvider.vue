@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { notificationTypeToColor, notificationTypeToIcon } from '~/components/partials/notification/helpers';
 import { useCalendarStore } from '~/stores/calendar';
 import { useMailerStore } from '~/stores/mailer';
-import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import type { Notification } from '~/utils/notifications';
 
@@ -13,9 +12,9 @@ const { timeouts } = useAppConfig();
 
 const { can, username, activeChar } = useAuth();
 
-const notificatorStore = useNotificatorStore();
-const { notifications } = storeToRefs(notificatorStore);
-const { startStream, stopStream } = notificatorStore;
+const notificationsStore = useNotificationsStore();
+const { startStream, stopStream } = notificationsStore;
+const { notifications } = storeToRefs(notificationsStore);
 
 const settingsStore = useSettingsStore();
 const { calendar } = storeToRefs(settingsStore);
@@ -80,7 +79,7 @@ async function toggleStream(): Promise<void> {
         stop();
         await stopStream();
 
-        notificatorStore.resetData();
+        notificationsStore.resetData();
     }
 }
 
@@ -108,7 +107,7 @@ function createNotifications(notifications: Notification[]): void {
             })),
             callback: () => {
                 if (notification.id) {
-                    notificatorStore.remove(notification.id);
+                    notificationsStore.remove(notification.id);
                 }
                 if (notification.callback) {
                     notification.callback();

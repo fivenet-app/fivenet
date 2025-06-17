@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import AccountInfo from '~/components/auth/account/AccountInfo.vue';
-import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 useHead({
@@ -16,7 +15,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 // `oauth2Connect` can be `failed` (with `reason`) or `success`
 const oauth2Connect = useRouteQuery('oauth2Connect');

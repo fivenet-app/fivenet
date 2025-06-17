@@ -6,7 +6,6 @@ import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWa
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useClipboardStore } from '~/stores/clipboard';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -33,7 +32,7 @@ const { attr, can, activeChar } = useAuth();
 
 const clipboardStore = useClipboardStore();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const w = window;
 

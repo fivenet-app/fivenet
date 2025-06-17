@@ -136,12 +136,12 @@ func New(p Params) *OAuth2 {
 
 // RegisterHTTP registers the OAuth2 login and callback endpoints on the given Gin engine.
 func (o *OAuth2) RegisterHTTP(e *gin.Engine) {
-	oauth := e.Group("/api/oauth2")
+	g := e.Group("/api/oauth2")
 	{
-		oauth.GET("/login/:provider", o.Login)
-		oauth.POST("/login/:provider", o.Login)
-		oauth.GET("/callback/:provider", o.Callback)
-		oauth.POST("/callback/:provider", o.Callback)
+		g.GET("/login/:provider", o.Login)
+		g.POST("/login/:provider", o.Login)
+		g.GET("/callback/:provider", o.Callback)
+		g.POST("/callback/:provider", o.Callback)
 	}
 }
 

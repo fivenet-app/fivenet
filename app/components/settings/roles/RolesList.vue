@@ -5,7 +5,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Role } from '~~/gen/ts/resources/permissions/permissions';
@@ -16,7 +15,7 @@ const { t } = useI18n();
 
 const modal = useModal();
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { can, activeChar } = useAuth();
 

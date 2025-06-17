@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import { useNotificatorStore } from '~/stores/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -20,7 +19,7 @@ const { isOpen } = useModal();
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const schema = z.object({
     status: z.nativeEnum(StatusDispatch),

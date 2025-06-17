@@ -10,7 +10,6 @@ import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerP
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
-import { useNotificatorStore } from '~/stores/notificator';
 import type { AuditEntry } from '~~/gen/ts/resources/audit/audit';
 import { EventType } from '~~/gen/ts/resources/audit/audit';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -110,7 +109,7 @@ watchDebounced(query, async () => refresh(), {
     maxWait: 1250,
 });
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 async function addToClipboard(logEntry: AuditEntry): Promise<void> {
     const user = logEntry.user;

@@ -671,7 +671,8 @@
         "first_citizen": "Erster Bürger",
         "auto_save": "Automatische Speicherung",
         "discord_guild": "Discord Gilde | Discord Gilden",
-        "no_versions": "Keine Versionen verfügbar."
+        "no_versions": "Keine Versionen verfügbar.",
+        "heatmap": "Heatmap"
     },
     "components": {
         "partials": {
@@ -1992,7 +1993,7 @@
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
         },
-        "NotificatorService": {
+        "NotificationsService": {
             "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
             "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
         },

@@ -8,7 +8,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/stores/calendar';
-import { useNotificatorStore } from '~/stores/notificator';
 import { AccessLevel, type CalendarJobAccess, type CalendarUserAccess } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateCalendarResponse, UpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
@@ -24,7 +23,7 @@ const { attr, activeChar } = useAuth();
 const calendarStore = useCalendarStore();
 const { hasPrivateCalendar } = storeToRefs(calendarStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
 

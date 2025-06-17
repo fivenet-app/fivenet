@@ -31,7 +31,7 @@ const modal = useModal();
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
-const notifications = useNotificatorStore();
+const notifications = useNotificationsStore();
 
 const appConfig = useAppConfig();
 

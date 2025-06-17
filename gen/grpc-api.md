@@ -682,16 +682,6 @@
   
     - [TimeclockService](#services-jobs-TimeclockService)
   
-- [services/notificator/notificator.proto](#services_notificator_notificator-proto)
-    - [GetNotificationsRequest](#services-notificator-GetNotificationsRequest)
-    - [GetNotificationsResponse](#services-notificator-GetNotificationsResponse)
-    - [MarkNotificationsRequest](#services-notificator-MarkNotificationsRequest)
-    - [MarkNotificationsResponse](#services-notificator-MarkNotificationsResponse)
-    - [StreamRequest](#services-notificator-StreamRequest)
-    - [StreamResponse](#services-notificator-StreamResponse)
-  
-    - [NotificatorService](#services-notificator-NotificatorService)
-  
 - [services/qualifications/qualifications.proto](#services_qualifications_qualifications-proto)
     - [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest)
     - [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse)
@@ -1084,6 +1074,17 @@
     - [ListFilesResponse](#services-filestore-ListFilesResponse)
   
     - [FilestoreService](#services-filestore-FilestoreService)
+  
+- [services/notifications/notifications.proto](#services_notifications_notifications-proto)
+    - [ClientView](#services-notifications-ClientView)
+    - [GetNotificationsRequest](#services-notifications-GetNotificationsRequest)
+    - [GetNotificationsResponse](#services-notifications-GetNotificationsResponse)
+    - [MarkNotificationsRequest](#services-notifications-MarkNotificationsRequest)
+    - [MarkNotificationsResponse](#services-notifications-MarkNotificationsResponse)
+    - [StreamRequest](#services-notifications-StreamRequest)
+    - [StreamResponse](#services-notifications-StreamResponse)
+  
+    - [NotificationsService](#services-notifications-NotificationsService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -10591,130 +10592,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
-<a name="services_notificator_notificator-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/notificator/notificator.proto
-
-
-
-<a name="services-notificator-GetNotificationsRequest"></a>
-
-### GetNotificationsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `include_read` | [bool](#bool) | optional |  |
-| `categories` | [resources.notifications.NotificationCategory](#resources-notifications-NotificationCategory) | repeated |  |
-
-
-
-
-
-
-<a name="services-notificator-GetNotificationsResponse"></a>
-
-### GetNotificationsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `notifications` | [resources.notifications.Notification](#resources-notifications-Notification) | repeated |  |
-
-
-
-
-
-
-<a name="services-notificator-MarkNotificationsRequest"></a>
-
-### MarkNotificationsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unread` | [bool](#bool) |  |  |
-| `ids` | [uint64](#uint64) | repeated |  |
-| `all` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-notificator-MarkNotificationsResponse"></a>
-
-### MarkNotificationsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `updated` | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-notificator-StreamRequest"></a>
-
-### StreamRequest
-
-
-
-
-
-
-
-<a name="services-notificator-StreamResponse"></a>
-
-### StreamResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `notification_count` | [int32](#int32) |  |  |
-| `restart` | [bool](#bool) | optional |  |
-| `user_event` | [resources.notifications.UserEvent](#resources-notifications-UserEvent) |  |  |
-| `job_event` | [resources.notifications.JobEvent](#resources-notifications-JobEvent) |  |  |
-| `job_grade_event` | [resources.notifications.JobGradeEvent](#resources-notifications-JobGradeEvent) |  |  |
-| `system_event` | [resources.notifications.SystemEvent](#resources-notifications-SystemEvent) |  |  |
-| `mailer_event` | [resources.mailer.MailerEvent](#resources-mailer-MailerEvent) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-notificator-NotificatorService"></a>
-
-### NotificatorService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `GetNotifications` | [GetNotificationsRequest](#services-notificator-GetNotificationsRequest) | [GetNotificationsResponse](#services-notificator-GetNotificationsResponse) | @perm: Name=Any |
-| `MarkNotifications` | [MarkNotificationsRequest](#services-notificator-MarkNotificationsRequest) | [MarkNotificationsResponse](#services-notificator-MarkNotificationsResponse) | @perm: Name=Any |
-| `Stream` | [StreamRequest](#services-notificator-StreamRequest) | [StreamResponse](#services-notificator-StreamResponse) stream | @perm: Name=Any |
-
- <!-- end services -->
-
-
-
 <a name="services_qualifications_qualifications-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -16036,6 +15913,151 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `ListFiles` | [ListFilesRequest](#services-filestore-ListFilesRequest) | [ListFilesResponse](#services-filestore-ListFilesResponse) | @perm: Name=Superuser |
 | `DeleteFile` | [.resources.file.DeleteFileRequest](#resources-file-DeleteFileRequest) | [.resources.file.DeleteFileResponse](#resources-file-DeleteFileResponse) | @perm: Name=Superuser |
 | `DeleteFileByPath` | [DeleteFileByPathRequest](#services-filestore-DeleteFileByPathRequest) | [DeleteFileByPathResponse](#services-filestore-DeleteFileByPathResponse) | @perm: Name=Superuser |
+
+ <!-- end services -->
+
+
+
+<a name="services_notifications_notifications-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/notifications/notifications.proto
+
+
+
+<a name="services-notifications-ClientView"></a>
+
+### ClientView
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `object_type` | [string](#string) |  |  |
+| `object_id` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-notifications-GetNotificationsRequest"></a>
+
+### GetNotificationsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `include_read` | [bool](#bool) | optional |  |
+| `categories` | [resources.notifications.NotificationCategory](#resources-notifications-NotificationCategory) | repeated |  |
+
+
+
+
+
+
+<a name="services-notifications-GetNotificationsResponse"></a>
+
+### GetNotificationsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `notifications` | [resources.notifications.Notification](#resources-notifications-Notification) | repeated |  |
+
+
+
+
+
+
+<a name="services-notifications-MarkNotificationsRequest"></a>
+
+### MarkNotificationsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unread` | [bool](#bool) |  |  |
+| `ids` | [uint64](#uint64) | repeated |  |
+| `all` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-notifications-MarkNotificationsResponse"></a>
+
+### MarkNotificationsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updated` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-notifications-StreamRequest"></a>
+
+### StreamRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `client_view` | [ClientView](#services-notifications-ClientView) |  |  |
+
+
+
+
+
+
+<a name="services-notifications-StreamResponse"></a>
+
+### StreamResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `notification_count` | [int32](#int32) |  |  |
+| `restart` | [bool](#bool) | optional |  |
+| `user_event` | [resources.notifications.UserEvent](#resources-notifications-UserEvent) |  |  |
+| `job_event` | [resources.notifications.JobEvent](#resources-notifications-JobEvent) |  |  |
+| `job_grade_event` | [resources.notifications.JobGradeEvent](#resources-notifications-JobGradeEvent) |  |  |
+| `system_event` | [resources.notifications.SystemEvent](#resources-notifications-SystemEvent) |  |  |
+| `mailer_event` | [resources.mailer.MailerEvent](#resources-mailer-MailerEvent) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-notifications-NotificationsService"></a>
+
+### NotificationsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetNotifications` | [GetNotificationsRequest](#services-notifications-GetNotificationsRequest) | [GetNotificationsResponse](#services-notifications-GetNotificationsResponse) | @perm: Name=Any |
+| `MarkNotifications` | [MarkNotificationsRequest](#services-notifications-MarkNotificationsRequest) | [MarkNotificationsResponse](#services-notifications-MarkNotificationsResponse) | @perm: Name=Any |
+| `Stream` | [StreamRequest](#services-notifications-StreamRequest) stream | [StreamResponse](#services-notifications-StreamResponse) stream | @perm: Name=Any |
 
  <!-- end services -->
 
