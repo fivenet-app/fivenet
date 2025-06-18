@@ -3336,6 +3336,17 @@
                     }
                 }
             }
+        },
+        "Superuser": {
+            "category": "Superuser",
+            "CanBeSuperuser": {
+                "key": "Can be Superuser",
+                "description": "This permission allows you to become a superuser, which grants access to all FiveNet features and permissions."
+            },
+            "Superuser": {
+                "key": "Superuser",
+                "description": "This permission allows you to access all FiveNet features and permissions, regardless of your job or role."
+            }
         }
     }
 }

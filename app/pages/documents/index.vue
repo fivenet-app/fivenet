@@ -10,7 +10,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.title',
     requiresAuth: true,
-    permission: 'documents.DocumentsService.ListDocuments',
+    permission: 'documents.DocumentsService/ListDocuments',
 });
 
 const modal = useModal();
@@ -33,7 +33,7 @@ const isOpen = ref(false);
 
                     <UButtonGroup class="inline-flex">
                         <UButton
-                            v-if="can('completor.CompletorService.CompleteDocumentCategories').value"
+                            v-if="can('completor.CompletorService/CompleteDocumentCategories').value"
                             :to="{ name: 'documents-categories' }"
                             icon="i-mdi-shape"
                             truncate
@@ -44,7 +44,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('documents.DocumentsService.ListTemplates').value"
+                            v-if="can('documents.DocumentsService/ListTemplates').value"
                             :to="{ name: 'documents-templates' }"
                             icon="i-mdi-file-code"
                             truncate
@@ -55,7 +55,7 @@ const isOpen = ref(false);
                         </UButton>
                     </UButtonGroup>
 
-                    <UTooltip v-if="can('documents.DocumentsService.UpdateDocument').value" :text="$t('common.create')">
+                    <UTooltip v-if="can('documents.DocumentsService/UpdateDocument').value" :text="$t('common.create')">
                         <UButton trailing-icon="i-mdi-plus" color="gray" truncate @click="modal.open(TemplatesModal, {})">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.document', 1) }}

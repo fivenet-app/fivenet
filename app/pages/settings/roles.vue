@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.settings.roles.title',
     requiresAuth: true,
-    permission: 'settings.SettingsService.GetRoles',
+    permission: 'settings.SettingsService/GetRoles',
 });
 </script>
 

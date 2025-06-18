@@ -11,6 +11,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { RoleAttribute } from "../../resources/permissions/attributes";
+import { Permission } from "../../resources/permissions/permissions";
 import { User } from "../../resources/users/users";
 import { JobProps } from "../../resources/jobs/job_props";
 import { Character } from "../../resources/accounts/accounts";
@@ -186,9 +188,9 @@ export interface ChooseCharacterResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: repeated string permissions = 2
+     * @generated from protobuf field: string username = 2
      */
-    permissions: string[];
+    username: string;
     /**
      * @generated from protobuf field: resources.jobs.JobProps job_props = 3
      */
@@ -198,9 +200,13 @@ export interface ChooseCharacterResponse {
      */
     char?: User; // @gotags: alias:"user"
     /**
-     * @generated from protobuf field: string username = 5
+     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 5
      */
-    username: string;
+    permissions: Permission[];
+    /**
+     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 6
+     */
+    attributes: RoleAttribute[];
 }
 /**
  * @generated from protobuf message services.auth.LogoutRequest
@@ -256,10 +262,6 @@ export interface SetSuperuserModeResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: repeated string permissions = 2
-     */
-    permissions: string[];
-    /**
      * @generated from protobuf field: optional resources.jobs.JobProps job_props = 3
      */
     jobProps?: JobProps;
@@ -267,6 +269,14 @@ export interface SetSuperuserModeResponse {
      * @generated from protobuf field: resources.users.User char = 4
      */
     char?: User; // @gotags: alias:"user"
+    /**
+     * @generated from protobuf field: repeated resources.permissions.Permission permissions = 5
+     */
+    permissions: Permission[];
+    /**
+     * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 6
+     */
+    attributes: RoleAttribute[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
@@ -1018,16 +1028,18 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
     constructor() {
         super("services.auth.ChooseCharacterResponse", [
             { no: 1, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 2, name: "permissions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "job_props", kind: "message", T: () => JobProps },
             { no: 4, name: "char", kind: "message", T: () => User },
-            { no: 5, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 5, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
+            { no: 6, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
         ]);
     }
     create(value?: PartialMessage<ChooseCharacterResponse>): ChooseCharacterResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.permissions = [];
         message.username = "";
+        message.permissions = [];
+        message.attributes = [];
         if (value !== undefined)
             reflectionMergePartial<ChooseCharacterResponse>(this, message, value);
         return message;
@@ -1040,8 +1052,8 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
                 case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* repeated string permissions */ 2:
-                    message.permissions.push(reader.string());
+                case /* string username */ 2:
+                    message.username = reader.string();
                     break;
                 case /* resources.jobs.JobProps job_props */ 3:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
@@ -1049,8 +1061,11 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
                 case /* resources.users.User char */ 4:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
-                case /* string username */ 5:
-                    message.username = reader.string();
+                case /* repeated resources.permissions.Permission permissions */ 5:
+                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.permissions.RoleAttribute attributes */ 6:
+                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1067,18 +1082,21 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated string permissions = 2; */
-        for (let i = 0; i < message.permissions.length; i++)
-            writer.tag(2, WireType.LengthDelimited).string(message.permissions[i]);
+        /* string username = 2; */
+        if (message.username !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.username);
         /* resources.jobs.JobProps job_props = 3; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* resources.users.User char = 4; */
         if (message.char)
             User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* string username = 5; */
-        if (message.username !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.username);
+        /* repeated resources.permissions.Permission permissions = 5; */
+        for (let i = 0; i < message.permissions.length; i++)
+            Permission.internalBinaryWrite(message.permissions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.RoleAttribute attributes = 6; */
+        for (let i = 0; i < message.attributes.length; i++)
+            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1327,14 +1345,16 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
     constructor() {
         super("services.auth.SetSuperuserModeResponse", [
             { no: 1, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 2, name: "permissions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "job_props", kind: "message", T: () => JobProps },
-            { no: 4, name: "char", kind: "message", T: () => User }
+            { no: 4, name: "char", kind: "message", T: () => User },
+            { no: 5, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
+            { no: 6, name: "attributes", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => RoleAttribute }
         ]);
     }
     create(value?: PartialMessage<SetSuperuserModeResponse>): SetSuperuserModeResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.permissions = [];
+        message.attributes = [];
         if (value !== undefined)
             reflectionMergePartial<SetSuperuserModeResponse>(this, message, value);
         return message;
@@ -1347,14 +1367,17 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
                 case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* repeated string permissions */ 2:
-                    message.permissions.push(reader.string());
-                    break;
                 case /* optional resources.jobs.JobProps job_props */ 3:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
                 case /* resources.users.User char */ 4:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
+                    break;
+                case /* repeated resources.permissions.Permission permissions */ 5:
+                    message.permissions.push(Permission.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.permissions.RoleAttribute attributes */ 6:
+                    message.attributes.push(RoleAttribute.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1371,15 +1394,18 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
         /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated string permissions = 2; */
-        for (let i = 0; i < message.permissions.length; i++)
-            writer.tag(2, WireType.LengthDelimited).string(message.permissions[i]);
         /* optional resources.jobs.JobProps job_props = 3; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* resources.users.User char = 4; */
         if (message.char)
             User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.Permission permissions = 5; */
+        for (let i = 0; i < message.permissions.length; i++)
+            Permission.internalBinaryWrite(message.permissions[i], writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.permissions.RoleAttribute attributes = 6; */
+        for (let i = 0; i < message.attributes.length; i++)
+            RoleAttribute.internalBinaryWrite(message.attributes[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

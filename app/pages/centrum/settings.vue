@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'components.centrum.settings.title',
     requiresAuth: true,
-    permission: 'centrum.CentrumService.TakeControl',
+    permission: 'centrum.CentrumService/TakeControl',
 });
 </script>
 

@@ -281,7 +281,7 @@ const columns = [
                     </UFormGroup>
 
                     <UFormGroup
-                        v-if="can('jobs.ConductService.CreateConductEntry').value"
+                        v-if="can('jobs.ConductService/CreateConductEntry').value"
                         class="flex-initial"
                         :label="$t('common.create')"
                         trailing-icon="i-mdi-plus"
@@ -380,7 +380,7 @@ const columns = [
                     />
                 </UTooltip>
 
-                <UTooltip v-if="can('jobs.ConductService.UpdateConductEntry').value" :text="$t('common.update')">
+                <UTooltip v-if="can('jobs.ConductService/UpdateConductEntry').value" :text="$t('common.update')">
                     <UButton
                         variant="link"
                         icon="i-mdi-pencil"
@@ -395,7 +395,7 @@ const columns = [
                     />
                 </UTooltip>
 
-                <UTooltip v-if="can('jobs.ConductService.DeleteConductEntry').value" :text="$t('common.delete')">
+                <UTooltip v-if="can('jobs.ConductService/DeleteConductEntry').value" :text="$t('common.delete')">
                     <UButton
                         variant="link"
                         icon="i-mdi-delete"

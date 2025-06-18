@@ -108,7 +108,7 @@ const columns = [
         key: 'actions',
         label: t('common.action', 2),
         sortable: false,
-        permission: 'jobs.JobsService.GetColleague' as Perms,
+        permission: 'jobs.JobsService/GetColleague' as Perms,
     },
 ].filter((c) => c.permission === undefined || can(c.permission).value);
 
@@ -120,7 +120,7 @@ const { game } = useAppConfig();
         <template #default>
             <div class="flex w-full flex-col">
                 <UButton
-                    v-if="can('jobs.TimeclockService.ListTimeclock').value"
+                    v-if="can('jobs.TimeclockService/ListTimeclock').value"
                     class="mb-2 place-self-end"
                     :to="{ name: 'jobs-timeclock' }"
                     icon="i-mdi-arrow-left"
@@ -201,10 +201,10 @@ const { game } = useAppConfig();
             </dl>
         </template>
 
-        <template v-if="can('jobs.JobsService.GetColleague').value" #actions-data="{ row: colleague }">
+        <template v-if="can('jobs.JobsService/GetColleague').value" #actions-data="{ row: colleague }">
             <div :key="colleague.id">
                 <UTooltip
-                    v-if="checkIfCanAccessColleague(colleague, 'jobs.JobsService.GetColleague')"
+                    v-if="checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')"
                     :text="$t('common.show')"
                 >
                     <UButton

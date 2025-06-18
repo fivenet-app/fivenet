@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.settings.settings.title',
     requiresAuth: true,
-    permission: 'Superuser',
+    permission: 'Superuser/Superuser',
 });
 </script>
 

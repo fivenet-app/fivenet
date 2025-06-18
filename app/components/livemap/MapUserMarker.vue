@@ -119,7 +119,7 @@ const markerRef = useTemplateRef('markerRef');
                         </UButton>
 
                         <UButton
-                            v-if="can('citizens.CitizensService.ListCitizens').value"
+                            v-if="can('citizens.CitizensService/ListCitizens').value"
                             variant="link"
                             icon="i-mdi-account"
                             :padded="false"
@@ -133,10 +133,10 @@ const markerRef = useTemplateRef('markerRef');
 
                         <UButton
                             v-if="
-                                can('jobs.JobsService.GetColleague').value &&
+                                can('jobs.JobsService/GetColleague').value &&
                                 marker.user &&
                                 marker.user?.job === activeChar?.job &&
-                                checkIfCanAccessColleague(marker.user, 'jobs.JobsService.GetColleague')
+                                checkIfCanAccessColleague(marker.user, 'jobs.JobsService/GetColleague')
                             "
                             variant="link"
                             icon="i-mdi-briefcase"

@@ -16,7 +16,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.colleagues.single.title',
     requiresAuth: true,
-    permission: 'jobs.JobsService.GetColleague',
+    permission: 'jobs.JobsService/GetColleague',
     redirect: { name: 'jobs-colleagues-id-info' },
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-info'>;
@@ -79,32 +79,32 @@ const links = computed(() =>
             label: t('common.info'),
             to: { name: 'jobs-colleagues-id-info', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-information-outline',
-            permission: 'jobs.JobsService.GetColleague' as Perms,
+            permission: 'jobs.JobsService/GetColleague' as Perms,
         },
         {
             label: t('common.activity'),
             to: { name: 'jobs-colleagues-id-activity', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-pulse',
-            permission: 'jobs.JobsService.ListColleagueActivity' as Perms,
+            permission: 'jobs.JobsService/ListColleagueActivity' as Perms,
         },
         {
             label: t('common.timeclock'),
             to: { name: 'jobs-colleagues-id-timeclock', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-timeline-clock',
-            permission: 'jobs.TimeclockService.ListTimeclock' as Perms,
-            check: attr('jobs.TimeclockService.ListTimeclock', 'Access', 'All').value,
+            permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
+            check: attr('jobs.TimeclockService/ListTimeclock', 'Access', 'All').value,
         },
         {
             label: t('pages.qualifications.title'),
             to: { name: 'jobs-colleagues-id-qualifications', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-school',
-            permission: 'qualifications.QualificationsService.ListQualifications' as Perms,
+            permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
         },
         {
             label: t('pages.jobs.conduct.title'),
             to: { name: 'jobs-colleagues-id-conduct', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-list-status',
-            permission: 'jobs.ConductService.ListConductEntries' as Perms,
+            permission: 'jobs.ConductService/ListConductEntries' as Perms,
         },
     ].filter((tab) => can(tab.permission).value && (tab.check === undefined || tab.check === true)),
 );

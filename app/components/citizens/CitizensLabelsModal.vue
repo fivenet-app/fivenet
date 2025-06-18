@@ -73,7 +73,7 @@ watch(labels, () => (state.labels = labels.value ?? []));
                 </template>
 
                 <UFormGroup
-                    v-if="state && can('citizens.CitizensService.ManageLabels').value"
+                    v-if="state && can('citizens.CitizensService/ManageLabels').value"
                     class="grid items-center gap-2"
                     name="citizenAttributes.list"
                     :ui="{ container: '' }"

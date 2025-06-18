@@ -359,7 +359,7 @@ const accordionCategories = computed(() =>
     }),
 );
 
-const canUpdate = can('settings.SettingsService.UpdateRolePerms');
+const canUpdate = can('settings.SettingsService/UpdateRolePerms');
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
@@ -406,7 +406,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                         <UTooltip :text="$t('common.delete')">
                             <UButton
-                                v-if="can('settings.SettingsService.DeleteRole').value"
+                                v-if="can('settings.SettingsService/DeleteRole').value"
                                 variant="link"
                                 icon="i-mdi-delete"
                                 color="error"

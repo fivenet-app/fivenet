@@ -19,7 +19,7 @@ useHead({
 definePageMeta({
     title: 'common.dispatches',
     requiresAuth: true,
-    permission: 'centrum.CentrumService.TakeControl',
+    permission: 'centrum.CentrumService/TakeControl',
 });
 
 const { $grpc } = useNuxtApp();

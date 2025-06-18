@@ -27,8 +27,8 @@ const completorStore = useCompletorStore();
 
 const canDo = computed(() => ({
     set:
-        can('citizens.CitizensService.SetUserProps').value &&
-        attr('citizens.CitizensService.SetUserProps', 'Fields', 'Labels').value,
+        can('citizens.CitizensService/SetUserProps').value &&
+        attr('citizens.CitizensService/SetUserProps', 'Fields', 'Labels').value,
 }));
 
 const labelsLoading = ref(false);
@@ -143,7 +143,7 @@ watch(state, () => {
             </div>
         </template>
 
-        <UFormGroup v-if="canDo.set && can('completor.CompletorService.CompleteCitizenLabels').value" name="labels">
+        <UFormGroup v-if="canDo.set && can('completor.CompletorService/CompleteCitizenLabels').value" name="labels">
             <ClientOnly>
                 <USelectMenu
                     v-model="state.labels"

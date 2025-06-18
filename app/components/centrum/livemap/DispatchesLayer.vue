@@ -43,14 +43,14 @@ watch(settings, () => {
         key: 'dispatches_own',
         category: 'dispatches',
         label: t('common.your_dispatches'),
-        perm: 'centrum.CentrumService.Stream',
+        perm: 'centrum.CentrumService/Stream',
         disabled: true,
     });
     addOrUpdateLivemapLayer({
         key: 'dispatches_all',
         category: 'dispatches',
         label: t('common.all_dispatches'),
-        perm: 'centrum.CentrumService.Stream',
+        perm: 'centrum.CentrumService/Stream',
         disabled: props.showAllDispatches,
         visible: props.showAllDispatches ? true : undefined,
     });

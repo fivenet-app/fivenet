@@ -3336,6 +3336,17 @@
                     }
                 }
             }
+        },
+        "Superuser": {
+            "category": "Superuser",
+            "CanBeSuperuser": {
+                "key": "Kann Superuser sein",
+                "description": "Diese Berechtigung erlaubt es Ihnen, Superuser zu werden, wodurch Sie Zugriff auf alle FiveNet-Funktionen und -Berechtigungen erhalten."
+            },
+            "Superuser": {
+                "key": "Superuser",
+                "description": "Diese Berechtigung erlaubt Ihnen den Zugriff auf alle FiveNet-Funktionen und -Berechtigungen, unabhängig von Ihrem Beruf oder Ihrer Rolle."
+            }
         }
     }
 }

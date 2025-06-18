@@ -167,7 +167,7 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    can(['jobs.JobsService.GetColleague', 'jobs.JobsService.SetColleagueProps']).value
+    can(['jobs.JobsService/GetColleague', 'jobs.JobsService/SetColleagueProps']).value
         ? {
               key: 'actions',
               label: t('common.action', 2),
@@ -177,8 +177,8 @@ const columns = [
 ].filter((c) => c !== undefined) as TableColumn[];
 
 const canDo = computed(() => ({
-    getColleague: can('jobs.JobsService.GetColleague').value,
-    setJobsUerProps: can('jobs.JobsService.SetColleagueProps').value,
+    getColleague: can('jobs.JobsService/GetColleague').value,
+    setJobsUerProps: can('jobs.JobsService/SetColleagueProps').value,
 }));
 
 const { game } = useAppConfig();
@@ -238,20 +238,20 @@ defineShortcuts({
 
                 <UFormGroup
                     v-if="
-                        can('jobs.JobsService.ManageLabels').value ||
-                        attr('jobs.JobsService.GetColleague', 'Types', 'Labels').value
+                        can('jobs.JobsService/ManageLabels').value ||
+                        attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value
                     "
                     label="&nbsp"
                     :ui="{ container: 'inline-flex gap-1' }"
                 >
                     <UButton
-                        v-if="can('jobs.JobsService.ManageLabels').value"
+                        v-if="can('jobs.JobsService/ManageLabels').value"
                         :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
                         @click="modal.open(JobsLabelsModal, {})"
                     />
 
-                    <UTooltip v-if="attr('jobs.JobsService.GetColleague', 'Types', 'Labels').value" :text="$t('common.stats')">
+                    <UTooltip v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value" :text="$t('common.stats')">
                         <UButton icon="i-mdi-chart-donut" color="white" @click="modal.open(ColleaguesLabelStatsModal, {})" />
                     </UTooltip>
                 </UFormGroup>
@@ -267,7 +267,7 @@ defineShortcuts({
                 <template #search>
                     <div class="flex flex-row flex-wrap gap-2">
                         <UFormGroup
-                            v-if="attr('jobs.JobsService.GetColleague', 'Types', 'Labels').value"
+                            v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
                             class="flex flex-1 flex-col"
                             name="labels"
                             :label="$t('common.label', 2)"
@@ -443,8 +443,8 @@ defineShortcuts({
                         v-if="
                             canDo.setJobsUerProps &&
                             (colleague.userId === activeChar!.userId ||
-                                attr('jobs.JobsService.SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                            checkIfCanAccessColleague(colleague, 'jobs.JobsService.SetColleagueProps')
+                                attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                            checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
                         "
                         :text="$t('components.jobs.self_service.set_absence_date')"
                     >
@@ -461,7 +461,7 @@ defineShortcuts({
                     </UTooltip>
 
                     <UTooltip
-                        v-if="canDo.getColleague && checkIfCanAccessColleague(colleague, 'jobs.JobsService.GetColleague')"
+                        v-if="canDo.getColleague && checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')"
                         :text="$t('common.show')"
                     >
                         <UButton
@@ -532,7 +532,7 @@ defineShortcuts({
                             </span>
 
                             <div
-                                v-if="attr('jobs.JobsService.GetColleague', 'Types', 'Labels').value"
+                                v-if="attr('jobs.JobsService/GetColleague', 'Types', 'Labels').value"
                                 class="flex flex-row gap-1"
                             >
                                 <UIcon class="h-5 w-5 shrink-0" name="i-mdi-tag" />
@@ -576,8 +576,8 @@ defineShortcuts({
                                 v-if="
                                     canDo.setJobsUerProps &&
                                     (colleague.userId === activeChar!.userId ||
-                                        attr('jobs.JobsService.SetColleagueProps', 'Types', 'AbsenceDate').value) &&
-                                    checkIfCanAccessColleague(colleague, 'jobs.JobsService.SetColleagueProps')
+                                        attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                                    checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')
                                 "
                                 class="flex-1"
                                 :text="$t('components.jobs.self_service.set_absence_date')"
@@ -598,7 +598,7 @@ defineShortcuts({
 
                             <UTooltip
                                 v-if="
-                                    canDo.getColleague && checkIfCanAccessColleague(colleague, 'jobs.JobsService.GetColleague')
+                                    canDo.getColleague && checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague')
                                 "
                                 class="flex-1"
                                 :text="$t('common.show')"

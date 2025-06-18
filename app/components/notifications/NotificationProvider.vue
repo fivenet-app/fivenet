@@ -48,7 +48,7 @@ const { start, stop } = useTimeoutFn(
             return;
         }
 
-        if (can('mailer.MailerService.ListEmails').value) {
+        if (can('mailer.MailerService/ListEmails').value) {
             await mailerStore.checkEmails();
         }
 

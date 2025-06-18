@@ -81,7 +81,7 @@ const canDo = computed(() => ({
                             <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
                             <UTooltip
-                                v-if="entry && can('calendar.CalendarService.CreateCalendar').value && canDo.edit"
+                                v-if="entry && can('calendar.CalendarService/CreateCalendar').value && canDo.edit"
                                 :text="$t('common.edit')"
                             >
                                 <UButton

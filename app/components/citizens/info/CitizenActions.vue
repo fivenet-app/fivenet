@@ -62,7 +62,7 @@ function copyLinkToClipboard(): void {
 if (props.registerShortcuts) {
     defineShortcuts({
         'c-w': () => {
-            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'Wanted').value) {
+            if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value) {
                 return;
             }
 
@@ -72,7 +72,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-j': () => {
-            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'Job').value) {
+            if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value) {
                 return;
             }
 
@@ -82,7 +82,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-p': () => {
-            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'TrafficInfractionPoints').value) {
+            if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value) {
                 return;
             }
 
@@ -92,7 +92,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-m': () => {
-            if (!attr('citizens.CitizensService.SetUserProps', 'Fields', 'Mugshot').value) {
+            if (!attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value) {
                 return;
             }
 
@@ -102,7 +102,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-d': () => {
-            if (!can('documents.DocumentsService.UpdateDocument').value) {
+            if (!can('documents.DocumentsService/UpdateDocument').value) {
                 return;
             }
 
@@ -115,7 +115,7 @@ if (props.registerShortcuts) {
 <template>
     <div class="flex w-full flex-col gap-2">
         <UTooltip
-            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'Wanted').value"
+            v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'Wanted').value"
             :text="
                 user?.props?.wanted
                     ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
@@ -144,7 +144,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'Job').value"
+            v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'Job').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_job')"
             :shortcuts="['C', 'J']"
         >
@@ -163,7 +163,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'TrafficInfractionPoints').value"
+            v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'TrafficInfractionPoints').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
             :shortcuts="['C', 'P']"
         >
@@ -182,7 +182,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('citizens.CitizensService.SetUserProps', 'Fields', 'Mugshot').value"
+            v-if="attr('citizens.CitizensService/SetUserProps', 'Fields', 'Mugshot').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_mugshot')"
             :shortcuts="['C', 'M']"
         >
@@ -201,7 +201,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="can('documents.DocumentsService.UpdateDocument').value"
+            v-if="can('documents.DocumentsService/UpdateDocument').value"
             :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
             :shortcuts="['C', 'D']"
         >
@@ -213,8 +213,8 @@ if (props.registerShortcuts) {
         <UButton
             v-if="
                 activeChar?.job === user.job &&
-                can('jobs.JobsService.GetColleague').value &&
-                checkIfCanAccessColleague(user, 'jobs.JobsService.GetColleague')
+                can('jobs.JobsService/GetColleague').value &&
+                checkIfCanAccessColleague(user, 'jobs.JobsService/GetColleague')
             "
             block
             icon="i-mdi-account-circle"

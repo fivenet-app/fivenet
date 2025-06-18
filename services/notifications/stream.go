@@ -318,7 +318,7 @@ func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInf
 	}
 
 	if currentUserInfo.LastChar != nil && *newUserInfo.LastChar != currentUserInfo.UserId && s.appCfg.Get().Auth.LastCharLock {
-		if !currentUserInfo.CanBeSuper && !currentUserInfo.Superuser {
+		if !currentUserInfo.CanBeSuperuser && !currentUserInfo.Superuser {
 			return nil, true, auth.ErrCharLock
 		}
 	}

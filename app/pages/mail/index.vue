@@ -21,7 +21,7 @@ useHead({
 definePageMeta({
     title: 'common.mail',
     requiresAuth: true,
-    permission: 'mailer.MailerService.ListEmails',
+    permission: 'mailer.MailerService/ListEmails',
 });
 
 const { t } = useI18n();

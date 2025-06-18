@@ -48,7 +48,7 @@ const { livemap } = storeToRefs(settingsStore);
 
 const logger = useLogger('⛑️ Centrum');
 
-const canStream = can('centrum.CentrumService.Stream');
+const canStream = can('centrum.CentrumService/Stream');
 
 const selectedDispatch = ref<number | undefined>();
 

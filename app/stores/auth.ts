@@ -7,8 +7,9 @@ import { useSettingsStore } from '~/stores/settings';
 import type { JobProps } from '~~/gen/ts/resources/jobs/job_props';
 import type { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { RoleAttribute } from '~~/gen/ts/resources/permissions/attributes';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
 import type { User } from '~~/gen/ts/resources/users/users';
-import type { SetSuperuserModeRequest } from '~~/gen/ts/services/auth/auth';
 
 const logger = useLogger('🔑 Auth');
 
@@ -19,14 +20,18 @@ export const useAuthStore = defineStore(
         const notifications = useNotificationsStore();
 
         // State
-        const accessTokenExpiration = ref<Date | null>(null);
+        const sessionExpiration = ref<Date | null>(null);
         const username = ref<string | null>(null);
         const lastCharID = ref<number | undefined>(0);
+
+        const userTokenExpiration = ref<Date | null>(null);
+        const userToken = ref<string | null>(null);
 
         const activeChar = ref<User | null>(null);
         const loggingIn = ref<boolean>(false);
         const loginError = ref<RpcError | null>(null);
-        const permissions = ref<string[]>([]);
+        const permissions = ref<Permission[]>([]);
+        const attributes = ref<RoleAttribute[]>([]);
         const jobProps = ref<JobProps | null>({
             job: '',
             livemapMarkerColor: '',
@@ -54,7 +59,7 @@ export const useAuthStore = defineStore(
             if (typeof expiration === 'string') {
                 expiration = new Date(expiration);
             }
-            accessTokenExpiration.value = expiration;
+            userTokenExpiration.value = expiration;
         };
 
         const setActiveChar = (char: User | null): void => {
@@ -62,9 +67,11 @@ export const useAuthStore = defineStore(
             lastCharID.value = char ? char.userId : lastCharID.value;
         };
 
-        const setPermissions = (perms: string[]): void => {
+        const setPermissions = (perms: Permission[], attrs: RoleAttribute[]): void => {
             permissions.value.length = 0;
             permissions.value.push(...perms.sort());
+            attributes.value.length = 0;
+            attributes.value.push(...attrs.sort());
         };
 
         const setJobProps = (jp: JobProps | undefined): void => {
@@ -89,7 +96,7 @@ export const useAuthStore = defineStore(
         const clearAuthInfo = (): void => {
             setAccessTokenExpiration(null);
             setActiveChar(null);
-            setPermissions([]);
+            setPermissions([], []);
             setJobProps(undefined);
             username.value = null;
             useGRPCWebsocketTransport().close();
@@ -99,7 +106,7 @@ export const useAuthStore = defineStore(
         const doLogin = async (user: string, pass: string): Promise<void> => {
             loginStart();
             setActiveChar(null);
-            setPermissions([]);
+            setPermissions([], []);
 
             try {
                 const call = $grpc.auth.auth.login({ username: user, password: pass });
@@ -122,7 +129,7 @@ export const useAuthStore = defineStore(
                     logger.info('Received fast-tracked login response with char, id:', response.char.char?.userId);
                     setActiveChar(response.char.char ?? null);
                     setAccessTokenExpiration(toDate(response.char.expires));
-                    setPermissions(response.char.permissions);
+                    setPermissions(response.char.permissions, response.char.attributes);
                     setJobProps(response.char.jobProps);
 
                     const startpage = useSettingsStore().startpage ?? '/overview';
@@ -188,7 +195,7 @@ export const useAuthStore = defineStore(
                 username.value = response.username;
                 setActiveChar(response.char);
                 setAccessTokenExpiration(toDate(response.expires));
-                setPermissions(response.permissions);
+                setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
 
                 if (redirect) {
@@ -216,21 +223,22 @@ export const useAuthStore = defineStore(
 
         const setSuperuserMode = async (superuser: boolean, job?: Job): Promise<void> => {
             try {
-                const req: SetSuperuserModeRequest = {
-                    superuser,
-                };
-
-                if (job) {
-                    req.job = job.name;
-                }
-
-                const call = $grpc.auth.auth.setSuperuserMode(req);
+                const call = $grpc.auth.auth.setSuperuserMode({
+                    superuser: superuser,
+                    job: job?.name,
+                });
                 const { response } = await call;
 
                 if (superuser) {
-                    permissions.value.push('superuser');
+                    permissions.value.push({
+                        id: 0,
+                        category: 'Superuser',
+                        name: 'Superuser',
+                        guardName: 'superuser-superuser',
+                        val: true,
+                    } as Permission);
                 } else {
-                    permissions.value = permissions.value.filter((p) => p !== 'superuser');
+                    permissions.value = permissions.value.filter((p) => p.guardName !== 'superuser');
                 }
 
                 notifications.add({
@@ -248,7 +256,7 @@ export const useAuthStore = defineStore(
 
                 setAccessTokenExpiration(toDate(response.expires));
                 setActiveChar(response.char!);
-                setPermissions(response.permissions);
+                setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
             } catch (e) {
                 handleGRPCError(e as RpcError);
@@ -258,7 +266,7 @@ export const useAuthStore = defineStore(
 
         // Getters
         const isSuperuser = computed<boolean>(() => {
-            return permissions.value.includes('superuser');
+            return !!permissions.value.find((p) => p.guardName === 'superuser');
         });
 
         // Watchers
@@ -275,13 +283,16 @@ export const useAuthStore = defineStore(
 
         return {
             // State
-            accessTokenExpiration,
+            sessionExpiration,
             username,
             lastCharID,
+            userTokenExpiration,
+            userToken,
             activeChar,
             loggingIn,
             loginError,
             permissions,
+            attributes,
             jobProps,
 
             // Actions
@@ -303,12 +314,15 @@ export const useAuthStore = defineStore(
     },
     {
         persist: {
-            pick: ['accessTokenExpiration', 'lastCharID', 'username'],
+            pick: ['sessionExpiration', 'username', 'lastCharID', 'userTokenExpiration'],
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             afterHydrate: (ctx: any) => {
                 const store = ctx.store;
-                if (typeof store.accessTokenExpiration === 'string') {
-                    store.accessTokenExpiration = new Date(store.accessTokenExpiration);
+                if (typeof store.sessionExpiration === 'string') {
+                    store.sessionExpiration = new Date(store.sessionExpiration);
+                }
+                if (typeof store.userTokenExpiration === 'string') {
+                    store.userTokenExpiration = new Date(store.userTokenExpiration);
                 }
             },
         },

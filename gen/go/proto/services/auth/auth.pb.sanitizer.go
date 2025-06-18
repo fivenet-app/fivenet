@@ -57,6 +57,18 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 		return nil
 	}
 
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Char
 	if m.Char != nil {
 		if v, ok := any(m.GetChar()).(interface{ Sanitize() error }); ok {
@@ -82,6 +94,18 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Permissions
+	for idx, item := range m.Permissions {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -275,6 +299,18 @@ func (m *SetSuperuserModeResponse) Sanitize() error {
 		return nil
 	}
 
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// Field: Char
 	if m.Char != nil {
 		if v, ok := any(m.GetChar()).(interface{ Sanitize() error }); ok {
@@ -300,6 +336,18 @@ func (m *SetSuperuserModeResponse) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Permissions
+	for idx, item := range m.Permissions {
+		_, _ = idx, item
+
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

@@ -38,7 +38,7 @@ watch(jobsUsers, () =>
             key: `users_${job.name}`,
             category: 'users',
             label: job.label,
-            perm: 'livemap.LivemapService.Stream',
+            perm: 'livemap.LivemapService/Stream',
             attr: {
                 key: 'Players',
                 val: job.name,

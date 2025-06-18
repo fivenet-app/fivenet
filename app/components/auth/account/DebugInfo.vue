@@ -3,6 +3,7 @@ import { listEnumValues } from '@protobuf-ts/runtime';
 import { LogLevels } from 'consola';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import PermList from '~/components/settings/roles/PermList.vue';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
@@ -14,7 +15,7 @@ const clipboardStore = useClipboardStore();
 const settings = useSettingsStore();
 
 const authStore = useAuthStore();
-const { activeChar, permissions, accessTokenExpiration, isSuperuser } = storeToRefs(authStore);
+const { activeChar, attributes, permissions, userTokenExpiration, isSuperuser } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
 
 const notifications = useNotificationsStore();
@@ -119,14 +120,14 @@ const version = APP_VERSION;
             </UFormGroup>
 
             <UFormGroup
-                v-if="accessTokenExpiration"
+                v-if="userTokenExpiration"
                 class="grid grid-cols-2 items-center gap-2"
-                name="accessTokenExpiration"
+                name="userTokenExpiration"
                 :label="$t('components.debug_info.access_token_expiration')"
                 :ui="{ container: '' }"
             >
-                <GenericTime :value="accessTokenExpiration" ago />
-                (<GenericTime :value="accessTokenExpiration" type="long" />)
+                <GenericTime :value="userTokenExpiration" ago />
+                (<GenericTime :value="userTokenExpiration" type="long" />)
             </UFormGroup>
 
             <UFormGroup
@@ -185,34 +186,20 @@ const version = APP_VERSION;
                 :label="$t('components.debug_info.perms')"
                 :ui="{ container: '' }"
             >
+                <p v-if="!activeChar">
+                    {{ $t('components.debug_info.no_char_selected') }}
+                </p>
                 <UAccordion
+                    v-else
                     variant="soft"
                     :items="[{ label: $t('components.debug_info.perms'), slot: 'perms', icon: 'i-mdi-key' }]"
                     :ui="{ wrapper: 'flex flex-col w-full' }"
                 >
                     <template #perms>
-                        <p v-if="!activeChar">
-                            {{ $t('components.debug_info.no_char_selected') }}
-                        </p>
-                        <ul v-else class="divide-y divide-gray-100 dark:divide-gray-800" role="list">
-                            <li
-                                v-for="perm in permissions"
-                                :key="perm"
-                                class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
-                            >
-                                <UIcon class="size-5 shrink-0 text-gray-400" name="i-mdi-key" />
-                                <div class="ml-4 flex min-w-0 flex-1 gap-2">
-                                    <span class="truncate font-medium">
-                                        {{ perm }}
-                                    </span>
-                                </div>
-                            </li>
-                        </ul>
+                        <PermList :permissions="permissions" :attributes="attributes" disabled />
                     </template>
                 </UAccordion>
             </UFormGroup>
         </UDashboardSection>
-
-        <UDivider class="mb-4" />
     </UDashboardPanelContent>
 </template>

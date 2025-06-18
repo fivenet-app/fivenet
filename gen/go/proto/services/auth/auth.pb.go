@@ -10,6 +10,7 @@ import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	accounts "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	permissions "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -735,12 +736,13 @@ func (x *ChooseCharacterRequest) GetCharId() int32 {
 }
 
 type ChooseCharacterResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Expires       *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
-	Permissions   []string               `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	JobProps      *jobs.JobProps         `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
-	Char          *users.User            `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"` // @gotags: alias:"user"
-	Username      string                 `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Expires       *timestamp.Timestamp         `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
+	Username      string                       `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	JobProps      *jobs.JobProps               `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
+	Char          *users.User                  `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"` // @gotags: alias:"user"
+	Permissions   []*permissions.Permission    `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,6,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -782,11 +784,11 @@ func (x *ChooseCharacterResponse) GetExpires() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *ChooseCharacterResponse) GetPermissions() []string {
+func (x *ChooseCharacterResponse) GetUsername() string {
 	if x != nil {
-		return x.Permissions
+		return x.Username
 	}
-	return nil
+	return ""
 }
 
 func (x *ChooseCharacterResponse) GetJobProps() *jobs.JobProps {
@@ -803,11 +805,18 @@ func (x *ChooseCharacterResponse) GetChar() *users.User {
 	return nil
 }
 
-func (x *ChooseCharacterResponse) GetUsername() string {
+func (x *ChooseCharacterResponse) GetPermissions() []*permissions.Permission {
 	if x != nil {
-		return x.Username
+		return x.Permissions
 	}
-	return ""
+	return nil
+}
+
+func (x *ChooseCharacterResponse) GetAttributes() []*permissions.RoleAttribute {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
 }
 
 type LogoutRequest struct {
@@ -1031,11 +1040,12 @@ func (x *SetSuperuserModeRequest) GetJob() string {
 }
 
 type SetSuperuserModeResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Expires       *timestamp.Timestamp   `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
-	Permissions   []string               `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
-	JobProps      *jobs.JobProps         `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
-	Char          *users.User            `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"` // @gotags: alias:"user"
+	state         protoimpl.MessageState       `protogen:"open.v1"`
+	Expires       *timestamp.Timestamp         `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
+	JobProps      *jobs.JobProps               `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3,oneof" json:"job_props,omitempty"`
+	Char          *users.User                  `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"` // @gotags: alias:"user"
+	Permissions   []*permissions.Permission    `protobuf:"bytes,5,rep,name=permissions,proto3" json:"permissions,omitempty"`
+	Attributes    []*permissions.RoleAttribute `protobuf:"bytes,6,rep,name=attributes,proto3" json:"attributes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1077,13 +1087,6 @@ func (x *SetSuperuserModeResponse) GetExpires() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *SetSuperuserModeResponse) GetPermissions() []string {
-	if x != nil {
-		return x.Permissions
-	}
-	return nil
-}
-
 func (x *SetSuperuserModeResponse) GetJobProps() *jobs.JobProps {
 	if x != nil {
 		return x.JobProps
@@ -1098,11 +1101,25 @@ func (x *SetSuperuserModeResponse) GetChar() *users.User {
 	return nil
 }
 
+func (x *SetSuperuserModeResponse) GetPermissions() []*permissions.Permission {
+	if x != nil {
+		return x.Permissions
+	}
+	return nil
+}
+
+func (x *SetSuperuserModeResponse) GetAttributes() []*permissions.RoleAttribute {
+	if x != nil {
+		return x.Attributes
+	}
+	return nil
+}
+
 var File_services_auth_auth_proto protoreflect.FileDescriptor
 
 const file_services_auth_auth_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/auth/auth.proto\x12\rservices.auth\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1eresources/jobs/job_props.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xb7\x01\n" +
+	"\x18services/auth/auth.proto\x12\rservices.auth\x1a!resources/accounts/accounts.proto\x1a\x1fresources/accounts/oauth2.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1eresources/jobs/job_props.proto\x1a&resources/permissions/attributes.proto\x1a'resources/permissions/permissions.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xb7\x01\n" +
 	"\x14CreateAccountRequest\x121\n" +
 	"\treg_token\x18\x01 \x01(\tB\x14\xfaB\x11r\x0f2\n" +
 	"^[0-9]{6}$\x98\x01\x06R\bregToken\x12E\n" +
@@ -1143,13 +1160,16 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x15GetCharactersResponse\x123\n" +
 	"\x05chars\x18\x01 \x03(\v2\x1d.resources.accounts.CharacterR\x05chars\":\n" +
 	"\x16ChooseCharacterRequest\x12 \n" +
-	"\achar_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06charId\"\xf3\x01\n" +
+	"\achar_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06charId\"\xdc\x02\n" +
 	"\x17ChooseCharacterResponse\x128\n" +
-	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12 \n" +
-	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x125\n" +
+	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername\x125\n" +
 	"\tjob_props\x18\x03 \x01(\v2\x18.resources.jobs.JobPropsR\bjobProps\x12)\n" +
-	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserR\x04char\x12\x1a\n" +
-	"\busername\x18\x05 \x01(\tR\busername\"\x0f\n" +
+	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserR\x04char\x12C\n" +
+	"\vpermissions\x18\x05 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\n" +
+	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributes\"\x0f\n" +
 	"\rLogoutRequest\"*\n" +
 	"\x0eLogoutResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\"D\n" +
@@ -1160,12 +1180,15 @@ const file_services_auth_auth_proto_rawDesc = "" +
 	"\x17SetSuperuserModeRequest\x12\x1c\n" +
 	"\tsuperuser\x18\x01 \x01(\bR\tsuperuser\x12\x1e\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x00R\x03job\x88\x01\x01B\x06\n" +
-	"\x04_job\"\xeb\x01\n" +
+	"\x04_job\"\xd4\x02\n" +
 	"\x18SetSuperuserModeResponse\x128\n" +
-	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12 \n" +
-	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12:\n" +
+	"\aexpires\x18\x01 \x01(\v2\x1e.resources.timestamp.TimestampR\aexpires\x12:\n" +
 	"\tjob_props\x18\x03 \x01(\v2\x18.resources.jobs.JobPropsH\x00R\bjobProps\x88\x01\x01\x12)\n" +
-	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserR\x04charB\f\n" +
+	"\x04char\x18\x04 \x01(\v2\x15.resources.users.UserR\x04char\x12C\n" +
+	"\vpermissions\x18\x05 \x03(\v2!.resources.permissions.PermissionR\vpermissions\x12D\n" +
+	"\n" +
+	"attributes\x18\x06 \x03(\v2$.resources.permissions.RoleAttributeR\n" +
+	"attributesB\f\n" +
 	"\n" +
 	"_job_props2\x8a\b\n" +
 	"\vAuthService\x12B\n" +
@@ -1224,6 +1247,8 @@ var file_services_auth_auth_proto_goTypes = []any{
 	(*accounts.Character)(nil),             // 26: resources.accounts.Character
 	(*jobs.JobProps)(nil),                  // 27: resources.jobs.JobProps
 	(*users.User)(nil),                     // 28: resources.users.User
+	(*permissions.Permission)(nil),         // 29: resources.permissions.Permission
+	(*permissions.RoleAttribute)(nil),      // 30: resources.permissions.RoleAttribute
 }
 var file_services_auth_auth_proto_depIdxs = []int32{
 	22, // 0: services.auth.LoginResponse.expires:type_name -> resources.timestamp.Timestamp
@@ -1236,36 +1261,40 @@ var file_services_auth_auth_proto_depIdxs = []int32{
 	22, // 7: services.auth.ChooseCharacterResponse.expires:type_name -> resources.timestamp.Timestamp
 	27, // 8: services.auth.ChooseCharacterResponse.job_props:type_name -> resources.jobs.JobProps
 	28, // 9: services.auth.ChooseCharacterResponse.char:type_name -> resources.users.User
-	22, // 10: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
-	27, // 11: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.JobProps
-	28, // 12: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
-	2,  // 13: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
-	16, // 14: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
-	0,  // 15: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
-	6,  // 16: services.auth.AuthService.ChangeUsername:input_type -> services.auth.ChangeUsernameRequest
-	4,  // 17: services.auth.AuthService.ChangePassword:input_type -> services.auth.ChangePasswordRequest
-	8,  // 18: services.auth.AuthService.ForgotPassword:input_type -> services.auth.ForgotPasswordRequest
-	12, // 19: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
-	14, // 20: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
-	10, // 21: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
-	18, // 22: services.auth.AuthService.DeleteOAuth2Connection:input_type -> services.auth.DeleteOAuth2ConnectionRequest
-	20, // 23: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
-	3,  // 24: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
-	17, // 25: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
-	1,  // 26: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
-	7,  // 27: services.auth.AuthService.ChangeUsername:output_type -> services.auth.ChangeUsernameResponse
-	5,  // 28: services.auth.AuthService.ChangePassword:output_type -> services.auth.ChangePasswordResponse
-	9,  // 29: services.auth.AuthService.ForgotPassword:output_type -> services.auth.ForgotPasswordResponse
-	13, // 30: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
-	15, // 31: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
-	11, // 32: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
-	19, // 33: services.auth.AuthService.DeleteOAuth2Connection:output_type -> services.auth.DeleteOAuth2ConnectionResponse
-	21, // 34: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
-	24, // [24:35] is the sub-list for method output_type
-	13, // [13:24] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	29, // 10: services.auth.ChooseCharacterResponse.permissions:type_name -> resources.permissions.Permission
+	30, // 11: services.auth.ChooseCharacterResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	22, // 12: services.auth.SetSuperuserModeResponse.expires:type_name -> resources.timestamp.Timestamp
+	27, // 13: services.auth.SetSuperuserModeResponse.job_props:type_name -> resources.jobs.JobProps
+	28, // 14: services.auth.SetSuperuserModeResponse.char:type_name -> resources.users.User
+	29, // 15: services.auth.SetSuperuserModeResponse.permissions:type_name -> resources.permissions.Permission
+	30, // 16: services.auth.SetSuperuserModeResponse.attributes:type_name -> resources.permissions.RoleAttribute
+	2,  // 17: services.auth.AuthService.Login:input_type -> services.auth.LoginRequest
+	16, // 18: services.auth.AuthService.Logout:input_type -> services.auth.LogoutRequest
+	0,  // 19: services.auth.AuthService.CreateAccount:input_type -> services.auth.CreateAccountRequest
+	6,  // 20: services.auth.AuthService.ChangeUsername:input_type -> services.auth.ChangeUsernameRequest
+	4,  // 21: services.auth.AuthService.ChangePassword:input_type -> services.auth.ChangePasswordRequest
+	8,  // 22: services.auth.AuthService.ForgotPassword:input_type -> services.auth.ForgotPasswordRequest
+	12, // 23: services.auth.AuthService.GetCharacters:input_type -> services.auth.GetCharactersRequest
+	14, // 24: services.auth.AuthService.ChooseCharacter:input_type -> services.auth.ChooseCharacterRequest
+	10, // 25: services.auth.AuthService.GetAccountInfo:input_type -> services.auth.GetAccountInfoRequest
+	18, // 26: services.auth.AuthService.DeleteOAuth2Connection:input_type -> services.auth.DeleteOAuth2ConnectionRequest
+	20, // 27: services.auth.AuthService.SetSuperuserMode:input_type -> services.auth.SetSuperuserModeRequest
+	3,  // 28: services.auth.AuthService.Login:output_type -> services.auth.LoginResponse
+	17, // 29: services.auth.AuthService.Logout:output_type -> services.auth.LogoutResponse
+	1,  // 30: services.auth.AuthService.CreateAccount:output_type -> services.auth.CreateAccountResponse
+	7,  // 31: services.auth.AuthService.ChangeUsername:output_type -> services.auth.ChangeUsernameResponse
+	5,  // 32: services.auth.AuthService.ChangePassword:output_type -> services.auth.ChangePasswordResponse
+	9,  // 33: services.auth.AuthService.ForgotPassword:output_type -> services.auth.ForgotPasswordResponse
+	13, // 34: services.auth.AuthService.GetCharacters:output_type -> services.auth.GetCharactersResponse
+	15, // 35: services.auth.AuthService.ChooseCharacter:output_type -> services.auth.ChooseCharacterResponse
+	11, // 36: services.auth.AuthService.GetAccountInfo:output_type -> services.auth.GetAccountInfoResponse
+	19, // 37: services.auth.AuthService.DeleteOAuth2Connection:output_type -> services.auth.DeleteOAuth2ConnectionResponse
+	21, // 38: services.auth.AuthService.SetSuperuserMode:output_type -> services.auth.SetSuperuserModeResponse
+	28, // [28:39] is the sub-list for method output_type
+	17, // [17:28] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_services_auth_auth_proto_init() }

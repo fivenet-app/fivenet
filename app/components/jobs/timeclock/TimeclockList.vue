@@ -42,7 +42,7 @@ const { attr, can } = useAuth();
 
 const completorStore = useCompletorStore();
 
-const canAccessAll = attr('jobs.TimeclockService.ListTimeclock', 'Access', 'All');
+const canAccessAll = attr('jobs.TimeclockService/ListTimeclock', 'Access', 'All');
 
 const dateLowerLimit = new Date(2022, 1, 1);
 
@@ -381,7 +381,7 @@ const { game } = useAppConfig();
 
                     <div class="flex items-center">
                         <UButton
-                            v-if="can('jobs.TimeclockService.ListInactiveEmployees').value && userId === undefined"
+                            v-if="can('jobs.TimeclockService/ListInactiveEmployees').value && userId === undefined"
                             :to="{ name: 'jobs-timeclock-inactive' }"
                             color="black"
                             trailing-icon="i-mdi-arrow-right"

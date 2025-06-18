@@ -25,7 +25,7 @@ const notifications = useNotificationsStore();
 
 const { isOpen } = useModal();
 
-const canEdit = can('documents.DocumentsService.CreateOrUpdateCategory');
+const canEdit = can('documents.DocumentsService/CreateOrUpdateCategory');
 
 const schema = z.object({
     name: z.string().min(3).max(128),
@@ -204,7 +204,7 @@ watch(props, () => setFromProps());
                         </UButton>
 
                         <UButton
-                            v-if="category !== undefined && canEdit && can('documents.DocumentsService.DeleteCategory').value"
+                            v-if="category !== undefined && canEdit && can('documents.DocumentsService/DeleteCategory').value"
                             class="flex-1"
                             block
                             :color="!category.deletedAt ? 'error' : 'success'"

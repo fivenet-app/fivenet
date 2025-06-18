@@ -314,7 +314,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <ThreadAttachmentsForm
-                            v-if="can('documents.DocumentsService.ListDocuments').value"
+                            v-if="can('documents.DocumentsService/ListDocuments').value"
                             v-model="state.attachments"
                             :can-submit="canSubmit"
                         />

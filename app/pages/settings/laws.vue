@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.settings.laws.title',
     requiresAuth: true,
-    permission: 'settings.LawsService.CreateOrUpdateLawBook',
+    permission: 'settings.LawsService/CreateOrUpdateLawBook',
 });
 </script>
 

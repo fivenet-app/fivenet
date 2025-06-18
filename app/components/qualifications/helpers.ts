@@ -41,9 +41,9 @@ function checkBaseQualificationAccess(
 }
 
 function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShort, perm: Perms): boolean {
-    const { attrList } = useAuth();
+    const { attrStringList } = useAuth();
 
-    const fields = attrList(perm, 'Access').value;
+    const fields = attrStringList(perm, 'Access').value;
     if (fields.length === 0) {
         return creator?.userId === activeChar.userId;
     }

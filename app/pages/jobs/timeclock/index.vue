@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.timeclock.title',
     requiresAuth: true,
-    permission: 'jobs.TimeclockService.ListTimeclock',
+    permission: 'jobs.TimeclockService/ListTimeclock',
 });
 </script>
 

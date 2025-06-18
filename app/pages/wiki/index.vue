@@ -13,7 +13,7 @@ useHead({
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,
-    permission: 'wiki.WikiService.ListPages',
+    permission: 'wiki.WikiService/ListPages',
 });
 
 const { $grpc } = useNuxtApp();
@@ -74,7 +74,7 @@ const wikiService = useWikiWiki();
                 </template>
 
                 <template #right>
-                    <UTooltip v-if="can('wiki.WikiService.UpdatePage').value" :text="$t('common.create')">
+                    <UTooltip v-if="can('wiki.WikiService/UpdatePage').value" :text="$t('common.create')">
                         <UButton color="gray" trailing-icon="i-mdi-plus" @click="wikiService.createPage()">
                             {{ $t('common.page') }}
                         </UButton>

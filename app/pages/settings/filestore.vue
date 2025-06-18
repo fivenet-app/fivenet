@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.settings.filestore.title',
     requiresAuth: true,
-    permission: 'Superuser',
+    permission: 'Superuser/Superuser',
 });
 </script>
 

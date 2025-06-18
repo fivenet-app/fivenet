@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.templates.edit.title',
     requiresAuth: true,
-    permission: 'documents.DocumentsService.CreateTemplate',
+    permission: 'documents.DocumentsService/CreateTemplate',
     validate: async (route) => {
         route = route as TypedRouteFromName<'documents-templates-edit-id'>;
         // Check if the id is made up of digits

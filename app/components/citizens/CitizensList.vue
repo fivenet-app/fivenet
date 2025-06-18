@@ -133,7 +133,7 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    attr('citizens.CitizensService.ListCitizens', 'Fields', 'PhoneNumber').value
+    attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value
         ? { key: 'phoneNumber', label: t('common.phone_number') }
         : undefined,
     {
@@ -142,14 +142,14 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
+    attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
         ? {
               key: 'trafficInfractionPoints',
               label: t('common.traffic_infraction_points', 2),
               sortable: true,
           }
         : undefined,
-    attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.OpenFines').value
+    attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value
         ? {
               key: 'openFines',
               label: t('common.fine', 2),
@@ -162,7 +162,7 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    can('citizens.CitizensService.GetUser').value
+    can('citizens.CitizensService/GetUser').value
         ? {
               key: 'actions',
               label: t('common.action', 2),
@@ -212,7 +212,7 @@ defineShortcuts({
                 </UFormGroup>
 
                 <UFormGroup
-                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.Wanted').value"
+                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Wanted').value"
                     class="flex flex-initial flex-col"
                     name="wanted"
                     :label="$t('components.citizens.CitizensList.only_wanted')"
@@ -238,7 +238,7 @@ defineShortcuts({
                 <template #search>
                     <div class="flex flex-row gap-2">
                         <UFormGroup
-                            v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'PhoneNumber').value"
+                            v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
                             class="flex-1"
                             name="phoneNumber"
                             :label="$t('common.phone_number')"
@@ -253,7 +253,7 @@ defineShortcuts({
                         </UFormGroup>
 
                         <UFormGroup
-                            v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'TrafficInfractionPoints').value"
+                            v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'TrafficInfractionPoints').value"
                             class="flex-1"
                             name="trafficInfractionPoints"
                             :label="$t('common.traffic_infraction_points', 2)"
@@ -269,7 +269,7 @@ defineShortcuts({
                         </UFormGroup>
 
                         <UFormGroup
-                            v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.OpenFines').value"
+                            v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
                             class="flex-1"
                             name="openFines"
                             :label="$t('components.citizens.CitizensList.open_fine')"
@@ -360,7 +360,7 @@ defineShortcuts({
 
         <template #height-data="{ row: citizen }"> {{ citizen.height.value ? citizen.height.value + 'cm' : '' }} </template>
 
-        <template v-if="can('citizens.CitizensService.GetUser').value" #actions-data="{ row: citizen }">
+        <template v-if="can('citizens.CitizensService/GetUser').value" #actions-data="{ row: citizen }">
             <div :key="citizen.userId" class="flex flex-col justify-end md:flex-row">
                 <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
                     <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />

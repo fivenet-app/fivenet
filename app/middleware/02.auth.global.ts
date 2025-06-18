@@ -47,7 +47,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                     });
                 } catch (_) {
                     setActiveChar(null);
-                    setPermissions([]);
+                    setPermissions([], []);
                     setJobProps(undefined);
 
                     return navigateTo({

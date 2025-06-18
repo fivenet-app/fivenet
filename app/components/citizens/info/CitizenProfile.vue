@@ -52,7 +52,7 @@ const { attr } = useAuth();
                 </div>
 
                 <div
-                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'PhoneNumber').value"
+                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'PhoneNumber').value"
                     class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
@@ -76,7 +76,7 @@ const { attr } = useAuth();
                 </div>
 
                 <div
-                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.BloodType').value"
+                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.BloodType').value"
                     class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
@@ -88,7 +88,7 @@ const { attr } = useAuth();
                 </div>
 
                 <div
-                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value"
+                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value"
                     class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
@@ -103,7 +103,7 @@ const { attr } = useAuth();
                 </div>
 
                 <div
-                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.OpenFines').value"
+                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.OpenFines').value"
                     class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
@@ -120,7 +120,7 @@ const { attr } = useAuth();
                 </div>
 
                 <div
-                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.Labels').value"
+                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Labels').value"
                     class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
@@ -148,7 +148,7 @@ const { attr } = useAuth();
                 </div>
 
                 <div
-                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'UserProps.Email').value"
+                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'UserProps.Email').value"
                     class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
@@ -160,7 +160,7 @@ const { attr } = useAuth();
                 </div>
 
                 <div
-                    v-if="attr('citizens.CitizensService.ListCitizens', 'Fields', 'Licenses').value"
+                    v-if="attr('citizens.CitizensService/ListCitizens', 'Fields', 'Licenses').value"
                     class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">

@@ -88,7 +88,7 @@ watchDebounced(query, async () => refresh(), {
 
 <template>
     <UAlert
-        v-if="userId === activeChar?.userId && !attr('citizens.CitizensService.ListUserActivity', 'Fields', 'Own').value"
+        v-if="userId === activeChar?.userId && !attr('citizens.CitizensService/ListUserActivity', 'Fields', 'Own').value"
         variant="subtle"
         color="error"
         icon="i-mdi-denied"

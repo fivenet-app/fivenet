@@ -333,16 +333,16 @@ const canDo = computed(() => ({
         state.access,
         document.value?.document?.creator,
         AccessLevel.EDIT,
-        'documents.DocumentsService.UpdateDocument',
+        'documents.DocumentsService/UpdateDocument',
     ),
     access: checkDocAccess(
         state.access,
         document.value?.document?.creator,
         AccessLevel.ACCESS,
-        'documents.DocumentsService.UpdateDocument',
+        'documents.DocumentsService/UpdateDocument',
     ),
-    references: can('documents.DocumentsService.AddDocumentReference').value,
-    relations: can('documents.DocumentsService.AddDocumentRelation').value,
+    references: can('documents.DocumentsService/AddDocumentReference').value,
+    relations: can('documents.DocumentsService/AddDocumentRelation').value,
 }));
 
 useYText(ydoc.getText('title'), toRef(state, 'title'), { provider: provider });

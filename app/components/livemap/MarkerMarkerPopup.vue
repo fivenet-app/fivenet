@@ -57,7 +57,7 @@ async function deleteMarker(id: number): Promise<void> {
                         </UButton>
                     </UTooltip>
 
-                    <UTooltip v-if="can('livemap.LivemapService.CreateOrUpdateMarker').value" :text="$t('common.edit')">
+                    <UTooltip v-if="can('livemap.LivemapService/CreateOrUpdateMarker').value" :text="$t('common.edit')">
                         <UButton
                             variant="link"
                             icon="i-mdi-pencil"
@@ -74,7 +74,7 @@ async function deleteMarker(id: number): Promise<void> {
                         </UButton>
                     </UTooltip>
 
-                    <UTooltip v-if="can('livemap.LivemapService.DeleteMarker').value" :text="$t('common.delete')">
+                    <UTooltip v-if="can('livemap.LivemapService/DeleteMarker').value" :text="$t('common.delete')">
                         <UButton
                             variant="link"
                             icon="i-mdi-delete"

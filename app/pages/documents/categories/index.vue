@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.categories.title',
     requiresAuth: true,
-    permission: 'documents.DocumentsService.ListCategories',
+    permission: 'documents.DocumentsService/ListCategories',
 });
 </script>
 

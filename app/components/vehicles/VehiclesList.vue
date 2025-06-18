@@ -254,7 +254,7 @@ defineShortcuts({
                 </UTooltip>
 
                 <UTooltip
-                    v-if="!hideCitizenLink && vehicle.owner?.userId && can('citizens.CitizensService.ListCitizens').value"
+                    v-if="!hideCitizenLink && vehicle.owner?.userId && can('citizens.CitizensService/ListCitizens').value"
                     :text="$t('common.show')"
                 >
                     <UButton

@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'components.settings.job_props.job_properties',
     requiresAuth: true,
-    permission: 'settings.SettingsService.GetJobProps',
+    permission: 'settings.SettingsService/GetJobProps',
 });
 </script>
 

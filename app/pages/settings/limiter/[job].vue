@@ -5,7 +5,7 @@ import AttrView from '~/components/settings/attrs/AttrView.vue';
 
 definePageMeta({
     requiresAuth: true,
-    permission: 'Superuser',
+    permission: 'Superuser/Superuser',
     validate: async (route) => {
         route = route as TypedRouteFromName<'settings-limiter-job'>;
         // Check if the id is made up of digits

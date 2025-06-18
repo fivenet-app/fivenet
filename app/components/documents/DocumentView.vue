@@ -127,7 +127,7 @@ const accordionItems = computed(() =>
         { slot: 'references', label: t('common.reference', 2), icon: 'i-mdi-file-document' },
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
         { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
-        can('documents.DocumentsService.ListDocumentActivity').value
+        can('documents.DocumentsService/ListDocumentActivity').value
             ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -138,12 +138,12 @@ defineShortcuts({
         if (
             !doc.value ||
             !(
-                can('documents.DocumentsService.ToggleDocument').value &&
+                can('documents.DocumentsService/ToggleDocument').value &&
                 checkDocAccess(
                     doc.value.access,
                     doc.value.document?.creator,
                     AccessLevel.STATUS,
-                    'documents.DocumentsService.ToggleDocument',
+                    'documents.DocumentsService/ToggleDocument',
                 )
             )
         ) {
@@ -156,12 +156,12 @@ defineShortcuts({
         if (
             !doc.value ||
             !(
-                can('documents.DocumentsService.UpdateDocument').value &&
+                can('documents.DocumentsService/UpdateDocument').value &&
                 checkDocAccess(
                     doc.value.access,
                     doc.value.document?.creator,
                     AccessLevel.EDIT,
-                    'documents.DocumentsService.ToggleDocument',
+                    'documents.DocumentsService/ToggleDocument',
                 )
             )
         ) {
@@ -174,7 +174,7 @@ defineShortcuts({
         });
     },
     'd-r': () => {
-        if (!doc.value || !can('documents.DocumentsService.ListDocumentReqs').value) {
+        if (!doc.value || !can('documents.DocumentsService/ListDocumentReqs').value) {
             return;
         }
 
@@ -227,12 +227,12 @@ const scrollRef = useTemplateRef('scrollRef');
                     <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                         <UTooltip
                             v-if="
-                                can('documents.DocumentsService.ToggleDocument').value &&
+                                can('documents.DocumentsService/ToggleDocument').value &&
                                 checkDocAccess(
                                     doc.access,
                                     doc.document?.creator,
                                     AccessLevel.STATUS,
-                                    'documents.DocumentsService.ToggleDocument',
+                                    'documents.DocumentsService/ToggleDocument',
                                 )
                             "
                             class="flex-1"
@@ -257,12 +257,12 @@ const scrollRef = useTemplateRef('scrollRef');
 
                         <UTooltip
                             v-if="
-                                can('documents.DocumentsService.UpdateDocument').value &&
+                                can('documents.DocumentsService/UpdateDocument').value &&
                                 checkDocAccess(
                                     doc.access,
                                     doc.document?.creator,
                                     AccessLevel.ACCESS,
-                                    'documents.DocumentsService.UpdateDocument',
+                                    'documents.DocumentsService/UpdateDocument',
                                 )
                             "
                             class="flex-1"
@@ -283,7 +283,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         </UTooltip>
 
                         <UTooltip
-                            v-if="can('documents.DocumentsService.ToggleDocumentPin').value"
+                            v-if="can('documents.DocumentsService/ToggleDocumentPin').value"
                             class="flex flex-1"
                             :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
                         >
@@ -306,7 +306,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 </UButton>
 
                                 <UButton
-                                    v-if="attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value"
+                                    v-if="attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value"
                                     class="flex-1 flex-col"
                                     block
                                     :color="doc.document?.pin?.state && doc.document?.pin?.job ? 'error' : 'primary'"
@@ -324,7 +324,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         </UTooltip>
 
                         <UTooltip
-                            v-if="can('documents.DocumentsService.ListDocumentReqs').value"
+                            v-if="can('documents.DocumentsService/ListDocumentReqs').value"
                             class="flex-1"
                             :text="$t('common.request', 2)"
                             :shortcuts="['D', 'R']"
@@ -340,7 +340,7 @@ const scrollRef = useTemplateRef('scrollRef');
                         </UTooltip>
 
                         <UTooltip
-                            v-if="can('documents.DocumentsService.SetDocumentReminder').value"
+                            v-if="can('documents.DocumentsService/SetDocumentReminder').value"
                             class="flex-1"
                             :text="$t('common.reminder')"
                         >
@@ -363,12 +363,12 @@ const scrollRef = useTemplateRef('scrollRef');
                         <UTooltip
                             v-if="
                                 (doc?.document?.creatorJob === activeChar?.job || isSuperuser) &&
-                                can('documents.DocumentsService.ChangeDocumentOwner').value &&
+                                can('documents.DocumentsService/ChangeDocumentOwner').value &&
                                 checkDocAccess(
                                     doc.access,
                                     doc?.document?.creator,
                                     AccessLevel.EDIT,
-                                    'documents.DocumentsService.ChangeDocumentOwner',
+                                    'documents.DocumentsService/ChangeDocumentOwner',
                                 )
                             "
                             class="flex-1"
@@ -391,12 +391,12 @@ const scrollRef = useTemplateRef('scrollRef');
 
                         <UTooltip
                             v-if="
-                                can('documents.DocumentsService.DeleteDocument').value &&
+                                can('documents.DocumentsService/DeleteDocument').value &&
                                 checkDocAccess(
                                     doc.access,
                                     doc.document?.creator,
                                     AccessLevel.EDIT,
-                                    'documents.DocumentsService.DeleteDocument',
+                                    'documents.DocumentsService/DeleteDocument',
                                 )
                             "
                             class="flex-1"
@@ -602,7 +602,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             </UContainer>
                         </template>
 
-                        <template v-if="can('documents.DocumentsService.ListDocumentActivity').value" #activity>
+                        <template v-if="can('documents.DocumentsService/ListDocumentActivity').value" #activity>
                             <UContainer>
                                 <DocumentActivityList :document-id="documentId" />
                             </UContainer>

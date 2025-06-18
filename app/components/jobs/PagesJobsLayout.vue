@@ -16,25 +16,25 @@ const links = [
         label: t('pages.jobs.colleagues.title'),
         to: { name: 'jobs-colleagues' },
         icon: 'i-mdi-account-group',
-        permission: 'jobs.JobsService.ListColleagues' as Perms,
+        permission: 'jobs.JobsService/ListColleagues' as Perms,
     },
     {
         label: t('common.activity'),
         to: { name: 'jobs-activity' },
         icon: 'i-mdi-pulse',
-        permission: 'jobs.JobsService.ListColleagueActivity' as Perms,
+        permission: 'jobs.JobsService/ListColleagueActivity' as Perms,
     },
     {
         label: t('pages.jobs.timeclock.title'),
         to: { name: 'jobs-timeclock' },
         icon: 'i-mdi-timeline-clock',
-        permission: 'jobs.TimeclockService.ListTimeclock' as Perms,
+        permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
     },
     {
         label: t('pages.jobs.conduct.title'),
         to: { name: 'jobs-conduct' },
         icon: 'i-mdi-list-status',
-        permission: 'jobs.ConductService.ListConductEntries' as Perms,
+        permission: 'jobs.ConductService/ListConductEntries' as Perms,
     },
 ].filter((t) => t.permission === undefined || can(t.permission).value) as {
     label: string;

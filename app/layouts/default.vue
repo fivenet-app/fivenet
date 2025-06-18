@@ -46,7 +46,7 @@ const links = computed(() =>
                 text: t('common.mail'),
                 shortcuts: ['G', 'E'],
             },
-            permission: 'mailer.MailerService.ListEmails' as Perms,
+            permission: 'mailer.MailerService/ListEmails' as Perms,
         },
         {
             label: t('common.citizen', 1),
@@ -56,7 +56,7 @@ const links = computed(() =>
                 text: t('common.citizen', 1),
                 shortcuts: ['G', 'C'],
             },
-            permission: 'citizens.CitizensService.ListCitizens' as Perms,
+            permission: 'citizens.CitizensService/ListCitizens' as Perms,
         },
         {
             label: t('common.vehicle', 2),
@@ -66,7 +66,7 @@ const links = computed(() =>
                 text: t('common.vehicle', 2),
                 shortcuts: ['G', 'V'],
             },
-            permission: 'vehicles.VehiclesService.ListVehicles' as Perms,
+            permission: 'vehicles.VehiclesService/ListVehicles' as Perms,
         },
         {
             label: t('common.document', 2),
@@ -76,7 +76,7 @@ const links = computed(() =>
                 text: t('common.document', 2),
                 shortcuts: ['G', 'D'],
             },
-            permission: 'documents.DocumentsService.ListDocuments' as Perms,
+            permission: 'documents.DocumentsService/ListDocuments' as Perms,
         },
         {
             label: t('common.job'),
@@ -95,25 +95,25 @@ const links = computed(() =>
                 {
                     label: t('common.colleague', 2),
                     to: '/jobs/colleagues',
-                    permission: 'jobs.JobsService.ListColleagues' as Perms,
+                    permission: 'jobs.JobsService/ListColleagues' as Perms,
                 },
                 {
                     label: t('common.activity'),
                     to: '/jobs/activity',
-                    permission: 'jobs.JobsService.ListColleagueActivity' as Perms,
+                    permission: 'jobs.JobsService/ListColleagueActivity' as Perms,
                 },
                 {
                     label: t('common.timeclock'),
                     to: '/jobs/timeclock',
-                    permission: 'jobs.TimeclockService.ListTimeclock' as Perms,
+                    permission: 'jobs.TimeclockService/ListTimeclock' as Perms,
                 },
                 {
                     label: t('common.conduct_register', 2),
                     to: '/jobs/conduct',
-                    permission: 'jobs.ConductService.ListConductEntries' as Perms,
+                    permission: 'jobs.ConductService/ListConductEntries' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
-            permission: 'jobs.JobsService.ListColleagues' as Perms,
+            permission: 'jobs.JobsService/ListColleagues' as Perms,
         },
         {
             label: t('common.calendar'),
@@ -132,7 +132,7 @@ const links = computed(() =>
                 text: t('common.qualification', 2),
                 shortcuts: ['G', 'Q'],
             },
-            permission: 'qualifications.QualificationsService.ListQualifications' as Perms,
+            permission: 'qualifications.QualificationsService/ListQualifications' as Perms,
         },
         {
             label: t('common.livemap'),
@@ -142,7 +142,7 @@ const links = computed(() =>
                 text: t('common.livemap'),
                 shortcuts: ['G', 'M'],
             },
-            permission: 'livemap.LivemapService.Stream' as Perms,
+            permission: 'livemap.LivemapService/Stream' as Perms,
         },
         {
             label: t('common.dispatch_center'),
@@ -152,7 +152,7 @@ const links = computed(() =>
                 text: t('common.dispatch_center'),
                 shortcuts: ['G', 'W'],
             },
-            permission: 'centrum.CentrumService.TakeControl' as Perms,
+            permission: 'centrum.CentrumService/TakeControl' as Perms,
         },
         {
             label: t('common.wiki'),
@@ -162,7 +162,7 @@ const links = computed(() =>
                 text: t('common.wiki'),
                 shortcuts: ['G', 'L'],
             },
-            permission: 'wiki.WikiService.ListPages' as Perms,
+            permission: 'wiki.WikiService/ListPages' as Perms,
         },
         {
             label: t('common.internet'),
@@ -172,7 +172,7 @@ const links = computed(() =>
                 text: t('common.internet'),
                 shortcuts: ['G', 'I'],
             },
-            permission: 'TODOService.TODOMethod' as Perms,
+            permission: 'TODOService/TODOMethod' as Perms,
         },
         {
             label: t('common.control_panel'),
@@ -182,7 +182,7 @@ const links = computed(() =>
                 text: t('common.control_panel'),
                 shortcuts: ['G', 'P'],
             },
-            permission: 'settings.SettingsService.GetJobProps' as Perms,
+            permission: 'settings.SettingsService/GetJobProps' as Perms,
         },
     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );
@@ -374,9 +374,9 @@ const clipboardLink = computed(() =>
     [
         activeChar.value &&
         can([
-            'documents.DocumentsService.UpdateDocument',
-            'citizens.CitizensService.GetUser',
-            'vehicles.VehiclesService.ListVehicles',
+            'documents.DocumentsService/UpdateDocument',
+            'citizens.CitizensService/GetUser',
+            'vehicles.VehiclesService/ListVehicles',
         ]).value
             ? {
                   label: t('common.clipboard'),

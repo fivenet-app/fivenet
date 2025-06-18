@@ -171,14 +171,14 @@ const links = computed(() =>
                 : undefined,
         ].filter((l) => l != undefined),
         [
-            ...(can('documents.DocumentsService.ToggleDocumentPin').value
+            ...(can('documents.DocumentsService/ToggleDocumentPin').value
                 ? [
                       {
                           label: `${t('common.pin')}: ${t('common.personal')}`,
                           icon: 'i-mdi-playlist-plus',
                           to: '/components/vertical-navigation',
                       },
-                      attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value
+                      attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value
                           ? {
                                 label: `${t('common.pin')}: ${t('common.job')}`,
                                 icon: 'i-mdi-pin',

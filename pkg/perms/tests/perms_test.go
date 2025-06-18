@@ -56,21 +56,21 @@ func TestBasicPerms(t *testing.T) {
 	}
 	// 1. Superuser can do everything
 	can := ps.Can(userInfo, "citizens.CitizensService", "ListCitizens")
-	assert.True(t, can, "Superuser has all permissions (citizens.CitizensService.ListCitizens)")
+	assert.True(t, can, "Superuser has all permissions (citizens.CitizensService/ListCitizens)")
 	can = ps.Can(userInfo, "documents.DocumentsService", "DeleteComment")
-	assert.True(t, can, "Superuser has all permissions (documents.DocumentsService.DeleteComment)")
+	assert.True(t, can, "Superuser has all permissions (documents.DocumentsService/DeleteComment)")
 
 	// 2. Non-superuser (ambulance, 17) - Some basic tests that role permissions and attributes are working
 	userInfo.Superuser = false
 	can = ps.Can(userInfo, "citizens.CitizensService", "ListCitizens")
-	assert.True(t, can, "User should have permission `citizens.CitizensService.ListCitizens`")
+	assert.True(t, can, "User should have permission `citizens.CitizensService/ListCitizens`")
 	can = ps.Can(userInfo, "jobs.TimeclockService", "ListTimeclock")
-	assert.True(t, can, "User should have permission `jobs.TimeclockService.ListTimeclock`")
+	assert.True(t, can, "User should have permission `jobs.TimeclockService/ListTimeclock`")
 
 	can = ps.Can(userInfo, "settings.LawsService", "CreateOrUpdateLawBook")
-	assert.False(t, can, "User should not have permission `settings.LawsService.CreateOrUpdateLawBook`")
+	assert.False(t, can, "User should not have permission `settings.LawsService/CreateOrUpdateLawBook`")
 	can = ps.Can(userInfo, "settings.LawsService", "DeleteLawBook")
-	assert.False(t, can, "User should not have permission `settings.SettingsService.DeleteLawBook`")
+	assert.False(t, can, "User should not have permission `settings.SettingsService/DeleteLawBook`")
 
 	attributes, err := ps.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
 	assert.NoError(t, err, "FlattenRoleAttributes should not return an error")

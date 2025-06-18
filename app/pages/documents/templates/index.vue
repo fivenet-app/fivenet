@@ -10,7 +10,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.templates.title',
     requiresAuth: true,
-    permission: 'documents.DocumentsService.ListTemplates',
+    permission: 'documents.DocumentsService/ListTemplates',
 });
 
 const { can } = useAuth();
@@ -33,7 +33,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
                 <template #right>
                     <PartialsBackButton to="/documents" />
 
-                    <UTooltip v-if="can('documents.DocumentsService.CreateTemplate').value" :text="$t('common.create')">
+                    <UTooltip v-if="can('documents.DocumentsService/CreateTemplate').value" :text="$t('common.create')">
                         <UButton :to="{ name: 'documents-templates-create' }" color="gray" trailing-icon="i-mdi-plus">
                             <span class="hidden truncate sm:block">
                                 {{ $t('common.template') }}

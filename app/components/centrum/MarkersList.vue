@@ -100,7 +100,7 @@ const columns = [
 
                         <UTooltip :text="$t('common.delete')">
                             <UButton
-                                v-if="can('livemap.LivemapService.DeleteMarker').value"
+                                v-if="can('livemap.LivemapService/DeleteMarker').value"
                                 variant="link"
                                 icon="i-mdi-delete"
                                 color="error"

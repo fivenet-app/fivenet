@@ -262,7 +262,7 @@ async function searchChannels() {
     }
 }
 
-const canEdit = can('settings.SettingsService.SetJobProps');
+const canEdit = can('settings.SettingsService/SetJobProps');
 
 const items = [
     {

@@ -2,8 +2,8 @@
 import type { RoutePathSchema } from '@typed-router';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import { useSettingsStore } from '~/stores/settings';
+import { reminderTimes } from '~/types/calendar';
 import type { Perms } from '~~/gen/ts/perms';
-import { reminderTimes } from './helpers';
 
 const { t } = useI18n();
 
@@ -14,20 +14,20 @@ const { startpage, design, streamerMode, audio, calendar } = storeToRefs(setting
 
 const startpages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
     { name: t('common.overview'), path: '/overview' },
-    { name: t('common.mail'), path: '/mail', permission: 'mailer.MailerService.ListEmails' },
-    { name: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService.ListCitizens' },
-    { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService.ListVehicles' },
-    { name: t('pages.documents.title'), path: '/documents', permission: 'documents.DocumentsService.ListDocuments' },
-    { name: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.JobsService.ListColleagues' },
+    { name: t('common.mail'), path: '/mail', permission: 'mailer.MailerService/ListEmails' },
+    { name: t('pages.citizens.title'), path: '/citizens', permission: 'citizens.CitizensService/ListCitizens' },
+    { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'vehicles.VehiclesService/ListVehicles' },
+    { name: t('pages.documents.title'), path: '/documents', permission: 'documents.DocumentsService/ListDocuments' },
+    { name: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'jobs.JobsService/ListColleagues' },
     { name: t('common.calendar'), path: '/calendar' },
     {
         name: t('common.qualification', 2),
         path: '/qualifications',
-        permission: 'qualifications.QualificationsService.ListQualifications',
+        permission: 'qualifications.QualificationsService/ListQualifications',
     },
-    { name: t('common.livemap'), path: '/livemap', permission: 'livemap.LivemapService.Stream' },
-    { name: t('common.dispatch_center'), path: '/centrum', permission: 'centrum.CentrumService.TakeControl' },
-    { name: t('common.wiki'), path: '/wiki', permission: 'wiki.WikiService.ListPages' },
+    { name: t('common.livemap'), path: '/livemap', permission: 'livemap.LivemapService/Stream' },
+    { name: t('common.dispatch_center'), path: '/centrum', permission: 'centrum.CentrumService/TakeControl' },
+    { name: t('common.wiki'), path: '/wiki', permission: 'wiki.WikiService/ListPages' },
 ];
 
 const selectedHomepage = ref<(typeof startpages)[0]>();

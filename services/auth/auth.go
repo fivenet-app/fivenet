@@ -10,9 +10,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth"
+	permsauth "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -591,12 +593,14 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	ps, err := s.listUserPerms(account, char, isSuperuser)
+	ps, attrs, err := s.listUserPerms(ctx, account, char, isSuperuser)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(ps) == 0 || (!isSuperuser && !slices.Contains(ps, "auth-authservice-choosecharacter")) {
+	if len(ps) == 0 || (!isSuperuser && !slices.ContainsFunc(ps, func(p *permissions.Permission) bool {
+		return p.Category == string(permsauth.AuthServicePerm) && p.Name == string(permsauth.AuthServiceChooseCharacterPerm)
+	})) {
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
@@ -614,14 +618,15 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 
 	return &pbauth.ChooseCharacterResponse{
 		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
-		Permissions: ps,
+		Username:    *account.Username,
 		JobProps:    jProps,
 		Char:        char,
-		Username:    *account.Username,
+		Permissions: ps,
+		Attributes:  attrs,
 	}, nil
 }
 
-func (s *Server) listUserPerms(account *model.FivenetAccounts, char *users.User, isSuperuser bool) ([]string, error) {
+func (s *Server) listUserPerms(ctx context.Context, account *model.FivenetAccounts, char *users.User, isSuperuser bool) ([]*permissions.Permission, []*permissions.RoleAttribute, error) {
 	// Load permissions of user
 	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
 		UserId:   char.UserId,
@@ -629,25 +634,23 @@ func (s *Server) listUserPerms(account *model.FivenetAccounts, char *users.User,
 		JobGrade: char.JobGrade,
 	})
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
+		return nil, nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
 	}
 
-	ps := userPs.GuardNames()
 	if isSuperuser {
-		ps = append(ps, auth.PermCanBeSuperKey)
+		userPs = append(userPs, auth.PermCanBeSuperuser)
 
 		if account.Superuser != nil && *account.Superuser {
-			ps = append(ps, auth.PermSuperuserKey)
+			userPs = append(userPs, auth.PermSuperuser)
 		}
 	}
 
-	attrs, err := s.ps.FlattenRoleAttributes(char.Job, char.JobGrade)
+	attrs, err := s.ps.GetEffectiveRoleAttributes(ctx, char.Job, char.JobGrade)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+		return nil, nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
-	ps = append(ps, attrs...)
 
-	return ps, nil
+	return userPs, attrs, nil
 }
 
 func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserModeRequest) (*pbauth.SetSuperuserModeResponse, error) {
@@ -668,7 +671,7 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 		trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.superuser.job", *req.Job))
 	}
 
-	if !userInfo.CanBeSuper {
+	if !userInfo.CanBeSuperuser {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
@@ -683,7 +686,8 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 	}
 
 	var jobProps *jobs.JobProps
-	var ps []string
+	var ps []*permissions.Permission
+	var attrs []*permissions.RoleAttribute
 
 	// Reset override job when switching off superuser mode using centralized helper
 	if !req.Superuser {
@@ -707,7 +711,7 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 		userInfo.OverrideJobGrade = nil
 
 		not := false
-		ps, err = s.listUserPerms(&model.FivenetAccounts{
+		ps, attrs, err = s.listUserPerms(ctx, &model.FivenetAccounts{
 			Superuser: &not,
 		}, char, true)
 		if err != nil {
@@ -730,7 +734,7 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 		char.JobGrade = jobGrade
 		s.enricher.EnrichJobInfo(char)
 
-		ps = []string{auth.PermCanBeSuperKey, auth.PermSuperuserKey}
+		ps = []*permissions.Permission{auth.PermCanBeSuperuser, auth.PermSuperuser}
 	}
 
 	if err := s.ui.SetUserInfo(ctx, claims.AccID, req.Superuser, userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
@@ -759,6 +763,7 @@ func (s *Server) SetSuperuserMode(ctx context.Context, req *pbauth.SetSuperuserM
 		JobProps:    jobProps,
 		Char:        char,
 		Permissions: ps,
+		Attributes:  attrs,
 	}, nil
 }
 

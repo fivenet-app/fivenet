@@ -25,7 +25,7 @@ const props = withDefaults(
 
 const { $grpc } = useNuxtApp();
 
-const { attrList, isSuperuser } = useAuth();
+const { attrStringList, isSuperuser } = useAuth();
 
 const completorStore = useCompletorStore();
 
@@ -36,7 +36,7 @@ const typesAttrs = (
         ? listEnumValues(ColleagueActivityType)
               .filter((t) => t.number !== 0)
               .map((t) => t.name)
-        : attrList('jobs.JobsService.ListColleagueActivity', 'Types').value
+        : attrStringList('jobs.JobsService/ListColleagueActivity', 'Types').value
 ).map((t) => t.toUpperCase());
 const activityTypes = Object.keys(ColleagueActivityType)
     .filter((aType) => typesAttrs.includes(aType))
@@ -101,7 +101,7 @@ async function listColleagueActivity(
 
 watch(offset, async () => refresh());
 
-const accessAttrs = attrList('jobs.JobsService.GetColleague', 'Access');
+const accessAttrs = attrStringList('jobs.JobsService/GetColleague', 'Access');
 const colleagueSearchAttrs = ['own', 'lower_rank', 'same_rank', 'any'];
 
 watch(props, async () => refresh());

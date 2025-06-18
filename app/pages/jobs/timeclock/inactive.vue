@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'common.inactive_colleagues',
     requiresAuth: true,
-    permission: 'jobs.TimeclockService.ListInactiveEmployees',
+    permission: 'jobs.TimeclockService/ListInactiveEmployees',
 });
 </script>
 

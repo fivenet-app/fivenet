@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.documents.templates.create_template',
     requiresAuth: true,
-    permission: 'documents.DocumentsService.CreateTemplate',
+    permission: 'documents.DocumentsService/CreateTemplate',
 });
 </script>
 

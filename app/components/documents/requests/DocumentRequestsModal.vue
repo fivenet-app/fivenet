@@ -37,7 +37,7 @@ const requestTypes = [
 ] as RequestType[];
 
 const availableRequestTypes = computed<RequestType[]>(() =>
-    requestTypes.filter((rt) => attr('documents.DocumentsService.CreateDocumentReq', 'Types', rt.attrKey).value),
+    requestTypes.filter((rt) => attr('documents.DocumentsService/CreateDocumentReq', 'Types', rt.attrKey).value),
 );
 
 const schema = z.object({
@@ -117,14 +117,14 @@ const canDo = computed(() => ({
     create:
         props.doc.creatorId !== activeChar.value?.userId &&
         availableRequestTypes.value.length > 0 &&
-        can('documents.DocumentsService.CreateDocumentReq').value &&
+        can('documents.DocumentsService/CreateDocumentReq').value &&
         checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW),
     update:
-        can('documents.DocumentsService.CreateDocumentReq').value &&
-        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'documents.DocumentsService.CreateDocumentReq'),
+        can('documents.DocumentsService/CreateDocumentReq').value &&
+        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'documents.DocumentsService/CreateDocumentReq'),
     delete:
-        can('documents.DocumentsService.DeleteDocumentReq').value &&
-        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'documents.DocumentsService.DeleteDocumentReq'),
+        can('documents.DocumentsService/DeleteDocumentReq').value &&
+        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'documents.DocumentsService/DeleteDocumentReq'),
 }));
 
 const canSubmit = ref(true);

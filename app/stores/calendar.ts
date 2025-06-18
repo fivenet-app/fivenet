@@ -33,6 +33,7 @@ export const useCalendarStore = defineStore(
     () => {
         const { $grpc } = useNuxtApp();
         const notifications = useNotificationsStore();
+        const settings = useSettingsStore();
 
         // State
         const activeCalendarIds = ref<number[]>([]);
@@ -50,7 +51,7 @@ export const useCalendarStore = defineStore(
         // Actions
         const checkAppointments = async (): Promise<void> => {
             try {
-                const reminderTimes = useSettingsStore().calendar.reminderTimes;
+                const reminderTimes = settings.calendar.reminderTimes;
                 const highestReminder = Math.max(...reminderTimes);
 
                 const response = await getUpcomingEntries({

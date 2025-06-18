@@ -1,11 +1,51 @@
 import { useAuthStore } from '~/stores/auth';
 import slug from '~/utils/slugify';
 import type { Perms } from '~~/gen/ts/perms';
+import type { Permission } from '~~/gen/ts/resources/permissions/permissions';
+
+export type canMode = 'oneof' | 'all';
 
 // Wrapper around auth store to make live easier
 const _useAuth = () => {
     const authStore = useAuthStore();
-    const { activeChar, jobProps, username, isSuperuser, permissions } = storeToRefs(authStore);
+    const { activeChar, attributes, isSuperuser, jobProps, username, permissions } = storeToRefs(authStore);
+
+    function checkPerm(permissions: Permission[], perm: string | string[], mode: canMode = 'oneof'): boolean {
+        if (mode === undefined) {
+            mode = 'oneof';
+        }
+
+        if (permissions.find((p) => p.guardName === 'superuser')) {
+            return true;
+        }
+
+        const input: string[] = [];
+        if (typeof perm === 'string') {
+            input.push(perm.replaceAll('/', '.'));
+        } else {
+            const vals = perm as string[];
+            input.push(...vals.map((v) => v.replaceAll('/', '.')));
+        }
+
+        let ok = false;
+        // Iterate over permissions and check in "OR" condition manner
+        for (let idx = 0; idx < input.length; idx++) {
+            const val = slug(input[idx] as string);
+            if (permissions.find((p) => p.guardName === val) || val === '') {
+                // Permission found
+                if (mode === 'oneof') {
+                    return true;
+                }
+
+                ok = true;
+            } else if (mode === 'all') {
+                // Permission not found and mode requires all to be found
+                return false;
+            }
+        }
+
+        return ok;
+    }
 
     /**
      * @param perm one or more perms to check
@@ -22,13 +62,58 @@ const _useAuth = () => {
         });
     };
 
-    const attr = (perm: Perms, name: string, val: string) =>
-        computed(() => checkPerm(permissions.value, perm + '.' + name + (val !== undefined ? '.' + val : '')));
-
-    const attrList = (perm: Perms, field: string) =>
+    const getAttr = (perm: Perms, key: string) =>
         computed(() => {
-            const key = slug(perm + '.' + field + '.');
-            return permissions.value.filter((p) => p.startsWith(key)).map((p) => p.substring(key.length + 1));
+            const split = perm.split('/');
+            return attributes.value.find((a) => a.category === split[0]! && a.name === split[1]! && a.key === key);
+        });
+
+    const attr = (perm: Perms, key: string, val: string) =>
+        computed(() => {
+            const a = getAttr(perm, key).value;
+
+            if (a?.value?.validValues.oneofKind === 'stringList') {
+                return a.value.validValues.stringList.strings.includes(val);
+            } else if (a?.value?.validValues.oneofKind === 'jobList') {
+                return a.value.validValues.jobList.strings.includes(val);
+            }
+
+            return false;
+        });
+
+    const attrStringList = (perm: Perms, key: string) =>
+        computed(() => {
+            const a = getAttr(perm, key).value;
+
+            if (a?.value?.validValues.oneofKind === 'stringList') {
+                return a.value.validValues.stringList.strings;
+            }
+            return [];
+        });
+
+    const attrJobList = (perm: Perms, key: string) =>
+        computed(() => {
+            const a = getAttr(perm, key).value;
+
+            if (a?.value?.validValues.oneofKind === 'jobList') {
+                return a.value.validValues.jobList.strings;
+            }
+            return [];
+        });
+
+    const attrJobGradeList = (perm: Perms, key: string) =>
+        computed(() => {
+            const a = getAttr(perm, key).value;
+
+            if (a?.value?.validValues.oneofKind === 'jobGradeList') {
+                return a.value.validValues.jobGradeList;
+            }
+
+            return {
+                fineGrained: false,
+                jobs: {},
+                grades: {},
+            };
         });
 
     return {
@@ -41,47 +126,11 @@ const _useAuth = () => {
         // Funcs
         can,
         attr,
-        attrList,
+
+        attrStringList,
+        attrJobList,
+        attrJobGradeList,
     };
 };
 
 export const useAuth = createSharedComposable(_useAuth);
-
-export type canMode = 'oneof' | 'all';
-
-function checkPerm(permissions: string[], perm: string | string[], mode: canMode = 'oneof'): boolean {
-    if (mode === undefined) {
-        mode = 'oneof';
-    }
-
-    if (permissions.includes('superuser')) {
-        return true;
-    }
-
-    const input: string[] = [];
-    if (typeof perm === 'string') {
-        input.push(perm);
-    } else {
-        const vals = perm as string[];
-        input.push(...vals);
-    }
-
-    let ok = false;
-    // Iterate over permissions and check in "OR" condition manner
-    for (let idx = 0; idx < input.length; idx++) {
-        const val = slug(input[idx] as string);
-        if (permissions.includes(val) || val === '') {
-            // Permission found
-            if (mode === 'oneof') {
-                return true;
-            }
-
-            ok = true;
-        } else if (mode === 'all') {
-            // Permission not found and mode requires all to be found
-            return false;
-        }
-    }
-
-    return ok;
-}

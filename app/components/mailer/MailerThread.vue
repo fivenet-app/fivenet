@@ -443,7 +443,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
 
                         <UTooltip
-                            v-if="can('documents.DocumentsService.ListDocuments').value"
+                            v-if="can('documents.DocumentsService/ListDocuments').value"
                             :text="$t('common.attachment', 2)"
                         >
                             <UButton

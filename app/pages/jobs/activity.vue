@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.colleagues.title',
     requiresAuth: true,
-    permission: 'jobs.JobsService.ListColleagueActivity',
+    permission: 'jobs.JobsService/ListColleagueActivity',
 });
 </script>
 

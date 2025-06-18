@@ -19,7 +19,7 @@ const { setActiveChar, setPermissions, setJobProps } = authStore;
 
 onBeforeMount(async () => {
     setActiveChar(null);
-    setPermissions([]);
+    setPermissions([], []);
     setJobProps(undefined);
 });
 </script>

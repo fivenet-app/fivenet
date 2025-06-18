@@ -23,7 +23,7 @@ watch(jobsMarkers, () =>
             key: `markers_${job.name}`,
             category: 'markers',
             label: job.label,
-            perm: 'livemap.LivemapService.Stream',
+            perm: 'livemap.LivemapService/Stream',
             attr: {
                 key: 'Markers',
                 val: job.name,

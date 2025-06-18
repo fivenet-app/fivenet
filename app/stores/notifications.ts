@@ -161,7 +161,7 @@ export const useNotificationsStore = defineStore(
                             logger.warn('Unknown systemEvent event data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'mailerEvent') {
-                        if (can('mailer.MailerService.ListEmails').value) {
+                        if (can('mailer.MailerService/ListEmails').value) {
                             useMailerStore().handleEvent(resp.data.mailerEvent);
                         }
                     }

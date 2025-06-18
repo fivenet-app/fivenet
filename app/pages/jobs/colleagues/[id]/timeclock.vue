@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.colleagues.single.timeclock',
     requiresAuth: true,
-    permission: 'jobs.TimeclockService.ListTimeclock',
+    permission: 'jobs.TimeclockService/ListTimeclock',
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-timeclock'>;
         // Check if the id is made up of digits

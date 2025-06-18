@@ -10,7 +10,7 @@ useHead({
 definePageMeta({
     title: 'common.unit',
     requiresAuth: true,
-    permission: 'centrum.CentrumService.CreateOrUpdateUnit',
+    permission: 'centrum.CentrumService/CreateOrUpdateUnit',
 });
 </script>
 

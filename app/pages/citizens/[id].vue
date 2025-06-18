@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.citizens.id.title',
     requiresAuth: true,
-    permission: 'citizens.CitizensService.GetUser',
+    permission: 'citizens.CitizensService/GetUser',
     validate: async (route) => {
         route = route as TypedRouteFromName<'citizens-id'>;
         // Check if the id is made up of digits

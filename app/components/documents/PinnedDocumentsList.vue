@@ -20,7 +20,7 @@ const {
     error,
     refresh,
 } = useLazyAsyncData(`calendars-${page.value}`, () => listDocumentPins(), {
-    immediate: can('documents.DocumentsService.ToggleDocumentPin').value,
+    immediate: can('documents.DocumentsService/ToggleDocumentPin').value,
 });
 
 async function listDocumentPins(): Promise<ListDocumentPinsResponse> {
@@ -71,7 +71,7 @@ const editing = ref(false);
 
             <template #right>
                 <UTooltip
-                    v-if="can('documents.DocumentsService.ToggleDocumentPin').value"
+                    v-if="can('documents.DocumentsService/ToggleDocumentPin').value"
                     :text="editing ? $t('common.save') : $t('common.edit')"
                 >
                     <UButton
@@ -108,7 +108,7 @@ const editing = ref(false);
                         class="flex flex-row gap-1 divide-x divide-gray-100 dark:divide-gray-800"
                     >
                         <UButtonGroup
-                            v-if="editing && can('documents.DocumentsService.ToggleDocumentPin').value"
+                            v-if="editing && can('documents.DocumentsService/ToggleDocumentPin').value"
                             class="inline-flex items-center gap-1"
                             orientation="vertical"
                         >
@@ -130,7 +130,7 @@ const editing = ref(false);
                                     {{ $t('common.personal') }}
                                 </UButton>
                                 <UTooltip
-                                    v-if="attr('documents.DocumentsService.ToggleDocumentPin', 'Types', 'JobWide').value"
+                                    v-if="attr('documents.DocumentsService/ToggleDocumentPin', 'Types', 'JobWide').value"
                                     :text="doc.pin?.state && doc.pin?.job ? $t('common.pin', 1) : $t('common.unpin')"
                                 >
                                     <UButton

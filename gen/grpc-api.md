@@ -8774,10 +8774,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `expires` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `permissions` | [string](#string) | repeated |  |
+| `username` | [string](#string) |  |  |
 | `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
 | `char` | [resources.users.User](#resources-users-User) |  | @gotags: alias:"user" |
-| `username` | [string](#string) |  |  |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
 
 
 
@@ -9007,9 +9008,10 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `expires` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `permissions` | [string](#string) | repeated |  |
 | `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) | optional |  |
 | `char` | [resources.users.User](#resources-users-User) |  | @gotags: alias:"user" |
+| `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |
+| `attributes` | [resources.permissions.RoleAttribute](#resources-permissions-RoleAttribute) | repeated |  |
 
 
 

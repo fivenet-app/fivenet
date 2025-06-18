@@ -85,7 +85,7 @@ const contentAccessTypes: AccessType[] = [
 
             <UButtonGroup v-if="template" class="inline-flex">
                 <UButton
-                    v-if="can('documents.DocumentsService.CreateTemplate').value"
+                    v-if="can('documents.DocumentsService/CreateTemplate').value"
                     class="flex-1"
                     block
                     color="white"
@@ -100,7 +100,7 @@ const contentAccessTypes: AccessType[] = [
                 </UButton>
 
                 <UButton
-                    v-if="can('documents.DocumentsService.CreateTemplate').value"
+                    v-if="can('documents.DocumentsService/CreateTemplate').value"
                     class="flex-1"
                     block
                     trailing-icon="i-mdi-pencil"
@@ -110,7 +110,7 @@ const contentAccessTypes: AccessType[] = [
                 </UButton>
 
                 <UButton
-                    v-if="can('documents.DocumentsService.DeleteTemplate').value"
+                    v-if="can('documents.DocumentsService/DeleteTemplate').value"
                     class="flex-1"
                     block
                     trailing-icon="i-mdi-delete"

@@ -204,7 +204,7 @@ const editing = ref(props.startInEdit);
                         <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
                     </UTooltip>
 
-                    <UTooltip v-if="can('settings.LawsService.DeleteLawBook').value" :text="$t('common.delete')">
+                    <UTooltip v-if="can('settings.LawsService/DeleteLawBook').value" :text="$t('common.delete')">
                         <UButton
                             variant="link"
                             icon="i-mdi-delete"
@@ -296,7 +296,7 @@ const editing = ref(props.startInEdit);
             </template>
 
             <template #actions-data="{ row: law }">
-                <UTooltip v-if="can('settings.LawsService.DeleteLawBook').value" :text="$t('common.delete')">
+                <UTooltip v-if="can('settings.LawsService/DeleteLawBook').value" :text="$t('common.delete')">
                     <UButton
                         variant="link"
                         icon="i-mdi-delete"

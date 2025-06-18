@@ -11,9 +11,9 @@ type UserInfo struct {
 	Job      string
 	JobGrade int32
 
-	Group      string
-	CanBeSuper bool
-	Superuser  bool
+	Group          string
+	CanBeSuperuser bool
+	Superuser      bool
 
 	OverrideJob      *string
 	OverrideJobGrade *int32
@@ -49,7 +49,7 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 	if u.Group != in.Group {
 		return false
 	}
-	if u.CanBeSuper != in.CanBeSuper {
+	if u.CanBeSuperuser != in.CanBeSuperuser {
 		return false
 	}
 	if u.Superuser != in.Superuser {
@@ -89,15 +89,15 @@ func equalStringPtr(a, b *string) bool {
 // Clone returns a deep copy of the UserInfo struct.
 func (u *UserInfo) Clone() UserInfo {
 	clone := UserInfo{
-		Enabled:    u.Enabled,
-		AccountId:  u.AccountId,
-		License:    u.License,
-		UserId:     u.UserId,
-		Job:        u.Job,
-		JobGrade:   u.JobGrade,
-		Group:      u.Group,
-		CanBeSuper: u.CanBeSuper,
-		Superuser:  u.Superuser,
+		Enabled:        u.Enabled,
+		AccountId:      u.AccountId,
+		License:        u.License,
+		UserId:         u.UserId,
+		Job:            u.Job,
+		JobGrade:       u.JobGrade,
+		Group:          u.Group,
+		CanBeSuperuser: u.CanBeSuperuser,
+		Superuser:      u.Superuser,
 	}
 	if u.LastChar != nil {
 		val := *u.LastChar

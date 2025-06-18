@@ -278,11 +278,11 @@ const isOpen = ref(false);
             <UDashboardNavbar :title="$t('common.calendar')">
                 <template #right>
                     <UButtonGroup
-                        v-if="can('calendar.CalendarService.CreateCalendar').value || hasEditAccessToCalendar"
+                        v-if="can('calendar.CalendarService/CreateCalendar').value || hasEditAccessToCalendar"
                         class="inline-flex w-full xl:hidden"
                     >
                         <UButton
-                            v-if="can('calendar.CalendarService.CreateCalendar').value"
+                            v-if="can('calendar.CalendarService/CreateCalendar').value"
                             class="flex-1"
                             block
                             color="gray"
@@ -548,11 +548,11 @@ const isOpen = ref(false);
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup
-                        v-if="can('calendar.CalendarService.CreateCalendar').value || hasEditAccessToCalendar"
+                        v-if="can('calendar.CalendarService/CreateCalendar').value || hasEditAccessToCalendar"
                         class="inline-flex w-full"
                     >
                         <UButton
-                            v-if="can('calendar.CalendarService.CreateCalendar').value"
+                            v-if="can('calendar.CalendarService/CreateCalendar').value"
                             class="flex-1"
                             block
                             color="gray"

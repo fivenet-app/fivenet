@@ -70,7 +70,7 @@ const { ydoc, provider } = useCollabDoc('wiki', props.pageId);
 const canDo = computed(() => ({
     access: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.ACCESS),
     edit: checkPageAccess(page.value?.access, page.value?.meta?.creator, AccessLevel.EDIT),
-    public: attr('wiki.WikiService.UpdatePage', 'Fields', 'Public').value,
+    public: attr('wiki.WikiService/UpdatePage', 'Fields', 'Public').value,
 }));
 
 const schema = z.object({

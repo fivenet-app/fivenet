@@ -288,7 +288,7 @@ onBeforeUnmount(() => {
             <ZoomControls />
 
             <LayerControls>
-                <div v-if="can('centrum.CentrumService.TakeControl').value">
+                <div v-if="can('centrum.CentrumService/TakeControl').value">
                     <div class="mt-1 inline-flex gap-1 overflow-y-hidden px-1">
                         <UToggle v-model="livemapSettings.showHeatmap" />
                         <span class="truncate hover:line-clamp-2">{{ $t('common.heatmap') }}</span>

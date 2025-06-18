@@ -3,7 +3,7 @@ import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { User } from '~~/gen/ts/resources/users/users';
 
 export function checkIfCanAccessColleague(target: Colleague | User, perm: Perms): boolean {
-    const { attrList, activeChar, isSuperuser } = useAuth();
+    const { attrStringList, activeChar, isSuperuser } = useAuth();
 
     if (!activeChar.value) {
         return false;
@@ -13,7 +13,7 @@ export function checkIfCanAccessColleague(target: Colleague | User, perm: Perms)
         return true;
     }
 
-    const fields = attrList(perm, 'Access').value;
+    const fields = attrStringList(perm, 'Access').value;
     if (fields.includes('any')) {
         return true;
     }

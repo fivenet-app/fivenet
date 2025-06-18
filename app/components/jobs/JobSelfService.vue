@@ -54,7 +54,7 @@ onBeforeMount(() => {
                 v-if="
                     colleagueSelf?.colleague &&
                     activeChar?.userId === colleagueSelf.colleague?.userId &&
-                    can('jobs.JobsService.SetColleagueProps').value
+                    can('jobs.JobsService/SetColleagueProps').value
                 "
                 class="flex-1"
                 block

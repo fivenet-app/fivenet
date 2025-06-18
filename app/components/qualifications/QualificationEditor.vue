@@ -325,9 +325,9 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
 }
 
 const canDo = computed(() => ({
-    edit: can('qualifications.QualificationsService.UpdateQualification').value,
+    edit: can('qualifications.QualificationsService/UpdateQualification').value,
     access: true,
-    public: attr('qualifications.QualificationsService.UpdateQualification', 'Fields', 'Public').value,
+    public: attr('qualifications.QualificationsService/UpdateQualification', 'Fields', 'Public').value,
 }));
 
 const items = [

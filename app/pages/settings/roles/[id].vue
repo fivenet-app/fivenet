@@ -5,7 +5,7 @@ import RoleView from '~/components/settings/roles/RoleView.vue';
 
 definePageMeta({
     requiresAuth: true,
-    permission: 'settings.SettingsService.GetRoles',
+    permission: 'settings.SettingsService/GetRoles',
     validate: async (route) => {
         route = route as TypedRouteFromName<'settings-roles-id'>;
         // Check if the id is made up of digits

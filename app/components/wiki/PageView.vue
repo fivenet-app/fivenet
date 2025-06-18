@@ -92,7 +92,7 @@ const tocLinks = computedAsync(async () => props.page?.content?.content && jsonN
 const accordionItems = computed(() =>
     [
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock' },
-        can('wiki.WikiService.ListPageActivity').value &&
+        can('wiki.WikiService/ListPageActivity').value &&
         checkPageAccess(props.page?.access, props.page?.meta?.creator, AccessLevel.VIEW)
             ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
@@ -172,7 +172,7 @@ const scrollRef = useTemplateRef('scrollRef');
             <PartialsBackButton fallback-to="/wiki" />
 
             <UButton
-                v-if="can('wiki.WikiService.UpdatePage').value"
+                v-if="can('wiki.WikiService/UpdatePage').value"
                 color="gray"
                 trailing-icon="i-mdi-plus"
                 @click="wikiService.createPage(page?.parentId ?? page?.id)"
@@ -244,7 +244,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
                         <UTooltip
                             v-if="
-                                can('wiki.WikiService.UpdatePage').value &&
+                                can('wiki.WikiService/UpdatePage').value &&
                                 checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
                             "
                             :text="$t('common.edit')"
@@ -258,7 +258,7 @@ const scrollRef = useTemplateRef('scrollRef');
 
                         <UTooltip
                             v-if="
-                                can('wiki.WikiService.DeletePage').value &&
+                                can('wiki.WikiService/DeletePage').value &&
                                 checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
                             "
                             :text="!page.meta.deletedAt ? $t('common.delete') : $t('common.restore')"
@@ -357,7 +357,7 @@ const scrollRef = useTemplateRef('scrollRef');
                             </UContainer>
                         </template>
 
-                        <template v-if="can('wiki.WikiService.ListPageActivity').value" #activity>
+                        <template v-if="can('wiki.WikiService/ListPageActivity').value" #activity>
                             <UContainer>
                                 <PageActivityList :page-id="page.id" />
                             </UContainer>

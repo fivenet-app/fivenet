@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'common.audit_log',
     requiresAuth: true,
-    permission: 'settings.SettingsService.ViewAuditLog',
+    permission: 'settings.SettingsService/ViewAuditLog',
 });
 </script>
 

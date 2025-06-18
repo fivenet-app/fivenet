@@ -109,7 +109,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 <template>
     <UDashboardPanelContent class="grid grid-cols-1 gap-2 lg:grid-cols-3">
         <div class="mb-2">
-            <UForm v-if="can('settings.SettingsService.CreateRole').value" :schema="schema" :state="state" @submit="refresh()">
+            <UForm v-if="can('settings.SettingsService/CreateRole').value" :schema="schema" :state="state" @submit="refresh()">
                 <div class="flex flex-row gap-2">
                     <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
                         <ClientOnly>

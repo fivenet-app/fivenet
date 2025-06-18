@@ -40,7 +40,7 @@ const items = computed(() => [
             shortcuts: [metaSymbol.value, 'K'],
             click: () => (isDashboardSearchModalOpen.value = true),
         },
-        can(['CanBeSuper', 'Superuser']).value
+        can(['Superuser/CanBeSuperuser', 'Superuser/Superuser']).value
             ? {
                   label: `${t('common.superuser')}: ${isSuperuser.value ? t('common.enabled') : t('common.disabled')}`,
                   icon: 'i-mdi-square-root',

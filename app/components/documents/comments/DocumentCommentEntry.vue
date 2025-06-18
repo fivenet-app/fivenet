@@ -204,7 +204,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UButton v-if="canComment" variant="link" icon="i-mdi-pencil" @click="editing = true" />
                         </UTooltip>
 
-                        <UTooltip v-if="can('documents.DocumentsService.DeleteComment').value" :text="$t('common.delete')">
+                        <UTooltip v-if="can('documents.DocumentsService/DeleteComment').value" :text="$t('common.delete')">
                             <UButton
                                 variant="link"
                                 icon="i-mdi-delete"

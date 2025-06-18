@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
@@ -18,13 +19,29 @@ const (
 )
 
 const (
-	PermCanBeSuper    = "CanBeSuper"
-	PermCanBeSuperKey = "canbesuper"
+	PermSuperuserCategory = "Superuser"
 
-	PermSuperuser    = "Superuser"
-	PermSuperuserKey = "superuser"
+	PermCanBeSuperuserName      = "CanBeSuperuser"
+	PermCanBeSuperuserGuardName = "superuser-canbesuper"
+
+	PermSuperuserName      = "Superuser"
+	PermSuperuserGuardName = "superuser-superuser"
 
 	PermAny = "Any"
+)
+
+var (
+	PermCanBeSuperuser = &permissions.Permission{
+		Category:  PermSuperuserCategory,
+		Name:      PermCanBeSuperuserName,
+		GuardName: PermCanBeSuperuserGuardName,
+	}
+
+	PermSuperuser = &permissions.Permission{
+		Category:  PermSuperuserCategory,
+		Name:      PermSuperuserName,
+		GuardName: PermSuperuserGuardName,
+	}
 )
 
 type userInfoCtxMarker struct{}
@@ -80,7 +97,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	)
 
 	if userInfo.LastChar != nil && *userInfo.LastChar != userInfo.UserId && g.appCfg.Get().Auth.LastCharLock {
-		if !userInfo.CanBeSuper && !userInfo.Superuser {
+		if !userInfo.CanBeSuperuser && !userInfo.Superuser {
 			return nil, ErrCharLock
 		}
 	}

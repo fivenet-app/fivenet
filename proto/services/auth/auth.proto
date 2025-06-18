@@ -6,6 +6,8 @@ import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/jobs/job_props.proto";
+import "resources/permissions/attributes.proto";
+import "resources/permissions/permissions.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -112,10 +114,11 @@ message ChooseCharacterRequest {
 
 message ChooseCharacterResponse {
   resources.timestamp.Timestamp expires = 1;
-  repeated string permissions = 2;
+  string username = 2;
   resources.jobs.JobProps job_props = 3;
   resources.users.User char = 4; // @gotags: alias:"user"
-  string username = 5;
+  repeated resources.permissions.Permission permissions = 5;
+  repeated resources.permissions.RoleAttribute attributes = 6;
 }
 
 message LogoutRequest {}
@@ -139,9 +142,10 @@ message SetSuperuserModeRequest {
 
 message SetSuperuserModeResponse {
   resources.timestamp.Timestamp expires = 1;
-  repeated string permissions = 2;
   optional resources.jobs.JobProps job_props = 3;
   resources.users.User char = 4; // @gotags: alias:"user"
+  repeated resources.permissions.Permission permissions = 5;
+  repeated resources.permissions.RoleAttribute attributes = 6;
 }
 
 // Auth Service handles user authentication, character selection and oauth2 connections

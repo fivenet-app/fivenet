@@ -166,7 +166,7 @@ func (ui *UIRetriever) setSuperuserStatus(dest *UserInfo) {
 	// Check if user is superuser by group or license (license may be nil)
 	isSuperGroup := slices.Contains(ui.superuserGroups, dest.Group)
 	if isSuperGroup || slices.Contains(ui.superuserUsers, dest.License) {
-		dest.CanBeSuper = true
+		dest.CanBeSuperuser = true
 		// Only override if both are non-nil and OverrideJob is not empty
 		if dest.OverrideJob != nil && *dest.OverrideJob != "" && dest.OverrideJobGrade != nil {
 			dest.Job = *dest.OverrideJob

@@ -11,7 +11,7 @@ useHead({
 definePageMeta({
     title: 'pages.qualifications.title',
     requiresAuth: true,
-    permission: 'qualifications.QualificationsService.ListQualifications',
+    permission: 'qualifications.QualificationsService/ListQualifications',
 });
 
 const { t } = useI18n();
@@ -60,7 +60,7 @@ const qualifications = useQualifications();
             <UDashboardNavbar :title="$t('pages.qualifications.title')">
                 <template #right>
                     <UTooltip
-                        v-if="can('qualifications.QualificationsService.UpdateQualification').value"
+                        v-if="can('qualifications.QualificationsService/UpdateQualification').value"
                         :text="$t('common.create')"
                     >
                         <UButton trailing-icon="i-mdi-plus" color="gray" @click="qualifications.createQualification()">
