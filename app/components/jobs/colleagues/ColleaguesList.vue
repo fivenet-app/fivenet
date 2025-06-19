@@ -274,8 +274,8 @@ defineShortcuts({
                                     :searchable-placeholder="$t('common.search_field')"
                                     :search-attributes="['name']"
                                     option-attribute="name"
-                                    by="name"
                                     clear-search-on-close
+                                    value-attribute="id"
                                 >
                                     <template #label="{ selected }">
                                         <span v-if="selected.length" class="truncate">

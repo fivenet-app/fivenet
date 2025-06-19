@@ -393,8 +393,8 @@ const { game } = useAppConfig();
                                     :placeholder="$t('common.colleague', 2)"
                                     block
                                     trailing
-                                    value-attribute="userId"
                                     leading-icon="i-mdi-search"
+                                    value-attribute="userId"
                                 >
                                     <template #label="{ selected }">
                                         <span v-if="selected.length > 0" class="truncate">

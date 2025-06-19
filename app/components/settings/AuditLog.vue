@@ -208,7 +208,7 @@ const expand = ref({
                                 block
                                 :placeholder="$t('common.user', 2)"
                                 trailing
-                                by="userId"
+                                value-attribute="userId"
                             >
                                 <template #label="{ selected }">
                                     <span v-if="selected.length > 0" class="truncate">
