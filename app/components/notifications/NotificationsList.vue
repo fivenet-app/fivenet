@@ -31,7 +31,9 @@ const schema = z.object({
     page: z.coerce.number().min(1).default(1),
 });
 
-const query = useSearchForm('notifications', schema);
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>(schema.parse({}));
 
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
