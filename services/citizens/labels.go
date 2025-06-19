@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("citizen_label")
+	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
 	tUserLabels        = table.FivenetUserLabels
 )
 

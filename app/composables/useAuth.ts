@@ -54,9 +54,7 @@ const _useAuth = () => {
      */
     const can = (perm: Perms | Perms[], mode: canMode = 'oneof') => {
         return computed(() => {
-            if (isSuperuser.value === true) {
-                return true;
-            }
+            if (isSuperuser.value === true) return true;
 
             return checkPerm(permissions.value, perm, mode);
         });
@@ -70,6 +68,8 @@ const _useAuth = () => {
 
     const attr = (perm: Perms, key: string, val: string) =>
         computed(() => {
+            if (isSuperuser.value === true) return true;
+
             const a = getAttr(perm, key).value;
 
             if (a?.value?.validValues.oneofKind === 'stringList') {

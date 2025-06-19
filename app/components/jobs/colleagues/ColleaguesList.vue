@@ -278,21 +278,27 @@ defineShortcuts({
                                     value-attribute="id"
                                 >
                                     <template #label="{ selected }">
-                                        <span v-if="selected.length" class="truncate">
-                                            <span v-for="(label, idx) in selected" :key="label.id">
-                                                <span class="truncate" :style="{ backgroundColor: label.color }">{{
-                                                    label.name
-                                                }}</span>
-                                                <span v-if="idx < selected.length - 1">, </span>
-                                            </span>
+                                        <span v-if="selected.length" class="inline-flex flex-wrap gap-1 truncate">
+                                            <UBadge
+                                                v-for="label in selected"
+                                                :key="label.id"
+                                                class="truncate"
+                                                :class="isColorBright(label.color) ? '!text-black' : '!text-white'"
+                                                :style="{ backgroundColor: label.color }"
+                                                :label="label.name"
+                                            />
                                         </span>
                                         <span v-else>&nbsp;</span>
                                     </template>
 
                                     <template #option="{ option }">
-                                        <span class="truncate" :style="{ backgroundColor: option.color }">{{
-                                            option.name
-                                        }}</span>
+                                        <UBadge
+                                            class="truncate"
+                                            :class="isColorBright(option.color) ? '!text-black' : '!text-white'"
+                                            :style="{ backgroundColor: option.color }"
+                                        >
+                                            {{ option.name }}
+                                        </UBadge>
                                     </template>
 
                                     <template #option-empty="{ query: search }">

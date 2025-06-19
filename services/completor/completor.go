@@ -20,7 +20,7 @@ import (
 
 var (
 	tDCategory         = table.FivenetDocumentsCategories.AS("category")
-	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("citizen_label")
+	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
 )
 
 func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.CompleteCitizensRequest) (*pbcompletor.CompleteCitizensRespoonse, error) {

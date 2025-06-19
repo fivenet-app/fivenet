@@ -116,7 +116,9 @@ export const useCompletorStore = defineStore(
 
         const completeCitizenLabels = async (search: string): Promise<Label[]> => {
             try {
-                const call = $grpc.completor.completor.completeCitizenLabels({ search });
+                const call = $grpc.completor.completor.completeCitizenLabels({
+                    search: search,
+                });
                 const { response } = await call;
                 return response.labels;
             } catch (e) {
