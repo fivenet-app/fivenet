@@ -31,17 +31,21 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 const schema = z
     .object({
         reason: z.string().min(3).max(255),
-        mugshot: z.custom<File>().array().min(1).max(1),
-        reset: z.boolean(),
+        mugshot: z.custom<File>().array().min(1).max(1).default([]),
+        reset: z.coerce.boolean(),
     })
     .or(
         z.union([
             z.object({
                 reason: z.string().min(3).max(255),
-                mugshot: z.custom<File>().array().min(1).max(1),
+                mugshot: z.custom<File>().array().min(1).max(1).default([]),
                 reset: z.literal(false),
             }),
-            z.object({ reason: z.string().min(3).max(255), mugshot: z.custom<File>().array(), reset: z.literal(true) }),
+            z.object({
+                reason: z.string().min(3).max(255),
+                mugshot: z.custom<File>().array().default([]),
+                reset: z.literal(true),
+            }),
         ]),
     );
 

@@ -397,6 +397,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 		SELECT(
 			tUsers.ID,
 			dbutils.Columns{
+				tUsers.ID.AS("user.user_id"),
 				tUsers.Identifier,
 				tUsers.Job,
 				tUsers.JobGrade,
@@ -482,6 +483,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
+			tUsers.ID.AS("user.user_id"),
 			tUsers.Identifier,
 			tUsers.Job,
 			tUsers.JobGrade,

@@ -38,8 +38,8 @@ const schema = z.object({
     expiresAt: z.date().optional(),
     color: z.string().length(7),
     markerType: z.nativeEnum(MarkerType),
-    circleRadius: z.number().gte(5).lte(250),
-    circleOpacity: z.number().gte(1).lte(75).optional(),
+    circleRadius: z.coerce.number().gte(5).lte(250),
+    circleOpacity: z.coerce.number().gte(1).lte(75).optional(),
     icon: z.string().max(64).optional(),
 });
 

@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
@@ -42,9 +43,9 @@ func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumServic
 	return nil
 }
 
-func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, userId int32, jobs *pbcentrum.JobAccess) error {
+func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userInfo *userinfo.UserInfo, jobs *pbcentrum.JobAccess) error {
 	dispatchers := &pbcentrum.Dispatchers{}
-	dispos, _ := s.state.GetDispatchers(ctx, userJob)
+	dispos, _ := s.state.GetDispatchers(ctx, userInfo.Job)
 	dispatchers.Dispatchers = []*centrum.Dispatchers{dispos}
 	for _, j := range jobs.Dispatches {
 		dispos, err := s.state.GetDispatchers(ctx, j.Job.Name)
@@ -54,14 +55,14 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 		dispatchers.Dispatchers = append(dispatchers.Dispatchers, dispos)
 	}
 
-	ownUnitMapping, _ := s.tracker.GetUserMapping(userId)
+	ownUnitMapping, _ := s.tracker.GetUserMapping(userInfo.UserId)
 	var pOwnUnitId *uint64
 	if ownUnitMapping != nil && ownUnitMapping.UnitId != nil && *ownUnitMapping.UnitId > 0 {
 		pOwnUnitId = ownUnitMapping.UnitId
 	}
 
 	// Retrieve units and dispatches
-	units := s.state.ListUnits(ctx, userJob)
+	units := s.state.ListUnits(ctx, userInfo.Job)
 	for _, j := range jobs.Dispatches {
 		units = append(units, s.state.ListUnits(ctx, j.Job.Name)...)
 	}
@@ -71,7 +72,7 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 		centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 	}
-	dispatches := s.state.FilterDispatches(ctx, userJob, nil, dispatchStatusFilter)
+	dispatches := s.state.FilterDispatches(ctx, userInfo.Job, nil, dispatchStatusFilter)
 	for _, j := range jobs.Dispatches {
 		dispatches = append(dispatches, s.state.FilterDispatches(ctx, j.Job.Name, nil, dispatchStatusFilter)...)
 	}
@@ -94,7 +95,7 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 }
 
 func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumService_StreamServer) error {
-	userInfo := *auth.MustGetUserInfoFromContext(srv.Context())
+	userInfo := auth.MustGetUserInfoFromContext(srv.Context()).Clone()
 
 	jobs := &pbcentrum.JobAccess{}
 	additionalJobs := []string{}
@@ -114,11 +115,11 @@ func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumServi
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.sendLatestState(srv.Context(), srv, userInfo.Job, userInfo.UserId, jobs); err != nil {
+		if err := s.sendLatestState(srv.Context(), srv, &userInfo, jobs); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.stream(srv.Context(), srv, userInfo.Job, userInfo.UserId, []string{}); err != nil {
+		if err := s.stream(srv.Context(), srv, &userInfo, []string{}); err != nil {
 			return err
 		}
 
@@ -205,10 +206,10 @@ var feeds = []feedCfg{
 	},
 }
 
-func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, job string, userId int32, additionalJobs []string) error {
-	s.logger.Debug("starting centrum stream", zap.String("job_main", job), zap.Int32("user_id", userId), zap.Strings("additional_jobs", additionalJobs))
+func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userInfo *userinfo.UserInfo, additionalJobs []string) error {
+	s.logger.Debug("starting centrum stream", zap.String("job_main", userInfo.Job), zap.Int32("user_id", userInfo.UserId), zap.Strings("additional_jobs", additionalJobs))
 
-	jobs := []string{job}
+	jobs := []string{userInfo.Job}
 	jobs = append(jobs, additionalJobs...)
 	jobs = utils.RemoveSliceDuplicates(jobs)
 
@@ -217,7 +218,7 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 
 	// Centrum Events (e.g., dispatch and unit status updates)
 	g.Go(func() error {
-		// Create consumer with multi-filter
+		// Create ephemeral consumer with multi-filter
 		consCfg := jetstream.ConsumerConfig{
 			FilterSubjects: centrumSubjects(jobs),
 			DeliverPolicy:  jetstream.DeliverNewPolicy,
@@ -301,6 +302,7 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 				FilterSubjects: kvSubjects(f.Bucket, jobs),
 				DeliverPolicy:  jetstream.DeliverNewPolicy,
 				AckPolicy:      jetstream.AckNonePolicy,
+				MaxWaiting:     8,
 			}
 			consumer, err := s.js.CreateConsumer(gctx, "KV_"+f.Bucket, consCfg)
 			if err != nil {

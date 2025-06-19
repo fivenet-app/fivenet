@@ -33,7 +33,7 @@ function updateTabInfo(): void {
 updateTabInfo();
 
 const schema = z.object({
-    tldId: z.number().positive().min(1),
+    tldId: z.coerce.number().positive().min(1),
     search: z.string().min(3).max(40),
 });
 

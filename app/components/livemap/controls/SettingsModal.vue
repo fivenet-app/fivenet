@@ -8,12 +8,12 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 const schema = z.object({
-    markerSize: z.number().min(14).max(32),
-    centerSelectedMarker: z.boolean(),
-    showUnitNames: z.boolean(),
-    showUnitStatus: z.boolean(),
-    showAllDispatches: z.boolean(),
-    showGrid: z.boolean(),
+    markerSize: z.coerce.number().min(14).max(32),
+    centerSelectedMarker: z.coerce.boolean(),
+    showUnitNames: z.coerce.boolean(),
+    showUnitStatus: z.coerce.boolean(),
+    showAllDispatches: z.coerce.boolean(),
+    showGrid: z.coerce.boolean(),
 });
 </script>
 

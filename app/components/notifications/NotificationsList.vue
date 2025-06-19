@@ -26,26 +26,21 @@ const categories: { mode: NotificationCategory }[] = [
 ];
 
 const schema = z.object({
-    includeRead: z.boolean(),
-    categories: z.nativeEnum(NotificationCategory).array().max(4),
+    includeRead: z.coerce.boolean().default(false),
+    categories: z.nativeEnum(NotificationCategory).array().max(4).default([]),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('notifications', schema);
 
-const query = reactive<Schema>({
-    includeRead: false,
-    categories: [...categories.map((c) => c.mode)],
-});
-
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`notifications-${page.value}-${query.includeRead}`, () => getNotifications());
+} = useLazyAsyncData(`notifications-${query.page}-${query.includeRead}`, () => getNotifications());
 
 async function getNotifications(): Promise<GetNotificationsResponse> {
     try {
@@ -266,6 +261,6 @@ const canSubmit = ref(true);
             </ul>
         </div>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </UDashboardPanelContent>
 </template>

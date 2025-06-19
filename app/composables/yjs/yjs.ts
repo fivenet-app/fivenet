@@ -64,7 +64,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
         // Clear local user state
         this.clientId && removeAwarenessStates(this.awareness, [this.clientId], 'app closed');
 
-        setTimeout(() => {
+        useTimeoutFn(() => {
             this.ydoc.off('update', this.handleDocUpdate);
             this.awareness.off('update', this.handleAwarenessUpdate);
             this.stream?.requests.complete();
@@ -221,7 +221,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
 
         const delay = this.opts.reconnectDelay?.(this.reconnectAttempt) ?? Math.min(1000 * 2 ** this.reconnectAttempt, 32000);
         this.reconnectAttempt++;
-        setTimeout(() => this.connect(), delay);
+        useTimeoutFn(() => this.connect(), delay);
     }
 
     // Yjs to Server

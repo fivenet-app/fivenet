@@ -23,11 +23,11 @@ const { settings, questions } = useVModels(props, emit);
 const schema = z.object({
     settings: z.object({
         time: zodDurationSchema,
-        autoGrade: z.boolean(),
-        autoGradeMode: z.nativeEnum(AutoGradeMode),
-        minimumPoints: z.number().min(0).default(0),
+        autoGrade: z.coerce.boolean().default(false),
+        autoGradeMode: z.nativeEnum(AutoGradeMode).default(AutoGradeMode.STRICT),
+        minimumPoints: z.coerce.number().min(0).default(0),
     }),
-    questions: z.custom<ExamQuestion>().array().max(50),
+    questions: z.custom<ExamQuestion>().array().max(50).default([]),
 });
 
 if (!settings.value.time) {

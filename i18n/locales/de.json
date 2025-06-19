@@ -1737,10 +1737,14 @@
                 "content": "Vorlage erfolgreich gelöscht."
             }
         },
-        "citizen_info": {
+        "citizens": {
             "copy_citizen_id": {
                 "title": "Bürger-ID kopiert",
                 "content": "Bürger-ID in die Zwischenablage kopiert."
+            },
+            "client_view_update": {
+                "title": "Bürger aktualisiert",
+                "content": "Der Bürger wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Bürgerdaten neu zu laden."
             }
         },
         "centrum": {

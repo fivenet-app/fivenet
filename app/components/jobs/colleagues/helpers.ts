@@ -14,20 +14,20 @@ export function checkIfCanAccessColleague(target: Colleague | User, perm: Perms)
     }
 
     const fields = attrStringList(perm, 'Access').value;
-    if (fields.includes('any')) {
+    if (fields.includes('Any')) {
         return true;
     }
-    if (fields.includes('lower_rank')) {
+    if (fields.includes('LowerRank')) {
         if (target.jobGrade < activeChar.value.jobGrade) {
             return true;
         }
     }
-    if (fields.includes('same_rank')) {
+    if (fields.includes('SameRank')) {
         if (target.jobGrade <= activeChar.value.jobGrade) {
             return true;
         }
     }
-    if (fields.includes('own')) {
+    if (fields.includes('Own')) {
         if (target.userId === activeChar.value.userId) {
             return true;
         }

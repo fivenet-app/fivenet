@@ -13,7 +13,6 @@ import { useCompletorStore } from '~/stores/completor';
 import { useSettingsStore } from '~/stores/settings';
 import type { ToggleItem } from '~/typings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
-import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/documents/documents';
@@ -43,58 +42,46 @@ const onlyDrafts: ToggleItem[] = [
 
 const schema = z.object({
     documentIds: z.string().max(16).optional(),
-    title: z.string().max(64).optional(),
-    creators: z.custom<UserShort>().array().max(5),
+    title: z.string().max(64).optional().default(''),
+    creators: z.coerce.number().array().max(5).default([]),
     date: z
         .object({
-            start: z.date(),
-            end: z.date(),
+            start: z.coerce.date(),
+            end: z.coerce.date(),
         })
         .optional(),
-    closed: z.boolean().optional(),
-    categories: z.custom<Category>().array().max(3),
-    onlyDrafts: z.boolean().optional(),
+    closed: z.coerce.boolean().optional(),
+    categories: z.number().array().max(3).default([]),
+    onlyDrafts: z.coerce.boolean().optional(),
+    sort: z.custom<TableSortable>().default({
+        column: 'createdAt',
+        direction: 'desc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
-
-const query = reactive<Schema>({
-    title: '',
-    date: undefined,
-    creators: [],
-    closed: undefined,
-    categories: [],
-    onlyDrafts: undefined,
-});
+const query = useSearchForm('jobs_timeclock', schema);
 
 const usersLoading = ref(false);
 
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'createdAt',
-    direction: 'desc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`documents-${sort.value.column}:${sort.value.direction}-${page.value}`, () => listDocuments(), {
-    watch: [sort],
-});
+} = useLazyAsyncData(`documents-${query.sort.column}:${query.sort.direction}-${query.page}`, () => listDocuments());
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const req: ListDocumentsRequest = {
         pagination: {
             offset: offset.value,
         },
-        sort: sort.value,
+        sort: query.sort,
         search: query.title ?? '',
-        categoryIds: query.categories.map((c) => c.id),
-        creatorIds: query.creators.map((c) => c.userId),
+        categoryIds: query.categories,
+        creatorIds: query.creators,
         documentIds: [],
         onlyDrafts: query.onlyDrafts,
     };
@@ -284,10 +271,11 @@ defineShortcuts({
                                     "
                                     searchable-lazy
                                     :searchable-placeholder="$t('common.category', 1)"
+                                    value-attribute="id"
                                 >
-                                    <template #label>
-                                        <div v-if="query.categories.length > 0" class="inline-flex gap-1">
-                                            <template v-for="category in query.categories" :key="category.id">
+                                    <template #label="{ selected }">
+                                        <div v-if="selected.length > 0" class="inline-flex gap-1">
+                                            <template v-for="category in selected" :key="category.id">
                                                 <span class="inline-flex gap-1" :class="`bg-${category.color}-500`">
                                                     <component
                                                         :is="
@@ -335,10 +323,11 @@ defineShortcuts({
                                     nullable
                                     block
                                     :searchable="
-                                        async (query: string): Promise<UserShort[]> => {
+                                        async (q: string): Promise<UserShort[]> => {
                                             usersLoading = true;
                                             const users = await completorStore.completeCitizens({
-                                                search: query,
+                                                search: q,
+                                                userIds: query.creators,
                                             });
                                             usersLoading = false;
                                             return users;
@@ -349,11 +338,11 @@ defineShortcuts({
                                     :search-attributes="['firstname', 'lastname']"
                                     :placeholder="$t('common.creator')"
                                     trailing
-                                    by="userId"
+                                    value-attribute="userId"
                                 >
-                                    <template #label>
-                                        <template v-if="query.creators.length">
-                                            {{ usersToLabel(query.creators) }}
+                                    <template #label="{ selected }">
+                                        <template v-if="selected.length">
+                                            {{ usersToLabel(selected) }}
                                         </template>
                                     </template>
 
@@ -438,7 +427,7 @@ defineShortcuts({
 
                         <UFormGroup class="flex-1 grow-0 basis-40" :label="$t('common.sort_by')">
                             <SortButton
-                                v-model="sort"
+                                v-model="query.sort"
                                 :fields="[
                                     { label: $t('common.created_at'), value: 'createdAt' },
                                     { label: $t('common.title'), value: 'title' },
@@ -526,5 +515,5 @@ defineShortcuts({
         </div>
     </UDashboardPanelContent>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

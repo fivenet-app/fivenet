@@ -6,14 +6,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 )
 
-// CheckIfHasAccess determines if a user has access to a resource based on permission levels, user info, and creator details.
+// CheckIfHasOwnJobAccess determines if a user has access to a resource based on permission levels, user info, and creator details.
 //
 // If the document creator job is not equal to the creator's current job, normal access checks need to be applied
 // and not the rank attributes checks. If the creator is nil, treat it like a normal doc access check.
 // If no levels set, assume "Own" as a safe default.
 //
 // Returns true if the user has access, otherwise false.
-func CheckIfHasAccess(
+func CheckIfHasOwnJobAccess(
 	levels *permissions.StringList, // List of access levels (e.g., Any, Lower_Rank, Same_Rank, Own)
 	userInfo *userinfo.UserInfo, // Information about the user requesting access
 	creatorJob string, // Job of the document creator

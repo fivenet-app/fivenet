@@ -1,13 +1,22 @@
 package citizens
 
 import (
+	context "context"
 	"database/sql"
+	"math"
+	"slices"
 
+	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
+	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
@@ -28,6 +37,7 @@ type Server struct {
 	appCfg   appconfig.IConfig
 	cfg      *config.Config
 	customDB config.CustomDB
+	notifi   notifi.INotifi
 
 	avatarHandler  *filestore.Handler[int32]
 	mugshotHandler *filestore.Handler[int32]
@@ -43,6 +53,7 @@ type Params struct {
 	Config    *config.Config
 	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
+	Notifi    notifi.INotifi
 }
 
 func NewServer(p Params) *Server {
@@ -55,7 +66,7 @@ func NewServer(p Params) *Server {
 		return tUserProps.UserID.EQ(jet.Int32(parentId))
 	}, filestore.UpdateJoinRow, true)
 
-	return &Server{
+	s := &Server{
 		db:       p.DB,
 		ps:       p.P,
 		enricher: p.Enricher,
@@ -64,10 +75,56 @@ func NewServer(p Params) *Server {
 		appCfg:   p.AppConfig,
 		cfg:      p.Config,
 		customDB: p.Config.Database.Custom,
+		notifi:   p.Notifi,
 
 		avatarHandler:  avatarHandler,
 		mugshotHandler: mugshotHandler,
 	}
+
+	access.RegisterAccess("citizen", &access.GroupedAccessAdapter{
+		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
+			if !s.ps.Can(userInfo, permscitizens.CitizensServicePerm, permscitizens.CitizensServiceGetUserPerm) {
+				return false, nil
+			}
+
+			if targetId > uint64(math.MaxInt32) {
+				return false, nil // targetId is too large to fit in int32
+			}
+			userId := int32(targetId)
+			tUser := tables.User().AS("user")
+
+			// Retrieve user job from database
+			stmt := tUser.
+				SELECT(
+					tUser.ID,
+					tUser.Job,
+				).
+				FROM(tUser).
+				WHERE(tUser.ID.EQ(jet.Int32(userId))).
+				LIMIT(1)
+
+			user := &users.User{}
+			if err := stmt.QueryContext(ctx, s.db, user); err != nil {
+				return false, err
+			}
+
+			if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, user.Job) ||
+				slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, user.Job) {
+				// Make sure user has permission to see that grade
+				check, err := s.checkIfUserCanAccess(userInfo, user.Job, user.JobGrade)
+				if err != nil {
+					return false, err
+				}
+				if !check {
+					return false, nil
+				}
+			}
+
+			return true, nil
+		},
+	})
+
+	return s
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

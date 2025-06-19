@@ -36,7 +36,7 @@ const notifications = useNotificationsStore();
 const appConfig = useAppConfig();
 
 const _schema = z.object({
-    fileUrl: z.custom<File>().array().min(1).max(1),
+    fileUrl: z.custom<File>().array().min(1).max(1).default([]),
 });
 
 type Schema = z.output<typeof _schema>;

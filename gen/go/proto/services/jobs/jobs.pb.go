@@ -30,11 +30,12 @@ type ListColleaguesRequest struct {
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
 	Search        string   `protobuf:"bytes,3,opt,name=search,proto3" json:"search,omitempty"`
-	UserId        *int32   `protobuf:"varint,4,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	Absent        *bool    `protobuf:"varint,5,opt,name=absent,proto3,oneof" json:"absent,omitempty"`
-	LabelIds      []uint64 `protobuf:"varint,6,rep,packed,name=label_ids,json=labelIds,proto3" json:"label_ids,omitempty"`
-	NamePrefix    *string  `protobuf:"bytes,7,opt,name=name_prefix,json=namePrefix,proto3,oneof" json:"name_prefix,omitempty"`
-	NameSuffix    *string  `protobuf:"bytes,8,opt,name=name_suffix,json=nameSuffix,proto3,oneof" json:"name_suffix,omitempty"`
+	UserIds       []int32  `protobuf:"varint,4,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	UserOnly      *bool    `protobuf:"varint,5,opt,name=user_only,json=userOnly,proto3,oneof" json:"user_only,omitempty"`
+	Absent        *bool    `protobuf:"varint,6,opt,name=absent,proto3,oneof" json:"absent,omitempty"`
+	LabelIds      []uint64 `protobuf:"varint,7,rep,packed,name=label_ids,json=labelIds,proto3" json:"label_ids,omitempty"`
+	NamePrefix    *string  `protobuf:"bytes,8,opt,name=name_prefix,json=namePrefix,proto3,oneof" json:"name_prefix,omitempty"`
+	NameSuffix    *string  `protobuf:"bytes,9,opt,name=name_suffix,json=nameSuffix,proto3,oneof" json:"name_suffix,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -90,11 +91,18 @@ func (x *ListColleaguesRequest) GetSearch() string {
 	return ""
 }
 
-func (x *ListColleaguesRequest) GetUserId() int32 {
-	if x != nil && x.UserId != nil {
-		return *x.UserId
+func (x *ListColleaguesRequest) GetUserIds() []int32 {
+	if x != nil {
+		return x.UserIds
 	}
-	return 0
+	return nil
+}
+
+func (x *ListColleaguesRequest) GetUserOnly() bool {
+	if x != nil && x.UserOnly != nil {
+		return *x.UserOnly
+	}
+	return false
 }
 
 func (x *ListColleaguesRequest) GetAbsent() bool {
@@ -1008,23 +1016,24 @@ var File_services_jobs_jobs_proto protoreflect.FileDescriptor
 
 const file_services_jobs_jobs_proto_rawDesc = "" +
 	"\n" +
-	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a(resources/common/database/database.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\x1a\x17validate/validate.proto\"\xc9\x03\n" +
+	"\x18services/jobs/jobs.proto\x12\rservices.jobs\x1a(resources/common/database/database.proto\x1a\x1dresources/jobs/activity.proto\x1a\x1fresources/jobs/colleagues.proto\x1a\x1bresources/jobs/labels.proto\x1a\x17validate/validate.proto\"\xef\x03\n" +
 	"\x15ListColleaguesRequest\x12V\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12\x1f\n" +
-	"\x06search\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x18@R\x06search\x12%\n" +
-	"\auser_id\x18\x04 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00H\x01R\x06userId\x88\x01\x01\x12\x1b\n" +
-	"\x06absent\x18\x05 \x01(\bH\x02R\x06absent\x88\x01\x01\x12\x1b\n" +
-	"\tlabel_ids\x18\x06 \x03(\x04R\blabelIds\x12-\n" +
-	"\vname_prefix\x18\a \x01(\tB\a\xfaB\x04r\x02\x18\fH\x03R\n" +
+	"\x06search\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x18@R\x06search\x12'\n" +
+	"\buser_ids\x18\x04 \x03(\x05B\f\xfaB\t\x92\x01\x06\"\x04\x1a\x02(\x00R\auserIds\x12 \n" +
+	"\tuser_only\x18\x05 \x01(\bH\x01R\buserOnly\x88\x01\x01\x12\x1b\n" +
+	"\x06absent\x18\x06 \x01(\bH\x02R\x06absent\x88\x01\x01\x12\x1b\n" +
+	"\tlabel_ids\x18\a \x03(\x04R\blabelIds\x12-\n" +
+	"\vname_prefix\x18\b \x01(\tB\a\xfaB\x04r\x02\x18\fH\x03R\n" +
 	"namePrefix\x88\x01\x01\x12-\n" +
-	"\vname_suffix\x18\b \x01(\tB\a\xfaB\x04r\x02\x18\fH\x04R\n" +
+	"\vname_suffix\x18\t \x01(\tB\a\xfaB\x04r\x02\x18\fH\x04R\n" +
 	"nameSuffix\x88\x01\x01B\a\n" +
-	"\x05_sortB\n" +
+	"\x05_sortB\f\n" +
 	"\n" +
-	"\b_user_idB\t\n" +
+	"_user_onlyB\t\n" +
 	"\a_absentB\x0e\n" +
 	"\f_name_prefixB\x0e\n" +
 	"\f_name_suffix\"\xa2\x01\n" +

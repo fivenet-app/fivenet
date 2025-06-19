@@ -33,15 +33,15 @@ const entry = defineModel<MixedAccessEntry>({ required: true });
 const completorStore = useCompletorStore();
 
 const schema = z.object({
-    id: z.number(),
-    type: z.number(),
-    userId: z.number().optional(),
+    id: z.coerce.number(),
+    type: z.coerce.number(),
+    userId: z.coerce.number().optional(),
     user: z.custom<UserShort>().optional(),
     job: z.string().optional(),
-    minimumGrade: z.number().optional(),
-    qualificationId: z.number().optional(),
-    access: z.number(),
-    required: z.boolean().optional(),
+    minimumGrade: z.coerce.number().optional(),
+    qualificationId: z.coerce.number().optional(),
+    access: z.coerce.number(),
+    required: z.coerce.boolean().optional(),
 });
 
 const selectedUser = ref<UserShort | undefined>();
@@ -62,7 +62,7 @@ async function findUser(userId?: number): Promise<UserShort[]> {
 
     return completorStore.completeCitizens({
         search: '',
-        userId: userId,
+        userIds: [userId],
     });
 }
 
@@ -165,10 +165,11 @@ watch(props, () => setFromProps());
                         v-model="selectedUser"
                         class="flex-1"
                         :searchable="
-                            async (query: string) => {
+                            async (q: string) => {
                                 usersLoading = true;
                                 const users = await completorStore.completeCitizens({
-                                    search: query,
+                                    search: q,
+                                    userIds: entry.userId ? [entry.userId] : [],
                                 });
                                 usersLoading = false;
                                 return users;
@@ -206,12 +207,12 @@ watch(props, () => setFromProps());
                         v-model="selectedQualification"
                         class="flex-1"
                         :searchable="
-                            async (query: string) => {
+                            async (q: string) => {
                                 const { response } = await $grpc.qualifications.qualifications.listQualifications({
                                     pagination: {
                                         offset: 0,
                                     },
-                                    search: query,
+                                    search: q,
                                 });
                                 return response?.qualifications ?? [];
                             }

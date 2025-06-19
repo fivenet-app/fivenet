@@ -349,7 +349,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(ownAccess, userInfo, oldQuali.CreatorJob, oldQuali.Creator) {
+	if !access.CheckIfHasOwnJobAccess(ownAccess, userInfo, oldQuali.CreatorJob, oldQuali.Creator) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -506,7 +506,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 

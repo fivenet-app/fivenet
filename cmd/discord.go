@@ -4,6 +4,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/commands"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"go.uber.org/fx"
 )
 
@@ -12,6 +13,8 @@ type DiscordCmd struct {
 }
 
 func (c *DiscordCmd) Run(ctx *Context) error {
+	instance.SetComponent("discord")
+
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(*discord.Bot) {}),

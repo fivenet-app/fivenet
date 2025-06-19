@@ -1737,10 +1737,22 @@
                 "content": "Template deleted successfully."
             }
         },
-        "citizen_info": {
+        "citizens": {
             "copy_citizen_id": {
                 "title": "Citizen ID copied",
                 "content": "Citizen ID copied to clipboard."
+            },
+            "colleague": {
+                "client_view_update": {
+                    "title": "Citizen updated",
+                    "content": "Citizen has been updated by another user. Click here to reload the citizen's data."
+                }
+            },
+            "conduct": {
+                "client_view_update": {
+                    "title": "Conduct entry updated",
+                    "content": "Conduct entry has been updated by another user. Click here to reload the conduct entry's data."
+                }
             }
         },
         "centrum": {
@@ -1953,11 +1965,27 @@
                     "title": "Document closed!",
                     "content": "Document has been closed."
                 }
+            },
+            "client_view_update": {
+                "title": "Document updated",
+                "content": "Document has been updated by another user. Click here to reload the document."
             }
         },
         "action_failed": {
             "title": "Failed!",
             "content": "Your action has failed, please try again."
+        },
+        "wiki": {
+            "client_view_update": {
+                "title": "Page updated",
+                "content": "Page has been updated by another user. Click here to reload the page."
+            }
+        },
+        "jobs": {
+            "client_view_update": {
+                "title": "Colleague updated",
+                "content": "Colleague has been updated by another user. Click here to reload the colleague's data."
+            }
         }
     },
     "errors": {

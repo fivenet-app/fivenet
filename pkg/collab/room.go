@@ -9,6 +9,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -60,6 +61,7 @@ func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js je
 	subject := fmt.Sprintf("collab.%s.%d", category, roomId)
 
 	consumer, err := js.CreateOrUpdateConsumer(ctx, "COLLAB", jetstream.ConsumerConfig{
+		Durable:       instance.ID() + "_collab_" + category,
 		FilterSubject: subject,
 		AckPolicy:     jetstream.AckExplicitPolicy,
 	})

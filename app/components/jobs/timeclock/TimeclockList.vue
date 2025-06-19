@@ -9,7 +9,6 @@ import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerP
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { TimeclockMode, TimeclockViewMode } from '~~/gen/ts/resources/jobs/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
@@ -44,37 +43,42 @@ const completorStore = useCompletorStore();
 
 const canAccessAll = attr('jobs.TimeclockService/ListTimeclock', 'Access', 'All');
 
+const route = useRoute();
+
 const dateLowerLimit = new Date(2022, 1, 1);
 
 const schema = z.object({
-    userMode: z.nativeEnum(TimeclockViewMode),
-    mode: z.nativeEnum(TimeclockMode),
-    users: z.custom<Colleague>().array().max(10),
-    date: z.object({
-        start: z.date(),
-        end: z.date(),
+    userMode: z
+        .nativeEnum(TimeclockViewMode)
+        .default(
+            TimeclockViewMode[(route.query?.mode as string | undefined)?.toUpperCase() as keyof typeof TimeclockViewMode] ??
+                TimeclockViewMode.SELF,
+        ),
+    mode: z
+        .nativeEnum(TimeclockMode)
+        .default(
+            TimeclockMode[(route.query?.view as string | undefined)?.toUpperCase() as keyof typeof TimeclockMode] ??
+                (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.RANGE),
+        ),
+    users: z.coerce.number().array().max(10).default([]),
+    date: z
+        .object({
+            start: z.coerce.date(),
+            end: z.coerce.date(),
+        })
+        .default({
+            start: subDays(new Date(), 7),
+            end: new Date(),
+        }),
+    perDay: z.coerce.boolean().default(true),
+    sort: z.custom<TableSortable>().default({
+        column: 'id',
+        direction: 'desc',
     }),
-    perDay: z.boolean(),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
-
-const route = useRoute();
-
-const query = reactive<Schema>({
-    userMode:
-        TimeclockViewMode[(route.query?.mode as string | undefined)?.toUpperCase() as keyof typeof TimeclockViewMode] ??
-        TimeclockViewMode.SELF,
-    mode:
-        TimeclockMode[(route.query?.view as string | undefined)?.toUpperCase() as keyof typeof TimeclockMode] ??
-        (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.RANGE),
-    users: [],
-    date: {
-        start: subDays(new Date(), 7),
-        end: new Date(),
-    },
-    perDay: true,
-});
+const query = useSearchForm('jobs_timeclock', schema);
 
 function setFromProps(): void {
     if (props.userId === undefined) {
@@ -82,16 +86,7 @@ function setFromProps(): void {
     }
 
     query.userMode = TimeclockViewMode.ALL;
-    query.users = [
-        {
-            userId: props.userId,
-            firstname: '',
-            lastname: '',
-            dateofbirth: '',
-            job: '',
-            jobGrade: 0,
-        },
-    ];
+    query.users = [props.userId];
 }
 
 setFromProps();
@@ -99,13 +94,7 @@ watch(props, setFromProps);
 
 const usersLoading = ref(false);
 
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'date',
-    direction: 'desc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
@@ -113,11 +102,8 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-timeclock-${sort.value.column}:${sort.value.direction}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.map((u) => u.userId)}-${page.value}`,
+    `jobs-timeclock-${query.sort.column}:${query.sort.direction}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.join(',')}-${query.page}`,
     () => listTimeclockEntries(),
-    {
-        watch: [sort],
-    },
 );
 
 async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
@@ -130,7 +116,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             userMode: query.userMode,
             mode: query.mode,
             date: {
@@ -145,7 +131,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
                     timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.date.end),
                 },
             },
-            userIds: query.users.map((u) => u.userId) ?? [],
+            userIds: query.users,
             perDay: query.perDay,
         };
 
@@ -229,18 +215,6 @@ const columns = computed(() => [
         sortable: true,
     },
 ]);
-
-const router = useRouter();
-
-watch(query, () =>
-    router.replace({
-        query: {
-            mode: TimeclockViewMode[query.userMode].toLowerCase(),
-            view: TimeclockMode[query.mode].toLowerCase(),
-        },
-        hash: '#',
-    }),
-);
 
 const items = computed(() =>
     [
@@ -402,11 +376,12 @@ const { game } = useAppConfig();
                                     v-model="query.users"
                                     multiple
                                     :searchable="
-                                        async (query: string) => {
+                                        async (q: string) => {
                                             usersLoading = true;
                                             const colleagues = await completorStore.listColleagues({
-                                                search: query,
+                                                search: q,
                                                 labelIds: [],
+                                                userIds: query.users,
                                             });
                                             usersLoading = false;
                                             return colleagues;
@@ -418,11 +393,12 @@ const { game } = useAppConfig();
                                     :placeholder="$t('common.colleague', 2)"
                                     block
                                     trailing
+                                    value-attribute="userId"
                                     leading-icon="i-mdi-search"
                                 >
-                                    <template #label>
-                                        <span v-if="query?.users?.length > 0" class="truncate">
-                                            {{ usersToLabel(query?.users ?? []) }}
+                                    <template #label="{ selected }">
+                                        <span v-if="selected.length > 0" class="truncate">
+                                            {{ usersToLabel(selected) }}
                                         </span>
                                     </template>
 
@@ -564,7 +540,7 @@ const { game } = useAppConfig();
 
     <UTable
         v-else-if="query.mode !== TimeclockMode.TIMELINE"
-        v-model:sort="sort"
+        v-model:sort="query.sort"
         class="flex-1"
         :loading="loading"
         :columns="columns"
@@ -645,7 +621,7 @@ const { game } = useAppConfig();
 
     <div class="flex flex-row items-center">
         <Pagination
-            v-model="page"
+            v-model="query.page"
             class="flex-1"
             :pagination="data?.pagination"
             :loading="loading"

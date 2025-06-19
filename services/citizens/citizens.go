@@ -8,6 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
@@ -609,6 +610,16 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizens.SetUserPropsR
 
 		resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(*resp.Props.JobName, grade)
 	}
+
+	userId := uint64(user.User.UserId)
+	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
+		Type:      notifications.ObjectType_OBJECT_TYPE_CITIZEN,
+		Id:        &userId,
+		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+
+		UserId: &userInfo.UserId,
+		Job:    &userInfo.Job,
+	})
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 

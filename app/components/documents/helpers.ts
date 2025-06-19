@@ -50,20 +50,20 @@ function checkIfCanAccessOwnJobDocument(activeChar: UserShort, creator: UserShor
         return creator?.userId === activeChar.userId;
     }
 
-    if (fields.includes('any')) {
+    if (fields.includes('Any')) {
         return true;
     }
-    if (fields.includes('lower_rank')) {
+    if (fields.includes('LowerRank')) {
         if (creator?.jobGrade < activeChar.jobGrade) {
             return true;
         }
     }
-    if (fields.includes('same_rank')) {
+    if (fields.includes('SameRank')) {
         if (creator?.jobGrade <= activeChar.jobGrade) {
             return true;
         }
     }
-    if (fields.includes('own')) {
+    if (fields.includes('Own')) {
         if (creator?.userId === activeChar.userId) {
             return true;
         }

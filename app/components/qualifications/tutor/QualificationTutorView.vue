@@ -45,10 +45,11 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                         trailing
                         by="userId"
                         :search="
-                            async (query: string): Promise<UserShort[]> => {
+                            async (q: string): Promise<UserShort[]> => {
                                 usersLoading = true;
                                 const users = await completorStore.completeCitizens({
-                                    search: query,
+                                    search: q,
+                                    userIds: query.user ? [query.user.userId] : [],
                                 });
                                 usersLoading = false;
                                 return users;

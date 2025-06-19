@@ -12,6 +12,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useClipboardStore } from '~/stores/clipboard';
 import type { Perms } from '~~/gen/ts/perms';
+import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import CitizenActions from './CitizenActions.vue';
@@ -28,6 +29,7 @@ const { t } = useI18n();
 const { attr, can } = useAuth();
 
 const clipboardStore = useClipboardStore();
+
 const notifications = useNotificationsStore();
 
 const items: TabItem[] = [
@@ -97,6 +99,24 @@ function addToClipboard(): void {
     });
 }
 
+// Handle the client update event
+const { sendClientView } = useClientUpdate(ObjectType.CITIZEN, () =>
+    notifications.add({
+        title: { key: 'notifications.citizens.client_view_update.title', parameters: {} },
+        description: { key: 'notifications.citizens.client_view_update.content', parameters: {} },
+        timeout: 7500,
+        type: NotificationType.INFO,
+        actions: [
+            {
+                label: { key: 'common.refresh', parameters: {} },
+                icon: 'i-mdi-refresh',
+                click: () => refresh(),
+            },
+        ],
+    }),
+);
+sendClientView(props.userId);
+
 const route = useRoute();
 const router = useRouter();
 
@@ -130,12 +150,14 @@ const isOpen = ref(false);
                 <template #right>
                     <PartialsBackButton fallback-to="/citizens" />
 
+                    <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="loading" @click="refresh" />
+
                     <UButtonGroup class="inline-flex lg:hidden">
                         <IDCopyBadge
                             :id="userId"
                             prefix="CIT"
-                            :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
-                            :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
+                            :title="{ key: 'notifications.citizens.copy_citizen_id.title', parameters: {} }"
+                            :content="{ key: 'notifications.citizens.copy_citizen_id.content', parameters: {} }"
                         />
 
                         <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
@@ -226,8 +248,8 @@ const isOpen = ref(false);
                         <IDCopyBadge
                             :id="userId"
                             prefix="CIT"
-                            :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
-                            :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
+                            :title="{ key: 'notifications.citizens.copy_citizen_id.title', parameters: {} }"
+                            :content="{ key: 'notifications.citizens.copy_citizen_id.content', parameters: {} }"
                         />
 
                         <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />

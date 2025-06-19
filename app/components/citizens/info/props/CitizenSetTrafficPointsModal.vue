@@ -22,7 +22,7 @@ const notifications = useNotificationsStore();
 const schema = z.object({
     reason: z.string().min(3).max(255),
     trafficInfractionPoints: z.coerce.number().int().nonnegative().lt(99999),
-    reset: z.boolean(),
+    reset: z.coerce.boolean(),
 });
 
 type Schema = z.output<typeof schema>;

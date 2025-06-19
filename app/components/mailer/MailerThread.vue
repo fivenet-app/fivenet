@@ -42,8 +42,9 @@ const schema = z.object({
     recipients: z
         .object({ label: z.string().min(6).max(80) })
         .array()
-        .max(20),
-    attachments: z.custom<MessageAttachment>().array().max(3),
+        .max(20)
+        .default([]),
+    attachments: z.custom<MessageAttachment>().array().max(3).default([]),
 });
 
 type Schema = z.output<typeof schema>;

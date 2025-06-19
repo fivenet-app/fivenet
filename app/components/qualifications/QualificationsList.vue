@@ -10,30 +10,25 @@ import type { ListQualificationsResponse } from '~~/gen/ts/services/qualificatio
 
 const { $grpc } = useNuxtApp();
 
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'abbreviation',
-    direction: 'asc',
-});
-
 const schema = z.object({
     search: z.string().max(64).optional(),
+    sort: z.custom<TableSortable>().default({
+        column: 'abbreviation',
+        direction: 'asc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('qualifications_list', schema);
 
-const query = reactive<Schema>({});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`qualifications-${sort.value.column}:${sort.value.direction}-${page.value}`, () => listQualifications(), {
-    watch: [sort],
-});
+} = useLazyAsyncData(`qualifications-${query.sort.column}:${query.sort.direction}-${query.page}`, () => listQualifications());
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
@@ -41,7 +36,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             search: query.search,
         });
         const { response } = await call;
@@ -81,7 +76,7 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
                     </UFormGroup>
                 </UForm>
 
-                <SortButton v-model="sort" :fields="[{ label: $t('common.id'), value: 'id' }]" />
+                <SortButton v-model="query.sort" :fields="[{ label: $t('common.id'), value: 'id' }]" />
             </div>
         </template>
 
@@ -109,7 +104,13 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
         </div>
 
         <template #footer>
-            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" disable-border />
+            <Pagination
+                v-model="query.page"
+                :pagination="data?.pagination"
+                :loading="loading"
+                :refresh="refresh"
+                disable-border
+            />
         </template>
     </UCard>
 </template>

@@ -31,7 +31,8 @@ type CompleteCitizensRequest struct {
 	Search        string                 `protobuf:"bytes,1,opt,name=search,proto3" json:"search,omitempty"`
 	CurrentJob    *bool                  `protobuf:"varint,2,opt,name=current_job,json=currentJob,proto3,oneof" json:"current_job,omitempty"`
 	OnDuty        *bool                  `protobuf:"varint,3,opt,name=on_duty,json=onDuty,proto3,oneof" json:"on_duty,omitempty"`
-	UserId        *int32                 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	UserIds       []int32                `protobuf:"varint,4,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	UserIdsOnly   *bool                  `protobuf:"varint,5,opt,name=user_ids_only,json=userIdsOnly,proto3,oneof" json:"user_ids_only,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -87,11 +88,18 @@ func (x *CompleteCitizensRequest) GetOnDuty() bool {
 	return false
 }
 
-func (x *CompleteCitizensRequest) GetUserId() int32 {
-	if x != nil && x.UserId != nil {
-		return *x.UserId
+func (x *CompleteCitizensRequest) GetUserIds() []int32 {
+	if x != nil {
+		return x.UserIds
 	}
-	return 0
+	return nil
+}
+
+func (x *CompleteCitizensRequest) GetUserIdsOnly() bool {
+	if x != nil && x.UserIdsOnly != nil {
+		return *x.UserIdsOnly
+	}
+	return false
 }
 
 type CompleteCitizensRespoonse struct {
@@ -502,18 +510,18 @@ var File_services_completor_completor_proto protoreflect.FileDescriptor
 
 const file_services_completor_completor_proto_rawDesc = "" +
 	"\n" +
-	"\"services/completor/completor.proto\x12\x12services.completor\x1a\"resources/documents/category.proto\x1a\x19resources/laws/laws.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xcd\x01\n" +
+	"\"services/completor/completor.proto\x12\x12services.completor\x1a\"resources/documents/category.proto\x1a\x19resources/laws/laws.proto\x1a\x19resources/jobs/jobs.proto\x1a\x1cresources/users/labels.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xfe\x01\n" +
 	"\x17CompleteCitizensRequest\x12\x1f\n" +
 	"\x06search\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18@R\x06search\x12$\n" +
 	"\vcurrent_job\x18\x02 \x01(\bH\x00R\n" +
 	"currentJob\x88\x01\x01\x12\x1c\n" +
-	"\aon_duty\x18\x03 \x01(\bH\x01R\x06onDuty\x88\x01\x01\x12%\n" +
-	"\auser_id\x18\x04 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\x02R\x06userId\x88\x01\x01B\x0e\n" +
+	"\aon_duty\x18\x03 \x01(\bH\x01R\x06onDuty\x88\x01\x01\x12'\n" +
+	"\buser_ids\x18\x04 \x03(\x05B\f\xfaB\t\x92\x01\x06\"\x04\x1a\x02 \x00R\auserIds\x12'\n" +
+	"\ruser_ids_only\x18\x05 \x01(\bH\x02R\vuserIdsOnly\x88\x01\x01B\x0e\n" +
 	"\f_current_jobB\n" +
 	"\n" +
-	"\b_on_dutyB\n" +
-	"\n" +
-	"\b_user_id\"M\n" +
+	"\b_on_dutyB\x10\n" +
+	"\x0e_user_ids_only\"M\n" +
 	"\x19CompleteCitizensRespoonse\x120\n" +
 	"\x05users\x18\x01 \x03(\v2\x1a.resources.users.UserShortR\x05users\"\xb2\x01\n" +
 	"\x13CompleteJobsRequest\x12$\n" +

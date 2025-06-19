@@ -24,8 +24,8 @@ const { isOpen } = useModal();
 const notifications = useNotificationsStore();
 
 const schema = z.object({
-    enabled: z.boolean(),
-    lastChar: z.number().optional(),
+    enabled: z.coerce.boolean().default(true),
+    lastChar: z.coerce.number().optional(),
 });
 
 type Schema = z.output<typeof schema>;

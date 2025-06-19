@@ -41,7 +41,11 @@ export const useCompletorStore = defineStore(
         };
 
         const findCitizen = async (userId: number): Promise<UserShort | undefined> => {
-            const users = await completeCitizens({ userId, search: '' });
+            const users = await completeCitizens({
+                search: '',
+                userIds: [userId],
+                userIdsOnly: true,
+            });
             return users.length === 0 ? undefined : users[0];
         };
 
@@ -61,7 +65,12 @@ export const useCompletorStore = defineStore(
         };
 
         const findColleague = async (userId: number): Promise<Colleague | undefined> => {
-            const colleagues = await listColleagues({ userId, search: '', labelIds: [] });
+            const colleagues = await listColleagues({
+                userIds: [userId],
+                search: '',
+                labelIds: [],
+                userOnly: true,
+            });
             return colleagues.length === 0 ? undefined : colleagues[0];
         };
 

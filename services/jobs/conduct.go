@@ -6,6 +6,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
 	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
@@ -333,6 +334,15 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 	}
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
+
+	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
+		Type:      notifications.ObjectType_OBJECT_TYPE_JOBS_CONDUCT,
+		Id:        &entry.Id,
+		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+
+		UserId: &userInfo.UserId,
+		Job:    &userInfo.Job,
+	})
 
 	return &pbjobs.UpdateConductEntryResponse{
 		Entry: entry,

@@ -7,6 +7,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki"
 	pbwiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki"
 	permswiki "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki/perms"
@@ -715,6 +716,15 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 	}
 
 	s.collabServer.SendTargetSaved(ctx, page.Id)
+
+	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
+		Type:      notifications.ObjectType_OBJECT_TYPE_WIKI_PAGE,
+		Id:        &page.Id,
+		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+
+		UserId: &userInfo.UserId,
+		Job:    &userInfo.Job,
+	})
 
 	return &pbwiki.UpdatePageResponse{
 		Page: page,

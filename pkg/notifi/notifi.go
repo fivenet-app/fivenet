@@ -20,6 +20,8 @@ var tNots = table.FivenetNotifications
 type INotifi interface {
 	// NotifyUser inserts a notification for a user and publishes it asynchronously.
 	NotifyUser(ctx context.Context, not *notifications.Notification) error
+	// SendObjectEvent publishes an object event notification to the event system.
+	SendObjectEvent(ctx context.Context, event *notifications.ObjectEvent) error
 }
 
 // Notifi implements the INotifi interface for managing user notifications.
@@ -56,7 +58,7 @@ func New(p Params) INotifi {
 
 	// Register event hooks on application start.
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		return n.registerEvents(ctx)
+		return n.registerStream(ctx)
 	}))
 
 	return n
@@ -117,4 +119,16 @@ func (n *Notifi) insertNotification(ctx context.Context, not *notifications.Noti
 	}
 
 	return id, nil
+}
+
+func (n *Notifi) SendObjectEvent(ctx context.Context, event *notifications.ObjectEvent) error {
+	if event.Id == nil {
+		return fmt.Errorf("object event ID is required")
+	}
+
+	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%s.%d", BaseSubject, ObjectTopic, event.Type.ToNatsKey(), *event.Id), event); err != nil {
+		return fmt.Errorf("failed to publish object event message. %w", err)
+	}
+
+	return nil
 }

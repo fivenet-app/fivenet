@@ -10,6 +10,7 @@ enum ContentType {
   CONTENT_TYPE_UNSPECIFIED = 0;
   CONTENT_TYPE_HTML = 1;
   CONTENT_TYPE_PLAIN = 2;
+  CONTENT_TYPE_TIPTAP_JSON = 3;
 }
 
 message Content {

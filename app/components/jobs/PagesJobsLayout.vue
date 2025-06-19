@@ -47,7 +47,11 @@ const links = [
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.jobs.title')" />
+            <UDashboardNavbar :title="$t('pages.jobs.title')">
+                <template #right>
+                    <PartialsBackButton fallback-to="/jobs/overview" />
+                </template>
+            </UDashboardNavbar>
 
             <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
                 <UHorizontalNavigation :links="links" />

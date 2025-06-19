@@ -220,6 +220,10 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 				}
 
 				if event.MarkerUpdate != nil {
+					if event.MarkerUpdate.Job != userInfo.Job && !userInfo.Superuser {
+						continue // Ignore updates for other jobs
+					}
+
 					// Send delete marker event to client
 					outCh <- &pblivemap.StreamResponse{
 						Data: &pblivemap.StreamResponse_Markers{
@@ -253,13 +257,13 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 			AckPolicy:      jetstream.AckNonePolicy,
 			MaxWaiting:     8,
 		}
-		cons, err := s.js.CreateConsumer(gctx, "KV_"+tracker.BucketUserLoc, consCfg)
+		consumer, err := s.js.CreateConsumer(gctx, "KV_"+tracker.BucketUserLoc, consCfg)
 		if err != nil {
 			return fmt.Errorf("failed to create consumer. %w", err)
 		}
 
 		for {
-			batch, err := cons.Fetch(feedFetch,
+			batch, err := consumer.Fetch(feedFetch,
 				jetstream.FetchMaxWait(2*time.Second))
 			if err != nil {
 				if errors.Is(err, context.DeadlineExceeded) ||

@@ -112,6 +112,22 @@ func (m *ListColleaguesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	for idx, item := range m.GetUserIds() {
+		_, _ = idx, item
+
+		if item < 0 {
+			err := ListColleaguesRequestValidationError{
+				field:  fmt.Sprintf("UserIds[%v]", idx),
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.Sort != nil {
 
 		if all {
@@ -145,19 +161,8 @@ func (m *ListColleaguesRequest) validate(all bool) error {
 
 	}
 
-	if m.UserId != nil {
-
-		if m.GetUserId() < 0 {
-			err := ListColleaguesRequestValidationError{
-				field:  "UserId",
-				reason: "value must be greater than or equal to 0",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
+	if m.UserOnly != nil {
+		// no validation rules for UserOnly
 	}
 
 	if m.Absent != nil {

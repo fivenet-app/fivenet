@@ -16,12 +16,13 @@ const completorStore = useCompletorStore();
 const schema = z.object({
     labels: z
         .object({
-            id: z.number(),
+            id: z.coerce.number(),
             name: z.string().min(1).max(64),
             color: z.string().length(7),
         })
         .array()
-        .max(15),
+        .max(15)
+        .default([]),
 });
 
 type Schema = z.output<typeof schema>;

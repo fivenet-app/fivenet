@@ -471,7 +471,8 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 
 	for _, settings := range s.ListSettings(ctx) {
 		job := settings.Job
-		if locs, ok := s.State.GetDispatchLocations(job); locs == nil || !ok {
+		locs, ok := s.State.GetDispatchLocations(job)
+		if locs == nil || !ok {
 			continue
 		}
 
@@ -505,10 +506,6 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				}
 
 				// Iterate over close by dispatches and collect the active ones (if locations are available)
-				locs, ok := s.State.GetDispatchLocations(dsp.Job)
-				if locs != nil || !ok {
-					continue
-				}
 				closestsDsp := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 					return p.(*centrum.Dispatch).Id != dsp.Id
 				}, 45.0)

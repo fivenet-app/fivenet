@@ -22,13 +22,13 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 
 const schema = z
     .object({
-        avatar: z.custom<File>().array().min(1).max(1),
-        reset: z.boolean(),
+        avatar: z.custom<File>().array().min(1).max(1).default([]),
+        reset: z.coerce.boolean(),
     })
     .or(
         z.union([
             z.object({
-                avatar: z.custom<File>().array().min(1).max(1),
+                avatar: z.custom<File>().array().min(1).max(1).default([]),
                 reset: z.literal(false),
             }),
             z.object({ avatar: z.custom<File>().array(), reset: z.literal(true) }),

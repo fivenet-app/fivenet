@@ -538,7 +538,7 @@ const isOpen = ref(false);
                     </UButton>
                 </UTooltip>
 
-                <UButton class="font-semibold" icon="i-mdi-search" @click="modal.open(FindCalendarsModal, {})">
+                <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarsModal, {})">
                     {{ $t('components.calendar.FindCalendarsModal.title') }}
                 </UButton>
             </div>
@@ -647,7 +647,7 @@ const isOpen = ref(false);
                     </UButton>
                 </UTooltip>
 
-                <UButton class="font-semibold" icon="i-mdi-search" @click="modal.open(FindCalendarsModal, {})">
+                <UButton class="font-semibold" icon="i-mdi-calendar-search" @click="modal.open(FindCalendarsModal, {})">
                     {{ $t('components.calendar.FindCalendarsModal.title') }}
                 </UButton>
             </div>

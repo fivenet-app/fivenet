@@ -8,7 +8,6 @@ import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { ColleagueActivityType } from '~~/gen/ts/resources/jobs/activity';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleagueName from '../ColleagueName.vue';
 
@@ -43,26 +42,18 @@ const activityTypes = Object.keys(ColleagueActivityType)
     .map((aType) => ColleagueActivityType[aType as keyof typeof ColleagueActivityType]);
 
 const schema = z.object({
-    colleagues: z.custom<Colleague>().array().max(10),
-    types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.length),
+    colleagues: z.coerce.number().array().max(10).default([]),
+    types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.length).default(activityTypes),
+    sort: z.custom<TableSortable>().default({
+        column: 'createdAt',
+        direction: 'desc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('jobs_colleagues_activity', schema);
 
-const query = reactive<Schema>({
-    colleagues: [],
-    types: activityTypes,
-});
-
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'createdAt',
-    direction: 'desc',
-});
-
-const selectedUsersIds = computed(() => (props.userId !== undefined ? [props.userId] : query.colleagues.map((u) => u.userId)));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
@@ -70,11 +61,8 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-colleague-${sort.value.column}:${sort.value.direction}-${page.value}-${selectedUsersIds.value.join(',')}-${query.types.join(':')}`,
-    () => listColleagueActivity(selectedUsersIds.value, query.types),
-    {
-        watch: [sort],
-    },
+    `jobs-colleague-${query.sort.column}:${query.sort.direction}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}`,
+    () => listColleagueActivity(query.colleagues, query.types),
 );
 
 async function listColleagueActivity(
@@ -86,7 +74,7 @@ async function listColleagueActivity(
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             userIds: userIds,
             activityTypes: activityTypes,
         });
@@ -102,7 +90,7 @@ async function listColleagueActivity(
 watch(offset, async () => refresh());
 
 const accessAttrs = attrStringList('jobs.JobsService/GetColleague', 'Access');
-const colleagueSearchAttrs = ['own', 'lower_rank', 'same_rank', 'any'];
+const colleagueSearchAttrs = ['Own', 'LowerRank', 'SameRank', 'Any'];
 
 watch(props, async () => refresh());
 watchDebounced(query, async () => refresh(), {
@@ -120,11 +108,12 @@ watchDebounced(query, async () => refresh(), {
                         v-model="query.colleagues"
                         multiple
                         :searchable="
-                            async (query: string) => {
+                            async (q: string) => {
                                 usersLoading = true;
                                 const colleagues = await completorStore.listColleagues({
-                                    search: query,
+                                    search: q,
                                     labelIds: [],
+                                    userIds: query.colleagues,
                                 });
                                 usersLoading = false;
                                 return colleagues;
@@ -137,10 +126,11 @@ watchDebounced(query, async () => refresh(), {
                         :placeholder="$t('common.colleague', 2)"
                         trailing
                         leading-icon="i-mdi-search"
+                        value-attribute="userId"
                     >
-                        <template #label>
-                            <template v-if="query.colleagues.length">
-                                {{ usersToLabel(query.colleagues) }}
+                        <template #label="{ selected }">
+                            <template v-if="selected.length">
+                                {{ usersToLabel(selected) }}
                             </template>
                         </template>
 
@@ -193,7 +183,7 @@ watchDebounced(query, async () => refresh(), {
             </UFormGroup>
 
             <UFormGroup label="&nbsp;">
-                <SortButton v-model="sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
+                <SortButton v-model="query.sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
             </UFormGroup>
         </UForm>
     </UDashboardToolbar>
@@ -259,5 +249,5 @@ watchDebounced(query, async () => refresh(), {
         </div>
     </div>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

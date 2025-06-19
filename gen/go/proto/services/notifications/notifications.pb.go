@@ -318,6 +318,7 @@ type StreamResponse struct {
 	//	*StreamResponse_JobGradeEvent
 	//	*StreamResponse_SystemEvent
 	//	*StreamResponse_MailerEvent
+	//	*StreamResponse_ObjectEvent
 	Data          isStreamResponse_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -419,6 +420,15 @@ func (x *StreamResponse) GetMailerEvent() *mailer.MailerEvent {
 	return nil
 }
 
+func (x *StreamResponse) GetObjectEvent() *notifications.ObjectEvent {
+	if x != nil {
+		if x, ok := x.Data.(*StreamResponse_ObjectEvent); ok {
+			return x.ObjectEvent
+		}
+	}
+	return nil
+}
+
 type isStreamResponse_Data interface {
 	isStreamResponse_Data()
 }
@@ -432,15 +442,19 @@ type StreamResponse_JobEvent struct {
 }
 
 type StreamResponse_JobGradeEvent struct {
-	JobGradeEvent *notifications.JobGradeEvent `protobuf:"bytes,7,opt,name=job_grade_event,json=jobGradeEvent,proto3,oneof"`
+	JobGradeEvent *notifications.JobGradeEvent `protobuf:"bytes,5,opt,name=job_grade_event,json=jobGradeEvent,proto3,oneof"`
 }
 
 type StreamResponse_SystemEvent struct {
-	SystemEvent *notifications.SystemEvent `protobuf:"bytes,5,opt,name=system_event,json=systemEvent,proto3,oneof"`
+	SystemEvent *notifications.SystemEvent `protobuf:"bytes,6,opt,name=system_event,json=systemEvent,proto3,oneof"`
 }
 
 type StreamResponse_MailerEvent struct {
-	MailerEvent *mailer.MailerEvent `protobuf:"bytes,6,opt,name=mailer_event,json=mailerEvent,proto3,oneof"`
+	MailerEvent *mailer.MailerEvent `protobuf:"bytes,7,opt,name=mailer_event,json=mailerEvent,proto3,oneof"`
+}
+
+type StreamResponse_ObjectEvent struct {
+	ObjectEvent *notifications.ObjectEvent `protobuf:"bytes,8,opt,name=object_event,json=objectEvent,proto3,oneof"`
 }
 
 func (*StreamResponse_UserEvent) isStreamResponse_Data() {}
@@ -452,6 +466,8 @@ func (*StreamResponse_JobGradeEvent) isStreamResponse_Data() {}
 func (*StreamResponse_SystemEvent) isStreamResponse_Data() {}
 
 func (*StreamResponse_MailerEvent) isStreamResponse_Data() {}
+
+func (*StreamResponse_ObjectEvent) isStreamResponse_Data() {}
 
 var File_services_notifications_notifications_proto protoreflect.FileDescriptor
 
@@ -482,16 +498,17 @@ const file_services_notifications_notifications_proto_rawDesc = "" +
 	"\rStreamMessage\x12P\n" +
 	"\vclient_view\x18\x01 \x01(\v2#.resources.notifications.ClientViewB\b\xfaB\x05\x8a\x01\x02\x10\x01H\x00R\n" +
 	"clientViewB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"\xdf\x03\n" +
+	"\x04data\x12\x03\xf8B\x01\"\xaa\x04\n" +
 	"\x0eStreamResponse\x12-\n" +
 	"\x12notification_count\x18\x01 \x01(\x05R\x11notificationCount\x12\x1d\n" +
 	"\arestart\x18\x02 \x01(\bH\x01R\arestart\x88\x01\x01\x12C\n" +
 	"\n" +
 	"user_event\x18\x03 \x01(\v2\".resources.notifications.UserEventH\x00R\tuserEvent\x12@\n" +
 	"\tjob_event\x18\x04 \x01(\v2!.resources.notifications.JobEventH\x00R\bjobEvent\x12P\n" +
-	"\x0fjob_grade_event\x18\a \x01(\v2&.resources.notifications.JobGradeEventH\x00R\rjobGradeEvent\x12I\n" +
-	"\fsystem_event\x18\x05 \x01(\v2$.resources.notifications.SystemEventH\x00R\vsystemEvent\x12B\n" +
-	"\fmailer_event\x18\x06 \x01(\v2\x1d.resources.mailer.MailerEventH\x00R\vmailerEventB\v\n" +
+	"\x0fjob_grade_event\x18\x05 \x01(\v2&.resources.notifications.JobGradeEventH\x00R\rjobGradeEvent\x12I\n" +
+	"\fsystem_event\x18\x06 \x01(\v2$.resources.notifications.SystemEventH\x00R\vsystemEvent\x12B\n" +
+	"\fmailer_event\x18\a \x01(\v2\x1d.resources.mailer.MailerEventH\x00R\vmailerEvent\x12I\n" +
+	"\fobject_event\x18\b \x01(\v2$.resources.notifications.ObjectEventH\x00R\vobjectEventB\v\n" +
 	"\x04data\x12\x03\xf8B\x01B\n" +
 	"\n" +
 	"\b_restart2\xe4\x02\n" +
@@ -530,6 +547,7 @@ var file_services_notifications_notifications_proto_goTypes = []any{
 	(*notifications.JobGradeEvent)(nil),     // 13: resources.notifications.JobGradeEvent
 	(*notifications.SystemEvent)(nil),       // 14: resources.notifications.SystemEvent
 	(*mailer.MailerEvent)(nil),              // 15: resources.mailer.MailerEvent
+	(*notifications.ObjectEvent)(nil),       // 16: resources.notifications.ObjectEvent
 }
 var file_services_notifications_notifications_proto_depIdxs = []int32{
 	6,  // 0: services.notifications.GetNotificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -542,17 +560,18 @@ var file_services_notifications_notifications_proto_depIdxs = []int32{
 	13, // 7: services.notifications.StreamResponse.job_grade_event:type_name -> resources.notifications.JobGradeEvent
 	14, // 8: services.notifications.StreamResponse.system_event:type_name -> resources.notifications.SystemEvent
 	15, // 9: services.notifications.StreamResponse.mailer_event:type_name -> resources.mailer.MailerEvent
-	0,  // 10: services.notifications.NotificationsService.GetNotifications:input_type -> services.notifications.GetNotificationsRequest
-	2,  // 11: services.notifications.NotificationsService.MarkNotifications:input_type -> services.notifications.MarkNotificationsRequest
-	4,  // 12: services.notifications.NotificationsService.Stream:input_type -> services.notifications.StreamMessage
-	1,  // 13: services.notifications.NotificationsService.GetNotifications:output_type -> services.notifications.GetNotificationsResponse
-	3,  // 14: services.notifications.NotificationsService.MarkNotifications:output_type -> services.notifications.MarkNotificationsResponse
-	5,  // 15: services.notifications.NotificationsService.Stream:output_type -> services.notifications.StreamResponse
-	13, // [13:16] is the sub-list for method output_type
-	10, // [10:13] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	16, // 10: services.notifications.StreamResponse.object_event:type_name -> resources.notifications.ObjectEvent
+	0,  // 11: services.notifications.NotificationsService.GetNotifications:input_type -> services.notifications.GetNotificationsRequest
+	2,  // 12: services.notifications.NotificationsService.MarkNotifications:input_type -> services.notifications.MarkNotificationsRequest
+	4,  // 13: services.notifications.NotificationsService.Stream:input_type -> services.notifications.StreamMessage
+	1,  // 14: services.notifications.NotificationsService.GetNotifications:output_type -> services.notifications.GetNotificationsResponse
+	3,  // 15: services.notifications.NotificationsService.MarkNotifications:output_type -> services.notifications.MarkNotificationsResponse
+	5,  // 16: services.notifications.NotificationsService.Stream:output_type -> services.notifications.StreamResponse
+	14, // [14:17] is the sub-list for method output_type
+	11, // [11:14] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_services_notifications_notifications_proto_init() }
@@ -571,6 +590,7 @@ func file_services_notifications_notifications_proto_init() {
 		(*StreamResponse_JobGradeEvent)(nil),
 		(*StreamResponse_SystemEvent)(nil),
 		(*StreamResponse_MailerEvent)(nil),
+		(*StreamResponse_ObjectEvent)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

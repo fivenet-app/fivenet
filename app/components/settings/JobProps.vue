@@ -35,47 +35,48 @@ const notifications = useNotificationsStore();
 const schema = z.object({
     livemapMarkerColor: z.string().length(7),
     quickButtons: z.object({
-        penaltyCalculator: z.boolean(),
-        mathCalculator: z.boolean(),
+        penaltyCalculator: z.coerce.boolean(),
+        mathCalculator: z.coerce.boolean(),
     }),
     radioFrequency: z.string().max(24),
     discordGuildId: z.string().max(48),
     discordSyncSettings: z.object({
-        dryRun: z.boolean(),
-        userInfoSync: z.boolean(),
+        dryRun: z.coerce.boolean(),
+        userInfoSync: z.coerce.boolean(),
         userInfoSyncSettings: z.object({
-            employeeRoleEnabled: z.boolean(),
+            employeeRoleEnabled: z.coerce.boolean(),
             employeeRoleFormat: z.string().max(64),
             gradeRoleFormat: z.string().max(64),
-            unemployedEnabled: z.boolean(),
+            unemployedEnabled: z.coerce.boolean(),
             unemployedMode: z.nativeEnum(UserInfoSyncUnemployedMode),
             unemployedRoleName: z.string().max(64),
-            syncNicknames: z.boolean(),
+            syncNicknames: z.coerce.boolean(),
             groupMapping: z
                 .object({
                     name: z.string().max(64),
-                    fromGrade: z.number().min(0).max(99999),
-                    toGrade: z.number().min(0).max(99999),
+                    fromGrade: z.coerce.number().min(0).max(99999),
+                    toGrade: z.coerce.number().min(0).max(99999),
                 })
                 .array()
-                .max(25),
+                .max(25)
+                .default([]),
         }),
-        statusLog: z.boolean(),
+        statusLog: z.coerce.boolean(),
         statusLogSettings: z.object({
             channelId: z.string().max(64),
         }),
-        jobsAbsence: z.boolean(),
+        jobsAbsence: z.coerce.boolean(),
         jobsAbsenceSettings: z.object({
             absenceRole: z.string().max(64),
         }),
         groupSyncSettings: z.object({
-            ignoredRoleIds: z.string().max(64).array().max(20),
+            ignoredRoleIds: z.string().max(64).array().max(20).default([]),
         }),
         qualificationsRoleFormat: z.string().max(64),
     }),
     settings: z.object({
-        absencePastDays: z.number().int().nonnegative().min(0).max(31),
-        absenceFutureDays: z.number().int().nonnegative().min(0).max(186),
+        absencePastDays: z.coerce.number().int().nonnegative().min(0).max(31),
+        absenceFutureDays: z.coerce.number().int().nonnegative().min(0).max(186),
     }),
 });
 
@@ -227,12 +228,16 @@ function setSettingsValues(): void {
 
 watch(jobProps, () => setSettingsValues());
 
+const canEdit = can('settings.SettingsService/SetJobProps');
+
 const dcConnectRequired = ref(false);
 const { data: userGuilds } = useLazyAsyncData(`settings-userguilds`, () => listGuilds(), {
     immediate: appConfig.discord.botEnabled,
 });
 
 async function listGuilds() {
+    if (!canEdit.value) return [];
+
     try {
         const call = $grpc.settings.settings.listUserGuilds({});
         const { response } = await call;
@@ -251,6 +256,8 @@ async function listGuilds() {
 }
 
 async function searchChannels() {
+    if (!canEdit.value) return [];
+
     try {
         const call = $grpc.settings.settings.listDiscordChannels({});
         const { response } = await call;
@@ -261,8 +268,6 @@ async function searchChannels() {
         return [];
     }
 }
-
-const canEdit = can('settings.SettingsService/SetJobProps');
 
 const items = [
     {
@@ -501,7 +506,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <template v-if="appConfig.discord.botEnabled" #links>
                                     <NotSupportedTabletBlock v-if="nuiEnabled" />
                                     <UButton
-                                        v-else
+                                        v-else-if="canEdit"
                                         class="mt-1"
                                         block
                                         color="white"

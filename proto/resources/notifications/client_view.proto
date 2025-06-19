@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.notifications;
 
+import "google/protobuf/struct.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notifications";
@@ -9,11 +10,29 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 enum ObjectType {
   OBJECT_TYPE_UNSPECIFIED = 0;
   OBJECT_TYPE_CITIZEN = 1;
-  OBJECT_TYPE_DOCUMENTS = 2;
+  OBJECT_TYPE_DOCUMENT = 2;
   OBJECT_TYPE_WIKI_PAGE = 3;
+  OBJECT_TYPE_JOBS_COLLEAGUE = 4;
+  OBJECT_TYPE_JOBS_CONDUCT = 5;
 }
 
 message ClientView {
   ObjectType type = 1 [(validate.rules).enum.defined_only = true];
   optional uint64 id = 2;
+}
+
+enum ObjectEventType {
+  OBJECT_EVENT_TYPE_UNSPECIFIED = 0;
+  OBJECT_EVENT_TYPE_UPDATED = 1;
+  OBJECT_EVENT_TYPE_DELETED = 2;
+}
+
+message ObjectEvent {
+  ObjectType type = 1 [(validate.rules).enum.defined_only = true];
+  optional uint64 id = 2;
+  ObjectEventType event_type = 3 [(validate.rules).enum.defined_only = true];
+
+  optional int32 user_id = 4 [(validate.rules).int32.gte = 0];
+  optional string job = 5 [(validate.rules).string.max_len = 20];
+  optional google.protobuf.Struct data = 6;
 }

@@ -185,11 +185,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <USelectMenu
                                             v-model="state.targetUser"
                                             :searchable="
-                                                async (query: string) => {
+                                                async (q: string) => {
                                                     usersLoading = true;
                                                     const colleagues = await completorStore.listColleagues({
-                                                        search: query,
+                                                        search: q,
                                                         labelIds: [],
+                                                        userIds: [],
                                                     });
                                                     usersLoading = false;
                                                     return colleagues;

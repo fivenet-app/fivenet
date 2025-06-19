@@ -8,6 +8,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -36,9 +37,10 @@ func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 		return err
 	}
 
-	consumer, err := s.js.CreateConsumer(ctxStartup, cfg.Name, jetstream.ConsumerConfig{
-		DeliverPolicy: jetstream.DeliverNewPolicy,
+	consumer, err := s.js.CreateOrUpdateConsumer(ctxStartup, cfg.Name, jetstream.ConsumerConfig{
+		Durable:       instance.ID() + "_livemap",
 		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
+		DeliverPolicy: jetstream.DeliverNewPolicy,
 	})
 	if err != nil {
 		return err

@@ -22,7 +22,7 @@ const { addressBook, selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
     signature: z.string().max(1024),
-    emails: z.string().array().max(25),
+    emails: z.string().array().max(25).default([]),
 });
 
 type Schema = z.output<typeof schema>;

@@ -37,10 +37,10 @@ const schema = z.object({
     description: z.union([z.string().min(1).max(255), z.string().length(0).optional()]),
     color: z.string().length(7),
     homePostal: z.union([z.string().min(1).max(48), z.string().length(0).optional()]),
-    attributes: z.nativeEnum(UnitAttribute).array().max(5),
+    attributes: z.nativeEnum(UnitAttribute).array().max(5).default([]),
     access: z.object({
-        jobs: z.custom<UnitJobAccess>().array().max(maxAccessEntries),
-        qualifications: z.custom<UnitQualificationAccess>().array().max(maxAccessEntries),
+        jobs: z.custom<UnitJobAccess>().array().max(maxAccessEntries).default([]),
+        qualifications: z.custom<UnitQualificationAccess>().array().max(maxAccessEntries).default([]),
     }),
 });
 

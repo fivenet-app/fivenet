@@ -52,10 +52,10 @@ const schema = z.object({
     content: z.string().min(3).max(1500000),
     contentState: z.union([z.string().min(1).max(512), z.string().length(0)]),
     category: z.custom<Category>().optional(),
-    jobAccess: z.custom<TemplateJobAccess>().array().max(maxAccessEntries),
+    jobAccess: z.custom<TemplateJobAccess>().array().max(maxAccessEntries).default([]),
     contentAccess: z.object({
-        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries),
-        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries),
+        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries).default([]),
+        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries).default([]),
     }),
     workflow: zWorkflow,
 });

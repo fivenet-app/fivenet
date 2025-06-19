@@ -381,7 +381,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *pbdocuments.DeleteComme
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(fields, userInfo, comment.CreatorJob, comment.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, comment.CreatorJob, comment.Creator) {
 		return nil, errorsdocuments.ErrCommentDeleteDenied
 	}
 
@@ -515,7 +515,7 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 				},
 			},
 		}
-		if err := s.notif.NotifyUser(ctx, not); err != nil {
+		if err := s.notifi.NotifyUser(ctx, not); err != nil {
 			return err
 		}
 	}

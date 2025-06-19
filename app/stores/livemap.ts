@@ -230,7 +230,7 @@ export const useLivemapStore = defineStore(
             logger.debug('Restart back off time in', reconnectBackoffTime.value, 'seconds');
             await stopStream();
 
-            setTimeout(async () => {
+            useTimeoutFn(async () => {
                 if (reconnecting.value) {
                     startStream();
                 }

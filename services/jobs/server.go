@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -74,6 +75,7 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
+	notifi   notifi.INotifi
 
 	customDB config.CustomDB
 }
@@ -88,6 +90,7 @@ type Params struct {
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Audit             audit.IAuditer
+	Notifi            notifi.INotifi
 	Config            *config.Config
 }
 
@@ -100,6 +103,7 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.UserAwareEnricher,
 		aud:      p.Audit,
+		notifi:   p.Notifi,
 
 		customDB: p.Config.Database.Custom,
 	}

@@ -18,6 +18,7 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import type { File } from '~~/gen/ts/resources/file/file';
+import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UpdateDocumentRequest } from '~~/gen/ts/services/documents/documents';
 import ConfirmModal from '../partials/ConfirmModal.vue';
@@ -108,17 +109,17 @@ const schema = z.object({
     title: z.string().min(3).max(255),
     state: z.union([z.string().length(0), z.string().min(3).max(32)]),
     content: z.string().min(3).max(1750000),
-    closed: z.boolean(),
-    draft: z.boolean(),
-    public: z.boolean(),
+    closed: z.coerce.boolean(),
+    draft: z.coerce.boolean(),
+    public: z.coerce.boolean(),
     category: z.custom<Category>(),
     access: z.object({
-        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries),
-        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries),
+        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries).default([]),
+        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries).default([]),
     }),
-    files: z.custom<File>().array().max(5),
-    references: z.custom<DocumentReference>().array().max(15),
-    relations: z.custom<DocumentRelation>().array().max(15),
+    files: z.custom<File>().array().max(5).default([]),
+    references: z.custom<DocumentReference>().array().max(15).default([]),
+    relations: z.custom<DocumentRelation>().array().max(15).default([]),
 });
 
 type Schema = z.output<typeof schema>;
@@ -344,6 +345,24 @@ const canDo = computed(() => ({
     references: can('documents.DocumentsService/AddDocumentReference').value,
     relations: can('documents.DocumentsService/AddDocumentRelation').value,
 }));
+
+// Handle the client update event
+const { sendClientView } = useClientUpdate(ObjectType.DOCUMENT, () =>
+    notifications.add({
+        title: { key: 'notifications.documents.client_view_update.title', parameters: {} },
+        description: { key: 'notifications.documents.client_view_update.content', parameters: {} },
+        timeout: 7500,
+        type: NotificationType.INFO,
+        actions: [
+            {
+                label: { key: 'common.refresh', parameters: {} },
+                icon: 'i-mdi-refresh',
+                click: () => refresh(),
+            },
+        ],
+    }),
+);
+sendClientView(props.documentId);
 
 useYText(ydoc.getText('title'), toRef(state, 'title'), { provider: provider });
 useYText(ydoc.getText('state'), toRef(state, 'state'), { provider: provider });

@@ -97,6 +97,22 @@ func (m *ListVehiclesRequest) validate(all bool) error {
 		}
 	}
 
+	for idx, item := range m.GetUserIds() {
+		_, _ = idx, item
+
+		if item < 0 {
+			err := ListVehiclesRequestValidationError{
+				field:  fmt.Sprintf("UserIds[%v]", idx),
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.Sort != nil {
 
 		if all {
@@ -151,21 +167,6 @@ func (m *ListVehiclesRequest) validate(all bool) error {
 			err := ListVehiclesRequestValidationError{
 				field:  "Model",
 				reason: "value length must be at most 32 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.UserId != nil {
-
-		if m.GetUserId() < 0 {
-			err := ListVehiclesRequestValidationError{
-				field:  "UserId",
-				reason: "value must be greater than or equal to 0",
 			}
 			if !all {
 				return err

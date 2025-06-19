@@ -10,9 +10,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
+	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
@@ -64,6 +66,7 @@ type Server struct {
 	perms    perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	htmlDiff *htmldiffer.Differ
+	notifi   notifi.INotifi
 
 	access *access.Grouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel], *access.DummyQualificationAccess[wiki.AccessLevel], wiki.AccessLevel]
 
@@ -84,6 +87,7 @@ type Params struct {
 	HTMLDiffer *htmldiffer.Differ
 	JS         *events.JSWrapper
 	Storage    storage.IStorage
+	Notifi     notifi.INotifi
 }
 
 func NewServer(p Params) *Server {
@@ -98,6 +102,65 @@ func NewServer(p Params) *Server {
 		}, filestore.InsertJoinRow, false,
 	)
 
+	objAccess := access.NewGrouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel]](
+		p.DB,
+		table.FivenetWikiPages,
+		&access.TargetTableColumns{
+			ID:         table.FivenetWikiPages.ID,
+			DeletedAt:  table.FivenetWikiPages.DeletedAt,
+			CreatorID:  table.FivenetWikiPages.CreatorID,
+			CreatorJob: table.FivenetWikiPages.Job,
+		},
+		access.NewJobs[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.AccessLevel](
+			table.FivenetWikiPagesAccess,
+			&access.JobAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:       table.FivenetWikiPagesAccess.ID,
+					TargetID: table.FivenetWikiPagesAccess.TargetID,
+					Access:   table.FivenetWikiPagesAccess.Access,
+				},
+				Job:          table.FivenetWikiPagesAccess.Job,
+				MinimumGrade: table.FivenetWikiPagesAccess.MinimumGrade,
+			},
+			table.FivenetWikiPagesAccess.AS("page_job_access"),
+			&access.JobAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:       table.FivenetWikiPagesAccess.AS("page_job_access").ID,
+					TargetID: table.FivenetWikiPagesAccess.AS("page_job_access").TargetID,
+					Access:   table.FivenetWikiPagesAccess.AS("page_job_access").Access,
+				},
+				Job:          table.FivenetWikiPagesAccess.AS("page_job_access").Job,
+				MinimumGrade: table.FivenetWikiPagesAccess.AS("page_job_access").MinimumGrade,
+			},
+		),
+		access.NewUsers[wiki.PageUserAccess, *wiki.PageUserAccess, wiki.AccessLevel](
+			table.FivenetWikiPagesAccess,
+			&access.UserAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:       table.FivenetWikiPagesAccess.ID,
+					TargetID: table.FivenetWikiPagesAccess.TargetID,
+					Access:   table.FivenetWikiPagesAccess.Access,
+				},
+				UserId: table.FivenetWikiPagesAccess.UserID,
+			},
+			table.FivenetWikiPagesAccess.AS("page_user_access"),
+			&access.UserAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:       table.FivenetWikiPagesAccess.AS("page_user_access").ID,
+					TargetID: table.FivenetWikiPagesAccess.AS("page_user_access").TargetID,
+					Access:   table.FivenetWikiPagesAccess.AS("page_user_access").Access,
+				},
+				UserId: table.FivenetWikiPagesAccess.AS("page_user_access").UserID,
+			},
+		),
+		nil,
+	)
+	access.RegisterAccess("wiki_page", &access.GroupedAccessAdapter{
+		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
+			return objAccess.CanUserAccessTarget(ctx, targetId, userInfo, wiki.AccessLevel(access))
+		},
+	})
+
 	s := &Server{
 		logger: p.Logger.Named("wiki"),
 		db:     p.DB,
@@ -107,60 +170,9 @@ func NewServer(p Params) *Server {
 		perms:    p.Perms,
 		enricher: p.Enricher,
 		htmlDiff: p.HTMLDiffer,
+		notifi:   p.Notifi,
 
-		access: access.NewGrouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel]](
-			p.DB,
-			table.FivenetWikiPages,
-			&access.TargetTableColumns{
-				ID:         table.FivenetWikiPages.ID,
-				DeletedAt:  table.FivenetWikiPages.DeletedAt,
-				CreatorID:  table.FivenetWikiPages.CreatorID,
-				CreatorJob: table.FivenetWikiPages.Job,
-			},
-			access.NewJobs[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.AccessLevel](
-				table.FivenetWikiPagesAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetWikiPagesAccess.ID,
-						TargetID: table.FivenetWikiPagesAccess.TargetID,
-						Access:   table.FivenetWikiPagesAccess.Access,
-					},
-					Job:          table.FivenetWikiPagesAccess.Job,
-					MinimumGrade: table.FivenetWikiPagesAccess.MinimumGrade,
-				},
-				table.FivenetWikiPagesAccess.AS("page_job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetWikiPagesAccess.AS("page_job_access").ID,
-						TargetID: table.FivenetWikiPagesAccess.AS("page_job_access").TargetID,
-						Access:   table.FivenetWikiPagesAccess.AS("page_job_access").Access,
-					},
-					Job:          table.FivenetWikiPagesAccess.AS("page_job_access").Job,
-					MinimumGrade: table.FivenetWikiPagesAccess.AS("page_job_access").MinimumGrade,
-				},
-			),
-			access.NewUsers[wiki.PageUserAccess, *wiki.PageUserAccess, wiki.AccessLevel](
-				table.FivenetWikiPagesAccess,
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetWikiPagesAccess.ID,
-						TargetID: table.FivenetWikiPagesAccess.TargetID,
-						Access:   table.FivenetWikiPagesAccess.Access,
-					},
-					UserId: table.FivenetWikiPagesAccess.UserID,
-				},
-				table.FivenetWikiPagesAccess.AS("page_user_access"),
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:       table.FivenetWikiPagesAccess.AS("page_user_access").ID,
-						TargetID: table.FivenetWikiPagesAccess.AS("page_user_access").TargetID,
-						Access:   table.FivenetWikiPagesAccess.AS("page_user_access").Access,
-					},
-					UserId: table.FivenetWikiPagesAccess.AS("page_user_access").UserID,
-				},
-			),
-			nil,
-		),
+		access:       objAccess,
 		collabServer: collabServer,
 		fHandler:     fHandler,
 	}

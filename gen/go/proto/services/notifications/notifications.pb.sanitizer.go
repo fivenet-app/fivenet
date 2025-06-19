@@ -122,6 +122,14 @@ func (m *StreamResponse) Sanitize() error {
 			}
 		}
 
+		// Field: ObjectEvent
+	case *StreamResponse_ObjectEvent:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: SystemEvent
 	case *StreamResponse_SystemEvent:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {

@@ -5,7 +5,6 @@ import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
     CreateCalendarResponse,
     CreateOrUpdateCalendarEntryResponse,
@@ -291,11 +290,11 @@ export const useCalendarStore = defineStore(
 
         const createOrUpdateCalendarEntry = async (
             entryParam: CalendarEntry,
-            users?: UserShort[],
+            users?: number[],
         ): Promise<CreateOrUpdateCalendarEntryResponse> => {
             const call = $grpc.calendar.calendar.createOrUpdateCalendarEntry({
                 entry: entryParam,
-                userIds: users?.map((u) => u.userId) ?? [],
+                userIds: users || [],
             });
             const { response } = await call;
 

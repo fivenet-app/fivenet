@@ -148,3 +148,191 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ClientViewValidationError{}
+
+// Validate checks the field values on ObjectEvent with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ObjectEvent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ObjectEvent with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ObjectEventMultiError, or
+// nil if none found.
+func (m *ObjectEvent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ObjectEvent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := ObjectType_name[int32(m.GetType())]; !ok {
+		err := ObjectEventValidationError{
+			field:  "Type",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := ObjectEventType_name[int32(m.GetEventType())]; !ok {
+		err := ObjectEventValidationError{
+			field:  "EventType",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.UserId != nil {
+
+		if m.GetUserId() < 0 {
+			err := ObjectEventValidationError{
+				field:  "UserId",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Job != nil {
+
+		if utf8.RuneCountInString(m.GetJob()) > 20 {
+			err := ObjectEventValidationError{
+				field:  "Job",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Data != nil {
+
+		if all {
+			switch v := interface{}(m.GetData()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ObjectEventValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ObjectEventValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ObjectEventValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ObjectEventMultiError(errors)
+	}
+
+	return nil
+}
+
+// ObjectEventMultiError is an error wrapping multiple validation errors
+// returned by ObjectEvent.ValidateAll() if the designated constraints aren't met.
+type ObjectEventMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ObjectEventMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ObjectEventMultiError) AllErrors() []error { return m }
+
+// ObjectEventValidationError is the validation error returned by
+// ObjectEvent.Validate if the designated constraints aren't met.
+type ObjectEventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ObjectEventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ObjectEventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ObjectEventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ObjectEventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ObjectEventValidationError) ErrorName() string { return "ObjectEventValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ObjectEventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sObjectEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ObjectEventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ObjectEventValidationError{}

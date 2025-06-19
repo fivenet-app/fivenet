@@ -30,34 +30,25 @@ const activityTypes = Object.keys(UserActivityType)
 const options = activityTypes.map((aType) => ({ aType: aType }));
 
 const schema = z.object({
-    types: z.nativeEnum(UserActivityType).array().max(activityTypes.length),
+    types: z.nativeEnum(UserActivityType).array().max(activityTypes.length).default(activityTypes),
+    sort: z.custom<TableSortable>().default({
+        column: 'createdAt',
+        direction: 'desc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('citizen_activity', schema);
 
-const query = reactive<Schema>({
-    types: activityTypes,
-});
-
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'createdAt',
-    direction: 'desc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(
-    `citizeninfo-activity-${sort.value.column}:${sort.value.direction}-${props.userId}-${page.value}`,
-    () => listUserActivity(),
-    {
-        watch: [sort],
-    },
+} = useLazyAsyncData(`citizeninfo-activity-${query.sort.column}:${query.sort.direction}-${props.userId}-${query.page}`, () =>
+    listUserActivity(),
 );
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
@@ -66,7 +57,7 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             userId: props.userId,
             types: query.types,
         });
@@ -131,7 +122,7 @@ watchDebounced(query, async () => refresh(), {
                     </UFormGroup>
 
                     <UFormGroup label="&nbsp;">
-                        <SortButton v-model="sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
+                        <SortButton v-model="query.sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
                     </UFormGroup>
                 </UForm>
             </template>
@@ -167,6 +158,6 @@ watchDebounced(query, async () => refresh(), {
             </div>
         </div>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </div>
 </template>

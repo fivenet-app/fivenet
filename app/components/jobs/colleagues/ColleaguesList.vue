@@ -28,33 +28,24 @@ const modal = useModal();
 const { attr, can, activeChar } = useAuth();
 
 const schema = z.object({
-    name: z.string().max(50),
-    absent: z.boolean(),
-    labels: z.custom<Label>().array().max(3),
+    name: z.string().max(50).default(''),
+    absent: z.coerce.boolean().default(false),
+    labels: z.coerce.number().array().max(3).default([]),
     namePrefix: z.string().max(12).optional(),
     nameSuffix: z.string().max(12).optional(),
+    sort: z.custom<TableSortable>().default({
+        column: 'rank',
+        direction: 'asc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
-
-const query = reactive<Schema>({
-    name: '',
-    absent: false,
-    labels: [],
-    namePrefix: undefined,
-    nameSuffix: undefined,
-});
+const query = useSearchForm('jobs_colleagues', schema);
 
 const settingsStore = useSettingsStore();
 const { jobsService } = storeToRefs(settingsStore);
 
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'rank',
-    direction: 'asc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
@@ -62,11 +53,10 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-colleagues-${sort.value.column}:${sort.value.direction}-${page.value}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
+    `jobs-colleagues-${query.sort.column}:${query.sort.direction}-${query.page}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
     () => listColleagues(),
     {
         transform: (input) => ({ pagination: input.pagination, colleagues: wrapRows(input?.colleagues, columns) }),
-        watch: [sort],
     },
 );
 
@@ -76,10 +66,11 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             search: query.name,
+            userIds: [],
             absent: query.absent,
-            labelIds: query.labels.map((l) => l.id),
+            labelIds: query.labels,
             namePrefix: query.namePrefix,
             nameSuffix: query.nameSuffix,
         });
@@ -128,11 +119,11 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
 }
 
 function toggleLabelInSearch(label: Label): void {
-    const idx = query.labels.findIndex((l) => l.id === label.id);
+    const idx = query.labels.findIndex((l) => l === label.id);
     if (idx > -1) {
         query.labels.splice(idx, 1);
     } else {
-        query.labels.push(label);
+        query.labels.push(label.id);
     }
 }
 
@@ -228,7 +219,7 @@ defineShortcuts({
 
                 <UFormGroup v-if="jobsService.cardView" :label="$t('common.sort_by')">
                     <SortButton
-                        v-model="sort"
+                        v-model="query.sort"
                         :fields="[
                             { label: $t('common.rank'), value: 'rank' },
                             { label: $t('common.name'), value: 'name' },
@@ -286,13 +277,13 @@ defineShortcuts({
                                     by="name"
                                     clear-search-on-close
                                 >
-                                    <template #label>
-                                        <span v-if="query.labels.length" class="truncate">
-                                            <span v-for="(label, idx) in query.labels" :key="label.id">
+                                    <template #label="{ selected }">
+                                        <span v-if="selected.length" class="truncate">
+                                            <span v-for="(label, idx) in selected" :key="label.id">
                                                 <span class="truncate" :style="{ backgroundColor: label.color }">{{
                                                     label.name
                                                 }}</span>
-                                                <span v-if="idx < query.labels.length - 1">, </span>
+                                                <span v-if="idx < selected.length - 1">, </span>
                                             </span>
                                         </span>
                                         <span v-else>&nbsp;</span>
@@ -362,7 +353,7 @@ defineShortcuts({
     <template v-else>
         <UTable
             v-if="!jobsService.cardView"
-            v-model:sort="sort"
+            v-model:sort="query.sort"
             class="flex-1"
             :loading="loading"
             :columns="columns"
@@ -411,7 +402,9 @@ defineShortcuts({
             </template>
 
             <template #phoneNumber-data="{ row: colleague }">
-                <PhoneNumberBlock :number="colleague.phoneNumber" />
+                <div>
+                    <PhoneNumberBlock :number="colleague.phoneNumber" />
+                </div>
 
                 <dl class="font-normal lg:hidden">
                     <dt class="sr-only">{{ $t('common.date_of_birth') }}</dt>
@@ -503,7 +496,7 @@ defineShortcuts({
                     </template>
 
                     <template #description>
-                        <div class="flex flex-col gap-1">
+                        <div class="flex flex-col gap-1 truncate">
                             <span>
                                 {{ colleague.jobGradeLabel }}
                                 <template v-if="colleague.job !== game.unemployedJobName">
@@ -511,7 +504,9 @@ defineShortcuts({
                                 </template>
                             </span>
 
-                            <PhoneNumberBlock :number="colleague.phoneNumber" />
+                            <div>
+                                <PhoneNumberBlock :number="colleague.phoneNumber" />
+                            </div>
 
                             <span class="inline-flex items-center gap-1">
                                 <UIcon class="h-5 w-5 shrink-0" name="i-mdi-birthday-cake" />
@@ -519,16 +514,10 @@ defineShortcuts({
                                 <span>{{ colleague.dateofbirth.value }}</span>
                             </span>
 
-                            <span class="inline-flex items-center gap-1">
+                            <span class="flex items-center gap-1">
                                 <UIcon class="h-5 w-5 shrink-0" name="i-mdi-email" />
 
-                                <EmailInfoPopover
-                                    :email="colleague.email"
-                                    variant="link"
-                                    truncate
-                                    :trailing="false"
-                                    :padded="false"
-                                />
+                                <EmailInfoPopover :email="colleague.email" variant="link" :trailing="false" :padded="false" />
                             </span>
 
                             <div
@@ -570,7 +559,16 @@ defineShortcuts({
                         </div>
                     </template>
 
-                    <template v-if="canDo.getColleague && canDo.setJobsUerProps" #footer>
+                    <template
+                        v-if="
+                            (canDo.setJobsUerProps &&
+                                (colleague.userId === activeChar!.userId ||
+                                    attr('jobs.JobsService/SetColleagueProps', 'Types', 'AbsenceDate').value) &&
+                                checkIfCanAccessColleague(colleague, 'jobs.JobsService/SetColleagueProps')) ||
+                            (canDo.getColleague && checkIfCanAccessColleague(colleague, 'jobs.JobsService/GetColleague'))
+                        "
+                        #footer
+                    >
                         <UButtonGroup class="inline-flex w-full">
                             <UTooltip
                                 v-if="
@@ -621,5 +619,5 @@ defineShortcuts({
         </div>
     </template>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

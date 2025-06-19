@@ -28,16 +28,11 @@ const livemapStore = useLivemapStore();
 const { showLocationMarker } = storeToRefs(livemapStore);
 
 const schema = z.object({
-    postal: z.string().trim().max(12),
-    id: z.number().max(16),
+    postal: z.string().trim().max(12).default(''),
+    id: z.coerce.number().max(16).default(0),
 });
 
-type Schema = z.output<typeof schema>;
-
-const query = reactive<Schema>({
-    postal: '',
-    id: 0,
-});
+const query = useSearchForm('centrum_dispatches_archive', schema);
 
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));

@@ -53,15 +53,15 @@ const examModes = ref<{ mode: QualificationExamMode; selected?: boolean }[]>([
 ]);
 
 const schema = z.object({
-    weight: z.number(),
+    weight: z.coerce.number(),
     abbreviation: z.string().min(3).max(20),
     title: z.string().min(3).max(255),
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     content: z.string().min(3).max(750000),
-    closed: z.boolean(),
-    draft: z.boolean(),
-    public: z.boolean(),
-    discordSyncEnabled: z.boolean(),
+    closed: z.coerce.boolean(),
+    draft: z.coerce.boolean(),
+    public: z.coerce.boolean(),
+    discordSyncEnabled: z.coerce.boolean(),
     discordSettings: z.object({
         roleName: z.string().max(64).optional(),
         roleFormat: z.string().max(64).optional(),
@@ -70,12 +70,12 @@ const schema = z.object({
     examSettings: z.custom<QualificationExamSettings>(),
     exam: z.custom<ExamQuestions>(),
     access: z.object({
-        jobs: z.custom<QualificationJobAccess>().array().max(maxAccessEntries),
+        jobs: z.custom<QualificationJobAccess>().array().max(maxAccessEntries).default([]),
     }),
-    labelSyncEnabled: z.boolean(),
+    labelSyncEnabled: z.coerce.boolean(),
     labelSyncFormat: z.string().max(128).optional(),
-    files: z.custom<File>().array().max(5),
-    requirements: z.custom<QualificationRequirement>().array().max(10),
+    files: z.custom<File>().array().max(5).default([]),
+    requirements: z.custom<QualificationRequirement>().array().max(10).default([]),
 });
 
 type Schema = z.output<typeof schema>;

@@ -250,7 +250,9 @@
   
 - [resources/notifications/client_view.proto](#resources_notifications_client_view-proto)
     - [ClientView](#resources-notifications-ClientView)
+    - [ObjectEvent](#resources-notifications-ObjectEvent)
   
+    - [ObjectEventType](#resources-notifications-ObjectEventType)
     - [ObjectType](#resources-notifications-ObjectType)
   
 - [resources/permissions/attributes.proto](#resources_permissions_attributes-proto)
@@ -2390,6 +2392,7 @@ States of Cronjbo
 | `CONTENT_TYPE_UNSPECIFIED` | 0 |  |
 | `CONTENT_TYPE_HTML` | 1 |  |
 | `CONTENT_TYPE_PLAIN` | 2 |  |
+| `CONTENT_TYPE_TIPTAP_JSON` | 3 |  |
 
 
 
@@ -4508,7 +4511,40 @@ User related events
 
 
 
+
+<a name="resources-notifications-ObjectEvent"></a>
+
+### ObjectEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [ObjectType](#resources-notifications-ObjectType) |  |  |
+| `id` | [uint64](#uint64) | optional |  |
+| `event_type` | [ObjectEventType](#resources-notifications-ObjectEventType) |  |  |
+| `user_id` | [int32](#int32) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `data` | [google.protobuf.Struct](#google-protobuf-Struct) | optional |  |
+
+
+
+
+
  <!-- end messages -->
+
+
+<a name="resources-notifications-ObjectEventType"></a>
+
+### ObjectEventType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `OBJECT_EVENT_TYPE_UNSPECIFIED` | 0 |  |
+| `OBJECT_EVENT_TYPE_UPDATED` | 1 |  |
+| `OBJECT_EVENT_TYPE_DELETED` | 2 |  |
+
 
 
 <a name="resources-notifications-ObjectType"></a>
@@ -4520,8 +4556,10 @@ User related events
 | ---- | ------ | ----------- |
 | `OBJECT_TYPE_UNSPECIFIED` | 0 |  |
 | `OBJECT_TYPE_CITIZEN` | 1 |  |
-| `OBJECT_TYPE_DOCUMENTS` | 2 |  |
+| `OBJECT_TYPE_DOCUMENT` | 2 |  |
 | `OBJECT_TYPE_WIKI_PAGE` | 3 |  |
+| `OBJECT_TYPE_JOBS_COLLEAGUE` | 4 |  |
+| `OBJECT_TYPE_JOBS_CONDUCT` | 5 |  |
 
 
  <!-- end enums -->
@@ -9856,7 +9894,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `search` | [string](#string) |  |  |
 | `current_job` | [bool](#bool) | optional |  |
 | `on_duty` | [bool](#bool) | optional |  |
-| `user_id` | [int32](#int32) | optional |  |
+| `user_ids` | [int32](#int32) | repeated |  |
+| `user_ids_only` | [bool](#bool) | optional |  |
 
 
 
@@ -10331,7 +10370,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | `search` | [string](#string) |  | Search params |
-| `user_id` | [int32](#int32) | optional |  |
+| `user_ids` | [int32](#int32) | repeated |  |
+| `user_only` | [bool](#bool) | optional |  |
 | `absent` | [bool](#bool) | optional |  |
 | `label_ids` | [uint64](#uint64) | repeated |  |
 | `name_prefix` | [string](#string) | optional |  |
@@ -15858,7 +15898,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | `license_plate` | [string](#string) | optional | Search params |
 | `model` | [string](#string) | optional |  |
-| `user_id` | [int32](#int32) | optional |  |
+| `user_ids` | [int32](#int32) | repeated |  |
 | `job` | [string](#string) | optional |  |
 
 
@@ -16089,6 +16129,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `job_grade_event` | [resources.notifications.JobGradeEvent](#resources-notifications-JobGradeEvent) |  |  |
 | `system_event` | [resources.notifications.SystemEvent](#resources-notifications-SystemEvent) |  |  |
 | `mailer_event` | [resources.mailer.MailerEvent](#resources-mailer-MailerEvent) |  |  |
+| `object_event` | [resources.notifications.ObjectEvent](#resources-notifications-ObjectEvent) |  |  |
 
 
 

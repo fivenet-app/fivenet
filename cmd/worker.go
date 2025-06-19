@@ -5,6 +5,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/demo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
@@ -22,6 +23,8 @@ type WorkerCmd struct {
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
+	instance.SetComponent("server")
+
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
 	fxOpts = append(fxOpts, fx.Invoke(func(*demo.Demo) {}))
 

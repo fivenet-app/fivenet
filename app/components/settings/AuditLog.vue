@@ -13,7 +13,6 @@ import { useCompletorStore } from '~/stores/completor';
 import type { AuditEntry } from '~~/gen/ts/resources/audit/audit';
 import { EventType } from '~~/gen/ts/resources/audit/audit';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import { eventTypeToBadgeColor } from './helpers';
@@ -25,36 +24,28 @@ const { d, t } = useI18n();
 const completorStore = useCompletorStore();
 
 const schema = z.object({
-    users: z.custom<UserShort>().array().max(5),
+    users: z.coerce.number().array().max(5).default([]),
     date: z
         .object({
-            start: z.date(),
-            end: z.date(),
+            start: z.coerce.date(),
+            end: z.coerce.date(),
         })
         .optional(),
-    services: z.string().max(64).array().max(10),
-    methods: z.string().max(64).array().max(10),
-    search: z.string().max(64),
+    services: z.string().max(64).array().max(10).default([]),
+    methods: z.string().max(64).array().max(10).default([]),
+    search: z.string().max(64).default(''),
+    sort: z.custom<TableSortable>().default({
+        column: 'createdAt',
+        direction: 'desc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
-
-const query = reactive<Schema>({
-    users: [],
-    services: [],
-    methods: [],
-    search: '',
-});
+const query = useSearchForm('settings_auditlog', schema);
 
 const usersLoading = ref(false);
 
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'createdAt',
-    direction: 'desc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
@@ -62,11 +53,8 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `settings-audit-${sort.value.column}:${sort.value.direction}-${page.value}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
+    `settings-audit-${query.sort.column}:${query.sort.direction}-${query.page}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.join(',')}`,
     () => viewAuditLog(),
-    {
-        watch: [sort],
-    },
 );
 
 async function viewAuditLog(): Promise<ViewAuditLogResponse> {
@@ -74,14 +62,12 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         pagination: {
             offset: offset.value,
         },
-        sort: sort.value,
-        userIds: [],
+        sort: query.sort,
+        userIds: query.users,
         services: query.services,
         // Make sure to remove the service from the beginning
         methods: query.methods.map((m) => m.split('/').pop() ?? m),
     };
-
-    req.userIds = query.users.map((v) => v.userId);
 
     if (query.date) {
         req.from = toTimestamp(query.date.start);
@@ -206,10 +192,11 @@ const expand = ref({
                                 v-model="query.users"
                                 multiple
                                 :searchable="
-                                    async (query: string) => {
+                                    async (q: string) => {
                                         usersLoading = true;
                                         const users = await completorStore.completeCitizens({
-                                            search: query,
+                                            search: q,
+                                            userIds: query.users,
                                         });
                                         usersLoading = false;
                                         return users;
@@ -223,9 +210,9 @@ const expand = ref({
                                 trailing
                                 by="userId"
                             >
-                                <template #label>
-                                    <span v-if="query.users.length" class="truncate">
-                                        {{ usersToLabel(query.users) }}
+                                <template #label="{ selected }">
+                                    <span v-if="selected.length > 0" class="truncate">
+                                        {{ usersToLabel(selected) }}
                                     </span>
                                 </template>
 
@@ -377,5 +364,5 @@ const expand = ref({
         </template>
     </UTable>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

@@ -9,6 +9,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import type { ListVehiclesResponse } from '~~/gen/ts/services/vehicles/vehicles';
+import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -29,28 +30,26 @@ const props = withDefaults(
     },
 );
 
+const clipboardStore = useClipboardStore();
+
+const notifications = useNotificationsStore();
+
 const { can } = useAuth();
 
 const schema = z.object({
-    licensePlate: z.string().max(32),
+    licensePlate: z.string().max(32).default(''),
     model: z.string().min(6).max(32).optional(),
-    userId: z.number().optional(),
+    userIds: z.coerce.number().array().max(5).default([]),
+    sort: z.custom<TableSortable>().default({
+        column: 'plate',
+        direction: 'asc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('vehicles', schema);
 
-const query = reactive<Schema>({
-    licensePlate: '',
-    userId: props.userId,
-});
-
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'plate',
-    direction: 'asc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const hideVehicleModell = ref(false);
 
@@ -59,9 +58,7 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`vehicles-${sort.value.column}:${sort.value.direction}-${page.value}`, () => listVehicles(), {
-    watch: [sort],
-});
+} = useLazyAsyncData(`vehicles-${query.sort.column}:${query.sort.direction}-${query.page}`, () => listVehicles());
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
@@ -69,10 +66,10 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             licensePlate: query.licensePlate,
             model: query.model,
-            userId: query.userId,
+            userIds: query.userIds,
         });
         const { response } = await call;
 
@@ -92,18 +89,12 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
 }
 
 const usersLoading = ref(false);
-const selectedUser = ref<undefined | UserShort>();
-watch(selectedUser, () => (query.userId = selectedUser.value?.userId));
 
 watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), {
     debounce: 200,
     maxWait: 1250,
 });
-
-const clipboardStore = useClipboardStore();
-
-const notifications = useNotificationsStore();
 
 function addToClipboard(vehicle: Vehicle): void {
     clipboardStore.addVehicle(vehicle);
@@ -177,32 +168,39 @@ defineShortcuts({
                     <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" block />
                 </UFormGroup>
 
-                <UFormGroup v-if="userId === undefined" class="flex-1" name="selectedUser" :label="$t('common.owner')">
+                <UFormGroup v-if="userId === undefined" class="flex-1" name="userIds" :label="$t('common.owner')">
                     <ClientOnly>
-                        <UInputMenu
-                            v-model="selectedUser"
-                            name="selectedUser"
-                            nullable
-                            :search="
-                                async (query: string): Promise<UserShort[]> => {
+                        <USelectMenu
+                            v-model="query.userIds"
+                            name="userIds"
+                            multiple
+                            :searchable="
+                                async (q: string): Promise<UserShort[]> => {
                                     usersLoading = true;
                                     const { response } = await $grpc.completor.completor.completeCitizens({
-                                        search: query,
+                                        search: q,
+                                        userIds: query.userIds,
                                     });
                                     usersLoading = false;
                                     return response.users;
                                 }
                             "
-                            search-lazy
+                            searchable-lazy
                             :search-placeholder="$t('common.search_field')"
                             :search-attributes="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.owner')"
                             trailing
-                            by="userId"
+                            value-attribute="userId"
                         >
+                            <template #label="{ selected }">
+                                <span v-if="selected.length > 0" class="truncate">
+                                    {{ usersToLabel(selected) }}
+                                </span>
+                            </template>
+
                             <template #option="{ option: user }">
-                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                <ColleagueName class="truncate" :colleague="user" birthday />
                             </template>
 
                             <template #option-empty="{ query: search }">
@@ -210,7 +208,7 @@ defineShortcuts({
                             </template>
 
                             <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
-                        </UInputMenu>
+                        </USelectMenu>
                     </ClientOnly>
                 </UFormGroup>
             </UForm>
@@ -226,7 +224,7 @@ defineShortcuts({
 
     <UTable
         v-else
-        v-model:sort="sort"
+        v-model:sort="query.sort"
         class="flex-1"
         :loading="loading"
         :columns="columns"
@@ -270,5 +268,5 @@ defineShortcuts({
         </template>
     </UTable>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

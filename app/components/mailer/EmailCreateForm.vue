@@ -88,7 +88,7 @@ const schema = z.object({
             message: t('errors.MailerService.ErrAddresseInvalid'),
         }),
     label: z.string().max(128).optional(),
-    deactivated: z.boolean(),
+    deactivated: z.coerce.boolean(),
     access: z.custom<Access>(),
 });
 

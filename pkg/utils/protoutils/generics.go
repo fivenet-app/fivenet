@@ -24,4 +24,5 @@ type ProtoMessage[T any] interface {
 // ProtoEnum is a generic interface for protobuf enums, requiring a Number method.
 type ProtoEnum interface {
 	Number() protoreflect.EnumNumber
+	String() string
 }

@@ -35,13 +35,13 @@ const canDo = computed(() => ({
 const schema = z.object({
     name: z.string().min(3).max(255),
     description: z.string().max(512).optional(),
-    private: z.boolean(),
-    public: z.boolean(),
-    closed: z.boolean(),
+    private: z.coerce.boolean(),
+    public: z.coerce.boolean(),
+    closed: z.coerce.boolean(),
     color: z.string().max(12),
     access: z.object({
-        jobs: z.custom<CalendarJobAccess>().array().max(maxAccessEntries),
-        users: z.custom<CalendarUserAccess>().array().max(maxAccessEntries),
+        jobs: z.custom<CalendarJobAccess>().array().max(maxAccessEntries).default([]),
+        users: z.custom<CalendarUserAccess>().array().max(maxAccessEntries).default([]),
     }),
 });
 

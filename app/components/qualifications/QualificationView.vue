@@ -151,7 +151,7 @@ const accordionItems = computed(() =>
         <template #right>
             <PartialsBackButton to="/qualifications" />
 
-            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" @click="refresh" />
+            <UButton icon="i-mdi-refresh" :label="$t('common.refresh')" :loading="loading" @click="refresh" />
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge

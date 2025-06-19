@@ -13,11 +13,12 @@ export const zWorkflow = z.object({
             reminderSettings: z.object({
                 reminders: z
                     .object({
-                        duration: z.number().max(60).positive().optional(),
+                        duration: z.coerce.number().max(60).positive().optional(),
                         message: z.string().max(1024),
                     })
                     .array()
-                    .max(3),
+                    .max(3)
+                    .default([]),
             }),
         }),
 
@@ -26,11 +27,12 @@ export const zWorkflow = z.object({
             reminderSettings: z.object({
                 reminders: z
                     .object({
-                        duration: z.number().max(60).positive(),
+                        duration: z.coerce.number().max(60).positive(),
                         message: z.string().min(3).max(1024),
                     })
                     .array()
-                    .max(3),
+                    .max(3)
+                    .default([]),
             }),
         }),
     ]),
@@ -39,16 +41,16 @@ export const zWorkflow = z.object({
         z.object({
             autoClose: z.literal(false),
             autoCloseSettings: z.object({
-                duration: z.number().max(60).positive(),
-                message: z.string().max(1024),
+                duration: z.coerce.number().max(60).positive(),
+                message: z.string().max(1024).default(''),
             }),
         }),
 
         z.object({
             autoClose: z.literal(true),
             autoCloseSettings: z.object({
-                duration: z.number().max(60).positive(),
-                message: z.string().min(3).max(1024),
+                duration: z.coerce.number().max(60).positive(),
+                message: z.string().min(3).max(1024).default(''),
             }),
         }),
     ]),

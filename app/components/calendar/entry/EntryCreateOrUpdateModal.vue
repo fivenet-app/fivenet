@@ -37,9 +37,9 @@ const schema = z.object({
     startTime: z.date(),
     endTime: z.date(),
     content: z.string().min(3).max(1000000),
-    closed: z.boolean(),
-    rsvpOpen: z.boolean(),
-    users: z.custom<UserShort>().array().max(20),
+    closed: z.coerce.boolean(),
+    rsvpOpen: z.coerce.boolean(),
+    users: z.custom<UserShort>().array().max(20).default([]),
 });
 
 type Schema = z.output<typeof schema>;
@@ -84,7 +84,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 rsvpOpen: values.rsvpOpen,
                 creatorJob: '',
             },
-            state.users,
+            state.users.map((u) => u.userId),
         );
 
         isOpen.value = false;
@@ -284,10 +284,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     v-model="state.users"
                                     multiple
                                     :searchable="
-                                        async (query: string) => {
+                                        async (q: string) => {
                                             usersLoading = true;
                                             const users = await completorStore.completeCitizens({
-                                                search: query,
+                                                search: q,
+                                                userIds: state.users.map((u) => u.userId),
                                             });
                                             usersLoading = false;
                                             return users;

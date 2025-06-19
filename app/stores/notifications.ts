@@ -1,9 +1,12 @@
+import type { DuplexStreamingCall } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
+import { notificationsEvents } from '~/composables/useClientUpdate';
 import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/utils/notifications';
+import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { MarkNotificationsRequest } from '~~/gen/ts/services/notifications/notifications';
+import type { MarkNotificationsRequest, StreamMessage, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';
 
@@ -18,14 +21,13 @@ export const useNotificationsStore = defineStore(
     () => {
         const { $grpc } = useNuxtApp();
 
-        const notificationSound = useSounds('/sounds/notification.mp3');
-
         // State
         const doNotDisturb = ref<boolean>(false);
         const notifications = ref<Notification[]>([]);
         const notificationsCount = ref<number>(0);
 
         const abort = ref<AbortController | undefined>(undefined);
+        const ready = ref<boolean>(false);
         const reconnecting = ref<boolean>(false);
         const reconnectBackoffTime = ref<number>(0);
 
@@ -48,10 +50,11 @@ export const useNotificationsStore = defineStore(
             notifications.value = [];
         };
 
+        // Stream
+        let currentStream: DuplexStreamingCall<StreamMessage, StreamResponse> | undefined = undefined;
+
         const startStream = async (): Promise<void> => {
-            if (abort.value !== undefined) {
-                return;
-            }
+            if (abort.value !== undefined) return;
 
             logger.debug('Starting Stream');
             abort.value = new AbortController();
@@ -60,31 +63,29 @@ export const useNotificationsStore = defineStore(
             const authStore = useAuthStore();
             const { can } = useAuth();
 
-            try {
-                const call = $grpc.notifications.notifications.stream({ abort: abort.value.signal });
+            const notificationSound = useSounds('/sounds/notification.mp3');
 
-                for await (const resp of call.responses) {
+            try {
+                currentStream = $grpc.notifications.notifications.stream({ abort: abort.value.signal });
+                ready.value = true;
+                notificationsEvents.emit('ready', true);
+
+                for await (const resp of currentStream.responses) {
                     notificationsCount.value = resp.notificationCount;
 
-                    if (!resp || !resp.data || resp.data.oneofKind === undefined) {
-                        continue;
-                    }
+                    if (!resp || !resp.data || resp.data.oneofKind === undefined) continue;
 
                     if (resp.data.oneofKind === 'userEvent') {
                         if (resp.data.userEvent.data.oneofKind === 'refreshToken') {
                             logger.info('Refreshing token...');
                             await authStore.chooseCharacter(undefined);
                         } else if (resp.data.userEvent.data.oneofKind === 'notification') {
-                            if (doNotDisturb.value) {
-                                continue;
-                            }
+                            if (doNotDisturb.value) continue;
 
                             const n = resp.data.userEvent.data.notification;
                             const nType = n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
 
-                            if (!n.title || !n.content) {
-                                continue;
-                            }
+                            if (!n.title || !n.content) continue;
 
                             const not: Notification = {
                                 title: n.title,
@@ -152,18 +153,19 @@ export const useNotificationsStore = defineStore(
                                 continue;
                             }
 
-                            if (system.bannerMessage?.id === resp.data.systemEvent.data.bannerMessage.bannerMessage.id) {
+                            if (system.bannerMessage?.id === resp.data.systemEvent.data.bannerMessage.bannerMessage.id)
                                 continue;
-                            }
 
                             system.bannerMessage = resp.data.systemEvent.data.bannerMessage.bannerMessage;
                         } else {
                             logger.warn('Unknown systemEvent event data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
+                    } else if (resp.data.oneofKind === 'objectEvent') {
+                        const event = resp.data.objectEvent;
+
+                        notificationsEvents.emit(event.type, event);
                     } else if (resp.data.oneofKind === 'mailerEvent') {
-                        if (can('mailer.MailerService/ListEmails').value) {
-                            useMailerStore().handleEvent(resp.data.mailerEvent);
-                        }
+                        if (can('mailer.MailerService/ListEmails').value) useMailerStore().handleEvent(resp.data.mailerEvent);
                     }
 
                     if (resp.restart) {
@@ -171,7 +173,7 @@ export const useNotificationsStore = defineStore(
                         reconnectBackoffTime.value = 0;
                         await stopStream();
                         useGRPCWebsocketTransport().close();
-                        restartStream();
+                        await restartStream();
                         return;
                     }
                 }
@@ -189,22 +191,24 @@ export const useNotificationsStore = defineStore(
                 }
             }
 
+            ready.value = false;
+            notificationsEvents.emit('ready', false);
             logger.debug('Stream ended');
         };
 
         const stopStream = async (): Promise<void> => {
-            if (!abort.value) {
-                return;
-            }
+            if (!abort.value) return;
+
+            ready.value = false;
+            notificationsEvents.emit('ready', false);
             abort.value.abort();
             logger.debug('Stopping Stream');
             abort.value = undefined;
         };
 
         const restartStream = async (): Promise<void> => {
-            if (!abort.value || abort.value.signal.aborted) {
-                return;
-            }
+            if (!abort.value || abort.value.signal.aborted) return;
+
             reconnecting.value = true;
 
             if (reconnectBackoffTime.value > maxBackoffTime) {
@@ -216,10 +220,8 @@ export const useNotificationsStore = defineStore(
             logger.debug('Restart back off time in', reconnectBackoffTime.value, 'seconds');
             await stopStream();
 
-            setTimeout(async () => {
-                if (reconnecting.value) {
-                    startStream();
-                }
+            useTimeoutFn(async () => {
+                if (reconnecting.value) startStream();
             }, reconnectBackoffTime.value * 1000);
         };
 
@@ -238,12 +240,39 @@ export const useNotificationsStore = defineStore(
             }
         };
 
+        const sendClientView = async (viewType: ObjectType, id?: number): Promise<void> => {
+            logger.debug('Sending client view', viewType, id, currentStream !== undefined);
+            try {
+                await currentStream?.requests.send({
+                    data: {
+                        oneofKind: 'clientView',
+                        clientView: {
+                            type: viewType,
+                            id: id,
+                        },
+                    },
+                });
+            } catch (e) {
+                logger.error('Failed to send client view', e);
+                // Ignore any errors here, as this is just a client-side view
+            }
+        };
+
+        const onClientUpdate = (objType: ObjectType, callback: (event: ObjectEvent) => void): void => {
+            notificationsEvents.on(objType, callback);
+        };
+
+        const offClientUpdate = (objType: ObjectType, callback: (event: ObjectEvent) => void): void => {
+            notificationsEvents.off(objType, callback);
+        };
+
         return {
             // State
             doNotDisturb,
             notifications,
             notificationsCount,
             abort,
+            ready,
             reconnecting,
             reconnectBackoffTime,
 
@@ -257,6 +286,9 @@ export const useNotificationsStore = defineStore(
             stopStream,
             restartStream,
             markNotifications,
+            sendClientView,
+            onClientUpdate,
+            offClientUpdate,
         };
     },
     {

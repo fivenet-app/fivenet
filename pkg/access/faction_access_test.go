@@ -195,7 +195,7 @@ func TestCheckIfHasAccess(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := CheckIfHasAccess(&permissions.StringList{
+			result := CheckIfHasOwnJobAccess(&permissions.StringList{
 				Strings: tt.levels,
 			}, tt.userInfo, tt.creatorJob, tt.creator)
 			assert.Equal(t, tt.expected, result, "Test case: %s", tt.name)

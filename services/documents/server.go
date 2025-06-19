@@ -114,7 +114,7 @@ type Server struct {
 	enricher      *mstlystcdata.UserAwareEnricher
 	aud           audit.IAuditer
 	ui            userinfo.UserInfoRetriever
-	notif         notifi.INotifi
+	notifi        notifi.INotifi
 	htmlDiff      *htmldiffer.Differ
 
 	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
@@ -157,6 +157,14 @@ func NewServer(p Params) (*Server, error) {
 		}, filestore.InsertJoinRow, false,
 	)
 
+	docAccess := newAccess(p.DB)
+	access.RegisterAccess("documents", &access.GroupedAccessAdapter{
+		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
+			// Type assert access to the correct enum type
+			return docAccess.CanUserAccessTarget(ctx, targetId, userInfo, documents.AccessLevel(access))
+		},
+	})
+
 	s := &Server{
 		logger: p.Logger.Named("documents"),
 		db:     p.DB,
@@ -168,10 +176,10 @@ func NewServer(p Params) (*Server, error) {
 		enricher:      p.Enricher,
 		aud:           p.Aud,
 		ui:            p.Ui,
-		notif:         p.Notif,
+		notifi:        p.Notif,
 		htmlDiff:      p.HTMLDiffer,
 
-		access: newAccess(p.DB),
+		access: docAccess,
 		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
 			p.DB,
 			table.FivenetDocumentsTemplates,

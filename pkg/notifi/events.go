@@ -32,8 +32,8 @@ const (
 	ObjectTopic events.Topic = "obj"
 )
 
-// registerEvents creates or updates the JetStream stream for notification events.
-func (n *Notifi) registerEvents(ctx context.Context) error {
+// registerStream creates or updates the JetStream stream for notification events.
+func (n *Notifi) registerStream(ctx context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:              StreamName,
 		Description:       "User, Job, Object and System notification events",

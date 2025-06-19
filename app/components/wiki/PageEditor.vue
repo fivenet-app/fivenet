@@ -8,6 +8,7 @@ import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import type { Content } from '~/types/history';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { File } from '~~/gen/ts/resources/file/file';
+import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { PageJobAccess, PageUserAccess } from '~~/gen/ts/resources/wiki/access';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
@@ -74,20 +75,20 @@ const canDo = computed(() => ({
 }));
 
 const schema = z.object({
-    parentId: z.number(),
+    parentId: z.coerce.number(),
     meta: z.object({
         title: z.string().min(3).max(255),
         description: z.string().max(255),
-        public: z.boolean(),
-        draft: z.boolean(),
-        toc: z.boolean(),
+        public: z.coerce.boolean(),
+        draft: z.coerce.boolean(),
+        toc: z.coerce.boolean(),
     }),
     content: z.string().min(3).max(1750000),
     access: z.object({
-        jobs: z.custom<PageJobAccess>().array().max(maxAccessEntries),
-        users: z.custom<PageUserAccess>().array().max(maxAccessEntries),
+        jobs: z.custom<PageJobAccess>().array().max(maxAccessEntries).default([]),
+        users: z.custom<PageUserAccess>().array().max(maxAccessEntries).default([]),
     }),
-    files: z.custom<File>().array().max(5),
+    files: z.custom<File>().array().max(5).default([]),
 });
 
 type Schema = z.output<typeof schema>;
@@ -341,6 +342,24 @@ const selectedTab = computed({
         router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
+
+// Handle the client update event
+const { sendClientView } = useClientUpdate(ObjectType.WIKI_PAGE, () =>
+    notifications.add({
+        title: { key: 'notifications.wiki.client_view_update.title', parameters: {} },
+        description: { key: 'notifications.wiki.client_view_update.content', parameters: {} },
+        timeout: 7500,
+        type: NotificationType.INFO,
+        actions: [
+            {
+                label: { key: 'common.refresh', parameters: {} },
+                icon: 'i-mdi-refresh',
+                click: () => refresh(),
+            },
+        ],
+    }),
+);
+sendClientView(props.pageId);
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {

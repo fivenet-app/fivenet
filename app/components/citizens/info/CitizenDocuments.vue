@@ -33,32 +33,29 @@ const docRelations = docRelationsEnum.map((r) => ({
 }));
 
 const schema = z.object({
-    closed: z.boolean().optional(),
-    relations: z.nativeEnum(DocRelation).array().max(docRelations.length),
+    closed: z.coerce.boolean().optional(),
+    relations: z
+        .nativeEnum(DocRelation)
+        .array()
+        .max(docRelations.length)
+        .default(docRelationsEnum.map((r) => DocRelation[r.name as keyof typeof DocRelation])),
+    sort: z.custom<TableSortable>().default({
+        column: 'createdAt',
+        direction: 'desc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('citizen_documents', schema);
 
-const query = reactive<Schema>({
-    relations: docRelationsEnum.map((r) => DocRelation[r.name as keyof typeof DocRelation]),
-});
-
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'createdAt',
-    direction: 'desc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${page.value}`, () => listUserDocuments(), {
-    watch: [sort],
-});
+} = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${query.page}`, () => listUserDocuments());
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
@@ -66,7 +63,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             userId: props.userId,
             relations: query.relations,
             closed: query.closed,
@@ -203,5 +200,5 @@ const columns = [
         </template>
     </UTable>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

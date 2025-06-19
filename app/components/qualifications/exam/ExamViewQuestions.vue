@@ -21,7 +21,7 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificationsStore();
 
 const schema = z.object({
-    responses: z.custom<ExamResponse>().array().max(50),
+    responses: z.custom<ExamResponse>().array().max(50).default([]),
 });
 
 type Schema = z.output<typeof schema>;

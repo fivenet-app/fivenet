@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
 	permsdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents/perms"
@@ -522,7 +523,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(fields, userInfo, oldDoc.CreatorJob, oldDoc.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, oldDoc.CreatorJob, oldDoc.Creator) {
 		return nil, errorsdocuments.ErrDocUpdateDenied
 	}
 
@@ -653,6 +654,15 @@ func (s *Server) UpdateDocument(ctx context.Context, req *pbdocuments.UpdateDocu
 
 	s.collabServer.SendTargetSaved(ctx, doc.Id)
 
+	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
+		Type:      notifications.ObjectType_OBJECT_TYPE_DOCUMENT,
+		Id:        &doc.Id,
+		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+
+		UserId: &userInfo.UserId,
+		Job:    &userInfo.Job,
+	})
+
 	return &pbdocuments.UpdateDocumentResponse{
 		Document: doc,
 	}, nil
@@ -697,7 +707,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *pbdocuments.DeleteDocu
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocuments.ErrDocDeleteDenied
 	}
 
@@ -778,7 +788,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *pbdocuments.ToggleDocu
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocuments.ErrDocToggleDenied
 	}
 
@@ -875,7 +885,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *pbdocuments.Chang
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
-	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocuments.ErrDocOwnerFailed
 	}
 

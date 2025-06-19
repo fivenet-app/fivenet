@@ -6,6 +6,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import type { Perms } from '~~/gen/ts/perms';
+import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
 
@@ -33,6 +35,8 @@ const { $grpc } = useNuxtApp();
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
+
+const notifications = useNotificationsStore();
 
 const route = useRoute('jobs-colleagues-id-info');
 
@@ -72,6 +76,24 @@ function updateColleageAbsence(value: { userId: number; absenceBegin?: Timestamp
     colleague.value.colleague.props.absenceBegin = value.absenceBegin;
     colleague.value.colleague.props.absenceEnd = value.absenceEnd;
 }
+
+// Handle the client update event
+const { sendClientView } = useClientUpdate(ObjectType.JOBS_COLLEAGUE, () =>
+    notifications.add({
+        title: { key: 'notifications.jobs.colleague.client_view_update.title', parameters: {} },
+        description: { key: 'notifications.jobs.colleague.client_view_update.content', parameters: {} },
+        timeout: 7500,
+        type: NotificationType.INFO,
+        actions: [
+            {
+                label: { key: 'common.refresh', parameters: {} },
+                icon: 'i-mdi-refresh',
+                click: () => refresh(),
+            },
+        ],
+    }),
+);
+sendClientView(parseInt(route.params.id as string));
 
 const links = computed(() =>
     [

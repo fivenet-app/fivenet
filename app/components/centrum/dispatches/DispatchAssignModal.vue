@@ -21,7 +21,7 @@ const dispatch = computed(() => dispatches.value.get(props.dispatchId));
 const { isOpen } = useModal();
 
 const schema = z.object({
-    units: z.custom<number>().array().max(10),
+    units: z.custom<number>().array().max(10).default([]),
 });
 
 type Schema = z.output<typeof schema>;

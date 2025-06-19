@@ -26,7 +26,7 @@ const completorStore = useCompletorStore();
 const usersLoading = ref(false);
 
 const schema = z.object({
-    users: z.custom<UserShort>().array().max(20),
+    users: z.custom<UserShort>().array().max(20).default([]),
 });
 
 type Schema = z.output<typeof schema>;
@@ -85,10 +85,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-model="state.users"
                             multiple
                             :searchable="
-                                async (query: string) => {
+                                async (q: string) => {
                                     usersLoading = true;
                                     const users = await completorStore.completeCitizens({
-                                        search: query,
+                                        search: q,
+                                        userIds: state.users.map((u) => u.userId),
                                     });
                                     usersLoading = false;
                                     return users.filter((u) => u.userId !== activeChar?.userId);

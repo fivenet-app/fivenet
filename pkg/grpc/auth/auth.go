@@ -22,7 +22,7 @@ const (
 	PermSuperuserCategory = "Superuser"
 
 	PermCanBeSuperuserName      = "CanBeSuperuser"
-	PermCanBeSuperuserGuardName = "superuser-canbesuper"
+	PermCanBeSuperuserGuardName = "superuser-canbesuperuser"
 
 	PermSuperuserName      = "Superuser"
 	PermSuperuserGuardName = "superuser-superuser"

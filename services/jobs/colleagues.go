@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs"
@@ -54,8 +55,12 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 	condition := tColleague.Job.EQ(jet.String(userInfo.Job)).
 		AND(s.customDB.Conditions.User.GetFilter(tColleague.Alias()))
 
-	if req.UserId != nil && *req.UserId > 0 {
-		condition = condition.AND(tColleague.ID.EQ(jet.Int32(*req.UserId)))
+	userIds := []jet.Expression{}
+	for _, v := range req.UserIds {
+		userIds = append(userIds, jet.Int32(v))
+	}
+	if len(req.UserIds) > 0 && req.UserOnly != nil && *req.UserOnly {
+		condition = condition.AND(tColleague.ID.IN(userIds...))
 	} else {
 		req.Search = strings.TrimSpace(req.Search)
 		req.Search = strings.ReplaceAll(req.Search, "%", "")
@@ -172,6 +177,11 @@ func (s *Server) ListColleagues(ctx context.Context, req *pbjobs.ListColleaguesR
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
+	if len(req.UserIds) > 0 {
+		// Make sure to sort by the user ID if provided
+		orderBys = append(orderBys, tColleague.ID.IN(userIds...).DESC())
+	}
+
 	if req.Sort != nil {
 		var columns []jet.Column
 		switch req.Sort.Column {
@@ -443,7 +453,7 @@ func (s *Server) GetColleague(ctx context.Context, req *pbjobs.GetColleagueReque
 
 	infoOnly := req.InfoOnly != nil && *req.InfoOnly
 
-	check := access.CheckIfHasAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
+	check := access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
 		UserId:   targetUser.UserId,
 		Job:      targetUser.Job,
 		JobGrade: targetUser.JobGrade,
@@ -548,7 +558,7 @@ func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleague
 		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
 
-	if !access.CheckIfHasAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
+	if !access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
 		UserId:   targetUser.UserId,
 		Job:      targetUser.Job,
 		JobGrade: targetUser.JobGrade,
@@ -657,6 +667,16 @@ func (s *Server) SetColleagueProps(ctx context.Context, req *pbjobs.SetColleague
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
+	userId := uint64(targetUser.UserId)
+	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
+		Type:      notifications.ObjectType_OBJECT_TYPE_JOBS_COLLEAGUE,
+		Id:        &userId,
+		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+
+		UserId: &userInfo.UserId,
+		Job:    &userInfo.Job,
+	})
+
 	return &pbjobs.SetColleaguePropsResponse{
 		Props: props,
 	}, nil
@@ -740,7 +760,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *pbjobs.ListColl
 			return nil, errorsjobs.ErrNotFoundOrNoPerms
 		}
 
-		if !access.CheckIfHasAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
+		if !access.CheckIfHasOwnJobAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
 			UserId:   targetUser.UserId,
 			Job:      targetUser.Job,
 			JobGrade: targetUser.JobGrade,

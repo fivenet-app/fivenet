@@ -238,7 +238,7 @@ export const useAuthStore = defineStore(
                         val: true,
                     } as Permission);
                 } else {
-                    permissions.value = permissions.value.filter((p) => p.guardName !== 'superuser');
+                    permissions.value = permissions.value.filter((p) => p.guardName === 'superuser-superuser');
                 }
 
                 notifications.add({
@@ -266,7 +266,7 @@ export const useAuthStore = defineStore(
 
         // Getters
         const isSuperuser = computed<boolean>(() => {
-            return !!permissions.value.find((p) => p.guardName === 'superuser');
+            return !!permissions.value.find((p) => p.guardName === 'superuser-superuser');
         });
 
         // Watchers

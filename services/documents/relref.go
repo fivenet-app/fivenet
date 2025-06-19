@@ -717,7 +717,7 @@ func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sou
 			},
 		},
 	}
-	if err := s.notif.NotifyUser(ctx, not); err != nil {
+	if err := s.notifi.NotifyUser(ctx, not); err != nil {
 		return err
 	}
 

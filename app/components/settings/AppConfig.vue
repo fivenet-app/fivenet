@@ -50,8 +50,8 @@ const schema = z.object({
     defaultLocale: z.custom<LocaleObject>(),
 
     auth: z.object({
-        signupEnabled: z.boolean(),
-        lastCharLock: z.boolean(),
+        signupEnabled: z.coerce.boolean(),
+        lastCharLock: z.coerce.boolean(),
     }),
     perms: z.object({
         default: z
@@ -68,22 +68,22 @@ const schema = z.object({
             privacyPolicy: z.union([z.string().min(1).max(255).url().startsWith('https://'), z.string().length(0).optional()]),
             imprint: z.union([z.string().min(1).max(255).url().startsWith('https://'), z.string().length(0).optional()]),
         }),
-        statsPage: z.boolean(),
+        statsPage: z.coerce.boolean(),
     }),
     jobInfo: z.object({
         unemployedJob: z.object({
             name: z.string().min(1).max(20),
             grade: z.coerce.number().min(0).max(99),
         }),
-        publicJobs: z.string().array().max(99),
-        hiddenJobs: z.string().array().max(99),
+        publicJobs: z.string().array().max(99).default([]),
+        hiddenJobs: z.string().array().max(99).default([]),
     }),
     userTracker: z.object({
         refreshTime: zodDurationSchema,
         dbRefreshTime: zodDurationSchema,
     }),
     discord: z.object({
-        enabled: z.boolean(),
+        enabled: z.coerce.boolean(),
         syncInterval: zodDurationSchema,
         botId: z.string().optional(),
         botPermissions: z.coerce.number(),
@@ -91,7 +91,7 @@ const schema = z.object({
             z.string().min(1).max(255).url().startsWith('https://discord.com/'),
             z.string().length(0).optional(),
         ]),
-        ignoredJobs: z.string().array().max(99),
+        ignoredJobs: z.string().array().max(99).default([]),
         botPresence: z
             .object({
                 type: z.nativeEnum(DiscordBotPresenceType),

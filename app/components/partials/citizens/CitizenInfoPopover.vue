@@ -113,8 +113,8 @@ watchOnce(opened, async () => {
                     <IDCopyBadge
                         :id="userId ?? user?.userId ?? 0"
                         prefix="CIT"
-                        :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
-                        :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
+                        :title="{ key: 'notifications.citizens.copy_citizen_id.title', parameters: {} }"
+                        :content="{ key: 'notifications.citizens.copy_citizen_id.content', parameters: {} }"
                         size="xs"
                     />
 

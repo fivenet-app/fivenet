@@ -16,28 +16,25 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
+const { attr, can } = useAuth();
+
 const schema = z.object({
     name: z.string().max(64).optional(),
     phoneNumber: z.string().max(20).optional(),
-    wanted: z.boolean().optional(),
+    wanted: z.coerce.boolean().optional(),
     trafficInfractionPoints: z.coerce.number().nonnegative().optional(),
     openFines: z.coerce.number().nonnegative().optional(),
     dateofbirth: z.string().max(10).optional(),
+    sort: z.custom<TableSortable>().default({
+        column: 'name',
+        direction: 'asc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('citizens', schema);
 
-const { attr, can } = useAuth();
-
-const query = reactive<Schema>({});
-
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'name',
-    direction: 'asc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
@@ -45,11 +42,10 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `citizens-${sort.value.column}:${sort.value.direction}-${page.value}-${JSON.stringify(query)}`,
+    `citizens-${query.sort.column}:${query.sort.direction}-${query.page}-${JSON.stringify(query)}`,
     () => listCitizens(),
     {
         transform: (input) => ({ ...input, users: wrapRows(input?.users, columns) }),
-        watch: [sort],
     },
 );
 
@@ -59,7 +55,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             search: query.name ?? '',
         };
         if (query.wanted) {
@@ -207,7 +203,7 @@ defineShortcuts({
                         name="dateofbirth"
                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
                         block
-                        data-maska="##[./]##[./]####"
+                        data-maska="##.##.####"
                     />
                 </UFormGroup>
 
@@ -298,7 +294,7 @@ defineShortcuts({
     />
     <UTable
         v-else
-        v-model:sort="sort"
+        v-model:sort="query.sort"
         class="flex-1"
         :loading="loading"
         :columns="columns"
@@ -380,5 +376,5 @@ defineShortcuts({
         </template>
     </UTable>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

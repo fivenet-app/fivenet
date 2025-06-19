@@ -136,10 +136,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-model="selectedUser"
                                 class="flex-1"
                                 :searchable="
-                                    async (query: string) => {
+                                    async (q: string) => {
                                         usersLoading = true;
                                         const users = await completorStore.completeCitizens({
-                                            search: query,
+                                            search: q,
+                                            userIds: selectedUser ? [selectedUser.userId] : [],
                                         });
                                         usersLoading = false;
                                         return users;

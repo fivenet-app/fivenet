@@ -41,13 +41,14 @@ const schema = z.object({
     reason: z.string().min(3).max(255),
     labels: z
         .object({
-            id: z.number(),
+            id: z.coerce.number(),
             name: z.string().min(1),
             color: z.string().length(7),
-            order: z.number().nonnegative().default(0),
+            order: z.coerce.number().nonnegative().default(0),
         })
         .array()
-        .max(10),
+        .max(10)
+        .default([]),
 });
 
 type Schema = z.output<typeof schema>;

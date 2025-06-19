@@ -265,7 +265,7 @@ if (props.enableCollab && ydoc && yjsProvider) {
             unref(editor)?.commands.setContent(modelValue.value);
         }
 
-        setTimeout(() => (loading.value = false), 250);
+        useTimeoutFn(() => (loading.value = false), 250);
     };
     yjsProvider.on('sync', onSync);
     onBeforeUnmount(() => yjsProvider.off('sync', onSync));

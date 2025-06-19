@@ -65,7 +65,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                     :search-attributes="['title', 'abbreviation']"
                     block
                     searchable-lazy
-                    :searchable="(query: string) => listQualifications(query)"
+                    :searchable="(q: string) => listQualifications(q)"
                     :searchable-placeholder="$t('common.search_field')"
                     :loading="qualificationsLoading"
                 >

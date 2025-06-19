@@ -33,7 +33,7 @@ type State struct {
 	units       *store.Store[centrum.Unit, *centrum.Unit]
 	dispatches  *store.Store[centrum.Dispatch, *centrum.Dispatch]
 
-	dispatchLocationsMutex *sync.RWMutex
+	dispatchLocationsMutex *sync.Mutex
 	dispatchLocations      map[string]*coords.Coords[*centrum.Dispatch]
 }
 
@@ -56,7 +56,7 @@ func New(p Params) (*State, error) {
 
 		logger: logger,
 
-		dispatchLocationsMutex: &sync.RWMutex{},
+		dispatchLocationsMutex: &sync.Mutex{},
 		dispatchLocations:      map[string]*coords.Coords[*centrum.Dispatch]{},
 	}
 
@@ -146,21 +146,25 @@ func (s *State) watchKV(ctx context.Context, watchCh <-chan *store.KeyValueEntry
 					continue
 				}
 
-				if locs, ok := s.GetDispatchLocations(dsp.Job); ok && locs != nil {
-					if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-						if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
-							locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
-						}
-					} else {
-						if err := locs.Replace(dsp, func(p orb.Pointer) bool {
-							return p.(*centrum.Dispatch).Id == dsp.Id
-						}, func(p1, p2 orb.Pointer) bool {
-							return p1.Point().Equal(p2.Point())
-						}); err != nil {
-							s.logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
-						}
+				locs, ok := s.GetDispatchLocations(dsp.Job)
+				if locs == nil || !ok {
+					continue
+				}
+
+				if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+					if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
+						locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
+					}
+				} else {
+					if err := locs.Replace(dsp, func(p orb.Pointer) bool {
+						return p.(*centrum.Dispatch).Id == dsp.Id
+					}, func(p1, p2 orb.Pointer) bool {
+						return p1.Point().Equal(p2.Point())
+					}); err != nil {
+						s.logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
 					}
 				}
+
 			} else if event.Operation() == jetstream.KeyValueDelete || event.Operation() == jetstream.KeyValuePurge {
 				key := event.Key()
 				if key == "" {

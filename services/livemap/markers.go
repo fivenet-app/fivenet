@@ -95,7 +95,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemap.Create
 			return nil, errswrap.NewError(err, errorslivemap.ErrMarkerFailed)
 		}
 
-		if !access.CheckIfHasAccess(fields, userInfo, marker.Creator.Job, marker.Creator) {
+		if !access.CheckIfHasOwnJobAccess(fields, userInfo, marker.Creator.Job, marker.Creator) {
 			return nil, errorslivemap.ErrMarkerDenied
 		}
 
@@ -176,7 +176,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *pblivemap.DeleteMarkerRe
 		return &pblivemap.DeleteMarkerResponse{}, nil
 	}
 
-	if !access.CheckIfHasAccess(fields, userInfo, marker.Creator.Job, marker.Creator) {
+	if !access.CheckIfHasOwnJobAccess(fields, userInfo, marker.Creator.Job, marker.Creator) {
 		return nil, errorslivemap.ErrMarkerDenied
 	}
 

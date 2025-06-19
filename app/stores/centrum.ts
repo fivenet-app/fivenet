@@ -654,7 +654,7 @@ export const useCentrumStore = defineStore(
 
             logger.debug('Restart back off time in', reconnectBackoffTime.value, 'seconds');
             await stopStream();
-            setTimeout(() => {
+            useTimeoutFn(() => {
                 if (reconnecting.value) {
                     startStream();
                 }

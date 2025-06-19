@@ -10,3 +10,20 @@ func (m *ClientView) Sanitize() error {
 
 	return nil
 }
+
+func (m *ObjectEvent) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Data
+	if m.Data != nil {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

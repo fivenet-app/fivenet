@@ -488,7 +488,7 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 			},
 		},
 	}
-	if err := s.notif.NotifyUser(ctx, not); err != nil {
+	if err := s.notifi.NotifyUser(ctx, not); err != nil {
 		return err
 	}
 

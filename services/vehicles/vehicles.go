@@ -43,13 +43,18 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbvehicles.ListVehiclesR
 		)))
 	}
 
-	if req.UserId != nil && *req.UserId != 0 {
+	if len(req.UserIds) > 0 {
 		logRequest = true
+		userIds := []jet.Expression{}
+		for _, v := range req.UserIds {
+			userIds = append(userIds, jet.Int32(v))
+		}
+
 		condition = jet.AND(condition,
 			tUsers.Identifier.EQ(tVehicles.Owner),
-			tUsers.ID.EQ(jet.Int32(*req.UserId)),
+			tUsers.ID.IN(userIds...),
 		)
-		userCondition = jet.AND(userCondition, tUsers.ID.EQ(jet.Int32(*req.UserId)))
+		userCondition = jet.AND(userCondition, tUsers.ID.IN(userIds...))
 	} else if req.Job != nil && *req.Job != "" && !tables.ESXCompatEnabled {
 		logRequest = true
 		condition = jet.AND(condition,

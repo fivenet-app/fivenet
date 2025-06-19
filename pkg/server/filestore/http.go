@@ -59,21 +59,15 @@ const (
 	fileRetrievalTimeout = 6 * time.Second
 )
 
-// isPathSafe checks for path traversal and absolute path attempts.
+// isPathSafe checks for path traversal attempts.
 func isPathSafe(p string) bool {
 	if p == "" || p == "." || p == "/" {
-		return false
-	}
-	if p[0] == '/' {
 		return false
 	}
 	if p == ".." || len(p) >= 3 && p[:3] == "../" || len(p) >= 3 && p[len(p)-3:] == "/.." || p == "." {
 		return false
 	}
 	if len(p) >= 2 && (p[:2] == ".." || p[len(p)-2:] == "..") {
-		return false
-	}
-	if filepath.IsAbs(p) {
 		return false
 	}
 	return true

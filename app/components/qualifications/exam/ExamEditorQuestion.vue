@@ -29,7 +29,7 @@ const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
 
 const schema = z.object({
-    id: z.number(),
+    id: z.coerce.number(),
     title: z.string().min(3).max(512),
     description: z.string().max(1024).optional(),
     data: z.object({
@@ -54,16 +54,16 @@ const schema = z.object({
             z.object({
                 oneofKind: z.literal('freeText'),
                 freeText: z.object({
-                    minLength: z.number().nonnegative(),
-                    maxLength: z.number().nonnegative(),
+                    minLength: z.coerce.number().nonnegative(),
+                    maxLength: z.coerce.number().nonnegative(),
                 }),
             }),
             z.object({
                 oneofKind: z.literal('multipleChoice'),
                 multipleChoice: z.object({
-                    multi: z.boolean(),
-                    limit: z.number().positive().optional(),
-                    choices: z.string().max(255).array().max(10),
+                    multi: z.coerce.boolean(),
+                    limit: z.coerce.number().positive().optional(),
+                    choices: z.string().max(255).array().max(10).default([]),
                 }),
             }),
         ]),

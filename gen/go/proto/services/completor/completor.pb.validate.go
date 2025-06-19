@@ -68,19 +68,12 @@ func (m *CompleteCitizensRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.CurrentJob != nil {
-		// no validation rules for CurrentJob
-	}
+	for idx, item := range m.GetUserIds() {
+		_, _ = idx, item
 
-	if m.OnDuty != nil {
-		// no validation rules for OnDuty
-	}
-
-	if m.UserId != nil {
-
-		if m.GetUserId() <= 0 {
+		if item <= 0 {
 			err := CompleteCitizensRequestValidationError{
-				field:  "UserId",
+				field:  fmt.Sprintf("UserIds[%v]", idx),
 				reason: "value must be greater than 0",
 			}
 			if !all {
@@ -89,6 +82,18 @@ func (m *CompleteCitizensRequest) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
+	}
+
+	if m.CurrentJob != nil {
+		// no validation rules for CurrentJob
+	}
+
+	if m.OnDuty != nil {
+		// no validation rules for OnDuty
+	}
+
+	if m.UserIdsOnly != nil {
+		// no validation rules for UserIdsOnly
 	}
 
 	if len(errors) > 0 {

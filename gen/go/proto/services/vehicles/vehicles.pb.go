@@ -31,7 +31,7 @@ type ListVehiclesRequest struct {
 	// Search params
 	LicensePlate  *string `protobuf:"bytes,3,opt,name=license_plate,json=licensePlate,proto3,oneof" json:"license_plate,omitempty"`
 	Model         *string `protobuf:"bytes,4,opt,name=model,proto3,oneof" json:"model,omitempty"`
-	UserId        *int32  `protobuf:"varint,5,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	UserIds       []int32 `protobuf:"varint,5,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
 	Job           *string `protobuf:"bytes,6,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -95,11 +95,11 @@ func (x *ListVehiclesRequest) GetModel() string {
 	return ""
 }
 
-func (x *ListVehiclesRequest) GetUserId() int32 {
-	if x != nil && x.UserId != nil {
-		return *x.UserId
+func (x *ListVehiclesRequest) GetUserIds() []int32 {
+	if x != nil {
+		return x.UserIds
 	}
-	return 0
+	return nil
 }
 
 func (x *ListVehiclesRequest) GetJob() string {
@@ -165,21 +165,19 @@ var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a(resources/common/database/database.proto\x1a!resources/vehicles/vehicles.proto\x1a\x17validate/validate.proto\"\xfe\x02\n" +
+	" services/vehicles/vehicles.proto\x12\x11services.vehicles\x1a(resources/common/database/database.proto\x1a!resources/vehicles/vehicles.proto\x1a\x17validate/validate.proto\"\xf4\x02\n" +
 	"\x13ListVehiclesRequest\x12V\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\b\xfaB\x05\x8a\x01\x02\x10\x01R\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x121\n" +
 	"\rlicense_plate\x18\x03 \x01(\tB\a\xfaB\x04r\x02\x18 H\x01R\flicensePlate\x88\x01\x01\x12\"\n" +
-	"\x05model\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18 H\x02R\x05model\x88\x01\x01\x12%\n" +
-	"\auser_id\x18\x05 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00H\x03R\x06userId\x88\x01\x01\x12\x1e\n" +
-	"\x03job\x18\x06 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x04R\x03job\x88\x01\x01B\a\n" +
+	"\x05model\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18 H\x02R\x05model\x88\x01\x01\x12'\n" +
+	"\buser_ids\x18\x05 \x03(\x05B\f\xfaB\t\x92\x01\x06\"\x04\x1a\x02(\x00R\auserIds\x12\x1e\n" +
+	"\x03job\x18\x06 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x03R\x03job\x88\x01\x01B\a\n" +
 	"\x05_sortB\x10\n" +
 	"\x0e_license_plateB\b\n" +
-	"\x06_modelB\n" +
-	"\n" +
-	"\b_user_idB\x06\n" +
+	"\x06_modelB\x06\n" +
 	"\x04_job\"\x9e\x01\n" +
 	"\x14ListVehiclesResponse\x12M\n" +
 	"\n" +

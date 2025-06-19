@@ -3,33 +3,39 @@ package sync
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	pbsync "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_StreamServer) error {
+	ctx := srv.Context()
+
 	// Setup consumer
-	c, err := s.js.CreateConsumer(srv.Context(), strings.ToUpper(string(BaseSubject)), jetstream.ConsumerConfig{
-		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
-		DeliverPolicy: jetstream.DeliverNewPolicy,
+	consumer, err := s.js.CreateOrUpdateConsumer(ctx, strings.ToUpper(string(BaseSubject)), jetstream.ConsumerConfig{
+		Durable:           instance.ID() + "_sync",
+		FilterSubject:     fmt.Sprintf("%s.>", BaseSubject),
+		DeliverPolicy:     jetstream.DeliverNewPolicy,
+		InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create consumer. %w", err)
 	}
 
-	cons, err := c.Messages()
+	batch, err := consumer.Messages()
 	if err != nil {
 		return fmt.Errorf("failed to fetch messages consumer. %w", err)
 	}
-	defer cons.Stop()
+	defer batch.Stop()
 
 	msgCh := make(chan jetstream.Msg, 8)
 	go func() {
 		for {
-			msg, err := cons.Next()
+			msg, err := batch.Next()
 			if err != nil {
 				close(msgCh)
 				return
@@ -41,7 +47,7 @@ func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_Stream
 
 	for {
 		select {
-		case <-srv.Context().Done():
+		case <-ctx.Done():
 			return nil
 
 		case msg := <-msgCh:

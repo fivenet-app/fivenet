@@ -38,12 +38,13 @@ const changed = ref(false);
 const schema = z.object({
     labels: z
         .object({
-            id: z.number(),
+            id: z.coerce.number(),
             name: z.string().min(1),
             color: z.string().length(7),
         })
         .array()
-        .max(10),
+        .max(10)
+        .default([]),
     reason: z.string().min(3).max(255),
 });
 
@@ -149,9 +150,9 @@ watch(state, () => {
                     v-model="state.labels"
                     multiple
                     :searchable="
-                        async (query: string) => {
+                        async (q: string) => {
                             labelsLoading = true;
-                            const colleagues = await completorStore.completeCitizenLabels(query);
+                            const colleagues = await completorStore.completeCitizenLabels(q);
                             labelsLoading = false;
                             return colleagues;
                         }

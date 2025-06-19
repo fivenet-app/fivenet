@@ -16,31 +16,26 @@ const modal = useModal();
 
 const schema = z.object({
     license: z.string().max(64).optional(),
-    enabled: z.boolean(),
+    enabled: z.coerce.boolean(),
+    sort: z.custom<TableSortable>().default({
+        column: 'username',
+        direction: 'asc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('settings_accounts', schema);
 
-const query = reactive<Schema>({
-    enabled: true,
-});
-
-const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() =>
-    accounts.value?.pagination?.pageSize ? accounts.value?.pagination?.pageSize * (page.value - 1) : 0,
+    accounts.value?.pagination?.pageSize ? accounts.value?.pagination?.pageSize * (query.page - 1) : 0,
 );
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'username',
-    direction: 'asc',
-});
 
 const {
     data: accounts,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`settings-accounts-${sort.value.column}:${sort.value.direction}-${page.value}`, () => listAccounts());
+} = useLazyAsyncData(`settings-accounts-${query.sort.column}:${query.sort.direction}-${query.page}`, () => listAccounts());
 
 async function listAccounts(): Promise<ListAccountsResponse> {
     try {
@@ -48,7 +43,7 @@ async function listAccounts(): Promise<ListAccountsResponse> {
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             enabled: query.enabled,
             license: query.license,
         });
@@ -243,6 +238,6 @@ const columns = [
             </template>
         </UTable>
 
-        <Pagination v-model="page" :pagination="accounts?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="query.page" :pagination="accounts?.pagination" :loading="loading" :refresh="refresh" />
     </template>
 </template>

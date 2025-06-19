@@ -4,6 +4,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	"go.uber.org/fx"
 )
@@ -13,6 +14,8 @@ type ServerCmd struct {
 }
 
 func (c *ServerCmd) Run(ctx *Context) error {
+	instance.SetComponent("server")
+
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
 	fxOpts = append(fxOpts, fx.Invoke(func(server.HTTPServer) {}))
 

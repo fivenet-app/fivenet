@@ -4,13 +4,42 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
+import { ObjectType } from '~~/gen/ts/resources/notifications/client_view';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { conductTypesToBadgeColor } from './helpers';
 
-defineProps<{
+const props = defineProps<{
     entry: ConductEntry & { creator?: { value: Colleague } };
 }>();
 
+const emits = defineEmits<{
+    (e: 'refresh'): void;
+}>();
+
 const { isOpen } = useSlideover();
+
+const notifications = useNotificationsStore();
+
+// Handle the client update event
+const { sendClientView } = useClientUpdate(ObjectType.JOBS_CONDUCT, () =>
+    notifications.add({
+        title: { key: 'notifications.jobs.conduct.client_view_update.title', parameters: {} },
+        description: { key: 'notifications.jobs.conduct.client_view_update.content', parameters: {} },
+        timeout: 7500,
+        type: NotificationType.INFO,
+        actions: [
+            {
+                label: { key: 'common.refresh', parameters: {} },
+                icon: 'i-mdi-refresh',
+                click: () => emits('refresh'),
+            },
+        ],
+    }),
+);
+
+if (props.entry.id > 0) {
+    sendClientView(props.entry.id);
+}
 </script>
 
 <template>

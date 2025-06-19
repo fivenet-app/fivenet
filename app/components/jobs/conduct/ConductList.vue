@@ -7,7 +7,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
@@ -42,29 +41,20 @@ const availableTypes = ref<{ status: ConductType }[]>([
 ]);
 
 const schema = z.object({
-    id: z.number().max(16).optional(),
-    types: z.nativeEnum(ConductType).array().max(10),
-    showExpired: z.boolean(),
-    user: z.custom<Colleague>().optional(),
+    id: z.union([z.string().optional(), z.coerce.number().min(1).optional()]),
+    types: z.nativeEnum(ConductType).array().max(10).default([]),
+    showExpired: z.coerce.boolean().default(false),
+    user: z.coerce.number().min(1).optional(),
+    sort: z.custom<TableSortable>().default({
+        column: 'id',
+        direction: 'desc',
+    }),
+    page: z.coerce.number().min(1).default(1),
 });
 
-type Schema = z.output<typeof schema>;
+const query = useSearchForm('jobs_conduct', schema);
 
-const query = reactive<Schema>({
-    id: undefined,
-    types: [],
-    showExpired: false,
-});
-
-const usersLoading = ref(false);
-
-const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const sort = useRouteQueryObject<TableSortable>('sort', {
-    column: 'id',
-    direction: 'desc',
-});
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
 const {
     data,
@@ -72,27 +62,26 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-conduct-${sort.value.column}:${sort.value.direction}-${page.value}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
+    `jobs-conduct-${query.sort.column}:${query.sort.direction}-${query.page}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
     () => listConductEntries(),
     {
         transform: (input) => ({ ...input, entries: wrapRows(input?.entries, columns) }),
-        watch: [sort],
     },
 );
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
     const entryIds: number[] = [];
-    if (query.id && query.id > 0) {
-        entryIds.push(query.id);
+    if (query.id) {
+        entryIds.push(typeof query.id === 'string' ? parseInt(query.id, 10) : query.id);
     }
 
-    const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
+    const userIds = props.userId ? [props.userId] : query.user ? [query.user] : [];
     try {
         const call = $grpc.jobs.conduct.listConductEntries({
             pagination: {
                 offset: offset.value,
             },
-            sort: sort.value,
+            sort: query.sort,
             types: query.types,
             userIds: userIds,
             showExpired: query.showExpired,
@@ -121,6 +110,8 @@ async function deleteConductEntry(id: number): Promise<void> {
 
 watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
+
+const usersLoading = ref(false);
 
 async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
     if (data.value === null) {
@@ -189,11 +180,12 @@ const columns = [
                                 ref="input"
                                 v-model="query.user"
                                 :searchable="
-                                    async (query: string) => {
+                                    async (q: string) => {
                                         usersLoading = true;
                                         const colleagues = await completorStore.listColleagues({
-                                            search: query,
+                                            search: q,
                                             labelIds: [],
+                                            userIds: query.user ? [query.user] : [],
                                         });
                                         usersLoading = false;
                                         return colleagues;
@@ -205,13 +197,13 @@ const columns = [
                                 block
                                 :placeholder="$t('common.colleague')"
                                 trailing
-                                by="userId"
                                 leading-icon="i-mdi-search"
+                                value-attribute="userId"
                                 @keydown.esc="$event.target.blur()"
                             >
-                                <template #label>
-                                    <span v-if="query?.user" class="truncate">
-                                        {{ userToLabel(query.user) }}
+                                <template #label="{ selected }">
+                                    <span v-if="selected" class="truncate">
+                                        {{ userToLabel(selected) }}
                                     </span>
                                 </template>
 
@@ -312,7 +304,7 @@ const columns = [
     />
     <UTable
         v-else
-        v-model:sort="sort"
+        v-model:sort="query.sort"
         class="flex-1"
         :loading="loading"
         :columns="columns"
@@ -375,6 +367,7 @@ const columns = [
                         @click="
                             slideover.open(ConductViewSlideover, {
                                 entry: conduct,
+                                onRefresh: async () => refresh(),
                             })
                         "
                     />
@@ -411,5 +404,5 @@ const columns = [
         </template>
     </UTable>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    <Pagination v-model="query.page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

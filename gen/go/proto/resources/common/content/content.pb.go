@@ -28,6 +28,7 @@ const (
 	ContentType_CONTENT_TYPE_UNSPECIFIED ContentType = 0
 	ContentType_CONTENT_TYPE_HTML        ContentType = 1
 	ContentType_CONTENT_TYPE_PLAIN       ContentType = 2
+	ContentType_CONTENT_TYPE_TIPTAP_JSON ContentType = 3
 )
 
 // Enum value maps for ContentType.
@@ -36,11 +37,13 @@ var (
 		0: "CONTENT_TYPE_UNSPECIFIED",
 		1: "CONTENT_TYPE_HTML",
 		2: "CONTENT_TYPE_PLAIN",
+		3: "CONTENT_TYPE_TIPTAP_JSON",
 	}
 	ContentType_value = map[string]int32{
 		"CONTENT_TYPE_UNSPECIFIED": 0,
 		"CONTENT_TYPE_HTML":        1,
 		"CONTENT_TYPE_PLAIN":       2,
+		"CONTENT_TYPE_TIPTAP_JSON": 3,
 	}
 )
 
@@ -302,11 +305,12 @@ const file_resources_common_content_content_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x05\n" +
 	"\x03_idB\a\n" +
-	"\x05_text*Z\n" +
+	"\x05_text*x\n" +
 	"\vContentType\x12\x1c\n" +
 	"\x18CONTENT_TYPE_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11CONTENT_TYPE_HTML\x10\x01\x12\x16\n" +
-	"\x12CONTENT_TYPE_PLAIN\x10\x02*z\n" +
+	"\x12CONTENT_TYPE_PLAIN\x10\x02\x12\x1c\n" +
+	"\x18CONTENT_TYPE_TIPTAP_JSON\x10\x03*z\n" +
 	"\bNodeType\x12\x19\n" +
 	"\x15NODE_TYPE_UNSPECIFIED\x10\x00\x12\x11\n" +
 	"\rNODE_TYPE_DOC\x10\x01\x12\x15\n" +

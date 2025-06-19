@@ -35,7 +35,8 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.Complete
 		currentJob = true
 	}
 
-	if req.UserId == nil {
+	orderBys := []jet.OrderByClause{}
+	if len(req.UserIds) == 0 {
 		if currentJob {
 			condition = condition.AND(
 				tUsers.Job.EQ(jet.String(userInfo.Job)),
@@ -52,8 +53,20 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.Complete
 				LIKE(jet.String(req.Search))
 		}
 	} else {
-		condition = condition.AND(tUsers.ID.EQ(jet.Int32(*req.UserId)))
+		userIds := []jet.Expression{}
+		for _, v := range req.UserIds {
+			userIds = append(userIds, jet.Int32(v))
+		}
+
+		if req.UserIdsOnly != nil && *req.UserIdsOnly {
+			condition = condition.AND(tUsers.ID.IN(userIds...))
+		}
+
+		// Make sure to sort by the user IDs if provided
+		orderBys = append(orderBys, tUsers.ID.IN(userIds...).DESC())
 	}
+
+	orderBys = append(orderBys, tUsers.Lastname.ASC())
 
 	columns := jet.ProjectionList{
 		tUsers.ID,
@@ -73,9 +86,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.Complete
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUsers).
 		WHERE(condition).
-		ORDER_BY(
-			tUsers.Lastname.ASC(),
-		).
+		ORDER_BY(orderBys...).
 		LIMIT(15)
 
 	var dest []*users.UserShort

@@ -60,9 +60,10 @@ message StreamResponse {
 
     resources.notifications.UserEvent user_event = 3;
     resources.notifications.JobEvent job_event = 4;
-    resources.notifications.JobGradeEvent job_grade_event = 7;
-    resources.notifications.SystemEvent system_event = 5;
-    resources.mailer.MailerEvent mailer_event = 6;
+    resources.notifications.JobGradeEvent job_grade_event = 5;
+    resources.notifications.SystemEvent system_event = 6;
+    resources.mailer.MailerEvent mailer_event = 7;
+    resources.notifications.ObjectEvent object_event = 8;
   }
 }
 

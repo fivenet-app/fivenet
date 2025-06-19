@@ -10,6 +10,7 @@ import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	structpb "google.golang.org/protobuf/types/known/structpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -25,10 +26,12 @@ const (
 type ObjectType int32
 
 const (
-	ObjectType_OBJECT_TYPE_UNSPECIFIED ObjectType = 0
-	ObjectType_OBJECT_TYPE_CITIZEN     ObjectType = 1
-	ObjectType_OBJECT_TYPE_DOCUMENTS   ObjectType = 2
-	ObjectType_OBJECT_TYPE_WIKI_PAGE   ObjectType = 3
+	ObjectType_OBJECT_TYPE_UNSPECIFIED    ObjectType = 0
+	ObjectType_OBJECT_TYPE_CITIZEN        ObjectType = 1
+	ObjectType_OBJECT_TYPE_DOCUMENT       ObjectType = 2
+	ObjectType_OBJECT_TYPE_WIKI_PAGE      ObjectType = 3
+	ObjectType_OBJECT_TYPE_JOBS_COLLEAGUE ObjectType = 4
+	ObjectType_OBJECT_TYPE_JOBS_CONDUCT   ObjectType = 5
 )
 
 // Enum value maps for ObjectType.
@@ -36,14 +39,18 @@ var (
 	ObjectType_name = map[int32]string{
 		0: "OBJECT_TYPE_UNSPECIFIED",
 		1: "OBJECT_TYPE_CITIZEN",
-		2: "OBJECT_TYPE_DOCUMENTS",
+		2: "OBJECT_TYPE_DOCUMENT",
 		3: "OBJECT_TYPE_WIKI_PAGE",
+		4: "OBJECT_TYPE_JOBS_COLLEAGUE",
+		5: "OBJECT_TYPE_JOBS_CONDUCT",
 	}
 	ObjectType_value = map[string]int32{
-		"OBJECT_TYPE_UNSPECIFIED": 0,
-		"OBJECT_TYPE_CITIZEN":     1,
-		"OBJECT_TYPE_DOCUMENTS":   2,
-		"OBJECT_TYPE_WIKI_PAGE":   3,
+		"OBJECT_TYPE_UNSPECIFIED":    0,
+		"OBJECT_TYPE_CITIZEN":        1,
+		"OBJECT_TYPE_DOCUMENT":       2,
+		"OBJECT_TYPE_WIKI_PAGE":      3,
+		"OBJECT_TYPE_JOBS_COLLEAGUE": 4,
+		"OBJECT_TYPE_JOBS_CONDUCT":   5,
 	}
 )
 
@@ -72,6 +79,55 @@ func (x ObjectType) Number() protoreflect.EnumNumber {
 // Deprecated: Use ObjectType.Descriptor instead.
 func (ObjectType) EnumDescriptor() ([]byte, []int) {
 	return file_resources_notifications_client_view_proto_rawDescGZIP(), []int{0}
+}
+
+type ObjectEventType int32
+
+const (
+	ObjectEventType_OBJECT_EVENT_TYPE_UNSPECIFIED ObjectEventType = 0
+	ObjectEventType_OBJECT_EVENT_TYPE_UPDATED     ObjectEventType = 1
+	ObjectEventType_OBJECT_EVENT_TYPE_DELETED     ObjectEventType = 2
+)
+
+// Enum value maps for ObjectEventType.
+var (
+	ObjectEventType_name = map[int32]string{
+		0: "OBJECT_EVENT_TYPE_UNSPECIFIED",
+		1: "OBJECT_EVENT_TYPE_UPDATED",
+		2: "OBJECT_EVENT_TYPE_DELETED",
+	}
+	ObjectEventType_value = map[string]int32{
+		"OBJECT_EVENT_TYPE_UNSPECIFIED": 0,
+		"OBJECT_EVENT_TYPE_UPDATED":     1,
+		"OBJECT_EVENT_TYPE_DELETED":     2,
+	}
+)
+
+func (x ObjectEventType) Enum() *ObjectEventType {
+	p := new(ObjectEventType)
+	*p = x
+	return p
+}
+
+func (x ObjectEventType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ObjectEventType) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_notifications_client_view_proto_enumTypes[1].Descriptor()
+}
+
+func (ObjectEventType) Type() protoreflect.EnumType {
+	return &file_resources_notifications_client_view_proto_enumTypes[1]
+}
+
+func (x ObjectEventType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ObjectEventType.Descriptor instead.
+func (ObjectEventType) EnumDescriptor() ([]byte, []int) {
+	return file_resources_notifications_client_view_proto_rawDescGZIP(), []int{1}
 }
 
 type ClientView struct {
@@ -126,22 +182,125 @@ func (x *ClientView) GetId() uint64 {
 	return 0
 }
 
+type ObjectEvent struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Type          ObjectType             `protobuf:"varint,1,opt,name=type,proto3,enum=resources.notifications.ObjectType" json:"type,omitempty"`
+	Id            *uint64                `protobuf:"varint,2,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	EventType     ObjectEventType        `protobuf:"varint,3,opt,name=event_type,json=eventType,proto3,enum=resources.notifications.ObjectEventType" json:"event_type,omitempty"`
+	UserId        *int32                 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	Job           *string                `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
+	Data          *structpb.Struct       `protobuf:"bytes,6,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ObjectEvent) Reset() {
+	*x = ObjectEvent{}
+	mi := &file_resources_notifications_client_view_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ObjectEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ObjectEvent) ProtoMessage() {}
+
+func (x *ObjectEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_notifications_client_view_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ObjectEvent.ProtoReflect.Descriptor instead.
+func (*ObjectEvent) Descriptor() ([]byte, []int) {
+	return file_resources_notifications_client_view_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ObjectEvent) GetType() ObjectType {
+	if x != nil {
+		return x.Type
+	}
+	return ObjectType_OBJECT_TYPE_UNSPECIFIED
+}
+
+func (x *ObjectEvent) GetId() uint64 {
+	if x != nil && x.Id != nil {
+		return *x.Id
+	}
+	return 0
+}
+
+func (x *ObjectEvent) GetEventType() ObjectEventType {
+	if x != nil {
+		return x.EventType
+	}
+	return ObjectEventType_OBJECT_EVENT_TYPE_UNSPECIFIED
+}
+
+func (x *ObjectEvent) GetUserId() int32 {
+	if x != nil && x.UserId != nil {
+		return *x.UserId
+	}
+	return 0
+}
+
+func (x *ObjectEvent) GetJob() string {
+	if x != nil && x.Job != nil {
+		return *x.Job
+	}
+	return ""
+}
+
+func (x *ObjectEvent) GetData() *structpb.Struct {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
 var File_resources_notifications_client_view_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_client_view_proto_rawDesc = "" +
 	"\n" +
-	")resources/notifications/client_view.proto\x12\x17resources.notifications\x1a\x17validate/validate.proto\"k\n" +
+	")resources/notifications/client_view.proto\x12\x17resources.notifications\x1a\x1cgoogle/protobuf/struct.proto\x1a\x17validate/validate.proto\"k\n" +
 	"\n" +
 	"ClientView\x12A\n" +
 	"\x04type\x18\x01 \x01(\x0e2#.resources.notifications.ObjectTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\x04type\x12\x13\n" +
 	"\x02id\x18\x02 \x01(\x04H\x00R\x02id\x88\x01\x01B\x05\n" +
-	"\x03_id*x\n" +
+	"\x03_id\"\xd5\x02\n" +
+	"\vObjectEvent\x12A\n" +
+	"\x04type\x18\x01 \x01(\x0e2#.resources.notifications.ObjectTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\x04type\x12\x13\n" +
+	"\x02id\x18\x02 \x01(\x04H\x00R\x02id\x88\x01\x01\x12Q\n" +
+	"\n" +
+	"event_type\x18\x03 \x01(\x0e2(.resources.notifications.ObjectEventTypeB\b\xfaB\x05\x82\x01\x02\x10\x01R\teventType\x12%\n" +
+	"\auser_id\x18\x04 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00H\x01R\x06userId\x88\x01\x01\x12\x1e\n" +
+	"\x03job\x18\x05 \x01(\tB\a\xfaB\x04r\x02\x18\x14H\x02R\x03job\x88\x01\x01\x120\n" +
+	"\x04data\x18\x06 \x01(\v2\x17.google.protobuf.StructH\x03R\x04data\x88\x01\x01B\x05\n" +
+	"\x03_idB\n" +
+	"\n" +
+	"\b_user_idB\x06\n" +
+	"\x04_jobB\a\n" +
+	"\x05_data*\xb5\x01\n" +
 	"\n" +
 	"ObjectType\x12\x1b\n" +
 	"\x17OBJECT_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
-	"\x13OBJECT_TYPE_CITIZEN\x10\x01\x12\x19\n" +
-	"\x15OBJECT_TYPE_DOCUMENTS\x10\x02\x12\x19\n" +
-	"\x15OBJECT_TYPE_WIKI_PAGE\x10\x03BYZWgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
+	"\x13OBJECT_TYPE_CITIZEN\x10\x01\x12\x18\n" +
+	"\x14OBJECT_TYPE_DOCUMENT\x10\x02\x12\x19\n" +
+	"\x15OBJECT_TYPE_WIKI_PAGE\x10\x03\x12\x1e\n" +
+	"\x1aOBJECT_TYPE_JOBS_COLLEAGUE\x10\x04\x12\x1c\n" +
+	"\x18OBJECT_TYPE_JOBS_CONDUCT\x10\x05*r\n" +
+	"\x0fObjectEventType\x12!\n" +
+	"\x1dOBJECT_EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x1d\n" +
+	"\x19OBJECT_EVENT_TYPE_UPDATED\x10\x01\x12\x1d\n" +
+	"\x19OBJECT_EVENT_TYPE_DELETED\x10\x02BYZWgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
 var (
 	file_resources_notifications_client_view_proto_rawDescOnce sync.Once
@@ -155,19 +314,25 @@ func file_resources_notifications_client_view_proto_rawDescGZIP() []byte {
 	return file_resources_notifications_client_view_proto_rawDescData
 }
 
-var file_resources_notifications_client_view_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_notifications_client_view_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_resources_notifications_client_view_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_resources_notifications_client_view_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_notifications_client_view_proto_goTypes = []any{
-	(ObjectType)(0),    // 0: resources.notifications.ObjectType
-	(*ClientView)(nil), // 1: resources.notifications.ClientView
+	(ObjectType)(0),         // 0: resources.notifications.ObjectType
+	(ObjectEventType)(0),    // 1: resources.notifications.ObjectEventType
+	(*ClientView)(nil),      // 2: resources.notifications.ClientView
+	(*ObjectEvent)(nil),     // 3: resources.notifications.ObjectEvent
+	(*structpb.Struct)(nil), // 4: google.protobuf.Struct
 }
 var file_resources_notifications_client_view_proto_depIdxs = []int32{
 	0, // 0: resources.notifications.ClientView.type:type_name -> resources.notifications.ObjectType
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	0, // 1: resources.notifications.ObjectEvent.type:type_name -> resources.notifications.ObjectType
+	1, // 2: resources.notifications.ObjectEvent.event_type:type_name -> resources.notifications.ObjectEventType
+	4, // 3: resources.notifications.ObjectEvent.data:type_name -> google.protobuf.Struct
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_resources_notifications_client_view_proto_init() }
@@ -176,13 +341,14 @@ func file_resources_notifications_client_view_proto_init() {
 		return
 	}
 	file_resources_notifications_client_view_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_notifications_client_view_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_notifications_client_view_proto_rawDesc), len(file_resources_notifications_client_view_proto_rawDesc)),
-			NumEnums:      1,
-			NumMessages:   1,
+			NumEnums:      2,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
