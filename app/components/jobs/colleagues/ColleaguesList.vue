@@ -276,6 +276,7 @@ defineShortcuts({
                                     option-attribute="name"
                                     clear-search-on-close
                                     value-attribute="id"
+                                    :ui="{ padding: { sm: 'py-1' } }"
                                 >
                                     <template #label="{ selected }">
                                         <span v-if="selected.length" class="inline-flex flex-wrap gap-1 truncate">

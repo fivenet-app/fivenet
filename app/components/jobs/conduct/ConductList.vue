@@ -276,11 +276,11 @@ const columns = [
                         v-if="can('jobs.ConductService/CreateConductEntry').value"
                         class="flex-initial"
                         :label="$t('common.create')"
-                        trailing-icon="i-mdi-plus"
-                        color="gray"
-                        truncate
                     >
                         <UButton
+                            trailing-icon="i-mdi-plus"
+                            color="gray"
+                            truncate
                             @click="
                                 modal.open(ConductCreateOrUpdateModal, {
                                     onCreated: ($event) => data?.entries.unshift($event),

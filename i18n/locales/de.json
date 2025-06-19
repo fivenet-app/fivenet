@@ -416,8 +416,6 @@
         "member": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
         "attributes": "Attribut | Attribute",
         "last_update": "Letzte Aktualisierung",
-        "dispatchers": "Dispatcher | Dispatcher",
-        "dispatcher": "Keine Dispatcher | {n} Dispatcher | {n} Dispatcher",
         "confirm": "Bestätigen | Bestätigt",
         "word": "Wort | Wörter",
         "marker": "Markierung | Markierungen",
@@ -672,6 +670,8 @@
         "auto_save": "Automatische Speicherung",
         "discord_guild": "Discord Gilde | Discord Gilden",
         "no_versions": "Keine Versionen verfügbar.",
+        "dispatchers": "Dispatcher | Dispatcher",
+        "dispatcher": "Keine Dispatcher | {n} Dispatcher | {n} Dispatcher",
         "heatmap": "Heatmap"
     },
     "components": {
@@ -985,10 +985,10 @@
                 },
                 "CreateOrUpdateModal": {
                     "create": {
-                        "title": "Erstelle neuen Führungsregister Eintrag"
+                        "title": "Erstelle neuen Führungsregister-Eintrag"
                     },
                     "update": {
-                        "title": "Aktualisiere Führungsregister Eintrag"
+                        "title": "Aktualisiere Führungsregister-Eintrag"
                     }
                 }
             },
@@ -1587,10 +1587,6 @@
                 "content": "E-Mail Adresse wurde in die Zwischenablage kopiert."
             }
         },
-        "action_successful": {
-            "title": "Erfolg!",
-            "content": "Ihre Aktion wurde erfolgreich übermittelt"
-        },
         "category_deleted": {
             "title": "Kategorie gelöscht!",
             "content": "Kategorie wurde erfolgreich gelöscht"
@@ -1735,16 +1731,6 @@
             "deleted": {
                 "title": "Vorlage: Gelöscht",
                 "content": "Vorlage erfolgreich gelöscht."
-            }
-        },
-        "citizens": {
-            "copy_citizen_id": {
-                "title": "Bürger-ID kopiert",
-                "content": "Bürger-ID in die Zwischenablage kopiert."
-            },
-            "client_view_update": {
-                "title": "Bürger aktualisiert",
-                "content": "Der Bürger wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Bürgerdaten neu zu laden."
             }
         },
         "centrum": {
@@ -1957,11 +1943,49 @@
                     "title": "Dokument geschlossen!",
                     "content": "Dokument wurde geschlossen."
                 }
+            },
+            "client_view_update": {
+                "title": "Dokument wurde aktualisiert",
+                "content": "Das Dokument wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um das Dokument neu zu laden."
             }
         },
         "action_failed": {
             "title": "Fehlgeschlagen!",
             "content": "Ihre Aktion ist fehlgeschlagen, bitte versuchen Sie es erneut."
+        },
+        "action_successful": {
+            "title": "Erfolg!",
+            "content": "Ihre Aktion wurde erfolgreich übermittelt"
+        },
+        "citizens": {
+            "copy_citizen_id": {
+                "title": "Bürger-ID kopiert",
+                "content": "Bürger-ID in die Zwischenablage kopiert."
+            },
+            "client_view_update": {
+                "title": "Bürger aktualisiert",
+                "content": "Der Bürger wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Bürgerdaten neu zu laden."
+            }
+        },
+        "wiki": {
+            "client_view_update": {
+                "title": "Seite wurde aktualisiert",
+                "content": "Die Seite wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um die Seite neu zu laden."
+            }
+        },
+        "jobs": {
+            "colleague": {
+                "client_view_update": {
+                    "title": "Kollege wurde aktualisiert",
+                    "content": "Der Kollege wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Kollegen neu zu laden."
+                }
+            },
+            "conduct": {
+                "client_view_update": {
+                    "title": "Führungsregister-Eintrag wurde aktualisiert",
+                    "content": "Der Führungsregister-Eintrag wurde von einem anderen Benutzer aktualisiert. Klicken Sie hier, um den Führungsregister-Eintrag neu zu laden."
+                }
+            }
         }
     },
     "errors": {
@@ -1996,10 +2020,6 @@
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
-        },
-        "NotificationsService": {
-            "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
-            "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
         },
         "CentrumService": {
             "ErrFailedQuery": "Fehler beim Anzeigen/ Aktualisieren von Leitstellen Daten!",
@@ -2201,6 +2221,10 @@
         "Filestore": {
             "ErrInvalidUploadMeta": "Ungültige Upload-Metadaten!",
             "ErrUploadFileTooLarge": "Datei ist zu groß zum Hochladen! Die maximale Dateigröße beträgt {maxSize} MB."
+        },
+        "NotificationsService": {
+            "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
+            "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
         }
     },
     "system": {

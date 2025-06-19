@@ -416,8 +416,6 @@
         "member": "No Members | {n} Member | {n} Members",
         "attributes": "Attribute | Attributes",
         "last_update": "Last Update",
-        "dispatchers": "Dispatcher | Dispatchers",
-        "dispatcher": "No Dispatchers | {n} Dispatcher | {n} Dispatchers",
         "confirm": "Confirm | Confirmed",
         "word": "Word | Words",
         "marker": "Marker | Markers",
@@ -672,6 +670,8 @@
         "auto_save": "Auto Save",
         "discord_guild": "Discord Guild | Discord Guilds",
         "no_versions": "No versions available.",
+        "dispatchers": "Dispatcher | Dispatchers",
+        "dispatcher": "No Dispatchers | {n} Dispatcher | {n} Dispatchers",
         "heatmap": "Heatmap"
     },
     "components": {
@@ -1587,10 +1587,6 @@
                 "content": "E-Mail address has been copied to your clipboard."
             }
         },
-        "action_successful": {
-            "title": "Success!",
-            "content": "Your action was successfully submitted"
-        },
         "category_deleted": {
             "title": "Category deleted!",
             "content": "The Category was successfully deleted"
@@ -1735,24 +1731,6 @@
             "deleted": {
                 "title": "Template: Deleted",
                 "content": "Template deleted successfully."
-            }
-        },
-        "citizens": {
-            "copy_citizen_id": {
-                "title": "Citizen ID copied",
-                "content": "Citizen ID copied to clipboard."
-            },
-            "colleague": {
-                "client_view_update": {
-                    "title": "Citizen updated",
-                    "content": "Citizen has been updated by another user. Click here to reload the citizen's data."
-                }
-            },
-            "conduct": {
-                "client_view_update": {
-                    "title": "Conduct entry updated",
-                    "content": "Conduct entry has been updated by another user. Click here to reload the conduct entry's data."
-                }
             }
         },
         "centrum": {
@@ -1975,6 +1953,20 @@
             "title": "Failed!",
             "content": "Your action has failed, please try again."
         },
+        "action_successful": {
+            "title": "Success!",
+            "content": "Your action was successfully submitted"
+        },
+        "citizens": {
+            "copy_citizen_id": {
+                "title": "Citizen ID copied",
+                "content": "Citizen ID copied to clipboard."
+            },
+            "client_view_update": {
+                "title": "Citizen updated",
+                "content": "Citizen has been updated by another user. Click here to reload the citizen's data."
+            }
+        },
         "wiki": {
             "client_view_update": {
                 "title": "Page updated",
@@ -1982,9 +1974,17 @@
             }
         },
         "jobs": {
-            "client_view_update": {
-                "title": "Colleague updated",
-                "content": "Colleague has been updated by another user. Click here to reload the colleague's data."
+            "colleague": {
+                "client_view_update": {
+                    "title": "Colleague updated",
+                    "content": "Colleague has been updated by another user. Click here to reload the colleague's data."
+                }
+            },
+            "conduct": {
+                "client_view_update": {
+                    "title": "Conduct entry updated",
+                    "content": "Conduct entry has been updated by another user. Click here to reload the conduct entry's data."
+                }
             }
         }
     },
@@ -2020,10 +2020,6 @@
         },
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"
-        },
-        "NotificationsService": {
-            "ErrFailedRequest": "Failed to load notifications data!",
-            "ErrFailedStream": "Failed to stream notifications!"
         },
         "CentrumService": {
             "ErrFailedQuery": "Failed to get/update dispatch center data!",
@@ -2225,6 +2221,10 @@
         "Filestore": {
             "ErrInvalidUploadMeta": "Invalid upload meta data!",
             "ErrUploadFileTooLarge": "File is too large to upload! Maximum file size is {maxSize} MB."
+        },
+        "NotificationsService": {
+            "ErrFailedRequest": "Failed to load notifications data!",
+            "ErrFailedStream": "Failed to stream notifications!"
         }
     },
     "system": {
