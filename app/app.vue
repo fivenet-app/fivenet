@@ -43,6 +43,7 @@ if (APP_VERSION !== settings.version) {
     logger.info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
 
     useClipboardStore().clear();
+    useSearchesStore().clear();
     settings.setVersion(APP_VERSION);
 }
 

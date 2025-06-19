@@ -17,5 +17,15 @@ export const useSearchesStore = defineStore('searches', () => {
         return searches[key] as S | undefined;
     }
 
-    return { searches, setSearch, getSearch };
+    function clear() {
+        // Clear all searches
+        for (const key in searches) {
+            if (Object.prototype.hasOwnProperty.call(searches, key)) {
+                // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                delete searches[key];
+            }
+        }
+    }
+
+    return { searches, setSearch, getSearch, clear };
 });

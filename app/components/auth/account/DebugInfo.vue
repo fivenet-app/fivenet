@@ -12,6 +12,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const clipboardStore = useClipboardStore();
 
+const searchesStore = useSearchesStore();
+
 const settings = useSettingsStore();
 
 const authStore = useAuthStore();
@@ -156,7 +158,13 @@ const version = APP_VERSION;
                 :ui="{ container: '' }"
             >
                 <UButtonGroup class="flex w-full break-words" orientation="vertical">
-                    <UButton block @click="clipboardStore.clear()">
+                    <UButton
+                        block
+                        @click="
+                            clipboardStore.clear();
+                            searchesStore.clear();
+                        "
+                    >
                         <span>{{ $t('components.debug_info.reset_clipboard') }}</span>
                     </UButton>
                     <UButton block @click="resetLocalStorage()">
