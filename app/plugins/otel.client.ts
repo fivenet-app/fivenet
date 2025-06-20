@@ -8,7 +8,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
     const { system } = useAppConfig();
 
-    if (!system.otlp.enabled || !system.otlp.url) return;
+    if (!system.otlp?.enabled || !system.otlp?.url) return;
 
     // Lazy load OpenTelemetry and set up the tracer
     const { WebTracerProvider, TraceIdRatioBasedSampler } = await import('@opentelemetry/sdk-trace-web');

@@ -23,7 +23,6 @@ type fivenetCentrumUserLocationsTable struct {
 	X          mysql.ColumnFloat
 	Y          mysql.ColumnFloat
 	Hidden     mysql.ColumnBool
-	OnDuty     mysql.ColumnBool
 	UpdatedAt  mysql.ColumnTimestamp
 	Data       mysql.ColumnString
 
@@ -73,12 +72,11 @@ func newFivenetCentrumUserLocationsTableImpl(schemaName, tableName, alias string
 		XColumn          = mysql.FloatColumn("x")
 		YColumn          = mysql.FloatColumn("y")
 		HiddenColumn     = mysql.BoolColumn("hidden")
-		OnDutyColumn     = mysql.BoolColumn("on_duty")
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		DataColumn       = mysql.StringColumn("data")
-		allColumns       = mysql.ColumnList{IdentifierColumn, JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, OnDutyColumn, UpdatedAtColumn, DataColumn}
-		mutableColumns   = mysql.ColumnList{JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, OnDutyColumn, UpdatedAtColumn, DataColumn}
-		defaultColumns   = mysql.ColumnList{HiddenColumn, OnDutyColumn, UpdatedAtColumn}
+		allColumns       = mysql.ColumnList{IdentifierColumn, JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
+		mutableColumns   = mysql.ColumnList{JobColumn, JobGradeColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn, DataColumn}
+		defaultColumns   = mysql.ColumnList{HiddenColumn, UpdatedAtColumn}
 	)
 
 	return fivenetCentrumUserLocationsTable{
@@ -91,7 +89,6 @@ func newFivenetCentrumUserLocationsTableImpl(schemaName, tableName, alias string
 		X:          XColumn,
 		Y:          YColumn,
 		Hidden:     HiddenColumn,
-		OnDuty:     OnDutyColumn,
 		UpdatedAt:  UpdatedAtColumn,
 		Data:       DataColumn,
 

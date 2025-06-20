@@ -6,18 +6,20 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer"
 	notifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbnotifications "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
 	natsutils "github.com/fivenet-app/fivenet/v2025/pkg/nats"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
+	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
@@ -28,7 +30,7 @@ import (
 
 const feedFetch = 8
 
-func (s *Server) buildSubjects(ctx context.Context, userInfo userinfo.UserInfo) ([]string, []string, error) {
+func (s *Server) buildSubjects(ctx context.Context, userInfo *pbuserinfo.UserInfo) ([]string, []string, error) {
 	baseSubjects := []string{
 		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.UserId),
 		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
@@ -38,7 +40,7 @@ func (s *Server) buildSubjects(ctx context.Context, userInfo userinfo.UserInfo) 
 
 	// Clone user info and disable superuser
 	userInfo.Superuser = false
-	emails, err := pbmailer.ListUserEmails(ctx, s.db, &userInfo, nil, false)
+	emails, err := pbmailer.ListUserEmails(ctx, s.db, userInfo, nil, false)
 	if err != nil {
 		return baseSubjects, nil, errswrap.NewError(err, ErrFailedStream)
 	}
@@ -61,30 +63,21 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	// Track changes to user info, so we can send an updated user info to the user
 	currentUserInfo := userInfo.Clone()
 
-	// User info update ticker
-	updateTicker := time.NewTicker(15 * time.Second)
-	defer updateTicker.Stop()
-
-	// Check user token validity and update if necessary
-	data, stop, err := s.checkUser(ctx, currentUserInfo)
-	if err != nil {
-		return err
+	if _, err := s.js.PublishAsyncProto(ctx, userinfo.PollSubject, &pbuserinfo.PollReq{
+		AccountId: currentUserInfo.AccountId,
+		UserId:    currentUserInfo.UserId,
+	}); err != nil {
+		s.logger.Error("failed to publish userinfo.poll.request", zap.Int32("user_id", currentUserInfo.UserId), zap.Error(err))
 	}
+
+	subjectsMu := &sync.Mutex{}
+	baseSubjects, additionalSubjects, err := s.buildSubjects(ctx, currentUserInfo)
+	if err != nil {
+		return errswrap.NewError(err, ErrFailedStream)
+	}
+	clientViewSubject := []string{}
 
 	notificationCount, err := s.getNotificationCount(ctx, userInfo.UserId)
-	if err != nil {
-		return errswrap.NewError(err, ErrFailedStream)
-	}
-
-	if err := srv.Send(&pbnotifications.StreamResponse{
-		NotificationCount: notificationCount,
-		Data:              data,
-		Restart:           &stop,
-	}); err != nil {
-		return errswrap.NewError(err, ErrFailedStream)
-	}
-
-	baseSubjects, additionalSubjects, err := s.buildSubjects(ctx, currentUserInfo)
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)
 	}
@@ -137,7 +130,6 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 				}
 				cfg := info.Config
 
-				subjects := append(baseSubjects, additionalSubjects...)
 				// If client view is not "unspecified", add specific subject for it
 				if clientView.Id != nil && clientView.Type > notifications.ObjectType_OBJECT_TYPE_UNSPECIFIED {
 					gAccess := access.GetAccess(clientView.Type.ToAccessKey())
@@ -154,11 +146,15 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					}
 
 					// Generate subject for the client view
-					stateSubject := fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.ObjectTopic, clientView.Type.ToNatsKey(), *clientView.Id)
-					subjects = append(subjects, stateSubject)
+					clientViewSubject = []string{
+						fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.ObjectTopic, clientView.Type.ToNatsKey(), *clientView.Id),
+					}
 				}
 
-				cfg.FilterSubjects = subjects
+				subjectsMu.Lock()
+				cfg.FilterSubjects = append(baseSubjects, additionalSubjects...)
+				cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubject...)
+				subjectsMu.Unlock()
 
 				// Update consumer
 				if _, err := s.js.UpdateConsumer(ctx, notifi.StreamName, cfg); err != nil {
@@ -228,16 +224,39 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						} else {
 							notificationCount -= d.NotificationsReadCount
 						}
+
+					case *notifications.UserEvent_UserInfoChanged:
+						currentUserInfo.Job = d.UserInfoChanged.NewJob
+						currentUserInfo.JobGrade = d.UserInfoChanged.NewJobGrade
+
+						baseSubjects, additionalSubjects, err = s.buildSubjects(ctx, currentUserInfo)
+						if err != nil {
+							return errswrap.NewError(err, ErrFailedStream)
+						}
+
+						info, err := consumer.Info(gctx)
+						if err != nil {
+							return errswrap.NewError(err, ErrFailedStream)
+						}
+
+						cfg := info.Config
+						subjectsMu.Lock()
+						cfg.FilterSubjects = append(baseSubjects, additionalSubjects...)
+						cfg.FilterSubjects = append(cfg.FilterSubjects, clientViewSubject...)
+						subjectsMu.Unlock()
+
+						// Update consumer subjects
+						if _, err := s.js.UpdateConsumer(ctx, notifi.StreamName, cfg); err != nil {
+							return fmt.Errorf("failed to update consumer. %w", err)
+						}
 					}
 
-					resp := &pbnotifications.StreamResponse{
+					if err := srv.Send(&pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_UserEvent{
 							UserEvent: &dest,
 						},
-					}
-
-					if err := srv.Send(resp); err != nil {
+					}); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
@@ -247,14 +266,12 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					resp := &pbnotifications.StreamResponse{
+					if err := srv.Send(&pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_JobEvent{
 							JobEvent: &dest,
 						},
-					}
-
-					if err := srv.Send(resp); err != nil {
+					}); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
@@ -275,14 +292,12 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					resp := &pbnotifications.StreamResponse{
+					if err := srv.Send(&pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_JobGradeEvent{
 							JobGradeEvent: &dest,
 						},
-					}
-
-					if err := srv.Send(resp); err != nil {
+					}); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
@@ -292,14 +307,12 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					resp := &pbnotifications.StreamResponse{
+					if err := srv.Send(&pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_SystemEvent{
 							SystemEvent: &dest,
 						},
-					}
-
-					if err := srv.Send(resp); err != nil {
+					}); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
@@ -325,14 +338,12 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						}
 					}
 
-					resp := &pbnotifications.StreamResponse{
+					if err := srv.Send(&pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_ObjectEvent{
 							ObjectEvent: &dest,
 						},
-					}
-
-					if err := srv.Send(resp); err != nil {
+					}); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
@@ -342,90 +353,18 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 						return errswrap.NewError(err, ErrFailedStream)
 					}
 
-					resp := &pbnotifications.StreamResponse{
+					if err := srv.Send(&pbnotifications.StreamResponse{
 						NotificationCount: notificationCount,
 						Data: &pbnotifications.StreamResponse_MailerEvent{
 							MailerEvent: &dest,
 						},
-					}
-
-					if err := srv.Send(resp); err != nil {
+					}); err != nil {
 						return errswrap.NewError(err, ErrFailedStream)
 					}
-				}
-			}
-		}
-	})
-
-	g.Go(func() error {
-		for {
-			select {
-			case <-gctx.Done():
-				return nil
-
-			case <-updateTicker.C:
-				// Check user token validity
-				data, stop, err := s.checkUser(ctx, currentUserInfo)
-				if err != nil {
-					return err
-				}
-				if data != nil {
-					resp := &pbnotifications.StreamResponse{
-						Data: data,
-					}
-					if err := srv.Send(resp); err != nil {
-						return errswrap.NewError(err, ErrFailedStream)
-					}
-				}
-
-				if stop {
-					// End stream if we should "stop"
-					return context.Canceled
-				}
-
-				// Make sure the notification is in sync (again)
-				notificationCount, err = s.getNotificationCount(ctx, userInfo.UserId)
-				if err != nil {
-					return errswrap.NewError(err, ErrFailedStream)
 				}
 			}
 		}
 	})
 
 	return g.Wait()
-}
-
-func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInfo) (*pbnotifications.StreamResponse_UserEvent, bool, error) {
-	newUserInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccountId)
-	if err != nil {
-		return nil, true, errswrap.NewError(err, ErrFailedStream)
-	}
-
-	if currentUserInfo.LastChar != nil && *newUserInfo.LastChar != currentUserInfo.UserId && s.appCfg.Get().Auth.LastCharLock {
-		if !currentUserInfo.CanBeSuperuser && !currentUserInfo.Superuser {
-			return nil, true, auth.ErrCharLock
-		}
-	}
-
-	token, err := auth.GetTokenFromGRPCContext(ctx)
-	if err != nil {
-		return nil, true, auth.ErrInvalidToken
-	}
-
-	claims, err := s.tm.ParseWithClaims(token)
-	if err != nil {
-		return nil, true, auth.ErrInvalidToken
-	}
-
-	// Either token should be renewed or new user info is not equal
-	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime || !currentUserInfo.Equal(newUserInfo) {
-		// Cause client to refresh token
-		return &pbnotifications.StreamResponse_UserEvent{UserEvent: &notifications.UserEvent{
-			Data: &notifications.UserEvent_RefreshToken{
-				RefreshToken: true,
-			},
-		}}, true, nil
-	}
-
-	return nil, false, nil
 }

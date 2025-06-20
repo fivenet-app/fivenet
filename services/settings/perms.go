@@ -8,9 +8,9 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
@@ -325,7 +325,7 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *pbsettings.UpdateRole
 		}
 	}
 
-	// Send event to every employee
+	// Send event to job grade employees
 	if _, err := s.js.PublishAsyncProto(ctx,
 		fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.JobGradeTopic, role.Job, role.Grade),
 		&notifications.JobGradeEvent{

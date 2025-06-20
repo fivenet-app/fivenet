@@ -38,7 +38,7 @@ const { website } = useAppConfig();
 
                 <UButtonGroup class="inline-flex w-full flex-1">
                     <UButton
-                        v-if="website.links.privacyPolicy"
+                        v-if="website.links?.privacyPolicy"
                         class="flex-1"
                         variant="link"
                         block
@@ -49,7 +49,7 @@ const { website } = useAppConfig();
                     </UButton>
 
                     <UButton
-                        v-if="website.links.imprint"
+                        v-if="website.links?.imprint"
                         class="flex-1"
                         variant="link"
                         block

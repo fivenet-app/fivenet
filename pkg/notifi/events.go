@@ -25,11 +25,10 @@ const (
 	JobGradeTopic events.Topic = "job_grade"
 	// SystemTopic is the topic for system event notifications.
 	SystemTopic events.Topic = "sys"
-	// MailerTopic is the topic for mailer event notifications.
-	MailerTopic events.Topic = "mailer"
-
 	// ObjectTopic is the topic for object event notifications (e.g., document updated).
 	ObjectTopic events.Topic = "obj"
+	// MailerTopic is the topic for mailer event notifications.
+	MailerTopic events.Topic = "mailer"
 )
 
 // registerStream creates or updates the JetStream stream for notification events.

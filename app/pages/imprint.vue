@@ -13,10 +13,10 @@ definePageMeta({
 
 const { website } = useAppConfig();
 
-if (website.links.imprint === undefined) {
+if (website.links?.imprint === undefined) {
     navigateTo({ name: 'index' });
 } else {
-    useTimeoutFn(() => navigateTo(website.links.imprint!, { external: true }), 1750);
+    useTimeoutFn(() => navigateTo(website.links!.imprint!, { external: true }), 1750);
 }
 </script>
 
@@ -27,7 +27,7 @@ if (website.links.imprint === undefined) {
         <div class="w-full flex-1">
             <ULandingHero
                 :title="$t('common.redirecting_to', [$t('common.imprint')])"
-                :links="[{ label: $t('common.imprint'), icon: 'i-mdi-link-variant', size: 'lg', to: website.links.imprint }]"
+                :links="[{ label: $t('common.imprint'), icon: 'i-mdi-link-variant', size: 'lg', to: website.links!.imprint }]"
             />
         </div>
     </div>

@@ -1,18 +1,18 @@
 import { defineNuxtPlugin } from '#app';
-import type { ServerAppConfig } from '~/typings';
+import type { ClientConfig } from '~~/gen/ts/resources/clientconfig/clientconfig';
 
 const appConfigPromise = loadConfig();
 
-async function loadConfig(): Promise<ServerAppConfig> {
+async function loadConfig(): Promise<ClientConfig> {
     const abort = new AbortController();
     const tId = setTimeout(() => abort.abort(), 7_500);
 
     try {
-        const resp = await $fetch<ServerAppConfig>('/api/config', {
+        const resp = await $fetch<ClientConfig>('/api/config', {
             method: 'POST',
             signal: abort.signal,
         });
-        updateAppConfig(resp);
+        updateAppConfig({ ...resp });
         return resp;
     } catch (e) {
         const err = e as Error;

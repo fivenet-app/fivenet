@@ -9,9 +9,9 @@ import (
 
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
@@ -115,11 +115,11 @@ func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumServi
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.sendLatestState(srv.Context(), srv, &userInfo, jobs); err != nil {
+		if err := s.sendLatestState(srv.Context(), srv, userInfo, jobs); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.stream(srv.Context(), srv, &userInfo, []string{}); err != nil {
+		if err := s.stream(srv.Context(), srv, userInfo, []string{}); err != nil {
 			return err
 		}
 

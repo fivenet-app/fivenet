@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorsmailer "github.com/fivenet-app/fivenet/v2025/services/mailer/errors"

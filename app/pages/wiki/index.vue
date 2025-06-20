@@ -115,7 +115,7 @@ const wikiService = useWikiWiki();
                         :ui="{ title: 'text-xl' }"
                     >
                         <template v-if="p.rootInfo?.logo?.filePath" #icon>
-                            <GenericImg class="h-10 w-10" :src="p.rootInfo?.logo?.filePath" :alt="$t('common.logo')" />
+                            <GenericImg class="h-10 w-auto" :src="p.rootInfo?.logo?.filePath" :alt="$t('common.logo')" />
                         </template>
                     </UPageCard>
                 </UPageGrid>

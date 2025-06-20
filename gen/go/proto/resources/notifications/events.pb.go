@@ -8,8 +8,9 @@ package notifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	clientconfig "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig"
 	jobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
-	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
+	userinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -32,6 +33,7 @@ type UserEvent struct {
 	//	*UserEvent_RefreshToken
 	//	*UserEvent_Notification
 	//	*UserEvent_NotificationsReadCount
+	//	*UserEvent_UserInfoChanged
 	Data          isUserEvent_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -101,6 +103,15 @@ func (x *UserEvent) GetNotificationsReadCount() int32 {
 	return 0
 }
 
+func (x *UserEvent) GetUserInfoChanged() *userinfo.UserInfoChanged {
+	if x != nil {
+		if x, ok := x.Data.(*UserEvent_UserInfoChanged); ok {
+			return x.UserInfoChanged
+		}
+	}
+	return nil
+}
+
 type isUserEvent_Data interface {
 	isUserEvent_Data()
 }
@@ -118,11 +129,17 @@ type UserEvent_NotificationsReadCount struct {
 	NotificationsReadCount int32 `protobuf:"varint,3,opt,name=notifications_read_count,json=notificationsReadCount,proto3,oneof"`
 }
 
+type UserEvent_UserInfoChanged struct {
+	UserInfoChanged *userinfo.UserInfoChanged `protobuf:"bytes,4,opt,name=user_info_changed,json=userInfoChanged,proto3,oneof"`
+}
+
 func (*UserEvent_RefreshToken) isUserEvent_Data() {}
 
 func (*UserEvent_Notification) isUserEvent_Data() {}
 
 func (*UserEvent_NotificationsReadCount) isUserEvent_Data() {}
+
+func (*UserEvent_UserInfoChanged) isUserEvent_Data() {}
 
 // Job related events
 type JobEvent struct {
@@ -263,8 +280,7 @@ type SystemEvent struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
 	//
-	//	*SystemEvent_Ping
-	//	*SystemEvent_BannerMessage
+	//	*SystemEvent_ClientConfig
 	Data          isSystemEvent_Data `protobuf_oneof:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -307,19 +323,10 @@ func (x *SystemEvent) GetData() isSystemEvent_Data {
 	return nil
 }
 
-func (x *SystemEvent) GetPing() bool {
+func (x *SystemEvent) GetClientConfig() *clientconfig.ClientConfig {
 	if x != nil {
-		if x, ok := x.Data.(*SystemEvent_Ping); ok {
-			return x.Ping
-		}
-	}
-	return false
-}
-
-func (x *SystemEvent) GetBannerMessage() *BannerMessageWrapper {
-	if x != nil {
-		if x, ok := x.Data.(*SystemEvent_BannerMessage); ok {
-			return x.BannerMessage
+		if x, ok := x.Data.(*SystemEvent_ClientConfig); ok {
+			return x.ClientConfig
 		}
 	}
 	return nil
@@ -329,94 +336,33 @@ type isSystemEvent_Data interface {
 	isSystemEvent_Data()
 }
 
-type SystemEvent_Ping struct {
-	Ping bool `protobuf:"varint,1,opt,name=ping,proto3,oneof"`
+type SystemEvent_ClientConfig struct {
+	// Client configuration update (e.g., feature gates, game settings, banner message)
+	ClientConfig *clientconfig.ClientConfig `protobuf:"bytes,1,opt,name=client_config,json=clientConfig,proto3,oneof"`
 }
 
-type SystemEvent_BannerMessage struct {
-	BannerMessage *BannerMessageWrapper `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3,oneof"`
-}
-
-func (*SystemEvent_Ping) isSystemEvent_Data() {}
-
-func (*SystemEvent_BannerMessage) isSystemEvent_Data() {}
-
-type BannerMessageWrapper struct {
-	state                protoimpl.MessageState  `protogen:"open.v1"`
-	BannerMessageEnabled bool                    `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3" json:"banner_message_enabled,omitempty"`
-	BannerMessage        *settings.BannerMessage `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"banner_message,omitempty"`
-	unknownFields        protoimpl.UnknownFields
-	sizeCache            protoimpl.SizeCache
-}
-
-func (x *BannerMessageWrapper) Reset() {
-	*x = BannerMessageWrapper{}
-	mi := &file_resources_notifications_events_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *BannerMessageWrapper) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*BannerMessageWrapper) ProtoMessage() {}
-
-func (x *BannerMessageWrapper) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_notifications_events_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use BannerMessageWrapper.ProtoReflect.Descriptor instead.
-func (*BannerMessageWrapper) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_events_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *BannerMessageWrapper) GetBannerMessageEnabled() bool {
-	if x != nil {
-		return x.BannerMessageEnabled
-	}
-	return false
-}
-
-func (x *BannerMessageWrapper) GetBannerMessage() *settings.BannerMessage {
-	if x != nil {
-		return x.BannerMessage
-	}
-	return nil
-}
+func (*SystemEvent_ClientConfig) isSystemEvent_Data() {}
 
 var File_resources_notifications_events_proto protoreflect.FileDescriptor
 
 const file_resources_notifications_events_proto_rawDesc = "" +
 	"\n" +
-	"$resources/notifications/events.proto\x12\x17resources.notifications\x1a+resources/notifications/notifications.proto\x1a\x1fresources/settings/banner.proto\x1a\x1eresources/jobs/job_props.proto\x1a\x17validate/validate.proto\"\xc8\x01\n" +
+	"$resources/notifications/events.proto\x12\x17resources.notifications\x1a)resources/clientconfig/clientconfig.proto\x1a\x1eresources/jobs/job_props.proto\x1a+resources/notifications/notifications.proto\x1a\"resources/userinfo/user_info.proto\x1a\x17validate/validate.proto\"\x9b\x02\n" +
 	"\tUserEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshToken\x12K\n" +
 	"\fnotification\x18\x02 \x01(\v2%.resources.notifications.NotificationH\x00R\fnotification\x12:\n" +
-	"\x18notifications_read_count\x18\x03 \x01(\x05H\x00R\x16notificationsReadCountB\v\n" +
+	"\x18notifications_read_count\x18\x03 \x01(\x05H\x00R\x16notificationsReadCount\x12Q\n" +
+	"\x11user_info_changed\x18\x04 \x01(\v2#.resources.userinfo.UserInfoChangedH\x00R\x0fuserInfoChangedB\v\n" +
 	"\x04data\x12\x03\xf8B\x01\"P\n" +
 	"\bJobEvent\x127\n" +
 	"\tjob_props\x18\x01 \x01(\v2\x18.resources.jobs.JobPropsH\x00R\bjobPropsB\v\n" +
 	"\x04data\x12\x03\xf8B\x01\"C\n" +
 	"\rJobGradeEvent\x12%\n" +
 	"\rrefresh_token\x18\x01 \x01(\bH\x00R\frefreshTokenB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"\x88\x01\n" +
-	"\vSystemEvent\x12\x14\n" +
-	"\x04ping\x18\x01 \x01(\bH\x00R\x04ping\x12V\n" +
-	"\x0ebanner_message\x18\x02 \x01(\v2-.resources.notifications.BannerMessageWrapperH\x00R\rbannerMessageB\v\n" +
-	"\x04data\x12\x03\xf8B\x01\"\xae\x01\n" +
-	"\x14BannerMessageWrapper\x124\n" +
-	"\x16banner_message_enabled\x18\x01 \x01(\bR\x14bannerMessageEnabled\x12M\n" +
-	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageH\x00R\rbannerMessage\x88\x01\x01B\x11\n" +
-	"\x0f_banner_messageBYZWgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
+	"\x04data\x12\x03\xf8B\x01\"g\n" +
+	"\vSystemEvent\x12K\n" +
+	"\rclient_config\x18\x01 \x01(\v2$.resources.clientconfig.ClientConfigH\x00R\fclientConfigB\v\n" +
+	"\x04data\x12\x03\xf8B\x01BYZWgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notificationsb\x06proto3"
 
 var (
 	file_resources_notifications_events_proto_rawDescOnce sync.Once
@@ -430,22 +376,22 @@ func file_resources_notifications_events_proto_rawDescGZIP() []byte {
 	return file_resources_notifications_events_proto_rawDescData
 }
 
-var file_resources_notifications_events_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_resources_notifications_events_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_notifications_events_proto_goTypes = []any{
-	(*UserEvent)(nil),              // 0: resources.notifications.UserEvent
-	(*JobEvent)(nil),               // 1: resources.notifications.JobEvent
-	(*JobGradeEvent)(nil),          // 2: resources.notifications.JobGradeEvent
-	(*SystemEvent)(nil),            // 3: resources.notifications.SystemEvent
-	(*BannerMessageWrapper)(nil),   // 4: resources.notifications.BannerMessageWrapper
-	(*Notification)(nil),           // 5: resources.notifications.Notification
-	(*jobs.JobProps)(nil),          // 6: resources.jobs.JobProps
-	(*settings.BannerMessage)(nil), // 7: resources.settings.BannerMessage
+	(*UserEvent)(nil),                 // 0: resources.notifications.UserEvent
+	(*JobEvent)(nil),                  // 1: resources.notifications.JobEvent
+	(*JobGradeEvent)(nil),             // 2: resources.notifications.JobGradeEvent
+	(*SystemEvent)(nil),               // 3: resources.notifications.SystemEvent
+	(*Notification)(nil),              // 4: resources.notifications.Notification
+	(*userinfo.UserInfoChanged)(nil),  // 5: resources.userinfo.UserInfoChanged
+	(*jobs.JobProps)(nil),             // 6: resources.jobs.JobProps
+	(*clientconfig.ClientConfig)(nil), // 7: resources.clientconfig.ClientConfig
 }
 var file_resources_notifications_events_proto_depIdxs = []int32{
-	5, // 0: resources.notifications.UserEvent.notification:type_name -> resources.notifications.Notification
-	6, // 1: resources.notifications.JobEvent.job_props:type_name -> resources.jobs.JobProps
-	4, // 2: resources.notifications.SystemEvent.banner_message:type_name -> resources.notifications.BannerMessageWrapper
-	7, // 3: resources.notifications.BannerMessageWrapper.banner_message:type_name -> resources.settings.BannerMessage
+	4, // 0: resources.notifications.UserEvent.notification:type_name -> resources.notifications.Notification
+	5, // 1: resources.notifications.UserEvent.user_info_changed:type_name -> resources.userinfo.UserInfoChanged
+	6, // 2: resources.notifications.JobEvent.job_props:type_name -> resources.jobs.JobProps
+	7, // 3: resources.notifications.SystemEvent.client_config:type_name -> resources.clientconfig.ClientConfig
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -463,6 +409,7 @@ func file_resources_notifications_events_proto_init() {
 		(*UserEvent_RefreshToken)(nil),
 		(*UserEvent_Notification)(nil),
 		(*UserEvent_NotificationsReadCount)(nil),
+		(*UserEvent_UserInfoChanged)(nil),
 	}
 	file_resources_notifications_events_proto_msgTypes[1].OneofWrappers = []any{
 		(*JobEvent_JobProps)(nil),
@@ -471,17 +418,15 @@ func file_resources_notifications_events_proto_init() {
 		(*JobGradeEvent_RefreshToken)(nil),
 	}
 	file_resources_notifications_events_proto_msgTypes[3].OneofWrappers = []any{
-		(*SystemEvent_Ping)(nil),
-		(*SystemEvent_BannerMessage)(nil),
+		(*SystemEvent_ClientConfig)(nil),
 	}
-	file_resources_notifications_events_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_notifications_events_proto_rawDesc), len(file_resources_notifications_events_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

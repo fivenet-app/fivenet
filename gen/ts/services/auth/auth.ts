@@ -77,6 +77,20 @@ export interface LoginResponse {
     char?: ChooseCharacterResponse;
 }
 /**
+ * @generated from protobuf message services.auth.LogoutRequest
+ */
+export interface LogoutRequest {
+}
+/**
+ * @generated from protobuf message services.auth.LogoutResponse
+ */
+export interface LogoutResponse {
+    /**
+     * @generated from protobuf field: bool success = 1
+     */
+    success: boolean;
+}
+/**
  * @generated from protobuf message services.auth.ChangePasswordRequest
  */
 export interface ChangePasswordRequest {
@@ -184,13 +198,13 @@ export interface ChooseCharacterRequest {
  */
 export interface ChooseCharacterResponse {
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp expires = 1
-     */
-    expires?: Timestamp;
-    /**
-     * @generated from protobuf field: string username = 2
+     * @generated from protobuf field: string username = 1
      */
     username: string;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp expires = 2
+     */
+    expires?: Timestamp;
     /**
      * @generated from protobuf field: resources.jobs.JobProps job_props = 3
      */
@@ -207,20 +221,6 @@ export interface ChooseCharacterResponse {
      * @generated from protobuf field: repeated resources.permissions.RoleAttribute attributes = 6
      */
     attributes: RoleAttribute[];
-}
-/**
- * @generated from protobuf message services.auth.LogoutRequest
- */
-export interface LogoutRequest {
-}
-/**
- * @generated from protobuf message services.auth.LogoutResponse
- */
-export interface LogoutResponse {
-    /**
-     * @generated from protobuf field: bool success = 1
-     */
-    success: boolean;
 }
 /**
  * @generated from protobuf message services.auth.DeleteOAuth2ConnectionRequest
@@ -258,7 +258,7 @@ export interface SetSuperuserModeRequest {
  */
 export interface SetSuperuserModeResponse {
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp expires = 1
+     * @generated from protobuf field: resources.timestamp.Timestamp expires = 2
      */
     expires?: Timestamp;
     /**
@@ -504,6 +504,91 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
  * @generated MessageType for protobuf message services.auth.LoginResponse
  */
 export const LoginResponse = new LoginResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LogoutRequest$Type extends MessageType<LogoutRequest> {
+    constructor() {
+        super("services.auth.LogoutRequest", []);
+    }
+    create(value?: PartialMessage<LogoutRequest>): LogoutRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<LogoutRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LogoutRequest): LogoutRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LogoutRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.LogoutRequest
+ */
+export const LogoutRequest = new LogoutRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LogoutResponse$Type extends MessageType<LogoutResponse> {
+    constructor() {
+        super("services.auth.LogoutResponse", [
+            { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<LogoutResponse>): LogoutResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.success = false;
+        if (value !== undefined)
+            reflectionMergePartial<LogoutResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LogoutResponse): LogoutResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool success */ 1:
+                    message.success = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LogoutResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool success = 1; */
+        if (message.success !== false)
+            writer.tag(1, WireType.Varint).bool(message.success);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.LogoutResponse
+ */
+export const LogoutResponse = new LogoutResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ChangePasswordRequest$Type extends MessageType<ChangePasswordRequest> {
     constructor() {
@@ -1027,8 +1112,8 @@ export const ChooseCharacterRequest = new ChooseCharacterRequest$Type();
 class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> {
     constructor() {
         super("services.auth.ChooseCharacterResponse", [
-            { no: 1, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
             { no: 3, name: "job_props", kind: "message", T: () => JobProps },
             { no: 4, name: "char", kind: "message", T: () => User },
             { no: 5, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
@@ -1049,11 +1134,11 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.timestamp.Timestamp expires */ 1:
-                    message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
-                    break;
-                case /* string username */ 2:
+                case /* string username */ 1:
                     message.username = reader.string();
+                    break;
+                case /* resources.timestamp.Timestamp expires */ 2:
+                    message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
                 case /* resources.jobs.JobProps job_props */ 3:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
@@ -1079,12 +1164,12 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         return message;
     }
     internalBinaryWrite(message: ChooseCharacterResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.timestamp.Timestamp expires = 1; */
-        if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string username = 2; */
+        /* string username = 1; */
         if (message.username !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.username);
+            writer.tag(1, WireType.LengthDelimited).string(message.username);
+        /* resources.timestamp.Timestamp expires = 2; */
+        if (message.expires)
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* resources.jobs.JobProps job_props = 3; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
@@ -1107,91 +1192,6 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
  * @generated MessageType for protobuf message services.auth.ChooseCharacterResponse
  */
 export const ChooseCharacterResponse = new ChooseCharacterResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class LogoutRequest$Type extends MessageType<LogoutRequest> {
-    constructor() {
-        super("services.auth.LogoutRequest", []);
-    }
-    create(value?: PartialMessage<LogoutRequest>): LogoutRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<LogoutRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LogoutRequest): LogoutRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: LogoutRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.auth.LogoutRequest
- */
-export const LogoutRequest = new LogoutRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class LogoutResponse$Type extends MessageType<LogoutResponse> {
-    constructor() {
-        super("services.auth.LogoutResponse", [
-            { no: 1, name: "success", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<LogoutResponse>): LogoutResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.success = false;
-        if (value !== undefined)
-            reflectionMergePartial<LogoutResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LogoutResponse): LogoutResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* bool success */ 1:
-                    message.success = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: LogoutResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool success = 1; */
-        if (message.success !== false)
-            writer.tag(1, WireType.Varint).bool(message.success);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.auth.LogoutResponse
- */
-export const LogoutResponse = new LogoutResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteOAuth2ConnectionRequest$Type extends MessageType<DeleteOAuth2ConnectionRequest> {
     constructor() {
@@ -1344,7 +1344,7 @@ export const SetSuperuserModeRequest = new SetSuperuserModeRequest$Type();
 class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse> {
     constructor() {
         super("services.auth.SetSuperuserModeResponse", [
-            { no: 1, name: "expires", kind: "message", T: () => Timestamp },
+            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
             { no: 3, name: "job_props", kind: "message", T: () => JobProps },
             { no: 4, name: "char", kind: "message", T: () => User },
             { no: 5, name: "permissions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Permission },
@@ -1364,7 +1364,7 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.timestamp.Timestamp expires */ 1:
+                case /* resources.timestamp.Timestamp expires */ 2:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
                 case /* optional resources.jobs.JobProps job_props */ 3:
@@ -1391,9 +1391,9 @@ class SetSuperuserModeResponse$Type extends MessageType<SetSuperuserModeResponse
         return message;
     }
     internalBinaryWrite(message: SetSuperuserModeResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.timestamp.Timestamp expires = 1; */
+        /* resources.timestamp.Timestamp expires = 2; */
         if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.jobs.JobProps job_props = 3; */
         if (message.jobProps)
             JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();

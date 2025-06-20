@@ -13,10 +13,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pblivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap"
 	permslivemap "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
@@ -152,8 +152,7 @@ func (s *Server) sendUserMarkers(srv pblivemap.LivemapService_StreamServer, ctx 
 func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapService_StreamServer) error {
 	ctx := srv.Context()
 
-	origUI := auth.MustGetUserInfoFromContext(ctx).Clone()
-	userInfo := &origUI
+	userInfo := auth.MustGetUserInfoFromContext(ctx).Clone()
 
 	s.logger.Debug("starting livemap stream", zap.Int32("user_id", userInfo.UserId))
 

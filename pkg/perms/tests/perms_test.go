@@ -5,11 +5,11 @@ import (
 	"os"
 	"testing"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/internal/modules"
 	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2025/internal/tests/testdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

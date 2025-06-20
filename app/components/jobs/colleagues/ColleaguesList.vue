@@ -37,7 +37,7 @@ const schema = z.object({
         column: 'rank',
         direction: 'asc',
     }),
-    page: z.coerce.number().min(1).default(1),
+    page: pageNumberSchema,
 });
 
 const query = useSearchForm('jobs_colleagues', schema);

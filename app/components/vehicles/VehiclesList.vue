@@ -44,7 +44,7 @@ const schema = z.object({
         column: 'plate',
         direction: 'asc',
     }),
-    page: z.coerce.number().min(1).default(1),
+    page: pageNumberSchema,
 });
 
 const query = useSearchForm('vehicles', schema);

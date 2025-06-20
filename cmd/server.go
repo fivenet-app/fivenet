@@ -1,11 +1,7 @@
 package cmd
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/server"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
-	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	"go.uber.org/fx"
 )
 
@@ -17,12 +13,12 @@ func (c *ServerCmd) Run(ctx *Context) error {
 	instance.SetComponent("server")
 
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
-	fxOpts = append(fxOpts, fx.Invoke(func(server.HTTPServer) {}))
+	fxOpts = append(fxOpts, FxServerOpts()...)
 
 	if c.ModuleCronAgent {
-		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Executor) {}))
-		fxOpts = append(fxOpts, fx.Invoke(func(*pbjobs.Housekeeper) {}))
-		fxOpts = append(fxOpts, fx.Invoke(func(*housekeeper.Housekeeper) {}))
+		fxOpts = append(fxOpts, FxCronerOpts()...)
+		fxOpts = append(fxOpts, FxJobsHousekeeperOpts()...)
+		fxOpts = append(fxOpts, FxHousekeeperOpts()...)
 	}
 
 	app := fx.New(fxOpts...)

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+export const pageNumberSchema = z.number().int().nonnegative().min(1).max(999_999_999).default(1);
+
 export const zodDurationSchema = z
     .number()
     .nonnegative()

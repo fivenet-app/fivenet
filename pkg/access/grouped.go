@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -150,13 +150,13 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) HandleAccessC
 }
 
 // CanUserAccessTarget checks if a user can access a specific target based on access rights.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTarget(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access V) (bool, error) {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTarget(ctx context.Context, targetId uint64, userInfo *pbuserinfo.UserInfo, access V) (bool, error) {
 	out, err := g.CanUserAccessTargetIDs(ctx, userInfo, access, targetId)
 	return len(out) > 0, err
 }
 
 // CanUserAccessTargets checks if a user can access multiple targets based on access rights.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTargets(ctx context.Context, userInfo *userinfo.UserInfo, access V, targetIds ...uint64) (bool, error) {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTargets(ctx context.Context, userInfo *pbuserinfo.UserInfo, access V, targetIds ...uint64) (bool, error) {
 	out, err := g.CanUserAccessTargetIDs(ctx, userInfo, access, targetIds...)
 	return len(out) == len(targetIds), err
 }
@@ -166,7 +166,7 @@ type canAccessIdsHelper struct {
 }
 
 // CanUserAccessTargetIDs retrieves target IDs that a user can access based on access rights.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTargetIDs(ctx context.Context, userInfo *userinfo.UserInfo, access V, targetIds ...uint64) ([]uint64, error) {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccessTargetIDs(ctx context.Context, userInfo *pbuserinfo.UserInfo, access V, targetIds ...uint64) ([]uint64, error) {
 	if len(targetIds) == 0 {
 		return targetIds, nil
 	}
@@ -189,7 +189,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 }
 
 // GetAccessQuery constructs a query to check user access for given target IDs.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuery(userInfo *userinfo.UserInfo, targetIds []uint64, access V) jet.SelectStatement {
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuery(userInfo *pbuserinfo.UserInfo, targetIds []uint64, access V) jet.SelectStatement {
 	ids := make([]jet.Expression, len(targetIds))
 	for i := range targetIds {
 		ids[i] = jet.Uint64(targetIds[i])

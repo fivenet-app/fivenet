@@ -24,9 +24,6 @@ export const useAuthStore = defineStore(
         const username = ref<string | null>(null);
         const lastCharID = ref<number | undefined>(0);
 
-        const userTokenExpiration = ref<Date | null>(null);
-        const userToken = ref<string | null>(null);
-
         const activeChar = ref<User | null>(null);
         const loggingIn = ref<boolean>(false);
         const loginError = ref<RpcError | null>(null);
@@ -59,7 +56,6 @@ export const useAuthStore = defineStore(
             if (typeof expiration === 'string') {
                 expiration = new Date(expiration);
             }
-            userTokenExpiration.value = expiration;
         };
 
         const setActiveChar = (char: User | null): void => {
@@ -94,11 +90,13 @@ export const useAuthStore = defineStore(
         };
 
         const clearAuthInfo = (): void => {
-            setAccessTokenExpiration(null);
+            username.value = null;
             setActiveChar(null);
+            setAccessTokenExpiration(null);
             setPermissions([], []);
             setJobProps(undefined);
-            username.value = null;
+
+            // Close the WebSocket connection when logging out
             useGRPCWebsocketTransport().close();
         };
 
@@ -117,7 +115,7 @@ export const useAuthStore = defineStore(
                 username.value = user;
 
                 if (response.char === undefined) {
-                    logger.info('Login response without included char, redirecting to char selector');
+                    logger.info('Login response (not fast-tracked), redirecting to char selector');
                     setAccessTokenExpiration(toDate(response.expires));
 
                     const route = useRoute();
@@ -127,8 +125,9 @@ export const useAuthStore = defineStore(
                     });
                 } else {
                     logger.info('Received fast-tracked login response with char, id:', response.char.char?.userId);
-                    setActiveChar(response.char.char ?? null);
+
                     setAccessTokenExpiration(toDate(response.char.expires));
+                    setActiveChar(response.char.char ?? null);
                     setPermissions(response.char.permissions, response.char.attributes);
                     setJobProps(response.char.jobProps);
 
@@ -185,7 +184,7 @@ export const useAuthStore = defineStore(
 
             try {
                 const call = $grpc.auth.auth.chooseCharacter({
-                    charId,
+                    charId: charId,
                 });
                 const { response } = await call;
                 if (!response.char) {
@@ -193,8 +192,8 @@ export const useAuthStore = defineStore(
                 }
 
                 username.value = response.username;
-                setActiveChar(response.char);
                 setAccessTokenExpiration(toDate(response.expires));
+                setActiveChar(response.char);
                 setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
 
@@ -229,6 +228,8 @@ export const useAuthStore = defineStore(
                 });
                 const { response } = await call;
 
+                await navigateTo({ name: 'overview' });
+
                 if (superuser) {
                     permissions.value.push({
                         id: 0,
@@ -252,9 +253,6 @@ export const useAuthStore = defineStore(
                     type: NotificationType.INFO,
                 });
 
-                await navigateTo({ name: 'overview' });
-
-                setAccessTokenExpiration(toDate(response.expires));
                 setActiveChar(response.char!);
                 setPermissions(response.permissions, response.attributes);
                 setJobProps(response.jobProps);
@@ -286,8 +284,6 @@ export const useAuthStore = defineStore(
             sessionExpiration,
             username,
             lastCharID,
-            userTokenExpiration,
-            userToken,
             activeChar,
             loggingIn,
             loginError,
@@ -314,15 +310,12 @@ export const useAuthStore = defineStore(
     },
     {
         persist: {
-            pick: ['sessionExpiration', 'username', 'lastCharID', 'userTokenExpiration'],
+            pick: ['sessionExpiration', 'username', 'lastCharID'],
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             afterHydrate: (ctx: any) => {
                 const store = ctx.store;
                 if (typeof store.sessionExpiration === 'string') {
                     store.sessionExpiration = new Date(store.sessionExpiration);
-                }
-                if (typeof store.userTokenExpiration === 'string') {
-                    store.userTokenExpiration = new Date(store.userTokenExpiration);
                 }
             },
         },

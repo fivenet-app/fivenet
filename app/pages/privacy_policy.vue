@@ -13,10 +13,10 @@ definePageMeta({
 
 const { website } = useAppConfig();
 
-if (website.links.privacyPolicy === undefined) {
+if (website.links?.privacyPolicy === undefined) {
     navigateTo({ name: 'index' });
 } else {
-    useTimeoutFn(() => navigateTo(website.links.privacyPolicy!, { external: true }), 1750);
+    useTimeoutFn(() => navigateTo(website.links!.privacyPolicy!, { external: true }), 1750);
 }
 </script>
 
@@ -32,7 +32,7 @@ if (website.links.privacyPolicy === undefined) {
                         label: $t('common.privacy_policy'),
                         icon: 'i-mdi-link-variant',
                         size: 'lg',
-                        to: website.links.privacyPolicy,
+                        to: website.links!.privacyPolicy,
                     },
                 ]"
             />

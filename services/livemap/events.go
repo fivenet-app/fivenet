@@ -23,7 +23,7 @@ const (
 	MarkerDelete events.Type = "delete"
 )
 
-func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+func (s *Server) registerStreamAndConsumer(ctxStartup context.Context, ctxCancel context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:        "LIVEMAP",
 		Description: "Livemapper Service events",
@@ -51,7 +51,7 @@ func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 	}
 
 	s.jsCons, err = consumer.Consume(s.watchForEventsFunc,
-		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger, s.registerSubscriptions))
+		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger, s.registerStreamAndConsumer))
 	if err != nil {
 		return err
 	}

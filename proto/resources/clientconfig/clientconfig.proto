@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package resources.clientconfig;
+
+import "resources/settings/banner.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig;clientconfig";
+
+message ClientConfig {
+  string version = 1;
+
+  string default_locale = 2;
+
+  LoginConfig login = 3;
+  Discord discord = 4;
+  Website website = 5;
+  FeatureGates feature_gates = 6;
+  Game game = 7;
+  System system = 8;
+}
+
+message LoginConfig {
+  bool signup_enabled = 1;
+  bool last_char_lock = 2;
+  repeated ProviderConfig providers = 3;
+}
+
+message ProviderConfig {
+  string name = 1;
+  string label = 2;
+  optional string icon = 3;
+  string homepage = 4;
+}
+
+message Discord {
+  bool bot_enabled = 1;
+}
+
+message Website {
+  Links links = 1;
+  bool stats_page = 2;
+}
+
+message Links {
+  optional string imprint = 1;
+  optional string privacy_policy = 2;
+}
+
+message FeatureGates {
+  bool image_proxy = 1;
+}
+
+message Game {
+  string unemployed_job_name = 1;
+  int32 start_job_grade = 2;
+}
+
+message System {
+  bool banner_message_enabled = 1;
+  optional resources.settings.BannerMessage banner_message = 2;
+  OTLPFrontend otlp = 3;
+}
+
+message OTLPFrontend {
+  bool enabled = 1;
+  string url = 2;
+  map<string, string> headers = 3;
+}

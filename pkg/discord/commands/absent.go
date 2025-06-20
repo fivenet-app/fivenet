@@ -13,12 +13,12 @@ import (
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	permsjobs "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs/perms"
 	lang "github.com/fivenet-app/fivenet/v2025/i18n"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/types"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -158,7 +158,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	}
 
 	// For now just check if the user can set
-	userInfo := &userinfo.UserInfo{
+	userInfo := &pbuserinfo.UserInfo{
 		UserId:   userId,
 		Job:      job,
 		JobGrade: jobGrade,

@@ -22,6 +22,10 @@ type INotifi interface {
 	NotifyUser(ctx context.Context, not *notifications.Notification) error
 	// SendObjectEvent publishes an object event notification to the event system.
 	SendObjectEvent(ctx context.Context, event *notifications.ObjectEvent) error
+	// SendUserEvent publishes a user event notification to the event system.
+	SendUserEvent(ctx context.Context, userId int32, event *notifications.UserEvent) error
+	// SendSystemEvent publishes a system-wide event notification to the event system.
+	SendSystemEvent(ctx context.Context, event *notifications.SystemEvent) error
 }
 
 // Notifi implements the INotifi interface for managing user notifications.
@@ -128,6 +132,30 @@ func (n *Notifi) SendObjectEvent(ctx context.Context, event *notifications.Objec
 
 	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%s.%d", BaseSubject, ObjectTopic, event.Type.ToNatsKey(), *event.Id), event); err != nil {
 		return fmt.Errorf("failed to publish object event message. %w", err)
+	}
+
+	return nil
+}
+
+func (n *Notifi) SendUserEvent(ctx context.Context, userId int32, event *notifications.UserEvent) error {
+	if event == nil || event.Data == nil {
+		return fmt.Errorf("user event data is required")
+	}
+
+	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, userId), event); err != nil {
+		return fmt.Errorf("failed to publish user event message. %w", err)
+	}
+
+	return nil
+}
+
+func (n *Notifi) SendSystemEvent(ctx context.Context, event *notifications.SystemEvent) error {
+	if event == nil || event.Data == nil {
+		return fmt.Errorf("system event data is required")
+	}
+
+	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s", BaseSubject, SystemTopic), event); err != nil {
+		return fmt.Errorf("failed to publish system event message. %w", err)
 	}
 
 	return nil

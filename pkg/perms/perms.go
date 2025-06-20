@@ -7,13 +7,12 @@ import (
 	"sync"
 	"time"
 
-	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/cache"
 	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -115,7 +114,7 @@ type Perms struct {
 	attrsPermsMap *xsync.Map[uint64, *xsync.Map[string, uint64]]
 
 	userCanCacheTTL time.Duration
-	userCanCache    *cache.Cache[userCacheKey, bool]
+	userCanCache    *cache.LRUCache[userCacheKey, bool]
 }
 
 type JobPermission struct {
@@ -138,11 +137,7 @@ type Params struct {
 func New(p Params) (Permissions, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	userCanCache := cache.NewContext(
-		ctxCancel,
-		cache.AsLRU[userCacheKey, bool](lru.WithCapacity(1024)),
-		cache.WithJanitorInterval[userCacheKey, bool](15*time.Second),
-	)
+	userCanCache := cache.NewLRUCache[userCacheKey, bool](1024)
 
 	ps := &Perms{
 		logger: p.Logger,
@@ -171,6 +166,8 @@ func New(p Params) (Permissions, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		go userCanCache.StartJanitor(ctxCancel, 31)
+
 		return ps.init(ctxCancel, ctxStartup, p)
 	}))
 

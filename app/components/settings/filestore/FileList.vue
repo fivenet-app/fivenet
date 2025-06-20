@@ -163,7 +163,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                         icon="i-mdi-link-variant"
                         external
                         target="_blank"
-                        :to="`/api/filestore/${file.name}`"
+                        :to="`/api/filestore/${file.filePath}`"
                     />
                 </UTooltip>
 
@@ -174,7 +174,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                         color="error"
                         @click="
                             modal.open(ConfirmModal, {
-                                confirm: async () => deleteFile(file.name),
+                                confirm: async () => deleteFile(file.filePath),
                             })
                         "
                     />
@@ -183,13 +183,17 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
 
             <template #name-data="{ row: file }">
                 <span class="text-gray-900 dark:text-white">
-                    {{ file.name }}
+                    {{ file.filePath }}
                 </span>
             </template>
 
             <template #preview-data="{ row: file }">
-                <UIcon v-if="!previewTypes.some((ext) => file.name.endsWith(ext))" class="size-8" name="i-mdi-file-outline" />
-                <NuxtImg v-else class="max-h-24 max-w-32" :src="`/api/filestore/${file.name}`" loading="lazy" />
+                <UIcon
+                    v-if="!previewTypes.some((ext) => file.filePath.endsWith(ext))"
+                    class="size-8"
+                    name="i-mdi-file-outline"
+                />
+                <NuxtImg v-else class="max-h-24 max-w-32" :src="`/api/filestore/${file.filePath}`" loading="lazy" />
             </template>
 
             <template #fileSize-data="{ row: file }">

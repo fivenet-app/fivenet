@@ -1,4 +1,4 @@
-import type { DiscordConfig, FeatureGates, GameConfig, LoginConfig, SystemConfig, WebsiteConfig } from '~/typings';
+import type { Discord, FeatureGates, Game, LoginConfig, System, Website } from '~~/gen/ts/resources/clientconfig/clientconfig';
 
 export default defineAppConfig({
     // Server provided App Config
@@ -13,22 +13,22 @@ export default defineAppConfig({
     } as LoginConfig,
     discord: {
         botEnabled: false,
-    } as DiscordConfig,
-    website: {} as WebsiteConfig,
+    } as Discord,
+    website: {} as Website,
     featureGates: {
         imageProxy: false,
     } as FeatureGates,
     game: {
         unemployedJobName: 'unemployed',
         startJobGrade: 0,
-    } as GameConfig,
+    } as Game,
     system: {
         bannerMessageEnabled: false,
 
         otlp: {
             enabled: false,
         },
-    } as SystemConfig,
+    } as System,
 
     // File upload related config
     fileUpload: {

@@ -6,13 +6,14 @@ import (
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbvehicles "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles"
 	"github.com/fivenet-app/fivenet/v2025/internal/modules"
 	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	grpcserver "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -40,7 +41,7 @@ func TestListVehicles(t *testing.T) {
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)
 
-	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{
+	ui := userinfo.NewMockUserInfoRetriever(map[int32]*pbuserinfo.UserInfo{
 		3: {
 			AccountId: 3,
 			Enabled:   true,

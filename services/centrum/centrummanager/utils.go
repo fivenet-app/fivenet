@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 )

@@ -123,7 +123,7 @@ func NewServer(p Params) *Server {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		go s.broker.Start(ctxCancel)
 
-		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
+		if err := s.registerStreamAndConsumer(ctxStartup, ctxCancel); err != nil {
 			return fmt.Errorf("failed to register subscriptions. %w", err)
 		}
 

@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"slices"
 
-	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms/collections"
 )
 
@@ -99,8 +98,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 		result = p.checkIfCan(permId, userInfo)
 	}
 
-	p.userCanCache.Set(cacheKey, result,
-		cache.WithExpiration(p.userCanCacheTTL))
+	p.userCanCache.Put(cacheKey, result, p.userCanCacheTTL)
 
 	return result
 }

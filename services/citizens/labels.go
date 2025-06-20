@@ -6,11 +6,11 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
 	permscompletor "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"

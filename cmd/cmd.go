@@ -46,7 +46,6 @@ import (
 	pkgfilestore "github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
@@ -63,6 +62,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/wk"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
@@ -78,10 +78,12 @@ var Cli struct {
 	StartTimeout   time.Duration `help:"App start timeout duration" default:"180s" env:"FIVENET_START_TIMEOUT"`
 	SkipMigrations *bool         `help:"Disable the automatic DB migrations on startup." env:"FIVENET_SKIP_DB_MIGRATIONS"`
 
-	Server     ServerCmd     `cmd:"" help:"Run FiveNet server."`
-	Worker     WorkerCmd     `cmd:"" help:"Run FiveNet worker."`
-	Discord    DiscordCmd    `cmd:"" help:"Run FiveNet Discord bot."`
-	DBSync     DBSyncCmd     `cmd:"" name:"dbsync" help:"Run FiveNet database sync."`
+	Server   ServerCmd   `cmd:"" help:"Run FiveNet server."`
+	Worker   WorkerCmd   `cmd:"" help:"Run FiveNet worker."`
+	Discord  DiscordCmd  `cmd:"" help:"Run FiveNet Discord bot."`
+	DBSync   DBSyncCmd   `cmd:"" name:"dbsync" help:"Run FiveNet database sync."`
+	AllInOne AllInOneCmd `cmd:"" name:"allinone" alias:"aio" help:"Run FiveNet server and worker in one."`
+
 	Tools      ToolsCmd      `cmd:"" help:"Run FiveNet tools/helpers."`
 	Migrations MigrationsCmd `cmd:"" help:"Run FiveNet migrations."`
 }
@@ -150,7 +152,8 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			postals.New,
 			tracker.New,
 			tracker.NewManager,
-			userinfo.NewUIRetriever,
+			userinfo.NewRetriever,
+			userinfo.NewPoller,
 
 			// GRPC Service Helpers, Housekeepers and Co.
 			pbjobs.NewHousekeeper,

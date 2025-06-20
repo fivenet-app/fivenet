@@ -17,7 +17,7 @@ const searchesStore = useSearchesStore();
 const settings = useSettingsStore();
 
 const authStore = useAuthStore();
-const { activeChar, attributes, permissions, userTokenExpiration, isSuperuser } = storeToRefs(authStore);
+const { activeChar, sessionExpiration, attributes, permissions, isSuperuser } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
 
 const notifications = useNotificationsStore();
@@ -122,14 +122,14 @@ const version = APP_VERSION;
             </UFormGroup>
 
             <UFormGroup
-                v-if="userTokenExpiration"
+                v-if="sessionExpiration"
                 class="grid grid-cols-2 items-center gap-2"
-                name="userTokenExpiration"
+                name="sessionExpiration"
                 :label="$t('components.debug_info.access_token_expiration')"
                 :ui="{ container: '' }"
             >
-                <GenericTime :value="userTokenExpiration" ago />
-                (<GenericTime :value="userTokenExpiration" type="long" />)
+                <GenericTime :value="sessionExpiration" ago />
+                (<GenericTime :value="sessionExpiration" type="long" />)
             </UFormGroup>
 
             <UFormGroup

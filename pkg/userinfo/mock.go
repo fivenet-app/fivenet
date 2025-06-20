@@ -3,23 +3,25 @@ package userinfo
 import (
 	"context"
 	"fmt"
+
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 )
 
 // MockUserInfoRetriever is a mock implementation of a user info retriever for testing purposes.
 type MockUserInfoRetriever struct {
 	// UserInfo maps user IDs to their corresponding UserInfo.
-	UserInfo map[int32]*UserInfo
+	UserInfo map[int32]*pbuserinfo.UserInfo
 }
 
 // NewMockUserInfoRetriever creates a new MockUserInfoRetriever with the provided user info map.
-func NewMockUserInfoRetriever(userInfo map[int32]*UserInfo) *MockUserInfoRetriever {
+func NewMockUserInfoRetriever(userInfo map[int32]*pbuserinfo.UserInfo) *MockUserInfoRetriever {
 	return &MockUserInfoRetriever{
 		UserInfo: userInfo,
 	}
 }
 
 // GetUserInfo retrieves the UserInfo for a given userId and accountId.
-func (ui *MockUserInfoRetriever) GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*UserInfo, error) {
+func (ui *MockUserInfoRetriever) GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*pbuserinfo.UserInfo, error) {
 	if userInfo, ok := ui.UserInfo[userId]; ok {
 		return userInfo, nil
 	}
@@ -28,7 +30,7 @@ func (ui *MockUserInfoRetriever) GetUserInfo(ctx context.Context, userId int32, 
 }
 
 // GetUserInfoWithoutAccountId retrieves the UserInfo for a given userId without requiring an accountId.
-func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error) {
+func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*pbuserinfo.UserInfo, error) {
 	if userInfo, ok := ui.UserInfo[userId]; ok {
 		return userInfo, nil
 	}

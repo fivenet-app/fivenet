@@ -2,8 +2,8 @@ package access
 
 import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 )
 
 // CheckIfHasOwnJobAccess determines if a user has access to a resource based on permission levels, user info, and creator details.
@@ -15,7 +15,7 @@ import (
 // Returns true if the user has access, otherwise false.
 func CheckIfHasOwnJobAccess(
 	levels *permissions.StringList, // List of access levels (e.g., Any, Lower_Rank, Same_Rank, Own)
-	userInfo *userinfo.UserInfo, // Information about the user requesting access
+	userInfo *pbuserinfo.UserInfo, // Information about the user requesting access
 	creatorJob string, // Job of the document creator
 	creator *users.UserShort, // Short info about the creator (may be nil)
 ) bool {

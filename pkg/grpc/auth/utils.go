@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 )
@@ -15,8 +15,8 @@ const (
 	AuthedCookieName = "fivenet_authed"
 )
 
-func FromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
-	c, ok := ctx.Value(userInfoCtxMarkerKey).(*userinfo.UserInfo)
+func FromContext(ctx context.Context) (*pbuserinfo.UserInfo, bool) {
+	c, ok := ctx.Value(userInfoCtxMarkerKey).(*pbuserinfo.UserInfo)
 	return c, ok
 }
 
@@ -48,11 +48,11 @@ func SetTokenInGRPCContext(ctx context.Context, token string) context.Context {
 	return md.Set("authorization", "bearer "+token).ToIncoming(ctx)
 }
 
-func GetUserInfoFromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
+func GetUserInfoFromContext(ctx context.Context) (*pbuserinfo.UserInfo, bool) {
 	return FromContext(ctx)
 }
 
-func MustGetUserInfoFromContext(ctx context.Context) *userinfo.UserInfo {
+func MustGetUserInfoFromContext(ctx context.Context) *pbuserinfo.UserInfo {
 	userInfo, ok := FromContext(ctx)
 	if !ok {
 		panic(ErrNoUserInfo)

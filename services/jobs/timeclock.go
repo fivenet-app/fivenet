@@ -587,7 +587,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *pbjobs.ListInac
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 16)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 20)
 	resp := &pbjobs.ListInactiveEmployeesResponse{
 		Pagination: pag,
 		Colleagues: []*jobs.Colleague{},

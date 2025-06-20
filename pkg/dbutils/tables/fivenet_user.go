@@ -32,6 +32,7 @@ type fivenetUserTable struct {
 	Visum       mysql.ColumnInteger
 	Playtime    mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
+	LastSeen    mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,7 +67,7 @@ func (a FivenetUserTable) WithSuffix(suffix string) *FivenetUserTable {
 func newFivenetUserTable(schemaName, tableName, alias string) *FivenetUserTable {
 	return &FivenetUserTable{
 		fivenetUserTable: newFivenetUserTableImpl(schemaName, tableName, alias),
-		NEW:               newFivenetUserTableImpl("", "new", ""),
+		NEW:              newFivenetUserTableImpl("", "new", ""),
 	}
 }
 
@@ -87,14 +88,15 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		VisumColumn       = mysql.IntegerColumn("visum")
 		PlaytimeColumn    = mysql.IntegerColumn("playtime")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn}
-		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn}
+		LastSeenColumn    = mysql.TimestampColumn("last_seen")
+		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn}
+		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn}
 	)
 
 	return fivenetUserTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
-		//Columns
+		// Columns
 		ID:          IDColumn,
 		Identifier:  IdentifierColumn,
 		Group:       GroupColumn,
@@ -110,6 +112,7 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		Visum:       VisumColumn,
 		Playtime:    PlaytimeColumn,
 		CreatedAt:   CreatedAtColumn,
+		LastSeen:    LastSeenColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

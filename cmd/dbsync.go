@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/dbsync"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"go.uber.org/fx"
 )
@@ -12,7 +11,7 @@ func (c *DBSyncCmd) Run(ctx *Context) error {
 	instance.SetComponent("dbsync")
 
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, false)
-	fxOpts = append(fxOpts, fx.Invoke(func(*dbsync.Sync) {}))
+	fxOpts = append(fxOpts, FxDBSyncOpts()...)
 
 	app := fx.New(fxOpts...)
 	app.Run()

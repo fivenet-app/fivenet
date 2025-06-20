@@ -61,7 +61,9 @@ export const useNotificationsStore = defineStore(
             reconnecting.value = false;
 
             const authStore = useAuthStore();
-            const { can } = useAuth();
+            const { activeChar, can } = useAuth();
+
+            const mailerStore = useMailerStore();
 
             const notificationSound = useSounds('/sounds/notification.mp3');
 
@@ -127,6 +129,13 @@ export const useNotificationsStore = defineStore(
                         }
                     } else if (resp.data.oneofKind === 'jobEvent') {
                         if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
+                            // Check that the job props are for the active character's job
+                            if (
+                                !resp.data.jobEvent.data.jobProps ||
+                                (activeChar.value?.job && resp.data.jobEvent.data.jobProps.job !== activeChar.value?.job)
+                            )
+                                continue;
+
                             authStore.setJobProps(resp.data.jobEvent.data.jobProps);
                         } else {
                             logger.warn('Unknown jobEvent data received - oneofKind:', resp.data.oneofKind, resp.data);
@@ -142,21 +151,9 @@ export const useNotificationsStore = defineStore(
                             );
                         }
                     } else if (resp.data.oneofKind === 'systemEvent') {
-                        if (resp.data.systemEvent.data.oneofKind === 'ping') {
-                            // Pong!
-                        } else if (resp.data.systemEvent.data.oneofKind === 'bannerMessage') {
-                            const { system } = useAppConfig();
-                            resp.data.systemEvent.data.bannerMessage.bannerMessageEnabled =
-                                resp.data.systemEvent.data.bannerMessage.bannerMessageEnabled ?? false;
-                            if (resp.data.systemEvent.data.bannerMessage.bannerMessage === undefined) {
-                                system.bannerMessage = undefined;
-                                continue;
-                            }
-
-                            if (system.bannerMessage?.id === resp.data.systemEvent.data.bannerMessage.bannerMessage.id)
-                                continue;
-
-                            system.bannerMessage = resp.data.systemEvent.data.bannerMessage.bannerMessage;
+                        if (resp.data.systemEvent.data.oneofKind === 'clientConfig') {
+                            logger.info('Client config update received');
+                            updateAppConfig({ ...resp.data.systemEvent.data.clientConfig });
                         } else {
                             logger.warn('Unknown systemEvent event data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
@@ -165,7 +162,7 @@ export const useNotificationsStore = defineStore(
 
                         notificationsEvents.emit(event.type, event);
                     } else if (resp.data.oneofKind === 'mailerEvent') {
-                        if (can('mailer.MailerService/ListEmails').value) useMailerStore().handleEvent(resp.data.mailerEvent);
+                        if (can('mailer.MailerService/ListEmails').value) mailerStore.handleEvent(resp.data.mailerEvent);
                     }
 
                     if (resp.restart) {

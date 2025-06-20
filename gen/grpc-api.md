@@ -242,7 +242,6 @@
     - [NotificationType](#resources-notifications-NotificationType)
   
 - [resources/notifications/events.proto](#resources_notifications_events-proto)
-    - [BannerMessageWrapper](#resources-notifications-BannerMessageWrapper)
     - [JobEvent](#resources-notifications-JobEvent)
     - [JobGradeEvent](#resources-notifications-JobGradeEvent)
     - [SystemEvent](#resources-notifications-SystemEvent)
@@ -547,6 +546,24 @@
   
 - [resources/tracker/mapping.proto](#resources_tracker_mapping-proto)
     - [UserMapping](#resources-tracker-UserMapping)
+  
+- [resources/clientconfig/clientconfig.proto](#resources_clientconfig_clientconfig-proto)
+    - [ClientConfig](#resources-clientconfig-ClientConfig)
+    - [Discord](#resources-clientconfig-Discord)
+    - [FeatureGates](#resources-clientconfig-FeatureGates)
+    - [Game](#resources-clientconfig-Game)
+    - [Links](#resources-clientconfig-Links)
+    - [LoginConfig](#resources-clientconfig-LoginConfig)
+    - [OTLPFrontend](#resources-clientconfig-OTLPFrontend)
+    - [OTLPFrontend.HeadersEntry](#resources-clientconfig-OTLPFrontend-HeadersEntry)
+    - [ProviderConfig](#resources-clientconfig-ProviderConfig)
+    - [System](#resources-clientconfig-System)
+    - [Website](#resources-clientconfig-Website)
+  
+- [resources/userinfo/user_info.proto](#resources_userinfo_user_info-proto)
+    - [PollReq](#resources-userinfo-PollReq)
+    - [UserInfo](#resources-userinfo-UserInfo)
+    - [UserInfoChanged](#resources-userinfo-UserInfoChanged)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -4401,22 +4418,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-notifications-BannerMessageWrapper"></a>
-
-### BannerMessageWrapper
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `banner_message_enabled` | [bool](#bool) |  |  |
-| `banner_message` | [resources.settings.BannerMessage](#resources-settings-BannerMessage) | optional |  |
-
-
-
-
-
-
 <a name="resources-notifications-JobEvent"></a>
 
 ### JobEvent
@@ -4455,8 +4456,7 @@ System related events
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `ping` | [bool](#bool) |  |  |
-| `banner_message` | [BannerMessageWrapper](#resources-notifications-BannerMessageWrapper) |  |  |
+| `client_config` | [resources.clientconfig.ClientConfig](#resources-clientconfig-ClientConfig) |  | Client configuration update (e.g., feature gates, game settings, banner message) |
 
 
 
@@ -4474,6 +4474,7 @@ User related events
 | `refresh_token` | [bool](#bool) |  |  |
 | `notification` | [Notification](#resources-notifications-Notification) |  | Notifications |
 | `notifications_read_count` | [int32](#int32) |  |  |
+| `user_info_changed` | [resources.userinfo.UserInfoChanged](#resources-userinfo-UserInfoChanged) |  |  |
 
 
 
@@ -8724,6 +8725,288 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+<a name="resources_clientconfig_clientconfig-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/clientconfig/clientconfig.proto
+
+
+
+<a name="resources-clientconfig-ClientConfig"></a>
+
+### ClientConfig
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) |  |  |
+| `default_locale` | [string](#string) |  |  |
+| `login` | [LoginConfig](#resources-clientconfig-LoginConfig) |  |  |
+| `discord` | [Discord](#resources-clientconfig-Discord) |  |  |
+| `website` | [Website](#resources-clientconfig-Website) |  |  |
+| `feature_gates` | [FeatureGates](#resources-clientconfig-FeatureGates) |  |  |
+| `game` | [Game](#resources-clientconfig-Game) |  |  |
+| `system` | [System](#resources-clientconfig-System) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-Discord"></a>
+
+### Discord
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `bot_enabled` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-FeatureGates"></a>
+
+### FeatureGates
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `image_proxy` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-Game"></a>
+
+### Game
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unemployed_job_name` | [string](#string) |  |  |
+| `start_job_grade` | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-Links"></a>
+
+### Links
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `imprint` | [string](#string) | optional |  |
+| `privacy_policy` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-LoginConfig"></a>
+
+### LoginConfig
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signup_enabled` | [bool](#bool) |  |  |
+| `last_char_lock` | [bool](#bool) |  |  |
+| `providers` | [ProviderConfig](#resources-clientconfig-ProviderConfig) | repeated |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-OTLPFrontend"></a>
+
+### OTLPFrontend
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `url` | [string](#string) |  |  |
+| `headers` | [OTLPFrontend.HeadersEntry](#resources-clientconfig-OTLPFrontend-HeadersEntry) | repeated |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-OTLPFrontend-HeadersEntry"></a>
+
+### OTLPFrontend.HeadersEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-ProviderConfig"></a>
+
+### ProviderConfig
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+| `icon` | [string](#string) | optional |  |
+| `homepage` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-System"></a>
+
+### System
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `banner_message_enabled` | [bool](#bool) |  |  |
+| `banner_message` | [resources.settings.BannerMessage](#resources-settings-BannerMessage) | optional |  |
+| `otlp` | [OTLPFrontend](#resources-clientconfig-OTLPFrontend) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-Website"></a>
+
+### Website
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `links` | [Links](#resources-clientconfig-Links) |  |  |
+| `stats_page` | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_userinfo_user_info-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/userinfo/user_info.proto
+
+
+
+<a name="resources-userinfo-PollReq"></a>
+
+### PollReq
+PollReq: published to `userinfo.poll.request` when an active user connects or requests a refresh.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account_id` | [uint64](#uint64) |  | The account the user belongs to |
+| `user_id` | [int32](#int32) |  | The unique user identifier within the account |
+
+
+
+
+
+
+<a name="resources-userinfo-UserInfo"></a>
+
+### UserInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `account_id` | [uint64](#uint64) |  |  |
+| `license` | [string](#string) |  |  |
+| `last_char` | [int32](#int32) | optional |  |
+| `user_id` | [int32](#int32) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `group` | [string](#string) |  |  |
+| `can_be_superuser` | [bool](#bool) |  |  |
+| `superuser` | [bool](#bool) |  |  |
+| `override_job` | [string](#string) | optional |  |
+| `override_job_grade` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="resources-userinfo-UserInfoChanged"></a>
+
+### UserInfoChanged
+UserInfoChanged used to signal Job or JobGrade changes.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `account_id` | [uint64](#uint64) |  | The account the user belongs to |
+| `user_id` | [int32](#int32) |  | The unique user identifier within the account |
+| `old_job` | [string](#string) |  | Previous job title |
+| `new_job` | [string](#string) |  | New job title |
+| `new_job_label` | [string](#string) | optional |  |
+| `old_job_grade` | [int32](#int32) |  | Previous job grade |
+| `new_job_grade` | [int32](#int32) |  | New job grade |
+| `new_job_grade_label` | [string](#string) | optional | New job grade label |
+| `changed_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | Timestamp of when the change was detected |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="services_auth_auth-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -8811,8 +9094,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `expires` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `username` | [string](#string) |  |  |
+| `expires` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
 | `char` | [resources.users.User](#resources-users-User) |  | @gotags: alias:"user" |
 | `permissions` | [resources.permissions.Permission](#resources-permissions-Permission) | repeated |  |

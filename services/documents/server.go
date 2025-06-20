@@ -5,12 +5,12 @@ import (
 	"database/sql"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents"
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
 	"github.com/fivenet-app/fivenet/v2025/pkg/collab"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
@@ -159,7 +160,7 @@ func NewServer(p Params) (*Server, error) {
 
 	docAccess := newAccess(p.DB)
 	access.RegisterAccess("documents", &access.GroupedAccessAdapter{
-		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *userinfo.UserInfo, access int32) (bool, error) {
+		CanUserAccessTargetFn: func(ctx context.Context, targetId uint64, userInfo *pbuserinfo.UserInfo, access int32) (bool, error) {
 			// Type assert access to the correct enum type
 			return docAccess.CanUserAccessTarget(ctx, targetId, userInfo, documents.AccessLevel(access))
 		},

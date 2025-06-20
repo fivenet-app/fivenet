@@ -6,6 +6,7 @@ import (
 	"math"
 	"slices"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	pbcitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens"
 	permscitizens "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens/perms"
@@ -14,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"

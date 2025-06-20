@@ -56,7 +56,7 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, AuditLogPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 30)
 	resp := &pbsettings.ListAccountsResponse{
 		Pagination: pag,
 	}
@@ -88,6 +88,33 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 		orderBys = append(orderBys, tAccounts.CreatedAt.DESC())
 	}
 
+	// First, fetch the distinct account IDs for the current page
+	var accountIDs []uint64
+	idStmt := tAccounts.
+		SELECT(
+			tAccounts.ID,
+		).
+		FROM(tAccounts).
+		WHERE(condition).
+		ORDER_BY(orderBys...).
+		OFFSET(req.Pagination.Offset).
+		LIMIT(limit)
+
+	if err := idStmt.QueryContext(ctx, s.db, &accountIDs); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
+		}
+	}
+	if len(accountIDs) == 0 {
+		return resp, nil
+	}
+
+	var ids []jet.Expression
+	for _, id := range accountIDs {
+		ids = append(ids, jet.Uint64(id))
+	}
+
+	// Now, fetch all accounts and their oauth2 connections for these IDs
 	stmt := tAccounts.
 		SELECT(
 			tAccounts.ID,
@@ -110,10 +137,7 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 					tOauth2.AccountID.EQ(tAccounts.ID),
 				),
 		).
-		WHERE(condition).
-		ORDER_BY(orderBys...).
-		OFFSET(req.Pagination.Offset).
-		LIMIT(limit)
+		WHERE(tAccounts.ID.IN(ids...))
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Accounts); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

@@ -1,54 +1,44 @@
 package cmd
 
 import (
-	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
-	"github.com/fivenet-app/fivenet/v2025/pkg/demo"
-	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
-	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
-	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	"go.uber.org/fx"
 )
 
 type WorkerCmd struct {
-	ModuleCentrumBot         bool `help:"Start Centrum bot module" default:"true"`
-	ModuleCentrumHousekeeper bool `help:"Start Centrum Housekeeper module" default:"true"`
-	ModuleUserTracker        bool `help:"Start User tracker module" default:"true"`
-	ModuleJobsTimeclock      bool `help:"Start Jobs timeclock housekeeper module" default:"true"`
-	ModuleDocsWorkflow       bool `help:"Start Docstore Workflow module" default:"true"`
-	ModuleHousekeeper        bool `help:"Start Housekeepr module" default:"true"`
+	ModuleCentrum        bool `help:"Start Centrum bot and housekeeper module" default:"true"`
+	ModuleUserTracker    bool `help:"Start User tracker module" default:"true"`
+	ModuleJobsTimeclock  bool `help:"Start Jobs timeclock housekeeper module" default:"true"`
+	ModuleDocsWorkflow   bool `help:"Start Docstore Workflow module" default:"true"`
+	ModuleHousekeeper    bool `help:"Start Housekeepr module" default:"true"`
+	ModuleUserInfoPoller bool `help:"Start UserInfo poller module" default:"true"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
-	instance.SetComponent("server")
+	instance.SetComponent("worker")
 
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
-	fxOpts = append(fxOpts, fx.Invoke(func(*demo.Demo) {}))
+	fxOpts = append(fxOpts, FxDemoOpts()...)
+	fxOpts = append(fxOpts, FxCronerOpts()...)
 
-	if c.ModuleCentrumBot {
-		fxOpts = append(fxOpts, fx.Invoke(func(*centrumbot.Manager) {}))
-	}
-	if c.ModuleCentrumHousekeeper {
-		fxOpts = append(fxOpts, fx.Invoke(func(*centrummanager.Housekeeper) {}))
+	if c.ModuleCentrum {
+		fxOpts = append(fxOpts, FxCentrumOpts()...)
 	}
 	if c.ModuleUserTracker {
-		fxOpts = append(fxOpts, fx.Invoke(func(*tracker.Manager) {}))
+		fxOpts = append(fxOpts, FxTrackerOpts()...)
 	}
 	if c.ModuleJobsTimeclock {
-		fxOpts = append(fxOpts, fx.Invoke(func(*pbjobs.Housekeeper) {}))
+		fxOpts = append(fxOpts, FxJobsHousekeeperOpts()...)
 	}
 	if c.ModuleDocsWorkflow {
-		fxOpts = append(fxOpts, fx.Invoke(func(*pbdocuments.Workflow) {}))
+		fxOpts = append(fxOpts, FxDocumentsWorkflowOpts()...)
 	}
 	if c.ModuleHousekeeper {
-		fxOpts = append(fxOpts, fx.Invoke(func(*housekeeper.Housekeeper) {}))
+		fxOpts = append(fxOpts, FxHousekeeperOpts()...)
 	}
-
-	// Always run cron agent in worker
-	fxOpts = append(fxOpts, fx.Invoke(func(*croner.Executor) {}))
+	if c.ModuleUserInfoPoller {
+		fxOpts = append(fxOpts, FxUserInfoPollerOpts()...)
+	}
 
 	app := fx.New(fxOpts...)
 	app.Run()

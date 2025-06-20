@@ -69,7 +69,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizens.ListUserA
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 16)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 20)
 	resp.Pagination = pag
 	if count.Total <= 0 {
 		return resp, nil

@@ -2,14 +2,13 @@ package settings
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications"
 	pbsettings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -54,8 +53,6 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbsettings.UpdateAppC
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	currentConfig := s.appCfg.Get()
-
 	req.Config.Default()
 	if req.Config.System.BannerMessage != nil {
 		var expiresAt time.Time
@@ -92,39 +89,6 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbsettings.UpdateAppC
 		return nil, err
 	}
 
-	// If banner is disabled and was previously enabled, send "nil" banner message to remove it from clients
-	if !req.Config.System.BannerMessageEnabled {
-		if currentConfig.System.BannerMessageEnabled != req.Config.System.BannerMessageEnabled {
-			if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic), &notifications.SystemEvent{
-				Data: &notifications.SystemEvent_BannerMessage{
-					BannerMessage: &notifications.BannerMessageWrapper{
-						BannerMessage:        nil,
-						BannerMessageEnabled: false,
-					},
-				},
-			}); err != nil {
-				return nil, err
-			}
-		}
-	} else {
-		// Check if an updated banner message event is needed by md5 hashing the title and using that as the ID
-		if currentConfig.System.BannerMessage == nil || req.Config.System.BannerMessage != nil && (currentConfig.System.BannerMessage.Id != req.Config.System.BannerMessage.Id ||
-			(req.Config.System.BannerMessage.ExpiresAt != nil &&
-				(currentConfig.System.BannerMessage.ExpiresAt == nil ||
-					req.Config.System.BannerMessage.ExpiresAt.AsTime().Compare(currentConfig.System.BannerMessage.ExpiresAt.AsTime()) != 0))) {
-			if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic), &notifications.SystemEvent{
-				Data: &notifications.SystemEvent_BannerMessage{
-					BannerMessage: &notifications.BannerMessageWrapper{
-						BannerMessage:        req.Config.System.BannerMessage,
-						BannerMessageEnabled: req.Config.System.BannerMessageEnabled,
-					},
-				},
-			}); err != nil {
-				return nil, err
-			}
-		}
-	}
-
 	// Update config state
 	if err := s.appCfg.Update(ctx, req.Config); err != nil {
 		return nil, err
@@ -136,6 +100,14 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbsettings.UpdateAppC
 	if err != nil {
 		return nil, err
 	}
+
+	clientCfg := clientconfig.BuildClientConfig(s.cfg, clientconfig.BuildProviderList(s.cfg), s.appCfg.Get())
+
+	s.notifi.SendSystemEvent(ctx, &notifications.SystemEvent{
+		Data: &notifications.SystemEvent_ClientConfig{
+			ClientConfig: clientCfg,
+		},
+	})
 
 	return &pbsettings.UpdateAppConfigResponse{
 		Config: config,

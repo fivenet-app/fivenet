@@ -3,17 +3,18 @@ package modules
 import (
 	"time"
 
+	pbuserinfo "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
+	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 )
@@ -54,7 +55,7 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 }
 
 func TestUserInfoRetriever() userinfo.UserInfoRetriever {
-	return userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{})
+	return userinfo.NewMockUserInfoRetriever(map[int32]*pbuserinfo.UserInfo{})
 }
 
 func TestTokenMgr() *auth.TokenMgr {

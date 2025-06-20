@@ -16,12 +16,12 @@ const modal = useModal();
 
 const schema = z.object({
     license: z.string().max(64).optional(),
-    enabled: z.coerce.boolean(),
+    enabled: z.coerce.boolean().default(true),
     sort: z.custom<TableSortable>().default({
         column: 'username',
         direction: 'asc',
     }),
-    page: z.coerce.number().min(1).default(1),
+    page: pageNumberSchema,
 });
 
 const query = useSearchForm('settings_accounts', schema);

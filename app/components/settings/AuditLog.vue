@@ -38,7 +38,7 @@ const schema = z.object({
         column: 'createdAt',
         direction: 'desc',
     }),
-    page: z.coerce.number().min(1).default(1),
+    page: pageNumberSchema,
 });
 
 const query = useSearchForm('settings_auditlog', schema);

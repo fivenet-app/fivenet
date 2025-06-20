@@ -49,7 +49,7 @@ const schema = z.object({
         column: 'id',
         direction: 'desc',
     }),
-    page: z.coerce.number().min(1).default(1),
+    page: pageNumberSchema,
 });
 
 const query = useSearchForm('jobs_conduct', schema);

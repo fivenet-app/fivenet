@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package resources.userinfo;
+
+import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo;userinfo";
+
+message UserInfo {
+  bool enabled = 1;
+  uint64 account_id = 2;
+  string license = 3;
+  optional int32 last_char = 4;
+
+  int32 user_id = 5;
+  string job = 6;
+  int32 job_grade = 7;
+
+  string group = 8;
+  bool can_be_superuser = 9;
+  bool superuser = 10;
+
+  optional string override_job = 11;
+  optional int32 override_job_grade = 12;
+}
+
+// PollReq: published to `userinfo.poll.request` when an active user connects or requests a refresh.
+message PollReq {
+  // The account the user belongs to
+  uint64 account_id = 1;
+
+  // The unique user identifier within the account
+  int32 user_id = 2;
+}
+
+// UserInfoChanged used to signal Job or JobGrade changes.
+message UserInfoChanged {
+  // The account the user belongs to
+  uint64 account_id = 1;
+  // The unique user identifier within the account
+  int32 user_id = 2;
+
+  // Previous job title
+  string old_job = 3;
+  // New job title
+  string new_job = 4;
+  optional string new_job_label = 5;
+
+  // Previous job grade
+  int32 old_job_grade = 6;
+  // New job grade
+  int32 new_job_grade = 7;
+  // New job grade label
+  optional string new_job_grade_label = 8;
+
+  // Timestamp of when the change was detected
+  resources.timestamp.Timestamp changed_at = 9;
+}

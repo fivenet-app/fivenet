@@ -16,14 +16,10 @@ const modal = useModal();
 const completorStore = useCompletorStore();
 
 const schema = z.object({
-    user: z.custom<UserShort>().optional(),
+    user: z.number().optional(),
 });
 
-type Schema = z.output<typeof schema>;
-
-const query = reactive<Schema>({
-    user: undefined,
-});
+const query = useSearchForm('qualifications_tutor', schema);
 
 const usersLoading = ref(false);
 
@@ -43,13 +39,12 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                         :placeholder="$t('common.citizen', 1)"
                         block
                         trailing
-                        by="userId"
                         :search="
                             async (q: string): Promise<UserShort[]> => {
                                 usersLoading = true;
                                 const users = await completorStore.completeCitizens({
                                     search: q,
-                                    userIds: query.user ? [query.user.userId] : [],
+                                    userIds: query.user ? [query.user] : [],
                                 });
                                 usersLoading = false;
                                 return users;
@@ -58,16 +53,17 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                         search-lazy
                         :search-placeholder="$t('common.search_field')"
                         leading-icon="i-mdi-search"
+                        value-attribute="userId"
                     >
-                        <template #label>
-                            <span v-if="query.user" class="truncate">
-                                {{ usersToLabel([query.user]) }}
+                        <template #label="{ selected }">
+                            <span v-if="selected" class="truncate">
+                                {{ userToLabel(selected) }}
                             </span>
                         </template>
 
                         <template #option="{ option: user }">
                             <span class="truncate">
-                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                <ColleagueName :colleague="user" />
                             </span>
                         </template>
 

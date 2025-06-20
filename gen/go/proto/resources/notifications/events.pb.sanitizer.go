@@ -3,23 +3,6 @@
 
 package notifications
 
-func (m *BannerMessageWrapper) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: BannerMessage
-	if m.BannerMessage != nil {
-		if v, ok := any(m.GetBannerMessage()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
 func (m *JobEvent) Sanitize() error {
 	if m == nil {
 		return nil
@@ -53,10 +36,10 @@ func (m *SystemEvent) Sanitize() error {
 		return nil
 	}
 
-	// Field: BannerMessage
+	// Field: ClientConfig
 	switch v := m.Data.(type) {
 
-	case *SystemEvent_BannerMessage:
+	case *SystemEvent_ClientConfig:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -77,6 +60,14 @@ func (m *UserEvent) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *UserEvent_Notification:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UserInfoChanged
+	case *UserEvent_UserInfoChanged:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

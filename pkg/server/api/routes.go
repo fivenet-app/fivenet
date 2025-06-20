@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"sync/atomic"
 
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/version"
@@ -19,7 +20,7 @@ type Routes struct {
 	logger *zap.Logger
 
 	cfg              *config.Config
-	clientCfg        *atomic.Pointer[ClientConfig]
+	clientCfg        *atomic.Pointer[clientconfig.ClientConfig]
 	discordInviteUrl *atomic.Pointer[string]
 }
 
@@ -37,20 +38,11 @@ func New(p Params) *Routes {
 	r := &Routes{
 		logger:           p.Logger,
 		cfg:              p.Config,
-		clientCfg:        &atomic.Pointer[ClientConfig]{},
+		clientCfg:        &atomic.Pointer[clientconfig.ClientConfig]{},
 		discordInviteUrl: &atomic.Pointer[string]{},
 	}
 
-	providers := make([]*ProviderConfig, len(p.Config.OAuth2.Providers))
-
-	for i, p := range p.Config.OAuth2.Providers {
-		providers[i] = &ProviderConfig{
-			Name:     p.Name,
-			Label:    p.Label,
-			Icon:     p.Icon,
-			Homepage: &p.Homepage,
-		}
-	}
+	providers := clientconfig.BuildProviderList(p.Config)
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -88,8 +80,8 @@ func New(p Params) *Routes {
 	return r
 }
 
-func (r *Routes) handleAppConfigUpdate(providers []*ProviderConfig, appCfg *appconfig.Cfg) {
-	clientCfg := r.buildClientConfig(providers, appCfg)
+func (r *Routes) handleAppConfigUpdate(providers []*clientconfig.ProviderConfig, appCfg *appconfig.Cfg) {
+	clientCfg := clientconfig.BuildClientConfig(r.cfg, providers, appCfg)
 	r.clientCfg.Store(clientCfg)
 
 	if appCfg.Discord.BotId == nil || *appCfg.Discord.BotId == "" {
@@ -122,58 +114,6 @@ func (r *Routes) handleAppConfigUpdate(providers []*ProviderConfig, appCfg *appc
 
 	inviteUrl := u.String()
 	r.discordInviteUrl.Store(&inviteUrl)
-}
-
-func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfig.Cfg) *ClientConfig {
-	clientCfg := &ClientConfig{
-		Version: version.Version,
-
-		DefaultLocale: appCfg.DefaultLocale,
-
-		Login: LoginConfig{
-			SignupEnabled: appCfg.Auth.SignupEnabled,
-			LastCharLock:  appCfg.Auth.LastCharLock,
-			Providers:     providers,
-		},
-		Discord: Discord{
-			BotEnabled: appCfg.Discord.BotId != nil && *appCfg.Discord.BotId != "",
-		},
-		Website: Website{
-			Links: Links{
-				Imprint:       appCfg.Website.Links.Imprint,
-				PrivacyPolicy: appCfg.Website.Links.PrivacyPolicy,
-			},
-			StatsPage: appCfg.Website.StatsPage,
-		},
-		FeatureGates: FeatureGates{
-			ImageProxy: r.cfg.ImageProxy.Enabled,
-		},
-		Game: Game{
-			UnemployedJobName: appCfg.JobInfo.UnemployedJob.Name,
-			StartJobGrade:     r.cfg.Game.StartJobGrade,
-		},
-		System: System{
-			BannerMessageEnabled: appCfg.System.BannerMessageEnabled,
-			OTLP: OTLPFrontend{
-				Enabled: r.cfg.OTLP.Enabled,
-				URL:     r.cfg.OTLP.Frontend.URL,
-				Headers: r.cfg.OTLP.Frontend.Headers,
-			},
-		},
-	}
-
-	if appCfg.System.BannerMessage != nil {
-		clientCfg.System.BannerMessage = &BannerMessage{
-			Id:        appCfg.System.BannerMessage.Id,
-			Title:     appCfg.System.BannerMessage.Title,
-			Icon:      appCfg.System.BannerMessage.Icon,
-			Color:     appCfg.System.BannerMessage.Color,
-			CreatedAt: appCfg.System.BannerMessage.CreatedAt,
-			ExpiresAt: appCfg.System.BannerMessage.ExpiresAt,
-		}
-	}
-
-	return clientCfg
 }
 
 var versionInfo = &Version{

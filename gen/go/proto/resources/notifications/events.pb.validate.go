@@ -127,6 +127,48 @@ func (m *UserEvent) validate(all bool) error {
 		}
 		oneofDataPresent = true
 		// no validation rules for NotificationsReadCount
+	case *UserEvent_UserInfoChanged:
+		if v == nil {
+			err := UserEventValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetUserInfoChanged()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserEventValidationError{
+						field:  "UserInfoChanged",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserEventValidationError{
+						field:  "UserInfoChanged",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserInfoChanged()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserEventValidationError{
+					field:  "UserInfoChanged",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}
@@ -528,20 +570,7 @@ func (m *SystemEvent) validate(all bool) error {
 
 	oneofDataPresent := false
 	switch v := m.Data.(type) {
-	case *SystemEvent_Ping:
-		if v == nil {
-			err := SystemEventValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		oneofDataPresent = true
-		// no validation rules for Ping
-	case *SystemEvent_BannerMessage:
+	case *SystemEvent_ClientConfig:
 		if v == nil {
 			err := SystemEventValidationError{
 				field:  "Data",
@@ -555,11 +584,11 @@ func (m *SystemEvent) validate(all bool) error {
 		oneofDataPresent = true
 
 		if all {
-			switch v := interface{}(m.GetBannerMessage()).(type) {
+			switch v := interface{}(m.GetClientConfig()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, SystemEventValidationError{
-						field:  "BannerMessage",
+						field:  "ClientConfig",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -567,16 +596,16 @@ func (m *SystemEvent) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, SystemEventValidationError{
-						field:  "BannerMessage",
+						field:  "ClientConfig",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetBannerMessage()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetClientConfig()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return SystemEventValidationError{
-					field:  "BannerMessage",
+					field:  "ClientConfig",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -673,140 +702,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SystemEventValidationError{}
-
-// Validate checks the field values on BannerMessageWrapper with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *BannerMessageWrapper) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on BannerMessageWrapper with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// BannerMessageWrapperMultiError, or nil if none found.
-func (m *BannerMessageWrapper) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *BannerMessageWrapper) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for BannerMessageEnabled
-
-	if m.BannerMessage != nil {
-
-		if all {
-			switch v := interface{}(m.GetBannerMessage()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, BannerMessageWrapperValidationError{
-						field:  "BannerMessage",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, BannerMessageWrapperValidationError{
-						field:  "BannerMessage",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetBannerMessage()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return BannerMessageWrapperValidationError{
-					field:  "BannerMessage",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return BannerMessageWrapperMultiError(errors)
-	}
-
-	return nil
-}
-
-// BannerMessageWrapperMultiError is an error wrapping multiple validation
-// errors returned by BannerMessageWrapper.ValidateAll() if the designated
-// constraints aren't met.
-type BannerMessageWrapperMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m BannerMessageWrapperMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m BannerMessageWrapperMultiError) AllErrors() []error { return m }
-
-// BannerMessageWrapperValidationError is the validation error returned by
-// BannerMessageWrapper.Validate if the designated constraints aren't met.
-type BannerMessageWrapperValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e BannerMessageWrapperValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e BannerMessageWrapperValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e BannerMessageWrapperValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e BannerMessageWrapperValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e BannerMessageWrapperValidationError) ErrorName() string {
-	return "BannerMessageWrapperValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e BannerMessageWrapperValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sBannerMessageWrapper.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = BannerMessageWrapperValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = BannerMessageWrapperValidationError{}

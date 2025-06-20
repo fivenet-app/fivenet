@@ -61,19 +61,19 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
 
     const code = err.code?.toUpperCase();
     if (code !== undefined) {
-        const route = useRoute();
-
         // If the error code has already been "handled", skip "handling" them for now
         // Only do this for internal, deadline_exceeded, cancelled, permission_denied, unauthenticated codes
         if (throttledErrorCodes.includes(code)) {
             if (lastError.code === code) {
-                if (lastError.receivedAt !== undefined && lastError.receivedAt.getTime() - new Date().getTime() < 10) {
+                if (lastError.receivedAt !== undefined && lastError.receivedAt.getTime() - new Date().getTime() < 15_000) {
                     return true;
                 }
             }
             lastError.code = code;
             lastError.receivedAt = new Date();
         }
+
+        const route = useRoute();
 
         switch (code) {
             case 'INTERNAL':

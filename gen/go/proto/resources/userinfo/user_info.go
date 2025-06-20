@@ -1,22 +1,29 @@
 package userinfo
 
-// UserInfo holds information about a user and their account.
-type UserInfo struct {
-	Enabled   bool
-	AccountId uint64
-	License   string // License is a string, not a pointer
-	LastChar  *int32
+import "google.golang.org/protobuf/proto"
 
-	UserId   int32
-	Job      string
-	JobGrade int32
+func (x *UserInfoChanged) GetJob() string {
+	return x.NewJob
+}
 
-	Group          string
-	CanBeSuperuser bool
-	Superuser      bool
+func (x *UserInfoChanged) SetJob(job string) {
+	x.NewJob = job
+}
 
-	OverrideJob      *string
-	OverrideJobGrade *int32
+func (x *UserInfoChanged) SetJobLabel(label string) {
+	x.NewJobLabel = &label
+}
+
+func (x *UserInfoChanged) GetJobGrade() int32 {
+	return x.NewJobGrade
+}
+
+func (x *UserInfoChanged) SetJobGrade(grade int32) {
+	x.NewJobGrade = grade
+}
+
+func (x *UserInfoChanged) SetJobGradeLabel(label string) {
+	x.NewJobGradeLabel = &label
 }
 
 // Equal returns true if all fields of u and in are equal.
@@ -87,29 +94,6 @@ func equalStringPtr(a, b *string) bool {
 }
 
 // Clone returns a deep copy of the UserInfo struct.
-func (u *UserInfo) Clone() UserInfo {
-	clone := UserInfo{
-		Enabled:        u.Enabled,
-		AccountId:      u.AccountId,
-		License:        u.License,
-		UserId:         u.UserId,
-		Job:            u.Job,
-		JobGrade:       u.JobGrade,
-		Group:          u.Group,
-		CanBeSuperuser: u.CanBeSuperuser,
-		Superuser:      u.Superuser,
-	}
-	if u.LastChar != nil {
-		val := *u.LastChar
-		clone.LastChar = &val
-	}
-	if u.OverrideJob != nil {
-		val := *u.OverrideJob
-		clone.OverrideJob = &val
-	}
-	if u.OverrideJobGrade != nil {
-		val := *u.OverrideJobGrade
-		clone.OverrideJobGrade = &val
-	}
-	return clone
+func (u *UserInfo) Clone() *UserInfo {
+	return proto.Clone(u).(*UserInfo)
 }

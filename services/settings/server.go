@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
@@ -52,6 +53,7 @@ type Server struct {
 	js        *events.JSWrapper
 	cronState *croner.Registry
 	crypt     *crypt.Crypt
+	notifi    notifi.INotifi
 
 	jobPropsFileHandler *filestore.Handler[string]
 
@@ -74,6 +76,7 @@ type Params struct {
 	JS        *events.JSWrapper
 	CronState *croner.Registry
 	Crypt     *crypt.Crypt
+	Notifi    notifi.INotifi
 }
 
 func NewServer(p Params) *Server {
@@ -110,6 +113,7 @@ func NewServer(p Params) *Server {
 		js:        p.JS,
 		cronState: p.CronState,
 		crypt:     p.Crypt,
+		notifi:    p.Notifi,
 
 		jobPropsFileHandler: fHandler,
 

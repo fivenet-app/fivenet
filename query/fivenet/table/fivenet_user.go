@@ -32,7 +32,7 @@ type fivenetUserTable struct {
 	Visum       mysql.ColumnInteger
 	Playtime    mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
-	UpdatedAt   mysql.ColumnTimestamp
+	LastSeen    mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -89,9 +89,9 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		VisumColumn       = mysql.IntegerColumn("visum")
 		PlaytimeColumn    = mysql.IntegerColumn("playtime")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
-		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn}
+		LastSeenColumn    = mysql.TimestampColumn("last_seen")
+		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn}
+		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, LastSeenColumn}
 		defaultColumns    = mysql.ColumnList{JobColumn, JobGradeColumn, DisabledColumn, CreatedAtColumn}
 	)
 
@@ -114,7 +114,7 @@ func newFivenetUserTableImpl(schemaName, tableName, alias string) fivenetUserTab
 		Visum:       VisumColumn,
 		Playtime:    PlaytimeColumn,
 		CreatedAt:   CreatedAtColumn,
-		UpdatedAt:   UpdatedAtColumn,
+		LastSeen:    LastSeenColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

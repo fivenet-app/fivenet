@@ -96,7 +96,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocuments.ListUse
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 16)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 20)
 	resp := &pbdocuments.ListUserDocumentsResponse{
 		Pagination: pag,
 		Relations:  []*documents.DocumentRelation{},

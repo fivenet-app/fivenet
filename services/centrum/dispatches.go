@@ -103,7 +103,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 16)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.Total, 20)
 	resp := &pbcentrum.ListDispatchesResponse{
 		Pagination: pag,
 	}

@@ -10,8 +10,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { BannerMessage } from "../settings/banner";
+import { ClientConfig } from "../clientconfig/clientconfig";
 import { JobProps } from "../jobs/job_props";
+import { UserInfoChanged } from "../userinfo/user_info";
 import { Notification } from "./notifications";
 /**
  * User related events
@@ -42,6 +43,12 @@ export interface UserEvent {
          * @generated from protobuf field: int32 notifications_read_count = 3
          */
         notificationsReadCount: number;
+    } | {
+        oneofKind: "userInfoChanged";
+        /**
+         * @generated from protobuf field: resources.userinfo.UserInfoChanged user_info_changed = 4
+         */
+        userInfoChanged: UserInfoChanged;
     } | {
         oneofKind: undefined;
     };
@@ -94,33 +101,16 @@ export interface SystemEvent {
      * @generated from protobuf oneof: data
      */
     data: {
-        oneofKind: "ping";
+        oneofKind: "clientConfig";
         /**
-         * @generated from protobuf field: bool ping = 1
+         * Client configuration update (e.g., feature gates, game settings, banner message)
+         *
+         * @generated from protobuf field: resources.clientconfig.ClientConfig client_config = 1
          */
-        ping: boolean;
-    } | {
-        oneofKind: "bannerMessage";
-        /**
-         * @generated from protobuf field: resources.notifications.BannerMessageWrapper banner_message = 2
-         */
-        bannerMessage: BannerMessageWrapper;
+        clientConfig: ClientConfig;
     } | {
         oneofKind: undefined;
     };
-}
-/**
- * @generated from protobuf message resources.notifications.BannerMessageWrapper
- */
-export interface BannerMessageWrapper {
-    /**
-     * @generated from protobuf field: bool banner_message_enabled = 1
-     */
-    bannerMessageEnabled: boolean;
-    /**
-     * @generated from protobuf field: optional resources.settings.BannerMessage banner_message = 2
-     */
-    bannerMessage?: BannerMessage;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserEvent$Type extends MessageType<UserEvent> {
@@ -128,7 +118,8 @@ class UserEvent$Type extends MessageType<UserEvent> {
         super("resources.notifications.UserEvent", [
             { no: 1, name: "refresh_token", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "notification", kind: "message", oneof: "data", T: () => Notification },
-            { no: 3, name: "notifications_read_count", kind: "scalar", oneof: "data", T: 5 /*ScalarType.INT32*/ }
+            { no: 3, name: "notifications_read_count", kind: "scalar", oneof: "data", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "user_info_changed", kind: "message", oneof: "data", T: () => UserInfoChanged }
         ]);
     }
     create(value?: PartialMessage<UserEvent>): UserEvent {
@@ -161,6 +152,12 @@ class UserEvent$Type extends MessageType<UserEvent> {
                         notificationsReadCount: reader.int32()
                     };
                     break;
+                case /* resources.userinfo.UserInfoChanged user_info_changed */ 4:
+                    message.data = {
+                        oneofKind: "userInfoChanged",
+                        userInfoChanged: UserInfoChanged.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userInfoChanged)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -182,6 +179,9 @@ class UserEvent$Type extends MessageType<UserEvent> {
         /* int32 notifications_read_count = 3; */
         if (message.data.oneofKind === "notificationsReadCount")
             writer.tag(3, WireType.Varint).int32(message.data.notificationsReadCount);
+        /* resources.userinfo.UserInfoChanged user_info_changed = 4; */
+        if (message.data.oneofKind === "userInfoChanged")
+            UserInfoChanged.internalBinaryWrite(message.data.userInfoChanged, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -296,8 +296,7 @@ export const JobGradeEvent = new JobGradeEvent$Type();
 class SystemEvent$Type extends MessageType<SystemEvent> {
     constructor() {
         super("resources.notifications.SystemEvent", [
-            { no: 1, name: "ping", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "banner_message", kind: "message", oneof: "data", T: () => BannerMessageWrapper }
+            { no: 1, name: "client_config", kind: "message", oneof: "data", T: () => ClientConfig }
         ]);
     }
     create(value?: PartialMessage<SystemEvent>): SystemEvent {
@@ -312,16 +311,10 @@ class SystemEvent$Type extends MessageType<SystemEvent> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool ping */ 1:
+                case /* resources.clientconfig.ClientConfig client_config */ 1:
                     message.data = {
-                        oneofKind: "ping",
-                        ping: reader.bool()
-                    };
-                    break;
-                case /* resources.notifications.BannerMessageWrapper banner_message */ 2:
-                    message.data = {
-                        oneofKind: "bannerMessage",
-                        bannerMessage: BannerMessageWrapper.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).bannerMessage)
+                        oneofKind: "clientConfig",
+                        clientConfig: ClientConfig.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).clientConfig)
                     };
                     break;
                 default:
@@ -336,12 +329,9 @@ class SystemEvent$Type extends MessageType<SystemEvent> {
         return message;
     }
     internalBinaryWrite(message: SystemEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool ping = 1; */
-        if (message.data.oneofKind === "ping")
-            writer.tag(1, WireType.Varint).bool(message.data.ping);
-        /* resources.notifications.BannerMessageWrapper banner_message = 2; */
-        if (message.data.oneofKind === "bannerMessage")
-            BannerMessageWrapper.internalBinaryWrite(message.data.bannerMessage, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.clientconfig.ClientConfig client_config = 1; */
+        if (message.data.oneofKind === "clientConfig")
+            ClientConfig.internalBinaryWrite(message.data.clientConfig, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -352,57 +342,3 @@ class SystemEvent$Type extends MessageType<SystemEvent> {
  * @generated MessageType for protobuf message resources.notifications.SystemEvent
  */
 export const SystemEvent = new SystemEvent$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class BannerMessageWrapper$Type extends MessageType<BannerMessageWrapper> {
-    constructor() {
-        super("resources.notifications.BannerMessageWrapper", [
-            { no: 1, name: "banner_message_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "banner_message", kind: "message", T: () => BannerMessage }
-        ]);
-    }
-    create(value?: PartialMessage<BannerMessageWrapper>): BannerMessageWrapper {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.bannerMessageEnabled = false;
-        if (value !== undefined)
-            reflectionMergePartial<BannerMessageWrapper>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BannerMessageWrapper): BannerMessageWrapper {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* bool banner_message_enabled */ 1:
-                    message.bannerMessageEnabled = reader.bool();
-                    break;
-                case /* optional resources.settings.BannerMessage banner_message */ 2:
-                    message.bannerMessage = BannerMessage.internalBinaryRead(reader, reader.uint32(), options, message.bannerMessage);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: BannerMessageWrapper, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool banner_message_enabled = 1; */
-        if (message.bannerMessageEnabled !== false)
-            writer.tag(1, WireType.Varint).bool(message.bannerMessageEnabled);
-        /* optional resources.settings.BannerMessage banner_message = 2; */
-        if (message.bannerMessage)
-            BannerMessage.internalBinaryWrite(message.bannerMessage, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.notifications.BannerMessageWrapper
- */
-export const BannerMessageWrapper = new BannerMessageWrapper$Type();
