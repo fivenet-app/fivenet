@@ -60,6 +60,7 @@ jobs:
       - name: Run pnpm build
         env:
           NUXT_UI_PRO_LICENSE: "${{ secrets.NUXT_UI_PRO_LICENSE }}"
+          NODE_OPTIONS: "--max-old-space-size=8192"
         run: pnpm build
 
   container-build:

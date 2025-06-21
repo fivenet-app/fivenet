@@ -13,7 +13,9 @@ RUN apk add --no-cache git && \
     corepack enable && \
     corepack prepare pnpm@10.4.0 --activate && \
     pnpm install && \
-    NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
+    NODE_OPTIONS="--max-old-space-size=8192" \
+        NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} \
+        pnpm generate
 
 # Livemap Tiles Layer for improved caching
 FROM docker.io/library/alpine:3.22.0 AS livemaptiles

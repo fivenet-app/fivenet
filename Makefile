@@ -97,7 +97,7 @@ build-go:
 .PHONY: build-js
 build-js:
 	rm -rf ./.nuxt/dist/
-	pnpm build
+	NODE_OPTIONS="--max-old-space-size=8192" pnpm build
 
 .PHONY: run-server
 run-server:
