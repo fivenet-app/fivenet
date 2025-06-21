@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.16-labs
+# syntax=docker/dockerfile:1.17-labs
 
 # Frontend Build
 FROM docker.io/library/node:23.11.1-alpine3.20 AS nodebuilder
