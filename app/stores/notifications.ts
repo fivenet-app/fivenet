@@ -124,6 +124,14 @@ export const useNotificationsStore = defineStore(
                             }
 
                             add(not);
+                        } else if (resp.data.userEvent.data.oneofKind === 'notificationsReadCount') {
+                            notificationsCount.value = resp.data.userEvent.data.notificationsReadCount;
+                        } else if (resp.data.userEvent.data.oneofKind === 'userInfoChanged') {
+                            // Update the user job info in the auth store
+                            activeChar.value!.job = resp.data.userEvent.data.userInfoChanged.newJob;
+                            activeChar.value!.jobLabel = resp.data.userEvent.data.userInfoChanged.newJobLabel;
+                            activeChar.value!.jobGrade = resp.data.userEvent.data.userInfoChanged.newJobGrade;
+                            activeChar.value!.jobGradeLabel = resp.data.userEvent.data.userInfoChanged.newJobGradeLabel;
                         } else {
                             logger.warn('Unknown userEvent data received - oneofKind:', resp.data.oneofKind, resp.data);
                         }
