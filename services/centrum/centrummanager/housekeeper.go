@@ -295,6 +295,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
 				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
 				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
 			),
 			tDispatch.CreatedAt.LT_EQ(
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
@@ -422,14 +423,23 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 		if (
 		// Created dispatches older than the delete dispatch days amount
 		dsp.CreatedAt != nil && time.Since(dsp.CreatedAt.AsTime()) > DeleteDispatchDays*24*time.Hour) ||
-			// Remove nil status
+			// Remove nil status dispatches
 			dsp.Status == nil ||
 			// "Completed" dispatches with their status being older than 15 minutes
 			(centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
 				time.Since(dsp.Status.CreatedAt.AsTime()) > 15*time.Minute) {
 			s.logger.Debug("old dispatch deleted from kv", zap.Uint64("dispatch_id", dsp.Id))
+
+			if _, err := s.UpdateDispatchStatus(ctx, dsp.Job, dsp.Id, &centrum.DispatchStatus{
+				CreatedAt:  timestamp.Now(),
+				DispatchId: dsp.Id,
+				Status:     centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
+			}); err != nil {
+				s.logger.Error("failed to update dispatch status to deleted", zap.Uint64("dispatch_id", dsp.Id), zap.Error(err))
+			}
+
 			if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id, false); err != nil {
-				errs = multierr.Append(errs, err)
+				errs = multierr.Append(errs, fmt.Errorf("failed to delete dispatch from KV. %w", err))
 				continue
 			}
 		}
@@ -484,6 +494,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 				centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 				centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+				centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
 			})
 
 			if len(dsps) <= 1 {
@@ -648,6 +659,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 			centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 			centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+			centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
 		})
 
 		for _, dsp := range dsps {

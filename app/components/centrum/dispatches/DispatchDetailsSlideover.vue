@@ -2,7 +2,7 @@
 import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssignModal.vue';
 import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
+import { dispatchStatusToBGColor, dispatchStatusToIcon } from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
@@ -288,6 +288,7 @@ watch(dispatch, () => {
                                 <UButton
                                     class="rounded px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
+                                    :icon="dispatchStatusToIcon(dispatch.status?.status)"
                                     @click="modal.open(DispatchStatusUpdateModal, { dispatchId: dispatch.id })"
                                 >
                                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}

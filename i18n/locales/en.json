@@ -2265,7 +2265,8 @@
                 "CANCELLED": "Abgebrochen",
                 "ARCHIVED": "Archived",
                 "UNIT_ACCEPTED": "Unit accepted Dispatch",
-                "UNIT_DECLINED": "Unit declined Dispatch"
+                "UNIT_DECLINED": "Unit declined Dispatch",
+                "DELETED": "Deleted"
             },
             "StatusUnit": {
                 "UNSPECIFIED": "Unspecified",

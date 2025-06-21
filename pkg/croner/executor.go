@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -87,10 +88,12 @@ func NewExecutor(p ExecutorParams) (*Executor, error) {
 }
 
 func (ag *Executor) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
-	consumer, err := ag.js.CreateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
-		DeliverPolicy: jetstream.DeliverNewPolicy,
-		FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
-		MaxDeliver:    3,
+	consumer, err := ag.js.CreateOrUpdateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
+		Durable:           instance.ID() + "_cron_executor",
+		DeliverPolicy:     jetstream.DeliverNewPolicy,
+		FilterSubject:     fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
+		MaxDeliver:        3,
+		InactiveThreshold: 5 * time.Second,
 	})
 	if err != nil {
 		return err
@@ -116,7 +119,7 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 	if err := protojson.Unmarshal(msg.Data(), job); err != nil {
 		ag.logger.Error("failed to unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 
-		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {
+		if err := msg.NakWithDelay(100 * time.Millisecond); err != nil {
 			ag.logger.Error("failed to nack unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		}
 		return
@@ -124,7 +127,7 @@ func (ag *Executor) watchForEvents(msg jetstream.Msg) {
 
 	fn := ag.handlers.getCronjobHandler(job.Cronjob.Name)
 	if fn == nil {
-		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {
+		if err := msg.NakWithDelay(100 * time.Millisecond); err != nil {
 			ag.logger.Error("failed to nack unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		}
 		return

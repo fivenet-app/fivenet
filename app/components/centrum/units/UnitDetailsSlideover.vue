@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { checkUnitAccess, unitStatusToBGColor } from '~/components/centrum//helpers';
+import { checkUnitAccess, unitStatusToBGColor, unitStatusToIcon } from '~/components/centrum//helpers';
 import UnitAttributes from '~/components/centrum/partials/UnitAttributes.vue';
 import UnitAssignUsersModal from '~/components/centrum/units/UnitAssignUsersModal.vue';
 import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
@@ -90,6 +90,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                 class="rounded px-2 py-1 text-sm font-semibold shadow-sm"
                                 :class="unitStatusColors"
                                 :disabled="!checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
+                                :icon="unitStatusToIcon(props.unit.status?.status)"
                                 @click="
                                     modal.open(UnitStatusUpdateModal, {
                                         unit: unit,

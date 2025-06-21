@@ -368,12 +368,12 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	return nil
 }
 
-func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, allTheWay bool) error {
+func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, removeFromDB bool) error {
 	if err := s.State.DeleteDispatch(ctx, job, id); err != nil {
 		return err
 	}
 
-	if allTheWay {
+	if removeFromDB {
 		tDispatch := table.FivenetCentrumDispatches
 
 		stmt := tDispatch.

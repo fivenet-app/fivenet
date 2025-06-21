@@ -10,11 +10,11 @@ const hints = shuffleArray([
     },
     {
         key: 'startpage',
-        to: { name: 'user-settings' },
+        to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
     },
     {
         key: 'documenteditor',
-        to: { name: 'user-settings' },
+        to: { name: 'user-settings', query: { tab: 'settings' }, hash: '#' },
     },
     {
         key: 'sociallogin_discord',

@@ -38,9 +38,10 @@ func (s *Server) registerStreamAndConsumer(ctxStartup context.Context, ctxCancel
 	}
 
 	consumer, err := s.js.CreateOrUpdateConsumer(ctxStartup, cfg.Name, jetstream.ConsumerConfig{
-		Durable:       instance.ID() + "_livemap",
-		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
-		DeliverPolicy: jetstream.DeliverNewPolicy,
+		Durable:           instance.ID() + "_livemap",
+		FilterSubject:     fmt.Sprintf("%s.>", BaseSubject),
+		DeliverPolicy:     jetstream.DeliverNewPolicy,
+		InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
 	})
 	if err != nil {
 		return err

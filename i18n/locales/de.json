@@ -2275,7 +2275,8 @@
                 "AVAILABLE": "Verfügbar",
                 "ON_BREAK": "Pause",
                 "BUSY": "Beschäftigt",
-                "UNKNOWN": "Unbekannt"
+                "UNKNOWN": "Unbekannt",
+                "DELETED": "Gelöscht"
             },
             "DispatchReferenceType": {
                 "UNSPECIFIED": "Unbestimmt",

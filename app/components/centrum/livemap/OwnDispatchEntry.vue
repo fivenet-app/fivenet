@@ -94,7 +94,7 @@ useIntervalFn(
 
                     <div class="inline-flex flex-col items-center">
                         <span class="font-medium">{{ $t('common.sent_by') }}:</span>
-                        <span class="truncate">
+                        <span class="line-clamp-2 break-words">
                             <template v-if="dispatch.anon">
                                 {{ $t('common.anon') }}
                             </template>

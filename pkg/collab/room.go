@@ -61,9 +61,10 @@ func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js je
 	subject := fmt.Sprintf("collab.%s.%d", category, roomId)
 
 	consumer, err := js.CreateOrUpdateConsumer(ctx, "COLLAB", jetstream.ConsumerConfig{
-		Durable:       instance.ID() + "_collab_" + category,
-		FilterSubject: subject,
-		AckPolicy:     jetstream.AckExplicitPolicy,
+		Durable:           instance.ID() + "_collab_" + category,
+		FilterSubject:     subject,
+		AckPolicy:         jetstream.AckExplicitPolicy,
+		InactiveThreshold: 5 * time.Second,
 	})
 	if err != nil {
 		cancel()

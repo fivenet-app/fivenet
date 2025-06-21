@@ -71,6 +71,7 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 		centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 		centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+		centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
 	}
 	dispatches := s.state.FilterDispatches(ctx, userInfo.Job, nil, dispatchStatusFilter)
 	for _, j := range jobs.Dispatches {

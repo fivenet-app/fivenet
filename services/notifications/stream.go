@@ -87,17 +87,17 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 
 	// Create durable pull consumer with multi-filter, required to update filter subjects dynamically
 	consCfg := jetstream.ConsumerConfig{
-		Durable:        natsutils.GenerateConsumerName(userInfo.AccountId, userInfo.UserId, connId),
-		FilterSubjects: append(baseSubjects, additionalSubjects...),
-		DeliverPolicy:  jetstream.DeliverNewPolicy,
-		AckPolicy:      jetstream.AckNonePolicy,
-		MaxWaiting:     8,
+		Durable:           natsutils.GenerateConsumerName(userInfo.AccountId, userInfo.UserId, connId),
+		FilterSubjects:    append(baseSubjects, additionalSubjects...),
+		DeliverPolicy:     jetstream.DeliverNewPolicy,
+		AckPolicy:         jetstream.AckNonePolicy,
+		MaxWaiting:        8,
+		InactiveThreshold: 15 * time.Second,
 	}
 	consumer, err := s.js.CreateOrUpdateConsumer(ctx, notifi.StreamName, consCfg)
 	if err != nil {
 		return fmt.Errorf("failed to create consumer. %w", err)
 	}
-	defer s.js.DeleteConsumer(ctx, notifi.StreamName, consCfg.Durable)
 
 	// Central pipe: all feeds push messages into outCh
 	outCh := make(chan *pbnotifications.StreamResponse, 256)

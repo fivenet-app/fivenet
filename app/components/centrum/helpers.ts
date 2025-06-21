@@ -85,6 +85,15 @@ export function dispatchStatusToBadgeColor(status: StatusDispatch | undefined): 
     }
 }
 
+export function dispatchStatusToIcon(status: StatusDispatch | undefined): string {
+    const found = dispatchStatuses.find((ds) => ds.status === status);
+    if (found) {
+        return found.icon;
+    }
+
+    return 'i-mdi-info-circle';
+}
+
 export const animateStates = [
     StatusDispatch.NEW.valueOf(),
     StatusDispatch.UNASSIGNED.valueOf(),
@@ -111,6 +120,15 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
         default:
             return '!bg-error-600';
     }
+}
+
+export function unitStatusToIcon(status: StatusUnit | undefined): string {
+    const found = unitStatuses.find((ds) => ds.status === status);
+    if (found) {
+        return found.icon;
+    }
+
+    return 'i-mdi-info-circle';
 }
 
 export const statusOrder = [

@@ -105,15 +105,15 @@
 - [resources/common/tests/objects.proto](#resources_common_tests_objects-proto)
     - [SimpleObject](#resources-common-tests-SimpleObject)
   
+- [resources/common/uuid.proto](#resources_common_uuid-proto)
+    - [UUID](#resources-common-UUID)
+  
 - [resources/common/error.proto](#resources_common_error-proto)
     - [Error](#resources-common-Error)
   
 - [resources/common/i18n.proto](#resources_common_i18n-proto)
     - [I18NItem](#resources-common-I18NItem)
     - [I18NItem.ParametersEntry](#resources-common-I18NItem-ParametersEntry)
-  
-- [resources/common/uuid.proto](#resources_common_uuid-proto)
-    - [UUID](#resources-common-UUID)
   
 - [resources/documents/category.proto](#resources_documents_category-proto)
     - [Category](#resources-documents-Category)
@@ -232,6 +232,19 @@
     - [Law](#resources-laws-Law)
     - [LawBook](#resources-laws-LawBook)
   
+- [resources/notifications/client_view.proto](#resources_notifications_client_view-proto)
+    - [ClientView](#resources-notifications-ClientView)
+    - [ObjectEvent](#resources-notifications-ObjectEvent)
+  
+    - [ObjectEventType](#resources-notifications-ObjectEventType)
+    - [ObjectType](#resources-notifications-ObjectType)
+  
+- [resources/notifications/events.proto](#resources_notifications_events-proto)
+    - [JobEvent](#resources-notifications-JobEvent)
+    - [JobGradeEvent](#resources-notifications-JobGradeEvent)
+    - [SystemEvent](#resources-notifications-SystemEvent)
+    - [UserEvent](#resources-notifications-UserEvent)
+  
 - [resources/notifications/notifications.proto](#resources_notifications_notifications-proto)
     - [CalendarData](#resources-notifications-CalendarData)
     - [Data](#resources-notifications-Data)
@@ -240,19 +253,6 @@
   
     - [NotificationCategory](#resources-notifications-NotificationCategory)
     - [NotificationType](#resources-notifications-NotificationType)
-  
-- [resources/notifications/events.proto](#resources_notifications_events-proto)
-    - [JobEvent](#resources-notifications-JobEvent)
-    - [JobGradeEvent](#resources-notifications-JobGradeEvent)
-    - [SystemEvent](#resources-notifications-SystemEvent)
-    - [UserEvent](#resources-notifications-UserEvent)
-  
-- [resources/notifications/client_view.proto](#resources_notifications_client_view-proto)
-    - [ClientView](#resources-notifications-ClientView)
-    - [ObjectEvent](#resources-notifications-ObjectEvent)
-  
-    - [ObjectEventType](#resources-notifications-ObjectEventType)
-    - [ObjectType](#resources-notifications-ObjectType)
   
 - [resources/permissions/attributes.proto](#resources_permissions_attributes-proto)
     - [AttributeValues](#resources-permissions-AttributeValues)
@@ -527,6 +527,19 @@
     - [FileMeta](#resources-file-FileMeta)
     - [ImageMeta](#resources-file-ImageMeta)
   
+- [resources/clientconfig/clientconfig.proto](#resources_clientconfig_clientconfig-proto)
+    - [ClientConfig](#resources-clientconfig-ClientConfig)
+    - [Discord](#resources-clientconfig-Discord)
+    - [FeatureGates](#resources-clientconfig-FeatureGates)
+    - [Game](#resources-clientconfig-Game)
+    - [Links](#resources-clientconfig-Links)
+    - [LoginConfig](#resources-clientconfig-LoginConfig)
+    - [OTLPFrontend](#resources-clientconfig-OTLPFrontend)
+    - [OTLPFrontend.HeadersEntry](#resources-clientconfig-OTLPFrontend-HeadersEntry)
+    - [ProviderConfig](#resources-clientconfig-ProviderConfig)
+    - [System](#resources-clientconfig-System)
+    - [Website](#resources-clientconfig-Website)
+  
 - [resources/livemap/coords.proto](#resources_livemap_coords-proto)
     - [Coords](#resources-livemap-Coords)
   
@@ -546,19 +559,6 @@
   
 - [resources/tracker/mapping.proto](#resources_tracker_mapping-proto)
     - [UserMapping](#resources-tracker-UserMapping)
-  
-- [resources/clientconfig/clientconfig.proto](#resources_clientconfig_clientconfig-proto)
-    - [ClientConfig](#resources-clientconfig-ClientConfig)
-    - [Discord](#resources-clientconfig-Discord)
-    - [FeatureGates](#resources-clientconfig-FeatureGates)
-    - [Game](#resources-clientconfig-Game)
-    - [Links](#resources-clientconfig-Links)
-    - [LoginConfig](#resources-clientconfig-LoginConfig)
-    - [OTLPFrontend](#resources-clientconfig-OTLPFrontend)
-    - [OTLPFrontend.HeadersEntry](#resources-clientconfig-OTLPFrontend-HeadersEntry)
-    - [ProviderConfig](#resources-clientconfig-ProviderConfig)
-    - [System](#resources-clientconfig-System)
-    - [Website](#resources-clientconfig-Website)
   
 - [resources/userinfo/user_info.proto](#resources_userinfo_user_info-proto)
     - [PollReq](#resources-userinfo-PollReq)
@@ -670,6 +670,19 @@
   
     - [ConductService](#services-jobs-ConductService)
   
+- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
+    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
+    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
+    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
+    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
+    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
+    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
+    - [TimeclockDay](#services-jobs-TimeclockDay)
+    - [TimeclockRange](#services-jobs-TimeclockRange)
+    - [TimeclockWeekly](#services-jobs-TimeclockWeekly)
+  
+    - [TimeclockService](#services-jobs-TimeclockService)
+  
 - [services/jobs/jobs.proto](#services_jobs_jobs-proto)
     - [GetColleagueLabelsRequest](#services-jobs-GetColleagueLabelsRequest)
     - [GetColleagueLabelsResponse](#services-jobs-GetColleagueLabelsResponse)
@@ -693,19 +706,6 @@
     - [SetMOTDResponse](#services-jobs-SetMOTDResponse)
   
     - [JobsService](#services-jobs-JobsService)
-  
-- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
-    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
-    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
-    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
-    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
-    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
-    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
-    - [TimeclockDay](#services-jobs-TimeclockDay)
-    - [TimeclockRange](#services-jobs-TimeclockRange)
-    - [TimeclockWeekly](#services-jobs-TimeclockWeekly)
-  
-    - [TimeclockService](#services-jobs-TimeclockService)
   
 - [services/qualifications/qualifications.proto](#services_qualifications_qualifications-proto)
     - [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest)
@@ -1807,6 +1807,7 @@ Dummy - DO NOT USE!
 | `STATUS_DISPATCH_COMPLETED` | 11 |  |
 | `STATUS_DISPATCH_CANCELLED` | 12 |  |
 | `STATUS_DISPATCH_ARCHIVED` | 13 |  |
+| `STATUS_DISPATCH_DELETED` | 14 |  |
 
 
 
@@ -2467,6 +2468,37 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 
 
 
+<a name="resources_common_uuid-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/common/uuid.proto
+
+
+
+<a name="resources-common-UUID"></a>
+
+### UUID
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `uuid` | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_common_error-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2532,37 +2564,6 @@ Wrapped translated message for the client @dbscanner: json
 | ----- | ---- | ----- | ----------- |
 | `key` | [string](#string) |  |  |
 | `value` | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_common_uuid-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/common/uuid.proto
-
-
-
-<a name="resources-common-UUID"></a>
-
-### UUID
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `uuid` | [string](#string) |  |  |
 
 
 
@@ -4292,6 +4293,166 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources_notifications_client_view-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/notifications/client_view.proto
+
+
+
+<a name="resources-notifications-ClientView"></a>
+
+### ClientView
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [ObjectType](#resources-notifications-ObjectType) |  |  |
+| `id` | [uint64](#uint64) | optional |  |
+
+
+
+
+
+
+<a name="resources-notifications-ObjectEvent"></a>
+
+### ObjectEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [ObjectType](#resources-notifications-ObjectType) |  |  |
+| `id` | [uint64](#uint64) | optional |  |
+| `event_type` | [ObjectEventType](#resources-notifications-ObjectEventType) |  |  |
+| `user_id` | [int32](#int32) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `data` | [google.protobuf.Struct](#google-protobuf-Struct) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-notifications-ObjectEventType"></a>
+
+### ObjectEventType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `OBJECT_EVENT_TYPE_UNSPECIFIED` | 0 |  |
+| `OBJECT_EVENT_TYPE_UPDATED` | 1 |  |
+| `OBJECT_EVENT_TYPE_DELETED` | 2 |  |
+
+
+
+<a name="resources-notifications-ObjectType"></a>
+
+### ObjectType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `OBJECT_TYPE_UNSPECIFIED` | 0 |  |
+| `OBJECT_TYPE_CITIZEN` | 1 |  |
+| `OBJECT_TYPE_DOCUMENT` | 2 |  |
+| `OBJECT_TYPE_WIKI_PAGE` | 3 |  |
+| `OBJECT_TYPE_JOBS_COLLEAGUE` | 4 |  |
+| `OBJECT_TYPE_JOBS_CONDUCT` | 5 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_notifications_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/notifications/events.proto
+
+
+
+<a name="resources-notifications-JobEvent"></a>
+
+### JobEvent
+Job related events
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
+
+
+
+
+
+
+<a name="resources-notifications-JobGradeEvent"></a>
+
+### JobGradeEvent
+Job grade events
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `refresh_token` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-notifications-SystemEvent"></a>
+
+### SystemEvent
+System related events
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `client_config` | [resources.clientconfig.ClientConfig](#resources-clientconfig-ClientConfig) |  | Client configuration update (e.g., feature gates, game settings, banner message) |
+
+
+
+
+
+
+<a name="resources-notifications-UserEvent"></a>
+
+### UserEvent
+User related events
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `refresh_token` | [bool](#bool) |  |  |
+| `notification` | [Notification](#resources-notifications-Notification) |  | Notifications |
+| `notifications_read_count` | [int32](#int32) |  |  |
+| `user_info_changed` | [resources.userinfo.UserInfoChanged](#resources-userinfo-UserInfoChanged) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_notifications_notifications-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4401,166 +4562,6 @@ Dummy - DO NOT USE!
 | `NOTIFICATION_TYPE_WARNING` | 2 |  |
 | `NOTIFICATION_TYPE_INFO` | 3 |  |
 | `NOTIFICATION_TYPE_SUCCESS` | 4 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_notifications_events-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/notifications/events.proto
-
-
-
-<a name="resources-notifications-JobEvent"></a>
-
-### JobEvent
-Job related events
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_props` | [resources.jobs.JobProps](#resources-jobs-JobProps) |  |  |
-
-
-
-
-
-
-<a name="resources-notifications-JobGradeEvent"></a>
-
-### JobGradeEvent
-Job grade events
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `refresh_token` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="resources-notifications-SystemEvent"></a>
-
-### SystemEvent
-System related events
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `client_config` | [resources.clientconfig.ClientConfig](#resources-clientconfig-ClientConfig) |  | Client configuration update (e.g., feature gates, game settings, banner message) |
-
-
-
-
-
-
-<a name="resources-notifications-UserEvent"></a>
-
-### UserEvent
-User related events
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `refresh_token` | [bool](#bool) |  |  |
-| `notification` | [Notification](#resources-notifications-Notification) |  | Notifications |
-| `notifications_read_count` | [int32](#int32) |  |  |
-| `user_info_changed` | [resources.userinfo.UserInfoChanged](#resources-userinfo-UserInfoChanged) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_notifications_client_view-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/notifications/client_view.proto
-
-
-
-<a name="resources-notifications-ClientView"></a>
-
-### ClientView
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `type` | [ObjectType](#resources-notifications-ObjectType) |  |  |
-| `id` | [uint64](#uint64) | optional |  |
-
-
-
-
-
-
-<a name="resources-notifications-ObjectEvent"></a>
-
-### ObjectEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `type` | [ObjectType](#resources-notifications-ObjectType) |  |  |
-| `id` | [uint64](#uint64) | optional |  |
-| `event_type` | [ObjectEventType](#resources-notifications-ObjectEventType) |  |  |
-| `user_id` | [int32](#int32) | optional |  |
-| `job` | [string](#string) | optional |  |
-| `data` | [google.protobuf.Struct](#google-protobuf-Struct) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-notifications-ObjectEventType"></a>
-
-### ObjectEventType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `OBJECT_EVENT_TYPE_UNSPECIFIED` | 0 |  |
-| `OBJECT_EVENT_TYPE_UPDATED` | 1 |  |
-| `OBJECT_EVENT_TYPE_DELETED` | 2 |  |
-
-
-
-<a name="resources-notifications-ObjectType"></a>
-
-### ObjectType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `OBJECT_TYPE_UNSPECIFIED` | 0 |  |
-| `OBJECT_TYPE_CITIZEN` | 1 |  |
-| `OBJECT_TYPE_DOCUMENT` | 2 |  |
-| `OBJECT_TYPE_WIKI_PAGE` | 3 |  |
-| `OBJECT_TYPE_JOBS_COLLEAGUE` | 4 |  |
-| `OBJECT_TYPE_JOBS_CONDUCT` | 5 |  |
 
 
  <!-- end enums -->
@@ -8475,6 +8476,207 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+<a name="resources_clientconfig_clientconfig-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/clientconfig/clientconfig.proto
+
+
+
+<a name="resources-clientconfig-ClientConfig"></a>
+
+### ClientConfig
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `version` | [string](#string) |  |  |
+| `default_locale` | [string](#string) |  |  |
+| `login` | [LoginConfig](#resources-clientconfig-LoginConfig) |  |  |
+| `discord` | [Discord](#resources-clientconfig-Discord) |  |  |
+| `website` | [Website](#resources-clientconfig-Website) |  |  |
+| `feature_gates` | [FeatureGates](#resources-clientconfig-FeatureGates) |  |  |
+| `game` | [Game](#resources-clientconfig-Game) |  |  |
+| `system` | [System](#resources-clientconfig-System) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-Discord"></a>
+
+### Discord
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `bot_enabled` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-FeatureGates"></a>
+
+### FeatureGates
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `image_proxy` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-Game"></a>
+
+### Game
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unemployed_job_name` | [string](#string) |  |  |
+| `start_job_grade` | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-Links"></a>
+
+### Links
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `imprint` | [string](#string) | optional |  |
+| `privacy_policy` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-LoginConfig"></a>
+
+### LoginConfig
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `signup_enabled` | [bool](#bool) |  |  |
+| `last_char_lock` | [bool](#bool) |  |  |
+| `providers` | [ProviderConfig](#resources-clientconfig-ProviderConfig) | repeated |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-OTLPFrontend"></a>
+
+### OTLPFrontend
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enabled` | [bool](#bool) |  |  |
+| `url` | [string](#string) |  |  |
+| `headers` | [OTLPFrontend.HeadersEntry](#resources-clientconfig-OTLPFrontend-HeadersEntry) | repeated |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-OTLPFrontend-HeadersEntry"></a>
+
+### OTLPFrontend.HeadersEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [string](#string) |  |  |
+| `value` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-ProviderConfig"></a>
+
+### ProviderConfig
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+| `icon` | [string](#string) | optional |  |
+| `homepage` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-System"></a>
+
+### System
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `banner_message_enabled` | [bool](#bool) |  |  |
+| `banner_message` | [resources.settings.BannerMessage](#resources-settings-BannerMessage) | optional |  |
+| `otlp` | [OTLPFrontend](#resources-clientconfig-OTLPFrontend) |  |  |
+
+
+
+
+
+
+<a name="resources-clientconfig-Website"></a>
+
+### Website
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `links` | [Links](#resources-clientconfig-Links) |  |  |
+| `stats_page` | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_livemap_coords-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -8710,207 +8912,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `unit_id` | [uint64](#uint64) | optional |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | `hidden` | [bool](#bool) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_clientconfig_clientconfig-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/clientconfig/clientconfig.proto
-
-
-
-<a name="resources-clientconfig-ClientConfig"></a>
-
-### ClientConfig
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `version` | [string](#string) |  |  |
-| `default_locale` | [string](#string) |  |  |
-| `login` | [LoginConfig](#resources-clientconfig-LoginConfig) |  |  |
-| `discord` | [Discord](#resources-clientconfig-Discord) |  |  |
-| `website` | [Website](#resources-clientconfig-Website) |  |  |
-| `feature_gates` | [FeatureGates](#resources-clientconfig-FeatureGates) |  |  |
-| `game` | [Game](#resources-clientconfig-Game) |  |  |
-| `system` | [System](#resources-clientconfig-System) |  |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-Discord"></a>
-
-### Discord
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `bot_enabled` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-FeatureGates"></a>
-
-### FeatureGates
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `image_proxy` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-Game"></a>
-
-### Game
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unemployed_job_name` | [string](#string) |  |  |
-| `start_job_grade` | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-Links"></a>
-
-### Links
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `imprint` | [string](#string) | optional |  |
-| `privacy_policy` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-LoginConfig"></a>
-
-### LoginConfig
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `signup_enabled` | [bool](#bool) |  |  |
-| `last_char_lock` | [bool](#bool) |  |  |
-| `providers` | [ProviderConfig](#resources-clientconfig-ProviderConfig) | repeated |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-OTLPFrontend"></a>
-
-### OTLPFrontend
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `enabled` | [bool](#bool) |  |  |
-| `url` | [string](#string) |  |  |
-| `headers` | [OTLPFrontend.HeadersEntry](#resources-clientconfig-OTLPFrontend-HeadersEntry) | repeated |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-OTLPFrontend-HeadersEntry"></a>
-
-### OTLPFrontend.HeadersEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `key` | [string](#string) |  |  |
-| `value` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-ProviderConfig"></a>
-
-### ProviderConfig
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  |  |
-| `label` | [string](#string) |  |  |
-| `icon` | [string](#string) | optional |  |
-| `homepage` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-System"></a>
-
-### System
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `banner_message_enabled` | [bool](#bool) |  |  |
-| `banner_message` | [resources.settings.BannerMessage](#resources-settings-BannerMessage) | optional |  |
-| `otlp` | [OTLPFrontend](#resources-clientconfig-OTLPFrontend) |  |  |
-
-
-
-
-
-
-<a name="resources-clientconfig-Website"></a>
-
-### Website
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `links` | [Links](#resources-clientconfig-Links) |  |  |
-| `stats_page` | [bool](#bool) |  |  |
 
 
 
@@ -10460,6 +10461,190 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 
 
+<a name="services_jobs_timeclock-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/jobs/timeclock.proto
+
+
+
+<a name="services-jobs-GetTimeclockStatsRequest"></a>
+
+### GetTimeclockStatsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-jobs-GetTimeclockStatsResponse"></a>
+
+### GetTimeclockStatsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `stats` | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| `weekly` | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesRequest"></a>
+
+### ListInactiveEmployeesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `days` | [int32](#int32) |  | Search params |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesResponse"></a>
+
+### ListInactiveEmployeesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `colleagues` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockRequest"></a>
+
+### ListTimeclockRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| `user_mode` | [resources.jobs.TimeclockViewMode](#resources-jobs-TimeclockViewMode) |  | Search params |
+| `mode` | [resources.jobs.TimeclockMode](#resources-jobs-TimeclockMode) |  |  |
+| `date` | [resources.common.database.DateRange](#resources-common-database-DateRange) | optional |  |
+| `per_day` | [bool](#bool) |  |  |
+| `user_ids` | [int32](#int32) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockResponse"></a>
+
+### ListTimeclockResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| `stats` | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| `stats_weekly` | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+| `daily` | [TimeclockDay](#services-jobs-TimeclockDay) |  |  |
+| `weekly` | [TimeclockWeekly](#services-jobs-TimeclockWeekly) |  |  |
+| `range` | [TimeclockRange](#services-jobs-TimeclockRange) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockDay"></a>
+
+### TimeclockDay
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `date` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `entries` | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| `sum` | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockRange"></a>
+
+### TimeclockRange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `date` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:"primary_key" |
+| `entries` | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| `sum` | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockWeekly"></a>
+
+### TimeclockWeekly
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `date` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:"primary_key" |
+| `entries` | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| `sum` | [int64](#int64) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-jobs-TimeclockService"></a>
+
+### TimeclockService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `ListTimeclock` | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{"All"} |
+| `GetTimeclockStats` | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
+| `ListInactiveEmployees` | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
+
+ <!-- end services -->
+
+
+
 <a name="services_jobs_jobs-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -10795,190 +10980,6 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetColleagueLabelsStats` | [GetColleagueLabelsStatsRequest](#services-jobs-GetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#services-jobs-GetColleagueLabelsStatsResponse) | @perm: Name=GetColleague |
 | `GetMOTD` | [GetMOTDRequest](#services-jobs-GetMOTDRequest) | [GetMOTDResponse](#services-jobs-GetMOTDResponse) | @perm: Name=Any |
 | `SetMOTD` | [SetMOTDRequest](#services-jobs-SetMOTDRequest) | [SetMOTDResponse](#services-jobs-SetMOTDResponse) | @perm |
-
- <!-- end services -->
-
-
-
-<a name="services_jobs_timeclock-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/jobs/timeclock.proto
-
-
-
-<a name="services-jobs-GetTimeclockStatsRequest"></a>
-
-### GetTimeclockStatsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-jobs-GetTimeclockStatsResponse"></a>
-
-### GetTimeclockStatsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `stats` | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| `weekly` | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesRequest"></a>
-
-### ListInactiveEmployeesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `days` | [int32](#int32) |  | Search params |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesResponse"></a>
-
-### ListInactiveEmployeesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `colleagues` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockRequest"></a>
-
-### ListTimeclockRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| `sort` | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| `user_mode` | [resources.jobs.TimeclockViewMode](#resources-jobs-TimeclockViewMode) |  | Search params |
-| `mode` | [resources.jobs.TimeclockMode](#resources-jobs-TimeclockMode) |  |  |
-| `date` | [resources.common.database.DateRange](#resources-common-database-DateRange) | optional |  |
-| `per_day` | [bool](#bool) |  |  |
-| `user_ids` | [int32](#int32) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockResponse"></a>
-
-### ListTimeclockResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `pagination` | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| `stats` | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| `stats_weekly` | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-| `daily` | [TimeclockDay](#services-jobs-TimeclockDay) |  |  |
-| `weekly` | [TimeclockWeekly](#services-jobs-TimeclockWeekly) |  |  |
-| `range` | [TimeclockRange](#services-jobs-TimeclockRange) |  |  |
-
-
-
-
-
-
-<a name="services-jobs-TimeclockDay"></a>
-
-### TimeclockDay
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `date` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `entries` | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| `sum` | [int64](#int64) |  |  |
-
-
-
-
-
-
-<a name="services-jobs-TimeclockRange"></a>
-
-### TimeclockRange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `date` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:"primary_key" |
-| `entries` | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| `sum` | [int64](#int64) |  |  |
-
-
-
-
-
-
-<a name="services-jobs-TimeclockWeekly"></a>
-
-### TimeclockWeekly
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `date` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:"primary_key" |
-| `entries` | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| `sum` | [int64](#int64) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-jobs-TimeclockService"></a>
-
-### TimeclockService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| `ListTimeclock` | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{"All"} |
-| `GetTimeclockStats` | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
-| `ListInactiveEmployees` | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
 
  <!-- end services -->
 

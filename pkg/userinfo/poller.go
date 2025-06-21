@@ -106,12 +106,12 @@ func NewPoller(p PollerParams) (*Poller, error) {
 
 func (p *Poller) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
 	// Subscribe to poll requests
-	consumer, err := p.js.CreateOrUpdateConsumer(ctxStartup, PollStreamName,
-		jetstream.ConsumerConfig{
-			Durable:        instance.ID() + "_ui_poller",
-			AckPolicy:      jetstream.AckExplicitPolicy,
-			FilterSubjects: []string{PollSubject},
-		})
+	consumer, err := p.js.CreateOrUpdateConsumer(ctxStartup, PollStreamName, jetstream.ConsumerConfig{
+		Durable:           instance.ID() + "_ui_poller",
+		AckPolicy:         jetstream.AckExplicitPolicy,
+		FilterSubjects:    []string{PollSubject},
+		InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
+	})
 	if err != nil {
 		return fmt.Errorf("failed to create/update consumer for %s. %w", PollStreamName, err)
 	}

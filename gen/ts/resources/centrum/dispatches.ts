@@ -282,7 +282,11 @@ export enum StatusDispatch {
     /**
      * @generated from protobuf enum value: STATUS_DISPATCH_ARCHIVED = 13;
      */
-    ARCHIVED = 13
+    ARCHIVED = 13,
+    /**
+     * @generated from protobuf enum value: STATUS_DISPATCH_DELETED = 14;
+     */
+    DELETED = 14
 }
 /**
  * @generated from protobuf enum resources.centrum.TakeDispatchResp

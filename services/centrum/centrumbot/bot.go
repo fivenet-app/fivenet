@@ -67,6 +67,7 @@ func (b *Bot) Run() {
 			centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 			centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+			centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
 		})
 
 		b.logger.Debug("trying to auto assign dispatches", zap.Int("dispatch_count", len(dispatches)))

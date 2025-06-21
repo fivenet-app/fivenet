@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/locks"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
@@ -323,11 +324,9 @@ func (s *Scheduler) start(ctx context.Context) {
 }
 
 func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) error {
-	msg := &cron.CronjobSchedulerEvent{
+	if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic), &cron.CronjobSchedulerEvent{
 		Cronjob: job,
-	}
-
-	if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic), msg); err != nil {
+	}); err != nil {
 		return err
 	}
 
@@ -335,10 +334,12 @@ func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) error {
 }
 
 func (s *Scheduler) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
-	consumer, err := s.js.CreateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
-		DeliverPolicy: jetstream.DeliverNewPolicy,
-		FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
-		MaxDeliver:    3,
+	consumer, err := s.js.CreateOrUpdateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
+		Durable:           instance.ID() + "_cron_scheduler",
+		DeliverPolicy:     jetstream.DeliverNewPolicy,
+		FilterSubject:     fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
+		MaxDeliver:        3,
+		InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
 	})
 	if err != nil {
 		return err

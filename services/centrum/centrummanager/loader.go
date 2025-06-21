@@ -269,6 +269,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 					jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
 					jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
 					jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+					jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_DELETED)),
 				)),
 		),
 	)

@@ -115,9 +115,10 @@ func NewRetriever(p Params) UserInfoRetriever {
 func (r *Retriever) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
 	// Subscribe to the userinfo diffs stream
 	consumer, err := r.js.CreateOrUpdateConsumer(ctxStartup, UserInfoStreamName, jetstream.ConsumerConfig{
-		Durable:        instance.ID() + "_ui_retriever",
-		AckPolicy:      jetstream.AckExplicitPolicy,
-		FilterSubjects: []string{UserInfoSubject},
+		Durable:           instance.ID() + "_ui_retriever",
+		AckPolicy:         jetstream.AckExplicitPolicy,
+		FilterSubjects:    []string{UserInfoSubject},
+		InactiveThreshold: 1 * time.Minute, // Close consumer if inactive for 1 minute
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create/update consumer for stream %q. %w", UserInfoStreamName, err)
