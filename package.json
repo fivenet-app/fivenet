@@ -1,7 +1,7 @@
 {
     "name": "fivenet",
     "private": true,
-    "version": "2025.6.1",
+    "version": "2025.6.3",
     "license": "Apache-2.0",
     "type": "module",
     "homepage": "https://fivenet.app",

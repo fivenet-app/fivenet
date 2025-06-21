@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.6.3] - 2025-06-21
+
+### 🚀 Features
+
+- Make client app config into protobuf messages and add client view
+
+### 🐛 Bug Fixes
+
+- Filestore migration command skipping every job logo after one
+- Template clipboard selection for more than one with max spec
+- Add log to tiptap editor sync event
+- Adjust yjs content set logic and add context menu for calendar
+
+## [2025.6.2] - 2025-06-21
+
+### 🚀 Features
+
+- Make client app config into protobuf messages and add client view
+
+### 🐛 Bug Fixes
+
+- Filestore migration command skipping every job logo after one
+- Template clipboard selection for more than one with max spec
+- Add log to tiptap editor sync event
+- Adjust yjs content set logic and add context menu for calendar
+
 ## [2025.6.1] - 2025-06-08
 
 ## [2025.6.0] - 2025-06-07
