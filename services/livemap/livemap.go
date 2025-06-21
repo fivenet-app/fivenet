@@ -84,8 +84,11 @@ func (s *Server) getAndSendACL(srv pblivemap.LivemapService_StreamServer, userIn
 		js.Jobs.Users = append(js.Jobs.Users, j)
 	}
 
+	// Check if the user is on duty (superuser is always on duty)
 	userOnDuty := false
-	if um, ok := s.tracker.GetUserMarkerById(userInfo.UserId); ok && !um.Hidden {
+	if userInfo.Superuser {
+		userOnDuty = true
+	} else if um, ok := s.tracker.GetUserMarkerById(userInfo.UserId); ok && !um.Hidden {
 		userOnDuty = true
 	}
 
