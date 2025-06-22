@@ -2,7 +2,7 @@
 import { addDays } from 'date-fns';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
-import type { JSONDataType } from 'vue-json-pretty/types/utils';
+import type { JSONDateventType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -45,16 +45,16 @@ const schema = z.object({
 const query = useSearchForm('settings_auditlog', schema);
 
 const eventTypes = Object.keys(EventType)
-    .map((aType) => EventType[aType as keyof typeof EventType])
-    .filter((aType) => {
-        if (typeof aType === 'string') {
+    .map((eventType) => EventType[eventType as keyof typeof EventType])
+    .filter((eventType) => {
+        if (typeof eventType === 'string') {
             return false;
-        } else if (typeof aType === 'number' && aType < 3) {
+        } else if (typeof eventType === 'number' && eventType < 3) {
             return false;
         }
         return true;
     });
-const statesOptions = eventTypes.map((aType) => ({ aType: aType }));
+const statesOptions = eventTypes.map((eventType) => ({ eventType: eventType }));
 
 const usersLoading = ref(false);
 
@@ -304,7 +304,7 @@ const expand = ref({
                                 :options="statesOptions"
                             >
                                 <template #option="{ option }">
-                                    {{ option }}
+                                    {{ $t(`enums.settings.AuditLog.EventType.${UserActivityType[option.eventType]}`) }}
                                 </template>
 
                                 <template #option-empty="{ query: search }">
@@ -394,7 +394,7 @@ const expand = ref({
                 <span v-if="!row.data">{{ $t('common.na') }}</span>
                 <span v-else>
                     <VueJsonPretty
-                        :data="JSON.parse(row.data!) as JSONDataType"
+                        :data="JSON.parse(row.data!) as JSONDateventType"
                         :show-icon="true"
                         :show-length="true"
                         :virtual="true"
