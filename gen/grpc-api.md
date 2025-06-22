@@ -1655,7 +1655,7 @@ Dummy - DO NOT USE!
 | `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `job` | [string](#string) |  |  |
+| `job` | [string](#string) |  | **Deprecated.**  |
 | `jobs` | [JobList](#resources-centrum-JobList) |  |  |
 | `status` | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
 | `message` | [string](#string) |  | @sanitize |

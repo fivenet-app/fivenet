@@ -16,4 +16,5 @@ var (
 
 	ErrModeForbidsAction        = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.CentrumService.ErrModeForbidsAction.content"}, &common.I18NItem{Key: "errors.CentrumService.ErrModeForbidsAction.title"})
 	ErrDispatchAlreadyCompleted = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.CentrumService.ErrDispatchAlreadyCompleted.content"}, &common.I18NItem{Key: "errors.CentrumService.ErrDispatchAlreadyCompleted.title"})
+	ErrDispatchNoJobs           = common.NewI18nErr(codes.InvalidArgument, &common.I18NItem{Key: "errors.CentrumService.ErrDispatchNoJobs"}, nil)
 )

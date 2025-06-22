@@ -33,7 +33,8 @@ export interface Dispatch {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string job = 4
+     * @deprecated
+     * @generated from protobuf field: string job = 4 [deprecated = true]
      */
     job: string;
     /**
@@ -385,7 +386,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
                 case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* string job */ 4:
+                case /* string job = 4 [deprecated = true] */ 4:
                     message.job = reader.string();
                     break;
                 case /* resources.centrum.JobList jobs */ 18:
@@ -448,7 +449,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* string job = 4; */
+        /* string job = 4 [deprecated = true]; */
         if (message.job !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.job);
         /* optional resources.centrum.DispatchStatus status = 5; */

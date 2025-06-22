@@ -821,6 +821,19 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 }
 
 func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
+	// Check if the dispatch has at least one job, till the Job field is removed keep using it as a fallback
+	if (dsp.Jobs == nil || len(dsp.Jobs.GetJobs()) == 0) && dsp.Job == "" {
+		return nil, errorscentrum.ErrDispatchNoJobs
+	}
+
+	// If the deprecated Job field is used, convert it to Jobs but only if the jobs list is empty
+	if dsp.Jobs == nil || len(dsp.Jobs.GetJobs()) == 0 {
+		dsp.Jobs = &centrum.JobList{
+			Jobs: []string{dsp.Job},
+		}
+		dsp.Job = ""
+	}
+
 	if dsp.Postal == nil || *dsp.Postal == "" {
 		if postal, ok := s.postals.Closest(dsp.X, dsp.Y); postal != nil && ok {
 			dsp.Postal = postal.Code

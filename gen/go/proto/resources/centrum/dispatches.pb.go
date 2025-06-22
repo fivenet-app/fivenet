@@ -219,9 +219,10 @@ type Dispatch struct {
 	Id        uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Job       string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	Jobs      *JobList               `protobuf:"bytes,18,opt,name=jobs,proto3" json:"jobs,omitempty"`
-	Status    *DispatchStatus        `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	// Deprecated: Marked as deprecated in resources/centrum/dispatches.proto.
+	Job    string          `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	Jobs   *JobList        `protobuf:"bytes,18,opt,name=jobs,proto3" json:"jobs,omitempty"`
+	Status *DispatchStatus `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	// @sanitize
 	Message string `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
 	// @sanitize
@@ -291,6 +292,7 @@ func (x *Dispatch) GetUpdatedAt() *timestamp.Timestamp {
 	return nil
 }
 
+// Deprecated: Marked as deprecated in resources/centrum/dispatches.proto.
 func (x *Dispatch) GetJob() string {
 	if x != nil {
 		return x.Job
@@ -777,14 +779,14 @@ var File_resources_centrum_dispatches_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x8d\a\n" +
+	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x8f\a\n" +
 	"\bDispatch\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x19\n" +
-	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12.\n" +
+	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
+	"\x03job\x18\x04 \x01(\tB\t\xfaB\x04r\x02\x18\x14\x18\x01R\x03job\x12.\n" +
 	"\x04jobs\x18\x12 \x01(\v2\x1a.resources.centrum.JobListR\x04jobs\x12>\n" +
 	"\x06status\x18\x05 \x01(\v2!.resources.centrum.DispatchStatusH\x02R\x06status\x88\x01\x01\x12\"\n" +
 	"\amessage\x18\a \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\amessage\x12/\n" +

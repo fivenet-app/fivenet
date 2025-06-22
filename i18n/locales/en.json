@@ -2045,7 +2045,8 @@
             "ErrDisabled": {
                 "title": "Dispatch Center is disabled!",
                 "content": "Please contact your leader to enable the dispatch center."
-            }
+            },
+            "ErrDispatchNoJobs": "You can't create a dispatch without any jobs!"
         },
         "general": {
             "internal_error": {

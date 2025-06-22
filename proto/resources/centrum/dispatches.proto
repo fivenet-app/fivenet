@@ -16,7 +16,7 @@ message Dispatch {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string job = 4 [(validate.rules).string.max_len = 20];
+  string job = 4 [deprecated = true, (validate.rules).string.max_len = 20];
   resources.centrum.JobList jobs = 18;
   optional DispatchStatus status = 5;
   // @sanitize
