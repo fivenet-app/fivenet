@@ -78,10 +78,11 @@ func NewPoller(p PollerParams) (*Poller, error) {
 			return fmt.Errorf("failed to register user info streams. %w", err)
 		}
 
-		kv, err := poller.js.CreateKeyValue(ctxStartup, jetstream.KeyValueConfig{
-			Bucket:      KVBucketName,
-			Description: "User info polling ttl store",
-			History:     2,
+		kv, err := poller.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
+			Bucket:         KVBucketName,
+			Description:    "User info polling ttl store",
+			History:        2,
+			LimitMarkerTTL: 2 * poller.interval,
 		})
 		if err != nil {
 			return fmt.Errorf("failed to create user info kv store. %w", err)

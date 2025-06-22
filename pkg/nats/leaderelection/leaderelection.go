@@ -12,6 +12,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const BucketName = "leader_election"
+
 // LeaderElector provides a generic leader election using JetStream KV with per-key TTL.
 // It invokes callbacks when this instance becomes leader or loses leadership, and supports
 // cancellation via both external context cancellation and Stop(), and can be restarted.
@@ -53,14 +55,19 @@ func New(
 	onStarted func(ctx context.Context),
 	onStopped func(),
 ) (*LeaderElector, error) {
+	if heartbeat >= ttl {
+		panic(fmt.Sprintf("invalid heartbeat (%s): must be less than ttl (%s)", heartbeat, ttl))
+	}
+
 	// derive a watcher context
 	wCtx, wCancel := context.WithCancel(parentCtx)
 
 	// ensure KV bucket exists
 	kv, err := js.CreateOrUpdateKeyValue(wCtx, jetstream.KeyValueConfig{
-		Bucket:      bucket,
-		TTL:         ttl,
-		Description: "Leader election bucket",
+		Bucket:         bucket,
+		TTL:            ttl,
+		Description:    "Leader election bucket",
+		LimitMarkerTTL: 2 * ttl, // ensure we have enough time to handle re-election
 	})
 	if err != nil {
 		wCancel()

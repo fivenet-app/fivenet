@@ -75,9 +75,7 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		}
 
 		s.le, err = leaderelection.New(
-			ctxCancel,
-			p.Logger.Named("cron.leader_election"),
-			s.js,
+			ctxCancel, s.logger, s.js,
 			"leader_election", // Bucket
 			"cron_scheduler",  // Key
 			10*time.Second,    // TTL for the lock

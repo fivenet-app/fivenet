@@ -110,5 +110,17 @@ func migrate001(ctx context.Context, js *JSWrapper) error {
 		}
 	}
 
+	// Remove buckets which didn't had their LimitMarkerTTL set correctly
+	for _, bucket := range []string{
+		"userinfo_poll_ttl",
+		"leader_election",
+	} {
+		if err := js.DeleteKeyValue(ctx, bucket); err != nil {
+			if !errors.Is(err, jetstream.ErrBucketNotFound) {
+				return fmt.Errorf("failed to delete userloc bucket. %w", err)
+			}
+		}
+	}
+
 	return nil
 }
