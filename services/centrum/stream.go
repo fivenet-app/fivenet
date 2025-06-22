@@ -124,6 +124,7 @@ func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumServi
 type feedCfg struct {
 	StreamName string
 	Bucket     string
+	NoWildcard bool                                                                  // if true, the subjects are not a wildcard bucket (e.g., centrum_dispatchers.JOB)
 	Unmarshal  func(ctx context.Context, s *Server, b []byte) (proto.Message, error) // bucket → concrete proto
 	WrapPut    func(proto.Message) *pbcentrum.StreamResponse
 	WrapDelete func(key string) *pbcentrum.StreamResponse
@@ -133,6 +134,7 @@ var feeds = []feedCfg{
 	{
 		StreamName: "centrum_settings",
 		Bucket:     "centrum_settings",
+		NoWildcard: true,
 		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
 			var u centrum.Settings
 			return &u, proto.Unmarshal(b, &u)
@@ -144,6 +146,7 @@ var feeds = []feedCfg{
 	{
 		StreamName: "centrum_dispatchers",
 		Bucket:     "centrum_dispatchers",
+		NoWildcard: true,
 		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
 			var u centrum.Dispatchers
 			return &u, proto.Unmarshal(b, &u)
@@ -299,7 +302,7 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 		g.Go(func() error {
 			// Create consumer with multi-filter
 			consCfg := jetstream.ConsumerConfig{
-				FilterSubjects: kvSubjects(f.Bucket, jobs),
+				FilterSubjects: kvSubjects(f.Bucket, jobs, f.NoWildcard),
 				DeliverPolicy:  jetstream.DeliverNewPolicy,
 				AckPolicy:      jetstream.AckNonePolicy,
 				MaxWaiting:     8,

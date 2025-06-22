@@ -934,9 +934,13 @@ func (s *UnitDB) GetLastStatus(ctx context.Context, tx qrm.DB, unitId uint64) (*
 					tAvatar.ID.EQ(tUserProps.AvatarFileID),
 				),
 		).
-		WHERE(
+		WHERE(jet.AND(
 			tUnitStatus.UnitID.EQ(jet.Uint64(unitId)),
-		).
+			tUnitStatus.Status.NOT_IN(
+				jet.Int16(int16(centrum.StatusUnit_STATUS_UNIT_USER_ADDED)),
+				jet.Int16(int16(centrum.StatusUnit_STATUS_UNIT_USER_REMOVED)),
+			),
+		)).
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		LIMIT(1)
 
