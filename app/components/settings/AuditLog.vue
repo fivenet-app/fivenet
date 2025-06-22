@@ -2,7 +2,7 @@
 import { addDays } from 'date-fns';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
-import type { JSONDateventType } from 'vue-json-pretty/types/utils';
+import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -49,7 +49,7 @@ const eventTypes = Object.keys(EventType)
     .filter((eventType) => {
         if (typeof eventType === 'string') {
             return false;
-        } else if (typeof eventType === 'number' && eventType < 3) {
+        } else if (typeof eventType === 'number' && eventType === 0) {
             return false;
         }
         return true;
@@ -178,6 +178,10 @@ const expand = ref({
     openedRows: [],
     row: {},
 });
+
+function statesToLabel(states: { eventType: EventType }[]): string {
+    return states.map((c) => t(`enums.settings.AuditLog.EventType.${EventType[c.eventType ?? 0]}`)).join(', ');
+}
 </script>
 
 <template>
@@ -245,79 +249,6 @@ const expand = ref({
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" name="service" :label="$t('common.service')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="query.services"
-                                multiple
-                                searchable
-                                name="service"
-                                :placeholder="$t('common.service')"
-                                :options="grpcServices.map((s) => s.split('.').pop() ?? s)"
-                            >
-                                <template #option="{ option }">
-                                    {{ option }}
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
-
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.service')]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormGroup>
-
-                    <UFormGroup class="flex-1" name="method" :label="$t('common.method')">
-                        <USelectMenu
-                            v-model="query.methods"
-                            multiple
-                            searchable
-                            name="method"
-                            :placeholder="$t('common.method')"
-                            :options="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
-                        >
-                            <template #option="{ option }">
-                                {{ option.split('/').pop() }}
-                            </template>
-
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.method')]) }}
-                            </template>
-                        </USelectMenu>
-                    </UFormGroup>
-
-                    <UFormGroup class="flex-1" name="states" :label="$t('common.service')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="query.states"
-                                multiple
-                                searchable
-                                name="states"
-                                :placeholder="$t('common.state')"
-                                :options="statesOptions"
-                            >
-                                <template #option="{ option }">
-                                    {{ $t(`enums.settings.AuditLog.EventType.${UserActivityType[option.eventType]}`) }}
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
-
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.service')]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormGroup>
-
                     <UFormGroup class="flex-1" name="data" :label="$t('common.data')">
                         <UInput
                             v-model="query.search"
@@ -341,6 +272,98 @@ const expand = ref({
                         </UInput>
                     </UFormGroup>
                 </div>
+
+                <UAccordion
+                    class="mt-2"
+                    color="white"
+                    variant="soft"
+                    size="sm"
+                    :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                >
+                    <template #search>
+                        <div class="flex flex-row flex-wrap gap-1">
+                            <UFormGroup class="flex-1" name="service" :label="$t('common.service')">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="query.services"
+                                        multiple
+                                        searchable
+                                        name="service"
+                                        :placeholder="$t('common.service')"
+                                        :options="grpcServices.map((s) => s.split('.').pop() ?? s)"
+                                    >
+                                        <template #option="{ option }">
+                                            {{ option }}
+                                        </template>
+
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.service')]) }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormGroup>
+
+                            <UFormGroup class="flex-1" name="method" :label="$t('common.method')">
+                                <USelectMenu
+                                    v-model="query.methods"
+                                    multiple
+                                    searchable
+                                    name="method"
+                                    :placeholder="$t('common.method')"
+                                    :options="grpcMethods.filter((m) => query.services.some((s) => m.includes('.' + s + '/')))"
+                                >
+                                    <template #option="{ option }">
+                                        {{ option.split('/').pop() }}
+                                    </template>
+
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.method')]) }}
+                                    </template>
+                                </USelectMenu>
+                            </UFormGroup>
+
+                            <UFormGroup class="flex-1" name="states" :label="$t('common.state')">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="query.states"
+                                        multiple
+                                        searchable
+                                        name="states"
+                                        :placeholder="$t('common.state')"
+                                        :options="statesOptions"
+                                        value-attribute="eventType"
+                                    >
+                                        <template #label="{ selected }">
+                                            <span v-if="selected.length > 0">
+                                                {{ statesToLabel(selected) }}
+                                            </span>
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            {{ $t(`enums.settings.AuditLog.EventType.${EventType[option.eventType]}`) }}
+                                        </template>
+
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.state')]) }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormGroup>
+                        </div>
+                    </template>
+                </UAccordion>
             </UForm>
         </template>
     </UDashboardToolbar>
@@ -394,7 +417,7 @@ const expand = ref({
                 <span v-if="!row.data">{{ $t('common.na') }}</span>
                 <span v-else>
                     <VueJsonPretty
-                        :data="JSON.parse(row.data!) as JSONDateventType"
+                        :data="JSON.parse(row.data!) as JSONDataType"
                         :show-icon="true"
                         :show-length="true"
                         :virtual="true"
