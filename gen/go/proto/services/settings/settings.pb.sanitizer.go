@@ -597,6 +597,12 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 		}
 	}
 
+	// Field: States
+	for idx, item := range m.States {
+		_, _ = idx, item
+
+	}
+
 	// Field: To
 	if m.To != nil {
 		if v, ok := any(m.GetTo()).(interface{ Sanitize() error }); ok {

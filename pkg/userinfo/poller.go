@@ -62,6 +62,8 @@ func NewPoller(p PollerParams) (*Poller, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	poller := &Poller{
+		logger: p.Logger.Named("userinfo.poller"),
+
 		ctx:      context.Background(),
 		db:       p.DB,
 		js:       p.JS,

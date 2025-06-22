@@ -114,6 +114,10 @@ message ViewAuditLogRequest {
     items: { string: { max_len: 64 } }
 }];
   optional string search = 8 [(validate.rules).string.max_len = 64];
+  repeated resources.audit.EventType states = 9 [(validate.rules).repeated = {
+    max_items: 10,
+    items: { enum: { defined_only: true } }
+  }];
 }
 
 message ViewAuditLogResponse {

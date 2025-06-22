@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	audit "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/audit"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = audit.EventType(0)
 )
 
 // Validate checks the field values on GetJobPropsRequest with the rules
@@ -2752,6 +2756,33 @@ func (m *ViewAuditLogRequest) validate(all bool) error {
 			err := ViewAuditLogRequestValidationError{
 				field:  fmt.Sprintf("Methods[%v]", idx),
 				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(m.GetStates()) > 10 {
+		err := ViewAuditLogRequestValidationError{
+			field:  "States",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetStates() {
+		_, _ = idx, item
+
+		if _, ok := audit.EventType_name[int32(item)]; !ok {
+			err := ViewAuditLogRequestValidationError{
+				field:  fmt.Sprintf("States[%v]", idx),
+				reason: "value must be one of the defined enum values",
 			}
 			if !all {
 				return err

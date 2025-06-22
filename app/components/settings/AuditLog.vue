@@ -33,6 +33,7 @@ const schema = z.object({
         .optional(),
     services: z.string().max(64).array().max(10).default([]),
     methods: z.string().max(64).array().max(10).default([]),
+    states: z.nativeEnum(EventType).array().max(10).default([]),
     search: z.string().max(64).default(''),
     sort: z.custom<TableSortable>().default({
         column: 'createdAt',
@@ -42,6 +43,18 @@ const schema = z.object({
 });
 
 const query = useSearchForm('settings_auditlog', schema);
+
+const eventTypes = Object.keys(EventType)
+    .map((aType) => EventType[aType as keyof typeof EventType])
+    .filter((aType) => {
+        if (typeof aType === 'string') {
+            return false;
+        } else if (typeof aType === 'number' && aType < 3) {
+            return false;
+        }
+        return true;
+    });
+const statesOptions = eventTypes.map((aType) => ({ aType: aType }));
 
 const usersLoading = ref(false);
 
@@ -67,6 +80,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         services: query.services,
         // Make sure to remove the service from the beginning
         methods: query.methods.map((m) => m.split('/').pop() ?? m),
+        states: query.states,
     };
 
     if (query.date) {
@@ -277,6 +291,31 @@ const expand = ref({
                                 {{ $t('common.not_found', [$t('common.method')]) }}
                             </template>
                         </USelectMenu>
+                    </UFormGroup>
+
+                    <UFormGroup class="flex-1" name="states" :label="$t('common.service')">
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="query.states"
+                                multiple
+                                searchable
+                                name="states"
+                                :placeholder="$t('common.state')"
+                                :options="statesOptions"
+                            >
+                                <template #option="{ option }">
+                                    {{ option }}
+                                </template>
+
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.service')]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup class="flex-1" name="data" :label="$t('common.data')">

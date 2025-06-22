@@ -17,6 +17,7 @@ import { Guild } from "../../resources/discord/discord";
 import { Channel } from "../../resources/discord/discord";
 import { AuditEntry } from "../../resources/audit/audit";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { EventType } from "../../resources/audit/audit";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -267,6 +268,10 @@ export interface ViewAuditLogRequest {
      * @generated from protobuf field: optional string search = 8
      */
     search?: string;
+    /**
+     * @generated from protobuf field: repeated resources.audit.EventType states = 9
+     */
+    states: EventType[];
 }
 /**
  * @generated from protobuf message services.settings.ViewAuditLogResponse
@@ -1386,7 +1391,8 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
             { no: 5, name: "to", kind: "message", T: () => Timestamp },
             { no: 6, name: "services", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
             { no: 7, name: "methods", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
-            { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
+            { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 9, name: "states", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.audit.EventType", EventType, "EVENT_TYPE_"], options: { "validate.rules": { repeated: { maxItems: "10", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<ViewAuditLogRequest>): ViewAuditLogRequest {
@@ -1394,6 +1400,7 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
         message.userIds = [];
         message.services = [];
         message.methods = [];
+        message.states = [];
         if (value !== undefined)
             reflectionMergePartial<ViewAuditLogRequest>(this, message, value);
         return message;
@@ -1430,6 +1437,13 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
                     break;
                 case /* optional string search */ 8:
                     message.search = reader.string();
+                    break;
+                case /* repeated resources.audit.EventType states */ 9:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.states.push(reader.int32());
+                    else
+                        message.states.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1471,6 +1485,13 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
         /* optional string search = 8; */
         if (message.search !== undefined)
             writer.tag(8, WireType.LengthDelimited).string(message.search);
+        /* repeated resources.audit.EventType states = 9; */
+        if (message.states.length) {
+            writer.tag(9, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.states.length; i++)
+                writer.int32(message.states[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

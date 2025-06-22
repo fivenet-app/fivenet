@@ -70,6 +70,13 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *pbsettings.ViewAuditLogR
 		}
 		condition = condition.AND(tAuditLog.Method.IN(methods...))
 	}
+	if len(req.States) > 0 {
+		states := make([]jet.Expression, len(req.States))
+		for i := range req.States {
+			states[i] = jet.Int32(int32(req.States[i]))
+		}
+		condition = condition.AND(tAuditLog.State.IN(states...))
+	}
 	if req.Search != nil && *req.Search != "" {
 		condition = condition.AND(jet.BoolExp(
 			jet.Raw("MATCH(`data`) AGAINST ($search IN BOOLEAN MODE)",

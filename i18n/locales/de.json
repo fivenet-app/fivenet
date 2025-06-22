@@ -973,6 +973,10 @@
                     "dispatch_max_wait": "Einsatz: Wartezeit (in Sekunden)",
                     "require_unit": "Kollegen müssen in einer Einheit sein",
                     "require_unit_reminder_seconds": "Erinnerungsintervall (in Sekunden), um Kollegen anzupingen, die nicht in einer Einheit sind"
+                },
+                "access": {
+                    "title": "Zugriff",
+                    "description": "Legen Sie fest, wer auf die Leitstelle zugreifen kann und welche Berechtigungen sie hat."
                 }
             }
         },
@@ -2041,7 +2045,8 @@
             "ErrDisabled": {
                 "title": "Leitstelle ist deaktiviert!",
                 "content": "Bitte kontaktieren Sie ihre Leitung, um die Leitstelle zu aktivieren."
-            }
+            },
+            "ErrDispatchNoJobs": "Sie können keinen Einsatz erstellen ohne einen Beruf auszuwählen!"
         },
         "general": {
             "internal_error": {
@@ -2298,6 +2303,13 @@
             "UnitAttribute": {
                 "STATIC": "Statisch",
                 "NO_DISPATCH_AUTO_ASSIGN": "Keine automatische Einsatz Zuweisung"
+            },
+            "CentrumAccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Anzeigen",
+                "PARTICIPATE": "Teilnehmen",
+                "DISPATCH": "Dispatchen"
             }
         },
         "livemap": {

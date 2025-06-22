@@ -16199,6 +16199,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `services` | [string](#string) | repeated | @sanitize: method=StripTags |
 | `methods` | [string](#string) | repeated | @sanitize: method=StripTags |
 | `search` | [string](#string) | optional |  |
+| `states` | [resources.audit.EventType](#resources-audit-EventType) | repeated |  |
 
 
 

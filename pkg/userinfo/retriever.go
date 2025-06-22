@@ -62,7 +62,9 @@ type Retriever struct {
 type Params struct {
 	fx.In
 
-	LC     fx.Lifecycle
+	LC fx.Lifecycle
+
+	Logger *zap.Logger
 	DB     *sql.DB
 	JS     *events.JSWrapper
 	Config *config.Config
@@ -76,6 +78,7 @@ func NewRetriever(p Params) UserInfoRetriever {
 	userCache := cache.NewLRUCache[userAccountKey, *pbuserinfo.UserInfo](350)
 
 	retriever := &Retriever{
+		logger: p.Logger.Named("userinfo.retriever"),
 		ctx:    ctxCancel,
 		db:     p.DB,
 		js:     p.JS,
