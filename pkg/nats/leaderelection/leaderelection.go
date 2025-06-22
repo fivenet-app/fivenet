@@ -13,7 +13,8 @@ import (
 )
 
 // LeaderElector provides a generic leader election using JetStream KV with per-key TTL.
-// It invokes callbacks when this instance becomes leader or loses leadership.
+// It invokes callbacks when this instance becomes leader or loses leadership, and supports
+// cancellation via both external context cancellation and Stop(), and can be restarted.
 type LeaderElector struct {
 	logger            *zap.Logger
 	kv                jetstream.KeyValue
@@ -27,34 +28,47 @@ type LeaderElector struct {
 	onStarted func(ctx context.Context)
 	onStopped func()
 
+	// contexts for watcher and current leadership
+	parentCtx    context.Context
+	parentCancel context.CancelFunc
+	leaderCtx    context.Context
+	leaderCancel context.CancelFunc
+
+	// watcher cancel to stop watch routine
+	watcherCancel context.CancelFunc
+
 	mu      sync.Mutex
-	ctx     context.Context
-	cancel  context.CancelFunc
 	running bool
 }
 
-// New creates a LeaderElector.
-// logger: zap.logger for logging events
-// js: events.JetStream context for KV operations
-// bucket: KV bucket name for election
-// key: key under which leadership is claimed
-// ttl: how long before a leader record expires
-// heartbeat: interval to refresh TTL
-// onStarted: called once when this instance becomes leader, receives a context that cancels on leadership loss
-// onStopped: called when this instance loses leadership or stops
-func New(logger *zap.Logger, js *events.JSWrapper, bucket, key string, ttl, heartbeat time.Duration, onStarted func(ctx context.Context), onStopped func()) (*LeaderElector, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-		Bucket: bucket,
-		TTL:    ttl,
+// New creates a LeaderElector. The provided parentCtx will be used to derive
+// a watcher context. Stop() will end watcher and leadership, but parentCtx is preserved
+// so Start() can be called multiple times.
+func New(
+	parentCtx context.Context,
+	logger *zap.Logger,
+	js *events.JSWrapper,
+	bucket, key string,
+	ttl, heartbeat time.Duration,
+	onStarted func(ctx context.Context),
+	onStopped func(),
+) (*LeaderElector, error) {
+	// derive a watcher context
+	wCtx, wCancel := context.WithCancel(parentCtx)
+
+	// ensure KV bucket exists
+	kv, err := js.CreateOrUpdateKeyValue(wCtx, jetstream.KeyValueConfig{
+		Bucket:      bucket,
+		TTL:         ttl,
+		Description: "Leader election bucket",
 	})
 	if err != nil {
-		cancel()
-		return nil, fmt.Errorf("failed to create %s key value store. %w", bucket, err)
+		wCancel()
+		return nil, fmt.Errorf("failed to create/update KV bucket %s: %w", bucket, err)
 	}
 
 	return &LeaderElector{
-		logger:            logger.Named("leaderelection").With(zap.String("bucket", bucket), zap.String("key", key)),
+		logger:            logger.Named("leader_election").With(zap.String("bucket", bucket), zap.String("key", key)),
 		kv:                kv,
 		js:                js,
 		bucket:            bucket,
@@ -62,49 +76,69 @@ func New(logger *zap.Logger, js *events.JSWrapper, bucket, key string, ttl, hear
 		ttl:               ttl,
 		heartbeatInterval: heartbeat,
 		id:                uuid.NewString(),
-		onStarted:         onStarted,
-		onStopped:         onStopped,
-		ctx:               ctx,
-		cancel:            cancel,
+
+		onStarted: onStarted,
+		onStopped: onStopped,
+
+		parentCtx:    wCtx,
+		parentCancel: wCancel,
 	}, nil
 }
 
-// Start begins the leader election process. Non-blocking.
-func (le *LeaderElector) Start() error {
+// Start begins the leader election process. Non-blocking. Can be called multiple times.
+func (le *LeaderElector) Start() {
 	le.mu.Lock()
 	if le.running {
 		le.mu.Unlock()
-		return nil
+		return
 	}
 	le.running = true
+	// reset contexts if previously stopped
+	if le.watcherCancel != nil {
+		// previous watcherCtx cancelled; create new
+		wCtx, wCancel := context.WithCancel(context.Background())
+		le.parentCtx = wCtx
+		le.parentCancel = wCancel
+	}
 	le.mu.Unlock()
 
-	// Watch for leadership changes
-	if err := le.watch(); err != nil {
-		return err
-	}
+	// start watching for key deletions (loss of leadership)
+	watchCtx, watchCancel := context.WithCancel(le.parentCtx)
+	le.mu.Lock()
+	le.watcherCancel = watchCancel
+	le.mu.Unlock()
+	go le.watchParent(watchCtx)
 
-	// Try initial election
+	// attempt initial acquisition
 	if ok, _ := le.tryAcquire(); ok {
-		le.startLeader()
+		le.becomeLeader()
 	}
-
-	return nil
 }
 
-// Stop halts the election, revoking leadership and stopping heartbeats.
+// Stop halts election and leadership. Parent context remains for future restarts.
 func (le *LeaderElector) Stop() {
 	le.mu.Lock()
-	defer le.mu.Unlock()
 	if !le.running {
+		le.mu.Unlock()
 		return
 	}
 	le.running = false
-	le.cancel()
+	// stop watcher
+	if le.watcherCancel != nil {
+		le.watcherCancel()
+		le.watcherCancel = nil
+	}
+	// cancel current leadership if any
+	if le.leaderCancel != nil {
+		le.leaderCancel()
+		le.leaderCancel = nil
+	}
+	le.mu.Unlock()
 }
 
+// tryAcquire attempts to create the leader key with TTL.
 func (le *LeaderElector) tryAcquire() (bool, error) {
-	_, err := le.kv.Create(le.ctx, le.key, []byte(le.id), jetstream.KeyTTL(le.ttl))
+	_, err := le.kv.Create(le.parentCtx, le.key, []byte(le.id), jetstream.KeyTTL(le.ttl))
 	if err == jetstream.ErrKeyExists {
 		return false, nil
 	}
@@ -114,49 +148,63 @@ func (le *LeaderElector) tryAcquire() (bool, error) {
 	return true, nil
 }
 
-func (le *LeaderElector) watch() error {
-	watcher, err := le.kv.WatchAll(le.ctx)
+// watchParent listens for deletion events on the leader key and triggers re-election.
+func (le *LeaderElector) watchParent(ctx context.Context) {
+	watcher, err := le.kv.WatchAll(ctx, jetstream.UpdatesOnly())
 	if err != nil {
-		return err
+		le.logger.Error("watch error", zap.Error(err))
+		return
 	}
 	for entry := range watcher.Updates() {
+		if entry == nil {
+			continue
+		}
+
 		if entry.Key() == le.key && entry.Operation() == jetstream.KeyValueDelete {
-			// leadership expired
+			le.logger.Info("leadership lost by expiration, retrying election")
+			// cleanup old leadership context
+			le.mu.Lock()
+			if le.leaderCancel != nil {
+				le.leaderCancel()
+				le.leaderCancel = nil
+			}
+			le.mu.Unlock()
+			// try to acquire again
 			if ok, _ := le.tryAcquire(); ok {
-				le.startLeader()
+				le.becomeLeader()
 			}
 		}
 	}
-
-	return nil
 }
 
-func (le *LeaderElector) startLeader() {
-	// Create a cancellable context for leadership
-	ctx, cancel := context.WithCancel(context.Background())
+// becomeLeader sets up leadership context, invokes onStarted, and starts heartbeat.
+func (le *LeaderElector) becomeLeader() {
+	le.logger.Info("became leader")
+	// create a cancelable leader context
+	leaderCtx, leaderCancel := context.WithCancel(le.parentCtx)
 	le.mu.Lock()
-	le.cancel = cancel
+	le.leaderCtx = leaderCtx
+	le.leaderCancel = leaderCancel
 	le.mu.Unlock()
 
-	// Invoke onStarted callback
+	// invoke startup callback
 	if le.onStarted != nil {
-		go le.onStarted(ctx)
+		go le.onStarted(leaderCtx)
 	}
 
-	// Heartbeat loop
+	// start heartbeat loop
 	ticker := time.NewTicker(le.heartbeatInterval)
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				// Refresh TTL
-				if _, err := le.kv.Put(le.ctx, le.key, []byte(le.id)); err != nil {
-					le.logger.Error("failed to refresh leadership TTL", zap.String("key", le.key), zap.Error(err))
+				if _, err := le.kv.Put(le.parentCtx, le.key, []byte(le.id)); err != nil {
+					le.logger.Error("failed to refresh leadership TTL", zap.Error(err))
 				}
 
-			case <-ctx.Done():
+			case <-leaderCtx.Done():
 				ticker.Stop()
-				// Callback on stopped
+				le.logger.Info("leadership context cancelled")
 				if le.onStopped != nil {
 					le.onStopped()
 				}

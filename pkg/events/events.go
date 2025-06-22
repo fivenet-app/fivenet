@@ -106,8 +106,12 @@ func New(p Params) (res Result, err error) {
 	wg := sync.WaitGroup{}
 	ctx, cancel := context.WithCancel(context.Background())
 
-	// Collect basic metric
+	// Run migrations and collect basic metric
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		if err := runMigrations(ctx, p.Logger, res.JS); err != nil {
+			return fmt.Errorf("failed to run nats migrations. %w", err)
+		}
+
 		wg.Add(1)
 		go func() {
 			defer wg.Done()

@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	BucketUserLoc         = "user_locations" // JOB.GRADE.USER_ID → UserMarker
-	BucketUserMappingsMap = "user_mappings"  // USER_ID           → UserMapping
-	BucketUserLocByID     = "userloc_by_id"  // USER_ID           → UserMapping (no Job/Grade)
+	BucketUserLoc         = "userloc"       // JOB.GRADE.USER_ID → UserMarker
+	BucketUserMappingsMap = "user_mappings" // USER_ID           → UserMapping
+	BucketUserLocByID     = "userloc_by_id" // USER_ID           → UserMapping (no Job/Grade)
 )
 
 func UserIdKey(id int32) string {

@@ -24,6 +24,20 @@ func WithLocks[T any, U protoutils.ProtoMessageWithMerge[T]](l *locks.Locks) Opt
 	}
 }
 
+// WithIgnoredKeys sets a list of keys to ignore in the store.
+func WithIgnoredKeys[T any, U protoutils.ProtoMessageWithMerge[T]](keys ...string) Option[T, U] {
+	return func(s *Store[T, U]) {
+		s.ignoredKeys = keys
+	}
+}
+
+// WithJetstreamKV sets a custom NATS JetStream KeyValue store instance.
+func WithJetstreamKV[T any, U protoutils.ProtoMessageWithMerge[T]](kv jetstream.KeyValue) Option[T, U] {
+	return func(s *Store[T, U]) {
+		s.kv = kv
+	}
+}
+
 // WithOnUpdateFn sets a callback function to be called on update events (only local).
 func WithOnUpdateFn[T any, U protoutils.ProtoMessageWithMerge[T]](fn OnUpdateFn[T, U]) Option[T, U] {
 	return func(s *Store[T, U]) {
@@ -45,16 +59,16 @@ func WithOnCreatedFn[T any, U protoutils.ProtoMessageWithMerge[T]](fn OnCreatedF
 	}
 }
 
-// WithJetstreamKV sets a custom NATS JetStream KeyValue store instance.
-func WithJetstreamKV[T any, U protoutils.ProtoMessageWithMerge[T]](kv jetstream.KeyValue) Option[T, U] {
+// WithOnRemoteUpdatedFn sets a callback function to be called on remove update events (only local).
+func WithOnRemoteUpdatedFn[T any, U protoutils.ProtoMessageWithMerge[T]](fn OnUpdateFn[T, U]) Option[T, U] {
 	return func(s *Store[T, U]) {
-		s.kv = kv
+		s.onRemoteUpdate = fn
 	}
 }
 
-// WithIgnoredKeys sets a list of keys to ignore in the store.
-func WithIgnoredKeys[T any, U protoutils.ProtoMessageWithMerge[T]](keys ...string) Option[T, U] {
+// WithOnRemoteDeletedFn sets a callback function to be called on create events (only local).
+func WithOnRemoteDeletedFn[T any, U protoutils.ProtoMessageWithMerge[T]](fn OnDeleteFn[T, U]) Option[T, U] {
 	return func(s *Store[T, U]) {
-		s.ignoredKeys = keys
+		s.onRemoteDeletion = fn
 	}
 }

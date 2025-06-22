@@ -2,7 +2,6 @@ package croner
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -12,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/locks"
+	"github.com/fivenet-app/fivenet/v2025/pkg/nats/leaderelection"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
@@ -40,17 +39,15 @@ type SchedulerParams struct {
 }
 
 type Scheduler struct {
-	logger *zap.Logger
-
-	nodeName string
-
+	logger    *zap.Logger
 	ctxCancel context.Context
 	js        *events.JSWrapper
 	registry  *Registry
 	gron      *gronx.Gronx
-	lock      *locks.Locks
+	le        *leaderelection.LeaderElector
 
-	jsCons jetstream.ConsumeContext
+	nodeName string
+	jsCons   jetstream.ConsumeContext
 }
 
 func NewScheduler(p SchedulerParams) (*Scheduler, error) {
@@ -77,13 +74,26 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 			return err
 		}
 
-		lock, err := locks.New(s.logger, s.registry.kv, s.registry.kv.Bucket(), 10*time.Second)
-		if err != nil {
-			return err
-		}
-		s.lock = lock
+		s.le, err = leaderelection.New(
+			ctxCancel,
+			p.Logger.Named("cron.leader_election"),
+			s.js,
+			"leader_election", // Bucket
+			"cron_scheduler",  // Key
+			10*time.Second,    // TTL for the lock
+			5*time.Second,     // Heartbeat interval
+			func(ctx context.Context) {
+				s.logger.Info("scheduler started, running as leader", zap.String("node_name", s.nodeName))
 
-		go s.run(ctxCancel)
+				s.start(ctx)
+			},
+			nil, // No on stopped function, context cancels the scheduler
+		)
+		if err != nil {
+			return fmt.Errorf("failed to create leader elector. %w", err)
+		}
+
+		s.le.Start()
 
 		return s.registerSubscriptions(ctxStartup, ctxCancel)
 	}))
@@ -95,155 +105,6 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 	}))
 
 	return s, nil
-}
-
-func (s *Scheduler) run(ctx context.Context) {
-	wg := sync.WaitGroup{}
-
-	for {
-		select {
-		case <-ctx.Done():
-			wg.Wait()
-
-			s.unlock(ctx)
-			return
-
-		case <-time.After(2 * time.Second):
-		}
-
-		state, err := s.getLockState(ctx)
-		if err != nil {
-			s.logger.Error("failed to create lock", zap.Error(err))
-			return
-		}
-
-		// Check if we are the owner of the lock or it is expired
-		if state != nil && state.Hostname != s.nodeName {
-			if state.UpdatedAt != nil {
-				// Check if the lock is expired
-				if time.Since(state.UpdatedAt.AsTime()) < 10*time.Second {
-					s.logger.Debug("lock is still valid, sleeping for a few seconds")
-					continue
-				}
-			}
-		}
-
-		s.logger.Info("no or expired lock, attempting to get lock")
-
-		if err := s.createOrUpdateLock(ctx); err != nil {
-			s.logger.Error("failed to create/update lock", zap.Error(err))
-			continue
-		}
-
-		func() {
-			ctx, cancel := context.WithCancel(ctx)
-			defer cancel()
-
-			// Keep lock owner state uptodate
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-
-				s.start(ctx)
-			}()
-
-			for {
-				select {
-				case <-ctx.Done():
-					wg.Wait()
-					return
-
-				case <-time.After(5 * time.Second):
-				}
-
-				if err := s.createOrUpdateLock(ctx); err != nil {
-					cancel()
-					s.logger.Error("error creating/updating owner lock state, stopping scheduler", zap.Error(err))
-					return
-				}
-			}
-		}()
-	}
-}
-
-func (s *Scheduler) getLockState(ctx context.Context) (*cron.CronjobLockOwnerState, error) {
-	if err := s.lock.Lock(ctx, OwnerKey); err != nil {
-		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
-			return nil, err
-		}
-
-		return nil, fmt.Errorf("error while trying to get owner lock. %w", err)
-	}
-	defer func() {
-		if err := s.lock.Unlock(ctx, OwnerKey); err != nil {
-			s.logger.Error("failed to unlock owner lock", zap.Error(err))
-		}
-	}()
-
-	entry, err := s.registry.kv.Get(ctx, OwnerKey)
-	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		return nil, fmt.Errorf("error getting owner lock entry. %w", err)
-	}
-
-	if entry != nil {
-		// Make sure the owner state is really expired and not just a "hiccup" of our nats lock logic
-		state := &cron.CronjobLockOwnerState{}
-		if err := protoutils.UnmarshalPartialPJSON(entry.Value(), state); err != nil {
-			s.logger.Warn("failed to unmarshal owner lock entry", zap.Error(err))
-		}
-
-		return state, nil
-	}
-
-	return nil, nil
-}
-
-func (s *Scheduler) createOrUpdateLock(ctx context.Context) error {
-	if err := s.lock.Lock(ctx, OwnerKey); err != nil {
-		if errors.Is(err, context.DeadlineExceeded) || errors.Is(err, context.Canceled) {
-			return err
-		}
-
-		return fmt.Errorf("error while trying to get owner lock. %w", err)
-	}
-	defer func() {
-		if err := s.lock.Unlock(ctx, OwnerKey); err != nil {
-			s.logger.Error("failed to unlock owner lock", zap.Error(err))
-		}
-	}()
-
-	out, err := protoutils.MarshalToPJSON(&cron.CronjobLockOwnerState{
-		Hostname:  s.nodeName,
-		UpdatedAt: timestamp.Now(),
-	})
-	if err != nil {
-		s.logger.Error("error marshalling owner lock state", zap.Error(err))
-		return err
-	}
-
-	if _, err := s.registry.kv.Put(ctx, OwnerKey, out); err != nil {
-		s.logger.Error("failed to update owner lock state in kv", zap.Error(err))
-		return err
-	}
-
-	return nil
-}
-
-func (s *Scheduler) unlock(ctx context.Context) {
-	entry, err := s.registry.kv.Get(ctx, OwnerKey)
-	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		s.logger.Error("error getting owner lock entry", zap.Error(err))
-		return
-	}
-
-	// Make sure we are the owner of the lock
-	if entry == nil || string(entry.Value()) != s.nodeName {
-		return // We are not the owner, so we don't need to unlock
-	}
-
-	if err := s.lock.Unlock(ctx, OwnerKey); err != nil {
-		s.logger.Error("failed to unlock owner lock on shutdown", zap.Error(err))
-	}
 }
 
 func (s *Scheduler) start(ctx context.Context) {

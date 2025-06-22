@@ -101,11 +101,6 @@ func New(p Params) (ITracker, error) {
 		}
 		t.userByIDStore = byID
 
-		// Remove any existing "_snapshot" mapping, as it is not used anymore
-		userMappingsStore.Delete(ctxStartup, "_snapshot")
-		userLocStore.Delete(ctxStartup, "_snapshot")
-		byID.Delete(ctxStartup, "_snapshot")
-
 		return nil
 	}))
 

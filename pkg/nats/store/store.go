@@ -81,6 +81,11 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	onDelete OnDeleteFn[T, U]
 	// callback for create events
 	onCreated OnCreatedFn[T, U]
+
+	// callback for remote update events
+	onRemoteUpdate OnUpdateFn[T, U]
+	// callback for remote delete events
+	onRemoteDeletion OnDeleteFn[T, U]
 }
 
 // Option is a functional option for configuring the Store.
@@ -199,7 +204,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 
 				switch entry.Operation() {
 				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
-					s.handleWatcherDelete(key, entry)
+					s.handleWatcherDelete(ctx, key, entry)
 
 				case jetstream.KeyValuePut:
 					s.handleWatcherPut(ctx, key, entry)
@@ -228,10 +233,17 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	return nil
 }
 
-func (s *Store[T, U]) handleWatcherDelete(key string, _ jetstream.KeyValueEntry) {
+func (s *Store[T, U]) handleWatcherDelete(ctx context.Context, key string, _ jetstream.KeyValueEntry) {
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
+
+	if s.onRemoteDeletion != nil {
+		item, _ := s.data.Load(key)
+		if err := s.onRemoteDeletion(ctx, s, key, item); err != nil {
+			s.logger.Error("failed to react to remote delete event from watcher", zap.String("key", key), zap.Error(err))
+		}
+	}
 
 	s.data.Delete(key)
 	s.mu.Delete(key)
@@ -244,8 +256,13 @@ func (s *Store[T, U]) handleWatcherPut(ctx context.Context, key string, entry je
 	mu.Lock()
 	defer mu.Unlock()
 
-	if _, err := s.update(ctx, entry, false); err != nil {
+	item, err := s.update(ctx, entry, false)
+	if err != nil {
 		s.logger.Error("failed to apply update from watcher", zap.String("key", key), zap.Error(err))
+	}
+
+	if s.onRemoteUpdate != nil {
+		s.onRemoteUpdate(ctx, s, item)
 	}
 }
 
