@@ -828,12 +828,6 @@ func (m *Snapshot) validate(all bool) error {
 
 	}
 
-	// no validation rules for GeneratedAt
-
-	// no validation rules for SnapshotSeq
-
-	// no validation rules for SchemaVersion
-
 	if len(errors) > 0 {
 		return SnapshotMultiError(errors)
 	}

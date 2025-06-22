@@ -1,3 +1,9 @@
+<script setup lang="ts">
+defineProps<{
+    label?: string;
+}>();
+</script>
+
 <template>
     <div class="absolute left-1/2 top-10 z-10 inline-flex -translate-x-1/2 -translate-y-1/2 flex-col md:top-8">
         <div
@@ -5,7 +11,7 @@
         >
             <div class="mx-0.5 flex items-center gap-1 text-xs">
                 <UIcon class="size-4 shrink-0 animate-spin" name="i-mdi-refresh" />
-                {{ $t('components.livemap.restarting_datastream') }}
+                <span>{{ label }}</span>
             </div>
         </div>
     </div>

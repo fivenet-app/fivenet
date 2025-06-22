@@ -1,0 +1,170 @@
+package settings
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
+)
+
+type SettingsDB struct {
+	logger *zap.Logger
+
+	db       *sql.DB
+	js       *events.JSWrapper
+	enricher *mstlystcdata.Enricher
+
+	store *store.Store[centrum.Settings, *centrum.Settings]
+}
+
+type Params struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger   *zap.Logger
+	JS       *events.JSWrapper
+	DB       *sql.DB
+	Enricher *mstlystcdata.Enricher
+}
+
+func New(p Params) *SettingsDB {
+	ctxCancel, cancel := context.WithCancel(context.Background())
+
+	logger := p.Logger.Named("centrum_settings")
+	d := &SettingsDB{
+		logger:   logger,
+		db:       p.DB,
+		js:       p.JS,
+		enricher: p.Enricher,
+	}
+
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		st, err := store.New[centrum.Settings, *centrum.Settings](ctxCancel, logger, p.JS, "centrum_settings")
+		if err != nil {
+			return err
+		}
+
+		if err := st.Start(ctxCancel, false); err != nil {
+			return err
+		}
+		d.store = st
+
+		return nil
+	}))
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		cancel()
+
+		return nil
+	}))
+
+	return d
+}
+
+func (s *SettingsDB) LoadFromDB(ctx context.Context, job string) error {
+	tCentrumSettings := table.FivenetCentrumSettings.AS("settings")
+
+	stmt := tCentrumSettings.
+		SELECT(
+			tCentrumSettings.Job,
+			tCentrumSettings.Enabled,
+			tCentrumSettings.Mode,
+			tCentrumSettings.FallbackMode,
+			tCentrumSettings.PredefinedStatus,
+			tCentrumSettings.Timings,
+		).
+		FROM(tCentrumSettings)
+
+	if job != "" {
+		stmt = stmt.WHERE(
+			tCentrumSettings.Job.EQ(jet.String(job)),
+		)
+	}
+
+	var dest []*centrum.Settings
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
+	}
+
+	for _, settings := range dest {
+		settings.Default(settings.Job)
+
+		if err := s.updateInKV(ctx, settings.Job, settings); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum.Settings) error {
+	tCentrumSettings := table.FivenetCentrumSettings
+
+	stmt := tCentrumSettings.
+		INSERT(
+			tCentrumSettings.Job,
+			tCentrumSettings.Enabled,
+			tCentrumSettings.Mode,
+			tCentrumSettings.FallbackMode,
+			tCentrumSettings.PredefinedStatus,
+			tCentrumSettings.Timings,
+		).
+		VALUES(
+			job,
+			settings.Enabled,
+			settings.Mode,
+			settings.FallbackMode,
+			settings.PredefinedStatus,
+			settings.Timings,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tCentrumSettings.Job.SET(jet.String(job)),
+			tCentrumSettings.Enabled.SET(jet.Bool(settings.Enabled)),
+			tCentrumSettings.Mode.SET(jet.Int32(int32(settings.Mode))),
+			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.FallbackMode))),
+			tCentrumSettings.PredefinedStatus.SET(jet.StringExp(jet.Raw("VALUES(`predefined_status`)"))),
+			tCentrumSettings.Timings.SET(jet.StringExp(jet.Raw("VALUES(`timings`)"))),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	// Load settings from database so they are updated in the "cache"
+	if err := s.LoadFromDB(ctx, job); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *SettingsDB) Update(ctx context.Context, job string, in *centrum.Settings) (*centrum.Settings, error) {
+	current, err := s.Get(ctx, job)
+	if err != nil {
+		return nil, err
+	}
+
+	current.Merge(in)
+
+	if err := s.updateDB(ctx, job, current); err != nil {
+		return nil, err
+	}
+
+	if err := s.updateInKV(ctx, job, current); err != nil {
+		return nil, err
+	}
+
+	return current, nil
+}

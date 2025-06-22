@@ -18,14 +18,6 @@
     - [DispatchAttribute](#resources-centrum-DispatchAttribute)
     - [UnitAttribute](#resources-centrum-UnitAttribute)
   
-- [resources/centrum/units.proto](#resources_centrum_units-proto)
-    - [Unit](#resources-centrum-Unit)
-    - [UnitAssignment](#resources-centrum-UnitAssignment)
-    - [UnitAssignments](#resources-centrum-UnitAssignments)
-    - [UnitStatus](#resources-centrum-UnitStatus)
-  
-    - [StatusUnit](#resources-centrum-StatusUnit)
-  
 - [resources/centrum/units_access.proto](#resources_centrum_units_access-proto)
     - [UnitAccess](#resources-centrum-UnitAccess)
     - [UnitJobAccess](#resources-centrum-UnitJobAccess)
@@ -45,6 +37,15 @@
 - [resources/centrum/dispatchers.proto](#resources_centrum_dispatchers-proto)
     - [Dispatchers](#resources-centrum-Dispatchers)
   
+- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [JobList](#resources-centrum-JobList)
+    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
+    - [Settings](#resources-centrum-Settings)
+    - [Timings](#resources-centrum-Timings)
+  
+    - [CentrumMode](#resources-centrum-CentrumMode)
+    - [CentrumType](#resources-centrum-CentrumType)
+  
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
     - [DispatchAssignment](#resources-centrum-DispatchAssignment)
@@ -57,13 +58,13 @@
     - [StatusDispatch](#resources-centrum-StatusDispatch)
     - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
   
-- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
-    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
-    - [Settings](#resources-centrum-Settings)
-    - [Timings](#resources-centrum-Timings)
+- [resources/centrum/units.proto](#resources_centrum_units-proto)
+    - [Unit](#resources-centrum-Unit)
+    - [UnitAssignment](#resources-centrum-UnitAssignment)
+    - [UnitAssignments](#resources-centrum-UnitAssignments)
+    - [UnitStatus](#resources-centrum-UnitStatus)
   
-    - [CentrumMode](#resources-centrum-CentrumMode)
-    - [CentrumType](#resources-centrum-CentrumType)
+    - [StatusUnit](#resources-centrum-StatusUnit)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
@@ -114,6 +115,9 @@
 - [resources/common/i18n.proto](#resources_common_i18n-proto)
     - [I18NItem](#resources-common-I18NItem)
     - [I18NItem.ParametersEntry](#resources-common-I18NItem-ParametersEntry)
+  
+- [resources/common/id_mapping.proto](#resources_common_id_mapping-proto)
+    - [IDMapping](#resources-common-IDMapping)
   
 - [resources/documents/category.proto](#resources_documents_category-proto)
     - [Category](#resources-documents-Category)
@@ -321,6 +325,7 @@
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
+    - [VehicleProps](#resources-vehicles-VehicleProps)
   
 - [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
     - [Calendar](#resources-calendar-Calendar)
@@ -556,6 +561,7 @@
   
 - [resources/livemap/user_marker.proto](#resources_livemap_user_marker-proto)
     - [UserMarker](#resources-livemap-UserMarker)
+    - [UserMarkerData](#resources-livemap-UserMarkerData)
   
 - [resources/tracker/mapping.proto](#resources_tracker_mapping-proto)
     - [UserMapping](#resources-tracker-UserMapping)
@@ -1298,129 +1304,6 @@
 
 
 
-<a name="resources_centrum_units-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/units.proto
-
-
-
-<a name="resources-centrum-Unit"></a>
-
-### Unit
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `name` | [string](#string) |  | @sanitize |
-| `initials` | [string](#string) |  | @sanitize |
-| `color` | [string](#string) |  | @sanitize: method=StripTags |
-| `description` | [string](#string) | optional | @sanitize |
-| `status` | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
-| `users` | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-| `attributes` | [UnitAttributes](#resources-centrum-UnitAttributes) | optional |  |
-| `home_postal` | [string](#string) | optional |  |
-| `access` | [UnitAccess](#resources-centrum-UnitAccess) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAssignment"></a>
-
-### UnitAssignment
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"unit_id" |
-| `user_id` | [int32](#int32) |  | @gotags: sql:"primary_key" alias:"user_id" |
-| `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAssignments"></a>
-
-### UnitAssignments
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `users` | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitStatus"></a>
-
-### UnitStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `unit_id` | [uint64](#uint64) |  |  |
-| `unit` | [Unit](#resources-centrum-Unit) | optional |  |
-| `status` | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
-| `reason` | [string](#string) | optional | @sanitize |
-| `code` | [string](#string) | optional | @sanitize |
-| `user_id` | [int32](#int32) | optional |  |
-| `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
-| `x` | [double](#double) | optional |  |
-| `y` | [double](#double) | optional |  |
-| `postal` | [string](#string) | optional | @sanitize |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-centrum-StatusUnit"></a>
-
-### StatusUnit
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `STATUS_UNIT_UNSPECIFIED` | 0 |  |
-| `STATUS_UNIT_UNKNOWN` | 1 |  |
-| `STATUS_UNIT_USER_ADDED` | 2 |  |
-| `STATUS_UNIT_USER_REMOVED` | 3 |  |
-| `STATUS_UNIT_UNAVAILABLE` | 4 |  |
-| `STATUS_UNIT_AVAILABLE` | 5 |  |
-| `STATUS_UNIT_ON_BREAK` | 6 |  |
-| `STATUS_UNIT_BUSY` | 7 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_centrum_units_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1591,10 +1474,11 @@ Dummy - DO NOT USE!
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_VIEW` | 1 |  |
-| `ACCESS_LEVEL_PARTICIPATE` | 2 |  |
-| `ACCESS_LEVEL_DISPATCH` | 3 |  |
+| `CENTRUM_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `CENTRUM_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `CENTRUM_ACCESS_LEVEL_VIEW` | 2 |  |
+| `CENTRUM_ACCESS_LEVEL_PARTICIPATE` | 3 |  |
+| `CENTRUM_ACCESS_LEVEL_DISPATCH` | 4 |  |
 
 
  <!-- end enums -->
@@ -1638,6 +1522,121 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources_centrum_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/settings.proto
+
+
+
+<a name="resources-centrum-JobList"></a>
+
+### JobList
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-PredefinedStatus"></a>
+
+### PredefinedStatus
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-centrum-Settings"></a>
+
+### Settings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `enabled` | [bool](#bool) |  |  |
+| `type` | [CentrumType](#resources-centrum-CentrumType) |  |  |
+| `public` | [bool](#bool) |  |  |
+| `mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| `fallback_mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| `predefined_status` | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+| `timings` | [Timings](#resources-centrum-Timings) |  |  |
+| `access` | [CentrumAccess](#resources-centrum-CentrumAccess) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-Timings"></a>
+
+### Timings
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatch_max_wait` | [int64](#int64) |  |  |
+| `require_unit` | [bool](#bool) |  |  |
+| `require_unit_reminder_seconds` | [int64](#int64) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-CentrumMode"></a>
+
+### CentrumMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CENTRUM_MODE_UNSPECIFIED` | 0 |  |
+| `CENTRUM_MODE_MANUAL` | 1 |  |
+| `CENTRUM_MODE_CENTRAL_COMMAND` | 2 |  |
+| `CENTRUM_MODE_AUTO_ROUND_ROBIN` | 3 |  |
+| `CENTRUM_MODE_SIMPLIFIED` | 4 |  |
+
+
+
+<a name="resources-centrum-CentrumType"></a>
+
+### CentrumType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CENTRUM_TYPE_UNSPECIFIED` | 0 |  |
+| `CENTRUM_TYPE_DISPATCH` | 1 |  |
+| `CENTRUM_TYPE_DELIVERY` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_centrum_dispatches-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1657,7 +1656,7 @@ Dummy - DO NOT USE!
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `job` | [string](#string) |  |  |
-| `jobs` | [string](#string) | repeated |  |
+| `jobs` | [JobList](#resources-centrum-JobList) |  |  |
 | `status` | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
 | `message` | [string](#string) |  | @sanitize |
 | `description` | [string](#string) | optional | @sanitize |
@@ -1764,6 +1763,7 @@ Dummy - DO NOT USE!
 | `x` | [double](#double) | optional |  |
 | `y` | [double](#double) | optional |  |
 | `postal` | [string](#string) | optional | @sanitize |
+| `creator_job` | [string](#string) | optional |  |
 
 
 
@@ -1832,63 +1832,98 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_centrum_settings-proto"></a>
+<a name="resources_centrum_units-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/centrum/settings.proto
+## resources/centrum/units.proto
 
 
 
-<a name="resources-centrum-PredefinedStatus"></a>
+<a name="resources-centrum-Unit"></a>
 
-### PredefinedStatus
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-centrum-Settings"></a>
-
-### Settings
+### Unit
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `job` | [string](#string) |  |  |
-| `enabled` | [bool](#bool) |  |  |
-| `type` | [CentrumType](#resources-centrum-CentrumType) |  |  |
-| `public` | [bool](#bool) |  |  |
-| `mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| `fallback_mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| `predefined_status` | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
-| `timings` | [Timings](#resources-centrum-Timings) |  |  |
-| `access` | [CentrumAccess](#resources-centrum-CentrumAccess) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `name` | [string](#string) |  | @sanitize |
+| `initials` | [string](#string) |  | @sanitize |
+| `color` | [string](#string) |  | @sanitize: method=StripTags |
+| `description` | [string](#string) | optional | @sanitize |
+| `status` | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
+| `users` | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
+| `attributes` | [UnitAttributes](#resources-centrum-UnitAttributes) | optional |  |
+| `home_postal` | [string](#string) | optional |  |
+| `access` | [UnitAccess](#resources-centrum-UnitAccess) |  |  |
 
 
 
 
 
 
-<a name="resources-centrum-Timings"></a>
+<a name="resources-centrum-UnitAssignment"></a>
 
-### Timings
-@dbscanner: json
+### UnitAssignment
+
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dispatch_max_wait` | [int64](#int64) |  |  |
-| `require_unit` | [bool](#bool) |  |  |
-| `require_unit_reminder_seconds` | [int64](#int64) |  |  |
+| `unit_id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"unit_id" |
+| `user_id` | [int32](#int32) |  | @gotags: sql:"primary_key" alias:"user_id" |
+| `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAssignments"></a>
+
+### UnitAssignments
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `users` | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitStatus"></a>
+
+### UnitStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `unit_id` | [uint64](#uint64) |  |  |
+| `unit` | [Unit](#resources-centrum-Unit) | optional |  |
+| `status` | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
+| `reason` | [string](#string) | optional | @sanitize |
+| `code` | [string](#string) | optional | @sanitize |
+| `user_id` | [int32](#int32) | optional |  |
+| `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
+| `x` | [double](#double) | optional |  |
+| `y` | [double](#double) | optional |  |
+| `postal` | [string](#string) | optional | @sanitize |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
+| `creator_job` | [string](#string) | optional |  |
 
 
 
@@ -1897,31 +1932,21 @@ Dummy - DO NOT USE!
  <!-- end messages -->
 
 
-<a name="resources-centrum-CentrumMode"></a>
+<a name="resources-centrum-StatusUnit"></a>
 
-### CentrumMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `CENTRUM_MODE_UNSPECIFIED` | 0 |  |
-| `CENTRUM_MODE_MANUAL` | 1 |  |
-| `CENTRUM_MODE_CENTRAL_COMMAND` | 2 |  |
-| `CENTRUM_MODE_AUTO_ROUND_ROBIN` | 3 |  |
-| `CENTRUM_MODE_SIMPLIFIED` | 4 |  |
-
-
-
-<a name="resources-centrum-CentrumType"></a>
-
-### CentrumType
+### StatusUnit
 
 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
-| `CENTRUM_TYPE_UNSPECIFIED` | 0 |  |
-| `CENTRUM_TYPE_DISPATCH` | 1 |  |
-| `CENTRUM_TYPE_DELIVERY` | 2 |  |
+| `STATUS_UNIT_UNSPECIFIED` | 0 |  |
+| `STATUS_UNIT_UNKNOWN` | 1 |  |
+| `STATUS_UNIT_USER_ADDED` | 2 |  |
+| `STATUS_UNIT_USER_REMOVED` | 3 |  |
+| `STATUS_UNIT_UNAVAILABLE` | 4 |  |
+| `STATUS_UNIT_AVAILABLE` | 5 |  |
+| `STATUS_UNIT_ON_BREAK` | 6 |  |
+| `STATUS_UNIT_BUSY` | 7 |  |
 
 
  <!-- end enums -->
@@ -2564,6 +2589,37 @@ Wrapped translated message for the client @dbscanner: json
 | ----- | ---- | ----- | ----------- |
 | `key` | [string](#string) |  |  |
 | `value` | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_common_id_mapping-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/common/id_mapping.proto
+
+
+
+<a name="resources-common-IDMapping"></a>
+
+### IDMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
 
 
 
@@ -5576,6 +5632,23 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `owner` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | `job` | [string](#string) | optional |  |
 | `job_label` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-vehicles-VehicleProps"></a>
+
+### VehicleProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `plate` | [string](#string) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `wanted` | [bool](#bool) | optional |  |
 
 
 
@@ -8878,6 +8951,24 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `unit_id` | [uint64](#uint64) | optional |  |
 | `unit` | [resources.centrum.Unit](#resources-centrum-Unit) | optional |  |
 | `hidden` | [bool](#bool) |  |  |
+| `data` | [UserMarkerData](#resources-livemap-UserMarkerData) | optional | @gotags: alias:"data" |
+
+
+
+
+
+
+<a name="resources-livemap-UserMarkerData"></a>
+
+### UserMarkerData
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `is_in_vehicle` | [bool](#bool) |  |  |
+| `vehicle_plate` | [string](#string) | optional |  |
+| `vehicle_updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 
 
 
@@ -9660,7 +9751,8 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `job` | [resources.jobs.Job](#resources-jobs-Job) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
 | `access` | [resources.centrum.CentrumAccessLevel](#resources-centrum-CentrumAccessLevel) |  |  |
 
 
@@ -9968,6 +10060,11 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 ### UpdateDispatchResponse
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatch` | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
 
 
 
@@ -15109,9 +15206,6 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `markers` | [resources.livemap.UserMarker](#resources-livemap-UserMarker) | repeated | All currently-known user markers, already filtered for obsolete PURGE/DELETE events. |
-| `generated_at` | [int64](#int64) |  | When the snapshot was generated (Unix epoch millis). |
-| `snapshot_seq` | [uint64](#uint64) |  | Optional monotonic counter so a client can ignore older roll-ups that arrive out-of-order. |
-| `schema_version` | [uint32](#uint32) |  | Version in case we extend the definition later (e.g. add units). |
 
 
 

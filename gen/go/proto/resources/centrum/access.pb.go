@@ -26,25 +26,28 @@ const (
 type CentrumAccessLevel int32
 
 const (
-	CentrumAccessLevel_ACCESS_LEVEL_UNSPECIFIED CentrumAccessLevel = 0
-	CentrumAccessLevel_ACCESS_LEVEL_VIEW        CentrumAccessLevel = 1
-	CentrumAccessLevel_ACCESS_LEVEL_PARTICIPATE CentrumAccessLevel = 2
-	CentrumAccessLevel_ACCESS_LEVEL_DISPATCH    CentrumAccessLevel = 3
+	CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_UNSPECIFIED CentrumAccessLevel = 0
+	CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_BLOCKED     CentrumAccessLevel = 1
+	CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_VIEW        CentrumAccessLevel = 2
+	CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_PARTICIPATE CentrumAccessLevel = 3
+	CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_DISPATCH    CentrumAccessLevel = 4
 )
 
 // Enum value maps for CentrumAccessLevel.
 var (
 	CentrumAccessLevel_name = map[int32]string{
-		0: "ACCESS_LEVEL_UNSPECIFIED",
-		1: "ACCESS_LEVEL_VIEW",
-		2: "ACCESS_LEVEL_PARTICIPATE",
-		3: "ACCESS_LEVEL_DISPATCH",
+		0: "CENTRUM_ACCESS_LEVEL_UNSPECIFIED",
+		1: "CENTRUM_ACCESS_LEVEL_BLOCKED",
+		2: "CENTRUM_ACCESS_LEVEL_VIEW",
+		3: "CENTRUM_ACCESS_LEVEL_PARTICIPATE",
+		4: "CENTRUM_ACCESS_LEVEL_DISPATCH",
 	}
 	CentrumAccessLevel_value = map[string]int32{
-		"ACCESS_LEVEL_UNSPECIFIED": 0,
-		"ACCESS_LEVEL_VIEW":        1,
-		"ACCESS_LEVEL_PARTICIPATE": 2,
-		"ACCESS_LEVEL_DISPATCH":    3,
+		"CENTRUM_ACCESS_LEVEL_UNSPECIFIED": 0,
+		"CENTRUM_ACCESS_LEVEL_BLOCKED":     1,
+		"CENTRUM_ACCESS_LEVEL_VIEW":        2,
+		"CENTRUM_ACCESS_LEVEL_PARTICIPATE": 3,
+		"CENTRUM_ACCESS_LEVEL_DISPATCH":    4,
 	}
 )
 
@@ -217,7 +220,7 @@ func (x *CentrumJobAccess) GetAccess() CentrumAccessLevel {
 	if x != nil {
 		return x.Access
 	}
-	return CentrumAccessLevel_ACCESS_LEVEL_UNSPECIFIED
+	return CentrumAccessLevel_CENTRUM_ACCESS_LEVEL_UNSPECIFIED
 }
 
 // Dummy - DO NOT USE!
@@ -317,12 +320,13 @@ const file_resources_centrum_access_proto_rawDesc = "" +
 	"_job_labelB\x12\n" +
 	"\x10_job_grade_label\"\x13\n" +
 	"\x11CentrumUserAccess\"\x1c\n" +
-	"\x1aCentrumQualificationAccess*\x82\x01\n" +
-	"\x12CentrumAccessLevel\x12\x1c\n" +
-	"\x18ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12\x15\n" +
-	"\x11ACCESS_LEVEL_VIEW\x10\x01\x12\x1c\n" +
-	"\x18ACCESS_LEVEL_PARTICIPATE\x10\x02\x12\x19\n" +
-	"\x15ACCESS_LEVEL_DISPATCH\x10\x03BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
+	"\x1aCentrumQualificationAccess*\xc4\x01\n" +
+	"\x12CentrumAccessLevel\x12$\n" +
+	" CENTRUM_ACCESS_LEVEL_UNSPECIFIED\x10\x00\x12 \n" +
+	"\x1cCENTRUM_ACCESS_LEVEL_BLOCKED\x10\x01\x12\x1d\n" +
+	"\x19CENTRUM_ACCESS_LEVEL_VIEW\x10\x02\x12$\n" +
+	" CENTRUM_ACCESS_LEVEL_PARTICIPATE\x10\x03\x12!\n" +
+	"\x1dCENTRUM_ACCESS_LEVEL_DISPATCH\x10\x04BMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrumb\x06proto3"
 
 var (
 	file_resources_centrum_access_proto_rawDescOnce sync.Once

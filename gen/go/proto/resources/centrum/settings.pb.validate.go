@@ -548,3 +548,128 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TimingsValidationError{}
+
+// Validate checks the field values on JobList with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JobList) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JobList with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in JobListMultiError, or nil if none found.
+func (m *JobList) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JobList) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetJobs()) > 10 {
+		err := JobListValidationError{
+			field:  "Jobs",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetJobs() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) > 20 {
+			err := JobListValidationError{
+				field:  fmt.Sprintf("Jobs[%v]", idx),
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return JobListMultiError(errors)
+	}
+
+	return nil
+}
+
+// JobListMultiError is an error wrapping multiple validation errors returned
+// by JobList.ValidateAll() if the designated constraints aren't met.
+type JobListMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JobListMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JobListMultiError) AllErrors() []error { return m }
+
+// JobListValidationError is the validation error returned by JobList.Validate
+// if the designated constraints aren't met.
+type JobListValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JobListValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JobListValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JobListValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JobListValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JobListValidationError) ErrorName() string { return "JobListValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JobListValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJobList.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JobListValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JobListValidationError{}

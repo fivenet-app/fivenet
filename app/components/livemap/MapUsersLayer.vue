@@ -67,7 +67,7 @@ onBeforeRouteLeave(async (to) => {
     // Don't end livemap stream if user is switching to livemap/centrum page
     if (to.path.startsWith('/livemap') || to.path === '/centrum') return;
 
-    await stopStream();
+    await stopStream(true);
 });
 
 const playerQueryRaw = ref<string>('');

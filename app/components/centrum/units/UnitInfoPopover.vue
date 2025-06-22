@@ -48,6 +48,8 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
             <div class="inline-flex min-w-48 flex-col gap-1 p-4">
                 <p class="text-base font-semibold leading-none">{{ unit.name }} ({{ unit.initials }})</p>
 
+                <p v-if="unit.jobLabel" class="text-base font-semibold leading-none">({{ unit.jobLabel }})</p>
+
                 <UBadge class="rounded font-semibold" :class="unitStatusColor" size="xs">
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
                 </UBadge>

@@ -7,6 +7,14 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+func (m *JobList) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *PredefinedStatus) Sanitize() error {
 	if m == nil {
 		return nil

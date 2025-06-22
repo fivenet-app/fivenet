@@ -21,13 +21,18 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
 	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
@@ -76,8 +81,13 @@ type Server struct {
 	postals  postals.Postals
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.UserAwareEnricher
+	jobs     *mstlystcdata.Jobs
 
-	state *centrummanager.Manager
+	helpers     *helpers.Helpers
+	settings    *settings.SettingsDB
+	dispatchers *dispatchers.DispatchersDB
+	units       *units.UnitDB
+	dispatches  *dispatches.DispatchDB
 }
 
 type Params struct {
@@ -95,8 +105,14 @@ type Params struct {
 	AppConfig appconfig.IConfig
 	Tracker   tracker.ITracker
 	Postals   postals.Postals
-	Manager   *centrummanager.Manager
 	Enricher  *mstlystcdata.UserAwareEnricher
+	Jobs      *mstlystcdata.Jobs
+
+	Helpers     *helpers.Helpers
+	Settings    *settings.SettingsDB
+	Dispatchers *dispatchers.DispatchersDB
+	Units       *units.UnitDB
+	Dispatches  *dispatches.DispatchDB
 }
 
 type Result struct {
@@ -124,13 +140,48 @@ func NewServer(p Params) (Result, error) {
 		postals:  p.Postals,
 		appCfg:   p.AppConfig,
 		enricher: p.Enricher,
+		jobs:     p.Jobs,
 
-		state: p.Manager,
+		helpers:     p.Helpers,
+		settings:    p.Settings,
+		dispatchers: p.Dispatchers,
+		units:       p.Units,
+		dispatches:  p.Dispatches,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		if _, err := eventscentrum.RegisterStream(ctxStartup, s.js); err != nil {
 			return fmt.Errorf("failed to register stream. %w", err)
+		}
+
+		g, gctx := errgroup.WithContext(ctxStartup)
+		g.Go(func() error {
+			if err := s.settings.LoadFromDB(gctx, ""); err != nil {
+				return fmt.Errorf("failed to load settings from DB. %w", err)
+			}
+			return nil
+		})
+
+		g.Go(func() error {
+			if err := s.dispatchers.LoadFromDB(ctxStartup, ""); err != nil {
+				return fmt.Errorf("failed to load dispatchers from DB. %w", err)
+			}
+			return nil
+		})
+
+		g.Go(func() error {
+			if err := s.units.LoadFromDB(ctxStartup, 0); err != nil {
+				return fmt.Errorf("failed to load units from DB. %w", err)
+			}
+			return nil
+		})
+
+		if err := g.Wait(); err != nil {
+			return fmt.Errorf("failed to load initial data. %w", err)
+		}
+
+		if err := s.dispatches.LoadFromDB(ctxStartup, nil); err != nil {
+			return fmt.Errorf("failed to load dispatches from DB. %w", err)
 		}
 
 		return nil

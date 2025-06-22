@@ -115,25 +115,6 @@ export interface Snapshot {
      * @generated from protobuf field: repeated resources.livemap.UserMarker markers = 1
      */
     markers: UserMarker[];
-    /**
-     * When the snapshot was generated (Unix epoch millis).
-     *
-     * @generated from protobuf field: int64 generated_at = 2
-     */
-    generatedAt: number;
-    /**
-     * Optional monotonic counter so a client can ignore older roll-ups
-     * that arrive out-of-order.
-     *
-     * @generated from protobuf field: uint64 snapshot_seq = 3
-     */
-    snapshotSeq: number;
-    /**
-     * Version in case we extend the definition later (e.g. add units).
-     *
-     * @generated from protobuf field: uint32 schema_version = 4
-     */
-    schemaVersion: number;
 }
 /**
  * @generated from protobuf message services.livemap.UserDelete
@@ -457,18 +438,12 @@ export const MarkerMarkersUpdates = new MarkerMarkersUpdates$Type();
 class Snapshot$Type extends MessageType<Snapshot> {
     constructor() {
         super("services.livemap.Snapshot", [
-            { no: 1, name: "markers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserMarker },
-            { no: 2, name: "generated_at", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "snapshot_seq", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 4, name: "schema_version", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
+            { no: 1, name: "markers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UserMarker }
         ]);
     }
     create(value?: PartialMessage<Snapshot>): Snapshot {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.markers = [];
-        message.generatedAt = 0;
-        message.snapshotSeq = 0;
-        message.schemaVersion = 0;
         if (value !== undefined)
             reflectionMergePartial<Snapshot>(this, message, value);
         return message;
@@ -480,15 +455,6 @@ class Snapshot$Type extends MessageType<Snapshot> {
             switch (fieldNo) {
                 case /* repeated resources.livemap.UserMarker markers */ 1:
                     message.markers.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* int64 generated_at */ 2:
-                    message.generatedAt = reader.int64().toNumber();
-                    break;
-                case /* uint64 snapshot_seq */ 3:
-                    message.snapshotSeq = reader.uint64().toNumber();
-                    break;
-                case /* uint32 schema_version */ 4:
-                    message.schemaVersion = reader.uint32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -505,15 +471,6 @@ class Snapshot$Type extends MessageType<Snapshot> {
         /* repeated resources.livemap.UserMarker markers = 1; */
         for (let i = 0; i < message.markers.length; i++)
             UserMarker.internalBinaryWrite(message.markers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int64 generated_at = 2; */
-        if (message.generatedAt !== 0)
-            writer.tag(2, WireType.Varint).int64(message.generatedAt);
-        /* uint64 snapshot_seq = 3; */
-        if (message.snapshotSeq !== 0)
-            writer.tag(3, WireType.Varint).uint64(message.snapshotSeq);
-        /* uint32 schema_version = 4; */
-        if (message.schemaVersion !== 0)
-            writer.tag(4, WireType.Varint).uint32(message.schemaVersion);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

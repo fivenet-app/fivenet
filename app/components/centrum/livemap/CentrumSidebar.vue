@@ -278,7 +278,7 @@ onBeforeRouteLeave(async (to) => {
     // Don't end centrum stream if user is switching to center or livemap page
     if (to.path.startsWith('/livemap') || to.path === '/centrum') return;
 
-    await stopStream();
+    await stopStream(true);
 });
 
 const attentionSound = useSounds('/sounds/centrum/attention.mp3', { playbackRate: 1.85 });
@@ -412,7 +412,7 @@ defineShortcuts({
                                             <div class="flex flex-1 flex-col items-center">
                                                 <UButton
                                                     v-if="getOwnUnit !== undefined"
-                                                    class="inline-flex flex-col"
+                                                    class="inline-flex flex-col rounded-b-none"
                                                     :class="ownUnitStatus"
                                                     icon="i-mdi-information-outline"
                                                     block
@@ -440,6 +440,7 @@ defineShortcuts({
 
                                                 <UButtonGroup class="w-full" orientation="vertical">
                                                     <UButton
+                                                        :class="getOwnUnit !== undefined ? 'rounded-t-none' : ''"
                                                         variant="soft"
                                                         color="primary"
                                                         size="xs"
@@ -663,7 +664,7 @@ defineShortcuts({
                             </Transition>
 
                             <!-- "Take Dispatches" Button -->
-                            <span v-if="open && getOwnUnit !== undefined" class="fixed bottom-2 right-1/2 z-30 inline-flex">
+                            <span v-if="getOwnUnit !== undefined" class="absolute bottom-2 right-1/2 z-30 inline-flex">
                                 <UChip
                                     :ui="{
                                         base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',

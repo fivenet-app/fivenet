@@ -28,7 +28,7 @@ func (s *Server) AddActivity(ctx context.Context, req *pbsync.AddActivityRequest
 		}
 
 	case *pbsync.AddActivityRequest_Dispatch:
-		if _, err := s.centrum.CreateDispatch(ctx, d.Dispatch); err != nil {
+		if _, err := s.dispatches.Create(ctx, d.Dispatch); err != nil {
 			return nil, fmt.Errorf("failed to create dispatch. %w", err)
 		}
 

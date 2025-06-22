@@ -3908,6 +3908,35 @@ func (m *UpdateDispatchResponse) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetDispatch()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDispatch()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateDispatchResponseValidationError{
+				field:  "Dispatch",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return UpdateDispatchResponseMultiError(errors)
 	}
@@ -6453,33 +6482,15 @@ func (m *JobAccessEntry) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetJob()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, JobAccessEntryValidationError{
-					field:  "Job",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, JobAccessEntryValidationError{
-					field:  "Job",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := JobAccessEntryValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
 		}
-	} else if v, ok := interface{}(m.GetJob()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return JobAccessEntryValidationError{
-				field:  "Job",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
 	}
 
 	if _, ok := centrum.CentrumAccessLevel_name[int32(m.GetAccess())]; !ok {
@@ -6491,6 +6502,10 @@ func (m *JobAccessEntry) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.JobLabel != nil {
+		// no validation rules for JobLabel
 	}
 
 	if len(errors) > 0 {

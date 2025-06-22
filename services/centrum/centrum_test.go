@@ -10,8 +10,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -44,8 +47,11 @@ func TestBasicCentrumFlow(t *testing.T) {
 			natsServer.FxProvide(),
 			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(tracker.NewForTests),
-			centrumstate.StateModule,
-			centrummanager.Module,
+			fx.Provide(helpers.New),
+			fx.Provide(settings.New),
+			fx.Provide(dispatchers.New),
+			fx.Provide(units.New),
+			fx.Provide(dispatches.New),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(func(p Params) (Result, error) {
 				r, err := NewServer(p)

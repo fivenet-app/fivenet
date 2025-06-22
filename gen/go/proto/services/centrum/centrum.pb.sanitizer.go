@@ -262,15 +262,6 @@ func (m *JobAccessEntry) Sanitize() error {
 		return nil
 	}
 
-	// Field: Job
-	if m.Job != nil {
-		if v, ok := any(m.GetJob()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 
@@ -709,6 +700,15 @@ func (m *UpdateDispatchRequest) Sanitize() error {
 func (m *UpdateDispatchResponse) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Dispatch
+	if m.Dispatch != nil {
+		if v, ok := any(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

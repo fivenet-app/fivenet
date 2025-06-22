@@ -11,8 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	grpcserver "github.com/fivenet-app/fivenet/v2025/pkg/grpc"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/fx"
@@ -45,8 +43,6 @@ func TestBasicCentrumFlow(t *testing.T) {
 			natsServer.FxProvide(),
 			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(tracker.NewForTests),
-			centrumstate.StateModule,
-			centrummanager.Module,
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {
 				srv = NewServer(p)

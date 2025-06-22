@@ -8,6 +8,7 @@ package vehicles
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
+	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -123,11 +124,71 @@ func (x *Vehicle) GetJobLabel() string {
 	return ""
 }
 
+type VehicleProps struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Plate         string                 `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty"`
+	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Wanted        *bool                  `protobuf:"varint,3,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *VehicleProps) Reset() {
+	*x = VehicleProps{}
+	mi := &file_resources_vehicles_vehicles_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *VehicleProps) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*VehicleProps) ProtoMessage() {}
+
+func (x *VehicleProps) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_vehicles_vehicles_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use VehicleProps.ProtoReflect.Descriptor instead.
+func (*VehicleProps) Descriptor() ([]byte, []int) {
+	return file_resources_vehicles_vehicles_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *VehicleProps) GetPlate() string {
+	if x != nil {
+		return x.Plate
+	}
+	return ""
+}
+
+func (x *VehicleProps) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *VehicleProps) GetWanted() bool {
+	if x != nil && x.Wanted != nil {
+		return *x.Wanted
+	}
+	return false
+}
+
 var File_resources_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
-	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x90\x03\n" +
+	"!resources/vehicles/vehicles.proto\x12\x12resources.vehicles\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x90\x03\n" +
 	"\aVehicle\x12\x1d\n" +
 	"\x05plate\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18 R\x05plate\x12\"\n" +
 	"\x05model\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18@H\x00R\x05model\x88\x01\x01\x12\x1b\n" +
@@ -143,7 +204,14 @@ const file_resources_vehicles_vehicles_proto_rawDesc = "" +
 	"\x06_ownerB\x06\n" +
 	"\x04_jobB\f\n" +
 	"\n" +
-	"_job_labelBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
+	"_job_label\"\xa8\x01\n" +
+	"\fVehicleProps\x12\x1d\n" +
+	"\x05plate\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18 R\x05plate\x12B\n" +
+	"\n" +
+	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
+	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01B\r\n" +
+	"\v_updated_atB\t\n" +
+	"\a_wantedBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehiclesb\x06proto3"
 
 var (
 	file_resources_vehicles_vehicles_proto_rawDescOnce sync.Once
@@ -157,18 +225,21 @@ func file_resources_vehicles_vehicles_proto_rawDescGZIP() []byte {
 	return file_resources_vehicles_vehicles_proto_rawDescData
 }
 
-var file_resources_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_resources_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_vehicles_vehicles_proto_goTypes = []any{
-	(*Vehicle)(nil),         // 0: resources.vehicles.Vehicle
-	(*users.UserShort)(nil), // 1: resources.users.UserShort
+	(*Vehicle)(nil),             // 0: resources.vehicles.Vehicle
+	(*VehicleProps)(nil),        // 1: resources.vehicles.VehicleProps
+	(*users.UserShort)(nil),     // 2: resources.users.UserShort
+	(*timestamp.Timestamp)(nil), // 3: resources.timestamp.Timestamp
 }
 var file_resources_vehicles_vehicles_proto_depIdxs = []int32{
-	1, // 0: resources.vehicles.Vehicle.owner:type_name -> resources.users.UserShort
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 0: resources.vehicles.Vehicle.owner:type_name -> resources.users.UserShort
+	3, // 1: resources.vehicles.VehicleProps.updated_at:type_name -> resources.timestamp.Timestamp
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_resources_vehicles_vehicles_proto_init() }
@@ -177,13 +248,14 @@ func file_resources_vehicles_vehicles_proto_init() {
 		return
 	}
 	file_resources_vehicles_vehicles_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_vehicles_vehicles_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_vehicles_vehicles_proto_rawDesc), len(file_resources_vehicles_vehicles_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

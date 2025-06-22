@@ -1,12 +1,9 @@
 package livemap
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"slices"
 	"strings"
 	"time"
 
@@ -21,7 +18,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorslivemap "github.com/fivenet-app/fivenet/v2025/services/livemap/errors"
-	"github.com/klauspost/compress/zstd"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
@@ -118,31 +114,15 @@ func buildFilters(jobs *permissions.JobGradeList) []string {
 	return f
 }
 
-func (s *Server) sendUserMarkers(srv pblivemap.LivemapService_StreamServer, ctx context.Context, usersJobs *permissions.JobGradeList, userInfo *userinfo.UserInfo) error {
-	// Fetch latest snapshot (may be nil on a cold cluster)
-	markers, snapTS, err := s.fetchSnapshot(ctx)
-	if err != nil {
-		return err
-	}
-
-	// Apply ACL from the request
-	markers = tracker.FilterMarkers(markers, usersJobs, userInfo)
-	markers = slices.DeleteFunc(markers, func(v *livemap.UserMarker) bool {
-		// Ensure that all users from the snapshot are still on duty
-		if um, ok := s.tracker.GetUserMarkerById(v.UserId); !ok || um.Hidden {
-			// If the user is not on duty or hidden, remove the marker
-			return true
-		}
-
-		return false
-	})
+func (s *Server) sendUserMarkers(srv pblivemap.LivemapService_StreamServer, usersJobs *permissions.JobGradeList, userInfo *userinfo.UserInfo) error {
+	// Get user markers
+	markers := s.tracker.GetFilteredUserMarkers(usersJobs, userInfo)
 
 	// Send initial payload
 	if err := srv.Send(&pblivemap.StreamResponse{
 		Data: &pblivemap.StreamResponse_Snapshot{
 			Snapshot: &pblivemap.Snapshot{
-				Markers:     markers,
-				GeneratedAt: snapTS,
+				Markers: markers,
 			},
 		},
 	}); err != nil {
@@ -169,7 +149,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 	}
 
 	if userOnDuty {
-		if err := s.sendUserMarkers(srv, ctx, usersJobs, userInfo); err != nil {
+		if err := s.sendUserMarkers(srv, usersJobs, userInfo); err != nil {
 			return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 		}
 	} else {
@@ -207,6 +187,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 		}
 	})
 
+	// Marker updates goroutine – listens for marker updates and sends them to outCh
 	g.Go(func() error {
 		markerUpdateCh := s.broker.Subscribe()
 		defer s.broker.Unsubscribe(markerUpdateCh)
@@ -251,6 +232,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 		}
 	})
 
+	// User markers goroutine – listens for user marker updates and sends them to outCh
 	g.Go(func() error {
 		// Upsert pull consumer with multi-filter
 		consCfg := jetstream.ConsumerConfig{
@@ -278,6 +260,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 			for m := range batch.Messages() {
 				op := m.Headers().Get("KV-Operation")
 				m.Ack()
+
 				if op == "DEL" || op == "PURGE" {
 					// Ignore delete and purge operations when not on duty
 					if !userOnDuty {
@@ -285,7 +268,6 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 					}
 
 					key := strings.TrimPrefix(m.Subject(), "$KV."+tracker.BucketUserLoc+".")
-
 					userId, job, jobGrade, err := tracker.DecodeUserMarkerKey(key)
 					if err != nil {
 						return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
@@ -345,7 +327,7 @@ func (s *Server) Stream(req *pblivemap.StreamRequest, srv pblivemap.LivemapServi
 					if um.UserId == userInfo.UserId {
 						userOnDuty = true
 						// If the user is (back) on duty, we send the user markers snapshot
-						if err := s.sendUserMarkers(srv, gctx, usersJobs, userInfo); err != nil {
+						if err := s.sendUserMarkers(srv, usersJobs, userInfo); err != nil {
 							return errswrap.NewError(err, errorslivemap.ErrStreamFailed)
 						}
 					} else {
@@ -463,38 +445,4 @@ func (s *Server) sendMarkerMarkers(srv pblivemap.LivemapService_StreamServer, jo
 	}
 
 	return false, nil
-}
-
-func (s *Server) fetchSnapshot(ctx context.Context) ([]*livemap.UserMarker, int64, error) {
-	stream, err := s.js.Stream(ctx, "KV_"+tracker.BucketUserLoc)
-	if err != nil {
-		return nil, 0, err
-	}
-
-	msg, err := stream.GetLastMsgForSubject(ctx, "$KV."+tracker.BucketUserLoc+"._snapshot")
-	if err != nil {
-		if !errors.Is(err, jetstream.ErrMsgNotFound) {
-			return nil, 0, err
-		}
-	}
-	if msg == nil {
-		return nil, 0, nil
-	}
-
-	zr, err := zstd.NewReader(bytes.NewReader(msg.Data))
-	if err != nil {
-		return nil, 0, err
-	}
-	buf, err := io.ReadAll(zr)
-	if err != nil {
-		return nil, 0, err
-	}
-	zr.Close()
-
-	snap := &pblivemap.Snapshot{}
-	if err := proto.Unmarshal(buf, snap); err != nil {
-		return nil, 0, err
-	}
-
-	return snap.Markers, snap.GeneratedAt, nil
 }

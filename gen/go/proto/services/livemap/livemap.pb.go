@@ -328,14 +328,7 @@ type Snapshot struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// All currently-known user markers, already filtered for
 	// obsolete PURGE/DELETE events.
-	Markers []*livemap.UserMarker `protobuf:"bytes,1,rep,name=markers,proto3" json:"markers,omitempty"`
-	// When the snapshot was generated (Unix epoch millis).
-	GeneratedAt int64 `protobuf:"varint,2,opt,name=generated_at,json=generatedAt,proto3" json:"generated_at,omitempty"`
-	// Optional monotonic counter so a client can ignore older roll-ups
-	// that arrive out-of-order.
-	SnapshotSeq uint64 `protobuf:"varint,3,opt,name=snapshot_seq,json=snapshotSeq,proto3" json:"snapshot_seq,omitempty"`
-	// Version in case we extend the definition later (e.g. add units).
-	SchemaVersion uint32 `protobuf:"varint,4,opt,name=schema_version,json=schemaVersion,proto3" json:"schema_version,omitempty"`
+	Markers       []*livemap.UserMarker `protobuf:"bytes,1,rep,name=markers,proto3" json:"markers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -375,27 +368,6 @@ func (x *Snapshot) GetMarkers() []*livemap.UserMarker {
 		return x.Markers
 	}
 	return nil
-}
-
-func (x *Snapshot) GetGeneratedAt() int64 {
-	if x != nil {
-		return x.GeneratedAt
-	}
-	return 0
-}
-
-func (x *Snapshot) GetSnapshotSeq() uint64 {
-	if x != nil {
-		return x.SnapshotSeq
-	}
-	return 0
-}
-
-func (x *Snapshot) GetSchemaVersion() uint32 {
-	if x != nil {
-		return x.SchemaVersion
-	}
-	return 0
 }
 
 type UserDelete struct {
@@ -645,12 +617,9 @@ const file_services_livemap_livemap_proto_rawDesc = "" +
 	"\aupdated\x18\x01 \x03(\v2\x1f.resources.livemap.MarkerMarkerR\aupdated\x12\x18\n" +
 	"\adeleted\x18\x02 \x03(\x04R\adeleted\x12\x12\n" +
 	"\x04part\x18\x03 \x01(\x05R\x04part\x12\x18\n" +
-	"\apartial\x18\x04 \x01(\bR\apartial\"\xb0\x01\n" +
+	"\apartial\x18\x04 \x01(\bR\apartial\"C\n" +
 	"\bSnapshot\x127\n" +
-	"\amarkers\x18\x01 \x03(\v2\x1d.resources.livemap.UserMarkerR\amarkers\x12!\n" +
-	"\fgenerated_at\x18\x02 \x01(\x03R\vgeneratedAt\x12!\n" +
-	"\fsnapshot_seq\x18\x03 \x01(\x04R\vsnapshotSeq\x12%\n" +
-	"\x0eschema_version\x18\x04 \x01(\rR\rschemaVersion\".\n" +
+	"\amarkers\x18\x01 \x03(\v2\x1d.resources.livemap.UserMarkerR\amarkers\".\n" +
 	"\n" +
 	"UserDelete\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x10\n" +

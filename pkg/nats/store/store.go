@@ -42,10 +42,10 @@ type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
 
 	Has(key string) bool
 	Keys(prefix string) []string
-	KeysFiltered(prefix string, filter func(string) bool) []string
+	KeysFiltered(prefix string, filter func(key string) bool) []string
 
 	List() []U
-	ListFiltered(prefix string, filter func(string) bool) []U
+	ListFiltered(prefix string, filter func(key string, val U) bool) []U
 	Range(fn func(key string, value U) bool)
 	Count() int
 
@@ -87,13 +87,13 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 type Option[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U])
 
 // OnUpdateFn is a callback for update events.
-type OnUpdateFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U], value U) (U, error)
+type OnUpdateFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(ctx context.Context, s *Store[T, U], value U) (U, error)
 
 // OnDeleteFn is a callback for delete events.
-type OnDeleteFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U], key string, value U) error
+type OnDeleteFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(ctx context.Context, s *Store[T, U], key string, value U) error
 
 // OnCreatedFn is a callback for create events.
-type OnCreatedFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U], key string, value U) error
+type OnCreatedFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(ctx context.Context, s *Store[T, U], key string, value U) error
 
 // mutexCompute returns a new mutex for use in the per-key mutex map.
 func mutexCompute() (*sync.Mutex, bool) {
@@ -202,7 +202,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 					s.handleWatcherDelete(key, entry)
 
 				case jetstream.KeyValuePut:
-					s.handleWatcherPut(key, entry)
+					s.handleWatcherPut(ctx, key, entry)
 				}
 			}
 		}
@@ -239,12 +239,12 @@ func (s *Store[T, U]) handleWatcherDelete(key string, _ jetstream.KeyValueEntry)
 	// Do NOT trigger onDelete hook — watcher = remote change
 }
 
-func (s *Store[T, U]) handleWatcherPut(key string, entry jetstream.KeyValueEntry) {
+func (s *Store[T, U]) handleWatcherPut(ctx context.Context, key string, entry jetstream.KeyValueEntry) {
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
 
-	if _, err := s.update(entry, false); err != nil {
+	if _, err := s.update(ctx, entry, false); err != nil {
 		s.logger.Error("failed to apply update from watcher", zap.String("key", key), zap.Error(err))
 	}
 }
@@ -359,10 +359,10 @@ func (s *Store[T, U]) load(ctx context.Context, key string) (U, error) {
 		return nil, err
 	}
 
-	return s.update(entry, true)
+	return s.update(ctx, entry, true)
 }
 
-func (s *Store[T, U]) update(entry jetstream.KeyValueEntry, triggerHook bool) (U, error) {
+func (s *Store[T, U]) update(ctx context.Context, entry jetstream.KeyValueEntry, triggerHook bool) (U, error) {
 	data := U(new(T))
 	if err := proto.Unmarshal(entry.Value(), data); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal store watcher update. %w", err)
@@ -371,7 +371,7 @@ func (s *Store[T, U]) update(entry jetstream.KeyValueEntry, triggerHook bool) (U
 	var err error
 	item := s.updateFromType(entry.Key(), data, triggerHook)
 	if triggerHook && s.onUpdate != nil {
-		item, err = s.onUpdate(s, item)
+		item, err = s.onUpdate(ctx, s, item)
 	}
 
 	return proto.Clone(item).(U), err
@@ -489,7 +489,7 @@ func (s *Store[T, U]) List() []U {
 	return list
 }
 
-func (s *Store[T, U]) ListFiltered(prefix string, filter func(string) bool) []U {
+func (s *Store[T, U]) ListFiltered(prefix string, filter func(key string, val U) bool) []U {
 	// Prepare the full internal prefix
 	full := s.prefix
 	if prefix != "" {
@@ -513,7 +513,7 @@ func (s *Store[T, U]) ListFiltered(prefix string, filter func(string) bool) []U 
 			return true
 		}
 
-		if filter(userKey) {
+		if filter == nil || filter(userKey, val) {
 			list = append(list, val)
 		}
 		return true
@@ -598,12 +598,12 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 	item := s.updateFromType(key, msg, true)
 	// revision == 1 means brand new key created
 	if rev == 1 && s.onCreated != nil {
-		if err := s.onCreated(s, key, item); err != nil {
+		if err := s.onCreated(ctx, s, key, item); err != nil {
 			s.logger.Error("onCreated hook failed", zap.String("key", key), zap.Error(err))
 		}
 	} else {
 		if s.onUpdate != nil {
-			if _, err := s.onUpdate(s, item); err != nil {
+			if _, err := s.onUpdate(ctx, s, item); err != nil {
 				s.logger.Error("onUpdate hook failed", zap.String("key", key), zap.Error(err))
 			}
 		}
@@ -692,7 +692,7 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 	s.mu.Delete(key)
 
 	if s.onDelete != nil {
-		if err := s.onDelete(s, key, item); err != nil {
+		if err := s.onDelete(ctx, s, key, item); err != nil {
 			s.logger.Error("onDelete hook failed", zap.String("key", key), zap.Error(err))
 		}
 	}

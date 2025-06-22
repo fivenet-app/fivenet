@@ -41,7 +41,9 @@ async function createDispatch(values: Schema): Promise<void> {
             dispatch: {
                 id: 0,
                 job: '',
-                jobs: [],
+                jobs: {
+                    jobs: [],
+                },
                 message: values.message,
                 description: values.description,
                 anon: values.anon,

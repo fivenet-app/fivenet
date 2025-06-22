@@ -73,6 +73,29 @@ export interface UserMarker {
      * @generated from protobuf field: bool hidden = 12
      */
     hidden: boolean;
+    /**
+     * @generated from protobuf field: optional resources.livemap.UserMarkerData data = 14
+     */
+    data?: UserMarkerData; // @gotags: alias:"data"
+}
+/**
+ * @dbscanner: json
+ *
+ * @generated from protobuf message resources.livemap.UserMarkerData
+ */
+export interface UserMarkerData {
+    /**
+     * @generated from protobuf field: bool is_in_vehicle = 1
+     */
+    isInVehicle: boolean;
+    /**
+     * @generated from protobuf field: optional string vehicle_plate = 2
+     */
+    vehiclePlate?: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp vehicle_updated_at = 3
+     */
+    vehicleUpdatedAt?: Timestamp;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserMarker$Type extends MessageType<UserMarker> {
@@ -90,7 +113,8 @@ class UserMarker$Type extends MessageType<UserMarker> {
             { no: 9, name: "user", kind: "message", T: () => Colleague },
             { no: 10, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 11, name: "unit", kind: "message", T: () => Unit },
-            { no: 12, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 12, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "data", kind: "message", T: () => UserMarkerData }
         ]);
     }
     create(value?: PartialMessage<UserMarker>): UserMarker {
@@ -149,6 +173,9 @@ class UserMarker$Type extends MessageType<UserMarker> {
                 case /* bool hidden */ 12:
                     message.hidden = reader.bool();
                     break;
+                case /* optional resources.livemap.UserMarkerData data */ 14:
+                    message.data = UserMarkerData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -200,6 +227,9 @@ class UserMarker$Type extends MessageType<UserMarker> {
         /* optional int32 job_grade = 13; */
         if (message.jobGrade !== undefined)
             writer.tag(13, WireType.Varint).int32(message.jobGrade);
+        /* optional resources.livemap.UserMarkerData data = 14; */
+        if (message.data)
+            UserMarkerData.internalBinaryWrite(message.data, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -210,3 +240,64 @@ class UserMarker$Type extends MessageType<UserMarker> {
  * @generated MessageType for protobuf message resources.livemap.UserMarker
  */
 export const UserMarker = new UserMarker$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserMarkerData$Type extends MessageType<UserMarkerData> {
+    constructor() {
+        super("resources.livemap.UserMarkerData", [
+            { no: 1, name: "is_in_vehicle", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "vehicle_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
+            { no: 3, name: "vehicle_updated_at", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<UserMarkerData>): UserMarkerData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.isInVehicle = false;
+        if (value !== undefined)
+            reflectionMergePartial<UserMarkerData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserMarkerData): UserMarkerData {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool is_in_vehicle */ 1:
+                    message.isInVehicle = reader.bool();
+                    break;
+                case /* optional string vehicle_plate */ 2:
+                    message.vehiclePlate = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp vehicle_updated_at */ 3:
+                    message.vehicleUpdatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.vehicleUpdatedAt);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserMarkerData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool is_in_vehicle = 1; */
+        if (message.isInVehicle !== false)
+            writer.tag(1, WireType.Varint).bool(message.isInVehicle);
+        /* optional string vehicle_plate = 2; */
+        if (message.vehiclePlate !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.vehiclePlate);
+        /* optional resources.timestamp.Timestamp vehicle_updated_at = 3; */
+        if (message.vehicleUpdatedAt)
+            Timestamp.internalBinaryWrite(message.vehicleUpdatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.livemap.UserMarkerData
+ */
+export const UserMarkerData = new UserMarkerData$Type();

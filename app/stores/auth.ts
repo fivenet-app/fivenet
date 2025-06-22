@@ -90,6 +90,7 @@ export const useAuthStore = defineStore(
         };
 
         const clearAuthInfo = (): void => {
+            logger.info('Clearing auth info');
             username.value = null;
             setActiveChar(null);
             setAccessTokenExpiration(null);
@@ -272,9 +273,11 @@ export const useAuthStore = defineStore(
             // Connect to the WebSocket if the user is logged in
             if (val !== null && val !== '') {
                 if (webSocket.status.value !== 'OPEN' && webSocket.status.value !== 'CONNECTING') {
+                    logger.info('Username set, opening WebSocket connection, status:', webSocket.status.value);
                     webSocket.open();
                 }
             } else {
+                logger.info('Username cleared, closing WebSocket connection, status:', webSocket.status.value);
                 webSocket.close();
             }
         });

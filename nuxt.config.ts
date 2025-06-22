@@ -172,6 +172,7 @@ export default defineNuxtConfig({
                     target: 'http://127.0.0.1:8080',
                     changeOrigin: true,
                     configure: (proxy, options) => {
+                        // changeOrigin doesn't work "correctly"
                         proxy.on('proxyReq', (_, req) => {
                             req.headers.origin =
                                 typeof options.target === 'string'
@@ -187,6 +188,7 @@ export default defineNuxtConfig({
                     timeout: 60 * 60 * 1000,
                     changeOrigin: true,
                     configure: (proxy, options) => {
+                        // changeOrigin doesn't work "correctly"
                         proxy.on('proxyReq', (_, req) => {
                             req.headers.origin =
                                 typeof options.target === 'string'
@@ -199,6 +201,7 @@ export default defineNuxtConfig({
                     target: 'http://127.0.0.1:8080',
                     changeOrigin: true,
                     configure: (proxy, options) => {
+                        // changeOrigin doesn't work "correctly"
                         proxy.on('proxyReq', (_, req) => {
                             req.headers.origin =
                                 typeof options.target === 'string'

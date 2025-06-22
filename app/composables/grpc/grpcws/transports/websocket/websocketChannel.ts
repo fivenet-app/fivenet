@@ -13,7 +13,7 @@ export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSock
     const wsChannel = new WebsocketChannelImpl(logger, webSocket);
 
     return (opts: TransportOptions) => {
-        opts.debug && logger.debug('Websocket factory triggered');
+        opts.debug && logger.debug('Websocket factory triggered, status:', webSocket.status.value);
         if (webSocket.status.value === 'CLOSED') {
             webSocket.open();
         }

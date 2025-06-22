@@ -12,7 +12,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { CentrumAccessLevel } from "../../resources/centrum/access";
-import { Job } from "../../resources/jobs/jobs";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
 import { DispatchStatus } from "../../resources/centrum/dispatches";
@@ -342,6 +341,10 @@ export interface UpdateDispatchRequest {
  * @generated from protobuf message services.centrum.UpdateDispatchResponse
  */
 export interface UpdateDispatchResponse {
+    /**
+     * @generated from protobuf field: resources.centrum.Dispatch dispatch = 1
+     */
+    dispatch?: Dispatch;
 }
 /**
  * @generated from protobuf message services.centrum.DeleteDispatchRequest
@@ -604,11 +607,15 @@ export interface JobAccess {
  */
 export interface JobAccessEntry {
     /**
-     * @generated from protobuf field: resources.jobs.Job job = 1
+     * @generated from protobuf field: string job = 1
      */
-    job?: Job;
+    job: string;
     /**
-     * @generated from protobuf field: resources.centrum.CentrumAccessLevel access = 2
+     * @generated from protobuf field: optional string job_label = 2
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: resources.centrum.CentrumAccessLevel access = 3
      */
     access: CentrumAccessLevel;
 }
@@ -2130,7 +2137,9 @@ export const UpdateDispatchRequest = new UpdateDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
     constructor() {
-        super("services.centrum.UpdateDispatchResponse", []);
+        super("services.centrum.UpdateDispatchResponse", [
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
+        ]);
     }
     create(value?: PartialMessage<UpdateDispatchResponse>): UpdateDispatchResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -2143,6 +2152,9 @@ class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* resources.centrum.Dispatch dispatch */ 1:
+                    message.dispatch = Dispatch.internalBinaryRead(reader, reader.uint32(), options, message.dispatch);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2155,6 +2167,9 @@ class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
         return message;
     }
     internalBinaryWrite(message: UpdateDispatchResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.centrum.Dispatch dispatch = 1; */
+        if (message.dispatch)
+            Dispatch.internalBinaryWrite(message.dispatch, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -3103,12 +3118,14 @@ export const JobAccess = new JobAccess$Type();
 class JobAccessEntry$Type extends MessageType<JobAccessEntry> {
     constructor() {
         super("services.centrum.JobAccessEntry", [
-            { no: 1, name: "job", kind: "message", T: () => Job },
-            { no: 2, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 2, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel, "CENTRUM_ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<JobAccessEntry>): JobAccessEntry {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.job = "";
         message.access = 0;
         if (value !== undefined)
             reflectionMergePartial<JobAccessEntry>(this, message, value);
@@ -3119,10 +3136,13 @@ class JobAccessEntry$Type extends MessageType<JobAccessEntry> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.jobs.Job job */ 1:
-                    message.job = Job.internalBinaryRead(reader, reader.uint32(), options, message.job);
+                case /* string job */ 1:
+                    message.job = reader.string();
                     break;
-                case /* resources.centrum.CentrumAccessLevel access */ 2:
+                case /* optional string job_label */ 2:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* resources.centrum.CentrumAccessLevel access */ 3:
                     message.access = reader.int32();
                     break;
                 default:
@@ -3137,12 +3157,15 @@ class JobAccessEntry$Type extends MessageType<JobAccessEntry> {
         return message;
     }
     internalBinaryWrite(message: JobAccessEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.Job job = 1; */
-        if (message.job)
-            Job.internalBinaryWrite(message.job, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.centrum.CentrumAccessLevel access = 2; */
+        /* string job = 1; */
+        if (message.job !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        /* optional string job_label = 2; */
+        if (message.jobLabel !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.jobLabel);
+        /* resources.centrum.CentrumAccessLevel access = 3; */
         if (message.access !== 0)
-            writer.tag(2, WireType.Varint).int32(message.access);
+            writer.tag(3, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -8,10 +8,10 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/v2025/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server"
-	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2025/pkg/tracker/manager"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
+	centrumbot "github.com/fivenet-app/fivenet/v2025/services/centrum/bot"
+	centrumhousekeeper "github.com/fivenet-app/fivenet/v2025/services/centrum/housekeeper"
 	pbdocuments "github.com/fivenet-app/fivenet/v2025/services/documents"
 	pbjobs "github.com/fivenet-app/fivenet/v2025/services/jobs"
 	"go.uber.org/fx"
@@ -53,13 +53,13 @@ func FxHousekeeperOpts() []fx.Option {
 func FxCentrumOpts() []fx.Option {
 	return []fx.Option{
 		fx.Invoke(func(*centrumbot.Manager) {}),
-		fx.Invoke(func(*centrummanager.Housekeeper) {}),
+		fx.Invoke(func(*centrumhousekeeper.Housekeeper) {}),
 	}
 }
 
 func FxTrackerOpts() []fx.Option {
 	return []fx.Option{
-		fx.Invoke(func(*tracker.Manager) {}),
+		fx.Invoke(func(*manager.Manager) {}),
 	}
 }
 

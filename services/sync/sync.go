@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -26,7 +26,7 @@ type Server struct {
 	auth *auth.GRPCAuth
 	cfg  *config.Config
 
-	centrum *centrummanager.Manager
+	dispatches *dispatches.DispatchDB
 
 	esxCompat bool
 	tokens    []string
@@ -37,12 +37,12 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger  *zap.Logger
-	DB      *sql.DB
-	JS      *events.JSWrapper
-	Auth    *auth.GRPCAuth
-	Config  *config.Config
-	Centrum *centrummanager.Manager
+	Logger     *zap.Logger
+	DB         *sql.DB
+	JS         *events.JSWrapper
+	Auth       *auth.GRPCAuth
+	Config     *config.Config
+	DispatchDB *dispatches.DispatchDB
 }
 
 func NewServer(p Params) *Server {
@@ -53,7 +53,7 @@ func NewServer(p Params) *Server {
 		auth:   p.Auth,
 		cfg:    p.Config,
 
-		centrum: p.Centrum,
+		dispatches: p.DispatchDB,
 
 		esxCompat: p.Config.Database.ESXCompat,
 		tokens:    p.Config.Sync.APITokens,

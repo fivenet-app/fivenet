@@ -316,6 +316,7 @@ const expand = ref({
     <UTable
         v-else
         v-model:expand="expand"
+        class="flex-1"
         :loading="loading"
         :columns="columns"
         :rows="data?.logs"
@@ -323,6 +324,7 @@ const expand = ref({
             icon: 'i-mdi-math-log',
             label: $t('common.not_found', [$t('common.entry', 2)]),
         }"
+        sort-mode="manual"
     >
         <template #actions-data="{ row }">
             <UTooltip :text="$t('components.clipboard.clipboard_button.add')">

@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.centrum;
 
 import "resources/centrum/attributes.proto";
+import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
@@ -16,7 +17,7 @@ message Dispatch {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
-  repeated string jobs = 18 [(validate.rules).repeated.max_items = 10];
+  resources.centrum.JobList jobs = 18;
   optional DispatchStatus status = 5;
   // @sanitize
   string message = 7 [(validate.rules).string.max_len = 255];
@@ -83,6 +84,7 @@ message DispatchStatus {
   optional double y = 12;
   // @sanitize
   optional string postal = 13 [(validate.rules).string.max_len = 48];
+  optional string creator_job = 14 [(validate.rules).string.max_len = 20];
 }
 
 enum TakeDispatchResp {

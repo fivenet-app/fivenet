@@ -8,7 +8,6 @@ import "resources/centrum/dispatches.proto";
 import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
 import "resources/common/database/database.proto";
-import "resources/jobs/jobs.proto";
 import "resources/livemap/heatmap.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
@@ -145,7 +144,9 @@ message UpdateDispatchRequest {
   resources.centrum.Dispatch dispatch = 1 [(validate.rules).message.required = true];
 }
 
-message UpdateDispatchResponse {}
+message UpdateDispatchResponse {
+  resources.centrum.Dispatch dispatch = 1;
+}
 
 message DeleteDispatchRequest {
   uint64 id = 1 [(validate.rules).uint64.gt = 0];
@@ -237,8 +238,9 @@ message JobAccess {
 }
 
 message JobAccessEntry {
-  resources.jobs.Job job = 1;
-  resources.centrum.CentrumAccessLevel access = 2 [(validate.rules).enum.defined_only = true];
+  string job = 1 [(validate.rules).string.max_len = 20];
+  optional string job_label = 2;
+  resources.centrum.CentrumAccessLevel access = 3 [(validate.rules).enum.defined_only = true];
 }
 
 message Dispatchers {

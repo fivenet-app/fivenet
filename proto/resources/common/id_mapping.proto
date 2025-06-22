@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package resources.common;
+
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common;common";
+
+message IDMapping {
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+}

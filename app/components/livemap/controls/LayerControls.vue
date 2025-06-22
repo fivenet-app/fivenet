@@ -24,7 +24,7 @@ const groupedLayers = computed(() => {
     Object.keys(reduced).forEach((key) => reduced[key]?.sort((a, b) => a.label.localeCompare(b.label)));
 
     // Reduce object to array and sort the categories by their order
-    return Object.keys(reduced)
+    const out = Object.keys(reduced)
         .map((key) => ({
             category: livemapLayerCategories.value.find((c) => c.key === key),
             layers: reduced[key]!,
@@ -35,6 +35,18 @@ const groupedLayers = computed(() => {
             }
             return 0;
         });
+
+    out.forEach((category) => {
+        // Sort the layers within each category by their order
+        category.layers.sort((a, b) => {
+            if (a.order !== undefined && b.order !== undefined) {
+                return a.order - b.order;
+            }
+            return 0;
+        });
+    });
+
+    return out;
 });
 </script>
 

@@ -30,4 +30,13 @@ message UserMarker {
   optional resources.centrum.Unit unit = 11;
 
   bool hidden = 12;
+
+  optional UserMarkerData data = 14; // @gotags: alias:"data"
+}
+
+// @dbscanner: json
+message UserMarkerData {
+  bool is_in_vehicle = 1;
+  optional string vehicle_plate = 2 [(validate.rules).string.max_len = 32];
+  optional resources.timestamp.Timestamp vehicle_updated_at = 3;
 }

@@ -78,21 +78,25 @@ export interface CentrumQualificationAccess {
  */
 export enum CentrumAccessLevel {
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UNSPECIFIED = 0;
+     * @generated from protobuf enum value: CENTRUM_ACCESS_LEVEL_UNSPECIFIED = 0;
      */
-    ACCESS_LEVEL_UNSPECIFIED = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 1;
+     * @generated from protobuf enum value: CENTRUM_ACCESS_LEVEL_BLOCKED = 1;
      */
-    ACCESS_LEVEL_VIEW = 1,
+    BLOCKED = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_PARTICIPATE = 2;
+     * @generated from protobuf enum value: CENTRUM_ACCESS_LEVEL_VIEW = 2;
      */
-    ACCESS_LEVEL_PARTICIPATE = 2,
+    VIEW = 2,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_DISPATCH = 3;
+     * @generated from protobuf enum value: CENTRUM_ACCESS_LEVEL_PARTICIPATE = 3;
      */
-    ACCESS_LEVEL_DISPATCH = 3
+    PARTICIPATE = 3,
+    /**
+     * @generated from protobuf enum value: CENTRUM_ACCESS_LEVEL_DISPATCH = 4;
+     */
+    DISPATCH = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class CentrumAccess$Type extends MessageType<CentrumAccess> {
@@ -152,7 +156,7 @@ class CentrumJobAccess$Type extends MessageType<CentrumJobAccess> {
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.centrum.CentrumAccessLevel", CentrumAccessLevel, "CENTRUM_ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<CentrumJobAccess>): CentrumJobAccess {

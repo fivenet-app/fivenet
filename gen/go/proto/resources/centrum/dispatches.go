@@ -26,9 +26,7 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		x.UpdatedAt = in.UpdatedAt
 	}
 
-	if x.Job != in.Job {
-		x.Job = in.Job
-	}
+	x.Jobs = in.Jobs
 
 	if in.Status != nil {
 		// Only update status if it is newer (higher ID)

@@ -4,33 +4,34 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"time"
 )
 
 const (
 	BucketUserLoc         = "user_locations" // JOB.GRADE.USER_ID → UserMarker
 	BucketUserMappingsMap = "user_mappings"  // USER_ID           → UserMapping
 	BucketUserLocByID     = "userloc_by_id"  // USER_ID           → UserMapping (no Job/Grade)
-
-	SnapshotSubject = "$KV." + BucketUserLoc + "._snapshot"
-
-	defaultSnapEvery = 30 * time.Second
 )
 
-// ExtractUserID takes a key like "police.3.123"  ➜  123
-func ExtractUserID(key string) (int32, error) {
-	idx := strings.LastIndexByte(key, '.')
-	if idx < 0 || idx+1 >= len(key) {
-		return 0, fmt.Errorf("key %q does not contain a numeric suffix", key)
-	}
-
-	id, err := strconv.ParseInt(key[idx+1:], 10, 32)
-	if err != nil {
-		return 0, fmt.Errorf("key %q does not contain a valid numeric suffix. %w", key, err)
-	}
-	return int32(id), nil
+func UserIdKey(id int32) string {
+	return strconv.FormatInt(int64(id), 10)
 }
 
-func userIdKey(id int32) string {
-	return strconv.FormatInt(int64(id), 10)
+func DecodeUserMarkerKey(key string) (int32, string, int32, error) {
+	parts := strings.Split(key, ".")
+	if len(parts) != 3 {
+		return 0, "", 0, fmt.Errorf("invalid user marker key: %s", key)
+	}
+
+	id, err := strconv.ParseInt(parts[2], 10, 32)
+	if err != nil {
+		return 0, "", 0, fmt.Errorf("invalid user marker id: %s", parts[2])
+	}
+
+	job := parts[0]
+	grade, err := strconv.ParseInt(parts[1], 10, 32)
+	if err != nil {
+		return 0, "", 0, fmt.Errorf("invalid user marker grade: %s", parts[1])
+	}
+
+	return int32(id), job, int32(grade), nil
 }

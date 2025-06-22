@@ -23,7 +23,7 @@ func (s *Server) TakeControl(ctx context.Context, req *pbcentrum.TakeControlRequ
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if err := s.state.DispatcherSignOn(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
+	if err := s.dispatchers.SetUserState(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
 		return nil, err
 	}
 
@@ -52,7 +52,7 @@ func (s *Server) UpdateDispatchers(ctx context.Context, req *pbcentrum.UpdateDis
 
 	// Sign off any requested dispatchers
 	for _, userId := range req.ToRemove {
-		if err := s.state.DispatcherSignOn(ctx, userInfo.Job, userId, false); err != nil {
+		if err := s.dispatchers.SetUserState(ctx, userInfo.Job, userId, false); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 	}
@@ -60,7 +60,7 @@ func (s *Server) UpdateDispatchers(ctx context.Context, req *pbcentrum.UpdateDis
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	// Retrieve the updated dispatchers list
-	dispatchers, err := s.state.GetDispatchers(ctx, userInfo.Job)
+	dispatchers, err := s.dispatchers.Get(ctx, userInfo.Job)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}

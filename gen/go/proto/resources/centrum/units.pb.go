@@ -94,6 +94,7 @@ type Unit struct {
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Job       string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel  *string                `protobuf:"bytes,15,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	// @sanitize
 	Name string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	// @sanitize
@@ -165,6 +166,13 @@ func (x *Unit) GetUpdatedAt() *timestamp.Timestamp {
 func (x *Unit) GetJob() string {
 	if x != nil {
 		return x.Job
+	}
+	return ""
+}
+
+func (x *Unit) GetJobLabel() string {
+	if x != nil && x.JobLabel != nil {
+		return *x.JobLabel
 	}
 	return ""
 }
@@ -371,6 +379,7 @@ type UnitStatus struct {
 	Postal        *string         `protobuf:"bytes,12,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
 	CreatorId     *int32          `protobuf:"varint,13,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator       *jobs.Colleague `protobuf:"bytes,14,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	CreatorJob    *string         `protobuf:"bytes,15,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -503,32 +512,42 @@ func (x *UnitStatus) GetCreator() *jobs.Colleague {
 	return nil
 }
 
+func (x *UnitStatus) GetCreatorJob() string {
+	if x != nil && x.CreatorJob != nil {
+		return *x.CreatorJob
+	}
+	return ""
+}
+
 var File_resources_centrum_units_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xde\x05\n" +
+	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\x97\x06\n" +
 	"\x04Unit\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x19\n" +
-	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12\x1d\n" +
+	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12)\n" +
+	"\tjob_label\x18\x0f \x01(\tB\a\xfaB\x04r\x02\x182H\x02R\bjobLabel\x88\x01\x01\x12\x1d\n" +
 	"\x04name\x18\x05 \x01(\tB\t\xfaB\x06r\x04\x10\x03\x18\x18R\x04name\x12%\n" +
 	"\binitials\x18\x06 \x01(\tB\t\xfaB\x06r\x04\x10\x02\x18\x04R\binitials\x121\n" +
 	"\x05color\x18\a \x01(\tB\x1b\xfaB\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12/\n" +
-	"\vdescription\x18\b \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x02R\vdescription\x88\x01\x01\x12:\n" +
-	"\x06status\x18\t \x01(\v2\x1d.resources.centrum.UnitStatusH\x03R\x06status\x88\x01\x01\x127\n" +
+	"\vdescription\x18\b \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01H\x03R\vdescription\x88\x01\x01\x12:\n" +
+	"\x06status\x18\t \x01(\v2\x1d.resources.centrum.UnitStatusH\x04R\x06status\x88\x01\x01\x127\n" +
 	"\x05users\x18\v \x03(\v2!.resources.centrum.UnitAssignmentR\x05users\x12F\n" +
 	"\n" +
-	"attributes\x18\f \x01(\v2!.resources.centrum.UnitAttributesH\x04R\n" +
+	"attributes\x18\f \x01(\v2!.resources.centrum.UnitAttributesH\x05R\n" +
 	"attributes\x88\x01\x01\x12-\n" +
-	"\vhome_postal\x18\r \x01(\tB\a\xfaB\x04r\x02\x180H\x05R\n" +
+	"\vhome_postal\x18\r \x01(\tB\a\xfaB\x04r\x02\x180H\x06R\n" +
 	"homePostal\x88\x01\x01\x125\n" +
 	"\x06access\x18\x0e \x01(\v2\x1d.resources.centrum.UnitAccessR\x06accessB\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_updated_atB\x0e\n" +
+	"\v_updated_atB\f\n" +
+	"\n" +
+	"_job_labelB\x0e\n" +
 	"\f_descriptionB\t\n" +
 	"\a_statusB\r\n" +
 	"\v_attributesB\x0e\n" +
@@ -541,7 +560,7 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\aunit_id\x18\x01 \x01(\x04R\x06unitId\x12 \n" +
 	"\auser_id\x18\x02 \x01(\x05B\a\xfaB\x04\x1a\x02(\x00R\x06userId\x122\n" +
 	"\x04user\x18\x03 \x01(\v2\x19.resources.jobs.ColleagueH\x00R\x04user\x88\x01\x01B\a\n" +
-	"\x05_user\"\xb6\x05\n" +
+	"\x05_user\"\xf5\x05\n" +
 	"\n" +
 	"UnitStatus\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
@@ -561,7 +580,9 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\n" +
 	"creator_id\x18\r \x01(\x05B\a\xfaB\x04\x1a\x02 \x00H\tR\tcreatorId\x88\x01\x01\x128\n" +
 	"\acreator\x18\x0e \x01(\v2\x19.resources.jobs.ColleagueH\n" +
-	"R\acreator\x88\x01\x01B\r\n" +
+	"R\acreator\x88\x01\x01\x12-\n" +
+	"\vcreator_job\x18\x0f \x01(\tB\a\xfaB\x04r\x02\x18\x14H\vR\n" +
+	"creatorJob\x88\x01\x01B\r\n" +
 	"\v_created_atB\a\n" +
 	"\x05_unitB\t\n" +
 	"\a_reasonB\a\n" +
@@ -574,7 +595,8 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\a_postalB\r\n" +
 	"\v_creator_idB\n" +
 	"\n" +
-	"\b_creator*\xe4\x01\n" +
+	"\b_creatorB\x0e\n" +
+	"\f_creator_job*\xe4\x01\n" +
 	"\n" +
 	"StatusUnit\x12\x1b\n" +
 	"\x17STATUS_UNIT_UNSPECIFIED\x10\x00\x12\x17\n" +

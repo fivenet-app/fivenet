@@ -13,7 +13,7 @@ import (
 func (s *Server) GetSettings(ctx context.Context, req *pbcentrum.GetSettingsRequest) (*pbcentrum.GetSettingsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	settings, err := s.state.GetSettings(ctx, userInfo.Job)
+	settings, err := s.settings.Get(ctx, userInfo.Job)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -35,7 +35,7 @@ func (s *Server) UpdateSettings(ctx context.Context, req *pbcentrum.UpdateSettin
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	settings, err := s.state.UpdateSettingsInDB(ctx, userInfo.Job, req.Settings)
+	settings, err := s.settings.Update(ctx, userInfo.Job, req.Settings)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}

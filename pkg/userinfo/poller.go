@@ -13,13 +13,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 type userSnapshot struct {
@@ -131,7 +131,7 @@ func (p *Poller) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 
 func (p *Poller) handleMsg(m jetstream.Msg) {
 	var req pb.PollReq
-	if err := proto.Unmarshal(m.Data(), &req); err == nil {
+	if err := protoutils.UnmarshalPartialPJSON(m.Data(), &req); err == nil {
 		key := fmt.Sprintf("%d:%d", req.AccountId, req.UserId)
 
 		// Try Create with TTL. ErrKeyExists means we skip.

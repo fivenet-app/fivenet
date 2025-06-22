@@ -15,6 +15,7 @@ export type LivemapLayer = {
         val: string;
     };
     disabled?: boolean;
+    order?: number;
 };
 
 export type LivemapLayerCategory = {
@@ -118,6 +119,12 @@ export const useSettingsStore = defineStore(
             current.perm = layer.perm;
             current.attr = layer.attr;
             current.disabled = layer.disabled;
+            current.order = layer.order;
+        };
+        const removeLivemapLayer = (key: string): void => {
+            const idx = livemapLayers.value.findIndex((l) => l.key === key);
+            if (idx === -1) return;
+            livemapLayers.value.splice(idx, 1);
         };
 
         // Getters
@@ -159,6 +166,7 @@ export const useSettingsStore = defineStore(
             setNuiSettings,
             addOrUpdateLivemapCategory,
             addOrUpdateLivemapLayer,
+            removeLivemapLayer,
 
             // Getters
             getUserLocale,

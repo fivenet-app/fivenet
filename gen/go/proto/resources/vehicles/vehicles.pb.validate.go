@@ -251,3 +251,150 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = VehicleValidationError{}
+
+// Validate checks the field values on VehicleProps with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *VehicleProps) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on VehicleProps with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in VehiclePropsMultiError, or
+// nil if none found.
+func (m *VehicleProps) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *VehicleProps) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetPlate()) > 32 {
+		err := VehiclePropsValidationError{
+			field:  "Plate",
+			reason: "value length must be at most 32 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, VehiclePropsValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, VehiclePropsValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return VehiclePropsValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Wanted != nil {
+		// no validation rules for Wanted
+	}
+
+	if len(errors) > 0 {
+		return VehiclePropsMultiError(errors)
+	}
+
+	return nil
+}
+
+// VehiclePropsMultiError is an error wrapping multiple validation errors
+// returned by VehicleProps.ValidateAll() if the designated constraints aren't met.
+type VehiclePropsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m VehiclePropsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m VehiclePropsMultiError) AllErrors() []error { return m }
+
+// VehiclePropsValidationError is the validation error returned by
+// VehicleProps.Validate if the designated constraints aren't met.
+type VehiclePropsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e VehiclePropsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e VehiclePropsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e VehiclePropsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e VehiclePropsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e VehiclePropsValidationError) ErrorName() string { return "VehiclePropsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e VehiclePropsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sVehicleProps.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = VehiclePropsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = VehiclePropsValidationError{}

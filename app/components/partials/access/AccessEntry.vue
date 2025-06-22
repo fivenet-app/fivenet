@@ -13,12 +13,14 @@ const props = withDefaults(
         accessTypes: AccessType[];
         accessRoles?: AccessLevelEnum[];
         jobs?: Job[] | undefined;
+        hideGrade?: boolean;
     }>(),
     {
         disabled: false,
         showRequired: false,
         accessRoles: undefined,
         jobs: () => [],
+        hideGrade: false,
     },
 );
 
@@ -268,7 +270,7 @@ watch(props, () => setFromProps());
                 </ClientOnly>
             </UFormGroup>
 
-            <UFormGroup class="flex-1" name="minimumGrade">
+            <UFormGroup v-if="!hideGrade" class="flex-1" name="minimumGrade">
                 <ClientOnly>
                     <USelectMenu
                         class="flex-1"

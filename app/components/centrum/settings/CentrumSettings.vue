@@ -1,9 +1,12 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { CentrumAccessLevel, type CentrumJobAccess } from '~~/gen/ts/resources/centrum/access';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 import { CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -15,6 +18,8 @@ const { t } = useI18n();
 const { isOpen } = useModal();
 
 const notifications = useNotificationsStore();
+
+const { maxAccessEntries } = useAppConfig();
 
 const {
     data: settings,
@@ -43,19 +48,22 @@ const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
 ]);
 
 const schema = z.object({
-    enabled: z.coerce.boolean(),
-    type: z.nativeEnum(CentrumType),
+    enabled: z.coerce.boolean().default(false),
+    type: z.nativeEnum(CentrumType).default(CentrumType.DISPATCH),
     public: z.coerce.boolean(),
-    mode: z.nativeEnum(CentrumMode),
-    fallbackMode: z.nativeEnum(CentrumMode),
+    mode: z.nativeEnum(CentrumMode).default(CentrumMode.MANUAL),
+    fallbackMode: z.nativeEnum(CentrumMode).default(CentrumMode.AUTO_ROUND_ROBIN),
     predefinedStatus: z.object({
         unitStatus: z.string().array().max(20).default([]),
         dispatchStatus: z.string().array().max(20).default([]),
     }),
     timings: z.object({
-        dispatchMaxWait: z.coerce.number().min(30).max(6000),
+        dispatchMaxWait: z.coerce.number().min(30).max(6000).default(900),
         requireUnit: z.coerce.boolean(),
-        requireUnitReminderSeconds: z.coerce.number().min(60).max(6000),
+        requireUnitReminderSeconds: z.coerce.number().min(60).max(6000).default(180),
+    }),
+    access: z.object({
+        jobs: z.custom<CentrumJobAccess>().array().max(maxAccessEntries).default([]),
     }),
 });
 
@@ -76,6 +84,9 @@ const state = reactive<Schema>({
         requireUnit: false,
         requireUnitReminderSeconds: 180,
     },
+    access: {
+        jobs: [],
+    },
 });
 
 async function updateSettings(values: Schema): Promise<void> {
@@ -90,17 +101,20 @@ async function updateSettings(values: Schema): Promise<void> {
                 fallbackMode: values.fallbackMode,
                 predefinedStatus: values.predefinedStatus,
                 timings: values.timings,
+                access: {
+                    jobs: [],
+                },
             },
         });
         await call;
-
-        refresh();
 
         notifications.add({
             title: { key: 'notifications.action_successful.title', parameters: {} },
             description: { key: 'notifications.action_successful.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
+
+        await refresh();
 
         isOpen.value = false;
     } catch (e) {
@@ -141,6 +155,11 @@ const items = [
         slot: 'timings',
         label: t('common.timings'),
         icon: 'i-mdi-access-time',
+    },
+    {
+        slot: 'access',
+        label: t('common.access'),
+        icon: 'i-mdi-lock',
     },
 ];
 
@@ -443,6 +462,28 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.time_ago.second', 2)"
                                         trailing-icon="i-mdi-access-time"
                                         :disabled="!canSubmit"
+                                    />
+                                </UFormGroup>
+                            </UDashboardSection>
+                        </UDashboardPanelContent>
+                    </template>
+
+                    <template #access>
+                        <UDashboardPanelContent>
+                            <UDashboardSection
+                                :title="$t('components.centrum.settings.access.title')"
+                                :description="$t('components.centrum.settings.access.description')"
+                            >
+                                <!-- Access -->
+                                <UFormGroup name="access" :label="$t('common.access')">
+                                    <AccessManager
+                                        v-model:jobs="state.access.jobs"
+                                        :target-id="0"
+                                        :access-roles="
+                                            enumToAccessLevelEnums(CentrumAccessLevel, 'enums.centrum.CentrumAccessLevel')
+                                        "
+                                        :access-types="[{ type: 'job', name: $t('common.job', 2) }]"
+                                        hide-grade
                                     />
                                 </UFormGroup>
                             </UDashboardSection>

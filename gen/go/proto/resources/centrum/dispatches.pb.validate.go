@@ -70,15 +70,33 @@ func (m *Dispatch) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if len(m.GetJobs()) > 10 {
-		err := DispatchValidationError{
-			field:  "Jobs",
-			reason: "value must contain no more than 10 item(s)",
+	if all {
+		switch v := interface{}(m.GetJobs()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DispatchValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DispatchValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
 		}
-		if !all {
-			return err
+	} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DispatchValidationError{
+				field:  "Jobs",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
-		errors = append(errors, err)
 	}
 
 	if utf8.RuneCountInString(m.GetMessage()) > 255 {
@@ -1005,6 +1023,21 @@ func (m *DispatchStatus) validate(all bool) error {
 			err := DispatchStatusValidationError{
 				field:  "Postal",
 				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.CreatorJob != nil {
+
+		if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+			err := DispatchStatusValidationError{
+				field:  "CreatorJob",
+				reason: "value length must be at most 20 runes",
 			}
 			if !all {
 				return err

@@ -35,6 +35,10 @@ export interface Unit {
      */
     job: string;
     /**
+     * @generated from protobuf field: optional string job_label = 15
+     */
+    jobLabel?: string;
+    /**
      * @sanitize
      *
      * @generated from protobuf field: string name = 5
@@ -179,6 +183,10 @@ export interface UnitStatus {
      * @generated from protobuf field: optional resources.jobs.Colleague creator = 14
      */
     creator?: Colleague;
+    /**
+     * @generated from protobuf field: optional string creator_job = 15
+     */
+    creatorJob?: string;
 }
 /**
  * @generated from protobuf enum resources.centrum.StatusUnit
@@ -225,6 +233,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 15, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24" } } } },
             { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
             { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
@@ -264,6 +273,9 @@ class Unit$Type extends MessageType<Unit> {
                     break;
                 case /* string job */ 4:
                     message.job = reader.string();
+                    break;
+                case /* optional string job_label */ 15:
+                    message.jobLabel = reader.string();
                     break;
                 case /* string name */ 5:
                     message.name = reader.string();
@@ -343,6 +355,9 @@ class Unit$Type extends MessageType<Unit> {
         /* resources.centrum.UnitAccess access = 14; */
         if (message.access)
             UnitAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* optional string job_label = 15; */
+        if (message.jobLabel !== undefined)
+            writer.tag(15, WireType.LengthDelimited).string(message.jobLabel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -495,7 +510,8 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 11, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 14, name: "creator", kind: "message", T: () => Colleague }
+            { no: 14, name: "creator", kind: "message", T: () => Colleague },
+            { no: 15, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<UnitStatus>): UnitStatus {
@@ -554,6 +570,9 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
                 case /* optional resources.jobs.Colleague creator */ 14:
                     message.creator = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
+                case /* optional string creator_job */ 15:
+                    message.creatorJob = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -608,6 +627,9 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
         /* optional resources.jobs.Colleague creator = 14; */
         if (message.creator)
             Colleague.internalBinaryWrite(message.creator, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
+        /* optional string creator_job = 15; */
+        if (message.creatorJob !== undefined)
+            writer.tag(15, WireType.LengthDelimited).string(message.creatorJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

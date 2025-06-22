@@ -24,8 +24,8 @@ type ITracker interface {
 	ListTrackedJobs() []string
 	GetUserMarkerById(id int32) (*livemap.UserMarker, bool)
 	IsUserOnDuty(userId int32) bool
-
 	Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error)
+	GetFilteredUserMarkers(acl *permissions.JobGradeList, userInfo *userinfo.UserInfo) []*livemap.UserMarker
 
 	GetUserMapping(userId int32) (*tracker.UserMapping, error)
 	SetUserMapping(ctx context.Context, mapping *tracker.UserMapping) error
@@ -35,8 +35,6 @@ type ITracker interface {
 }
 
 type Tracker struct {
-	ITracker
-
 	logger *zap.Logger
 	tracer trace.Tracer
 	js     *events.JSWrapper
@@ -82,7 +80,6 @@ func New(p Params) (ITracker, error) {
 
 		userLocStore, err := store.New(ctxStartup, p.Logger, p.JS, BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
-			store.WithIgnoredKeys[livemap.UserMarker, *livemap.UserMarker]("_snapshot"),
 		)
 		if err != nil {
 			return err
@@ -103,6 +100,11 @@ func New(p Params) (ITracker, error) {
 			return err
 		}
 		t.userByIDStore = byID
+
+		// Remove any existing "_snapshot" mapping, as it is not used anymore
+		userMappingsStore.Delete(ctxStartup, "_snapshot")
+		userLocStore.Delete(ctxStartup, "_snapshot")
+		byID.Delete(ctxStartup, "_snapshot")
 
 		return nil
 	}))
@@ -158,34 +160,31 @@ func (t *Tracker) IsUserOnDuty(id int32) bool {
 	return err == nil && um != nil && !um.Hidden
 }
 
-func (s *Tracker) Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
-	return s.userLocStore.WatchAll(ctx)
+func (t *Tracker) Subscribe(ctx context.Context) (chan *store.KeyValueEntry[livemap.UserMarker, *livemap.UserMarker], error) {
+	return t.userLocStore.WatchAll(ctx)
 }
 
-func FilterMarkers(markers []*livemap.UserMarker, acl *permissions.JobGradeList, userInfo *userinfo.UserInfo) []*livemap.UserMarker {
-	if len(markers) == 0 || acl == nil {
-		return markers
-	}
+func (t *Tracker) GetFilteredUserMarkers(acl *permissions.JobGradeList, userInfo *userinfo.UserInfo) []*livemap.UserMarker {
+	return t.userLocStore.ListFiltered("", func(key string, um *livemap.UserMarker) bool {
+		if um == nil || um.Hidden {
+			return false
+		}
 
-	filtered := make([]*livemap.UserMarker, 0, len(markers))
-	for _, um := range markers {
 		jg := um.User.JobGrade
 		if um.JobGrade != nil {
 			jg = *um.JobGrade
 		}
 
 		if !userInfo.Superuser && !acl.HasJobGrade(um.Job, jg) {
-			continue
+			return false
 		}
 
-		filtered = append(filtered, um)
-	}
-
-	return filtered
+		return true // keep this marker
+	})
 }
 
 func (t *Tracker) GetUserMapping(userId int32) (*tracker.UserMapping, error) {
-	mapping, err := t.userMappingsStore.Get(userIdKey(userId))
+	mapping, err := t.userMappingsStore.Get(UserIdKey(userId))
 	if err != nil {
 		return nil, fmt.Errorf("failed to retrieve unit mapping for user %d. %w", userId, err)
 	}
@@ -209,7 +208,7 @@ func (t *Tracker) SetUserMapping(ctx context.Context, mapping *tracker.UserMappi
 		mapping.CreatedAt = timestamp.Now()
 	}
 
-	if err := t.userMappingsStore.Put(ctx, userIdKey(mapping.UserId), mapping); err != nil {
+	if err := t.userMappingsStore.Put(ctx, UserIdKey(mapping.UserId), mapping); err != nil {
 		return fmt.Errorf("failed to set unit mapping for user %d. %w", mapping.UserId, err)
 	}
 
@@ -229,6 +228,13 @@ func (t *Tracker) SetUserMappingForUser(ctx context.Context, userId int32, unitI
 
 func (t *Tracker) UnsetUnitIDForUser(ctx context.Context, userId int32) error {
 	return t.SetUserMappingForUser(ctx, userId, nil)
+}
+
+func (t *Tracker) DeleteUserMapping(ctx context.Context, userId int32) error {
+	if err := t.userMappingsStore.Delete(ctx, UserIdKey(userId)); err != nil {
+		return fmt.Errorf("failed to delete unit mapping for user %d. %w", userId, err)
+	}
+	return nil
 }
 
 func (t *Tracker) ListUserMappings(ctx context.Context) (map[int32]*tracker.UserMapping, error) {

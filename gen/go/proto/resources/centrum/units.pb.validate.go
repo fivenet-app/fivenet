@@ -243,6 +243,21 @@ func (m *Unit) validate(all bool) error {
 
 	}
 
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := UnitValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.Description != nil {
 
 		if utf8.RuneCountInString(m.GetDescription()) > 255 {
@@ -959,6 +974,21 @@ func (m *UnitStatus) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.CreatorJob != nil {
+
+		if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+			err := UnitStatusValidationError{
+				field:  "CreatorJob",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

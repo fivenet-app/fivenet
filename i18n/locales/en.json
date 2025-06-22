@@ -918,7 +918,6 @@
                 "title": "Update Unit Status"
             },
             "dispatch_center": {
-                "starting_datastream": "Starting Dispatch Center data stream...",
                 "failed_datastream": "Failed to stream Dispatch Center data!",
                 "join_center": "Join the dispatch center, by clicking here."
             },
@@ -974,6 +973,10 @@
                     "dispatch_max_wait": "Dispatch: Max Wait (in seconds)",
                     "require_unit": "Require colleagues to be in an unit",
                     "require_unit_reminder_seconds": "Reminder interval (in seconds) to ping colleagues not in an unit to join an unit"
+                },
+                "access": {
+                    "title": "Access",
+                    "description": "Configure who can access the dispatch center and what permissions they have."
                 }
             }
         },
@@ -2299,6 +2302,13 @@
             "UnitAttribute": {
                 "STATIC": "Static",
                 "NO_DISPATCH_AUTO_ASSIGN": "No Dispatch Auto Assign"
+            },
+            "CentrumAccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "PARTICIPATE": "Participate",
+                "DISPATCH": "Dispatch"
             }
         },
         "livemap": {

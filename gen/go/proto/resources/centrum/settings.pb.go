@@ -350,6 +350,50 @@ func (x *Timings) GetRequireUnitReminderSeconds() int64 {
 	return 0
 }
 
+type JobList struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Jobs          []string               `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *JobList) Reset() {
+	*x = JobList{}
+	mi := &file_resources_centrum_settings_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *JobList) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JobList) ProtoMessage() {}
+
+func (x *JobList) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_settings_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JobList.ProtoReflect.Descriptor instead.
+func (*JobList) Descriptor() ([]byte, []int) {
+	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *JobList) GetJobs() []string {
+	if x != nil {
+		return x.Jobs
+	}
+	return nil
+}
+
 var File_resources_centrum_settings_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_settings_proto_rawDesc = "" +
@@ -375,7 +419,10 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\xfaB\a\"\x05\x10\xf0. \x1eR\x0fdispatchMaxWait\x12!\n" +
 	"\frequire_unit\x18\x02 \x01(\bR\vrequireUnit\x12M\n" +
 	"\x1drequire_unit_reminder_seconds\x18\x03 \x01(\x03B\n" +
-	"\xfaB\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds*a\n" +
+	"\xfaB\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds\"-\n" +
+	"\aJobList\x12\"\n" +
+	"\x04jobs\x18\x01 \x03(\tB\x0e\xfaB\v\x92\x01\b\x10\n" +
+	"\"\x04r\x02\x18\x14R\x04jobs*a\n" +
 	"\vCentrumType\x12\x1c\n" +
 	"\x18CENTRUM_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15CENTRUM_TYPE_DISPATCH\x10\x01\x12\x19\n" +
@@ -400,14 +447,15 @@ func file_resources_centrum_settings_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_centrum_settings_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resources_centrum_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_resources_centrum_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_centrum_settings_proto_goTypes = []any{
 	(CentrumType)(0),         // 0: resources.centrum.CentrumType
 	(CentrumMode)(0),         // 1: resources.centrum.CentrumMode
 	(*Settings)(nil),         // 2: resources.centrum.Settings
 	(*PredefinedStatus)(nil), // 3: resources.centrum.PredefinedStatus
 	(*Timings)(nil),          // 4: resources.centrum.Timings
-	(*CentrumAccess)(nil),    // 5: resources.centrum.CentrumAccess
+	(*JobList)(nil),          // 5: resources.centrum.JobList
+	(*CentrumAccess)(nil),    // 6: resources.centrum.CentrumAccess
 }
 var file_resources_centrum_settings_proto_depIdxs = []int32{
 	0, // 0: resources.centrum.Settings.type:type_name -> resources.centrum.CentrumType
@@ -415,7 +463,7 @@ var file_resources_centrum_settings_proto_depIdxs = []int32{
 	1, // 2: resources.centrum.Settings.fallback_mode:type_name -> resources.centrum.CentrumMode
 	3, // 3: resources.centrum.Settings.predefined_status:type_name -> resources.centrum.PredefinedStatus
 	4, // 4: resources.centrum.Settings.timings:type_name -> resources.centrum.Timings
-	5, // 5: resources.centrum.Settings.access:type_name -> resources.centrum.CentrumAccess
+	6, // 5: resources.centrum.Settings.access:type_name -> resources.centrum.CentrumAccess
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
@@ -436,7 +484,7 @@ func file_resources_centrum_settings_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_settings_proto_rawDesc), len(file_resources_centrum_settings_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

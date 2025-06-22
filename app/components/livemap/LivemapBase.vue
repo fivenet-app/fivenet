@@ -10,7 +10,6 @@ import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
 import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
@@ -32,10 +31,10 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
 const { startStream } = livemapStore;
-const { error, abort, reconnecting, initiated, location, showLocationMarker, selectedMarker } = storeToRefs(livemapStore);
+const { error, stopping: stoppingLivemap, initiated, location, showLocationMarker, selectedMarker } = storeToRefs(livemapStore);
 
 const centrumStore = useCentrumStore();
-const { reconnecting: reconnectingCentrum } = storeToRefs(centrumStore);
+const { stopping: stoppingCentrum } = storeToRefs(centrumStore);
 
 const mapOptions = {
     zoomControl: false,
@@ -81,26 +80,15 @@ if (nuiEnabled.value) {
     });
 }
 
-const reconnectingDebounced = useDebounce(reconnecting, 500);
-const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
+const inititedDebounced = useDebounce(initiated, 750);
+const stoppingLivemapDebounced = useDebounce(stoppingLivemap, 500);
+const stoppingCentrumDebounced = useDebounce(stoppingCentrum, 500);
 </script>
 
 <template>
     <div class="relative size-full">
-        <div
-            v-if="!!error || !initiated || (abort === undefined && !reconnecting)"
-            class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70"
-        >
-            <DataErrorBlock
-                v-if="error"
-                :title="$t('components.livemap.failed_datastream')"
-                :error="error"
-                :retry="startStream"
-            />
-            <DataPendingBlock
-                v-else-if="!initiated || (abort === undefined && !reconnectingDebounced)"
-                :message="$t('components.livemap.starting_datastream')"
-            />
+        <div v-if="error" class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70">
+            <DataErrorBlock :title="$t('components.livemap.failed_datastream')" :error="error" :retry="startStream" />
         </div>
 
         <BaseMap :map-options="mapOptions">
@@ -126,7 +114,14 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
             </template>
 
             <template #afterMap>
-                <ReconnectingPopup v-if="reconnectingDebounced || reconnectionCentrumDebounced" />
+                <ReconnectingPopup
+                    v-if="!inititedDebounced || stoppingLivemapDebounced || stoppingCentrumDebounced"
+                    :label="
+                        !inititedDebounced
+                            ? $t('components.livemap.starting_datastream')
+                            : $t('components.livemap.restarting_datastream')
+                    "
+                />
 
                 <slot name="afterMap" />
             </template>

@@ -34,13 +34,13 @@ export const useCentrumStore = defineStore(
         const error = ref<RpcError | undefined>(undefined);
         const abort = ref<AbortController | undefined>(undefined);
         const cleanupIntervalId = ref<ReturnType<typeof setInterval> | undefined>(undefined);
-        const reconnecting = ref<boolean>(false);
+        const stopping = ref<boolean>(false);
         const reconnectBackoffTime = ref<number>(initialReconnectBackoffTime);
 
         const timeCorrection = ref<number>(0);
 
-        const settings = ref<Settings | undefined>(undefined);
         const dispatchesJobs = ref<JobAccess | undefined>(undefined);
+        const settings = ref<Settings | undefined>(undefined);
         const isDispatcher = ref<boolean>(false);
         const dispatchers = ref<Dispatchers[]>([]);
         const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
@@ -96,8 +96,10 @@ export const useCentrumStore = defineStore(
         });
 
         const getSortedUnits = computed<Unit[]>(() => {
+            const { activeChar } = useAuth();
+
             const array: Unit[] = [];
-            units.value.forEach((u) => array.push(u));
+            units.value.forEach((u) => u.job === activeChar.value?.job && array.push(u));
             return array.sort(
                 (a, b) =>
                     a.name.localeCompare(b.name) -
@@ -117,7 +119,6 @@ export const useCentrumStore = defineStore(
 
         // Actions
 
-        // General
         const setOrUpdateSettings = (newSettings: Settings): void => {
             if (settings.value !== undefined) {
                 settings.value.enabled = newSettings.enabled;
@@ -227,6 +228,7 @@ export const useCentrumStore = defineStore(
         const addOrUpdateDispatch = (dispatchObj: Dispatch): void => {
             const existing = dispatches.value.get(dispatchObj.id);
             if (!existing) {
+                // Ensure the dispatch has a status
                 if (!dispatchObj.status) {
                     dispatchObj.status = {
                         dispatchId: dispatchObj.id,
@@ -239,6 +241,7 @@ export const useCentrumStore = defineStore(
                 existing.createdAt = dispatchObj.createdAt;
                 existing.updatedAt = dispatchObj.updatedAt;
                 existing.job = dispatchObj.job;
+                existing.jobs = dispatchObj.jobs;
                 existing.message = dispatchObj.message;
                 existing.description = dispatchObj.description;
                 existing.attributes = dispatchObj.attributes;
@@ -360,18 +363,18 @@ export const useCentrumStore = defineStore(
 
         const startStream = async (): Promise<void> => {
             if (abort.value !== undefined) return;
+            stopping.value = false;
 
             logger.debug('Starting Stream');
-
-            if (!cleanupIntervalId.value) {
-                cleanupIntervalId.value = setInterval(() => cleanup(), cleanupInterval);
-            }
 
             const { activeChar } = useAuth();
 
             abort.value = new AbortController();
             error.value = undefined;
-            reconnecting.value = false;
+
+            if (!cleanupIntervalId.value) {
+                cleanupIntervalId.value = setInterval(() => cleanup(), cleanupInterval);
+            }
 
             try {
                 currentStream = $grpc.centrum.centrum.stream({}, { abort: abort.value.signal });
@@ -391,11 +394,12 @@ export const useCentrumStore = defineStore(
                         if (resp.change.handshake.serverTime) {
                             calculateTimeCorrection(resp.change.handshake.serverTime);
                         }
+
+                        dispatchesJobs.value = resp.change.handshake.jobAccess;
+
                         if (resp.change.handshake.settings) {
                             setOrUpdateSettings(resp.change.handshake.settings);
                         }
-
-                        dispatchesJobs.value = resp.change.handshake.jobAccess;
                     } else if (resp.change.oneofKind === 'latestState') {
                         logger.info(
                             'Latest state received. Dispatches:',
@@ -628,15 +632,22 @@ export const useCentrumStore = defineStore(
             logger.debug('Stream ended');
         };
 
-        const stopStream = async (): Promise<void> => {
+        const stopStream = async (end?: boolean): Promise<void> => {
+            if (end === true) stopping.value = true;
+
             if (abort.value) {
                 abort.value.abort();
                 logger.debug('Stopping Stream');
             }
-            if (!reconnecting.value && cleanupIntervalId.value) {
+            if (stopping.value && cleanupIntervalId.value) {
                 clearInterval(cleanupIntervalId.value);
                 cleanupIntervalId.value = undefined;
             }
+
+            // Remove all dispatch layers from the settings
+            const settingsStore = useSettingsStore();
+            dispatchesJobs.value?.dispatches.forEach((job) => settingsStore.removeLivemapLayer(`dispatches_job_${job.job}`));
+
             abort.value = undefined;
         };
 
@@ -644,7 +655,6 @@ export const useCentrumStore = defineStore(
             if (!abort.value || abort.value.signal.aborted) {
                 return;
             }
-            reconnecting.value = true;
 
             if (reconnectBackoffTime.value > maxBackOffTime) {
                 reconnectBackoffTime.value = initialReconnectBackoffTime;
@@ -655,7 +665,7 @@ export const useCentrumStore = defineStore(
             logger.debug('Restart back off time in', reconnectBackoffTime.value, 'seconds');
             await stopStream();
             useTimeoutFn(() => {
-                if (reconnecting.value) {
+                if (!stopping.value) {
                     startStream();
                 }
             }, reconnectBackoffTime.value * 1000);
@@ -838,7 +848,7 @@ export const useCentrumStore = defineStore(
             error,
             abort,
             cleanupIntervalId,
-            reconnecting,
+            stopping,
             reconnectBackoffTime,
             timeCorrection,
             settings,

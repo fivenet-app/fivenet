@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -57,7 +57,7 @@ type Demo struct {
 	// database connection
 	db *sql.DB
 	// centrum manager for dispatch operations
-	cs *centrummanager.Manager
+	dispatches *dispatches.DispatchDB
 	// application configuration
 	cfg *config.Config
 
@@ -72,10 +72,10 @@ type Params struct {
 	// LC is the Fx lifecycle for registering hooks
 	LC fx.Lifecycle
 
-	Logger         *zap.Logger
-	Cfg            *config.Config
-	DB             *sql.DB
-	CentrumManager *centrummanager.Manager
+	Logger     *zap.Logger
+	Cfg        *config.Config
+	DB         *sql.DB
+	Dispatches *dispatches.DispatchDB
 }
 
 // New creates a new Demo instance if demo mode is enabled in the config.
@@ -88,10 +88,10 @@ func New(p Params) *Demo {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	d := &Demo{
-		logger: p.Logger.Named("demo"),
-		db:     p.DB,
-		cs:     p.CentrumManager,
-		cfg:    p.Cfg,
+		logger:     p.Logger.Named("demo"),
+		db:         p.DB,
+		dispatches: p.Dispatches,
+		cfg:        p.Cfg,
 	}
 
 	d.logger.Warn("Demo mode is enabled. This will generate random dispatches and user locations!!!")
@@ -167,9 +167,10 @@ func (d *Demo) generateDispatches(ctx context.Context) error {
 		y := rand.Float64()*(yBounds[1]-yBounds[0]) + yBounds[0]
 		desc := dispatchDescriptions[rand.Intn(len(dispatchDescriptions))]
 		msg := dispatchMessages[rand.Intn(len(dispatchMessages))]
-		if _, err := d.cs.CreateDispatch(ctx, &centrum.Dispatch{
-			Job:         d.cfg.Demo.TargetJob,
-			Jobs:        []string{d.cfg.Demo.TargetJob},
+		if _, err := d.dispatches.Create(ctx, &centrum.Dispatch{
+			Jobs: &centrum.JobList{
+				Jobs: []string{d.cfg.Demo.TargetJob},
+			},
 			Message:     msg,
 			Description: &desc,
 			X:           x,
@@ -185,8 +186,7 @@ func (d *Demo) generateDispatches(ctx context.Context) error {
 
 // updateDispatches randomly updates the status and position of up to 2 existing dispatches.
 func (d *Demo) updateDispatches(ctx context.Context) error {
-	dsps, _ := d.cs.ListDispatches(ctx, d.cfg.Demo.TargetJob)
-
+	dsps := d.dispatches.List(ctx, []string{d.cfg.Demo.TargetJob})
 	if len(dsps) == 0 {
 		return nil
 	}
@@ -217,8 +217,10 @@ func (d *Demo) updateDispatches(ctx context.Context) error {
 
 			X: &x,
 			Y: &y,
+
+			CreatorJob: &d.cfg.Demo.TargetJob,
 		}
-		if _, err := d.cs.UpdateDispatchStatus(ctx, dsp.Job, dsp.Id, newStatus); err != nil {
+		if _, err := d.dispatches.UpdateStatus(ctx, dsp.Id, newStatus); err != nil {
 			d.logger.Error("failed to update dispatch status", zap.Error(err))
 		}
 	}

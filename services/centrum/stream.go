@@ -8,6 +8,7 @@ import (
 	"time"
 
 	centrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
@@ -16,14 +17,15 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	errorscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/v2025/services/centrum/events"
+	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, jobs *pbcentrum.JobAccess) error {
-	settings, err := s.state.GetSettings(ctx, userJob)
+func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userJob string, aclJobs *pbcentrum.JobAccess) error {
+	settings, err := s.settings.Get(ctx, userJob)
 	if err != nil {
 		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
@@ -33,7 +35,7 @@ func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumServic
 			Handshake: &pbcentrum.StreamHandshake{
 				ServerTime: timestamp.Now(),
 				Settings:   settings,
-				JobAccess:  jobs,
+				JobAccess:  aclJobs,
 			},
 		},
 	}); err != nil {
@@ -43,18 +45,18 @@ func (s *Server) sendHandshakre(ctx context.Context, srv pbcentrum.CentrumServic
 	return nil
 }
 
-func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userInfo *userinfo.UserInfo, jobs *pbcentrum.JobAccess) error {
+func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumService_StreamServer, userInfo *userinfo.UserInfo, aclJobs *pbcentrum.JobAccess, jobList []string) error {
+	// Dispatchers
 	dispatchers := &pbcentrum.Dispatchers{}
-	dispos, _ := s.state.GetDispatchers(ctx, userInfo.Job)
-	dispatchers.Dispatchers = []*centrum.Dispatchers{dispos}
-	for _, j := range jobs.Dispatches {
-		dispos, err := s.state.GetDispatchers(ctx, j.Job.Name)
+	for _, j := range aclJobs.Dispatches {
+		dispos, err := s.dispatchers.Get(ctx, j.Job)
 		if err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 		dispatchers.Dispatchers = append(dispatchers.Dispatchers, dispos)
 	}
 
+	// Own unit ID
 	ownUnitMapping, _ := s.tracker.GetUserMapping(userInfo.UserId)
 	var pOwnUnitId *uint64
 	if ownUnitMapping != nil && ownUnitMapping.UnitId != nil && *ownUnitMapping.UnitId > 0 {
@@ -62,21 +64,14 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 	}
 
 	// Retrieve units and dispatches
-	units := s.state.ListUnits(ctx, userInfo.Job)
-	for _, j := range jobs.Dispatches {
-		units = append(units, s.state.ListUnits(ctx, j.Job.Name)...)
-	}
+	units := s.units.List(ctx, jobList)
 
-	dispatchStatusFilter := []centrum.StatusDispatch{
+	dispatches := s.dispatches.Filter(ctx, jobList, nil, []centrum.StatusDispatch{
 		centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 		centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 		centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 		centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
-	}
-	dispatches := s.state.FilterDispatches(ctx, userInfo.Job, nil, dispatchStatusFilter)
-	for _, j := range jobs.Dispatches {
-		dispatches = append(dispatches, s.state.FilterDispatches(ctx, j.Job.Name, nil, dispatchStatusFilter)...)
-	}
+	})
 
 	// Send initial state to client
 	if err := srv.Send(&pbcentrum.StreamResponse{
@@ -98,29 +93,22 @@ func (s *Server) sendLatestState(ctx context.Context, srv pbcentrum.CentrumServi
 func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context()).Clone()
 
-	jobs := &pbcentrum.JobAccess{}
-	additionalJobs := []string{}
-	for _, job := range additionalJobs {
-		j := s.enricher.GetJobByName(job)
-		if j == nil {
-			return errswrap.NewError(fmt.Errorf("job not found. %s", job), errorscentrum.ErrFailedQuery)
-		}
-		jobs.Dispatches = append(jobs.Dispatches, &pbcentrum.JobAccessEntry{
-			Job:    j,
-			Access: centrum.CentrumAccessLevel_ACCESS_LEVEL_DISPATCH,
-		})
+	// Check if user has access to other job's centrum
+	jobList, jobAcls, err := s.settings.GetJobAccessList(srv.Context(), userInfo.Job, userInfo.JobGrade)
+	if err != nil {
+		return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
 	for {
-		if err := s.sendHandshakre(srv.Context(), srv, userInfo.Job, jobs); err != nil {
+		if err := s.sendHandshakre(srv.Context(), srv, userInfo.Job, jobAcls); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.sendLatestState(srv.Context(), srv, userInfo, jobs); err != nil {
+		if err := s.sendLatestState(srv.Context(), srv, userInfo, jobAcls, jobList); err != nil {
 			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		if err := s.stream(srv.Context(), srv, userInfo, []string{}); err != nil {
+		if err := s.stream(srv.Context(), srv, userInfo, jobList); err != nil {
 			return err
 		}
 
@@ -134,16 +122,18 @@ func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumServi
 }
 
 type feedCfg struct {
+	StreamName string
 	Bucket     string
-	Unmarshal  func([]byte) (proto.Message, error) // bucket → concrete proto
+	Unmarshal  func(ctx context.Context, s *Server, b []byte) (proto.Message, error) // bucket → concrete proto
 	WrapPut    func(proto.Message) *pbcentrum.StreamResponse
 	WrapDelete func(key string) *pbcentrum.StreamResponse
 }
 
 var feeds = []feedCfg{
 	{
-		Bucket: "centrum_settings",
-		Unmarshal: func(b []byte) (proto.Message, error) {
+		StreamName: "centrum_settings",
+		Bucket:     "centrum_settings",
+		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
 			var u centrum.Settings
 			return &u, proto.Unmarshal(b, &u)
 		},
@@ -152,8 +142,9 @@ var feeds = []feedCfg{
 		},
 	},
 	{
-		Bucket: "centrum_dispatchers",
-		Unmarshal: func(b []byte) (proto.Message, error) {
+		StreamName: "centrum_dispatchers",
+		Bucket:     "centrum_dispatchers",
+		Unmarshal: func(ctx context.Context, _ *Server, b []byte) (proto.Message, error) {
 			var u centrum.Dispatchers
 			return &u, proto.Unmarshal(b, &u)
 		},
@@ -162,16 +153,20 @@ var feeds = []feedCfg{
 		},
 	},
 	{
-		Bucket: "centrum_units",
-		Unmarshal: func(b []byte) (proto.Message, error) {
-			var u centrum.Unit
-			return &u, proto.Unmarshal(b, &u)
+		StreamName: "centrum_units",
+		Bucket:     "centrum_units.job",
+		Unmarshal: func(ctx context.Context, s *Server, b []byte) (proto.Message, error) {
+			var d common.IDMapping
+			if err := proto.Unmarshal(b, &d); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal unit id mapping. %w", err)
+			}
+			return s.units.Get(ctx, d.Id)
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
 			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_UnitUpdated{UnitUpdated: m.(*centrum.Unit)}}
 		},
 		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			id, err := extractID(key)
+			id, err := centrumutils.ExtractID(key)
 			if err != nil {
 				return nil
 			}
@@ -184,16 +179,20 @@ var feeds = []feedCfg{
 		},
 	},
 	{
-		Bucket: "centrum_dispatches",
-		Unmarshal: func(b []byte) (proto.Message, error) {
-			var d centrum.Dispatch
-			return &d, proto.Unmarshal(b, &d)
+		StreamName: "centrum_dispatches",
+		Bucket:     "centrum_dispatches.job",
+		Unmarshal: func(ctx context.Context, s *Server, b []byte) (proto.Message, error) {
+			var d common.IDMapping
+			if err := proto.Unmarshal(b, &d); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal dispatch id mapping. %w", err)
+			}
+			return s.dispatches.Get(ctx, d.Id)
 		},
 		WrapPut: func(m proto.Message) *pbcentrum.StreamResponse {
 			return &pbcentrum.StreamResponse{Change: &pbcentrum.StreamResponse_DispatchUpdated{DispatchUpdated: m.(*centrum.Dispatch)}}
 		},
 		WrapDelete: func(key string) *pbcentrum.StreamResponse {
-			id, err := extractID(key)
+			id, err := centrumutils.ExtractID(key)
 			if err != nil {
 				return nil
 			}
@@ -305,7 +304,7 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 				AckPolicy:      jetstream.AckNonePolicy,
 				MaxWaiting:     8,
 			}
-			consumer, err := s.js.CreateConsumer(gctx, "KV_"+f.Bucket, consCfg)
+			consumer, err := s.js.CreateConsumer(gctx, "KV_"+f.StreamName, consCfg)
 			if err != nil {
 				return fmt.Errorf("failed to create consumer. %w", err)
 			}
@@ -339,7 +338,7 @@ func (s *Server) stream(ctx context.Context, srv pbcentrum.CentrumService_Stream
 						continue
 					}
 
-					obj, err := f.Unmarshal(m.Data())
+					obj, err := f.Unmarshal(gctx, s, m.Data())
 					if err != nil {
 						// Bad payload – skip
 						continue

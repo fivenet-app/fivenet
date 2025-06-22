@@ -1,12 +1,12 @@
 package tracker
 
 func (x *UserMapping) Merge(in *UserMapping) *UserMapping {
-	if x.UserId != in.UserId {
-		x.UserId = in.UserId
-	}
+	x.UserId = in.UserId
 
-	if x.UnitId != in.UnitId {
+	if in.UnitId != nil {
 		x.UnitId = in.UnitId
+	} else {
+		x.UnitId = nil
 	}
 
 	if x.CreatedAt == nil {

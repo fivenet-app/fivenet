@@ -18,6 +18,15 @@ func (m *UserMarker) Sanitize() error {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
 
+	// Field: Data
+	if m.Data != nil {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Postal
 
 	if m.Postal != nil {
@@ -45,6 +54,23 @@ func (m *UserMarker) Sanitize() error {
 	// Field: User
 	if m.User != nil {
 		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UserMarkerData) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: VehicleUpdatedAt
+	if m.VehicleUpdatedAt != nil {
+		if v, ok := any(m.GetVehicleUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

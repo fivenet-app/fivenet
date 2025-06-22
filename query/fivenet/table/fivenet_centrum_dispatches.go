@@ -20,7 +20,7 @@ type fivenetCentrumDispatchesTable struct {
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
 	UpdatedAt   mysql.ColumnTimestamp
-	Job         mysql.ColumnString
+	Jobs        mysql.ColumnString
 	Message     mysql.ColumnString
 	Description mysql.ColumnString
 	Attributes  mysql.ColumnString
@@ -74,7 +74,7 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		IDColumn          = mysql.IntegerColumn("id")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
-		JobColumn         = mysql.StringColumn("job")
+		JobsColumn        = mysql.StringColumn("jobs")
 		MessageColumn     = mysql.StringColumn("message")
 		DescriptionColumn = mysql.StringColumn("description")
 		AttributesColumn  = mysql.StringColumn("attributes")
@@ -84,8 +84,8 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		PostalColumn      = mysql.StringColumn("postal")
 		AnonColumn        = mysql.BoolColumn("anon")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, ReferencesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, ReferencesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobsColumn, MessageColumn, DescriptionColumn, AttributesColumn, ReferencesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobsColumn, MessageColumn, DescriptionColumn, AttributesColumn, ReferencesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
 		defaultColumns    = mysql.ColumnList{CreatedAtColumn, AnonColumn}
 	)
 
@@ -96,7 +96,7 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		ID:          IDColumn,
 		CreatedAt:   CreatedAtColumn,
 		UpdatedAt:   UpdatedAtColumn,
-		Job:         JobColumn,
+		Jobs:        JobsColumn,
 		Message:     MessageColumn,
 		Description: DescriptionColumn,
 		Attributes:  AttributesColumn,

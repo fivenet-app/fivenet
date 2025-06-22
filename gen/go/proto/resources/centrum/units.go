@@ -5,6 +5,10 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+func (x *Unit) SetJobLabel(in string) {
+	x.JobLabel = &in
+}
+
 func (x *Unit) Merge(in *Unit) *Unit {
 	if x.Id != in.Id {
 		return x

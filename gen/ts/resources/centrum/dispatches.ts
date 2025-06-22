@@ -14,6 +14,7 @@ import { Colleague } from "../jobs/colleagues";
 import { Unit } from "./units";
 import { User } from "../users/users";
 import { DispatchAttributes } from "./attributes";
+import { JobList } from "./settings";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.centrum.Dispatch
@@ -36,9 +37,9 @@ export interface Dispatch {
      */
     job: string;
     /**
-     * @generated from protobuf field: repeated string jobs = 18
+     * @generated from protobuf field: resources.centrum.JobList jobs = 18
      */
-    jobs: string[];
+    jobs?: JobList;
     /**
      * @generated from protobuf field: optional resources.centrum.DispatchStatus status = 5
      */
@@ -198,6 +199,10 @@ export interface DispatchStatus {
      * @generated from protobuf field: optional string postal = 13
      */
     postal?: string;
+    /**
+     * @generated from protobuf field: optional string creator_job = 14
+     */
+    creatorJob?: string;
 }
 /**
  * @dbscanner: json
@@ -338,7 +343,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 18, name: "jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
+            { no: 18, name: "jobs", kind: "message", T: () => JobList },
             { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
             { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
@@ -357,7 +362,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.job = "";
-        message.jobs = [];
         message.message = "";
         message.x = 0;
         message.y = 0;
@@ -384,8 +388,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
                 case /* string job */ 4:
                     message.job = reader.string();
                     break;
-                case /* repeated string jobs */ 18:
-                    message.jobs.push(reader.string());
+                case /* resources.centrum.JobList jobs */ 18:
+                    message.jobs = JobList.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
                     break;
                 case /* optional resources.centrum.DispatchStatus status */ 5:
                     message.status = DispatchStatus.internalBinaryRead(reader, reader.uint32(), options, message.status);
@@ -483,9 +487,9 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* optional resources.centrum.DispatchReferences references = 17; */
         if (message.references)
             DispatchReferences.internalBinaryWrite(message.references, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
-        /* repeated string jobs = 18; */
-        for (let i = 0; i < message.jobs.length; i++)
-            writer.tag(18, WireType.LengthDelimited).string(message.jobs[i]);
+        /* resources.centrum.JobList jobs = 18; */
+        if (message.jobs)
+            JobList.internalBinaryWrite(message.jobs, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -651,7 +655,8 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 10, name: "user", kind: "message", T: () => Colleague },
             { no: 11, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 13, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
+            { no: 13, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 14, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<DispatchStatus>): DispatchStatus {
@@ -707,6 +712,9 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
                 case /* optional string postal */ 13:
                     message.postal = reader.string();
                     break;
+                case /* optional string creator_job */ 14:
+                    message.creatorJob = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -758,6 +766,9 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
         /* optional string postal = 13; */
         if (message.postal !== undefined)
             writer.tag(13, WireType.LengthDelimited).string(message.postal);
+        /* optional string creator_job = 14; */
+        if (message.creatorJob !== undefined)
+            writer.tag(14, WireType.LengthDelimited).string(message.creatorJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

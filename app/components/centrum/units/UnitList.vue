@@ -7,7 +7,7 @@ import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 const { can } = useAuth();
 
 const centrumStore = useCentrumStore();
-const { getSortedUnits, abort, reconnecting } = storeToRefs(centrumStore);
+const { getSortedUnits, abort, stopping } = storeToRefs(centrumStore);
 
 const grouped = computedAsync(async () => {
     const groups: GroupedUnits = [];
@@ -60,7 +60,7 @@ const grouped = computedAsync(async () => {
         </div>
         <div class="@container/unitlist flex-1">
             <div
-                v-if="abort === undefined && !reconnecting"
+                v-if="abort === undefined && stopping"
                 class="@md/unitlist:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2"
             >
                 <USkeleton v-for="idx in 8" :key="idx" class="h-9 w-full" />

@@ -62,18 +62,30 @@ func (s *Server) GetDispatchHeatmap(ctx context.Context, req *pbcentrum.GetDispa
 	return resp, nil
 }
 
-func (s *Server) generateDispatchHeatmaps(ctx context.Context) error {
-	grid := float64(5)
-
-	const q = `
+// heatmapQuery is the SQL to rebuild the per‐job 5×5‐bin heatmaps.
+// note how we break out the `max` identifier so the raw string literal isn’t terminated early.
+var heatmapQuery = `
 REPLACE INTO fivenet_centrum_dispatches_heatmaps (job, heat_json, ` + "`max`" + `)
-WITH bins AS (
+WITH exploded AS (
+    SELECT
+        jt.job AS job,
+        f.x,
+        f.y
+    FROM fivenet_centrum_dispatches AS f
+    JOIN JSON_TABLE(
+        f.jobs, '$[*]'
+        COLUMNS (
+            job VARCHAR(50) PATH '$'
+        )
+    ) AS jt
+),
+bins AS (
     SELECT
         job,
-        ROUND(x / ?) * ? AS x_bin,
-        ROUND(y / ?) * ? AS y_bin,
-        COUNT(*)         AS w
-    FROM fivenet_centrum_dispatches
+        ROUND(x/?)* ? AS x_bin,
+        ROUND(y/?)* ? AS y_bin,
+        COUNT(*)      AS w
+    FROM exploded
     GROUP BY job, x_bin, y_bin
 ),
 maxw AS (
@@ -83,16 +95,22 @@ maxw AS (
 )
 SELECT
     b.job,
-    JSON_ARRAYAGG(JSON_OBJECT('x', x_bin, 'y', y_bin, 'w', w)) AS heat_json,
-    mw AS ` + "`max`" + `
+    JSON_ARRAYAGG(
+        JSON_OBJECT('x', b.x_bin, 'y', b.y_bin, 'w', b.w)
+    ) AS heat_json,
+    m.mw AS ` + "`max`" + `
 FROM bins AS b
 JOIN maxw AS m USING (job)
 GROUP BY b.job;
 `
+
+func (s *Server) generateDispatchHeatmaps(ctx context.Context) error {
+	grid := float64(5)
+
 	// Four placeholders → Four copies of the grid value
 	args := []any{grid, grid, grid, grid}
 
-	if _, err := s.db.ExecContext(ctx, q, args...); err != nil {
+	if _, err := s.db.ExecContext(ctx, heatmapQuery, args...); err != nil {
 		return fmt.Errorf("failed to generate dispatch heatmaps. %w", err)
 	}
 

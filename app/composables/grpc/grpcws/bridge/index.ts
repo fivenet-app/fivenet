@@ -329,8 +329,8 @@ export class GrpcWSTransport implements RpcTransport {
     close(): void {
         if (this.webSocket.status.value === 'CLOSED') return;
 
+        logger.info('Closing Websocket');
         this.webSocket.close();
-        logger.info('Closed Websocket');
     }
 }
 

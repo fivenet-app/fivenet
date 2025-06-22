@@ -16,9 +16,9 @@ func (c *ServerCmd) Run(ctx *Context) error {
 	fxOpts = append(fxOpts, FxServerOpts()...)
 
 	if c.ModuleCronAgent {
-		fxOpts = append(fxOpts, FxCronerOpts()...)
-		fxOpts = append(fxOpts, FxJobsHousekeeperOpts()...)
-		fxOpts = append(fxOpts, FxHousekeeperOpts()...)
+		// fxOpts = append(fxOpts, FxCronerOpts()...)
+		// fxOpts = append(fxOpts, FxJobsHousekeeperOpts()...)
+		// fxOpts = append(fxOpts, FxHousekeeperOpts()...)
 	}
 
 	app := fx.New(fxOpts...)

@@ -39,7 +39,8 @@ const barStyle = computed(() => {
             <!-- Captions -->
             <div class="flex justify-between text-gray-900 dark:text-gray-400">
                 <span>{{ $t('common.min') }}</span>
-                <span>{{ $t('common.max') }} {{ max }}</span>
+                <span v-if="max > 0" class="text-gray-700 dark:text-gray-200">{{ max }}</span>
+                <span>{{ $t('common.max') }}</span>
             </div>
         </div>
     </LControl>

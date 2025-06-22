@@ -28,6 +28,7 @@ type fivenetCentrumDispatchesStatusTable struct {
 	Y          mysql.ColumnFloat
 	Postal     mysql.ColumnString
 	UserID     mysql.ColumnInteger
+	CreatorJob mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -80,8 +81,9 @@ func newFivenetCentrumDispatchesStatusTableImpl(schemaName, tableName, alias str
 		YColumn          = mysql.FloatColumn("y")
 		PostalColumn     = mysql.StringColumn("postal")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn}
+		CreatorJobColumn = mysql.StringColumn("creator_job")
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn, CreatorJobColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn, CreatorJobColumn}
 		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -100,6 +102,7 @@ func newFivenetCentrumDispatchesStatusTableImpl(schemaName, tableName, alias str
 		Y:          YColumn,
 		Postal:     PostalColumn,
 		UserID:     UserIDColumn,
+		CreatorJob: CreatorJobColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

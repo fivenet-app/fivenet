@@ -15,6 +15,7 @@
 // source: resources/collab/collab.proto
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto
+// source: resources/common/id_mapping.proto
 // source: resources/common/uuid.proto
 // source: resources/common/content/content.proto
 // source: resources/common/cron/cron.proto

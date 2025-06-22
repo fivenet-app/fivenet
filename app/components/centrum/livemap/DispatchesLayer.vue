@@ -15,19 +15,26 @@ const { t } = useI18n();
 const slideover = useSlideover();
 
 const centrumStore = useCentrumStore();
-const { dispatches, ownDispatches, settings } = storeToRefs(centrumStore);
+const { dispatches, dispatchesJobs, ownDispatches, settings } = storeToRefs(centrumStore);
 
 const settingsStore = useSettingsStore();
-const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
+const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory, removeLivemapLayer } = settingsStore;
 const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
 const dispatchQueryRaw = ref<string>('');
 const dispatchQuery = computed(() => dispatchQueryRaw.value.trim().toLowerCase());
 
+const activeJobLayers = computed(() =>
+    livemapLayers.value
+        .filter((l) => l.key.startsWith('dispatches_job_') && l.visible)
+        .map((l) => l.key.replace('dispatches_job_', '')),
+);
+
 const dispatchesFiltered = computedAsync(async () =>
     [...(props.dispatchList ?? dispatches.value.values() ?? [])].filter(
         (m) =>
             !ownDispatches.value.includes(m.id) &&
+            m.jobs?.jobs.every((j) => activeJobLayers.value.includes(j)) &&
             (m.id.toString().startsWith(dispatchQuery.value) ||
                 m.message.toLowerCase().includes(dispatchQuery.value) ||
                 (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
@@ -39,22 +46,29 @@ watch(settings, () => {
         return;
     }
 
+    removeLivemapLayer('dispatches_all');
+
     addOrUpdateLivemapLayer({
         key: 'dispatches_own',
         category: 'dispatches',
         label: t('common.your_dispatches'),
         perm: 'centrum.CentrumService/Stream',
         disabled: true,
-    });
-    addOrUpdateLivemapLayer({
-        key: 'dispatches_all',
-        category: 'dispatches',
-        label: t('common.all_dispatches'),
-        perm: 'centrum.CentrumService/Stream',
-        disabled: props.showAllDispatches,
-        visible: props.showAllDispatches ? true : undefined,
+        order: 1,
     });
 });
+
+watch(dispatchesJobs, () =>
+    dispatchesJobs.value?.dispatches.forEach((job) =>
+        addOrUpdateLivemapLayer({
+            key: `dispatches_job_${job.job}`,
+            category: 'dispatches',
+            label: job.jobLabel ?? job.job ?? '',
+            perm: 'centrum.CentrumService/Stream',
+            order: 10,
+        }),
+    ),
+);
 
 onBeforeMount(async () => {
     addOrUpdateLivemapCategory({
@@ -80,14 +94,7 @@ onBeforeMount(async () => {
         />
     </LLayerGroup>
 
-    <LLayerGroup
-        key="dispatches_all"
-        :name="$t('common.dispatch', 2)"
-        layer-type="overlay"
-        :visible="
-            showAllDispatches || livemapLayers.find((l) => l.key === `dispatches_all`)?.visible || dispatchQuery.length > 0
-        "
-    >
+    <LLayerGroup key="dispatches_all" :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="true">
         <DispatchMarker
             v-for="dispatch in dispatchesFiltered"
             :key="dispatch.id"

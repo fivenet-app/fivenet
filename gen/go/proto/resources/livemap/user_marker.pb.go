@@ -42,6 +42,7 @@ type UserMarker struct {
 	UnitId        *uint64         `protobuf:"varint,10,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
 	Unit          *centrum.Unit   `protobuf:"bytes,11,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
 	Hidden        bool            `protobuf:"varint,12,opt,name=hidden,proto3" json:"hidden,omitempty"`
+	Data          *UserMarkerData `protobuf:"bytes,14,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"` // @gotags: alias:"data"
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -167,11 +168,79 @@ func (x *UserMarker) GetHidden() bool {
 	return false
 }
 
+func (x *UserMarker) GetData() *UserMarkerData {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+// @dbscanner: json
+type UserMarkerData struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	IsInVehicle      bool                   `protobuf:"varint,1,opt,name=is_in_vehicle,json=isInVehicle,proto3" json:"is_in_vehicle,omitempty"`
+	VehiclePlate     *string                `protobuf:"bytes,2,opt,name=vehicle_plate,json=vehiclePlate,proto3,oneof" json:"vehicle_plate,omitempty"`
+	VehicleUpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=vehicle_updated_at,json=vehicleUpdatedAt,proto3,oneof" json:"vehicle_updated_at,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *UserMarkerData) Reset() {
+	*x = UserMarkerData{}
+	mi := &file_resources_livemap_user_marker_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UserMarkerData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserMarkerData) ProtoMessage() {}
+
+func (x *UserMarkerData) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_livemap_user_marker_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserMarkerData.ProtoReflect.Descriptor instead.
+func (*UserMarkerData) Descriptor() ([]byte, []int) {
+	return file_resources_livemap_user_marker_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *UserMarkerData) GetIsInVehicle() bool {
+	if x != nil {
+		return x.IsInVehicle
+	}
+	return false
+}
+
+func (x *UserMarkerData) GetVehiclePlate() string {
+	if x != nil && x.VehiclePlate != nil {
+		return *x.VehiclePlate
+	}
+	return ""
+}
+
+func (x *UserMarkerData) GetVehicleUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.VehicleUpdatedAt
+	}
+	return nil
+}
+
 var File_resources_livemap_user_marker_proto protoreflect.FileDescriptor
 
 const file_resources_livemap_user_marker_proto_rawDesc = "" +
 	"\n" +
-	"#resources/livemap/user_marker.proto\x12\x11resources.livemap\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xa4\x04\n" +
+	"#resources/livemap/user_marker.proto\x12\x11resources.livemap\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x17validate/validate.proto\"\xe9\x04\n" +
 	"\n" +
 	"UserMarker\x12 \n" +
 	"\auser_id\x18\x01 \x01(\x05B\a\xfaB\x04\x1a\x02 \x00R\x06userId\x12\f\n" +
@@ -188,7 +257,8 @@ const file_resources_livemap_user_marker_proto_rawDesc = "" +
 	"\aunit_id\x18\n" +
 	" \x01(\x04H\x04R\x06unitId\x88\x01\x01\x120\n" +
 	"\x04unit\x18\v \x01(\v2\x17.resources.centrum.UnitH\x05R\x04unit\x88\x01\x01\x12\x16\n" +
-	"\x06hidden\x18\f \x01(\bR\x06hiddenB\r\n" +
+	"\x06hidden\x18\f \x01(\bR\x06hidden\x12:\n" +
+	"\x04data\x18\x0e \x01(\v2!.resources.livemap.UserMarkerDataH\x06R\x04data\x88\x01\x01B\r\n" +
 	"\v_updated_atB\t\n" +
 	"\a_postalB\b\n" +
 	"\x06_colorB\f\n" +
@@ -196,7 +266,14 @@ const file_resources_livemap_user_marker_proto_rawDesc = "" +
 	"_job_gradeB\n" +
 	"\n" +
 	"\b_unit_idB\a\n" +
-	"\x05_unitBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
+	"\x05_unitB\a\n" +
+	"\x05_data\"\xe3\x01\n" +
+	"\x0eUserMarkerData\x12\"\n" +
+	"\ris_in_vehicle\x18\x01 \x01(\bR\visInVehicle\x121\n" +
+	"\rvehicle_plate\x18\x02 \x01(\tB\a\xfaB\x04r\x02\x18 H\x00R\fvehiclePlate\x88\x01\x01\x12Q\n" +
+	"\x12vehicle_updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\x10vehicleUpdatedAt\x88\x01\x01B\x10\n" +
+	"\x0e_vehicle_plateB\x15\n" +
+	"\x13_vehicle_updated_atBMZKgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemapb\x06proto3"
 
 var (
 	file_resources_livemap_user_marker_proto_rawDescOnce sync.Once
@@ -210,22 +287,25 @@ func file_resources_livemap_user_marker_proto_rawDescGZIP() []byte {
 	return file_resources_livemap_user_marker_proto_rawDescData
 }
 
-var file_resources_livemap_user_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_resources_livemap_user_marker_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_resources_livemap_user_marker_proto_goTypes = []any{
 	(*UserMarker)(nil),          // 0: resources.livemap.UserMarker
-	(*timestamp.Timestamp)(nil), // 1: resources.timestamp.Timestamp
-	(*jobs.Colleague)(nil),      // 2: resources.jobs.Colleague
-	(*centrum.Unit)(nil),        // 3: resources.centrum.Unit
+	(*UserMarkerData)(nil),      // 1: resources.livemap.UserMarkerData
+	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
+	(*jobs.Colleague)(nil),      // 3: resources.jobs.Colleague
+	(*centrum.Unit)(nil),        // 4: resources.centrum.Unit
 }
 var file_resources_livemap_user_marker_proto_depIdxs = []int32{
-	1, // 0: resources.livemap.UserMarker.updated_at:type_name -> resources.timestamp.Timestamp
-	2, // 1: resources.livemap.UserMarker.user:type_name -> resources.jobs.Colleague
-	3, // 2: resources.livemap.UserMarker.unit:type_name -> resources.centrum.Unit
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	2, // 0: resources.livemap.UserMarker.updated_at:type_name -> resources.timestamp.Timestamp
+	3, // 1: resources.livemap.UserMarker.user:type_name -> resources.jobs.Colleague
+	4, // 2: resources.livemap.UserMarker.unit:type_name -> resources.centrum.Unit
+	1, // 3: resources.livemap.UserMarker.data:type_name -> resources.livemap.UserMarkerData
+	2, // 4: resources.livemap.UserMarkerData.vehicle_updated_at:type_name -> resources.timestamp.Timestamp
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_resources_livemap_user_marker_proto_init() }
@@ -234,13 +314,14 @@ func file_resources_livemap_user_marker_proto_init() {
 		return
 	}
 	file_resources_livemap_user_marker_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_livemap_user_marker_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_livemap_user_marker_proto_rawDesc), len(file_resources_livemap_user_marker_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

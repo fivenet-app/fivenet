@@ -23,7 +23,7 @@ export const useLivemapStore = defineStore(
         // State
         const error = ref<RpcError | undefined>(undefined);
         const abort = ref<AbortController | undefined>(undefined);
-        const reconnecting = ref<boolean>(false);
+        const stopping = ref<boolean>(false);
         const reconnectBackoffTime = ref<number>(0);
 
         const location = ref<Coordinate | undefined>();
@@ -59,6 +59,7 @@ export const useLivemapStore = defineStore(
 
         const startStream = async (): Promise<void> => {
             if (abort.value !== undefined) return;
+            stopping.value = false;
 
             logger.debug('Starting Stream');
 
@@ -69,7 +70,6 @@ export const useLivemapStore = defineStore(
 
             abort.value = new AbortController();
             error.value = undefined;
-            reconnecting.value = false;
 
             // Tracking marker and user markers between part responses
             const foundMarkers: number[] = [];
@@ -203,13 +203,14 @@ export const useLivemapStore = defineStore(
             logger.debug('Stream ended');
         };
 
-        const stopStream = async (): Promise<void> => {
-            if (!abort.value) {
-                return;
+        const stopStream = async (end?: boolean): Promise<void> => {
+            if (end === true) stopping.value = true;
+
+            if (abort.value) {
+                abort.value.abort();
+                logger.debug('Stopping Stream');
             }
 
-            abort.value.abort();
-            logger.debug('Stopping Stream');
             abort.value = undefined;
         };
 
@@ -217,8 +218,6 @@ export const useLivemapStore = defineStore(
             if (!abort.value || abort.value.signal.aborted) {
                 return;
             }
-
-            reconnecting.value = true;
 
             // Reset back off time if it exceeds max
             if (reconnectBackoffTime.value > maxBackOffTime) {
@@ -231,7 +230,7 @@ export const useLivemapStore = defineStore(
             await stopStream();
 
             useTimeoutFn(async () => {
-                if (reconnecting.value) {
+                if (!stopping.value) {
                     startStream();
                 }
             }, reconnectBackoffTime.value * 1000);
@@ -385,7 +384,7 @@ export const useLivemapStore = defineStore(
             // State
             error,
             abort,
-            reconnecting,
+            stopping,
             reconnectBackoffTime,
             location,
             showLocationMarker,

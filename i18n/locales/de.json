@@ -918,7 +918,6 @@
                 "title": "Aktualisiere Einheit Status"
             },
             "dispatch_center": {
-                "starting_datastream": "Start Leitstellen Datenstrom...",
                 "failed_datastream": "Leistellen Datenstrom fehlgeschlagen!",
                 "join_center": "Trete der Leitstelle bei, indem du hier klickst."
             },
@@ -2265,7 +2264,8 @@
                 "CANCELLED": "Abgebrochen",
                 "ARCHIVED": "Archiviert",
                 "UNIT_ACCEPTED": "Einsatz von Einheit akzeptiert",
-                "UNIT_DECLINED": "Einsatz von Einheit abgelehnt"
+                "UNIT_DECLINED": "Einsatz von Einheit abgelehnt",
+                "DELETED": "Gelöscht"
             },
             "StatusUnit": {
                 "UNSPECIFIED": "Unbestimmt",
@@ -2275,8 +2275,7 @@
                 "AVAILABLE": "Verfügbar",
                 "ON_BREAK": "Pause",
                 "BUSY": "Beschäftigt",
-                "UNKNOWN": "Unbekannt",
-                "DELETED": "Gelöscht"
+                "UNKNOWN": "Unbekannt"
             },
             "DispatchReferenceType": {
                 "UNSPECIFIED": "Unbestimmt",

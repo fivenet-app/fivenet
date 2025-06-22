@@ -8,14 +8,13 @@ import MarkersList from '~/components/centrum/MarkersList.vue';
 import UnitList from '~/components/centrum/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import DispatchersInfo from './dispatchers/DispatchersInfo.vue';
 
 const { can } = useAuth();
 
 const centrumStore = useCentrumStore();
-const { error, abort, reconnecting, feed, isCenter } = storeToRefs(centrumStore);
+const { error, feed, isCenter } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 onBeforeMount(async () => {
@@ -35,7 +34,7 @@ onBeforeRouteLeave(async (to) => {
     // Don't end centrum stream if user is switching to livemap page
     if (to.path.startsWith('/livemap')) return;
 
-    await stopStream();
+    await stopStream(true);
 });
 </script>
 
@@ -53,19 +52,11 @@ onBeforeRouteLeave(async (to) => {
             <Splitpanes>
                 <Pane :min-size="25">
                     <div class="relative size-full">
-                        <div
-                            v-if="error || (abort === undefined && !reconnecting)"
-                            class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
-                        >
+                        <div v-if="error" class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70">
                             <DataErrorBlock
-                                v-if="error"
                                 :title="$t('components.centrum.dispatch_center.failed_datastream')"
                                 :error="error"
                                 :retry="startStream"
-                            />
-                            <DataPendingBlock
-                                v-else-if="abort === undefined && !reconnecting"
-                                :message="$t('components.centrum.dispatch_center.starting_datastream')"
                             />
                         </div>
 

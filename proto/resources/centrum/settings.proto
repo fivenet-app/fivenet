@@ -53,3 +53,14 @@ message Timings {
   bool require_unit = 2;
   int64 require_unit_reminder_seconds = 3 [(validate.rules).int64 = { gt: 30, lt: 6000}];
 }
+
+message JobList {
+  repeated string jobs = 1 [(validate.rules).repeated = {
+    max_items: 10,
+    items: {
+      string: {
+        max_len: 20,
+      },
+    },
+  }];
+}

@@ -62,11 +62,17 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/wk"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
+	"github.com/fivenet-app/fivenet/v2025/pkg/tracker/manager"
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/query"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumbot"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrummanager"
-	"github.com/fivenet-app/fivenet/v2025/services/centrum/centrumstate"
+	centrumbot "github.com/fivenet-app/fivenet/v2025/services/centrum/bot"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/converter"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
+	centrumhousekeeper "github.com/fivenet-app/fivenet/v2025/services/centrum/housekeeper"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
 )
 
 type Context struct{}
@@ -115,15 +121,21 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		htmlsanitizer.Module,
 		htmldiffer.Module,
 		i18n.Module,
-		centrummanager.HousekeeperModule,
-		centrummanager.Module,
+		fx.Provide(
+			converter.New,
+			dispatchers.New,
+			dispatches.New,
+			settings.New,
+			units.New,
+			helpers.New,
+		),
+		centrumhousekeeper.Module,
 		modules.LoggerModule,
 		modules.TracerProviderModule,
 		perms.Module,
 		query.Module,
 		server.HTTPEngineModule,
 		server.HTTPServerModule,
-		centrumstate.StateModule,
 		storage.Module,
 		housekeeper.Module,
 		dbsync.Module,
@@ -148,10 +160,10 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 			mstlystcdata.NewLaws,
 			mstlystcdata.NewEnricher,
 			mstlystcdata.NewUserAwareEnricher,
-			notifi.New,
 			postals.New,
 			tracker.New,
-			tracker.NewManager,
+			manager.New,
+			notifi.New,
 			userinfo.NewRetriever,
 			userinfo.NewPoller,
 

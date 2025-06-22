@@ -37,7 +37,7 @@ const slideover = useSlideover();
 const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
-const { getSortedDispatches, settings, abort, reconnecting } = storeToRefs(centrumStore);
+const { getSortedDispatches, settings, abort, stopping } = storeToRefs(centrumStore);
 
 type GroupedDispatches = { date: Date; key: string; dispatches: Dispatch[] }[];
 
@@ -120,7 +120,7 @@ const columns = [
         </div>
 
         <div class="flex flex-1 flex-col overflow-x-auto overflow-y-auto">
-            <div v-if="!dispatches && abort === undefined && !reconnecting" class="space-y-1">
+            <div v-if="!dispatches && abort === undefined && stopping" class="space-y-1">
                 <USkeleton v-for="idx in 7" :key="idx" class="h-9 w-full" />
             </div>
 

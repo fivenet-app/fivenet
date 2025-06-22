@@ -220,7 +220,7 @@ type Dispatch struct {
 	CreatedAt *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Job       string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	Jobs      []string               `protobuf:"bytes,18,rep,name=jobs,proto3" json:"jobs,omitempty"`
+	Jobs      *JobList               `protobuf:"bytes,18,opt,name=jobs,proto3" json:"jobs,omitempty"`
 	Status    *DispatchStatus        `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
 	// @sanitize
 	Message string `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
@@ -298,7 +298,7 @@ func (x *Dispatch) GetJob() string {
 	return ""
 }
 
-func (x *Dispatch) GetJobs() []string {
+func (x *Dispatch) GetJobs() *JobList {
 	if x != nil {
 		return x.Jobs
 	}
@@ -543,6 +543,7 @@ type DispatchStatus struct {
 	Y      *float64        `protobuf:"fixed64,12,opt,name=y,proto3,oneof" json:"y,omitempty"`
 	// @sanitize
 	Postal        *string `protobuf:"bytes,13,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	CreatorJob    *string `protobuf:"bytes,14,opt,name=creator_job,json=creatorJob,proto3,oneof" json:"creator_job,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -668,6 +669,13 @@ func (x *DispatchStatus) GetPostal() string {
 	return ""
 }
 
+func (x *DispatchStatus) GetCreatorJob() string {
+	if x != nil && x.CreatorJob != nil {
+		return *x.CreatorJob
+	}
+	return ""
+}
+
 // @dbscanner: json
 type DispatchReferences struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -769,16 +777,15 @@ var File_resources_centrum_dispatches_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\n" +
-	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\xfb\x06\n" +
+	"\"resources/centrum/dispatches.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a resources/centrum/settings.proto\x1a\x1dresources/centrum/units.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1bresources/users/users.proto\x1a\x17validate/validate.proto\"\x8d\a\n" +
 	"\bDispatch\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
 	"updated_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x19\n" +
-	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12\x1c\n" +
-	"\x04jobs\x18\x12 \x03(\tB\b\xfaB\x05\x92\x01\x02\x10\n" +
-	"R\x04jobs\x12>\n" +
+	"\x03job\x18\x04 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x03job\x12.\n" +
+	"\x04jobs\x18\x12 \x01(\v2\x1a.resources.centrum.JobListR\x04jobs\x12>\n" +
 	"\x06status\x18\x05 \x01(\v2!.resources.centrum.DispatchStatusH\x02R\x06status\x88\x01\x01\x12\"\n" +
 	"\amessage\x18\a \x01(\tB\b\xfaB\x05r\x03\x18\xff\x01R\amessage\x12/\n" +
 	"\vdescription\x18\b \x01(\tB\b\xfaB\x05r\x03\x18\x80\bH\x03R\vdescription\x88\x01\x01\x12J\n" +
@@ -823,7 +830,7 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"expires_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01B\a\n" +
 	"\x05_unitB\r\n" +
 	"\v_created_atB\r\n" +
-	"\v_expires_at\"\xee\x04\n" +
+	"\v_expires_at\"\xad\x05\n" +
 	"\x0eDispatchStatus\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12B\n" +
 	"\n" +
@@ -840,7 +847,10 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	" \x01(\v2\x19.resources.jobs.ColleagueH\x06R\x04user\x88\x01\x01\x12\x11\n" +
 	"\x01x\x18\v \x01(\x01H\aR\x01x\x88\x01\x01\x12\x11\n" +
 	"\x01y\x18\f \x01(\x01H\bR\x01y\x88\x01\x01\x12$\n" +
-	"\x06postal\x18\r \x01(\tB\a\xfaB\x04r\x02\x180H\tR\x06postal\x88\x01\x01B\r\n" +
+	"\x06postal\x18\r \x01(\tB\a\xfaB\x04r\x02\x180H\tR\x06postal\x88\x01\x01\x12-\n" +
+	"\vcreator_job\x18\x0e \x01(\tB\a\xfaB\x04r\x02\x18\x14H\n" +
+	"R\n" +
+	"creatorJob\x88\x01\x01B\r\n" +
 	"\v_created_atB\n" +
 	"\n" +
 	"\b_unit_idB\a\n" +
@@ -852,7 +862,8 @@ const file_resources_centrum_dispatches_proto_rawDesc = "" +
 	"\x05_userB\x04\n" +
 	"\x02_xB\x04\n" +
 	"\x02_yB\t\n" +
-	"\a_postal\"Z\n" +
+	"\a_postalB\x0e\n" +
+	"\f_creator_job\"Z\n" +
 	"\x12DispatchReferences\x12D\n" +
 	"\n" +
 	"references\x18\x01 \x03(\v2$.resources.centrum.DispatchReferenceR\n" +
@@ -913,34 +924,36 @@ var file_resources_centrum_dispatches_proto_goTypes = []any{
 	(*DispatchReferences)(nil),  // 7: resources.centrum.DispatchReferences
 	(*DispatchReference)(nil),   // 8: resources.centrum.DispatchReference
 	(*timestamp.Timestamp)(nil), // 9: resources.timestamp.Timestamp
-	(*DispatchAttributes)(nil),  // 10: resources.centrum.DispatchAttributes
-	(*users.User)(nil),          // 11: resources.users.User
-	(*Unit)(nil),                // 12: resources.centrum.Unit
-	(*jobs.Colleague)(nil),      // 13: resources.jobs.Colleague
+	(*JobList)(nil),             // 10: resources.centrum.JobList
+	(*DispatchAttributes)(nil),  // 11: resources.centrum.DispatchAttributes
+	(*users.User)(nil),          // 12: resources.users.User
+	(*Unit)(nil),                // 13: resources.centrum.Unit
+	(*jobs.Colleague)(nil),      // 14: resources.jobs.Colleague
 }
 var file_resources_centrum_dispatches_proto_depIdxs = []int32{
 	9,  // 0: resources.centrum.Dispatch.created_at:type_name -> resources.timestamp.Timestamp
 	9,  // 1: resources.centrum.Dispatch.updated_at:type_name -> resources.timestamp.Timestamp
-	6,  // 2: resources.centrum.Dispatch.status:type_name -> resources.centrum.DispatchStatus
-	10, // 3: resources.centrum.Dispatch.attributes:type_name -> resources.centrum.DispatchAttributes
-	11, // 4: resources.centrum.Dispatch.creator:type_name -> resources.users.User
-	5,  // 5: resources.centrum.Dispatch.units:type_name -> resources.centrum.DispatchAssignment
-	7,  // 6: resources.centrum.Dispatch.references:type_name -> resources.centrum.DispatchReferences
-	5,  // 7: resources.centrum.DispatchAssignments.units:type_name -> resources.centrum.DispatchAssignment
-	12, // 8: resources.centrum.DispatchAssignment.unit:type_name -> resources.centrum.Unit
-	9,  // 9: resources.centrum.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
-	9,  // 10: resources.centrum.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
-	9,  // 11: resources.centrum.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
-	12, // 12: resources.centrum.DispatchStatus.unit:type_name -> resources.centrum.Unit
-	0,  // 13: resources.centrum.DispatchStatus.status:type_name -> resources.centrum.StatusDispatch
-	13, // 14: resources.centrum.DispatchStatus.user:type_name -> resources.jobs.Colleague
-	8,  // 15: resources.centrum.DispatchReferences.references:type_name -> resources.centrum.DispatchReference
-	2,  // 16: resources.centrum.DispatchReference.reference_type:type_name -> resources.centrum.DispatchReferenceType
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	10, // 2: resources.centrum.Dispatch.jobs:type_name -> resources.centrum.JobList
+	6,  // 3: resources.centrum.Dispatch.status:type_name -> resources.centrum.DispatchStatus
+	11, // 4: resources.centrum.Dispatch.attributes:type_name -> resources.centrum.DispatchAttributes
+	12, // 5: resources.centrum.Dispatch.creator:type_name -> resources.users.User
+	5,  // 6: resources.centrum.Dispatch.units:type_name -> resources.centrum.DispatchAssignment
+	7,  // 7: resources.centrum.Dispatch.references:type_name -> resources.centrum.DispatchReferences
+	5,  // 8: resources.centrum.DispatchAssignments.units:type_name -> resources.centrum.DispatchAssignment
+	13, // 9: resources.centrum.DispatchAssignment.unit:type_name -> resources.centrum.Unit
+	9,  // 10: resources.centrum.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 11: resources.centrum.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
+	9,  // 12: resources.centrum.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
+	13, // 13: resources.centrum.DispatchStatus.unit:type_name -> resources.centrum.Unit
+	0,  // 14: resources.centrum.DispatchStatus.status:type_name -> resources.centrum.StatusDispatch
+	14, // 15: resources.centrum.DispatchStatus.user:type_name -> resources.jobs.Colleague
+	8,  // 16: resources.centrum.DispatchReferences.references:type_name -> resources.centrum.DispatchReference
+	2,  // 17: resources.centrum.DispatchReference.reference_type:type_name -> resources.centrum.DispatchReferenceType
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_dispatches_proto_init() }
@@ -949,6 +962,7 @@ func file_resources_centrum_dispatches_proto_init() {
 		return
 	}
 	file_resources_centrum_attributes_proto_init()
+	file_resources_centrum_settings_proto_init()
 	file_resources_centrum_units_proto_init()
 	file_resources_centrum_dispatches_proto_msgTypes[0].OneofWrappers = []any{}
 	file_resources_centrum_dispatches_proto_msgTypes[2].OneofWrappers = []any{}

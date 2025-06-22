@@ -321,7 +321,7 @@ const items = [
     },
     {
         slot: 'access',
-        label: t('common.access', 1),
+        label: t('common.access'),
         icon: 'i-mdi-key',
     },
 ];
