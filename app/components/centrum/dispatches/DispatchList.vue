@@ -2,7 +2,7 @@
 import DispatchAssignModal from '~/components/centrum/dispatches/DispatchAssignModal.vue';
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches/DispatchDetailsByIDSlideover.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
-import { dispatchStatusAnimate, dispatchStatusToBadgeColor, dispatchTimeToTextColor } from '~/components/centrum/helpers';
+import { dispatchStatusAnimate, dispatchStatusToBadgeColor, dispatchTimeToBadge } from '~/components/centrum/helpers';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchStatusBreakdown from '~/components/centrum/partials/DispatchStatusBreakdown.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
@@ -203,9 +203,11 @@ const columns = [
                             <GenericTime
                                 :value="dispatch.createdAt"
                                 type="compact"
+                                badge
+                                size="xs"
                                 :update-callback="
                                     () =>
-                                        dispatchTimeToTextColor(
+                                        dispatchTimeToBadge(
                                             dispatch.createdAt,
                                             dispatch.status.status,
                                             settings?.timings?.dispatchMaxWait,
@@ -344,9 +346,11 @@ const columns = [
                                             <GenericTime
                                                 :value="dispatch.createdAt"
                                                 type="compact"
+                                                badge
+                                                size="sm"
                                                 :update-callback="
                                                     () =>
-                                                        dispatchTimeToTextColor(
+                                                        dispatchTimeToBadge(
                                                             dispatch.createdAt,
                                                             dispatch.status?.status,
                                                             settings?.timings?.dispatchMaxWait,
@@ -378,13 +382,13 @@ const columns = [
 
                         <div class="flex flex-col gap-1">
                             <div class="flex flex-row">
-                                <p class="line-clamp-2 inline-flex flex-1 gap-1 hover:line-clamp-6">
-                                    <span class="font-semibold">{{ $t('common.message') }}:</span>
+                                <p class="line-clamp-2 flex-1 hover:line-clamp-6">
+                                    <span class="mr-1 font-semibold">{{ $t('common.message') }}:</span>
                                     <span>{{ dispatch.message }}</span>
                                 </p>
 
                                 <p class="inline-flex items-center gap-1">
-                                    <span class="font-semibold">{{ $t('common.creator') }}:</span>
+                                    <span class="mr-1 font-semibold">{{ $t('common.creator') }}:</span>
                                     <span v-if="dispatch.anon">
                                         {{ $t('common.anon') }}
                                     </span>
