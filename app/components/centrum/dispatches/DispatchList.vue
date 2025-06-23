@@ -378,8 +378,9 @@ const columns = [
 
                         <div class="flex flex-col gap-1">
                             <div class="flex flex-row">
-                                <p class="line-clamp-2 flex-1 hover:line-clamp-6">
-                                    <span class="font-semibold">{{ $t('common.message') }}:</span> {{ dispatch.message }}
+                                <p class="line-clamp-2 inline-flex flex-1 gap-1 hover:line-clamp-6">
+                                    <span class="font-semibold">{{ $t('common.message') }}:</span>
+                                    <span>{{ dispatch.message }}</span>
                                 </p>
 
                                 <p class="inline-flex items-center gap-1">
