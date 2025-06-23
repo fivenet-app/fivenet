@@ -49,7 +49,7 @@ type Params struct {
 func New(p Params) *DispatchersDB {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	logger := p.Logger.Named("centrum_dispatchers")
+	logger := p.Logger.Named("centrum.dispatchers")
 	d := &DispatchersDB{
 		logger:   logger,
 		db:       p.DB,

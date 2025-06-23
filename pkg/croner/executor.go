@@ -59,8 +59,10 @@ func NewExecutor(p ExecutorParams) (*Executor, error) {
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
+	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentCron, p.Cfg.LogLevel))).
+		Named("cron.executor")
 	ag := &Executor{
-		logger: p.Logger.Named("cron.executor"),
+		logger: logger,
 
 		nodeName: nodeName,
 

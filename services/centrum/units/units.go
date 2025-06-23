@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/access"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
@@ -54,13 +55,14 @@ type Params struct {
 	Logger   *zap.Logger
 	JS       *events.JSWrapper
 	DB       *sql.DB
+	Cfg      *config.Config
 	Enricher *mstlystcdata.Enricher
 	Tracker  tracker.ITracker
 	Postals  postals.Postals
 }
 
 func New(p Params) *UnitDB {
-	logger := p.Logger.Named("centrum_state")
+	logger := p.Logger.Named("centrum.units")
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
@@ -126,7 +128,9 @@ func New(p Params) *UnitDB {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		jobSt, err := store.New[common.IDMapping, *common.IDMapping](ctxCancel, logger, p.JS, "centrum_units",
+		storeLogger := logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel)))
+
+		jobSt, err := store.New[common.IDMapping, *common.IDMapping](ctxCancel, storeLogger, p.JS, "centrum_units",
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 		)
 		if err != nil {
@@ -138,7 +142,7 @@ func New(p Params) *UnitDB {
 		}
 		d.jobMapping = jobSt
 
-		st, err := store.New[centrum.Unit, *centrum.Unit](ctxCancel, logger, p.JS, "centrum_units",
+		st, err := store.New[centrum.Unit, *centrum.Unit](ctxCancel, storeLogger, p.JS, "centrum_units",
 			store.WithKVPrefix[centrum.Unit, *centrum.Unit]("id"),
 			store.WithOnUpdateFn[centrum.Unit, *centrum.Unit](func(ctx context.Context, _ *store.Store[centrum.Unit, *centrum.Unit], unit *centrum.Unit) (*centrum.Unit, error) {
 				if unit == nil {

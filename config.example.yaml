@@ -1,35 +1,24 @@
 #
 # Be sure to checkout the Config file reference: https://fivenet.app/getting-started/configuration/config-reference
 #
+# Debug or release mode (affects performance)
+mode: "release"
+
 # Can be "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
 logLevel: "INFO"
-# Debug or release mode
-mode: "release"
+# Customize log level for specific components (if empty will use the global logLevel, can never be more verbose than the global logLevel)
+logLevelOverrides:
+  kvstore: "INFO"
+  locks: "INFO"
+  cron: "INFO"
+  perms: "INFO"
+
 # Must be 32 chars (bytes) long
 secret: "your_generated_db_secret_32_char"
-otlp:
-  enabled: false
-  # Can be "stdout", "grpc", "http"
-  type: "stdout"
-  # OTLP endpoint URL (must include `http(s)://`)
-  url: "http://localhost:4317"
-  insecure: false
-  timeout: 10s
-  environment: "dev"
-  ratio: 0.1
-  attributes: []
-  # - service.name=fivenet-server
-  # - k8s.namespace.name=${POD_NAMESPACE}
-  headers: {}
-    # Example to authenticate with an API key
-    #authorization: "OTEL_API_KEY_HERE"
-  # Can be "none" or "gzip"
-  compression: "none"
-  frontend:
-    url: ""
-    headers: {}
-      # Example to authenticate with an API key
-      #authorization: "OTEL_API_KEY_HERE"
+
+jwt:
+  secret: "your_generated_jwt_secret"
+
 http:
   listen: ":8080"
   adminListen: ":7070"
@@ -42,6 +31,7 @@ http:
   sessions:
     cookieSecret: "your_generated_cookie_secret"
     domain: "fivenet.example.com"
+
 database:
   # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
   # Please note that the `parseTime` parameter is allows set to true
@@ -65,13 +55,13 @@ database:
     conditions:
       user:
         filterEmptyName: false
+
 nats:
   # This NATS url is for using the NATS server from the `docker-compose.yaml`
   # If you change the NATS username or password, below `nats:` config section
   url: "nats://fivenet:fivenet_topsecret@nats:4222"
   replicas: 1
-jwt:
-  secret: "your_generated_jwt_secret"
+
 storage:
   type: "filesystem"
   filesystem:
@@ -87,6 +77,7 @@ storage:
     prefix: ""
     retries: 3
     checkOnStartup: false
+
 imageProxy:
   enabled: true
   url: "/api/image_proxy/"
@@ -94,8 +85,10 @@ imageProxy:
   options:
     allowHosts: []
     denyHosts: []
+
 audit:
   retentionDays: 90
+
 oauth2:
   providers:
     - name: "discord"
@@ -113,16 +106,20 @@ oauth2:
       endpoints:
         authURL: "https://discord.com/api/oauth2/authorize"
         tokenURL: "https://discord.com/api/oauth2/token"
+
 postalsFile: ".output/public/data/postals.json"
+
 auth:
   superuserGroups:
     - projektleiter
     - teamleitung
   superuserUsers: []
+
 dispatchCenter:
   type: "gksphone"
   convertJobs: []
     #- police
+
 discord:
   enabled: true
   token: "your_discord_bot_token"
@@ -146,12 +143,38 @@ discord:
         #color: "#9B59B6"
   commands:
     enabled: true
+
 game:
   # First grade "number/id", some servers start at 0, but I have seen some start at 1
   startJobGrade: 0
   # If enabled it will automatically delete roles which no jobs/grades are found for
   cleanupRolesForMissingJobs: false
+
 sync:
   enabled: false
   apiTokens: []
     #- LONG_RANDOM_API_TOKEN_FOR_DBSYNC
+
+otlp:
+  enabled: false
+  # Can be "stdout", "grpc", "http"
+  type: "stdout"
+  # OTLP endpoint URL (must include `http(s)://`)
+  url: "http://localhost:4317"
+  insecure: false
+  timeout: 10s
+  environment: "dev"
+  ratio: 0.1
+  attributes: []
+  # - service.name=fivenet-server
+  # - k8s.namespace.name=${POD_NAMESPACE}
+  headers: {}
+    # Example to authenticate with an API key
+    #authorization: "OTEL_API_KEY_HERE"
+  # Can be "none" or "gzip"
+  compression: "none"
+  frontend:
+    url: ""
+    headers: {}
+      # Example to authenticate with an API key
+      #authorization: "OTEL_API_KEY_HERE"

@@ -29,7 +29,7 @@ var metricCommandCalls = promauto.NewGaugeVec(prometheus.GaugeOpts{
 }, []string{"command"})
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
-	return log.Named("discord_bot").Named("commands")
+	return log.Named("discord.bot").Named("commands")
 }
 
 var Module = fx.Module("discord_commands",

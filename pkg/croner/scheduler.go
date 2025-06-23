@@ -58,8 +58,10 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
+	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentCron, p.Cfg.LogLevel))).
+		Named("cron.scheduler")
 	s := &Scheduler{
-		logger: p.Logger.Named("cron.scheduler"),
+		logger: logger,
 
 		nodeName: nodeName,
 

@@ -84,6 +84,13 @@ func Load() (Result, error) {
 		c.HTTP.Origins[i] = strings.ToLower(c.HTTP.Origins[i])
 	}
 
+	// Ensure that all log level overrides are set to the default log level if they are empty
+	for k, v := range c.LogLevelOverrides {
+		if v == "" {
+			c.LogLevelOverrides[k] = c.LogLevel
+		}
+	}
+
 	return res, nil
 }
 

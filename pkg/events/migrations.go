@@ -122,5 +122,14 @@ func migrate001(ctx context.Context, js *JSWrapper) error {
 		}
 	}
 
+	// Remove _owner key from cron jobs bucket
+	kv, err := js.KeyValue(ctx, "cron")
+	if err == nil {
+		_ = kv.Delete(ctx, "_owner")
+		_ = kv.Delete(ctx, "LOCK._owner")
+	} else if !errors.Is(err, jetstream.ErrBucketNotFound) {
+		return fmt.Errorf("failed to get user locations bucket: %w", err)
+	}
+
 	return nil
 }

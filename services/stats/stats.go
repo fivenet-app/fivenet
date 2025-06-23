@@ -37,7 +37,7 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	s := &Server{
-		logger: p.Logger.Named("stats_worker"),
+		logger: p.Logger.Named("stats.worker"),
 		js:     p.JS,
 
 		worker: newWorker(p.Logger, p.DB),

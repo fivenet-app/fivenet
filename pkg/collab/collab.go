@@ -54,7 +54,7 @@ func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, category
 
 	return &CollabServer{
 		ctx:    ctx,
-		logger: logger.Named("collab_server").With(zap.String("category", category)),
+		logger: logger.Named("collab.server").With(zap.String("category", category)),
 		js:     js,
 
 		category: category,

@@ -9,13 +9,13 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	grpc_auth "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/permission"
 	grpc_sanitizer "github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/sanitizer"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/interceptors/tracing"
 	"github.com/fivenet-app/fivenet/v2025/pkg/perms"
+	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
@@ -46,7 +46,7 @@ var panicsTotal = promauto.With(prometheus.DefaultRegisterer).NewCounter(prometh
 })
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
-	return log.Named("grpc_server")
+	return log.Named("server.grpc")
 }
 
 var ServerModule = fx.Module("grpcserver",

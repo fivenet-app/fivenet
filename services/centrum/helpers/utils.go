@@ -54,7 +54,7 @@ type Params struct {
 }
 
 func New(p Params) *Helpers {
-	logger := p.Logger.Named("centrum_state")
+	logger := p.Logger.Named("centrum.state")
 	d := &Helpers{
 		logger: logger,
 

@@ -28,9 +28,9 @@ var Module = fx.Module("metricsserver",
 	fx.Decorate(wrapLogger),
 )
 
-// wrapLogger returns a logger named "metrics_server" for metrics server logging.
+// wrapLogger returns a logger named "server.metrics" for metrics server logging.
 func wrapLogger(log *zap.Logger) *zap.Logger {
-	return log.Named("metrics_server")
+	return log.Named("server.metrics")
 }
 
 // AdminServer is a type alias for *http.Server, representing the admin HTTP server.

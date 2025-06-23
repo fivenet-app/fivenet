@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
@@ -34,13 +35,14 @@ type Params struct {
 	Logger   *zap.Logger
 	JS       *events.JSWrapper
 	DB       *sql.DB
+	Cfg      *config.Config
 	Enricher *mstlystcdata.Enricher
 }
 
 func New(p Params) *SettingsDB {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	logger := p.Logger.Named("centrum_settings")
+	logger := p.Logger.Named("centrum.settings")
 	d := &SettingsDB{
 		logger:   logger,
 		db:       p.DB,

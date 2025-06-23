@@ -59,7 +59,7 @@ func New(p Params) *Converter {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	c := &Converter{
-		logger: p.Logger.Named("centrum_converter"),
+		logger: p.Logger.Named("centrum.converter"),
 		db:     p.DB,
 
 		dispatches: p.Dispatches,

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -64,6 +65,8 @@ type Params struct {
 	DB *sql.DB
 	// TP is the OpenTelemetry tracer provider.
 	TP *tracesdk.TracerProvider
+	// Config for log level overrides.
+	Cfg *config.Config
 }
 
 // Result defines the outputs provided by the Housekeeper module.
@@ -78,8 +81,11 @@ type Result struct {
 
 // New constructs a new Housekeeper and returns it as an fx result.
 func New(p Params) Result {
+	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentHousekeeper, p.Cfg.LogLevel))).
+		Named("housekeeper")
+
 	h := &Housekeeper{
-		logger: p.Logger.Named("housekeeper"),
+		logger: logger,
 		tracer: p.TP.Tracer("housekeeper"),
 
 		// Assign the database connection.

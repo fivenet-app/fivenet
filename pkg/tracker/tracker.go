@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/tracker"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/userinfo"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
@@ -54,20 +55,24 @@ type Params struct {
 	Logger *zap.Logger
 	TP     *tracesdk.TracerProvider
 	JS     *events.JSWrapper
+	Cfg    *config.Config
 }
 
 func New(p Params) (ITracker, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
+	logger := p.Logger.Named("tracker")
 	t := &Tracker{
-		logger: p.Logger.Named("tracker"),
+		logger: logger,
 		tracer: p.TP.Tracer("tracker"),
 		js:     p.JS,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		storeLogger := logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel)))
+
 		userMappingsStore, err := store.New[tracker.UserMapping, *tracker.UserMapping](
-			ctxStartup, p.Logger, p.JS, BucketUserMappingsMap,
+			ctxStartup, storeLogger, p.JS, BucketUserMappingsMap,
 			store.WithLocks[tracker.UserMapping, *tracker.UserMapping](nil),
 		)
 		if err != nil {
@@ -78,7 +83,7 @@ func New(p Params) (ITracker, error) {
 		}
 		t.userMappingsStore = userMappingsStore
 
-		userLocStore, err := store.New(ctxStartup, p.Logger, p.JS, BucketUserLoc,
+		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, storeLogger, p.JS, BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
 		if err != nil {
@@ -90,7 +95,7 @@ func New(p Params) (ITracker, error) {
 		t.userLocStore = userLocStore
 
 		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
-			ctxStartup, p.Logger, p.JS, BucketUserLocByID,
+			ctxStartup, storeLogger, p.JS, BucketUserLocByID,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
 		if err != nil {

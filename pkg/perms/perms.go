@@ -139,8 +139,10 @@ func New(p Params) (Permissions, error) {
 
 	userCanCache := cache.NewLRUCache[userCacheKey, bool](1024)
 
+	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentPerms, p.Cfg.LogLevel)))
+
 	ps := &Perms{
-		logger: p.Logger,
+		logger: logger,
 		db:     p.DB,
 		wg:     sync.WaitGroup{},
 

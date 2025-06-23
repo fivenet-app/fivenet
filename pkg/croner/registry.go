@@ -4,15 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"slices"
 	"strings"
 	"time"
 
 	"github.com/adhocore/gronx"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
-	"github.com/fivenet-app/fivenet/v2025/pkg/nats/locks"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
@@ -22,6 +21,8 @@ import (
 
 const DefaultCronjobTimeout = 15 * time.Second
 
+const BucketName = "cron"
+
 var RegistryModule = fx.Module("cron_registry",
 	fx.Provide(
 		NewRegistry,
@@ -29,11 +30,6 @@ var RegistryModule = fx.Module("cron_registry",
 )
 
 var ErrInvalidCronSyntax = errors.New("invalid cron syntax")
-
-var reservedCronjobKeys = []string{
-	OwnerKey,
-	locks.KeyPrefix + OwnerKey,
-}
 
 type IRegistry interface {
 	RegisterCronjob(ctx context.Context, job *cron.Cronjob) error
@@ -52,6 +48,7 @@ type RegistryParams struct {
 
 	Logger *zap.Logger
 	JS     *events.JSWrapper
+	Cfg    *config.Config
 
 	Jobs []CronRegister `group:"cronjobregister"`
 }
@@ -75,8 +72,10 @@ type RegistryResult struct {
 func NewRegistry(p RegistryParams) (RegistryResult, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
+	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentCron, p.Cfg.LogLevel))).
+		Named("cron.registry")
 	r := &Registry{
-		logger: p.Logger.Named("cron.registry"),
+		logger: p.Logger,
 		ctx:    ctxCancel,
 		js:     p.JS,
 	}
@@ -86,21 +85,19 @@ func NewRegistry(p RegistryParams) (RegistryResult, error) {
 			return err
 		}
 
-		bucket := "cron"
 		storeKV, err := r.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
-			Bucket:      bucket,
-			Description: fmt.Sprintf("%s Store", bucket),
+			Bucket:      BucketName,
+			Description: fmt.Sprintf("%s Store", BucketName),
 			History:     2,
 			Storage:     jetstream.MemoryStorage,
 		})
 		if err != nil {
-			return fmt.Errorf("failed to create kv (bucket %s) for cron store. %w", bucket, err)
+			return fmt.Errorf("failed to create kv (bucket %s) for cron store. %w", BucketName, err)
 		}
 		r.kv = storeKV
 
-		st, err := store.New[cron.Cronjob, *cron.Cronjob](ctxStartup, p.Logger, p.JS, bucket,
+		st, err := store.New[cron.Cronjob, *cron.Cronjob](ctxStartup, logger, p.JS, BucketName,
 			store.WithJetstreamKV[cron.Cronjob, *cron.Cronjob](storeKV),
-			store.WithIgnoredKeys[cron.Cronjob, *cron.Cronjob](reservedCronjobKeys...),
 		)
 		if err != nil {
 			return err
@@ -145,7 +142,7 @@ func (r *Registry) ListCronjobs(ctx context.Context) []*cron.Cronjob {
 }
 
 func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
-	if job.Name == "" || slices.Contains(reservedCronjobKeys, job.Name) {
+	if job.Name == "" {
 		return fmt.Errorf("cron job name is required or uses reserved name: %s", job.Name)
 	}
 

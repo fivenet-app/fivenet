@@ -68,7 +68,7 @@ type Params struct {
 	DB        *sql.DB
 	Enricher  *mstlystcdata.Enricher
 	Postals   postals.Postals
-	Config    *config.Config
+	Cfg       *config.Config
 	AppConfig appconfig.IConfig
 	Units     *units.UnitDB
 }
@@ -76,8 +76,10 @@ type Params struct {
 func New(p Params) (*Manager, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
+	logger := p.Logger.Named("tracker.manager")
+
 	m := &Manager{
-		logger:   p.Logger,
+		logger:   logger,
 		tracer:   p.TP.Tracer("tracker.manager"),
 		js:       p.JS,
 		db:       p.DB,
@@ -109,8 +111,10 @@ func New(p Params) (*Manager, error) {
 			}
 		}()
 
+		storeLogger := logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel)))
+
 		userMappingsStore, err := store.New[pbtracker.UserMapping, *pbtracker.UserMapping](
-			ctxStartup, p.Logger, p.JS, tracker.BucketUserMappingsMap,
+			ctxStartup, storeLogger, p.JS, tracker.BucketUserMappingsMap,
 			store.WithLocks[pbtracker.UserMapping, *pbtracker.UserMapping](nil),
 		)
 		if err != nil {
@@ -121,7 +125,7 @@ func New(p Params) (*Manager, error) {
 		}
 		m.userMappingsStore = userMappingsStore
 
-		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, p.Logger, p.JS, tracker.BucketUserLoc,
+		userLocStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, storeLogger, p.JS, tracker.BucketUserLoc,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
 		if err != nil {
@@ -133,7 +137,7 @@ func New(p Params) (*Manager, error) {
 		m.userLocStore = userLocStore
 
 		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
-			ctxStartup, p.Logger, p.JS, tracker.BucketUserLocByID,
+			ctxStartup, storeLogger, p.JS, tracker.BucketUserLocByID,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 			store.WithOnUpdateFn(func(ctx context.Context, _ *store.Store[livemap.UserMarker, *livemap.UserMarker],
 				um *livemap.UserMarker,

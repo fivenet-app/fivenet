@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords"
 	"github.com/fivenet-app/fivenet/v2025/pkg/coords/postals"
@@ -80,6 +81,7 @@ type Params struct {
 	Logger    *zap.Logger
 	JS        *events.JSWrapper
 	DB        *sql.DB
+	Cfg       *config.Config
 	Enricher  *mstlystcdata.Enricher
 	Tracker   tracker.ITracker
 	Postals   postals.Postals
@@ -92,7 +94,7 @@ type Params struct {
 func New(p Params) *DispatchDB {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	logger := p.Logger.Named("centrum_dispatches")
+	logger := p.Logger.Named("centrum.dispatches")
 	d := &DispatchDB{
 		logger:   logger,
 		db:       p.DB,

@@ -4,21 +4,26 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/zaputils"
+	"go.uber.org/zap/zapcore"
 )
 
 type Config struct {
-	LogLevel string `default:"DEBUG" yaml:"logLevel"`
-	Mode     string `default:"debug" yaml:"mode"`
+	Mode string `default:"release" yaml:"mode"`
+
+	LogLevel string `default:"DEBUG" enum:"" yaml:"logLevel"`
+	// Any empty log level will be set to the `.LogLevel`
+	LogLevelOverrides LogLevelOverrides `yaml:"logLevelOverrides"`
+
 	// Secret used to encrypt/decrypt data in, e.g., the database
 	Secret string `yaml:"secret"`
 
 	Demo Demo `yaml:"demo"`
 
-	OTLP           OTLPConfig     `yaml:"otlp"`
+	JWT            JWT            `yaml:"jwt"`
 	HTTP           HTTP           `yaml:"http"`
 	Database       Database       `yaml:"database"`
 	NATS           NATS           `yaml:"nats"`
-	JWT            JWT            `yaml:"jwt"`
 	Storage        Storage        `yaml:"storage"`
 	ImageProxy     ImageProxy     `yaml:"imageProxy"`
 	Audit          Audit          `yaml:"audit"`
@@ -29,42 +34,32 @@ type Config struct {
 	Discord        Discord        `yaml:"discord"`
 	Game           Game           `yaml:"game"`
 	Sync           Sync           `yaml:"sync"`
+	OTLP           OTLPConfig     `yaml:"otlp"`
+}
+
+type LoggingComponent string
+
+var (
+	LoggingComponentKVStore     LoggingComponent = "kvstore"
+	LoggingComponentCron        LoggingComponent = "cron"
+	LoggingComponentPerms       LoggingComponent = "perms"
+	LoggingComponentHousekeeper LoggingComponent = "housekeeper"
+)
+
+type LogLevelOverrides map[string]string
+
+func (l LogLevelOverrides) Get(component LoggingComponent, defaultLevel string) zapcore.Level {
+	if level, ok := l[string(component)]; ok && level != "" {
+		return zaputils.StringToLevel(level)
+	}
+
+	return zaputils.StringToLevel(defaultLevel)
 }
 
 type Demo struct {
 	Enabled   bool     `default:"false" yaml:"enabled"`
 	TargetJob string   `default:"police" yaml:"targetJob"`
 	Users     []string `yaml:"users"`
-}
-
-type OtelExporter string
-
-const (
-	TracingExporter_StdoutTrace OtelExporter = "stdout"
-	TracingExporter_OTLPGRPC    OtelExporter = "grpc"
-	TracingExporter_OTLPHTTP    OtelExporter = "http"
-)
-
-type OTLPConfig struct {
-	Enabled     bool          `default:"false" yaml:"enabled"`
-	Type        OtelExporter  `default:"stdout" yaml:"type"`
-	URL         string        `yaml:"url"`
-	Insecure    bool          `yaml:"insecure"`
-	Timeout     time.Duration `default:"10s" yaml:"timeout"`
-	Environment string        `default:"dev" yaml:"environment"`
-	Ratio       float64       `default:"0.1" yaml:"ratio"`
-	Attributes  []string      `yaml:"attributes"`
-	// Headers to send with OTLP HTTP requests
-	Headers map[string]string `yaml:"headers,omitempty"`
-	// Compression type for OTLP HTTP requests
-	Compression string             `default:"none" yaml:"compression"`
-	Frontend    OTLPFrontendConfig `yaml:"frontend"`
-}
-
-type OTLPFrontendConfig struct {
-	// Public URL for traces and other instrumentation (if set, only then instrumentation is enabled in the frontend)
-	URL     string            `yaml:"url"`
-	Headers map[string]string `yaml:"headers,omitempty"`
 }
 
 type HTTP struct {
@@ -297,4 +292,34 @@ type Game struct {
 type Sync struct {
 	Enabled   bool     `yaml:"enabled"`
 	APITokens []string `yaml:"apiTokens"`
+}
+
+type OtelExporter string
+
+const (
+	TracingExporter_StdoutTrace OtelExporter = "stdout"
+	TracingExporter_OTLPGRPC    OtelExporter = "grpc"
+	TracingExporter_OTLPHTTP    OtelExporter = "http"
+)
+
+type OTLPConfig struct {
+	Enabled     bool          `default:"false" yaml:"enabled"`
+	Type        OtelExporter  `default:"stdout" yaml:"type"`
+	URL         string        `yaml:"url"`
+	Insecure    bool          `yaml:"insecure"`
+	Timeout     time.Duration `default:"10s" yaml:"timeout"`
+	Environment string        `default:"dev" yaml:"environment"`
+	Ratio       float64       `default:"0.1" yaml:"ratio"`
+	Attributes  []string      `yaml:"attributes"`
+	// Headers to send with OTLP HTTP requests
+	Headers map[string]string `yaml:"headers,omitempty"`
+	// Compression type for OTLP HTTP requests
+	Compression string             `default:"none" yaml:"compression"`
+	Frontend    OTLPFrontendConfig `yaml:"frontend"`
+}
+
+type OTLPFrontendConfig struct {
+	// Public URL for traces and other instrumentation (if set, only then instrumentation is enabled in the frontend)
+	URL     string            `yaml:"url"`
+	Headers map[string]string `yaml:"headers,omitempty"`
 }
