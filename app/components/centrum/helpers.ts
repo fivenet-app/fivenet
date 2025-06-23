@@ -1,4 +1,5 @@
 import type { BadgeColor } from '#ui/types';
+import type { CentrumAccess, CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
@@ -241,6 +242,28 @@ export function checkUnitAccess(unitAccess: UnitAccess | undefined, level: UnitA
     }
 
     if (!checkAccess(activeChar.value, unitAccess, undefined, level)) {
+        return false;
+    }
+
+    return true;
+}
+
+export function checkDispatchAccess(dispatchAccess: CentrumAccess | undefined, level: CentrumAccessLevel): boolean {
+    // TODO check the job of the active char, user always has "full" access to dispatches that they are part of
+    if (dispatchAccess === undefined || dispatchAccess.jobs.length === 0) {
+        return true;
+    }
+
+    const { activeChar, isSuperuser } = useAuth();
+    if (isSuperuser.value) {
+        return true;
+    }
+
+    if (activeChar.value === null) {
+        return false;
+    }
+
+    if (!checkAccess(activeChar.value, dispatchAccess, undefined, level)) {
         return false;
     }
 

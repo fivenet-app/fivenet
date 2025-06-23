@@ -38,6 +38,7 @@
     - [Dispatchers](#resources-centrum-Dispatchers)
   
 - [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [Job](#resources-centrum-Job)
     - [JobList](#resources-centrum-JobList)
     - [PredefinedStatus](#resources-centrum-PredefinedStatus)
     - [Settings](#resources-centrum-Settings)
@@ -1529,6 +1530,22 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources-centrum-Job"></a>
+
+### Job
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  |  |
+| `label` | [string](#string) | optional |  |
+
+
+
+
+
+
 <a name="resources-centrum-JobList"></a>
 
 ### JobList
@@ -1537,7 +1554,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [string](#string) | repeated |  |
+| `jobs` | [Job](#resources-centrum-Job) | repeated |  |
 
 
 

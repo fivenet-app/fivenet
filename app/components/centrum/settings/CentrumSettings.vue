@@ -17,6 +17,8 @@ const { t } = useI18n();
 
 const { isOpen } = useModal();
 
+const { activeChar } = useAuth();
+
 const notifications = useNotificationsStore();
 
 const { maxAccessEntries } = useAppConfig();
@@ -101,9 +103,7 @@ async function updateSettings(values: Schema): Promise<void> {
                 fallbackMode: values.fallbackMode,
                 predefinedStatus: values.predefinedStatus,
                 timings: values.timings,
-                access: {
-                    jobs: [],
-                },
+                access: values.access,
             },
         });
         await call;
@@ -485,6 +485,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :access-types="[{ type: 'job', name: $t('common.job', 2) }]"
                                         hide-grade
+                                        :hide-jobs="[activeChar!.job]"
                                     />
                                 </UFormGroup>
                             </UDashboardSection>

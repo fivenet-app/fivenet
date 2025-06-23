@@ -87,9 +87,23 @@ func (x *Settings) JobHasAccess(job string, access CentrumAccessLevel) bool {
 func (x *JobList) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
-		return json.Unmarshal([]byte(t), &x.Jobs)
+		var dest []string
+		if err := json.Unmarshal([]byte(t), &dest); err != nil {
+			return err
+		}
+		for _, job := range dest {
+			x.Jobs = append(x.Jobs, &Job{Name: job})
+		}
+		return nil
 	case []byte:
-		return json.Unmarshal(t, &x.Jobs)
+		var dest []string
+		if err := json.Unmarshal(t, &dest); err != nil {
+			return err
+		}
+		for _, job := range dest {
+			x.Jobs = append(x.Jobs, &Job{Name: job})
+		}
+		return nil
 	}
 	return nil
 }
@@ -100,9 +114,32 @@ func (x *JobList) Value() (driver.Value, error) {
 		return nil, nil
 	}
 
-	return json.MarshalToString(x.Jobs)
+	return json.MarshalToString(x.GetJobStrings())
 }
 
 func (x *JobList) ContainsJob(job string) bool {
-	return slices.Contains(x.Jobs, job)
+	return slices.ContainsFunc(x.Jobs, func(in *Job) bool {
+		return in.Name == job
+	})
+}
+
+func (x *JobList) GetJobStrings() []string {
+	jobs := []string{}
+	for _, job := range x.Jobs {
+		jobs = append(jobs, job.Name)
+	}
+
+	return jobs
+}
+
+func (x *Job) GetJob() string {
+	return x.Name
+}
+
+func (x *Job) SetJob(job string) {
+	x.Name = job
+}
+
+func (x *Job) SetJobLabel(label string) {
+	x.Label = &label
 }

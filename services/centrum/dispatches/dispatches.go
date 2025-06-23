@@ -130,7 +130,7 @@ func New(p Params) *DispatchDB {
 				}
 
 				var errs error
-				for _, job := range dispatch.Jobs.GetJobs() {
+				for _, job := range dispatch.Jobs.GetJobStrings() {
 					if err := jobSt.Put(ctx, centrumutils.JobIdKey(job, dispatch.Id), &common.IDMapping{
 						Id: dispatch.Id,
 					}); err != nil {
@@ -147,7 +147,7 @@ func New(p Params) *DispatchDB {
 				}
 
 				var errs error
-				for _, job := range dispatch.Jobs.GetJobs() {
+				for _, job := range dispatch.Jobs.GetJobStrings() {
 					if err := jobSt.Delete(ctx, centrumutils.JobIdKey(job, dispatch.Id)); err != nil {
 						errs = multierr.Append(errs, fmt.Errorf("failed to delete job %s mapping for dispatch %d. %w", job, dispatch.Id, err))
 						continue
@@ -163,7 +163,7 @@ func New(p Params) *DispatchDB {
 
 				addLocation := dispatch.Status != nil && centrumutils.IsStatusDispatchComplete(dispatch.Status.Status)
 				// Ensure the dispatch has a valid ID
-				for _, job := range dispatch.Jobs.GetJobs() {
+				for _, job := range dispatch.Jobs.GetJobStrings() {
 					locs, ok := d.GetLocations(job)
 					if locs == nil || !ok {
 						continue
@@ -188,7 +188,7 @@ func New(p Params) *DispatchDB {
 			}),
 			store.WithOnRemoteDeletedFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *store.Store[centrum.Dispatch, *centrum.Dispatch], key string, dispatch *centrum.Dispatch) error {
 				if dispatch != nil {
-					for _, job := range dispatch.Jobs.GetJobs() {
+					for _, job := range dispatch.Jobs.GetJobStrings() {
 						if locs, ok := d.GetLocations(job); ok && locs != nil {
 							locs.Remove(nil, centrum.DispatchPointMatchFn(dispatch.Id))
 						}
@@ -367,6 +367,21 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) er
 			if err != nil {
 				return err
 			}
+		}
+
+		// Ensure dispatch has a valid job list (fallback to deprecated Jobs field for old dispatches)
+		if dsps[i].Jobs == nil || len(dsps[i].Jobs.GetJobs()) == 0 {
+			dsps[i].Jobs = &centrum.JobList{
+				Jobs: []*centrum.Job{
+					{
+						Name: dsps[i].Job,
+					},
+				},
+			}
+			dsps[i].Job = ""
+		}
+		for _, job := range dsps[i].Jobs.GetJobs() {
+			s.enricher.EnrichJobName(job)
 		}
 
 		// Update dispatch in db and in kv
@@ -555,7 +570,7 @@ func (s *DispatchDB) UpdateStatus(ctx context.Context, dspId uint64, in *centrum
 		return nil, err
 	}
 
-	for _, job := range dsp.Jobs.GetJobs() {
+	for _, job := range dsp.Jobs.GetJobStrings() {
 		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job), data); err != nil {
 			return nil, fmt.Errorf("failed to publish dispatch status event (size: %d, message: '%+v'). %w", len(data), in, err)
 		}
@@ -713,7 +728,7 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 					X:          x,
 					Y:          y,
 					Postal:     postal,
-				}, true, dsp.Jobs.GetJobs()); err != nil {
+				}, true, dsp.Jobs.GetJobStrings()); err != nil {
 					return nil, false, err
 				}
 			}
@@ -767,7 +782,7 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 					X:          x,
 					Y:          y,
 					Postal:     postal,
-				}, true, dsp.Jobs.GetJobs()); err != nil {
+				}, true, dsp.Jobs.GetJobStrings()); err != nil {
 					return nil, false, err
 				}
 			}
@@ -813,9 +828,17 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 	// If the deprecated Job field is used, convert it to Jobs but only if the jobs list is empty
 	if dsp.Jobs == nil || len(dsp.Jobs.GetJobs()) == 0 {
 		dsp.Jobs = &centrum.JobList{
-			Jobs: []string{dsp.Job},
+			Jobs: []*centrum.Job{
+				{
+					Name: dsp.Job,
+				},
+			},
 		}
 		dsp.Job = ""
+	}
+
+	for _, job := range dsp.Jobs.GetJobs() {
+		s.enricher.EnrichJobName(job)
 	}
 
 	if dsp.Postal == nil || *dsp.Postal == "" {
@@ -834,7 +857,7 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 		if dsp.Creator == nil {
 			dsp.Creator = nil
 			dsp.CreatorId = nil
-		} else if !slices.Contains(dsp.Jobs.GetJobs(), dsp.Creator.Job) {
+		} else if !slices.Contains(dsp.Jobs.GetJobStrings(), dsp.Creator.Job) {
 			// Remove creator props when job isn't equal
 			dsp.Creator.Props = nil
 		}
@@ -916,7 +939,7 @@ func (s *DispatchDB) Create(ctx context.Context, dsp *centrum.Dispatch) (*centru
 		return nil, err
 	}
 
-	for _, job := range dsp.Jobs.GetJobs() {
+	for _, job := range dsp.Jobs.GetJobStrings() {
 		metricDispatchLastID.WithLabelValues(job).Set(float64(lastId))
 	}
 
@@ -1239,7 +1262,7 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 				Y:          y,
 				Postal:     postal,
 				CreatorJob: &userJob,
-			}, true, dsp.Jobs.GetJobs()); err != nil {
+			}, true, dsp.Jobs.GetJobStrings()); err != nil {
 				return nil, false, err
 			}
 

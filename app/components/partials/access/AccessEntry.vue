@@ -14,6 +14,7 @@ const props = withDefaults(
         accessRoles?: AccessLevelEnum[];
         jobs?: Job[] | undefined;
         hideGrade?: boolean;
+        hideJobs?: string[];
     }>(),
     {
         disabled: false,
@@ -21,6 +22,7 @@ const props = withDefaults(
         accessRoles: undefined,
         jobs: () => [],
         hideGrade: false,
+        hideJobs: () => [],
     },
 );
 
@@ -33,6 +35,8 @@ const { $grpc } = useNuxtApp();
 const entry = defineModel<MixedAccessEntry>({ required: true });
 
 const completorStore = useCompletorStore();
+
+const { game } = useAppConfig();
 
 const schema = z.object({
     id: z.coerce.number(),
@@ -106,7 +110,7 @@ async function setFromProps(): Promise<void> {
         if (entry.value.minimumGrade === -1) {
             const grades = props.jobs.find((j) => j.name === entry.value.job)?.grades;
             if (grades) {
-                entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? 0;
+                entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? game.startJobGrade;
             }
         }
     }
@@ -114,6 +118,22 @@ async function setFromProps(): Promise<void> {
 
 setFromProps();
 watch(props, () => setFromProps());
+if (props.hideGrade) {
+    watch(
+        () => entry.value.job,
+        () => {
+            if (!props.hideGrade) return;
+
+            // If hide grade is true, we must set the minimumGrade to a sane default value
+            if (entry.value.job && entry.value.minimumGrade === undefined) {
+                const grades = props.jobs.find((j) => j.name === entry.value.job)?.grades;
+                if (grades) {
+                    entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? game.startJobGrade;
+                }
+            }
+        },
+    );
+}
 </script>
 
 <template>
@@ -257,7 +277,7 @@ watch(props, () => setFromProps());
                         searchable
                         :search-attributes="['name', 'label']"
                         value-attribute="name"
-                        :options="jobs ?? []"
+                        :options="jobs?.filter((j) => hideJobs.length === 0 || !hideJobs.includes(j.name)) ?? []"
                         :placeholder="$t('common.job')"
                         :searchable-placeholder="$t('common.search_field')"
                     >

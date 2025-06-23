@@ -338,11 +338,7 @@ defineShortcuts({
                             :ui="{ container: 'flex-1 flex' }"
                         >
                             <div class="flex flex-1 items-center">
-                                <UToggle v-model="jobsService.cardView">
-                                    <span class="sr-only">
-                                        {{ $t('common.card_view') }}
-                                    </span>
-                                </UToggle>
+                                <UToggle v-model="jobsService.cardView" />
                             </div>
                         </UFormGroup>
                     </div>

@@ -174,14 +174,16 @@ func (b *Manager) stopBot(job string) error {
 
 func (s *Manager) checkIfBotsAreNeeded(ctx context.Context) error {
 	for _, settings := range s.settings.List(ctx) {
-		if s.helpers.CheckIfBotNeeded(ctx, settings.Job) {
-			if err := s.startBot(ctx, settings.Job); err != nil {
-				s.logger.Error("failed to start dispatch center bot for job", zap.String("job", settings.Job))
-			}
-		} else {
+		if !s.helpers.CheckIfBotNeeded(ctx, settings.Job) {
 			if err := s.stopBot(settings.Job); err != nil {
 				s.logger.Error("failed to stop dispatch center bot for job", zap.String("job", settings.Job))
 			}
+
+			continue
+		}
+
+		if err := s.startBot(ctx, settings.Job); err != nil {
+			s.logger.Error("failed to start dispatch center bot for job", zap.String("job", settings.Job))
 		}
 	}
 

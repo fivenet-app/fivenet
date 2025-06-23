@@ -95,9 +95,22 @@ export interface Timings {
  */
 export interface JobList {
     /**
-     * @generated from protobuf field: repeated string jobs = 1
+     * @generated from protobuf field: repeated resources.centrum.Job jobs = 1
      */
-    jobs: string[];
+    jobs: Job[];
+}
+/**
+ * @generated from protobuf message resources.centrum.Job
+ */
+export interface Job {
+    /**
+     * @generated from protobuf field: string name = 1
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: optional string label = 2
+     */
+    label?: string;
 }
 /**
  * @generated from protobuf enum resources.centrum.CentrumType
@@ -371,7 +384,7 @@ export const Timings = new Timings$Type();
 class JobList$Type extends MessageType<JobList> {
     constructor() {
         super("resources.centrum.JobList", [
-            { no: 1, name: "jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { string: { maxLen: "20" } } } } } }
+            { no: 1, name: "jobs", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => Job, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);
     }
     create(value?: PartialMessage<JobList>): JobList {
@@ -386,8 +399,8 @@ class JobList$Type extends MessageType<JobList> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated string jobs */ 1:
-                    message.jobs.push(reader.string());
+                case /* repeated resources.centrum.Job jobs */ 1:
+                    message.jobs.push(Job.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -401,9 +414,9 @@ class JobList$Type extends MessageType<JobList> {
         return message;
     }
     internalBinaryWrite(message: JobList, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated string jobs = 1; */
+        /* repeated resources.centrum.Job jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
-            writer.tag(1, WireType.LengthDelimited).string(message.jobs[i]);
+            Job.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -414,3 +427,57 @@ class JobList$Type extends MessageType<JobList> {
  * @generated MessageType for protobuf message resources.centrum.JobList
  */
 export const JobList = new JobList$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Job$Type extends MessageType<Job> {
+    constructor() {
+        super("resources.centrum.Job", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 2, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Job>): Job {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        if (value !== undefined)
+            reflectionMergePartial<Job>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Job): Job {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* optional string label */ 2:
+                    message.label = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Job, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* optional string label = 2; */
+        if (message.label !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.label);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.Job
+ */
+export const Job = new Job$Type();

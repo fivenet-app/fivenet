@@ -352,7 +352,7 @@ func (x *Timings) GetRequireUnitReminderSeconds() int64 {
 
 type JobList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Jobs          []string               `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
+	Jobs          []*Job                 `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -387,11 +387,63 @@ func (*JobList) Descriptor() ([]byte, []int) {
 	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *JobList) GetJobs() []string {
+func (x *JobList) GetJobs() []*Job {
 	if x != nil {
 		return x.Jobs
 	}
 	return nil
+}
+
+type Job struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Label         *string                `protobuf:"bytes,2,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Job) Reset() {
+	*x = Job{}
+	mi := &file_resources_centrum_settings_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Job) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Job) ProtoMessage() {}
+
+func (x *Job) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_settings_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Job.ProtoReflect.Descriptor instead.
+func (*Job) Descriptor() ([]byte, []int) {
+	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *Job) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Job) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
+	}
+	return ""
 }
 
 var File_resources_centrum_settings_proto protoreflect.FileDescriptor
@@ -419,10 +471,14 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\xfaB\a\"\x05\x10\xf0. \x1eR\x0fdispatchMaxWait\x12!\n" +
 	"\frequire_unit\x18\x02 \x01(\bR\vrequireUnit\x12M\n" +
 	"\x1drequire_unit_reminder_seconds\x18\x03 \x01(\x03B\n" +
-	"\xfaB\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds\"-\n" +
-	"\aJobList\x12\"\n" +
-	"\x04jobs\x18\x01 \x03(\tB\x0e\xfaB\v\x92\x01\b\x10\n" +
-	"\"\x04r\x02\x18\x14R\x04jobs*a\n" +
+	"\xfaB\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds\"?\n" +
+	"\aJobList\x124\n" +
+	"\x04jobs\x18\x01 \x03(\v2\x16.resources.centrum.JobB\b\xfaB\x05\x92\x01\x02\x10\n" +
+	"R\x04jobs\"G\n" +
+	"\x03Job\x12\x1b\n" +
+	"\x04name\x18\x01 \x01(\tB\a\xfaB\x04r\x02\x18\x14R\x04name\x12\x19\n" +
+	"\x05label\x18\x02 \x01(\tH\x00R\x05label\x88\x01\x01B\b\n" +
+	"\x06_label*a\n" +
 	"\vCentrumType\x12\x1c\n" +
 	"\x18CENTRUM_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
 	"\x15CENTRUM_TYPE_DISPATCH\x10\x01\x12\x19\n" +
@@ -447,7 +503,7 @@ func file_resources_centrum_settings_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_centrum_settings_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resources_centrum_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_resources_centrum_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_centrum_settings_proto_goTypes = []any{
 	(CentrumType)(0),         // 0: resources.centrum.CentrumType
 	(CentrumMode)(0),         // 1: resources.centrum.CentrumMode
@@ -455,7 +511,8 @@ var file_resources_centrum_settings_proto_goTypes = []any{
 	(*PredefinedStatus)(nil), // 3: resources.centrum.PredefinedStatus
 	(*Timings)(nil),          // 4: resources.centrum.Timings
 	(*JobList)(nil),          // 5: resources.centrum.JobList
-	(*CentrumAccess)(nil),    // 6: resources.centrum.CentrumAccess
+	(*Job)(nil),              // 6: resources.centrum.Job
+	(*CentrumAccess)(nil),    // 7: resources.centrum.CentrumAccess
 }
 var file_resources_centrum_settings_proto_depIdxs = []int32{
 	0, // 0: resources.centrum.Settings.type:type_name -> resources.centrum.CentrumType
@@ -463,12 +520,13 @@ var file_resources_centrum_settings_proto_depIdxs = []int32{
 	1, // 2: resources.centrum.Settings.fallback_mode:type_name -> resources.centrum.CentrumMode
 	3, // 3: resources.centrum.Settings.predefined_status:type_name -> resources.centrum.PredefinedStatus
 	4, // 4: resources.centrum.Settings.timings:type_name -> resources.centrum.Timings
-	6, // 5: resources.centrum.Settings.access:type_name -> resources.centrum.CentrumAccess
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	7, // 5: resources.centrum.Settings.access:type_name -> resources.centrum.CentrumAccess
+	6, // 6: resources.centrum.JobList.jobs:type_name -> resources.centrum.Job
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_settings_proto_init() }
@@ -478,13 +536,14 @@ func file_resources_centrum_settings_proto_init() {
 	}
 	file_resources_centrum_access_proto_init()
 	file_resources_centrum_settings_proto_msgTypes[0].OneofWrappers = []any{}
+	file_resources_centrum_settings_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_settings_proto_rawDesc), len(file_resources_centrum_settings_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

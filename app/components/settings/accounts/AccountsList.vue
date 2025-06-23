@@ -156,11 +156,7 @@ const columns = [
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <UToggle v-model="query.enabled">
-                                <span class="sr-only">
-                                    {{ $t('common.enabled') }}
-                                </span>
-                            </UToggle>
+                            <UToggle v-model="query.enabled" />
                         </div>
                     </UFormGroup>
                 </div>

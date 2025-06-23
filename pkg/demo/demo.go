@@ -169,7 +169,11 @@ func (d *Demo) generateDispatches(ctx context.Context) error {
 		msg := dispatchMessages[rand.Intn(len(dispatchMessages))]
 		if _, err := d.dispatches.Create(ctx, &centrum.Dispatch{
 			Jobs: &centrum.JobList{
-				Jobs: []string{d.cfg.Demo.TargetJob},
+				Jobs: []*centrum.Job{
+					{
+						Name: d.cfg.Demo.TargetJob,
+					},
+				},
 			},
 			Message:     msg,
 			Description: &desc,

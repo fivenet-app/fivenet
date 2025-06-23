@@ -180,7 +180,11 @@ func (s *Converter) convertGKSPhoneJobMsgToDispatch(ctx context.Context) error {
 			CreatedAt:  timestamp.Now(),
 			Attributes: &centrum.DispatchAttributes{},
 			Jobs: &centrum.JobList{
-				Jobs: []string{job},
+				Jobs: []*centrum.Job{
+					{
+						Name: job,
+					},
+				},
 			},
 			Message:   message,
 			X:         x,
@@ -279,7 +283,11 @@ func (s *Converter) convertLBPhoneJobMsgToDispatch(ctx context.Context) error {
 			CreatedAt:  timestamp.Now(),
 			Attributes: &centrum.DispatchAttributes{},
 			Jobs: &centrum.JobList{
-				Jobs: []string{msg.Job},
+				Jobs: []*centrum.Job{
+					{
+						Name: msg.Job,
+					},
+				},
 			},
 			Message:   message,
 			X:         float64(msg.XPos),

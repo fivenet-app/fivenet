@@ -45,6 +45,10 @@ export const useSettingsStore = defineStore(
             showHeatmap: false,
         });
 
+        const centrum = ref({
+            dispatchListCardStyle: false,
+        });
+
         const livemapTileLayer = ref<string>('postal');
         const livemapLayers = ref<LivemapLayer[]>([]);
         const livemapLayerCategories = ref<LivemapLayerCategory[]>([]);
@@ -151,6 +155,7 @@ export const useSettingsStore = defineStore(
             livemapLayerCategories,
             livemapLayers,
             livemapTileLayer,
+            centrum,
             startpage,
             design,
             audio,

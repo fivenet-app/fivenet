@@ -55,12 +55,10 @@ message Timings {
 }
 
 message JobList {
-  repeated string jobs = 1 [(validate.rules).repeated = {
-    max_items: 10,
-    items: {
-      string: {
-        max_len: 20,
-      },
-    },
-  }];
+  repeated Job jobs = 1 [(validate.rules).repeated.max_items = 10];
+}
+
+message Job {
+  string name = 1 [(validate.rules).string.max_len = 20];
+  optional string label = 2;
 }

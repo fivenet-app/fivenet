@@ -78,10 +78,13 @@ func (s *SettingsDB) LoadFromDB(ctx context.Context, job string) error {
 		SELECT(
 			tCentrumSettings.Job,
 			tCentrumSettings.Enabled,
+			tCentrumSettings.Type,
+			tCentrumSettings.Public,
 			tCentrumSettings.Mode,
 			tCentrumSettings.FallbackMode,
 			tCentrumSettings.PredefinedStatus,
 			tCentrumSettings.Timings,
+			tCentrumSettings.Access,
 		).
 		FROM(tCentrumSettings)
 
@@ -136,8 +139,9 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 			settings.Access,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tCentrumSettings.Job.SET(jet.String(job)),
 			tCentrumSettings.Enabled.SET(jet.Bool(settings.Enabled)),
+			tCentrumSettings.Type.SET(jet.Int32(int32(settings.Type))),
+			tCentrumSettings.Public.SET(jet.Bool(settings.Public)),
 			tCentrumSettings.Mode.SET(jet.Int32(int32(settings.Mode))),
 			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.FallbackMode))),
 			tCentrumSettings.PredefinedStatus.SET(jet.StringExp(jet.Raw("VALUES(`predefined_status`)"))),

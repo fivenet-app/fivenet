@@ -29,6 +29,7 @@ const props = withDefaults(
         defaultAccessType?: AccessEntryType;
         totalLimit?: number;
         hideGrade?: boolean;
+        hideJobs?: string[];
     }>(),
     {
         jobs: () => [],
@@ -41,6 +42,7 @@ const props = withDefaults(
         defaultAccessType: 'job',
         totalLimit: undefined,
         hideGrade: false,
+        hideJobs: () => [],
     },
 );
 
@@ -230,6 +232,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             :jobs="jobsList"
             v-bind="$attrs"
             :hide-grade="hideGrade"
+            :hide-jobs="hideJobs"
             @delete="access?.splice(idx, 1)"
         />
 

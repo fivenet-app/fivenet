@@ -190,6 +190,21 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 				resp.Dispatches[i].Creator.JobGrade = 0
 			}
 		}
+
+		// Ensure dispatch has a valid job list (fallback to deprecated Jobs field for old dispatches)
+		if resp.Dispatches[i].Jobs == nil || len(resp.Dispatches[i].Jobs.GetJobs()) == 0 {
+			resp.Dispatches[i].Jobs = &centrum.JobList{
+				Jobs: []*centrum.Job{
+					{
+						Name: resp.Dispatches[i].Job,
+					},
+				},
+			}
+			resp.Dispatches[i].Job = ""
+		}
+		for _, job := range resp.Dispatches[i].Jobs.GetJobs() {
+			s.enricher.EnrichJobName(job)
+		}
 	}
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_VIEWED
@@ -324,14 +339,18 @@ func (s *Server) CreateDispatch(ctx context.Context, req *pbcentrum.CreateDispat
 
 	// Make sure jobs and creator id are set
 	if len(req.Dispatch.Jobs.GetJobs()) > 0 {
-		for _, job := range req.Dispatch.Jobs.GetJobs() {
+		for _, job := range req.Dispatch.Jobs.GetJobStrings() {
 			if !s.jobs.Has(job) {
 				return nil, errorscentrum.ErrFailedQuery
 			}
 		}
 	} else {
 		req.Dispatch.Jobs = &centrum.JobList{
-			Jobs: []string{userInfo.Job},
+			Jobs: []*centrum.Job{
+				{
+					Name: userInfo.Job,
+				},
+			},
 		}
 	}
 	req.Dispatch.CreatorId = &userInfo.UserId
@@ -497,7 +516,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *pbcentrum.AssignDispat
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	if !slices.Contains(dsp.Jobs.GetJobs(), userInfo.Job) {
+	if !slices.Contains(dsp.Jobs.GetJobStrings(), userInfo.Job) {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
@@ -644,7 +663,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *pbcentrum.DeleteDispat
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
-	if !slices.Contains(dsp.Jobs.GetJobs(), userInfo.Job) {
+	if !slices.Contains(dsp.Jobs.GetJobStrings(), userInfo.Job) {
 		return nil, errorscentrum.ErrNotPartOfDispatch
 	}
 

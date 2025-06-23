@@ -114,9 +114,7 @@ onBeforeMount(async () => (selectedHomepage.value = startpages.find((h) => h.pat
                         :label="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
                         :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
                     >
-                        <UToggle v-model="streamerMode" name="streamerMode">
-                            <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
-                        </UToggle>
+                        <UToggle v-model="streamerMode" name="streamerMode" />
                     </UFormGroup>
 
                     <UFormGroup
@@ -126,11 +124,7 @@ onBeforeMount(async () => (selectedHomepage.value = startpages.find((h) => h.pat
                     >
                         <div class="inline-flex items-center gap-2 text-sm">
                             <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
-                            <UToggle v-model="designDocumentsListStyle">
-                                <span class="sr-only">{{
-                                    $t('components.auth.UserSettingsPanel.documents_lists_style.title')
-                                }}</span>
-                            </UToggle>
+                            <UToggle v-model="designDocumentsListStyle" />
                             <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
                         </div>
                     </UFormGroup>
