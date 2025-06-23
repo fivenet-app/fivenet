@@ -116,18 +116,24 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 		INSERT(
 			tCentrumSettings.Job,
 			tCentrumSettings.Enabled,
+			tCentrumSettings.Type,
+			tCentrumSettings.Public,
 			tCentrumSettings.Mode,
 			tCentrumSettings.FallbackMode,
 			tCentrumSettings.PredefinedStatus,
 			tCentrumSettings.Timings,
+			tCentrumSettings.Access,
 		).
 		VALUES(
 			job,
 			settings.Enabled,
+			settings.Type,
+			settings.Public,
 			settings.Mode,
 			settings.FallbackMode,
 			settings.PredefinedStatus,
 			settings.Timings,
+			settings.Access,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tCentrumSettings.Job.SET(jet.String(job)),
@@ -136,6 +142,7 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.FallbackMode))),
 			tCentrumSettings.PredefinedStatus.SET(jet.StringExp(jet.Raw("VALUES(`predefined_status`)"))),
 			tCentrumSettings.Timings.SET(jet.StringExp(jet.Raw("VALUES(`timings`)"))),
+			tCentrumSettings.Access.SET(jet.StringExp(jet.Raw("VALUES(`access`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

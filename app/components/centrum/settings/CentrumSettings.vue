@@ -135,6 +135,7 @@ function setSettingsValues(): void {
         unitStatus: [],
         dispatchStatus: [],
     };
+    state.access = settings.value.access ?? { jobs: [] };
 }
 
 watch(settings, () => setSettingsValues());
