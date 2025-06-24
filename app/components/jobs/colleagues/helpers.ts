@@ -12,9 +12,8 @@ export function checkIfCanAccessColleague(target: Colleague | User, perm: Perms)
     if (isSuperuser.value) {
         return true;
     }
-    console.log('checkIfCanAccessColleague 3');
+
     const fields = attrStringList(perm, 'Access').value;
-    console.log('checkIfCanAccessColleague 4', fields);
     if (fields.includes('Any')) {
         return true;
     }
