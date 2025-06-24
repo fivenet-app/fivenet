@@ -57,14 +57,11 @@ const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, 
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status ?? 0));
-
-const markerRef = useTemplateRef('markerRef');
 </script>
 
 <template>
     <LMarker
         :key="`user_${marker.userId}`"
-        ref="markerRef"
         :lat-lng="[marker.y, marker.x]"
         :z-index-offset="activeChar === null || marker.user?.userId !== activeChar.userId ? 20 : 30"
         @click="$emit('selected', $event)"
