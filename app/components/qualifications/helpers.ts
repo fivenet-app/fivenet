@@ -51,12 +51,12 @@ function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShor
     if (fields.includes('Any')) {
         return true;
     }
-    if (fields.includes('LowerRank')) {
+    if (fields.includes('Lower_Rank')) {
         if (creator?.jobGrade < activeChar.jobGrade) {
             return true;
         }
     }
-    if (fields.includes('SameRank')) {
+    if (fields.includes('Same_Rank')) {
         if (creator?.jobGrade <= activeChar.jobGrade) {
             return true;
         }

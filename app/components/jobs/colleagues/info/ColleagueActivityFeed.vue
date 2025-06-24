@@ -90,7 +90,7 @@ async function listColleagueActivity(
 watch(offset, async () => refresh());
 
 const accessAttrs = attrStringList('jobs.JobsService/GetColleague', 'Access');
-const colleagueSearchAttrs = ['Own', 'LowerRank', 'SameRank', 'Any'];
+const colleagueSearchAttrs = ['Own', 'Lower_Rank', 'Same_Rank', 'Any'];
 
 watch(props, async () => refresh());
 watchDebounced(query, async () => refresh(), {

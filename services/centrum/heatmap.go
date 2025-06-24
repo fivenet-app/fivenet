@@ -62,7 +62,9 @@ func (s *Server) GetDispatchHeatmap(ctx context.Context, req *pbcentrum.GetDispa
 	return resp, nil
 }
 
-// heatmapQuery is the SQL to rebuild the per‐job 5×5‐bin heatmaps.
+const binSize = float64(10)
+
+// heatmapQuery is the SQL to rebuild the per‐job Y×X‐bin heatmaps.
 // note how we break out the `max` identifier so the raw string literal isn’t terminated early.
 var heatmapQuery = `
 REPLACE INTO fivenet_centrum_dispatches_heatmaps (job, heat_json, ` + "`max`" + `)
@@ -105,10 +107,8 @@ GROUP BY b.job;
 `
 
 func (s *Server) generateDispatchHeatmaps(ctx context.Context) error {
-	grid := float64(5)
-
 	// Four placeholders → Four copies of the grid value
-	args := []any{grid, grid, grid, grid}
+	args := []any{binSize, binSize, binSize, binSize}
 
 	if _, err := s.db.ExecContext(ctx, heatmapQuery, args...); err != nil {
 		return fmt.Errorf("failed to generate dispatch heatmaps. %w", err)
