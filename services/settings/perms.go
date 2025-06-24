@@ -145,7 +145,7 @@ func (s *Server) GetRoles(ctx context.Context, req *pbsettings.GetRolesRequest) 
 			Permissions: []*permissions.Permission{},
 		}
 
-		s.enricher.EnrichJobInfo(role)
+		s.enricher.EnrichJobInfoNoFallback(role)
 
 		resp.Roles = append(resp.Roles, role)
 	}
@@ -189,7 +189,7 @@ func (s *Server) GetRole(ctx context.Context, req *pbsettings.GetRoleRequest) (*
 		return nil, errswrap.NewError(err, errorssettings.ErrFailedQuery)
 	}
 
-	s.enricher.EnrichJobInfo(resp.Role)
+	s.enricher.EnrichJobInfoNoFallback(resp.Role)
 
 	return resp, nil
 }
@@ -238,7 +238,7 @@ func (s *Server) CreateRole(ctx context.Context, req *pbsettings.CreateRoleReque
 		return nil, errswrap.NewError(err, errorssettings.ErrInvalidRequest)
 	}
 
-	s.enricher.EnrichJobInfo(r)
+	s.enricher.EnrichJobInfoNoFallback(r)
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_CREATED
 	return &pbsettings.CreateRoleResponse{
@@ -482,7 +482,7 @@ func (s *Server) GetEffectivePermissions(ctx context.Context, req *pbsettings.Ge
 		Grade: role.Grade,
 	}
 
-	s.enricher.EnrichJobInfo(r)
+	s.enricher.EnrichJobInfoNoFallback(r)
 
 	resp := &pbsettings.GetEffectivePermissionsResponse{}
 	resp.Role = r

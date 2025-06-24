@@ -64,6 +64,27 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 	}
 }
 
+// EnrichJobInfoNoFallback enriches the job information of an object that implements the common.IJobInfo interface.
+// Sets job label and grade label, in case the job is not found, will only set the labels to N/A and unemployed job.
+func (e *Enricher) EnrichJobInfoNoFallback(usr common.IJobInfo) {
+	job, err := e.jobs.Get(usr.GetJob())
+	if err == nil {
+		usr.SetJobLabel(job.Label)
+
+		gradeIndex := max(usr.GetJobGrade()-e.jobStartIndex, 0)
+
+		if len(job.Grades) > int(gradeIndex) {
+			usr.SetJobGradeLabel(job.Grades[gradeIndex].Label)
+		} else {
+			jg := strconv.FormatInt(int64(usr.GetJobGrade()), 10)
+			usr.SetJobGradeLabel(jg)
+		}
+	} else {
+		usr.SetJobLabel(NotAvailablePlaceholder)
+		usr.SetJobGradeLabel(NotAvailablePlaceholder)
+	}
+}
+
 // EnrichJobName enriches the job label for an object that implements the common.IJobName interface.
 func (e *Enricher) EnrichJobName(usr common.IJobName) {
 	job, err := e.jobs.Get(usr.GetJob())
