@@ -34,7 +34,7 @@ const dispatchesFiltered = computedAsync(async () =>
     [...(props.dispatchList ?? dispatches.value.values() ?? [])].filter(
         (m) =>
             !ownDispatches.value.includes(m.id) &&
-            m.jobs?.jobs.every((j) => activeJobLayers.value.includes(j)) &&
+            m.jobs?.jobs.every((j) => activeJobLayers.value.includes(j.name)) &&
             (m.id.toString().startsWith(dispatchQuery.value) ||
                 m.message.toLowerCase().includes(dispatchQuery.value) ||
                 (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
