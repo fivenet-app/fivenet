@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.6.4] - 2025-06-24
+
+### 🐛 Bug Fixes
+
+- Switch to leader election for cron scheduler and add nats
+
 ## [2025.6.3] - 2025-06-21
 
 ### 🚀 Features
