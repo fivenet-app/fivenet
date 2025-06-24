@@ -10724,6 +10724,8 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `sort` | [resources.common.database.Sort](#resourcescommondatabaseSort) | optional |  |
 | `license` | [string](#string) | optional | Search params |
 | `enabled` | [bool](#bool) | optional |  |
+| `username` | [string](#string) | optional |  |
+| `external_id` | [string](#string) | optional |  |
 
 
 

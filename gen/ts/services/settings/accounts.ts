@@ -38,6 +38,14 @@ export interface ListAccountsRequest {
      * @generated from protobuf field: optional bool enabled = 4
      */
     enabled?: boolean;
+    /**
+     * @generated from protobuf field: optional string username = 5
+     */
+    username?: string;
+    /**
+     * @generated from protobuf field: optional string external_id = 6
+     */
+    externalId?: string;
 }
 /**
  * @generated from protobuf message services.settings.ListAccountsResponse
@@ -117,7 +125,9 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "buf.validate.field": { required: true } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "license", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
-            { no: 4, name: "enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "enabled", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "username", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "64" } } } },
+            { no: 6, name: "external_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<ListAccountsRequest>): ListAccountsRequest {
@@ -143,6 +153,12 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
                 case /* optional bool enabled */ 4:
                     message.enabled = reader.bool();
                     break;
+                case /* optional string username */ 5:
+                    message.username = reader.string();
+                    break;
+                case /* optional string external_id */ 6:
+                    message.externalId = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -167,6 +183,12 @@ class ListAccountsRequest$Type extends MessageType<ListAccountsRequest> {
         /* optional bool enabled = 4; */
         if (message.enabled !== undefined)
             writer.tag(4, WireType.Varint).bool(message.enabled);
+        /* optional string username = 5; */
+        if (message.username !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.username);
+        /* optional string external_id = 6; */
+        if (message.externalId !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.externalId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -30,6 +30,8 @@ type ListAccountsRequest struct {
 	// Search params
 	License       *string `protobuf:"bytes,3,opt,name=license,proto3,oneof" json:"license,omitempty"`
 	Enabled       *bool   `protobuf:"varint,4,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`
+	Username      *string `protobuf:"bytes,5,opt,name=username,proto3,oneof" json:"username,omitempty"`
+	ExternalId    *string `protobuf:"bytes,6,opt,name=external_id,json=externalId,proto3,oneof" json:"external_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -90,6 +92,20 @@ func (x *ListAccountsRequest) GetEnabled() bool {
 		return *x.Enabled
 	}
 	return false
+}
+
+func (x *ListAccountsRequest) GetUsername() string {
+	if x != nil && x.Username != nil {
+		return *x.Username
+	}
+	return ""
+}
+
+func (x *ListAccountsRequest) GetExternalId() string {
+	if x != nil && x.ExternalId != nil {
+		return *x.ExternalId
+	}
+	return ""
 }
 
 type ListAccountsResponse struct {
@@ -420,19 +436,24 @@ var File_services_settings_accounts_proto protoreflect.FileDescriptor
 
 const file_services_settings_accounts_proto_rawDesc = "" +
 	"\n" +
-	" services/settings/accounts.proto\x12\x11services.settings\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\"\x8d\x02\n" +
+	" services/settings/accounts.proto\x12\x11services.settings\x1a!resources/accounts/accounts.proto\x1a(resources/common/database/database.proto\"\x84\x03\n" +
 	"\x13ListAccountsRequest\x12T\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2,.resources.common.database.PaginationRequestB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
 	"\x04sort\x18\x02 \x01(\v2\x1f.resources.common.database.SortH\x00R\x04sort\x88\x01\x01\x12&\n" +
 	"\alicense\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18@H\x01R\alicense\x88\x01\x01\x12\x1d\n" +
-	"\aenabled\x18\x04 \x01(\bH\x02R\aenabled\x88\x01\x01B\a\n" +
+	"\aenabled\x18\x04 \x01(\bH\x02R\aenabled\x88\x01\x01\x12(\n" +
+	"\busername\x18\x05 \x01(\tB\a\xbaH\x04r\x02\x18@H\x03R\busername\x88\x01\x01\x12.\n" +
+	"\vexternal_id\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x04R\n" +
+	"externalId\x88\x01\x01B\a\n" +
 	"\x05_sortB\n" +
 	"\n" +
 	"\b_licenseB\n" +
 	"\n" +
-	"\b_enabled\"\x9e\x01\n" +
+	"\b_enabledB\v\n" +
+	"\t_usernameB\x0e\n" +
+	"\f_external_id\"\x9e\x01\n" +
 	"\x14ListAccountsResponse\x12M\n" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +

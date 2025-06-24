@@ -17,6 +17,9 @@ const modal = useModal();
 const schema = z.object({
     license: z.string().max(64).optional(),
     enabled: z.coerce.boolean().default(true),
+    username: z.string().max(64).optional(),
+    externalId: z.string().max(64).optional(),
+
     sort: z.custom<TableSortable>().default({
         column: 'username',
         direction: 'asc',
@@ -35,7 +38,10 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`settings-accounts-${query.sort.column}:${query.sort.direction}-${query.page}`, () => listAccounts());
+} = useLazyAsyncData(
+    `settings-accounts-${query.license}-${query.enabled}-${query.username}-${query.externalId}-${query.sort.column}:${query.sort.direction}-${query.page}`,
+    () => listAccounts(),
+);
 
 async function listAccounts(): Promise<ListAccountsResponse> {
     try {
@@ -46,6 +52,8 @@ async function listAccounts(): Promise<ListAccountsResponse> {
             sort: query.sort,
             enabled: query.enabled,
             license: query.license,
+            username: query.username,
+            externalId: query.externalId,
         });
         const { response } = await call;
 
@@ -160,6 +168,42 @@ const columns = [
                         </div>
                     </UFormGroup>
                 </div>
+
+                <UAccordion
+                    class="mt-2"
+                    color="white"
+                    variant="soft"
+                    size="sm"
+                    :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                >
+                    <template #search>
+                        <div class="flex flex-row flex-wrap gap-1">
+                            <UFormGroup class="flex-1" name="username" :label="$t('common.username')">
+                                <UInput
+                                    v-model="query.username"
+                                    type="text"
+                                    name="username"
+                                    :placeholder="$t('common.username')"
+                                    block
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                class="flex-1"
+                                name="externalId"
+                                :label="$t('components.auth.OAuth2Connections.external_id')"
+                            >
+                                <UInput
+                                    v-model="query.externalId"
+                                    type="text"
+                                    name="externalId"
+                                    :placeholder="$t('components.auth.OAuth2Connections.external_id')"
+                                    block
+                                />
+                            </UFormGroup>
+                        </div>
+                    </template>
+                </UAccordion>
             </UForm>
         </UDashboardToolbar>
 

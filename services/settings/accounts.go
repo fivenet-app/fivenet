@@ -33,20 +33,29 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 		State:   audit.EventType_EVENT_TYPE_VIEWED,
 	}, req)
 
+	var t jet.ReadableTable = tAccounts
 	condition := jet.Bool(true)
-	if req.License != nil {
+	if req.License != nil && *req.License != "" {
 		condition = condition.AND(tAccounts.License.LIKE(jet.String(fmt.Sprintf("%%%s%%", *req.License))))
 	}
-
 	if req.Enabled != nil {
 		condition = condition.AND(tAccounts.Enabled.EQ(jet.Bool(*req.Enabled)))
+	}
+	if req.Username != nil && *req.Username != "" {
+		condition = condition.AND(tAccounts.Username.LIKE(jet.String(fmt.Sprintf("%%%s%%", *req.Username))))
+	}
+	if req.ExternalId != nil && *req.ExternalId != "" {
+		condition = condition.AND(tOauth2.ExternalID.LIKE(jet.String(fmt.Sprintf("%%%s%%", *req.ExternalId))))
+		t = t.INNER_JOIN(tOauth2,
+			tOauth2.AccountID.EQ(tAccounts.ID),
+		)
 	}
 
 	countStmt := tAccounts.
 		SELECT(
 			jet.COUNT(tAccounts.ID).AS("data_count.total"),
 		).
-		FROM(tAccounts).
+		FROM(t).
 		WHERE(condition)
 
 	var count database.DataCount
@@ -94,7 +103,7 @@ func (s *Server) ListAccounts(ctx context.Context, req *pbsettings.ListAccountsR
 		SELECT(
 			tAccounts.ID,
 		).
-		FROM(tAccounts).
+		FROM(t).
 		WHERE(condition).
 		ORDER_BY(orderBys...).
 		OFFSET(req.Pagination.Offset).
