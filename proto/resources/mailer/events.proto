@@ -2,17 +2,17 @@ syntax = "proto3";
 
 package resources.mailer;
 
+import "buf/validate/validate.proto";
 import "resources/mailer/email.proto";
-import "resources/mailer/settings.proto";
 import "resources/mailer/message.proto";
+import "resources/mailer/settings.proto";
 import "resources/mailer/thread.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailer";
 
 message MailerEvent {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     Email email_update = 1;
     uint64 email_delete = 2;

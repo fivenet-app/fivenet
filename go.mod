@@ -3,6 +3,7 @@ module github.com/fivenet-app/fivenet/v2025
 go 1.24.4
 
 require (
+	buf.build/go/protovalidate v0.12.0
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/HugoSmits86/nativewebp v1.2.0
 	github.com/Masterminds/sprig/v3 v3.3.0
@@ -17,7 +18,6 @@ require (
 	github.com/desertbit/timer v1.0.1
 	github.com/diamondburned/arikawa/v3 v3.5.0
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
-	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/pprof v1.5.3
@@ -51,6 +51,7 @@ require (
 	github.com/rs/cors v1.11.1
 	github.com/sethvargo/go-retry v0.3.0
 	github.com/spf13/viper v1.20.1
+	github.com/srikrsna/protoc-gen-gotag v1.0.2
 	github.com/stretchr/testify v1.10.0
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
 	go.eigsys.de/gin-cachecontrol/v2 v2.3.0
@@ -90,6 +91,8 @@ require (
 )
 
 require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.6-20250425153114-8976f5be98c1.1 // indirect
+	cel.dev/expr v0.23.1 // indirect
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
 	dario.cat/mergo v1.0.1 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
@@ -99,6 +102,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/RoaringBitmap/roaring/v2 v2.4.5 // indirect
+	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.22.0 // indirect
@@ -147,6 +151,7 @@ require (
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v1.0.0 // indirect
+	github.com/google/cel-go v0.25.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/go-tpm v0.9.5 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
@@ -204,6 +209,7 @@ require (
 	github.com/spf13/afero v1.14.0 // indirect
 	github.com/spf13/cast v1.7.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/stoewer/go-strcase v1.3.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tinylib/msgp v1.3.0 // indirect
@@ -219,6 +225,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/dig v1.19.0 // indirect
 	golang.org/x/arch v0.18.0 // indirect
+	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	golang.org/x/text v0.26.0 // indirect
 	golang.org/x/time v0.11.0 // indirect

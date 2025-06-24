@@ -21,34 +21,20 @@ build_dir:
 
 buf:
 ifeq (, $(shell which buf))
-	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.26.1
+	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.55.1
 endif
 
 protoc-gen-go:
 	$(GO) install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	$(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 protoc-gen-go-grpc:
 	$(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
-protoc-gen-validate: build_dir
-	if test ! -d $(BUILD_DIR)validate-$(VALIDATE_VERSION)/; then \
-		git clone --branch $(VALIDATE_VERSION) https://github.com/bufbuild/protoc-gen-validate.git $(BUILD_DIR)validate-$(VALIDATE_VERSION); \
-	else \
-		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ pull --all; \
-		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ checkout $(VALIDATE_VERSION); \
-	fi
-
-	cd $(BUILD_DIR) && ln -sfn validate-$(VALIDATE_VERSION)/ validate
-
-protoc-gen-customizer:
-	$(GO) build -o ./internal/cmd/protoc-gen-customizer ./internal/cmd/protoc-gen-customizer
-
-protoc-gen-fronthelper:
-	$(GO) build -o ./internal/cmd/protoc-gen-fronthelper ./internal/cmd/protoc-gen-fronthelper
-
 protoc-gen-doc:
 	$(GO) install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
+
+protoc-gen-gotag:
+	$(GO) install github.com/srikrsna/protoc-gen-gotag@latest
 
 go-licenses:
 ifeq (, $(shell which go-licenses))
@@ -115,43 +101,12 @@ gen-sql:
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
 .PHONY: gen-proto
-gen-proto: protoc-gen-go protoc-gen-go-grpc protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper protoc-gen-doc
-	mkdir -p ./gen/go/proto
-	PATH="$$PATH:./internal/cmd/protoc-gen-customizer/" \
-	$(PROTOC) \
-		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
-		--proto_path=./proto \
-		--go_out=./gen/go/proto \
-		--go_opt=paths=source_relative \
-		--go-grpc_out=./gen/go/proto \
-		--go-grpc_opt=paths=source_relative \
-		--validate_opt=paths=source_relative \
-		--validate_out="lang=go:./gen/go/proto" \
-		--customizer_opt=paths=source_relative \
-		--customizer_out=./gen/go/proto \
-		--doc_opt=./internal/protoc-gen-doc-md.tmpl,grpc-api.md \
-		--doc_out=./gen \
-		$(shell find proto/ -iname "*.proto")
+gen-proto: buf protoc-gen-go protoc-gen-go-grpc protoc-gen-doc protoc-gen-gotag
+	mkdir -p ./gen/go/proto ./gen/ts
 
-	# Inject Go field tags into generated fields
-	find ./gen/go/proto/ -iname "*.pb.go" \
-		-exec protoc-go-inject-tag \
-			-input={} \;
+	buf generate
 
-	mkdir -p ./gen/ts
-	PATH="$$PATH:node_modules/@protobuf-ts/plugin/bin/:./internal/cmd/protoc-gen-fronthelper/" \
-	$(PROTOC) \
-		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
-		--proto_path=./proto \
-		--ts_out=./gen/ts \
-		--ts_opt=optimize_speed,long_type_number,force_server_none \
-		--fronthelper_opt=paths=source_relative \
-		--fronthelper_out=./gen/ts \
-		$(shell find proto/ -iname "*.proto")
-
-	# Fix ignore TS typecheck comment
-	find ./gen/ts/ -type f -iname "*.ts" -print0 | \
-		xargs -0 sed -i 's~// tslint:disable~// @ts-nocheck~g'
+	buf generate --template buf.gen.tag.yaml
 
 .PHONY: fmt
 fmt:

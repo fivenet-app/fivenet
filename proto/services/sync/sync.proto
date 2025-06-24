@@ -2,12 +2,12 @@ syntax = "proto3";
 
 package services.sync;
 
+import "buf/validate/validate.proto";
 import "resources/centrum/dispatches.proto";
 import "resources/jobs/activity.proto";
 import "resources/sync/activity.proto";
 import "resources/sync/data.proto";
 import "resources/users/activity.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/sync;sync";
 
@@ -23,7 +23,7 @@ message GetStatusResponse {
 
 message AddActivityRequest {
   oneof activity {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     resources.sync.UserOAuth2Conn user_oauth2 = 1;
 
@@ -49,30 +49,30 @@ message AddActivityRequest {
 message AddActivityResponse {}
 
 message RegisterAccountRequest {
-  string identifier = 1 [(validate.rules).string.max_len = 64];
+  string identifier = 1 [(buf.validate.field).string.max_len = 64];
   bool reset_token = 2;
-  optional int32 last_char_id = 3 [(validate.rules).int32.gt = 0];
+  optional int32 last_char_id = 3 [(buf.validate.field).int32.gt = 0];
 }
 
 message RegisterAccountResponse {
-  optional string reg_token = 1 [(validate.rules).string = {
-    len: 6,
-    pattern: "^[0-9]{6}$",
+  optional string reg_token = 1 [(buf.validate.field).string = {
+    len: 6
+    pattern: "^[0-9]{6}$"
   }];
   optional uint64 account_id = 2;
   optional string username = 3;
 }
 
 message TransferAccountRequest {
-  string old_license = 1 [(validate.rules).string.max_len = 64];
-  string new_license = 2 [(validate.rules).string.max_len = 64];
+  string old_license = 1 [(buf.validate.field).string.max_len = 64];
+  string new_license = 2 [(buf.validate.field).string.max_len = 64];
 }
 
 message TransferAccountResponse {}
 
 message SendDataRequest {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     resources.sync.DataJobs jobs = 1;
     resources.sync.DataLicenses licenses = 2;
@@ -90,7 +90,7 @@ message SendDataResponse {
 
 message DeleteDataRequest {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     resources.sync.DeleteUsers users = 1;
     resources.sync.DeleteVehicles vehicles = 2;

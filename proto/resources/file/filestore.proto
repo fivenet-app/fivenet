@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.file;
 
+import "buf/validate/validate.proto";
 import "resources/file/file.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;file";
 
@@ -11,23 +11,25 @@ message UploadPacket {
   oneof payload {
     UploadMeta meta = 1;
     // Raw bytes <= 128 KiB each, browsers should only read 64 KiB at a time, but this is a buffer just in case
-    bytes data = 2 [(validate.rules).bytes.max_len = 131072];
+    bytes data = 2 [(buf.validate.field).bytes.max_len = 131072];
   }
 }
 
 message UploadMeta {
   uint64 parent_id = 1;
   string namespace = 2; // "documents", "wiki", …
-  string original_name = 3 [(validate.rules).string.max_len = 255];
-  string content_type = 4;  // optional – server re-validates
-  int64 size = 5 [(validate.rules).int64.gt = 0]; // Size in bytes
+  string original_name = 3 [(buf.validate.field).string.max_len = 255];
+  string content_type = 4; // optional – server re-validates
+  int64 size = 5 [(buf.validate.field).int64.gt = 0]; // Size in bytes
 
   // @sanitize
-  string reason = 6 [(validate.rules).string = {
-    ignore_empty: true,
-    min_len: 3,
-    max_len: 255
-  }];
+  string reason = 6 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
 }
 
 message UploadResponse {
@@ -37,8 +39,8 @@ message UploadResponse {
 }
 
 message DeleteFileRequest {
-  uint64 parent_id = 1 [(validate.rules).uint64.gt = 0];
-  uint64 file_id = 2 [(validate.rules).uint64.gt = 0];
+  uint64 parent_id = 1 [(buf.validate.field).uint64.gt = 0];
+  uint64 file_id = 2 [(buf.validate.field).uint64.gt = 0];
 }
 
 message DeleteFileResponse {}

@@ -41,7 +41,7 @@ func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error
 	// 1) Ensure the migration tracking bucket exists
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: migrationBucket})
 	if err != nil {
-		return fmt.Errorf("failed to ensure migration KV bucket: %w", err)
+		return fmt.Errorf("failed to ensure migration KV bucket. %w", err)
 	}
 
 	// Fetch the recorded latest version
@@ -50,12 +50,12 @@ func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error
 		// Fresh install: record highest and exit
 		latest := registeredMigrations[len(registeredMigrations)-1].ID
 		if _, err := kv.Put(ctx, "latest", []byte(latest)); err != nil {
-			return fmt.Errorf("failed to record initial migration %s: %w", latest, err)
+			return fmt.Errorf("failed to record initial migration %s. %w", latest, err)
 		}
 		logger.Info("fresh install: recorded latest migration", zap.String("version", latest))
 		return nil
 	} else if err != nil {
-		return fmt.Errorf("failed to fetch recorded migration: %w", err)
+		return fmt.Errorf("failed to fetch recorded migration. %w", err)
 	}
 
 	current := string(rec.Value())
@@ -72,11 +72,11 @@ func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error
 		}
 		logger.Info("applying migration", zap.String("id", m.ID))
 		if err := m.Fn(ctx, js); err != nil {
-			return fmt.Errorf("migration %s failed: %w", m.ID, err)
+			return fmt.Errorf("migration %s failed. %w", m.ID, err)
 		}
 		// record this version
 		if _, err := kv.Put(ctx, "latest", []byte(m.ID)); err != nil {
-			return fmt.Errorf("failed to record migration %s: %w", m.ID, err)
+			return fmt.Errorf("failed to record migration %s. %w", m.ID, err)
 		}
 		logger.Info("migration applied", zap.String("id", m.ID))
 	}
@@ -99,7 +99,7 @@ func migrate001(ctx context.Context, js *JSWrapper) error {
 		if err == nil {
 			_ = kv.Delete(ctx, "_snapshot")
 		} else if !errors.Is(err, jetstream.ErrBucketNotFound) {
-			return fmt.Errorf("failed to get user locations bucket: %w", err)
+			return fmt.Errorf("failed to get user locations bucket. %w", err)
 		}
 	}
 
@@ -128,7 +128,13 @@ func migrate001(ctx context.Context, js *JSWrapper) error {
 		_ = kv.Delete(ctx, "_owner")
 		_ = kv.Delete(ctx, "LOCK._owner")
 	} else if !errors.Is(err, jetstream.ErrBucketNotFound) {
-		return fmt.Errorf("failed to get user locations bucket: %w", err)
+		return fmt.Errorf("failed to get user locations bucket. %w", err)
+	}
+
+	if err := js.DeleteStream(ctx, "USERINFO"); err != nil {
+		if !errors.Is(err, jetstream.ErrStreamNotFound) {
+			return fmt.Errorf("failed to delete userinfo stream. %w", err)
+		}
 	}
 
 	return nil

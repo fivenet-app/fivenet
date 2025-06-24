@@ -2,16 +2,16 @@ syntax = "proto3";
 
 package resources.qualifications;
 
+import "buf/validate/validate.proto";
 import "resources/file/file.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/qualifications;qualifications";
 
 // Exam / Questions
 
 message ExamQuestions {
-  repeated ExamQuestion questions = 1 [(validate.rules).repeated.max_items = 50];
+  repeated ExamQuestion questions = 1 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message ExamQuestion {
@@ -20,25 +20,25 @@ message ExamQuestion {
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp updated_at = 4;
   // @sanitize: method=StripTags
-  string title = 5 [(validate.rules).string = {
-    min_len: 3,
+  string title = 5 [(buf.validate.field).string = {
+    min_len: 3
     max_len: 512
   }];
   // @sanitize: method=StripTags
-  optional string description = 6 [(validate.rules).string.max_len = 1024];
-  ExamQuestionData data = 7 [(validate.rules).message.required = true];
+  optional string description = 6 [(buf.validate.field).string.max_len = 1024];
+  ExamQuestionData data = 7 [(buf.validate.field).required = true];
   optional ExamQuestionAnswerData answer = 8;
-  optional int32 points = 9 [(validate.rules).int32.gte = 0];
+  optional int32 points = 9 [(buf.validate.field).int32.gte = 0];
 }
 
 // @dbscanner: json
 message ExamQuestionData {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     ExamQuestionSeparator separator = 1;
     ExamQuestionImage image = 6;
-    ExamQuestionYesNo yesno  = 2;
+    ExamQuestionYesNo yesno = 2;
     ExamQuestionText free_text = 3;
     ExamQuestionSingleChoice single_choice = 4;
     ExamQuestionMultipleChoice multiple_choice = 5;
@@ -49,7 +49,7 @@ message ExamQuestionSeparator {}
 
 message ExamQuestionImage {
   resources.file.File image = 1;
-  optional string alt = 2 [(validate.rules).string.max_len = 128];
+  optional string alt = 2 [(buf.validate.field).string.max_len = 128];
 }
 
 message ExamQuestionYesNo {}
@@ -61,21 +61,24 @@ message ExamQuestionText {
 
 message ExamQuestionSingleChoice {
   // @sanitize: method=StripTags
-  repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
+  repeated string choices = 1 [(buf.validate.field).repeated.max_items = 10];
 }
 
 message ExamQuestionMultipleChoice {
   // @sanitize: method=StripTags
-  repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
-  optional int32 limit = 2 [(validate.rules).int32 = {gte: 0, lte: 10}];
+  repeated string choices = 1 [(buf.validate.field).repeated.max_items = 10];
+  optional int32 limit = 2 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 10
+  }];
 }
 
 // @dbscanner: json
 message ExamQuestionAnswerData {
-  string answer_key = 1 [(validate.rules).string.max_len = 1024];
+  string answer_key = 1 [(buf.validate.field).string.max_len = 1024];
 
   oneof answer {
-    ExamResponseYesNo yesno  = 4;
+    ExamResponseYesNo yesno = 4;
     ExamResponseText free_text = 5;
     ExamResponseSingleChoice single_choice = 6;
     ExamResponseMultipleChoice multiple_choice = 7;
@@ -97,7 +100,7 @@ message ExamUser {
 message ExamResponses {
   uint64 qualification_id = 1;
   int32 user_id = 2;
-  repeated ExamResponse responses = 3 [(validate.rules).repeated.max_items = 50];
+  repeated ExamResponse responses = 3 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message ExamResponse {
@@ -110,10 +113,10 @@ message ExamResponse {
 
 message ExamResponseData {
   oneof response {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     ExamResponseSeparator separator = 3;
-    ExamResponseYesNo yesno  = 4;
+    ExamResponseYesNo yesno = 4;
     ExamResponseText free_text = 5;
     ExamResponseSingleChoice single_choice = 6;
     ExamResponseMultipleChoice multiple_choice = 7;
@@ -128,26 +131,29 @@ message ExamResponseYesNo {
 
 message ExamResponseText {
   // @sanitize: method=StripTags
-  string text = 1 [(validate.rules).string.max_bytes = 500000]; // 0.5 Megabyte
+  string text = 1 [(buf.validate.field).string.max_bytes = 500000]; // 0.5 Megabyte
 }
 
 message ExamResponseSingleChoice {
   // @sanitize: method=StripTags
-  string choice = 1 [(validate.rules).string.max_len = 512];
+  string choice = 1 [(buf.validate.field).string.max_len = 512];
 }
 
 message ExamResponseMultipleChoice {
   // @sanitize: method=StripTags
-  repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
+  repeated string choices = 1 [(buf.validate.field).repeated.max_items = 10];
 }
 
 // @dbscanner: json
 message ExamGrading {
-  repeated ExamGradingResponse responses = 1 [(validate.rules).repeated.max_items = 50];
+  repeated ExamGradingResponse responses = 1 [(buf.validate.field).repeated.max_items = 50];
 }
 
 message ExamGradingResponse {
   uint64 question_id = 1;
-  float points = 2 [(validate.rules).float = {gte: 0, lte: 1000}];
+  float points = 2 [(buf.validate.field).float = {
+    gte: 0
+    lte: 1000
+  }];
   optional bool checked = 3;
 }

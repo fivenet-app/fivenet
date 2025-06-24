@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.documents;
 
+import "buf/validate/validate.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/access.proto";
@@ -15,7 +16,7 @@ import "resources/documents/templates.proto";
 import "resources/file/file.proto";
 import "resources/file/filestore.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documents";
 
@@ -39,7 +40,7 @@ message GetTemplateResponse {
 }
 
 message CreateTemplateRequest {
-  resources.documents.Template template = 1 [(validate.rules).message.required = true];
+  resources.documents.Template template = 1 [(buf.validate.field).required = true];
 }
 
 message CreateTemplateResponse {
@@ -47,7 +48,7 @@ message CreateTemplateResponse {
 }
 
 message UpdateTemplateRequest {
-  resources.documents.Template template = 1 [(validate.rules).message.required = true];
+  resources.documents.Template template = 1 [(buf.validate.field).required = true];
 }
 
 message UpdateTemplateResponse {
@@ -63,16 +64,16 @@ message DeleteTemplateResponse {}
 // Documents ==================================================================
 
 message ListDocumentsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  optional string search = 3 [(validate.rules).string.max_len = 64];
-  repeated uint64 category_ids = 4 [(validate.rules).repeated.max_items = 5];
-  repeated int32 creator_ids = 5 [(validate.rules).repeated.max_items = 5];
+  optional string search = 3 [(buf.validate.field).string.max_len = 64];
+  repeated uint64 category_ids = 4 [(buf.validate.field).repeated.max_items = 5];
+  repeated int32 creator_ids = 5 [(buf.validate.field).repeated.max_items = 5];
   optional resources.timestamp.Timestamp from = 6;
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;
-  repeated uint64 document_ids = 9 [(validate.rules).repeated.max_items = 5];
+  repeated uint64 document_ids = 9 [(buf.validate.field).repeated.max_items = 5];
   // Controls inclusion of drafts in the result:
   // - unset/null: include all documents (drafts and non-drafts)
   // - false: only non-draft documents
@@ -81,7 +82,7 @@ message ListDocumentsRequest {
 }
 
 message ListDocumentsResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.documents.DocumentShort documents = 2;
 }
 
@@ -100,7 +101,7 @@ message GetDocumentReferencesRequest {
 }
 
 message GetDocumentReferencesResponse {
-  repeated resources.documents.DocumentReference references = 1; // @gotags: alias:"reference"
+  repeated resources.documents.DocumentReference references = 1 [(tagger.tags) = "alias:\"reference\""];
 }
 
 message GetDocumentRelationsRequest {
@@ -108,11 +109,11 @@ message GetDocumentRelationsRequest {
 }
 
 message GetDocumentRelationsResponse {
-  repeated resources.documents.DocumentRelation relations = 1; // @gotags: alias:"relation"
+  repeated resources.documents.DocumentRelation relations = 1 [(tagger.tags) = "alias:\"relation\""];
 }
 
 message AddDocumentReferenceRequest {
-  resources.documents.DocumentReference reference = 1 [(validate.rules).message.required = true];
+  resources.documents.DocumentReference reference = 1 [(buf.validate.field).required = true];
 }
 
 message AddDocumentReferenceResponse {
@@ -126,7 +127,7 @@ message RemoveDocumentReferenceRequest {
 message RemoveDocumentReferenceResponse {}
 
 message AddDocumentRelationRequest {
-  resources.documents.DocumentRelation relation = 1 [(validate.rules).message.required = true];
+  resources.documents.DocumentRelation relation = 1 [(buf.validate.field).required = true];
 }
 
 message AddDocumentRelationResponse {
@@ -142,7 +143,7 @@ message RemoveDocumentRelationResponse {}
 // Comments ===============================================================
 
 message GetCommentsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   uint64 document_id = 2;
 }
 
@@ -152,7 +153,7 @@ message GetCommentsResponse {
 }
 
 message PostCommentRequest {
-  resources.documents.Comment comment = 1 [(validate.rules).message.required = true];
+  resources.documents.Comment comment = 1 [(buf.validate.field).required = true];
 }
 
 message PostCommentResponse {
@@ -160,7 +161,7 @@ message PostCommentResponse {
 }
 
 message EditCommentRequest {
-  resources.documents.Comment comment = 1 [(validate.rules).message.required = true];
+  resources.documents.Comment comment = 1 [(buf.validate.field).required = true];
 }
 
 message EditCommentResponse {
@@ -178,9 +179,9 @@ message UpdateDocumentResponse {
 }
 
 message DeleteDocumentRequest {
-  uint64 document_id = 1; // @gotags: alias:"id"
+  uint64 document_id = 1 [(tagger.tags) = "alias:\"id\""];
   // @sanitize: method=StripTags
-  optional string reason = 2 [(validate.rules).string.max_len = 255];
+  optional string reason = 2 [(buf.validate.field).string.max_len = 255];
 }
 
 message DeleteDocumentResponse {}
@@ -200,7 +201,7 @@ message ChangeDocumentOwnerRequest {
 message ChangeDocumentOwnerResponse {}
 
 message CreateDocumentRequest {
-  resources.common.content.ContentType content_type = 1 [(validate.rules).enum.defined_only = true];
+  resources.common.content.ContentType content_type = 1 [(buf.validate.field).enum.defined_only = true];
   optional uint64 template_id = 2;
   optional resources.documents.TemplateData template_data = 3;
 }
@@ -210,36 +211,48 @@ message CreateDocumentResponse {
 }
 
 message UpdateDocumentRequest {
-  uint64 document_id = 1; // @gotags: alias:"id"
+  uint64 document_id = 1 [(tagger.tags) = "alias:\"id\""];
   optional uint64 category_id = 2;
   // @sanitize: method=StripTags
-  string title = 3 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 255
-  }]; // @gotags: alias:"title"
+  string title = 3 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (tagger.tags) = "alias:\"title\""
+  ];
   resources.common.content.Content content = 4;
-  resources.common.content.ContentType content_type = 5 [(validate.rules).enum.defined_only = true];
-  optional string data = 6 [(validate.rules).string = {
-    max_bytes: 1000000 // 1 Megabyte
-  }];
+  resources.common.content.ContentType content_type = 5 [(buf.validate.field).enum.defined_only = true];
+  optional string data = 6 [(buf.validate.field).string = {max_bytes: 1000000}];
   // @sanitize
-  string state = 7 [(validate.rules).string.max_len = 32];
+  string state = 7 [(buf.validate.field).string.max_len = 32];
   bool closed = 8;
   bool draft = 9;
   bool public = 10;
   optional resources.documents.DocumentAccess access = 11;
-  repeated resources.file.File files = 12; // @gotags: alias:"files"
+  repeated resources.file.File files = 12 [(tagger.tags) = "alias:\"files\""];
 }
 
 // Document Activity and Requests =============================================
 
 message ListDocumentActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   uint64 document_id = 2;
   // Search params
-  repeated resources.documents.DocActivityType activity_types = 3 [(validate.rules).repeated = {
-    max_items: 10,
-    items: { enum: { in: [13,14,15,16,17,18] }}
+  repeated resources.documents.DocActivityType activity_types = 3 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      enum: {
+        in: [
+          13,
+          14,
+          15,
+          16,
+          17,
+          18
+        ]
+      }
+    }
   }];
 }
 
@@ -249,7 +262,7 @@ message ListDocumentActivityResponse {
 }
 
 message ListDocumentReqsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   uint64 document_id = 2;
 }
 
@@ -260,9 +273,18 @@ message ListDocumentReqsResponse {
 
 message CreateDocumentReqRequest {
   uint64 document_id = 1;
-  resources.documents.DocActivityType request_type = 2 [(validate.rules).enum = {in: [13,14,15,16,17,18]}];
+  resources.documents.DocActivityType request_type = 2 [(buf.validate.field).enum = {
+    in: [
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ]
+  }];
   // @sanitize
-  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string reason = 3 [(buf.validate.field).string.max_len = 255];
   optional resources.documents.DocActivityData data = 4;
 }
 
@@ -274,7 +296,7 @@ message UpdateDocumentReqRequest {
   uint64 document_id = 1;
   uint64 request_id = 2;
   // @sanitize
-  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string reason = 3 [(buf.validate.field).string.max_len = 255];
   optional resources.documents.DocActivityData data = 4;
   bool accepted = 5;
 }
@@ -296,21 +318,21 @@ message GetDocumentAccessRequest {
 }
 
 message GetDocumentAccessResponse {
-  resources.documents.DocumentAccess access = 1 [(validate.rules).message.required = true];
+  resources.documents.DocumentAccess access = 1 [(buf.validate.field).required = true];
 }
 
 message SetDocumentAccessRequest {
   uint64 document_id = 1;
-  resources.documents.DocumentAccess access = 2 [(validate.rules).message.required = true];
+  resources.documents.DocumentAccess access = 2 [(buf.validate.field).required = true];
 }
 
 message SetDocumentAccessResponse {}
 
 message ListUserDocumentsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
-  int32 user_id = 3 [(validate.rules).int32.gt = 0];
-  repeated resources.documents.DocRelation relations = 4 [(validate.rules).repeated.max_items = 3];
+  int32 user_id = 3 [(buf.validate.field).int32.gt = 0];
+  repeated resources.documents.DocRelation relations = 4 [(buf.validate.field).repeated.max_items = 3];
   optional bool closed = 5;
 }
 
@@ -328,11 +350,11 @@ message ListCategoriesResponse {
 }
 
 message CreateOrUpdateCategoryRequest {
-  resources.documents.Category category = 1 [(validate.rules).message.required = true];
+  resources.documents.Category category = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateCategoryResponse {
-  resources.documents.Category category = 1 [(validate.rules).message.required = true];
+  resources.documents.Category category = 1 [(buf.validate.field).required = true];
 }
 
 message DeleteCategoryRequest {
@@ -344,7 +366,7 @@ message DeleteCategoryResponse {}
 // Pins =======================================================================
 
 message ListDocumentPinsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   // Search params
   // If true, only personal pins are returned
   optional bool personal = 2;
@@ -363,7 +385,7 @@ message ToggleDocumentPinRequest {
 }
 
 message ToggleDocumentPinResponse {
-  optional resources.documents.DocumentPin pin = 1; // @gotags: alias:"pin"
+  optional resources.documents.DocumentPin pin = 1 [(tagger.tags) = "alias:\"pin\""];
 }
 
 // Reminders ==================================================================
@@ -372,7 +394,7 @@ message SetDocumentReminderRequest {
   uint64 document_id = 1;
   optional resources.timestamp.Timestamp reminder_time = 2;
   // @sanitize: method=StripTags
-  optional string message = 3 [(validate.rules).string.max_bytes = 1024];
+  optional string message = 3 [(buf.validate.field).string.max_bytes = 1024];
 }
 
 message SetDocumentReminderResponse {}

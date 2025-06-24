@@ -2,11 +2,12 @@ syntax = "proto3";
 
 package resources.users;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/labels.proto";
 import "resources/users/licenses.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;users";
 
@@ -29,26 +30,41 @@ enum UserActivityType {
 }
 
 message UserActivity {
-  uint64 id = 1; // @gotags: alias:"user_activity.id"
-  UserActivityType type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"user_activity.type"
-  resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"user_activity.created_at"
-  optional int32 source_user_id = 4; // @gotags: alias:"source_user_id"
-  optional UserShort source_user = 5; // @gotags: alias:"source_user"
-  int32 target_user_id = 6; // @gotags: alias:"target_user_id"
-  UserShort target_user = 7; // @gotags: alias:"target_user"
+  uint64 id = 1 [(tagger.tags) = "alias:\"user_activity.id\""];
+  UserActivityType type = 2 [
+    (buf.validate.field).enum.defined_only = true,
+    (tagger.tags) = "alias:\"user_activity.type\""
+  ];
+  resources.timestamp.Timestamp created_at = 3 [(tagger.tags) = "alias:\"user_activity.created_at\""];
+  optional int32 source_user_id = 4 [(tagger.tags) = "alias:\"source_user_id\""];
+  optional UserShort source_user = 5 [(tagger.tags) = "alias:\"source_user\""];
+  int32 target_user_id = 6 [(tagger.tags) = "alias:\"target_user_id\""];
+  UserShort target_user = 7 [(tagger.tags) = "alias:\"target_user\""];
   // @sanitize
-  string key = 8 [(validate.rules).string.max_len = 64]; // @gotags: alias:"user_activity.key"
+  string key = 8 [
+    (buf.validate.field).string.max_len = 64,
+    (tagger.tags) = "alias:\"user_activity.key\""
+  ];
   // @sanitize
-  string reason = 9 [(validate.rules).string.max_len = 255]; // @gotags: alias:"user_activity.reason"
-  optional UserActivityData data = 10; // @gotags: alias:"user_activity.data"
-  string old_value = 11 [(validate.rules).string.max_len = 255]; // @gotags: alias:"user_activity.old_value"
-  string new_value = 12 [(validate.rules).string.max_len = 255]; // @gotags: alias:"user_activity.new_value"
+  string reason = 9 [
+    (buf.validate.field).string.max_len = 255,
+    (tagger.tags) = "alias:\"user_activity.reason\""
+  ];
+  optional UserActivityData data = 10 [(tagger.tags) = "alias:\"user_activity.data\""];
+  string old_value = 11 [
+    (buf.validate.field).string.max_len = 255,
+    (tagger.tags) = "alias:\"user_activity.old_value\""
+  ];
+  string new_value = 12 [
+    (buf.validate.field).string.max_len = 255,
+    (tagger.tags) = "alias:\"user_activity.new_value\""
+  ];
 }
 
 // @dbscanner: json
 message UserActivityData {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     NameChange name_change = 1;
     LicenseChange licenses_change = 2;

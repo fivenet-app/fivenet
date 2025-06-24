@@ -2,9 +2,10 @@ syntax = "proto3";
 
 package resources.livemap;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap;livemap";
 
@@ -24,33 +25,33 @@ message MarkerMarker {
   optional resources.timestamp.Timestamp expires_at = 6;
   optional resources.timestamp.Timestamp deleted_at = 7;
   // @sanitize
-  string name = 8 [(validate.rules).string = {
-    min_len: 1,
-    max_len: 255,
+  string name = 8 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 255
   }];
   // @sanitize
   optional string description = 9;
   // @sanitize: method=StripTags
-  optional string postal = 10 [(validate.rules).string.max_len = 48];
+  optional string postal = 10 [(buf.validate.field).string.max_len = 48];
   // @sanitize: method=StripTags
-  optional string color = 11 [(validate.rules).string = {
-    len: 7,
-    pattern: "^#[A-Fa-f0-9]{6}$",
+  optional string color = 11 [(buf.validate.field).string = {
+    len: 7
+    pattern: "^#[A-Fa-f0-9]{6}$"
   }];
-  string job = 12 [(validate.rules).string.max_len = 20];
+  string job = 12 [(buf.validate.field).string.max_len = 20];
   string job_label = 13;
 
-  MarkerType type = 14; // @gotags: alias:"markerType"
-  MarkerData data = 15; // @gotags: alias:"markerData"
+  MarkerType type = 14 [(tagger.tags) = "alias:\"markerType\""];
+  MarkerData data = 15 [(tagger.tags) = "alias:\"markerData\""];
 
-  optional int32 creator_id = 16 [(validate.rules).int32.gt = 0];
+  optional int32 creator_id = 16 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort creator = 17;
 }
 
 // @dbscanner
 message MarkerData {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     CircleMarker circle = 3;
     IconMarker icon = 4;
@@ -59,13 +60,16 @@ message MarkerData {
 
 message CircleMarker {
   int32 radius = 1;
-  optional float opacity = 2 [(validate.rules).float = {
-    gte: 1,
-    lte: 75,
+  optional float opacity = 2 [(buf.validate.field).float = {
+    gte: 1
+    lte: 75
   }];
 }
 
 message IconMarker {
   // @sanitize: method=StripTags
-  string icon = 1 [(validate.rules).string.max_len = 128];
+  string icon = 1 [(buf.validate.field).string = {
+    max_len: 128
+    suffix: "Icon"
+  }];
 }

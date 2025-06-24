@@ -39,7 +39,7 @@ func (m *CompleteCitizensRequest) Sanitize() error {
 	return nil
 }
 
-func (m *CompleteCitizensRespoonse) Sanitize() error {
+func (m *CompleteCitizensResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

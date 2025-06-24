@@ -2,34 +2,38 @@ syntax = "proto3";
 
 package resources.centrum;
 
+import "buf/validate/validate.proto";
 import "resources/centrum/attributes.proto";
 import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
 message Dispatch {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string job = 4 [deprecated = true, (validate.rules).string.max_len = 20];
+  string job = 4 [
+    deprecated = true,
+    (buf.validate.field).string.max_len = 20
+  ];
   resources.centrum.JobList jobs = 18;
   optional DispatchStatus status = 5;
   // @sanitize
-  string message = 7 [(validate.rules).string.max_len = 255];
+  string message = 7 [(buf.validate.field).string.max_len = 255];
   // @sanitize
-  optional string description = 8 [(validate.rules).string.max_len = 1024];
+  optional string description = 8 [(buf.validate.field).string.max_len = 1024];
   optional DispatchAttributes attributes = 9;
   double x = 10;
   double y = 11;
   // @sanitize
-  optional string postal = 12 [(validate.rules).string.max_len = 48];
+  optional string postal = 12 [(buf.validate.field).string.max_len = 48];
   bool anon = 13;
-  optional int32 creator_id = 14 [(validate.rules).int32.gt = 0];
+  optional int32 creator_id = 14 [(buf.validate.field).int32.gt = 0];
   optional resources.users.User creator = 15;
   repeated DispatchAssignment units = 16;
   optional DispatchReferences references = 17;
@@ -37,13 +41,13 @@ message Dispatch {
 
 message DispatchAssignments {
   uint64 dispatch_id = 1;
-  string job = 2 [(validate.rules).string.max_len = 20];
+  string job = 2 [(buf.validate.field).string.max_len = 20];
   repeated DispatchAssignment units = 3;
 }
 
 message DispatchAssignment {
-  uint64 dispatch_id = 1; // @gotags: sql:"primary_key" alias:"dispatch_id"
-  uint64 unit_id = 2; // @gotags: sql:"primary_key" alias:"unit_id"
+  uint64 dispatch_id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"dispatch_id\""];
+  uint64 unit_id = 2 [(tagger.tags) = "sql:\"primary_key\" alias:\"unit_id\""];
   optional resources.centrum.Unit unit = 3;
   optional resources.timestamp.Timestamp created_at = 4;
   optional resources.timestamp.Timestamp expires_at = 5;
@@ -68,23 +72,23 @@ enum StatusDispatch {
 }
 
 message DispatchStatus {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 dispatch_id = 3;
   optional uint64 unit_id = 4;
   optional resources.centrum.Unit unit = 5;
-  StatusDispatch status = 6 [(validate.rules).enum.defined_only = true];
+  StatusDispatch status = 6 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
-  optional string reason = 7 [(validate.rules).string.max_len = 255];
+  optional string reason = 7 [(buf.validate.field).string.max_len = 255];
   // @sanitize
-  optional string code = 8 [(validate.rules).string.max_len = 20];
-  optional int32 user_id = 9 [(validate.rules).int32.gt = 0];
+  optional string code = 8 [(buf.validate.field).string.max_len = 20];
+  optional int32 user_id = 9 [(buf.validate.field).int32.gt = 0];
   optional resources.jobs.Colleague user = 10;
   optional double x = 11;
   optional double y = 12;
   // @sanitize
-  optional string postal = 13 [(validate.rules).string.max_len = 48];
-  optional string creator_job = 14 [(validate.rules).string.max_len = 20];
+  optional string postal = 13 [(buf.validate.field).string.max_len = 48];
+  optional string creator_job = 14 [(buf.validate.field).string.max_len = 20];
 }
 
 enum TakeDispatchResp {
@@ -101,7 +105,7 @@ message DispatchReferences {
 
 message DispatchReference {
   uint64 target_dispatch_id = 1;
-  DispatchReferenceType reference_type = 2 [(validate.rules).enum.defined_only = true];
+  DispatchReferenceType reference_type = 2 [(buf.validate.field).enum.defined_only = true];
 }
 
 enum DispatchReferenceType {

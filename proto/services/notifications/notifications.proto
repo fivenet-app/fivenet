@@ -2,25 +2,23 @@ syntax = "proto3";
 
 package services.notifications;
 
+import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
 import "resources/mailer/events.proto";
 import "resources/notifications/client_view.proto";
 import "resources/notifications/events.proto";
 import "resources/notifications/notifications.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/notifications;notifications";
 
 message GetNotificationsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional bool include_read = 2;
-  repeated resources.notifications.NotificationCategory categories = 3 [(validate.rules).repeated = {
-    max_items: 4,
+  repeated resources.notifications.NotificationCategory categories = 3 [(buf.validate.field).repeated = {
+    max_items: 4
     items: {
-      enum: {
-        defined_only: true,
-      },
-    },
+      enum: {defined_only: true}
+    }
   }];
 }
 
@@ -31,11 +29,13 @@ message GetNotificationsResponse {
 
 message MarkNotificationsRequest {
   bool unread = 1;
-  repeated uint64 ids = 2 [(validate.rules).repeated = {
-    ignore_empty: true,
-    min_items: 1,
-    max_items: 20
-  }];
+  repeated uint64 ids = 2 [
+    (buf.validate.field).repeated = {
+      min_items: 1
+      max_items: 20
+    },
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
   optional bool all = 3;
 }
 
@@ -43,11 +43,11 @@ message MarkNotificationsResponse {
   uint64 updated = 1;
 }
 
-message StreamMessage {
+message StreamRequest {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
-    resources.notifications.ClientView client_view = 1 [(validate.rules).message.required = true];
+    resources.notifications.ClientView client_view = 1;
   }
 }
 
@@ -56,7 +56,7 @@ message StreamResponse {
   optional bool restart = 2;
 
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     resources.notifications.UserEvent user_event = 3;
     resources.notifications.JobEvent job_event = 4;
@@ -74,5 +74,5 @@ service NotificationsService {
   rpc MarkNotifications(MarkNotificationsRequest) returns (MarkNotificationsResponse);
 
   // @perm: Name=Any
-  rpc Stream(stream StreamMessage) returns (stream StreamResponse);
+  rpc Stream(stream StreamRequest) returns (stream StreamResponse);
 }

@@ -1,9 +1,8 @@
-
-
 syntax = "proto3";
 
 package services.mailer;
 
+import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
 import "resources/mailer/email.proto";
 import "resources/mailer/message.proto";
@@ -11,33 +10,32 @@ import "resources/mailer/settings.proto";
 import "resources/mailer/template.proto";
 import "resources/mailer/thread.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/mailer;mailer";
 
 // Emails
 
 message ListEmailsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   // Search params
   optional bool all = 2;
 }
 
 message ListEmailsResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.mailer.Email emails = 2;
 }
 
 message GetEmailRequest {
-  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
 }
 
 message GetEmailResponse {
-  resources.mailer.Email email = 1 [(validate.rules).message.required = true];
+  resources.mailer.Email email = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateEmailRequest {
-  resources.mailer.Email email = 1 [(validate.rules).message.required = true];
+  resources.mailer.Email email = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateEmailResponse {
@@ -45,13 +43,13 @@ message CreateOrUpdateEmailResponse {
 }
 
 message DeleteEmailRequest {
-  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
 }
 
 message DeleteEmailResponse {}
 
 message GetEmailProposalsRequest {
-  string input = 1 [(validate.rules).string.max_len = 40];
+  string input = 1 [(buf.validate.field).string.max_len = 40];
   optional bool job = 2;
   optional int32 user_id = 3;
 }
@@ -64,7 +62,7 @@ message GetEmailProposalsResponse {
 // Templates
 
 message ListTemplatesRequest {
-  uint64 email_id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
 }
 
 message ListTemplatesResponse {
@@ -72,25 +70,25 @@ message ListTemplatesResponse {
 }
 
 message GetTemplateRequest {
-  uint64 email_id = 1 [(validate.rules).uint64.gt = 0];
-  uint64 template_id = 2 [(validate.rules).uint64.gt = 0];
+  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
+  uint64 template_id = 2 [(buf.validate.field).uint64.gt = 0];
 }
 
 message GetTemplateResponse {
-  resources.mailer.Template template = 1 [(validate.rules).message.required = true];
+  resources.mailer.Template template = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateTemplateRequest {
-  resources.mailer.Template template = 1 [(validate.rules).message.required = true];
+  resources.mailer.Template template = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateTemplateResponse {
-  resources.mailer.Template template = 1 [(validate.rules).message.required = true];
+  resources.mailer.Template template = 1 [(buf.validate.field).required = true];
 }
 
 message DeleteTemplateRequest {
-  uint64 email_id = 1 [(validate.rules).uint64.gt = 0];
-  uint64 id = 2 [(validate.rules).uint64.gt = 0];
+  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
+  uint64 id = 2 [(buf.validate.field).uint64.gt = 0];
 }
 
 message DeleteTemplateResponse {}
@@ -98,25 +96,27 @@ message DeleteTemplateResponse {}
 // Threads
 
 message ListThreadsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   // Search params
-  repeated uint64 email_ids = 2 [(validate.rules).repeated = {
-    min_items: 1,
-    max_items: 10,
-    items: { uint64: { gt: 0 } },
+  repeated uint64 email_ids = 2 [(buf.validate.field).repeated = {
+    min_items: 1
+    max_items: 10
+    items: {
+      uint64: {gt: 0}
+    }
   }];
   optional bool unread = 4;
   optional bool archived = 5;
 }
 
 message ListThreadsResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.mailer.Thread threads = 2;
 }
 
 message GetThreadRequest {
-  uint64 email_id = 1 [(validate.rules).uint64.gt = 0];
-  uint64 thread_id = 2 [(validate.rules).uint64.gt = 0];
+  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
+  uint64 thread_id = 2 [(buf.validate.field).uint64.gt = 0];
 }
 
 message GetThreadResponse {
@@ -124,13 +124,18 @@ message GetThreadResponse {
 }
 
 message CreateThreadRequest {
-  resources.mailer.Thread thread = 1 [(validate.rules).message.required = true];
-  resources.mailer.Message message = 2 [(validate.rules).message.required = true];
+  resources.mailer.Thread thread = 1 [(buf.validate.field).required = true];
+  resources.mailer.Message message = 2 [(buf.validate.field).required = true];
   // @sanitize: method=StripTags
-  repeated string recipients = 3 [(validate.rules).repeated = {
-    min_items: 1,
-    max_items: 15,
-    items: { string: { min_len: 6, max_len: 80 } },
+  repeated string recipients = 3 [(buf.validate.field).repeated = {
+    min_items: 1
+    max_items: 15
+    items: {
+      string: {
+        min_len: 6
+        max_len: 80
+      }
+    }
   }];
 }
 
@@ -139,15 +144,15 @@ message CreateThreadResponse {
 }
 
 message DeleteThreadRequest {
-  uint64 email_id = 1 [(validate.rules).uint64.gt = 0];
-  uint64 thread_id = 2 [(validate.rules).uint64.gt = 0];
+  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
+  uint64 thread_id = 2 [(buf.validate.field).uint64.gt = 0];
 }
 
 message DeleteThreadResponse {}
 
 message GetThreadStateRequest {
-  uint64 email_id = 1 [(validate.rules).uint64.gt = 0];
-  uint64 thread_id = 2 [(validate.rules).uint64.gt = 0];
+  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
+  uint64 thread_id = 2 [(buf.validate.field).uint64.gt = 0];
 }
 
 message GetThreadStateResponse {
@@ -155,7 +160,7 @@ message GetThreadStateResponse {
 }
 
 message SetThreadStateRequest {
-  resources.mailer.ThreadState state = 1 [(validate.rules).message.required = true];
+  resources.mailer.ThreadState state = 1 [(buf.validate.field).required = true];
 }
 
 message SetThreadStateResponse {
@@ -163,7 +168,7 @@ message SetThreadStateResponse {
 }
 
 message GetEmailSettingsRequest {
-  uint64 email_id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
 }
 
 message GetEmailSettingsResponse {
@@ -171,7 +176,7 @@ message GetEmailSettingsResponse {
 }
 
 message SetEmailSettingsRequest {
-  resources.mailer.EmailSettings settings = 1 [(validate.rules).message.required = true];
+  resources.mailer.EmailSettings settings = 1 [(buf.validate.field).required = true];
 }
 
 message SetEmailSettingsResponse {
@@ -181,34 +186,39 @@ message SetEmailSettingsResponse {
 // Messages
 
 message SearchThreadsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   // Search params
-  string search = 2 [(validate.rules).string.max_len = 64];
+  string search = 2 [(buf.validate.field).string.max_len = 64];
 }
 
 message SearchThreadsResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.mailer.Message messages = 2;
 }
 
 message ListThreadMessagesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 email_id = 2 [(validate.rules).uint64.gt = 0];
-  uint64 thread_id = 3 [(validate.rules).uint64.gt = 0];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  uint64 email_id = 2 [(buf.validate.field).uint64.gt = 0];
+  uint64 thread_id = 3 [(buf.validate.field).uint64.gt = 0];
   optional resources.timestamp.Timestamp after = 4;
 }
 
 message ListThreadMessagesResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.mailer.Message messages = 2;
 }
 
 message PostMessageRequest {
-  resources.mailer.Message message = 1 [(validate.rules).message.required = true];
+  resources.mailer.Message message = 1 [(buf.validate.field).required = true];
   // @sanitize: method=StripTags
-  repeated string recipients = 2 [(validate.rules).repeated = {
-    max_items: 10,
-    items: { string: { min_len: 6, max_len: 80 } },
+  repeated string recipients = 2 [(buf.validate.field).repeated = {
+    max_items: 10
+    items: {
+      string: {
+        min_len: 6
+        max_len: 80
+      }
+    }
   }];
 }
 
@@ -217,9 +227,9 @@ message PostMessageResponse {
 }
 
 message DeleteMessageRequest {
-  uint64 email_id = 1 [(validate.rules).uint64.gt = 0];
-  uint64 thread_id = 2 [(validate.rules).uint64.gt = 0];
-  uint64 message_id = 3 [(validate.rules).uint64.gt = 0];
+  uint64 email_id = 1 [(buf.validate.field).uint64.gt = 0];
+  uint64 thread_id = 2 [(buf.validate.field).uint64.gt = 0];
+  uint64 message_id = 3 [(buf.validate.field).uint64.gt = 0];
 }
 
 message DeleteMessageResponse {}

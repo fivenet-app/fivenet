@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package services.settings;
 
+import "buf/validate/validate.proto";
 import "resources/settings/config.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
 
@@ -14,7 +14,7 @@ message GetAppConfigResponse {
 }
 
 message UpdateAppConfigRequest {
-  resources.settings.AppConfig config = 1 [(validate.rules).message.required = true];
+  resources.settings.AppConfig config = 1 [(buf.validate.field).required = true];
 }
 
 message UpdateAppConfigResponse {

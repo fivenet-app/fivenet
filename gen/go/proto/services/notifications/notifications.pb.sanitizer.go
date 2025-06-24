@@ -71,7 +71,7 @@ func (m *MarkNotificationsResponse) Sanitize() error {
 	return nil
 }
 
-func (m *StreamMessage) Sanitize() error {
+func (m *StreamRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -79,7 +79,7 @@ func (m *StreamMessage) Sanitize() error {
 	// Field: ClientView
 	switch v := m.Data.(type) {
 
-	case *StreamMessage_ClientView:
+	case *StreamRequest_ClientView:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

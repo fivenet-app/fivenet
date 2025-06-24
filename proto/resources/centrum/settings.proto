@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.centrum;
 
+import "buf/validate/validate.proto";
 import "resources/centrum/access.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
@@ -22,12 +22,12 @@ enum CentrumMode {
 }
 
 message Settings {
-  string job = 1 [(validate.rules).string.max_len = 20];
+  string job = 1 [(buf.validate.field).string.max_len = 20];
   bool enabled = 2;
-  CentrumType type = 3 [(validate.rules).enum.defined_only = true];
+  CentrumType type = 3 [(buf.validate.field).enum.defined_only = true];
   bool public = 9;
-  CentrumMode mode = 8 [(validate.rules).enum.defined_only = true];
-  CentrumMode fallback_mode = 4 [(validate.rules).enum.defined_only = true];
+  CentrumMode mode = 8 [(buf.validate.field).enum.defined_only = true];
+  CentrumMode fallback_mode = 4 [(buf.validate.field).enum.defined_only = true];
   optional PredefinedStatus predefined_status = 5;
   Timings timings = 6;
   resources.centrum.CentrumAccess access = 7;
@@ -36,29 +36,39 @@ message Settings {
 // @dbscanner: json
 message PredefinedStatus {
   // @sanitize: method=StripTags
-  repeated string unit_status = 1 [(validate.rules).repeated = {
-    max_items: 20,
-    items: { string: { max_len: 64 } }
+  repeated string unit_status = 1 [(buf.validate.field).repeated = {
+    max_items: 20
+    items: {
+      string: {max_len: 64}
+    }
   }];
   // @sanitize: method=StripTags
-  repeated string dispatch_status = 2 [(validate.rules).repeated = {
-    max_items: 20,
-    items: { string: { max_len: 64 } }
+  repeated string dispatch_status = 2 [(buf.validate.field).repeated = {
+    max_items: 20
+    items: {
+      string: {max_len: 64}
+    }
   }];
 }
 
 // @dbscanner: json
 message Timings {
-  int64 dispatch_max_wait = 1 [(validate.rules).int64 = { gt: 30, lt: 6000}];
+  int64 dispatch_max_wait = 1 [(buf.validate.field).int64 = {
+    gt: 30
+    lt: 6000
+  }];
   bool require_unit = 2;
-  int64 require_unit_reminder_seconds = 3 [(validate.rules).int64 = { gt: 30, lt: 6000}];
+  int64 require_unit_reminder_seconds = 3 [(buf.validate.field).int64 = {
+    gt: 30
+    lt: 6000
+  }];
 }
 
 message JobList {
-  repeated Job jobs = 1 [(validate.rules).repeated.max_items = 10];
+  repeated Job jobs = 1 [(buf.validate.field).repeated.max_items = 10];
 }
 
 message Job {
-  string name = 1 [(validate.rules).string.max_len = 20];
+  string name = 1 [(buf.validate.field).string.max_len = 20];
   optional string label = 2;
 }

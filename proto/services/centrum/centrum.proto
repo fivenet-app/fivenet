@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.centrum;
 
+import "buf/validate/validate.proto";
 import "resources/centrum/access.proto";
 import "resources/centrum/dispatchers.proto";
 import "resources/centrum/dispatches.proto";
@@ -10,19 +11,18 @@ import "resources/centrum/units.proto";
 import "resources/common/database/database.proto";
 import "resources/livemap/heatmap.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum;centrum";
 
 // Common
 
 message ListDispatchActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   uint64 id = 2;
 }
 
 message ListUnitActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   uint64 id = 2;
 }
 
@@ -43,7 +43,7 @@ message UpdateSettingsResponse {
 // Unit Management
 
 message ListUnitsRequest {
-  repeated resources.centrum.StatusUnit status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.StatusUnit status = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
 }
 
 message ListUnitsResponse {
@@ -51,7 +51,7 @@ message ListUnitsResponse {
 }
 
 message CreateOrUpdateUnitRequest {
-  resources.centrum.Unit unit = 1 [(validate.rules).message.required = true];
+  resources.centrum.Unit unit = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateUnitResponse {
@@ -66,11 +66,11 @@ message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
   uint64 unit_id = 1;
-  resources.centrum.StatusUnit status = 2 [(validate.rules).enum.defined_only = true];
+  resources.centrum.StatusUnit status = 2 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
-  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string reason = 3 [(buf.validate.field).string.max_len = 255];
   // @sanitize
-  optional string code = 4 [(validate.rules).string.max_len = 20];
+  optional string code = 4 [(buf.validate.field).string.max_len = 20];
 }
 
 message UpdateUnitStatusResponse {}
@@ -91,7 +91,7 @@ message GetDispatchHeatmapResponse {
 }
 
 message UpdateDispatchersRequest {
-  repeated int32 to_remove = 1 [(validate.rules).repeated.max_items = 10];
+  repeated int32 to_remove = 1 [(buf.validate.field).repeated.max_items = 10];
 }
 
 message UpdateDispatchersResponse {
@@ -112,11 +112,11 @@ message TakeControlRequest {
 message TakeControlResponse {}
 
 message ListDispatchesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  repeated resources.centrum.StatusDispatch status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
-  repeated resources.centrum.StatusDispatch not_status = 3 [(validate.rules).repeated.items.enum.defined_only = true];
-  repeated uint64 ids = 4 [(validate.rules).repeated.max_items = 10];
-  optional string postal = 5 [(validate.rules).string.max_len = 12];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
+  repeated resources.centrum.StatusDispatch status = 2 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated resources.centrum.StatusDispatch not_status = 3 [(buf.validate.field).repeated.items.enum.defined_only = true];
+  repeated uint64 ids = 4 [(buf.validate.field).repeated.max_items = 10];
+  optional string postal = 5 [(buf.validate.field).string.max_len = 12];
 }
 
 message ListDispatchesResponse {
@@ -125,7 +125,7 @@ message ListDispatchesResponse {
 }
 
 message GetDispatchRequest {
-  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
 }
 
 message GetDispatchResponse {
@@ -133,7 +133,7 @@ message GetDispatchResponse {
 }
 
 message CreateDispatchRequest {
-  resources.centrum.Dispatch dispatch = 1 [(validate.rules).message.required = true];
+  resources.centrum.Dispatch dispatch = 1 [(buf.validate.field).required = true];
 }
 
 message CreateDispatchResponse {
@@ -141,7 +141,7 @@ message CreateDispatchResponse {
 }
 
 message UpdateDispatchRequest {
-  resources.centrum.Dispatch dispatch = 1 [(validate.rules).message.required = true];
+  resources.centrum.Dispatch dispatch = 1 [(buf.validate.field).required = true];
 }
 
 message UpdateDispatchResponse {
@@ -149,16 +149,16 @@ message UpdateDispatchResponse {
 }
 
 message DeleteDispatchRequest {
-  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 id = 1 [(buf.validate.field).uint64.gt = 0];
 }
 
 message DeleteDispatchResponse {}
 
 message UpdateDispatchStatusRequest {
   uint64 dispatch_id = 1;
-  resources.centrum.StatusDispatch status = 2 [(validate.rules).enum.defined_only = true];
+  resources.centrum.StatusDispatch status = 2 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
-  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string reason = 3 [(buf.validate.field).string.max_len = 255];
   // @sanitize
   optional string code = 4;
 }
@@ -188,10 +188,10 @@ message JoinUnitResponse {
 }
 
 message TakeDispatchRequest {
-  repeated uint64 dispatch_ids = 1 [(validate.rules).repeated.min_items = 1];
-  resources.centrum.TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
+  repeated uint64 dispatch_ids = 1 [(buf.validate.field).repeated.min_items = 1];
+  resources.centrum.TakeDispatchResp resp = 2 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
-  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string reason = 3 [(buf.validate.field).string.max_len = 255];
 }
 
 message TakeDispatchResponse {}
@@ -214,7 +214,7 @@ message StreamRequest {}
 
 message StreamResponse {
   oneof change {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     StreamHandshake handshake = 1;
     LatestState latest_state = 2;
@@ -238,9 +238,9 @@ message JobAccess {
 }
 
 message JobAccessEntry {
-  string job = 1 [(validate.rules).string.max_len = 20];
+  string job = 1 [(buf.validate.field).string.max_len = 20];
   optional string job_label = 2;
-  resources.centrum.CentrumAccessLevel access = 3 [(validate.rules).enum.defined_only = true];
+  resources.centrum.CentrumAccessLevel access = 3 [(buf.validate.field).enum.defined_only = true];
 }
 
 message Dispatchers {

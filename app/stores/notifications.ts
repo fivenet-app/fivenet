@@ -6,7 +6,7 @@ import { useAuthStore } from '~/stores/auth';
 import type { Notification } from '~/utils/notifications';
 import type { ObjectEvent, ObjectType } from '~~/gen/ts/resources/notifications/client_view';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { MarkNotificationsRequest, StreamMessage, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
+import type { MarkNotificationsRequest, StreamRequest, StreamResponse } from '~~/gen/ts/services/notifications/notifications';
 import { useCalendarStore } from './calendar';
 import { useMailerStore } from './mailer';
 
@@ -51,7 +51,7 @@ export const useNotificationsStore = defineStore(
         };
 
         // Stream
-        let currentStream: DuplexStreamingCall<StreamMessage, StreamResponse> | undefined = undefined;
+        let currentStream: DuplexStreamingCall<StreamRequest, StreamResponse> | undefined = undefined;
 
         const startStream = async (): Promise<void> => {
             if (abort.value !== undefined) return;

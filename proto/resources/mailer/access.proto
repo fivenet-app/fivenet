@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package resources.mailer;
 
+import "buf/validate/validate.proto";
 import "resources/qualifications/qualifications.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailer";
 
@@ -18,29 +19,38 @@ enum AccessLevel {
 }
 
 message Access {
-  repeated JobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
-  repeated UserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
-  repeated QualificationAccess qualifications = 3 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"qualification_access"
+  repeated JobAccess jobs = 1 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"job_access\""
+  ];
+  repeated UserAccess users = 2 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"user_access\""
+  ];
+  repeated QualificationAccess qualifications = 3 [
+    (buf.validate.field).repeated.max_items = 20,
+    (tagger.tags) = "alias:\"qualification_access\""
+  ];
 }
 
 message JobAccess {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 target_id = 4;
-  string job = 5 [(validate.rules).string.max_len = 20];
-  optional string job_label = 6 [(validate.rules).string.max_len = 50];
-  int32 minimum_grade = 7 [(validate.rules).int32.gte = 0];
-  optional string job_grade_label = 8 [(validate.rules).string.max_len = 50];
-  AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
+  string job = 5 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 6 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 7 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 8 [(buf.validate.field).string.max_len = 50];
+  AccessLevel access = 9 [(buf.validate.field).enum.defined_only = true];
 }
 
 message UserAccess {
   uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 target_id = 3;
-  int32 user_id = 4 [(validate.rules).int32.gte = 0];
+  int32 user_id = 4 [(buf.validate.field).int32.gte = 0];
   optional resources.users.UserShort user = 5;
-  AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
+  AccessLevel access = 6 [(buf.validate.field).enum.defined_only = true];
 }
 
 message QualificationAccess {
@@ -49,5 +59,5 @@ message QualificationAccess {
   uint64 target_id = 3;
   uint64 qualification_id = 4;
   optional resources.qualifications.QualificationShort qualification = 5;
-  AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
+  AccessLevel access = 6 [(buf.validate.field).enum.defined_only = true];
 }

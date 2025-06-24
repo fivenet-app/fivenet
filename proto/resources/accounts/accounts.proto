@@ -2,27 +2,28 @@ syntax = "proto3";
 
 package resources.accounts;
 
+import "buf/validate/validate.proto";
 import "resources/accounts/oauth2.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts;accounts";
 
 message Account {
-  uint64 id = 1; // @gotags: sql:"primary_key"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string username = 4 [(validate.rules).string.max_len = 24];
-  string license = 5 [(validate.rules).string.max_len = 64];
+  string username = 4 [(buf.validate.field).string.max_len = 24];
+  string license = 5 [(buf.validate.field).string.max_len = 64];
   bool enabled = 6;
-  optional int32 last_char = 7 [(validate.rules).int32.gt = 0];
+  optional int32 last_char = 7 [(buf.validate.field).int32.gt = 0];
 
-  repeated OAuth2Account oauth2_accounts = 8 [(validate.rules).repeated.max_items = 10]; // @gotags: alias:"oauth2_account"
+  repeated OAuth2Account oauth2_accounts = 8 [(buf.validate.field).repeated.max_items = 10, (tagger.tags) = "alias:\"oauth2_account\""];
 }
 
 message Character {
   bool available = 1;
   string group = 2;
-  resources.users.User char = 3; // @gotags: alias:"user"
+  resources.users.User char = 3 [(tagger.tags) = "alias:\"user\""];
 }

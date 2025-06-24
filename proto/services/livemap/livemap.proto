@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package services.livemap;
 
-import "resources/livemap/user_marker.proto";
-import "resources/livemap/marker_marker.proto";
+import "buf/validate/validate.proto";
 import "resources/jobs/jobs.proto";
-import "validate/validate.proto";
+import "resources/livemap/marker_marker.proto";
+import "resources/livemap/user_marker.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/livemap;livemap";
 
@@ -15,7 +15,7 @@ message StreamResponse {
   optional bool user_on_duty = 1;
 
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     JobsList jobs = 2;
     MarkerMarkersUpdates markers = 3;
@@ -57,7 +57,7 @@ message UserDelete {
 }
 
 message CreateOrUpdateMarkerRequest {
-  resources.livemap.MarkerMarker marker = 1 [(validate.rules).message.required = true];
+  resources.livemap.MarkerMarker marker = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateMarkerResponse {

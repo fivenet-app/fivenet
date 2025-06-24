@@ -2,19 +2,20 @@ syntax = "proto3";
 
 package resources.accounts;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/accounts;accounts";
 
 message OAuth2Account {
   uint64 account_id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  string provider_name = 3 [(validate.rules).string.max_len = 255]; // @gotags: sql:"primary_key" alias:"provider_name"
+  string provider_name = 3 [(buf.validate.field).string.max_len = 255, (tagger.tags) = "sql:\"primary_key\" alias:\"provider_name\""];
   OAuth2Provider provider = 4;
-  string external_id = 5 [(validate.rules).string.max_len = 128];
-  string username = 6 [(validate.rules).string.max_len = 255];
-  string avatar = 7 [(validate.rules).string.max_len = 255];
+  string external_id = 5 [(buf.validate.field).string.max_len = 128];
+  string username = 6 [(buf.validate.field).string.max_len = 255];
+  string avatar = 7 [(buf.validate.field).string.max_len = 255];
 }
 
 message OAuth2Provider {

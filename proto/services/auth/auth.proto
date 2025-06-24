@@ -2,29 +2,30 @@ syntax = "proto3";
 
 package services.auth;
 
+import "buf/validate/validate.proto";
 import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
-import "resources/timestamp/timestamp.proto";
 import "resources/jobs/job_props.proto";
 import "resources/permissions/attributes.proto";
 import "resources/permissions/permissions.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/auth;auth";
 
 message CreateAccountRequest {
-  string reg_token = 1 [(validate.rules).string = {
-    len: 6,
-    pattern: "^[0-9]{6}$",
+  string reg_token = 1 [(buf.validate.field).string = {
+    len: 6
+    pattern: "^[0-9]{6}$"
   }];
-  string username = 2 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 24,
-    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$",
+  string username = 2 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 24
+    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
   }];
-  string password = 3 [(validate.rules).string = {
-    min_len: 6,
+  string password = 3 [(buf.validate.field).string = {
+    min_len: 6
     max_bytes: 70
   }];
 }
@@ -34,13 +35,13 @@ message CreateAccountResponse {
 }
 
 message LoginRequest {
-  string username = 1 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 24,
-    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$",
+  string username = 1 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 24
+    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
   }];
-  string password = 2 [(validate.rules).string = {
-    min_len: 6,
+  string password = 2 [(buf.validate.field).string = {
+    min_len: 6
     max_bytes: 70
   }];
 }
@@ -58,12 +59,12 @@ message LogoutResponse {
 }
 
 message ChangePasswordRequest {
-  string current = 1 [(validate.rules).string = {
-    min_len: 6,
+  string current = 1 [(buf.validate.field).string = {
+    min_len: 6
     max_bytes: 70
   }];
-  string new = 2 [(validate.rules).string = {
-    min_len: 6,
+  string new = 2 [(buf.validate.field).string = {
+    min_len: 6
     max_bytes: 70
   }];
 }
@@ -73,27 +74,27 @@ message ChangePasswordResponse {
 }
 
 message ChangeUsernameRequest {
-  string current = 1 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 24,
-    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$",
+  string current = 1 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 24
+    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
   }];
-  string new = 2 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 24,
-    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$",
+  string new = 2 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 24
+    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$"
   }];
 }
 
 message ChangeUsernameResponse {}
 
 message ForgotPasswordRequest {
-  string reg_token = 1 [(validate.rules).string = {
-    len: 6,
-    pattern: "^[0-9]{6}$",
+  string reg_token = 1 [(buf.validate.field).string = {
+    len: 6
+    pattern: "^[0-9]{6}$"
   }];
-  string new = 2 [(validate.rules).string = {
-    min_len: 6,
+  string new = 2 [(buf.validate.field).string = {
+    min_len: 6
     max_bytes: 70
   }];
 }
@@ -115,20 +116,20 @@ message GetCharactersResponse {
 }
 
 message ChooseCharacterRequest {
-  int32 char_id = 1 [(validate.rules).int32.gt = 0];
+  int32 char_id = 1 [(buf.validate.field).int32.gt = 0];
 }
 
 message ChooseCharacterResponse {
   string username = 1;
   resources.timestamp.Timestamp expires = 2;
   resources.jobs.JobProps job_props = 3;
-  resources.users.User char = 4; // @gotags: alias:"user"
+  resources.users.User char = 4 [(tagger.tags) = "alias:\"user\""];
   repeated resources.permissions.Permission permissions = 5;
   repeated resources.permissions.RoleAttribute attributes = 6;
 }
 
 message DeleteOAuth2ConnectionRequest {
-  string provider = 1 [(validate.rules).string.max_len = 50];
+  string provider = 1 [(buf.validate.field).string.max_len = 50];
 }
 
 message DeleteOAuth2ConnectionResponse {
@@ -137,13 +138,13 @@ message DeleteOAuth2ConnectionResponse {
 
 message SetSuperuserModeRequest {
   bool superuser = 1;
-  optional string job = 2 [(validate.rules).string.max_len = 20];
+  optional string job = 2 [(buf.validate.field).string.max_len = 20];
 }
 
 message SetSuperuserModeResponse {
   resources.timestamp.Timestamp expires = 2;
   optional resources.jobs.JobProps job_props = 3;
-  resources.users.User char = 4; // @gotags: alias:"user"
+  resources.users.User char = 4 [(tagger.tags) = "alias:\"user\""];
   repeated resources.permissions.Permission permissions = 5;
   repeated resources.permissions.RoleAttribute attributes = 6;
 }

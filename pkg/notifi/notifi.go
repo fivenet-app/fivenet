@@ -131,7 +131,7 @@ func (n *Notifi) SendObjectEvent(ctx context.Context, event *notifications.Objec
 	}
 
 	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%s.%d", BaseSubject, ObjectTopic, event.Type.ToNatsKey(), *event.Id), event); err != nil {
-		return fmt.Errorf("failed to publish object event message. %w", err)
+		return fmt.Errorf("failed to publish object %s event message. %w", event.Type.String(), err)
 	}
 
 	return nil
@@ -143,7 +143,7 @@ func (n *Notifi) SendUserEvent(ctx context.Context, userId int32, event *notific
 	}
 
 	if _, err := n.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, userId), event); err != nil {
-		return fmt.Errorf("failed to publish user event message. %w", err)
+		return fmt.Errorf("failed to publish user %d event message. %w", userId, err)
 	}
 
 	return nil

@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package resources.settings;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 import "resources/settings/banner.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
 
@@ -12,7 +12,7 @@ option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources
 message AppConfig {
   optional string version = 1;
 
-  string default_locale = 8 [(validate.rules).string.max_len = 20];
+  string default_locale = 8 [(buf.validate.field).string.max_len = 20];
 
   Auth auth = 2;
   Perms perms = 3;
@@ -29,14 +29,14 @@ message Auth {
 }
 
 message Perms {
- repeated Perm default = 1 [(validate.rules).repeated.max_items = 100];
+  repeated Perm default = 1 [(buf.validate.field).repeated.max_items = 100];
 }
 
 message Perm {
   // @sanitize: method=StripTags
-  string category = 1 [(validate.rules).string.max_len = 128];
+  string category = 1 [(buf.validate.field).string.max_len = 128];
   // @sanitize: method=StripTags
-  string name = 2 [(validate.rules).string.max_len = 255];
+  string name = 2 [(buf.validate.field).string.max_len = 255];
 }
 
 message Website {
@@ -46,51 +46,57 @@ message Website {
 
 message Links {
   // @sanitize: method=StripTags
-  optional string privacy_policy = 1 [(validate.rules).string.max_len = 255];
+  optional string privacy_policy = 1 [(buf.validate.field).string.max_len = 255];
   // @sanitize: method=StripTags
-  optional string imprint = 2 [(validate.rules).string.max_len = 255];
+  optional string imprint = 2 [(buf.validate.field).string.max_len = 255];
 }
 
 message JobInfo {
-  UnemployedJob unemployed_job = 1 [(validate.rules).message.required = true];
+  UnemployedJob unemployed_job = 1 [(buf.validate.field).required = true];
   // @sanitize: method=StripTags
-  repeated string public_jobs = 2 [(validate.rules).repeated.max_items = 100];
+  repeated string public_jobs = 2 [(buf.validate.field).repeated.max_items = 100];
   // @sanitize: method=StripTags
-  repeated string hidden_jobs = 3 [(validate.rules).repeated.max_items = 100];
+  repeated string hidden_jobs = 3 [(buf.validate.field).repeated.max_items = 100];
 }
 
 message UnemployedJob {
-  string name = 1 [(validate.rules).string.max_len = 20];
-  int32 grade = 2 [(validate.rules).int32.gte = 0];
+  string name = 1 [(buf.validate.field).string.max_len = 20];
+  int32 grade = 2 [(buf.validate.field).int32.gte = 0];
 }
 
 message UserTracker {
-  google.protobuf.Duration refresh_time = 1 [(validate.rules).duration = {
-    required: true,
-    lt:  {seconds: 60}
-    gte: {nanos: 500000000},
-  }];
-  google.protobuf.Duration db_refresh_time = 2 [(validate.rules).duration = {
-    required: true,
-    lt:  {seconds: 60}
-    gte: {nanos: 500000000},
-  }];
+  google.protobuf.Duration refresh_time = 1 [
+    (buf.validate.field).duration = {
+      lt: {seconds: 60}
+      gte: {nanos: 500000000}
+    },
+    (buf.validate.field).required = true
+  ];
+  google.protobuf.Duration db_refresh_time = 2 [
+    (buf.validate.field).duration = {
+      lt: {seconds: 60}
+      gte: {nanos: 500000000}
+    },
+    (buf.validate.field).required = true
+  ];
 }
 
 message Discord {
   bool enabled = 1;
-  google.protobuf.Duration sync_interval = 2 [(validate.rules).duration = {
-    required: true,
-    lt:  {seconds: 180000000},
-    gte: {seconds: 60},
-  }];
+  google.protobuf.Duration sync_interval = 2 [
+    (buf.validate.field).duration = {
+      lt: {seconds: 180000000}
+      gte: {seconds: 60}
+    },
+    (buf.validate.field).required = true
+  ];
   // @sanitize: method=StripTags
-  optional string invite_url = 3 [(validate.rules).string.max_len = 255];
+  optional string invite_url = 3 [(buf.validate.field).string.max_len = 255];
   // @sanitize: method=StripTags
-  repeated string ignored_jobs = 4 [(validate.rules).repeated.max_items = 100];
+  repeated string ignored_jobs = 4 [(buf.validate.field).repeated.max_items = 100];
   optional DiscordBotPresence bot_presence = 5;
   // @sanitize: method=StripTags
-  optional string bot_id = 6 [(validate.rules).string.max_len = 255];
+  optional string bot_id = 6 [(buf.validate.field).string.max_len = 255];
   int64 bot_permissions = 7;
 }
 

@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package resources.jobs;
 
+import "buf/validate/validate.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/jobs/labels.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
 
@@ -22,23 +23,23 @@ enum ColleagueActivityType {
 }
 
 message ColleagueActivity {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
-  string job = 4 [(validate.rules).string.max_len = 20];
-  optional int32 source_user_id = 5 [(validate.rules).int32.gt = 0];
-  optional Colleague source_user = 6; // @gotags: alias:"source_user"
-  int32 target_user_id = 7 [(validate.rules).int32.gt = 0];
-  Colleague target_user = 8; // @gotags: alias:"target_user"
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional int32 source_user_id = 5 [(buf.validate.field).int32.gt = 0];
+  optional Colleague source_user = 6 [(tagger.tags) = "alias:\"source_user\""];
+  int32 target_user_id = 7 [(buf.validate.field).int32.gt = 0];
+  Colleague target_user = 8 [(tagger.tags) = "alias:\"target_user\""];
   ColleagueActivityType activity_type = 9;
   // @sanitize
-  string reason = 10 [(validate.rules).string.max_len = 255];
+  string reason = 10 [(buf.validate.field).string.max_len = 255];
   ColleagueActivityData data = 11;
 }
 
 // @dbscanner: json
 message ColleagueActivityData {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     AbsenceDateChange absence_date = 1;
     GradeChange grade_change = 2;

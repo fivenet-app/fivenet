@@ -24,8 +24,9 @@ const (
 func registerStreams(ctx context.Context, js *events.JSWrapper) error {
 	// Stream for incoming poll requests
 	pollStreamCfg := jetstream.StreamConfig{
-		Name:     PollStreamName,
-		Subjects: []string{PollSubject},
+		Name:      PollStreamName,
+		Subjects:  []string{PollSubject},
+		Retention: jetstream.InterestPolicy,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, pollStreamCfg); err != nil {
 		return fmt.Errorf("failed to create/update stream %s: %w", PollStreamName, err)

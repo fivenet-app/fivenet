@@ -2,45 +2,52 @@ syntax = "proto3";
 
 package resources.jobs;
 
+import "buf/validate/validate.proto";
 import "resources/jobs/labels.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
 
 message Colleague {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
-  optional string identifier = 2 [(validate.rules).string.max_len = 64];
-  string job = 3 [(validate.rules).string.max_len = 20];
-  optional string job_label = 4 [(validate.rules).string.max_len = 50];
-  int32 job_grade = 5 [(validate.rules).int32.gt = -1];
-  optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
-  string firstname = 7 [(validate.rules).string = {
-    min_len: 1,
+  int32 user_id = 1 [
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"id\""
+  ];
+  optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
+  string job = 3 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
+  int32 job_grade = 5 [(buf.validate.field).int32.gt = -1];
+  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
+  string firstname = 7 [(buf.validate.field).string = {
+    min_len: 1
     max_len: 50
   }];
-  string lastname = 8 [(validate.rules).string = {
-    min_len: 1,
+  string lastname = 8 [(buf.validate.field).string = {
+    min_len: 1
     max_len: 50
   }];
-  string dateofbirth = 9 [(validate.rules).string.len = 10];
-  optional string phone_number = 12 [(validate.rules).string.max_len = 20];
+  string dateofbirth = 9 [(buf.validate.field).string.len = 10];
+  optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
   optional uint64 avatar_file_id = 17;
-  optional string avatar = 18; // @gotags: alias:"avatar"
-  ColleagueProps props = 19; // @gotags: alias:"colleague_props"
+  optional string avatar = 18 [(tagger.tags) = "alias:\"avatar\""];
+  ColleagueProps props = 19 [(tagger.tags) = "alias:\"colleague_props\""];
   // @sanitize: method=StripTags
-  optional string email = 20 [(validate.rules).string = {min_len: 6, max_len: 80}];
+  optional string email = 20 [(buf.validate.field).string = {
+    min_len: 6
+    max_len: 80
+  }];
 }
 
 message ColleagueProps {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0];
-  string job = 2 [(validate.rules).string.max_len = 20];
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  string job = 2 [(buf.validate.field).string.max_len = 20];
   optional resources.timestamp.Timestamp deleted_at = 3;
   optional resources.timestamp.Timestamp absence_begin = 4;
   optional resources.timestamp.Timestamp absence_end = 5;
   // @sanitize: method=StripTags
   optional string note = 6;
   optional Labels labels = 7;
-  optional string name_prefix = 8 [(validate.rules).string.max_len = 12];
-  optional string name_suffix = 9 [(validate.rules).string.max_len = 12];
+  optional string name_prefix = 8 [(buf.validate.field).string.max_len = 12];
+  optional string name_suffix = 9 [(buf.validate.field).string.max_len = 12];
 }

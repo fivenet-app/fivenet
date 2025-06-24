@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/v2025/pkg/notifi"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
@@ -37,6 +38,7 @@ type Poller struct {
 	db       *sql.DB
 	js       *events.JSWrapper
 	enricher *mstlystcdata.Enricher
+	notifi   notifi.INotifi
 	kv       jetstream.KeyValue
 
 	pendingMu sync.Mutex
@@ -54,7 +56,8 @@ type PollerParams struct {
 
 	Logger   *zap.Logger
 	DB       *sql.DB
-	Enricher *mstlystcdata.Jobs
+	Enricher *mstlystcdata.Enricher
+	Notifi   notifi.INotifi
 	JS       *events.JSWrapper
 }
 
@@ -66,7 +69,10 @@ func NewPoller(p PollerParams) (*Poller, error) {
 
 		ctx:      context.Background(),
 		db:       p.DB,
+		enricher: p.Enricher,
+		notifi:   p.Notifi,
 		js:       p.JS,
+
 		pending:  make(map[string]*pb.PollReq),
 		lastSeen: make(map[uint64]map[int32]*userSnapshot),
 		interval: 20 * time.Second,
@@ -250,7 +256,7 @@ func (p *Poller) checkDiffAndPublish(ctx context.Context, acct uint64, uid int32
 		p.enricher.EnrichJobInfo(evt)
 
 		subj := fmt.Sprintf("userinfo.%d.changes", acct)
-		p.js.PublishProto(ctx, subj, evt)
+		p.js.PublishAsyncProto(ctx, subj, evt)
 		userMap[uid] = &userSnapshot{Job: job, JobGrade: grade}
 	}
 

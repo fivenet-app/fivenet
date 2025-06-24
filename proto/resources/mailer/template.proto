@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.mailer;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailer";
 
@@ -14,15 +14,15 @@ message Template {
   optional resources.timestamp.Timestamp deleted_at = 5;
   uint64 email_id = 6;
   // @sanitize: method=StripTags
-  string title = 7 [(validate.rules).string = {
-    min_len: 3,
+  string title = 7 [(buf.validate.field).string = {
+    min_len: 3
     max_len: 255
   }];
   // @sanitize
-  string content = 8 [(validate.rules).string = {
-    min_len: 3,
+  string content = 8 [(buf.validate.field).string = {
+    min_len: 3
     max_len: 10240
   }];
-  optional string creator_job = 9 [(validate.rules).string.max_len = 40];
-  optional int32 creator_id = 10 [(validate.rules).int32.gt = 0];
+  optional string creator_job = 9 [(buf.validate.field).string.max_len = 40];
+  optional int32 creator_id = 10 [(buf.validate.field).int32.gt = 0];
 }

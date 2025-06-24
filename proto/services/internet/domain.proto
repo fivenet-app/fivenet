@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package services.internet;
 
+import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
 import "resources/internet/domain.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/internet;internet";
 
@@ -19,8 +19,8 @@ message ListTLDsResponse {
 message CheckDomainAvailabilityRequest {
   uint64 tld_id = 1;
   // @sanitize: method=StripTags
-  string name = 2 [(validate.rules).string = {
-    min_len: 3,
+  string name = 2 [(buf.validate.field).string = {
+    min_len: 3
     max_len: 60
   }];
 }
@@ -33,14 +33,14 @@ message CheckDomainAvailabilityResponse {
 message RegisterDomainRequest {
   uint64 tld_id = 1;
   // @sanitize: method=StripTags
-  string name = 2 [(validate.rules).string = {
-    min_len: 3,
+  string name = 2 [(buf.validate.field).string = {
+    min_len: 3
     max_len: 60
   }];
   // In case a domain will be transfered
-  optional string transfer_code = 3 [(validate.rules).string = {
-    len: 10,
-    pattern: "^[0-9A-Z]{6}$",
+  optional string transfer_code = 3 [(buf.validate.field).string = {
+    len: 10
+    pattern: "^[0-9A-Z]{6}$"
   }];
 }
 
@@ -49,11 +49,11 @@ message RegisterDomainResponse {
 }
 
 message ListDomainsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
 }
 
 message ListDomainsResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.internet.Domain domains = 2;
 }
 

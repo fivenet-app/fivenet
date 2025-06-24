@@ -1,0 +1,43 @@
+version: v2
+clean: false
+plugins:
+  # Golang
+  - local: protoc-gen-go
+    out: ./gen/go/proto
+    opt:
+      - paths=source_relative
+    include_wkt: false
+    exclude_types:
+      - buf.validate
+  - local: protoc-gen-go-grpc
+    out: ./gen/go/proto
+    opt:
+      - paths=source_relative
+    include_wkt: false
+    exclude_types:
+      - buf.validate
+  - local: ["go", "run", "./internal/cmd/protoc-gen-customizer"]
+    out: ./gen/go/proto
+    opt:
+      - paths=source_relative
+    strategy: all
+  # TypeScript
+  - local: node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts
+    out: ./gen/ts
+    opt:
+      - force_server_none
+      - long_type_number
+      - optimize_speed
+      - ts_nocheck
+    strategy: all
+  - local: ["go", "run", "./internal/cmd/protoc-gen-fronthelper"]
+    out: ./gen/ts
+    opt:
+      - paths=source_relative
+    strategy: all
+  # Docs
+  - local: protoc-gen-doc
+    out: ./gen
+    opt:
+      - ./internal/protoc-gen-doc.md.tmpl,grpc-api.md
+    strategy: all

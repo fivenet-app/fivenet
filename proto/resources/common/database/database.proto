@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package resources.common.database;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database;database";
 
 // Pagination for requests to the server
 message PaginationRequest {
-  int64 offset = 1 [(validate.rules).int64.gte = 0];
-  optional int64 page_size = 2 [(validate.rules).int64.gte = 0];
+  int64 offset = 1 [(buf.validate.field).int64.gte = 0];
+  optional int64 page_size = 2 [(buf.validate.field).int64.gte = 0];
 }
 
 // Server Pagination Response
@@ -24,12 +24,17 @@ message PaginationResponse {
 // Sort by column
 message Sort {
   // Column name
-  string column = 1 [(validate.rules).string = {
-    min_len: 1,
+  string column = 1 [(buf.validate.field).string = {
+    min_len: 1
     max_len: 64
   }];
   // Sort direction, must be `asc` (ascending) or `desc` (descending)
-  string direction = 2 [(validate.rules).string = { in: ["asc", "desc"] }];
+  string direction = 2 [(buf.validate.field).string = {
+    in: [
+      "asc",
+      "desc"
+    ]
+  }];
 }
 
 /*

@@ -6,6 +6,7 @@ import (
 	"math"
 	"time"
 
+	"buf.build/go/protovalidate"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
@@ -18,8 +19,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
+	protovalidate_middleware "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/protovalidate"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
-	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	otelmetric "go.opentelemetry.io/otel/metric"
@@ -102,6 +103,12 @@ func NewServer(p ServerParams) (ServerResult, error) {
 		return nil
 	}
 
+	// Create a Protovalidate Validator
+	validator, err := protovalidate.New()
+	if err != nil {
+		return ServerResult{}, fmt.Errorf("failed to create protovalidate validator. %w", err)
+	}
+
 	// Configure W3C Trace Context Propagator for traces
 	textMapPropagator := otelpropagation.TraceContext{}
 	so := opentelemetry.ServerOption(opentelemetry.Options{
@@ -129,7 +136,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			tracing.UnaryServerInterceptor(),
 			grpc_auth.UnaryServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
 			grpc_permission.UnaryServerInterceptor(p.GRPCPerm.GRPCPermissionUnaryFunc),
-			validator.UnaryServerInterceptor(),
+			protovalidate_middleware.UnaryServerInterceptor(validator),
 			grpc_sanitizer.UnaryServerInterceptor(),
 			recovery.UnaryServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
@@ -144,7 +151,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			tracing.StreamServerInterceptor(),
 			grpc_auth.StreamServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
 			grpc_permission.StreamServerInterceptor(p.GRPCPerm.GRPCPermissionStreamFunc),
-			validator.StreamServerInterceptor(),
+			protovalidate_middleware.StreamServerInterceptor(validator),
 			recovery.StreamServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler(p.Logger)),
 			),

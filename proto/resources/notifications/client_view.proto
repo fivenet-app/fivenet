@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.notifications;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/struct.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/notifications;notifications";
 
@@ -17,7 +17,7 @@ enum ObjectType {
 }
 
 message ClientView {
-  ObjectType type = 1 [(validate.rules).enum.defined_only = true];
+  ObjectType type = 1 [(buf.validate.field).enum.defined_only = true];
   optional uint64 id = 2;
 }
 
@@ -28,11 +28,11 @@ enum ObjectEventType {
 }
 
 message ObjectEvent {
-  ObjectType type = 1 [(validate.rules).enum.defined_only = true];
+  ObjectType type = 1 [(buf.validate.field).enum.defined_only = true];
   optional uint64 id = 2;
-  ObjectEventType event_type = 3 [(validate.rules).enum.defined_only = true];
+  ObjectEventType event_type = 3 [(buf.validate.field).enum.defined_only = true];
 
-  optional int32 user_id = 4 [(validate.rules).int32.gte = 0];
-  optional string job = 5 [(validate.rules).string.max_len = 20];
+  optional int32 user_id = 4 [(buf.validate.field).int32.gte = 0];
+  optional string job = 5 [(buf.validate.field).string.max_len = 20];
   optional google.protobuf.Struct data = 6;
 }

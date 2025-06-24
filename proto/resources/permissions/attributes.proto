@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.permissions;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/permissions;permissions";
 
@@ -12,10 +12,10 @@ message RoleAttribute {
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 attr_id = 3;
   uint64 permission_id = 4;
-  string category = 5 [(validate.rules).string.max_len = 128];
-  string name = 6 [(validate.rules).string.max_len = 255];
-  string key = 7 [(validate.rules).string.max_len = 255];
-  string type = 8 [(validate.rules).string.max_len = 255];
+  string category = 5 [(buf.validate.field).string.max_len = 128];
+  string name = 6 [(buf.validate.field).string.max_len = 255];
+  string key = 7 [(buf.validate.field).string.max_len = 255];
+  string type = 8 [(buf.validate.field).string.max_len = 255];
   AttributeValues valid_values = 9;
   AttributeValues value = 10;
   optional AttributeValues max_values = 11;
@@ -24,7 +24,7 @@ message RoleAttribute {
 // @dbscanner: json
 message AttributeValues {
   oneof valid_values {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     StringList string_list = 1;
     StringList job_list = 2;

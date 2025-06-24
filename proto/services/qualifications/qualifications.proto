@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.qualifications;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
@@ -9,16 +10,15 @@ import "resources/file/filestore.proto";
 import "resources/qualifications/access.proto";
 import "resources/qualifications/exam.proto";
 import "resources/qualifications/qualifications.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualifications";
 
 message ListQualificationsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  optional string search = 3 [(validate.rules).string.max_len = 64];
-  optional string job = 4 [(validate.rules).string.max_len = 20];
+  optional string search = 3 [(buf.validate.field).string.max_len = 64];
+  optional string job = 4 [(buf.validate.field).string.max_len = 20];
 }
 
 message ListQualificationsResponse {
@@ -36,7 +36,7 @@ message GetQualificationResponse {
 }
 
 message CreateQualificationRequest {
-  resources.common.content.ContentType content_type = 1 [(validate.rules).enum.defined_only = true];
+  resources.common.content.ContentType content_type = 1 [(buf.validate.field).enum.defined_only = true];
 }
 
 message CreateQualificationResponse {
@@ -44,7 +44,7 @@ message CreateQualificationResponse {
 }
 
 message UpdateQualificationRequest {
-  resources.qualifications.Qualification qualification = 1 [(validate.rules).message.required = true];
+  resources.qualifications.Qualification qualification = 1 [(buf.validate.field).required = true];
 }
 
 message UpdateQualificationResponse {
@@ -64,12 +64,12 @@ message GetQualificationAccessRequest {
 }
 
 message GetQualificationAccessResponse {
-  resources.qualifications.QualificationAccess access = 1 [(validate.rules).message.required = true];
+  resources.qualifications.QualificationAccess access = 1 [(buf.validate.field).required = true];
 }
 
 message SetQualificationAccessRequest {
   uint64 qualification_id = 1;
-  resources.qualifications.QualificationAccess access = 2 [(validate.rules).message.required = true];
+  resources.qualifications.QualificationAccess access = 2 [(buf.validate.field).required = true];
 }
 
 message SetQualificationAccessResponse {}
@@ -77,12 +77,12 @@ message SetQualificationAccessResponse {}
 // Requests ===================================================================
 
 message ListQualificationRequestsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
   optional uint64 qualification_id = 3;
   repeated resources.qualifications.RequestStatus status = 4;
-  optional int32 user_id = 5 [(validate.rules).int32.gte = 0];
+  optional int32 user_id = 5 [(buf.validate.field).int32.gte = 0];
 }
 
 message ListQualificationRequestsResponse {
@@ -91,7 +91,7 @@ message ListQualificationRequestsResponse {
 }
 
 message CreateOrUpdateQualificationRequestRequest {
-  resources.qualifications.QualificationRequest request = 1 [(validate.rules).message.required = true];
+  resources.qualifications.QualificationRequest request = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateQualificationRequestResponse {
@@ -100,7 +100,7 @@ message CreateOrUpdateQualificationRequestResponse {
 
 message DeleteQualificationReqRequest {
   uint64 qualification_id = 1;
-  int32 user_id = 2 [(validate.rules).int32.gte = 0];
+  int32 user_id = 2 [(buf.validate.field).int32.gte = 0];
 }
 
 message DeleteQualificationReqResponse {}
@@ -108,12 +108,12 @@ message DeleteQualificationReqResponse {}
 // Results ====================================================================
 
 message ListQualificationsResultsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
   optional uint64 qualification_id = 3;
   repeated resources.qualifications.ResultStatus status = 4;
-  optional int32 user_id = 5 [(validate.rules).int32.gte = 0];
+  optional int32 user_id = 5 [(buf.validate.field).int32.gte = 0];
 }
 
 message ListQualificationsResultsResponse {
@@ -122,7 +122,7 @@ message ListQualificationsResultsResponse {
 }
 
 message CreateOrUpdateQualificationResultRequest {
-  resources.qualifications.QualificationResult result = 1 [(validate.rules).message.required = true];
+  resources.qualifications.QualificationResult result = 1 [(buf.validate.field).required = true];
   optional resources.qualifications.ExamGrading grading = 2;
 }
 
@@ -169,7 +169,7 @@ message SubmitExamResponse {
 
 message GetUserExamRequest {
   uint64 qualification_id = 1;
-  int32 user_id = 2 [(validate.rules).int32.gte = 0];
+  int32 user_id = 2 [(buf.validate.field).int32.gte = 0];
 }
 
 message GetUserExamResponse {

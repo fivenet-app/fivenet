@@ -2,9 +2,9 @@ syntax = "proto3";
 
 package resources.internet;
 
+import "buf/validate/validate.proto";
 import "resources/common/content/content.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/internet;internet";
 
@@ -15,12 +15,18 @@ message Page {
   optional resources.timestamp.Timestamp deleted_at = 4;
   uint64 domain_id = 5;
   // @sanitize: method=StripTags
-  string path = 6 [(validate.rules).string.max_len = 128];
+  string path = 6 [(buf.validate.field).string.max_len = 128];
   // @sanitize: method=StripTags
-  string title = 7 [(validate.rules).string = {min_len: 1, max_len: 255}];
+  string title = 7 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 255
+  }];
   // @sanitize: method=StripTags
-  string description = 8 [(validate.rules).string = {min_len: 3, max_len: 512}];
-  PageData data = 9 [(validate.rules).message.required = true];
+  string description = 8 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 512
+  }];
+  PageData data = 9 [(buf.validate.field).required = true];
   optional string creator_job = 10;
   optional int32 creator_id = 11;
 }
@@ -38,7 +44,7 @@ message PageData {
 }
 
 message ContentNode {
-  resources.common.content.NodeType type = 1 [(validate.rules).enum.defined_only = true];
+  resources.common.content.NodeType type = 1 [(buf.validate.field).enum.defined_only = true];
   // @sanitize: method=StripTags
   optional string id = 2;
   // @sanitize: method=StripTags

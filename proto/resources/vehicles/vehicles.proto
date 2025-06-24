@@ -2,25 +2,25 @@ syntax = "proto3";
 
 package resources.vehicles;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehicles";
 
 message Vehicle {
-  string plate = 1 [(validate.rules).string.max_len = 32];
-  optional string model = 2 [(validate.rules).string.max_len = 64];
-  string type = 3 [(validate.rules).string.max_len = 32];
+  string plate = 1 [(buf.validate.field).string.max_len = 32];
+  optional string model = 2 [(buf.validate.field).string.max_len = 64];
+  string type = 3 [(buf.validate.field).string.max_len = 32];
   optional int32 owner_id = 4;
-  optional string owner_identifier = 6 [(validate.rules).string.max_len = 64];
+  optional string owner_identifier = 6 [(buf.validate.field).string.max_len = 64];
   optional resources.users.UserShort owner = 5;
-  optional string job = 7 [(validate.rules).string.max_len = 20];
-  optional string job_label = 8 [(validate.rules).string.max_len = 50];
+  optional string job = 7 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 8 [(buf.validate.field).string.max_len = 50];
 }
 
 message VehicleProps {
-  string plate = 1 [(validate.rules).string.max_len = 32];
+  string plate = 1 [(buf.validate.field).string.max_len = 32];
   optional resources.timestamp.Timestamp updated_at = 2;
   optional bool wanted = 3;
 }

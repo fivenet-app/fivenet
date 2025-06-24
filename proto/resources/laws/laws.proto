@@ -2,33 +2,40 @@ syntax = "proto3";
 
 package resources.laws;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/laws;laws";
 
 message LawBook {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   // @sanitize
-  string name = 4 [(validate.rules).string = {min_len: 3, max_len: 128}];
+  string name = 4 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 128
+  }];
   // @sanitize
-  optional string description = 5 [(validate.rules).string.max_len = 255];
+  optional string description = 5 [(buf.validate.field).string.max_len = 255];
   repeated Law laws = 6;
 }
 
 message Law {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"law.id"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"law.id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   uint64 lawbook_id = 4;
   // @sanitize
-  string name = 5 [(validate.rules).string = {min_len: 3, max_len: 128}];
+  string name = 5 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 128
+  }];
   // @sanitize
-  optional string description = 6 [(validate.rules).string.max_len = 1024];
+  optional string description = 6 [(buf.validate.field).string.max_len = 1024];
   // @sanitize
-  optional string hint = 7 [(validate.rules).string.max_len = 512];
+  optional string hint = 7 [(buf.validate.field).string.max_len = 512];
   optional uint32 fine = 8;
   optional uint32 detention_time = 9;
   optional uint32 stvo_points = 10;

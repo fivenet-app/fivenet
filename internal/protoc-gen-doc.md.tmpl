@@ -1,0 +1,84 @@
+---
+title: GRPC Protobuf Documentation
+description: Documentation for GRPC Protobuf files.
+---
+
+{{range .Files}}
+{{$file_name := .Name}}
+## {{.Name}}
+{{- with .Description}}
+{{nobr . | replace "\n\n" "<br/><br/>"}}
+{{end}}
+
+{{range .Messages}}
+### {{.FullName}}
+
+{{- with .Description}}
+{{nobr . | replace "\n\n" "<br/><br/>"}}
+{{end}}
+
+{{if .HasFields}}
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+{{range .Fields -}}
+| `{{.Name}}` | [{{.LongType}}]({{if hasPrefix "google." .FullType }}https://protobuf.dev/reference/protobuf/google.protobuf/#{{.Type | lower}}{{else}}#{{.FullType | anchor | replace "-" ""}}{{end}}) | {{.Label}} | {{if (index .Options "deprecated"|default false)}}**Deprecated.** {{end}}{{nobr .Description | replace "\n\n" "<br/><br/>"}}{{if .DefaultValue}} Default: {{.DefaultValue}}{{end}} |
+{{end}}
+{{end}}
+
+{{if .HasExtensions}}
+| Extension | Type | Base | Number | Description |
+| --------- | ---- | ---- | ------ | ----------- |
+{{range .Extensions -}}
+| `{{.Name}}` | {{.LongType}} | {{.ContainingLongType}} | {{.Number}} | {{nobr .Description | replace "\n\n" "<br/><br/>"}}{{if .DefaultValue}} Default: {{.DefaultValue}}{{end}} |
+{{end}}
+{{end}}
+{{end}} <!-- end messages -->
+
+{{range .Enums}}
+### {{.FullName}}
+
+{{- with .Description}}
+{{nobr . | replace "\n\n" "<br>"}}
+{{end}}
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+{{range .Values -}}
+| `{{.Name}}` | {{.Number}} | {{nobr .Description | replace "\n\n" "<br/><br/>"}} |
+{{end}}
+
+{{end}} <!-- end enums -->
+
+{{if .HasExtensions}}
+### File-level Extensions
+
+| Extension | Type | Base | Number | Description |
+| --------- | ---- | ---- | ------ | ----------- |
+{{range .Extensions -}}
+| `{{.Name}}` | {{.LongType}} | {{.ContainingLongType}} | {{.Number}} | {{nobr .Description | replace "\n\n" "<br/><br/>"}}{{if .DefaultValue}}<br/><br/>Default: `{{.DefaultValue}}`{{end}} |
+{{end}}
+{{end}} <!-- end HasExtensions -->
+
+{{range .Services}}
+### {{.FullName}}
+
+{{- with .Description}}
+{{nobr . | replace "\n\n" "<br>"}}
+{{end}}
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+{{range .Methods -}}
+| `{{.Name}}` | [{{.RequestLongType}}](#{{.RequestFullType | anchor | replace "-" ""}}){{if .RequestStreaming}} stream{{end}} | [{{.ResponseLongType}}](#{{.ResponseFullType | anchor | replace "-" ""}}){{if .ResponseStreaming}} stream{{end}} | {{- with .Description}}{{nobr . | replace "\n\n" "<br/><br/>"}}{{end}} |
+{{end}}
+{{end}} <!-- end services -->
+
+{{end}}
+
+## Scalar Value Types
+
+| .proto Type | Notes | C++ | Java | Python | Go | C# | PHP | Ruby |
+| ----------- | ----- | --- | ---- | ------ | -- | -- | --- | ---- |
+{{range .Scalars -}}
+| <a name="{{.ProtoType | anchor | replace "-" ""}}" /> `{{.ProtoType}}` | {{.Notes}} | {{.CppType}} | {{.JavaType}} | {{.PythonType}} | {{.GoType}} | {{.CSharp}} | {{.PhpType}} | {{.RubyType}} |
+{{end}}

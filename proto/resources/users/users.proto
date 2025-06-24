@@ -2,61 +2,68 @@ syntax = "proto3";
 
 package resources.users;
 
+import "buf/validate/validate.proto";
 import "resources/users/licenses.proto";
 import "resources/users/props.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;users";
 
 message UserShort {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
-  optional string identifier = 2 [(validate.rules).string.max_len = 64];
-  string job = 3 [(validate.rules).string.max_len = 20];
-  optional string job_label = 4 [(validate.rules).string.max_len = 50];
-  int32 job_grade = 5 [(validate.rules).int32.gt = -1];
-  optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
-  string firstname = 7 [(validate.rules).string = {
-    min_len: 1,
+  int32 user_id = 1 [
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"id\""
+  ];
+  optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
+  string job = 3 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
+  int32 job_grade = 5 [(buf.validate.field).int32.gt = -1];
+  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
+  string firstname = 7 [(buf.validate.field).string = {
+    min_len: 1
     max_len: 50
   }];
-  string lastname = 8 [(validate.rules).string = {
-    min_len: 1,
+  string lastname = 8 [(buf.validate.field).string = {
+    min_len: 1
     max_len: 50
   }];
-  string dateofbirth = 9 [(validate.rules).string.len = 10];
-  optional string phone_number = 12 [(validate.rules).string.max_len = 20];
+  string dateofbirth = 9 [(buf.validate.field).string.len = 10];
+  optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
   optional uint64 avatar_file_id = 17;
   optional string avatar = 18;
 }
 
 message User {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
-  optional string identifier = 2 [(validate.rules).string.max_len = 64];
-  string job = 3 [(validate.rules).string.max_len = 20];
-  optional string job_label = 4 [(validate.rules).string.max_len = 50];
-  int32 job_grade = 5 [(validate.rules).int32.gt = -1];
-  optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
-  string firstname = 7 [(validate.rules).string = {
-    min_len: 1,
+  int32 user_id = 1 [
+    (buf.validate.field).int32.gt = 0,
+    (tagger.tags) = "alias:\"id\""
+  ];
+  optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
+  string job = 3 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
+  int32 job_grade = 5 [(buf.validate.field).int32.gt = -1];
+  optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
+  string firstname = 7 [(buf.validate.field).string = {
+    min_len: 1
     max_len: 50
   }];
-  string lastname = 8 [(validate.rules).string = {
-    min_len: 1,
+  string lastname = 8 [(buf.validate.field).string = {
+    min_len: 1
     max_len: 50
   }];
-  string dateofbirth = 9 [(validate.rules).string.len = 10];
-  optional string sex = 10 [(validate.rules).string = {
-    min_len: 1,
+  string dateofbirth = 9 [(buf.validate.field).string.len = 10];
+  optional string sex = 10 [(buf.validate.field).string = {
+    min_len: 1
     max_len: 2
   }];
   optional string height = 11;
-  optional string phone_number = 12 [(validate.rules).string.max_len = 20];
-  optional int32 visum = 13 [(validate.rules).int32.gte = 0];
-  optional int32 playtime = 14 [(validate.rules).int32.gte = 0];
+  optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
+  optional int32 visum = 13 [(buf.validate.field).int32.gte = 0];
+  optional int32 playtime = 14 [(buf.validate.field).int32.gte = 0];
 
-  UserProps props = 15; // @gotags: alias:"fivenet_user_props"
-  repeated License licenses = 16; // @gotags: alias:"user_licenses"
+  UserProps props = 15 [(tagger.tags) = "alias:\"fivenet_user_props\""];
+  repeated License licenses = 16 [(tagger.tags) = "alias:\"user_licenses\""];
   optional uint64 avatar_file_id = 17;
   optional string avatar = 18;
-  optional string group = 20 [(validate.rules).string.max_len = 50];
+  optional string group = 20 [(buf.validate.field).string.max_len = 50];
 }

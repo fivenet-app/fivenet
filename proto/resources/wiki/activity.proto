@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package resources.wiki;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "resources/wiki/access.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/wiki;wiki";
 
@@ -25,18 +26,18 @@ message PageActivity {
   resources.timestamp.Timestamp created_at = 2;
   uint64 page_id = 3;
   PageActivityType activity_type = 4;
-  optional int32 creator_id = 5 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 6; // @gotags: alias:"creator"
-  string creator_job = 7 [(validate.rules).string.max_len = 20];
-  optional string creator_job_label = 8 [(validate.rules).string.max_len = 50];
-  optional string reason = 9 [(validate.rules).string.max_len = 255];
+  optional int32 creator_id = 5 [(buf.validate.field).int32.gt = 0];
+  optional resources.users.UserShort creator = 6 [(tagger.tags) = "alias:\"creator\""];
+  string creator_job = 7 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 8 [(buf.validate.field).string.max_len = 50];
+  optional string reason = 9 [(buf.validate.field).string.max_len = 255];
   PageActivityData data = 10;
 }
 
 // @dbscanner: json
 message PageActivityData {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     PageUpdated updated = 1;
     PageAccessUpdated access_updated = 2;
@@ -61,13 +62,13 @@ message PageAccessUpdated {
 }
 
 message PageAccessJobsDiff {
-  repeated PageJobAccess to_create = 1 [(validate.rules).repeated.max_items = 20];
-  repeated PageJobAccess to_update = 2 [(validate.rules).repeated.max_items = 20];
-  repeated PageJobAccess to_delete = 3 [(validate.rules).repeated.max_items = 20];
+  repeated PageJobAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
+  repeated PageJobAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
+  repeated PageJobAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message PageAccessUsersDiff {
-  repeated PageUserAccess to_create = 1 [(validate.rules).repeated.max_items = 20];
-  repeated PageUserAccess to_update = 2 [(validate.rules).repeated.max_items = 20];
-  repeated PageUserAccess to_delete = 3 [(validate.rules).repeated.max_items = 20];
+  repeated PageUserAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
+  repeated PageUserAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
+  repeated PageUserAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }

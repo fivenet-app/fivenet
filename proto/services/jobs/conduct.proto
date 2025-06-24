@@ -2,16 +2,16 @@ syntax = "proto3";
 
 package services.jobs;
 
+import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
 import "resources/jobs/conduct.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobs";
 
 // Conduct Register
 
 message ListConductEntriesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
   repeated resources.jobs.ConductType types = 3;
@@ -26,7 +26,7 @@ message ListConductEntriesResponse {
 }
 
 message CreateConductEntryRequest {
-  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
+  resources.jobs.ConductEntry entry = 1 [(buf.validate.field).required = true];
 }
 
 message CreateConductEntryResponse {
@@ -34,11 +34,11 @@ message CreateConductEntryResponse {
 }
 
 message UpdateConductEntryRequest {
-  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
+  resources.jobs.ConductEntry entry = 1 [(buf.validate.field).required = true];
 }
 
 message UpdateConductEntryResponse {
-  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
+  resources.jobs.ConductEntry entry = 1 [(buf.validate.field).required = true];
 }
 
 message DeleteConductEntryRequest {

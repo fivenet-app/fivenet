@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.jobs;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
 
@@ -22,7 +22,7 @@ message DiscordSyncSettings {
 
   GroupSyncSettings group_sync_settings = 8;
 
-  string qualifications_role_format = 9 [(validate.rules).string.max_len = 64];
+  string qualifications_role_format = 9 [(buf.validate.field).string.max_len = 64];
 }
 
 // @dbscanner: json
@@ -43,12 +43,12 @@ enum UserInfoSyncUnemployedMode {
 
 message UserInfoSyncSettings {
   bool employee_role_enabled = 1;
-  string employee_role_format = 2 [(validate.rules).string.max_len = 64];
-  string grade_role_format = 3 [(validate.rules).string.max_len = 64];
+  string employee_role_format = 2 [(buf.validate.field).string.max_len = 64];
+  string grade_role_format = 3 [(buf.validate.field).string.max_len = 64];
 
   bool unemployed_enabled = 4;
-  UserInfoSyncUnemployedMode unemployed_mode = 5 [(validate.rules).enum.defined_only = true];
-  string unemployed_role_name = 6 [(validate.rules).string.max_len = 64];
+  UserInfoSyncUnemployedMode unemployed_mode = 5 [(buf.validate.field).enum.defined_only = true];
+  string unemployed_role_name = 6 [(buf.validate.field).string.max_len = 64];
 
   bool sync_nicknames = 7;
 
@@ -56,9 +56,9 @@ message UserInfoSyncSettings {
 }
 
 message GroupMapping {
-  string name = 1 [(validate.rules).string.max_len = 64];
-  int32 from_grade = 2 [(validate.rules).int32.gte = 0];
-  int32 to_grade = 3 [(validate.rules).int32.gte = 0];
+  string name = 1 [(buf.validate.field).string.max_len = 64];
+  int32 from_grade = 2 [(buf.validate.field).int32.gte = 0];
+  int32 to_grade = 3 [(buf.validate.field).int32.gte = 0];
 }
 
 message StatusLogSettings {
@@ -66,22 +66,27 @@ message StatusLogSettings {
 }
 
 message JobsAbsenceSettings {
-  string absence_role = 1 [(validate.rules).string.max_len = 64];
+  string absence_role = 1 [(buf.validate.field).string.max_len = 64];
 }
 
 message GroupSyncSettings {
   // @sanitize: method=StripTags
-  repeated string ignored_role_ids = 1 [(validate.rules).repeated = { items { string { max_len: 24 } }, max_items: 25 }];
+  repeated string ignored_role_ids = 1 [(buf.validate.field).repeated = {
+    items: {
+      string: {max_len: 24}
+    }
+    max_items: 25
+  }];
 }
 
 // @dbscanner: json
 message JobSettings {
-  int32 absence_past_days = 1 [(validate.rules).int32 = {
-    gte: 0,
-    lte: 31,
+  int32 absence_past_days = 1 [(buf.validate.field).int32 = {
+    gte: 0
+    lte: 31
   }];
-  int32 absence_future_days = 2 [(validate.rules).int32 = {
-    gte: 3,
-    lte: 186, // ~6 months (6 * 31 days)
+  int32 absence_future_days = 2 [(buf.validate.field).int32 = {
+    gte: 3
+    lte: 186
   }];
 }

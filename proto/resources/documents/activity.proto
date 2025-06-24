@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "buf/validate/validate.proto";
 import "resources/documents/access.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
@@ -40,18 +41,18 @@ message DocActivity {
   resources.timestamp.Timestamp created_at = 2;
   uint64 document_id = 3;
   DocActivityType activity_type = 4;
-  optional int32 creator_id = 5 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 6; // @gotags: alias:"creator"
-  string creator_job = 7 [(validate.rules).string.max_len = 20];
-  optional string creator_job_label = 8 [(validate.rules).string.max_len = 50];
-  optional string reason = 9 [(validate.rules).string.max_len = 255];
+  optional int32 creator_id = 5 [(buf.validate.field).int32.gt = 0];
+  optional resources.users.UserShort creator = 6 [(tagger.tags) = "alias:\"creator\""];
+  string creator_job = 7 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 8 [(buf.validate.field).string.max_len = 50];
+  optional string reason = 9 [(buf.validate.field).string.max_len = 255];
   DocActivityData data = 10;
 }
 
 // @dbscanner: json
 message DocActivityData {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     DocUpdated updated = 1;
     DocOwnerChanged owner_changed = 2;
@@ -78,7 +79,7 @@ message DocOwnerChanged {
 }
 
 message DocAccessRequested {
-  resources.documents.AccessLevel level = 1 [(validate.rules).enum.defined_only = true];
+  resources.documents.AccessLevel level = 1 [(buf.validate.field).enum.defined_only = true];
 }
 
 message DocAccessUpdated {
@@ -87,13 +88,13 @@ message DocAccessUpdated {
 }
 
 message DocAccessJobsDiff {
-  repeated DocumentJobAccess to_create = 1 [(validate.rules).repeated.max_items = 20];
-  repeated DocumentJobAccess to_update = 2 [(validate.rules).repeated.max_items = 20];
-  repeated DocumentJobAccess to_delete = 3 [(validate.rules).repeated.max_items = 20];
+  repeated DocumentJobAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
+  repeated DocumentJobAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
+  repeated DocumentJobAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message DocAccessUsersDiff {
-  repeated DocumentUserAccess to_create = 1 [(validate.rules).repeated.max_items = 20];
-  repeated DocumentUserAccess to_update = 2 [(validate.rules).repeated.max_items = 20];
-  repeated DocumentUserAccess to_delete = 3 [(validate.rules).repeated.max_items = 20];
+  repeated DocumentUserAccess to_create = 1 [(buf.validate.field).repeated.max_items = 20];
+  repeated DocumentUserAccess to_update = 2 [(buf.validate.field).repeated.max_items = 20];
+  repeated DocumentUserAccess to_delete = 3 [(buf.validate.field).repeated.max_items = 20];
 }

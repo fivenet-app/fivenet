@@ -23,7 +23,7 @@ var (
 	tCitizensLabelsJob = table.FivenetUserLabelsJob.AS("label")
 )
 
-func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.CompleteCitizensRequest) (*pbcompletor.CompleteCitizensRespoonse, error) {
+func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.CompleteCitizensRequest) (*pbcompletor.CompleteCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tUsers := tables.User().AS("user_short")
@@ -109,7 +109,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.Complete
 		}
 	}
 
-	return &pbcompletor.CompleteCitizensRespoonse{
+	return &pbcompletor.CompleteCitizensResponse{
 		Users: dest,
 	}, nil
 }

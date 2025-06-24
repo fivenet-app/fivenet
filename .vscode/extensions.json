@@ -2,12 +2,12 @@
     "recommendations": [
         "vue.volar",
         "editorconfig.editorconfig",
-        "zxh404.vscode-proto3",
         "yoavbls.pretty-ts-errors",
         "lokalise.i18n-ally",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "tombonnike.vscode-status-bar-format-toggle"
+        "tombonnike.vscode-status-bar-format-toggle",
+        "bufbuild.vscode-buf"
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"

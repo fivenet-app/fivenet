@@ -1,12 +1,6 @@
 {
     "javascript.preferences.quoteStyle": "single",
     "typescript.preferences.quoteStyle": "single",
-    "protoc": {
-        "options": [
-            "--proto_path=./.build/validate",
-            "--proto_path=./proto"
-        ]
-    },
     "i18n-ally.localesPaths": [
         "i18n/locales"
     ],

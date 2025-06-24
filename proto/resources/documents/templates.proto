@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "buf/validate/validate.proto";
 import "resources/documents/access.proto";
 import "resources/documents/category.proto";
 import "resources/documents/documents.proto";
@@ -9,64 +10,79 @@ import "resources/documents/workflow.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "resources/vehicles/vehicles.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
 message Template {
-  uint64 id = 1; // @gotags: alias:"id"
+  uint64 id = 1 [(tagger.tags) = "alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  resources.documents.Category category = 4; // @gotags: alias:"category"
-  uint32 weight = 5 [(validate.rules).uint32.lt = 4294967295];
+  resources.documents.Category category = 4 [(tagger.tags) = "alias:\"category\""];
+  uint32 weight = 5 [(buf.validate.field).uint32.lt = 4294967295];
   // @sanitize
-  string title = 6 [(validate.rules).string.min_len = 3];
+  string title = 6 [(buf.validate.field).string.min_len = 3];
   // @sanitize
-  string description = 7 [(validate.rules).string.max_len = 255];
+  string description = 7 [(buf.validate.field).string.max_len = 255];
   // @sanitize: method=StripTags
-  optional string color = 8 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 7,
+  optional string color = 8 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 7
   }];
   // @sanitize: method=StripTags
-  optional string icon = 9 [(validate.rules).string.max_len = 128];
-  string content_title = 10 [(validate.rules).string = {
-    min_len: 3,
-    max_bytes: 10240
-  }]; // @gotags: alias:"content_title"
-  string content = 11 [(validate.rules).string = {
-    min_len: 0,
-    max_bytes: 2000000 // 2 Megabytes
-  }]; // @gotags: alias:"content"
-  string state = 12 [(validate.rules).string.max_len = 512]; // @gotags: alias:"state"
-  resources.documents.TemplateSchema schema = 13; // @gotags: alias:"schema"
-  string creator_job = 14 [(validate.rules).string.max_len = 20];
-  optional string creator_job_label = 15 [(validate.rules).string.max_len = 50];
-  repeated TemplateJobAccess job_access = 16 [(validate.rules).repeated.max_items = 20];
-  resources.documents.DocumentAccess content_access = 17; // @gotags: alias:"access"
+  optional string icon = 9 [(buf.validate.field).string = {
+    max_len: 128
+    suffix: "Icon"
+  }];
+  string content_title = 10 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_bytes: 10240
+    },
+    (tagger.tags) = "alias:\"content_title\""
+  ];
+  string content = 11 [
+    (buf.validate.field).string = {
+      min_len: 0
+      max_bytes: 2000000
+    },
+    (tagger.tags) = "alias:\"content\""
+  ];
+  string state = 12 [
+    (buf.validate.field).string.max_len = 512,
+    (tagger.tags) = "alias:\"state\""
+  ];
+  resources.documents.TemplateSchema schema = 13 [(tagger.tags) = "alias:\"schema\""];
+  string creator_job = 14 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 15 [(buf.validate.field).string.max_len = 50];
+  repeated TemplateJobAccess job_access = 16 [(buf.validate.field).repeated.max_items = 20];
+  resources.documents.DocumentAccess content_access = 17 [(tagger.tags) = "alias:\"access\""];
   optional resources.documents.Workflow workflow = 18;
 }
 
 message TemplateShort {
-  uint64 id = 1; // @gotags: alias:"id"
+  uint64 id = 1 [(tagger.tags) = "alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  resources.documents.Category category = 4; // @gotags: alias:"category"
-  uint32 weight = 5 [(validate.rules).uint32.lt = 4294967295];
+  resources.documents.Category category = 4 [(tagger.tags) = "alias:\"category\""];
+  uint32 weight = 5 [(buf.validate.field).uint32.lt = 4294967295];
   // @sanitize
-  string title = 6 [(validate.rules).string.min_len = 3];
+  string title = 6 [(buf.validate.field).string.min_len = 3];
   // @sanitize
-  string description = 7 [(validate.rules).string.max_len = 255];
+  string description = 7 [(buf.validate.field).string.max_len = 255];
   // @sanitize: method=StripTags
-  optional string color = 8 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 7,
+  optional string color = 8 [(buf.validate.field).string = {
+    min_len: 3
+    max_len: 7
   }];
   // @sanitize: method=StripTags
-  optional string icon = 9 [(validate.rules).string.max_len = 128];
-  resources.documents.TemplateSchema schema = 10; // @gotags: alias:"schema"
-  string creator_job = 11 [(validate.rules).string.max_len = 20];
-  optional string creator_job_label = 12 [(validate.rules).string.max_len = 50];
+  optional string icon = 9 [(buf.validate.field).string = {
+    max_len: 128
+    suffix: "Icon"
+  }];
+  resources.documents.TemplateSchema schema = 10 [(tagger.tags) = "alias:\"schema\""];
+  string creator_job = 11 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 12 [(buf.validate.field).string.max_len = 50];
   optional resources.documents.Workflow workflow = 18;
 }
 
@@ -88,21 +104,21 @@ message ObjectSpecs {
 }
 
 message TemplateData {
-  resources.users.User activeChar = 1 [(validate.rules).message.required = true];
-  repeated resources.documents.DocumentShort documents = 2 [(validate.rules).repeated.max_items = 12];
-  repeated resources.users.UserShort users = 3 [(validate.rules).repeated.max_items = 12];
-  repeated resources.vehicles.Vehicle vehicles = 4 [(validate.rules).repeated.max_items = 12];
+  resources.users.User active_char = 1 [(buf.validate.field).required = true];
+  repeated resources.documents.DocumentShort documents = 2 [(buf.validate.field).repeated.max_items = 12];
+  repeated resources.users.UserShort users = 3 [(buf.validate.field).repeated.max_items = 12];
+  repeated resources.vehicles.Vehicle vehicles = 4 [(buf.validate.field).repeated.max_items = 12];
 }
 
 message TemplateJobAccess {
-  uint64 id = 1; // @gotags: alias:"id"
+  uint64 id = 1 [(tagger.tags) = "alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3; // @gotags: alias:"template_id"
-  string job = 4 [(validate.rules).string.max_len = 20];
-  optional string job_label = 5 [(validate.rules).string.max_len = 50];
-  int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
-  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50];
-  resources.documents.AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
+  uint64 target_id = 3 [(tagger.tags) = "alias:\"template_id\""];
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
+  resources.documents.AccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
 }
 
 // Dummy - DO NOT USE!

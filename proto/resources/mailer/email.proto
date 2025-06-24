@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package resources.mailer;
 
+import "buf/validate/validate.proto";
 import "resources/mailer/access.proto";
 import "resources/mailer/settings.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailer";
 
@@ -16,14 +16,17 @@ message Email {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   bool deactivated = 5;
-  optional string job = 6 [(validate.rules).string.max_len = 40];
-  optional int32 user_id = 7 [(validate.rules).int32.gt = 0];
+  optional string job = 6 [(buf.validate.field).string.max_len = 40];
+  optional int32 user_id = 7 [(buf.validate.field).int32.gt = 0];
   optional resources.users.UserShort user = 8;
   // @sanitize: method=StripTags
-  string email = 9 [(validate.rules).string = {min_len: 6, max_len: 80}];
+  string email = 9 [(buf.validate.field).string = {
+    min_len: 6
+    max_len: 80
+  }];
   optional resources.timestamp.Timestamp email_changed = 10;
   // @sanitize: method=StripTags
-  optional string label = 11 [(validate.rules).string.max_len = 128];
+  optional string label = 11 [(buf.validate.field).string.max_len = 128];
   Access access = 12;
   optional EmailSettings settings = 13;
 }

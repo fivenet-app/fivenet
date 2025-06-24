@@ -2,13 +2,13 @@ syntax = "proto3";
 
 package resources.tracker;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/tracker;tracker";
 
 message UserMapping {
-  int32 user_id = 1 [(validate.rules).int32.gte = 0];
+  int32 user_id = 1 [(buf.validate.field).int32.gte = 0];
   optional uint64 unit_id = 2;
   resources.timestamp.Timestamp created_at = 3;
   bool hidden = 4;

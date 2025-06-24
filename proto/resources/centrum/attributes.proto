@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resources.centrum;
 
-import "validate/validate.proto";
+import "buf/validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
@@ -22,10 +22,10 @@ enum DispatchAttribute {
 
 // @dbscanner: json
 message UnitAttributes {
-  repeated UnitAttribute list = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated UnitAttribute list = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
 }
 
 // @dbscanner: json
 message DispatchAttributes {
-  repeated DispatchAttribute list = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated DispatchAttribute list = 1 [(buf.validate.field).repeated.items.enum.defined_only = true];
 }

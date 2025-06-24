@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resources.common.content;
 
-import "validate/validate.proto";
+import "buf/validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/content;content";
 
@@ -14,12 +14,10 @@ enum ContentType {
 }
 
 message Content {
-  optional string version = 1 [(validate.rules).string.max_len = 24];
+  optional string version = 1 [(buf.validate.field).string.max_len = 24];
   optional JSONNode content = 2;
   // @sanitize
-  optional string raw_content = 3 [(validate.rules).string = {
-    max_bytes: 2000000 // 2 Megabytes
-  }];
+  optional string raw_content = 3 [(buf.validate.field).string = {max_bytes: 2000000}];
 }
 
 enum NodeType {
@@ -33,7 +31,7 @@ enum NodeType {
 }
 
 message JSONNode {
-  NodeType type = 1 [(validate.rules).enum.defined_only = true];
+  NodeType type = 1 [(buf.validate.field).enum.defined_only = true];
   // @sanitize: method=StripTags
   optional string id = 2;
   // @sanitize: method=StripTags

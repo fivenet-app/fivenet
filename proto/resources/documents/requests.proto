@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "buf/validate/validate.proto";
 import "resources/documents/activity.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
@@ -14,12 +15,21 @@ message DocRequest {
   resources.timestamp.Timestamp created_at = 2;
   resources.timestamp.Timestamp updated_at = 3;
   uint64 document_id = 4;
-  DocActivityType request_type = 5 [(validate.rules).enum = {in: [13,14,15,16,17,18]}];
-  optional int32 creator_id = 6 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 7; // @gotags: alias:"creator"
-  string creator_job = 8 [(validate.rules).string.max_len = 20];
-  optional string creator_job_label = 9 [(validate.rules).string.max_len = 50];
-  optional string reason = 10 [(validate.rules).string.max_len = 255];
+  DocActivityType request_type = 5 [(buf.validate.field).enum = {
+    in: [
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ]
+  }];
+  optional int32 creator_id = 6 [(buf.validate.field).int32.gt = 0];
+  optional resources.users.UserShort creator = 7 [(tagger.tags) = "alias:\"creator\""];
+  string creator_job = 8 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 9 [(buf.validate.field).string.max_len = 50];
+  optional string reason = 10 [(buf.validate.field).string.max_len = 255];
   DocActivityData data = 11;
   optional bool accepted = 12;
 }

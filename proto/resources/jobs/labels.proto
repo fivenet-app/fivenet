@@ -2,24 +2,25 @@ syntax = "proto3";
 
 package resources.jobs;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/jobs;jobs";
 
 message Labels {
-  repeated Label list = 1 [(validate.rules).repeated.max_items = 10];
+  repeated Label list = 1 [(buf.validate.field).repeated.max_items = 10];
 }
 
 message Label {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  optional string job = 2 [(validate.rules).string.max_len = 20];
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
+  optional string job = 2 [(buf.validate.field).string.max_len = 20];
   optional resources.timestamp.Timestamp deleted_at = 3;
-  string name = 4 [(validate.rules).string.max_len = 48];
+  string name = 4 [(buf.validate.field).string.max_len = 48];
   // @sanitize: method=StripTags
-  string color = 5 [(validate.rules).string = {
-    len: 7,
-    pattern: "^#[A-Fa-f0-9]{6}$",
+  string color = 5 [(buf.validate.field).string = {
+    len: 7
+    pattern: "^#[A-Fa-f0-9]{6}$"
   }];
   int32 order = 6;
 }

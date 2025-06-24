@@ -2,53 +2,54 @@ syntax = "proto3";
 
 package resources.centrum;
 
+import "buf/validate/validate.proto";
 import "resources/centrum/attributes.proto";
 import "resources/centrum/units_access.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
 message Unit {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string job = 4 [(validate.rules).string.max_len = 20];
-  optional string job_label = 15 [(validate.rules).string.max_len = 50];
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 15 [(buf.validate.field).string.max_len = 50];
   // @sanitize
-  string name = 5 [(validate.rules).string = {
-    min_len: 3,
+  string name = 5 [(buf.validate.field).string = {
+    min_len: 3
     max_len: 24
   }];
   // @sanitize
-  string initials = 6 [(validate.rules).string = {
-    min_len: 2,
+  string initials = 6 [(buf.validate.field).string = {
+    min_len: 2
     max_len: 4
   }];
   // @sanitize: method=StripTags
-  string color = 7 [(validate.rules).string = {
-    len: 7,
-    pattern: "^#[A-Fa-f0-9]{6}$",
+  string color = 7 [(buf.validate.field).string = {
+    len: 7
+    pattern: "^#[A-Fa-f0-9]{6}$"
   }];
   // @sanitize
-  optional string description = 8 [(validate.rules).string.max_len = 255];
+  optional string description = 8 [(buf.validate.field).string.max_len = 255];
   optional UnitStatus status = 9;
   repeated UnitAssignment users = 11;
   optional UnitAttributes attributes = 12;
-  optional string home_postal = 13 [(validate.rules).string.max_len = 48];
+  optional string home_postal = 13 [(buf.validate.field).string.max_len = 48];
   resources.centrum.UnitAccess access = 14;
 }
 
 message UnitAssignments {
   uint64 unit_id = 1;
-  string job = 2 [(validate.rules).string.max_len = 20];
+  string job = 2 [(buf.validate.field).string.max_len = 20];
   repeated UnitAssignment users = 3;
 }
 
 message UnitAssignment {
-  uint64 unit_id = 1; // @gotags: sql:"primary_key" alias:"unit_id"
-  int32 user_id = 2 [(validate.rules).int32.gte = 0]; // @gotags: sql:"primary_key" alias:"user_id"
+  uint64 unit_id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"unit_id\""];
+  int32 user_id = 2 [(buf.validate.field).int32.gte = 0, (tagger.tags) = "sql:\"primary_key\" alias:\"user_id\""];
   optional resources.jobs.Colleague user = 3;
 }
 
@@ -64,22 +65,22 @@ enum StatusUnit {
 }
 
 message UnitStatus {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 unit_id = 3;
   optional resources.centrum.Unit unit = 4;
-  StatusUnit status = 5 [(validate.rules).enum.defined_only = true];
+  StatusUnit status = 5 [(buf.validate.field).enum.defined_only = true];
   // @sanitize
-  optional string reason = 6 [(validate.rules).string.max_len = 255];
+  optional string reason = 6 [(buf.validate.field).string.max_len = 255];
   // @sanitize
-  optional string code = 7 [(validate.rules).string.max_len = 20];
-  optional int32 user_id = 8 [(validate.rules).int32.gt = 0];
+  optional string code = 7 [(buf.validate.field).string.max_len = 20];
+  optional int32 user_id = 8 [(buf.validate.field).int32.gt = 0];
   optional resources.jobs.Colleague user = 9;
   optional double x = 10;
   optional double y = 11;
   // @sanitize
-  optional string postal = 12 [(validate.rules).string.max_len = 48];
-  optional int32 creator_id = 13 [(validate.rules).int32.gt = 0];
+  optional string postal = 12 [(buf.validate.field).string.max_len = 48];
+  optional int32 creator_id = 13 [(buf.validate.field).int32.gt = 0];
   optional resources.jobs.Colleague creator = 14;
-  optional string creator_job = 15 [(validate.rules).string.max_len = 20];
+  optional string creator_job = 15 [(buf.validate.field).string.max_len = 20];
 }

@@ -2,9 +2,10 @@ syntax = "proto3";
 
 package resources.centrum;
 
+import "buf/validate/validate.proto";
 import "resources/qualifications/qualifications.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
 
@@ -16,19 +17,19 @@ enum UnitAccessLevel {
 
 // @dbscanner: json
 message UnitAccess {
-  repeated UnitJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
-  repeated UnitQualificationAccess qualifications = 3 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"qualification_access"
+  repeated UnitJobAccess jobs = 1 [(buf.validate.field).repeated.max_items = 20, (tagger.tags) = "alias:\"job_access\""];
+  repeated UnitQualificationAccess qualifications = 3 [(buf.validate.field).repeated.max_items = 20, (tagger.tags) = "alias:\"qualification_access\""];
 }
 
 message UnitJobAccess {
   uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 target_id = 3;
-  string job = 4 [(validate.rules).string.max_len = 20];
-  optional string job_label = 5 [(validate.rules).string.max_len = 50];
-  int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
-  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50];
-  UnitAccessLevel access = 8 [(validate.rules).enum.defined_only = true];
+  string job = 4 [(buf.validate.field).string.max_len = 20];
+  optional string job_label = 5 [(buf.validate.field).string.max_len = 50];
+  int32 minimum_grade = 6 [(buf.validate.field).int32.gte = 0];
+  optional string job_grade_label = 7 [(buf.validate.field).string.max_len = 50];
+  UnitAccessLevel access = 8 [(buf.validate.field).enum.defined_only = true];
 }
 
 message UnitUserAccess {}
@@ -39,5 +40,5 @@ message UnitQualificationAccess {
   uint64 target_id = 3;
   uint64 qualification_id = 4;
   optional resources.qualifications.QualificationShort qualification = 5;
-  UnitAccessLevel access = 6 [(validate.rules).enum.defined_only = true];
+  UnitAccessLevel access = 6 [(buf.validate.field).enum.defined_only = true];
 }

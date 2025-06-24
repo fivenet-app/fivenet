@@ -2,26 +2,26 @@ syntax = "proto3";
 
 package services.wiki;
 
+import "buf/validate/validate.proto";
 import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
 import "resources/wiki/activity.proto";
 import "resources/wiki/page.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wiki";
 
 message ListPagesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  optional string job = 3 [(validate.rules).string.max_len = 50];
+  optional string job = 3 [(buf.validate.field).string.max_len = 50];
   optional bool root_only = 4;
-  optional string search = 5 [(validate.rules).string.max_len = 64];
+  optional string search = 5 [(buf.validate.field).string.max_len = 64];
 }
 
 message ListPagesResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.wiki.PageShort pages = 2;
 }
 
@@ -34,8 +34,8 @@ message GetPageResponse {
 }
 
 message CreatePageRequest {
-  optional uint64 parent_id = 1 [(validate.rules).uint64.gt = 0];
-  resources.common.content.ContentType content_type = 2 [(validate.rules).enum.defined_only = true];
+  optional uint64 parent_id = 1 [(buf.validate.field).uint64.gt = 0];
+  resources.common.content.ContentType content_type = 2 [(buf.validate.field).enum.defined_only = true];
 }
 
 message CreatePageResponse {
@@ -44,7 +44,7 @@ message CreatePageResponse {
 }
 
 message UpdatePageRequest {
-  resources.wiki.Page page = 1 [(validate.rules).message.required = true];
+  resources.wiki.Page page = 1 [(buf.validate.field).required = true];
 }
 
 message UpdatePageResponse {
@@ -58,12 +58,12 @@ message DeletePageRequest {
 message DeletePageResponse {}
 
 message ListPageActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   uint64 page_id = 2;
 }
 
 message ListPageActivityResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.wiki.PageActivity activity = 2;
 }
 

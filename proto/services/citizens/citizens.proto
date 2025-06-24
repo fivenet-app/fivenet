@@ -2,25 +2,25 @@ syntax = "proto3";
 
 package services.citizens;
 
+import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
 import "resources/file/filestore.proto";
 import "resources/users/activity.proto";
 import "resources/users/labels.proto";
 import "resources/users/props.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizens";
 
 message ListCitizensRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  string search = 3 [(validate.rules).string.max_len = 64];
+  string search = 3 [(buf.validate.field).string.max_len = 64];
   optional bool wanted = 4;
-  optional string phone_number = 5 [(validate.rules).string.max_len = 20];
+  optional string phone_number = 5 [(buf.validate.field).string.max_len = 20];
   optional uint32 traffic_infraction_points = 6;
-  optional string dateofbirth = 7 [(validate.rules).string.max_len = 10];
+  optional string dateofbirth = 7 [(buf.validate.field).string.max_len = 10];
   optional uint64 open_fines = 8;
 }
 
@@ -30,7 +30,7 @@ message ListCitizensResponse {
 }
 
 message GetUserRequest {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
   optional bool info_only = 2;
 }
 
@@ -39,11 +39,11 @@ message GetUserResponse {
 }
 
 message ListUserActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  int32 user_id = 3 [(validate.rules).int32.gt = 0];
-  repeated resources.users.UserActivityType types = 4 [(validate.rules).repeated.max_items = 20];
+  int32 user_id = 3 [(buf.validate.field).int32.gt = 0];
+  repeated resources.users.UserActivityType types = 4 [(buf.validate.field).repeated.max_items = 20];
 }
 
 message ListUserActivityResponse {
@@ -52,13 +52,15 @@ message ListUserActivityResponse {
 }
 
 message SetUserPropsRequest {
-  resources.users.UserProps props = 1 [(validate.rules).message.required = true];
+  resources.users.UserProps props = 1 [(buf.validate.field).required = true];
   // @sanitize
-  string reason = 2 [(validate.rules).string = {
-    ignore_empty: true,
-    min_len: 3,
-    max_len: 255
-  }];
+  string reason = 2 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
 }
 
 message SetUserPropsResponse {
@@ -70,13 +72,15 @@ message DeleteAvatarRequest {}
 message DeleteAvatarResponse {}
 
 message DeleteMugshotRequest {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
   // @sanitize
-  string reason = 2 [(validate.rules).string = {
-    ignore_empty: true,
-    min_len: 3,
-    max_len: 255
-  }];
+  string reason = 2 [
+    (buf.validate.field).string = {
+      min_len: 3
+      max_len: 255
+    },
+    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+  ];
 }
 
 message DeleteMugshotResponse {}
@@ -108,7 +112,6 @@ service CitizensService {
   rpc UploadMugshot(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
   // @perm: Name=SetUserProps
   rpc DeleteMugshot(DeleteMugshotRequest) returns (DeleteMugshotResponse);
-
 
   // @perm
   rpc ManageLabels(ManageLabelsRequest) returns (ManageLabelsResponse);

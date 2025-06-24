@@ -118,7 +118,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 			}
 
 			switch d := msg.Data.(type) {
-			case *pbnotifications.StreamMessage_ClientView:
+			case *pbnotifications.StreamRequest_ClientView:
 				clientView := d.ClientView
 				if clientView == nil {
 					continue // Skip nil client view

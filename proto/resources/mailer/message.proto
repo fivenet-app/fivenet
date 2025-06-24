@@ -2,10 +2,11 @@ syntax = "proto3";
 
 package resources.mailer;
 
+import "buf/validate/validate.proto";
 import "resources/common/content/content.proto";
 import "resources/mailer/email.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/mailer;mailer";
 
@@ -13,13 +14,13 @@ message Message {
   uint64 id = 1;
   uint64 thread_id = 2;
   uint64 sender_id = 3;
-  optional resources.mailer.Email sender = 4; // @gotags: alias:"sender"
+  optional resources.mailer.Email sender = 4 [(tagger.tags) = "alias:\"sender\""];
   resources.timestamp.Timestamp created_at = 5;
   optional resources.timestamp.Timestamp updated_at = 6;
   optional resources.timestamp.Timestamp deleted_at = 7;
   // @sanitize: method=StripTags
-  string title = 8 [(validate.rules).string = {
-    min_len: 3,
+  string title = 8 [(buf.validate.field).string = {
+    min_len: 3
     max_len: 255
   }];
   // @sanitize
@@ -31,12 +32,12 @@ message Message {
 
 // @dbscanner: json
 message MessageData {
-  repeated MessageAttachment attachments = 1 [(validate.rules).repeated.max_items = 3];
+  repeated MessageAttachment attachments = 1 [(buf.validate.field).repeated.max_items = 3];
 }
 
 message MessageAttachment {
   oneof data {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     MessageAttachmentDocument document = 1;
   }
@@ -44,5 +45,5 @@ message MessageAttachment {
 
 message MessageAttachmentDocument {
   uint64 id = 1;
-  optional string title = 2 [(validate.rules).string.max_len = 768];
+  optional string title = 2 [(buf.validate.field).string.max_len = 768];
 }

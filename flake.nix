@@ -44,7 +44,8 @@
             nodejs_22
             pnpm_10
 
-            # protoc + Protobuf
+            # Protobuf
+            buf
             protobuf
             protoc-gen-go
             protoc-gen-go-grpc

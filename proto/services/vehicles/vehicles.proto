@@ -2,20 +2,20 @@ syntax = "proto3";
 
 package services.vehicles;
 
+import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
 import "resources/vehicles/vehicles.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehicles";
 
 message ListVehiclesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  optional string license_plate = 3 [(validate.rules).string.max_len = 32];
-  optional string model = 4 [(validate.rules).string.max_len = 32];
-  repeated int32 user_ids = 5 [(validate.rules).repeated.items.int32.gte = 0];
-  optional string job = 6 [(validate.rules).string.max_len = 20];
+  optional string license_plate = 3 [(buf.validate.field).string.max_len = 32];
+  optional string model = 4 [(buf.validate.field).string.max_len = 32];
+  repeated int32 user_ids = 5 [(buf.validate.field).repeated.items.int32.gte = 0];
+  optional string job = 6 [(buf.validate.field).string.max_len = 20];
 }
 
 message ListVehiclesResponse {

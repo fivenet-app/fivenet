@@ -2,25 +2,26 @@ syntax = "proto3";
 
 package services.jobs;
 
+import "buf/validate/validate.proto";
 import "resources/common/database/database.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/jobs/timeclock.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/jobs;jobs";
 
 // Time Clock
 
 message ListTimeclockRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
   resources.jobs.TimeclockViewMode user_mode = 3;
   resources.jobs.TimeclockMode mode = 4;
   optional resources.common.database.DateRange date = 5;
   bool per_day = 6;
-  repeated int32 user_ids = 7 [(validate.rules).repeated.max_items = 15];
+  repeated int32 user_ids = 7 [(buf.validate.field).repeated.max_items = 15];
 }
 
 message ListTimeclockResponse {
@@ -29,7 +30,7 @@ message ListTimeclockResponse {
   repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3;
 
   oneof entries {
-    option (validate.required) = true;
+    option (buf.validate.oneof).required = true;
 
     TimeclockDay daily = 4;
     TimeclockWeekly weekly = 5;
@@ -44,19 +45,19 @@ message TimeclockDay {
 }
 
 message TimeclockWeekly {
-  resources.timestamp.Timestamp date = 1; // @gotags: sql:"primary_key"
+  resources.timestamp.Timestamp date = 1 [(tagger.tags) = "sql:\"primary_key\""];
   repeated resources.jobs.TimeclockEntry entries = 2;
   int64 sum = 3;
 }
 
 message TimeclockRange {
-  resources.timestamp.Timestamp date = 1; // @gotags: sql:"primary_key"
+  resources.timestamp.Timestamp date = 1 [(tagger.tags) = "sql:\"primary_key\""];
   repeated resources.jobs.TimeclockEntry entries = 2;
   int64 sum = 3;
 }
 
 message GetTimeclockStatsRequest {
-  optional int32 user_id = 1 [(validate.rules).int32.gte = 0];
+  optional int32 user_id = 1 [(buf.validate.field).int32.gte = 0];
 }
 
 message GetTimeclockStatsResponse {
@@ -65,10 +66,10 @@ message GetTimeclockStatsResponse {
 }
 
 message ListInactiveEmployeesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  int32 days = 3 [(validate.rules).int32.gte = 1];
+  int32 days = 3 [(buf.validate.field).int32.gte = 1];
 }
 
 message ListInactiveEmployeesResponse {

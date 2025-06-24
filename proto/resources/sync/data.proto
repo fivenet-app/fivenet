@@ -2,12 +2,12 @@ syntax = "proto3";
 
 package resources.sync;
 
-import "resources/livemap/coords.proto";
+import "buf/validate/validate.proto";
 import "resources/jobs/jobs.proto";
+import "resources/livemap/coords.proto";
 import "resources/users/licenses.proto";
 import "resources/users/users.proto";
 import "resources/vehicles/vehicles.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/sync;sync";
 
@@ -16,38 +16,38 @@ message DataStatus {
 }
 
 message DataJobs {
-  repeated resources.jobs.Job jobs = 1 [(validate.rules).repeated.max_items = 200];
+  repeated resources.jobs.Job jobs = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 message DataUsers {
-  repeated resources.users.User users = 1 [(validate.rules).repeated.max_items = 500];
+  repeated resources.users.User users = 1 [(buf.validate.field).repeated.max_items = 500];
 }
 
 message DataVehicles {
-  repeated resources.vehicles.Vehicle vehicles = 1 [(validate.rules).repeated.max_items = 1000];
+  repeated resources.vehicles.Vehicle vehicles = 1 [(buf.validate.field).repeated.max_items = 1000];
 }
 
 message DataLicenses {
-  repeated resources.users.License licenses = 1 [(validate.rules).repeated.max_items = 200];
+  repeated resources.users.License licenses = 1 [(buf.validate.field).repeated.max_items = 200];
 }
 
 message DataUserLocations {
-  repeated CitizenLocations users = 1 [(validate.rules).repeated.max_items = 2000];
+  repeated CitizenLocations users = 1 [(buf.validate.field).repeated.max_items = 2000];
   optional bool clear_all = 2;
 }
 
 message CitizenLocations {
-  string identifier = 1 [(validate.rules).string.max_len = 64];
-  string job = 2 [(validate.rules).string.max_len = 20];
-  resources.livemap.Coords coords = 3 [(validate.rules).message.required = true];
+  string identifier = 1 [(buf.validate.field).string.max_len = 64];
+  string job = 2 [(buf.validate.field).string.max_len = 20];
+  resources.livemap.Coords coords = 3 [(buf.validate.field).required = true];
   bool hidden = 4;
   bool remove = 5;
 }
 
 message DeleteUsers {
-  repeated int32 user_ids = 1 [(validate.rules).repeated.max_items = 100];
+  repeated int32 user_ids = 1 [(buf.validate.field).repeated.max_items = 100];
 }
 
 message DeleteVehicles {
-  repeated string plates = 1 [(validate.rules).repeated.max_items = 100];
+  repeated string plates = 1 [(buf.validate.field).repeated.max_items = 100];
 }

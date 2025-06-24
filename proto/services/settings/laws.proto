@@ -2,17 +2,17 @@ syntax = "proto3";
 
 package services.settings;
 
+import "buf/validate/validate.proto";
 import "resources/laws/laws.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settings";
 
 message CreateOrUpdateLawBookRequest {
-  resources.laws.LawBook lawBook = 1 [(validate.rules).message.required = true];
+  resources.laws.LawBook law_book = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateLawBookResponse {
-  resources.laws.LawBook lawBook = 1;
+  resources.laws.LawBook law_book = 1;
 }
 
 message DeleteLawBookRequest {
@@ -21,7 +21,7 @@ message DeleteLawBookRequest {
 message DeleteLawBookResponse {}
 
 message CreateOrUpdateLawRequest {
-  resources.laws.Law law = 1 [(validate.rules).message.required = true];
+  resources.laws.Law law = 1 [(buf.validate.field).required = true];
 }
 
 message CreateOrUpdateLawResponse {

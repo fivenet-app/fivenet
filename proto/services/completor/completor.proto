@@ -2,29 +2,30 @@ syntax = "proto3";
 
 package services.completor;
 
+import "buf/validate/validate.proto";
 import "resources/documents/category.proto";
-import "resources/laws/laws.proto";
 import "resources/jobs/jobs.proto";
+import "resources/laws/laws.proto";
 import "resources/users/labels.proto";
 import "resources/users/users.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/completor;completor";
 
 message CompleteCitizensRequest {
-  string search = 1 [(validate.rules).string.max_len = 64];
+  string search = 1 [(buf.validate.field).string.max_len = 64];
   optional bool current_job = 2;
   optional bool on_duty = 3;
-  repeated int32 user_ids = 4 [(validate.rules).repeated.items.int32.gt = 0];
+  repeated int32 user_ids = 4 [(buf.validate.field).repeated.items.int32.gt = 0];
   optional bool user_ids_only = 5;
 }
 
-message CompleteCitizensRespoonse {
-  repeated resources.users.UserShort users = 1; // @gotags: alias:"user"
+message CompleteCitizensResponse {
+  repeated resources.users.UserShort users = 1 [(tagger.tags) = "alias:\"user\""];
 }
 
 message CompleteJobsRequest {
-  optional string search = 1 [(validate.rules).string.max_len = 64];
+  optional string search = 1 [(buf.validate.field).string.max_len = 64];
   optional bool exact_match = 2;
   optional bool current_job = 3;
 }
@@ -34,7 +35,7 @@ message CompleteJobsResponse {
 }
 
 message CompleteDocumentCategoriesRequest {
-  string search = 1 [(validate.rules).string.max_len = 64];
+  string search = 1 [(buf.validate.field).string.max_len = 64];
 }
 
 message CompleteDocumentCategoriesResponse {
@@ -48,7 +49,7 @@ message ListLawBooksResponse {
 }
 
 message CompleteCitizenLabelsRequest {
-  string search = 1 [(validate.rules).string.max_len = 64];
+  string search = 1 [(buf.validate.field).string.max_len = 64];
 }
 
 message CompleteCitizenLabelsResponse {
@@ -57,7 +58,7 @@ message CompleteCitizenLabelsResponse {
 
 service CompletorService {
   // @perm
-  rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensRespoonse);
+  rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensResponse);
   // @perm: Name=Any
   rpc CompleteJobs(CompleteJobsRequest) returns (CompleteJobsResponse);
   // @perm: Attrs=Jobs/JobList

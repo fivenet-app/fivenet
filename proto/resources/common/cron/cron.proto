@@ -69,7 +69,7 @@ message CronjobCompletedEvent {
   // Cronjob execution was cancelled
   bool cancelled = 7;
   // Cronjob end time
-  resources.timestamp.Timestamp endDate = 3;
+  resources.timestamp.Timestamp end_date = 3;
   // Cronjob execution time/elapsed time
   google.protobuf.Duration elapsed = 4;
 

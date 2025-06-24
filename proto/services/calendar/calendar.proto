@@ -2,25 +2,25 @@ syntax = "proto3";
 
 package services.calendar;
 
-import "resources/common/database/database.proto";
+import "buf/validate/validate.proto";
 import "resources/calendar/access.proto";
 import "resources/calendar/calendar.proto";
+import "resources/common/database/database.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/calendar;calendar";
 
 // Calendar
 
 message ListCalendarsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   bool only_public = 2;
   optional resources.calendar.AccessLevel min_access_level = 3;
   optional resources.timestamp.Timestamp after = 4;
 }
 
 message ListCalendarsResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.calendar.Calendar calendars = 2;
 }
 
@@ -33,7 +33,7 @@ message GetCalendarResponse {
 }
 
 message CreateCalendarRequest {
-  resources.calendar.Calendar calendar = 1 [(validate.rules).message.required = true];
+  resources.calendar.Calendar calendar = 1 [(buf.validate.field).required = true];
 }
 
 message CreateCalendarResponse {
@@ -41,7 +41,7 @@ message CreateCalendarResponse {
 }
 
 message UpdateCalendarRequest {
-  resources.calendar.Calendar calendar = 1 [(validate.rules).message.required = true];
+  resources.calendar.Calendar calendar = 1 [(buf.validate.field).required = true];
 }
 
 message UpdateCalendarResponse {
@@ -57,10 +57,10 @@ message DeleteCalendarResponse {}
 // Calendar Entries
 
 message ListCalendarEntriesRequest {
-  int32 year = 1 [(validate.rules).int32 = { gte: 2023 }];
-  int32 month = 2 [(validate.rules).int32 = {
-    gte: 1,
-    lte: 12,
+  int32 year = 1 [(buf.validate.field).int32 = {gte: 2023}];
+  int32 month = 2 [(buf.validate.field).int32 = {
+    gte: 1
+    lte: 12
   }];
   repeated uint64 calendar_ids = 3;
   optional bool show_hidden = 4;
@@ -88,7 +88,7 @@ message GetCalendarEntryResponse {
 }
 
 message CreateOrUpdateCalendarEntryRequest {
-  resources.calendar.CalendarEntry entry = 1 [(validate.rules).message.required = true];
+  resources.calendar.CalendarEntry entry = 1 [(buf.validate.field).required = true];
   repeated int32 user_ids = 2;
 }
 
@@ -112,12 +112,12 @@ message ShareCalendarEntryResponse {}
 // RSVP
 
 message ListCalendarEntryRSVPRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
   uint64 entry_id = 2;
 }
 
 message ListCalendarEntryRSVPResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.calendar.CalendarEntryRSVP entries = 2;
 }
 
@@ -134,11 +134,11 @@ message RSVPCalendarEntryResponse {
 // Subs
 
 message ListSubscriptionsRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationRequest pagination = 1 [(buf.validate.field).required = true];
 }
 
 message ListSubscriptionsResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  resources.common.database.PaginationResponse pagination = 1 [(buf.validate.field).required = true];
   repeated resources.calendar.CalendarSub subs = 2;
 }
 

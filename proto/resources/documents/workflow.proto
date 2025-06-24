@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "buf/validate/validate.proto";
 import "google/protobuf/duration.proto";
-import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
@@ -17,25 +17,29 @@ message Workflow {
 }
 
 message ReminderSettings {
-  repeated Reminder reminders = 1 [(validate.rules).repeated.max_items = 3];
+  repeated Reminder reminders = 1 [(buf.validate.field).repeated.max_items = 3];
 }
 
 message Reminder {
-  google.protobuf.Duration duration = 1 [(validate.rules).duration = {
-    required: true,
-    lt:  {seconds: 7776000}, // 90 days
-    gte: {seconds: 86400}, // 1 day
-  }];
-  string message = 2 [(validate.rules).string.max_len = 255];
+  google.protobuf.Duration duration = 1 [
+    (buf.validate.field).duration = {
+      lt: {seconds: 7776000} /* 90 days */
+      gte: {seconds: 86400} /* 1 day */
+    },
+    (buf.validate.field).required = true
+  ];
+  string message = 2 [(buf.validate.field).string.max_len = 255];
 }
 
 message AutoCloseSettings {
-  google.protobuf.Duration duration = 1 [(validate.rules).duration = {
-    required: true,
-    lt:  {seconds: 7776000}, // 90 days
-    gte: {seconds: 86400}, // 1 day
-  }];
-  string message = 2 [(validate.rules).string.max_len = 255];
+  google.protobuf.Duration duration = 1 [
+    (buf.validate.field).duration = {
+      lt: {seconds: 7776000} /* 90 days */
+      gte: {seconds: 86400} /* 1 day */
+    },
+    (buf.validate.field).required = true
+  ];
+  string message = 2 [(buf.validate.field).string.max_len = 255];
 }
 
 message WorkflowCronData {

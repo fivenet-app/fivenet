@@ -2,15 +2,16 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
-import "validate/validate.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/documents;documents";
 
 message DocumentPin {
-  uint64 document_id = 1 [(validate.rules).uint64.gt = 0]; // @gotags: sql:"primary_key"
-  optional string job = 2 [(validate.rules).string.max_len = 20]; // @gotags: sql:"primary_key"
-  optional int32 user_id = 3 [(validate.rules).int32.gt = 0]; // @gotags: sql:"primary_key"
+  uint64 document_id = 1 [(buf.validate.field).uint64.gt = 0, (tagger.tags) = "sql:\"primary_key\""];
+  optional string job = 2 [(buf.validate.field).string.max_len = 20, (tagger.tags) = "sql:\"primary_key\""];
+  optional int32 user_id = 3 [(buf.validate.field).int32.gt = 0, (tagger.tags) = "sql:\"primary_key\""];
   optional resources.timestamp.Timestamp created_at = 4;
   bool state = 5;
   int32 creator_id = 6;

@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.file;
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;file";
+
 // @dbscanner: json
 message FileMeta {
   oneof meta {
@@ -11,6 +12,6 @@ message FileMeta {
 }
 
 message ImageMeta {
-  int64  width  = 1;
-  int64  height = 2;
+  int64 width = 1;
+  int64 height = 2;
 }
