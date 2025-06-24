@@ -11,6 +11,7 @@ import (
 	database "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	pbcentrum "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/centrum"
+	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/v2025/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
@@ -45,11 +46,18 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	condition := tDispatchStatus.ID.IS_NULL().OR(
-		tDispatchStatus.ID.EQ(
-			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
-		),
-	)
+	jobs := []string{userInfo.Job}
+	// TODO add other jobs based on user access
+	jobsOut, _ := json.Marshal(jobs)
+
+	condition := jet.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, jet.StringExp(jet.String(string(jobsOut))))).
+		AND(
+			tDispatchStatus.ID.IS_NULL().OR(
+				tDispatchStatus.ID.EQ(
+					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+				),
+			),
+		)
 
 	if len(req.Status) > 0 {
 		statuses := make([]jet.Expression, len(req.Status))
@@ -226,12 +234,19 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	jobs, _, err := s.settings.GetJobAccessList(ctx, userInfo.Job, userInfo.JobGrade)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+	}
+	jobsOut, _ := json.Marshal(jobs)
+
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		tDispatchStatus.ID.EQ(
 			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 		),
 	).
-		AND(tDispatch.ID.EQ(jet.Uint64(req.Id)))
+		AND(tDispatch.ID.EQ(jet.Uint64(req.Id))).
+		AND(jet.BoolExp(dbutils.JSON_CONTAINS(tDispatch.Jobs, jet.StringExp(jet.String(string(jobsOut))))))
 
 	resp := &pbcentrum.GetDispatchResponse{
 		Dispatch: &centrum.Dispatch{},
@@ -298,7 +313,6 @@ func (s *Server) GetDispatch(ctx context.Context, req *pbcentrum.GetDispatchRequ
 		return &pbcentrum.GetDispatchResponse{}, nil
 	}
 
-	var err error
 	resp.Dispatch.Units, err = s.dispatches.LoadDispatchAssignments(ctx, resp.Dispatch.Id)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)

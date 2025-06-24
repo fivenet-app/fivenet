@@ -589,7 +589,7 @@ func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 
 	if s.l != nil {
 		if err := s.l.Lock(ctx, key); err != nil {
-			return err
+			return fmt.Errorf("failed to lock key %s for put. %w", key, err)
 		}
 		defer s.l.Unlock(ctx, key)
 	}
@@ -604,12 +604,12 @@ func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 	data, err := proto.Marshal(msg)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal proto msg for key %s put. %w", key, err)
 	}
 
 	rev, err := s.kv.Put(ctx, key, data)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to put value for key %s. %w", key, err)
 	}
 
 	item := s.updateFromType(key, msg, true)
@@ -641,7 +641,7 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 
 	if s.l != nil {
 		if err := s.l.Lock(ctx, key); err != nil {
-			return err
+			return fmt.Errorf("failed to lock key %s for compute update. %w", key, err)
 		}
 		defer s.l.Unlock(ctx, key)
 	}
@@ -695,14 +695,14 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 
 	if s.l != nil {
 		if err := s.l.Lock(ctx, key); err != nil {
-			return err
+			return fmt.Errorf("failed to lock key %s for delete. %w", key, err)
 		}
 		defer s.l.Unlock(ctx, key)
 	}
 
 	item, _ := s.data.Load(key)
 	if err := s.kv.Purge(ctx, key); err != nil {
-		return err
+		return fmt.Errorf("failed to purge key %s. %w", key, err)
 	}
 
 	s.data.Delete(key)

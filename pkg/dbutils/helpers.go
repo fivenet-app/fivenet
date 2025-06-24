@@ -15,3 +15,7 @@ func (c Columns) Get() jet.ProjectionList {
 
 	return out
 }
+
+func JSON_CONTAINS(column jet.Column, value jet.Expression) jet.Expression {
+	return jet.CustomExpression(jet.Token("JSON_CONTAINS("), column, jet.Token(", "), value, jet.Token(")"))
+}
