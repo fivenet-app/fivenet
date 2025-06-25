@@ -12,7 +12,7 @@ SET @ver := VERSION();
 SET @ddl :=
   IF(
     LOCATE('MariaDB', @ver) = 0,
-    'ALTER TABLE your_table
+    'ALTER TABLE fivenet_centrum_dispatches
        ADD INDEX idx_jobs_elements
          ((CAST(jobs AS CHAR(255) ARRAY)));',
     CONCAT(
