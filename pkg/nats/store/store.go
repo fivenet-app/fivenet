@@ -137,7 +137,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 
 	// Create locks only if not overriden by option
 	if s.cl && s.l == nil {
-		l, err := locks.New(ctx, logger, js, bucket, 3*locks.LockTimeout)
+		l, err := locks.New(ctx, logger, js, bucket, 2*locks.LockTimeout)
 		if err != nil {
 			return nil, err
 		}
@@ -571,7 +571,7 @@ func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
 	mu.Lock()
 	defer mu.Unlock()
 
-	ctx, cancel := context.WithTimeout(ctx, locks.LockTimeout)
+	ctx, cancel := context.WithTimeout(ctx, 2*locks.LockTimeout)
 	defer cancel()
 
 	if s.l != nil {
@@ -635,7 +635,7 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 	mu.Lock()
 	defer mu.Unlock()
 
-	ctx, cancel := context.WithTimeout(ctx, locks.LockTimeout)
+	ctx, cancel := context.WithTimeout(ctx, 2*locks.LockTimeout)
 	defer cancel()
 
 	if s.l != nil {
@@ -689,7 +689,7 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 	mu.Lock()
 	defer mu.Unlock()
 
-	ctx, cancel := context.WithTimeout(ctx, locks.LockTimeout)
+	ctx, cancel := context.WithTimeout(ctx, 2*locks.LockTimeout)
 	defer cancel()
 
 	if s.l != nil {

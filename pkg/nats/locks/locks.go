@@ -152,10 +152,10 @@ loop:
 			return err
 		}
 		if revision == nil {
-			break // nobody holds the lock
+			break // Nobody holds the lock
 		}
 
-		// wait a little and retry
+		// Wait a little and retry
 		select {
 		case <-time.After(jitterDelay()):
 		case <-ctx.Done():
@@ -197,7 +197,7 @@ func (l *Locks) TryLock(ctx context.Context, key string) (bool, error) {
 		return false, nil // someone else holds the lock
 	}
 
-	// create the lock with TTL + debug payload in one shot
+	// Create the lock with TTL + debug payload in one shot
 	nrev, err := l.kv.Create(ctx, lockKey, l.debugPayload(), jetstream.KeyTTL(l.maxLockAge))
 	if err != nil {
 		if isWrongSequence(err) {

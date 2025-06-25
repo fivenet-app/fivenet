@@ -132,6 +132,7 @@ func New(p Params) *UnitDB {
 
 		jobSt, err := store.New[common.IDMapping, *common.IDMapping](ctxCancel, storeLogger, p.JS, "centrum_units",
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
+			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
 		)
 		if err != nil {
 			return err

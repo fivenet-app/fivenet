@@ -114,6 +114,7 @@ func New(p Params) *DispatchDB {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		jobSt, err := store.New[common.IDMapping, *common.IDMapping](ctxCancel, logger, p.JS, "centrum_dispatches",
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
+			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
 		)
 		if err != nil {
 			return err
