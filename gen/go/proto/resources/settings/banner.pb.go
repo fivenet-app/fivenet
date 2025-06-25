@@ -8,6 +8,7 @@ package settings
 
 import (
 	timestamp "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -32,8 +33,8 @@ type BannerMessage struct {
 	Icon *string `protobuf:"bytes,3,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	// @sanitize: method=StripTags
 	Color         *string              `protobuf:"bytes,4,opt,name=color,proto3,oneof" json:"color,omitempty"`
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	ExpiresAt     *timestamp.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expires_at,omitempty"`
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"createdAt"`
+	ExpiresAt     *timestamp.Timestamp `protobuf:"bytes,6,opt,name=expires_at,json=expiresAt,proto3,oneof" json:"expiresAt"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -114,17 +115,17 @@ var File_resources_settings_banner_proto protoreflect.FileDescriptor
 
 const file_resources_settings_banner_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/settings/banner.proto\x12\x12resources.settings\x1a#resources/timestamp/timestamp.proto\"\xbc\x02\n" +
+	"\x1fresources/settings/banner.proto\x12\x12resources.settings\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xea\x02\n" +
 	"\rBannerMessage\x12\x17\n" +
 	"\x02id\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18@R\x02id\x12 \n" +
 	"\x05title\x18\x02 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12'\n" +
 	"\x04icon\x18\x03 \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconH\x00R\x04icon\x88\x01\x01\x12\"\n" +
-	"\x05color\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\fH\x01R\x05color\x88\x01\x01\x12=\n" +
+	"\x05color\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\fH\x01R\x05color\x88\x01\x01\x12T\n" +
 	"\n" +
-	"created_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampR\tcreatedAt\x12B\n" +
+	"created_at\x18\x05 \x01(\v2\x1e.resources.timestamp.TimestampB\x15\x9a\x84\x9e\x03\x10json:\"createdAt\"R\tcreatedAt\x12Y\n" +
 	"\n" +
-	"expires_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampH\x02R\texpiresAt\x88\x01\x01B\a\n" +
+	"expires_at\x18\x06 \x01(\v2\x1e.resources.timestamp.TimestampB\x15\x9a\x84\x9e\x03\x10json:\"expiresAt\"H\x02R\texpiresAt\x88\x01\x01B\a\n" +
 	"\x05_iconB\b\n" +
 	"\x06_colorB\r\n" +
 	"\v_expires_atBOZMgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settingsb\x06proto3"

@@ -8,6 +8,7 @@ package clientconfig
 
 import (
 	settings "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings"
+	_ "github.com/srikrsna/protoc-gen-gotag/tagger"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -25,11 +26,11 @@ const (
 type ClientConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Version       string                 `protobuf:"bytes,1,opt,name=version,proto3" json:"version,omitempty"`
-	DefaultLocale string                 `protobuf:"bytes,2,opt,name=default_locale,json=defaultLocale,proto3" json:"default_locale,omitempty"`
+	DefaultLocale string                 `protobuf:"bytes,2,opt,name=default_locale,json=defaultLocale,proto3" json:"defaultLocale"`
 	Login         *LoginConfig           `protobuf:"bytes,3,opt,name=login,proto3" json:"login,omitempty"`
 	Discord       *Discord               `protobuf:"bytes,4,opt,name=discord,proto3" json:"discord,omitempty"`
 	Website       *Website               `protobuf:"bytes,5,opt,name=website,proto3" json:"website,omitempty"`
-	FeatureGates  *FeatureGates          `protobuf:"bytes,6,opt,name=feature_gates,json=featureGates,proto3" json:"feature_gates,omitempty"`
+	FeatureGates  *FeatureGates          `protobuf:"bytes,6,opt,name=feature_gates,json=featureGates,proto3" json:"featureGates"`
 	Game          *Game                  `protobuf:"bytes,7,opt,name=game,proto3" json:"game,omitempty"`
 	System        *System                `protobuf:"bytes,8,opt,name=system,proto3" json:"system,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -124,9 +125,9 @@ func (x *ClientConfig) GetSystem() *System {
 
 type LoginConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	SignupEnabled bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signup_enabled,omitempty"`
-	LastCharLock  bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"last_char_lock,omitempty"`
-	Providers     []*ProviderConfig      `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers,omitempty"`
+	SignupEnabled bool                   `protobuf:"varint,1,opt,name=signup_enabled,json=signupEnabled,proto3" json:"signupEnabled"`
+	LastCharLock  bool                   `protobuf:"varint,2,opt,name=last_char_lock,json=lastCharLock,proto3" json:"lastCharLock"`
+	Providers     []*ProviderConfig      `protobuf:"bytes,3,rep,name=providers,proto3" json:"providers"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -252,7 +253,7 @@ func (x *ProviderConfig) GetHomepage() string {
 
 type Discord struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BotEnabled    bool                   `protobuf:"varint,1,opt,name=bot_enabled,json=botEnabled,proto3" json:"bot_enabled,omitempty"`
+	BotEnabled    bool                   `protobuf:"varint,1,opt,name=bot_enabled,json=botEnabled,proto3" json:"botEnabled"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -297,7 +298,7 @@ func (x *Discord) GetBotEnabled() bool {
 type Website struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Links         *Links                 `protobuf:"bytes,1,opt,name=links,proto3" json:"links,omitempty"`
-	StatsPage     bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3" json:"stats_page,omitempty"`
+	StatsPage     bool                   `protobuf:"varint,2,opt,name=stats_page,json=statsPage,proto3" json:"statsPage"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -349,7 +350,7 @@ func (x *Website) GetStatsPage() bool {
 type Links struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Imprint       *string                `protobuf:"bytes,1,opt,name=imprint,proto3,oneof" json:"imprint,omitempty"`
-	PrivacyPolicy *string                `protobuf:"bytes,2,opt,name=privacy_policy,json=privacyPolicy,proto3,oneof" json:"privacy_policy,omitempty"`
+	PrivacyPolicy *string                `protobuf:"bytes,2,opt,name=privacy_policy,json=privacyPolicy,proto3,oneof" json:"privacyPolicy"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -400,7 +401,7 @@ func (x *Links) GetPrivacyPolicy() string {
 
 type FeatureGates struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ImageProxy    bool                   `protobuf:"varint,1,opt,name=image_proxy,json=imageProxy,proto3" json:"image_proxy,omitempty"`
+	ImageProxy    bool                   `protobuf:"varint,1,opt,name=image_proxy,json=imageProxy,proto3" json:"imageProxy"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -444,8 +445,8 @@ func (x *FeatureGates) GetImageProxy() bool {
 
 type Game struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
-	UnemployedJobName string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3" json:"unemployed_job_name,omitempty"`
-	StartJobGrade     int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3" json:"start_job_grade,omitempty"`
+	UnemployedJobName string                 `protobuf:"bytes,1,opt,name=unemployed_job_name,json=unemployedJobName,proto3" json:"unemployedJobName"`
+	StartJobGrade     int32                  `protobuf:"varint,2,opt,name=start_job_grade,json=startJobGrade,proto3" json:"startJobGrade"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -496,8 +497,8 @@ func (x *Game) GetStartJobGrade() int32 {
 
 type System struct {
 	state                protoimpl.MessageState  `protogen:"open.v1"`
-	BannerMessageEnabled bool                    `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3" json:"banner_message_enabled,omitempty"`
-	BannerMessage        *settings.BannerMessage `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"banner_message,omitempty"`
+	BannerMessageEnabled bool                    `protobuf:"varint,1,opt,name=banner_message_enabled,json=bannerMessageEnabled,proto3" json:"bannerMessageEnabled"`
+	BannerMessage        *settings.BannerMessage `protobuf:"bytes,2,opt,name=banner_message,json=bannerMessage,proto3,oneof" json:"bannerMessages"`
 	Otlp                 *OTLPFrontend           `protobuf:"bytes,3,opt,name=otlp,proto3" json:"otlp,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
@@ -618,48 +619,48 @@ var File_resources_clientconfig_clientconfig_proto protoreflect.FileDescriptor
 
 const file_resources_clientconfig_clientconfig_proto_rawDesc = "" +
 	"\n" +
-	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\"\xb5\x03\n" +
+	")resources/clientconfig/clientconfig.proto\x12\x16resources.clientconfig\x1a\x1fresources/settings/banner.proto\x1a\x13tagger/tagger.proto\"\xea\x03\n" +
 	"\fClientConfig\x12\x18\n" +
-	"\aversion\x18\x01 \x01(\tR\aversion\x12%\n" +
-	"\x0edefault_locale\x18\x02 \x01(\tR\rdefaultLocale\x129\n" +
+	"\aversion\x18\x01 \x01(\tR\aversion\x12@\n" +
+	"\x0edefault_locale\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"defaultLocale\"R\rdefaultLocale\x129\n" +
 	"\x05login\x18\x03 \x01(\v2#.resources.clientconfig.LoginConfigR\x05login\x129\n" +
 	"\adiscord\x18\x04 \x01(\v2\x1f.resources.clientconfig.DiscordR\adiscord\x129\n" +
-	"\awebsite\x18\x05 \x01(\v2\x1f.resources.clientconfig.WebsiteR\awebsite\x12I\n" +
-	"\rfeature_gates\x18\x06 \x01(\v2$.resources.clientconfig.FeatureGatesR\ffeatureGates\x120\n" +
+	"\awebsite\x18\x05 \x01(\v2\x1f.resources.clientconfig.WebsiteR\awebsite\x12c\n" +
+	"\rfeature_gates\x18\x06 \x01(\v2$.resources.clientconfig.FeatureGatesB\x18\x9a\x84\x9e\x03\x13json:\"featureGates\"R\ffeatureGates\x120\n" +
 	"\x04game\x18\a \x01(\v2\x1c.resources.clientconfig.GameR\x04game\x126\n" +
-	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemR\x06system\"\xa0\x01\n" +
-	"\vLoginConfig\x12%\n" +
-	"\x0esignup_enabled\x18\x01 \x01(\bR\rsignupEnabled\x12$\n" +
-	"\x0elast_char_lock\x18\x02 \x01(\bR\flastCharLock\x12D\n" +
-	"\tproviders\x18\x03 \x03(\v2&.resources.clientconfig.ProviderConfigR\tproviders\"x\n" +
+	"\x06system\x18\b \x01(\v2\x1e.resources.clientconfig.SystemR\x06system\"\xec\x01\n" +
+	"\vLoginConfig\x12@\n" +
+	"\x0esignup_enabled\x18\x01 \x01(\bB\x19\x9a\x84\x9e\x03\x14json:\"signupEnabled\"R\rsignupEnabled\x12>\n" +
+	"\x0elast_char_lock\x18\x02 \x01(\bB\x18\x9a\x84\x9e\x03\x13json:\"lastCharLock\"R\flastCharLock\x12[\n" +
+	"\tproviders\x18\x03 \x03(\v2&.resources.clientconfig.ProviderConfigB\x15\x9a\x84\x9e\x03\x10json:\"providers\"R\tproviders\"x\n" +
 	"\x0eProviderConfig\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05label\x18\x02 \x01(\tR\x05label\x12\x17\n" +
 	"\x04icon\x18\x03 \x01(\tH\x00R\x04icon\x88\x01\x01\x12\x1a\n" +
 	"\bhomepage\x18\x04 \x01(\tR\bhomepageB\a\n" +
-	"\x05_icon\"*\n" +
-	"\aDiscord\x12\x1f\n" +
-	"\vbot_enabled\x18\x01 \x01(\bR\n" +
-	"botEnabled\"]\n" +
+	"\x05_icon\"B\n" +
+	"\aDiscord\x127\n" +
+	"\vbot_enabled\x18\x01 \x01(\bB\x16\x9a\x84\x9e\x03\x11json:\"botEnabled\"R\n" +
+	"botEnabled\"t\n" +
 	"\aWebsite\x123\n" +
-	"\x05links\x18\x01 \x01(\v2\x1d.resources.clientconfig.LinksR\x05links\x12\x1d\n" +
+	"\x05links\x18\x01 \x01(\v2\x1d.resources.clientconfig.LinksR\x05links\x124\n" +
 	"\n" +
-	"stats_page\x18\x02 \x01(\bR\tstatsPage\"q\n" +
+	"stats_page\x18\x02 \x01(\bB\x15\x9a\x84\x9e\x03\x10json:\"statsPage\"R\tstatsPage\"\x8c\x01\n" +
 	"\x05Links\x12\x1d\n" +
-	"\aimprint\x18\x01 \x01(\tH\x00R\aimprint\x88\x01\x01\x12*\n" +
-	"\x0eprivacy_policy\x18\x02 \x01(\tH\x01R\rprivacyPolicy\x88\x01\x01B\n" +
+	"\aimprint\x18\x01 \x01(\tH\x00R\aimprint\x88\x01\x01\x12E\n" +
+	"\x0eprivacy_policy\x18\x02 \x01(\tB\x19\x9a\x84\x9e\x03\x14json:\"privacyPolicy\"H\x01R\rprivacyPolicy\x88\x01\x01B\n" +
 	"\n" +
 	"\b_imprintB\x11\n" +
-	"\x0f_privacy_policy\"/\n" +
-	"\fFeatureGates\x12\x1f\n" +
-	"\vimage_proxy\x18\x01 \x01(\bR\n" +
-	"imageProxy\"^\n" +
-	"\x04Game\x12.\n" +
-	"\x13unemployed_job_name\x18\x01 \x01(\tR\x11unemployedJobName\x12&\n" +
-	"\x0fstart_job_grade\x18\x02 \x01(\x05R\rstartJobGrade\"\xda\x01\n" +
-	"\x06System\x124\n" +
-	"\x16banner_message_enabled\x18\x01 \x01(\bR\x14bannerMessageEnabled\x12M\n" +
-	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageH\x00R\rbannerMessage\x88\x01\x01\x128\n" +
+	"\x0f_privacy_policy\"G\n" +
+	"\fFeatureGates\x127\n" +
+	"\vimage_proxy\x18\x01 \x01(\bB\x16\x9a\x84\x9e\x03\x11json:\"imageProxy\"R\n" +
+	"imageProxy\"\x98\x01\n" +
+	"\x04Game\x12M\n" +
+	"\x13unemployed_job_name\x18\x01 \x01(\tB\x1d\x9a\x84\x9e\x03\x18json:\"unemployedJobName\"R\x11unemployedJobName\x12A\n" +
+	"\x0fstart_job_grade\x18\x02 \x01(\x05B\x19\x9a\x84\x9e\x03\x14json:\"startJobGrade\"R\rstartJobGrade\"\x98\x02\n" +
+	"\x06System\x12V\n" +
+	"\x16banner_message_enabled\x18\x01 \x01(\bB \x9a\x84\x9e\x03\x1bjson:\"bannerMessageEnabled\"R\x14bannerMessageEnabled\x12i\n" +
+	"\x0ebanner_message\x18\x02 \x01(\v2!.resources.settings.BannerMessageB\x1a\x9a\x84\x9e\x03\x15json:\"bannerMessages\"H\x00R\rbannerMessage\x88\x01\x01\x128\n" +
 	"\x04otlp\x18\x03 \x01(\v2$.resources.clientconfig.OTLPFrontendR\x04otlpB\x11\n" +
 	"\x0f_banner_message\"\xc3\x01\n" +
 	"\fOTLPFrontend\x12\x18\n" +

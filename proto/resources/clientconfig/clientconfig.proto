@@ -3,26 +3,27 @@ syntax = "proto3";
 package resources.clientconfig;
 
 import "resources/settings/banner.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/clientconfig;clientconfig";
 
 message ClientConfig {
   string version = 1;
 
-  string default_locale = 2;
+  string default_locale = 2 [(tagger.tags) = "json:\"defaultLocale\""];
 
   LoginConfig login = 3;
   Discord discord = 4;
   Website website = 5;
-  FeatureGates feature_gates = 6;
+  FeatureGates feature_gates = 6 [(tagger.tags) = "json:\"featureGates\""];
   Game game = 7;
   System system = 8;
 }
 
 message LoginConfig {
-  bool signup_enabled = 1;
-  bool last_char_lock = 2;
-  repeated ProviderConfig providers = 3;
+  bool signup_enabled = 1 [(tagger.tags) = "json:\"signupEnabled\""];
+  bool last_char_lock = 2 [(tagger.tags) = "json:\"lastCharLock\""];
+  repeated ProviderConfig providers = 3 [(tagger.tags) = "json:\"providers\""];
 }
 
 message ProviderConfig {
@@ -33,31 +34,31 @@ message ProviderConfig {
 }
 
 message Discord {
-  bool bot_enabled = 1;
+  bool bot_enabled = 1 [(tagger.tags) = "json:\"botEnabled\""];
 }
 
 message Website {
   Links links = 1;
-  bool stats_page = 2;
+  bool stats_page = 2 [(tagger.tags) = "json:\"statsPage\""];
 }
 
 message Links {
   optional string imprint = 1;
-  optional string privacy_policy = 2;
+  optional string privacy_policy = 2 [(tagger.tags) = "json:\"privacyPolicy\""];
 }
 
 message FeatureGates {
-  bool image_proxy = 1;
+  bool image_proxy = 1 [(tagger.tags) = "json:\"imageProxy\""];
 }
 
 message Game {
-  string unemployed_job_name = 1;
-  int32 start_job_grade = 2;
+  string unemployed_job_name = 1 [(tagger.tags) = "json:\"unemployedJobName\""];
+  int32 start_job_grade = 2 [(tagger.tags) = "json:\"startJobGrade\""];
 }
 
 message System {
-  bool banner_message_enabled = 1;
-  optional resources.settings.BannerMessage banner_message = 2;
+  bool banner_message_enabled = 1 [(tagger.tags) = "json:\"bannerMessageEnabled\""];
+  optional resources.settings.BannerMessage banner_message = 2 [(tagger.tags) = "json:\"bannerMessages\""];
   OTLPFrontend otlp = 3;
 }
 

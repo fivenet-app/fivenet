@@ -185,11 +185,11 @@ class ClientConfig$Type extends MessageType<ClientConfig> {
     constructor() {
         super("resources.clientconfig.ClientConfig", [
             { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"defaultLocale\"" } },
             { no: 3, name: "login", kind: "message", T: () => LoginConfig },
             { no: 4, name: "discord", kind: "message", T: () => Discord },
             { no: 5, name: "website", kind: "message", T: () => Website },
-            { no: 6, name: "feature_gates", kind: "message", T: () => FeatureGates },
+            { no: 6, name: "feature_gates", kind: "message", T: () => FeatureGates, options: { "tagger.tags": "json:\"featureGates\"" } },
             { no: 7, name: "game", kind: "message", T: () => Game },
             { no: 8, name: "system", kind: "message", T: () => System }
         ]);
@@ -281,9 +281,9 @@ export const ClientConfig = new ClientConfig$Type();
 class LoginConfig$Type extends MessageType<LoginConfig> {
     constructor() {
         super("resources.clientconfig.LoginConfig", [
-            { no: 1, name: "signup_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "last_char_lock", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "providers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ProviderConfig }
+            { no: 1, name: "signup_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"signupEnabled\"" } },
+            { no: 2, name: "last_char_lock", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"lastCharLock\"" } },
+            { no: 3, name: "providers", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ProviderConfig, options: { "tagger.tags": "json:\"providers\"" } }
         ]);
     }
     create(value?: PartialMessage<LoginConfig>): LoginConfig {
@@ -414,7 +414,7 @@ export const ProviderConfig = new ProviderConfig$Type();
 class Discord$Type extends MessageType<Discord> {
     constructor() {
         super("resources.clientconfig.Discord", [
-            { no: 1, name: "bot_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "bot_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"botEnabled\"" } }
         ]);
     }
     create(value?: PartialMessage<Discord>): Discord {
@@ -462,7 +462,7 @@ class Website$Type extends MessageType<Website> {
     constructor() {
         super("resources.clientconfig.Website", [
             { no: 1, name: "links", kind: "message", T: () => Links },
-            { no: 2, name: "stats_page", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "stats_page", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"statsPage\"" } }
         ]);
     }
     create(value?: PartialMessage<Website>): Website {
@@ -516,7 +516,7 @@ class Links$Type extends MessageType<Links> {
     constructor() {
         super("resources.clientconfig.Links", [
             { no: 1, name: "imprint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "privacy_policy", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"privacyPolicy\"" } }
         ]);
     }
     create(value?: PartialMessage<Links>): Links {
@@ -568,7 +568,7 @@ export const Links = new Links$Type();
 class FeatureGates$Type extends MessageType<FeatureGates> {
     constructor() {
         super("resources.clientconfig.FeatureGates", [
-            { no: 1, name: "image_proxy", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "image_proxy", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"imageProxy\"" } }
         ]);
     }
     create(value?: PartialMessage<FeatureGates>): FeatureGates {
@@ -615,8 +615,8 @@ export const FeatureGates = new FeatureGates$Type();
 class Game$Type extends MessageType<Game> {
     constructor() {
         super("resources.clientconfig.Game", [
-            { no: 1, name: "unemployed_job_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "start_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "unemployed_job_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "tagger.tags": "json:\"unemployedJobName\"" } },
+            { no: 2, name: "start_job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "tagger.tags": "json:\"startJobGrade\"" } }
         ]);
     }
     create(value?: PartialMessage<Game>): Game {
@@ -670,8 +670,8 @@ export const Game = new Game$Type();
 class System$Type extends MessageType<System> {
     constructor() {
         super("resources.clientconfig.System", [
-            { no: 1, name: "banner_message_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "banner_message", kind: "message", T: () => BannerMessage },
+            { no: 1, name: "banner_message_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/, options: { "tagger.tags": "json:\"bannerMessageEnabled\"" } },
+            { no: 2, name: "banner_message", kind: "message", T: () => BannerMessage, options: { "tagger.tags": "json:\"bannerMessages\"" } },
             { no: 3, name: "otlp", kind: "message", T: () => OTLPFrontend }
         ]);
     }

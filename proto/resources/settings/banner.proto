@@ -4,6 +4,7 @@ package resources.settings;
 
 import "buf/validate/validate.proto";
 import "resources/timestamp/timestamp.proto";
+import "tagger/tagger.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/settings;settings";
 
@@ -22,6 +23,6 @@ message BannerMessage {
   }];
   // @sanitize: method=StripTags
   optional string color = 4 [(buf.validate.field).string.max_len = 12];
-  resources.timestamp.Timestamp created_at = 5;
-  optional resources.timestamp.Timestamp expires_at = 6;
+  resources.timestamp.Timestamp created_at = 5 [(tagger.tags) = "json:\"createdAt\""];
+  optional resources.timestamp.Timestamp expires_at = 6 [(tagger.tags) = "json:\"expiresAt\""];
 }
