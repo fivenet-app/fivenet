@@ -5,7 +5,7 @@ import (
 )
 
 // Guard edits the given string.
-// example: 'create $#% contact' -> 'create-contact'.
+// example: 'create $#% contact' → 'create-contact'.
 // @param string
 // @param string
 // return bool

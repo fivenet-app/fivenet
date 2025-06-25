@@ -149,9 +149,9 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 						if perm.Service != nil {
 							svc = *perm.Service
 						}
-						p.Debugf("Permission Remap added: %q -> %q/%q\n", mName, svc, perm.Name)
+						p.Debugf("Permission Remap added: %q → %q/%q\n", mName, svc, perm.Name)
 					} else {
-						p.Debugf("Permission Remap already exists: %q -> %q\n", mName, perm.Name)
+						p.Debugf("Permission Remap already exists: %q → %q\n", mName, perm.Name)
 					}
 				}
 

@@ -1,7 +1,6 @@
 package perms
 
 import (
-	"context"
 	"os"
 	"testing"
 
@@ -29,8 +28,7 @@ func TestBasicPerms(t *testing.T) {
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
 
-	ctx, cancel := context.WithCancel(t.Context())
-	defer cancel()
+	ctx := t.Context()
 
 	var ps perms.Permissions
 	app := fxtest.New(t,

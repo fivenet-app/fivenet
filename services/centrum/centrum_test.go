@@ -1,7 +1,6 @@
 package centrum
 
 import (
-	"context"
 	"os"
 	"testing"
 
@@ -34,8 +33,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
 
-	ctx, cancel := context.WithCancel(t.Context())
-	defer cancel()
+	ctx := t.Context()
 
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)
@@ -69,7 +67,6 @@ func TestBasicCentrumFlow(t *testing.T) {
 	assert.NotNil(t, srv)
 
 	client := pbcentrum.NewCentrumServiceClient(clientConn)
-	defer cancel()
 	_ = ctx
 	_ = client
 }

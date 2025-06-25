@@ -1,7 +1,6 @@
 package housekeeper
 
 import (
-	"context"
 	"testing"
 
 	"github.com/DATA-DOG/go-sqlmock"
@@ -10,7 +9,7 @@ import (
 )
 
 func TestSoftDeleteJobData(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Mock dependencies
 	logger := zap.NewNop()
@@ -86,7 +85,7 @@ func TestSoftDeleteJobData(t *testing.T) {
 }
 
 func TestHardDelete(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	// Mock dependencies
 	logger := zap.NewNop()

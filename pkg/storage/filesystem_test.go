@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"context"
 	"io"
 	"os"
 	"path/filepath"
@@ -27,7 +26,7 @@ func TestFilesystem_Get(t *testing.T) {
 	require.NoError(t, err)
 
 	t.Run("valid file", func(t *testing.T) {
-		ctx := context.Background()
+		ctx := t.Context()
 		obj, info, err := fs.Get(ctx, "testfile.txt")
 		require.NoError(t, err)
 		require.NotNil(t, obj)
@@ -46,13 +45,13 @@ func TestFilesystem_Get(t *testing.T) {
 	})
 
 	t.Run("file not found", func(t *testing.T) {
-		ctx := context.Background()
+		ctx := t.Context()
 		_, _, err := fs.Get(ctx, "nonexistent.txt")
 		require.ErrorIs(t, err, ErrNotFound)
 	})
 
 	t.Run("invalid path", func(t *testing.T) {
-		ctx := context.Background()
+		ctx := t.Context()
 		_, _, err := fs.Get(ctx, "../invalidpath.txt")
 		require.ErrorIs(t, err, ErrInvalidPath)
 	})

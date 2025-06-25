@@ -49,7 +49,7 @@ DELETE rp
 FROM fivenet_rbac_roles_permissions AS rp
 WHERE rp.permission_id = @create_perm_id;
 
--- Rename `qualifications.QualificationsService` `CreateQualification` -> `UpdateQualification`
+-- Rename `qualifications.QualificationsService` `CreateQualification` → `UpdateQualification`
 UPDATE
 	fivenet_rbac_attrs
 SET

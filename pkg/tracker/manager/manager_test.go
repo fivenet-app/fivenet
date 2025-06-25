@@ -34,8 +34,7 @@ func TestRefreshUserLocations(t *testing.T) {
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
 
-	ctx, cancel := context.WithCancel(t.Context())
-	defer cancel()
+	ctx := t.Context()
 
 	var manager *Manager
 	app := fxtest.New(t,

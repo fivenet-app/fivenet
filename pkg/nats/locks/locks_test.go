@@ -16,21 +16,21 @@ import (
 	"go.uber.org/zap"
 )
 
-func getNatsClient(t *testing.T, js jetstream.JetStream, bucket string) *Locks {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func getNatsClient(t *testing.T, ctx context.Context, js jetstream.JetStream, bucket string) *Locks {
+	lBucket := fmt.Sprintf("%s_locks", bucket)
 	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-		Bucket:   bucket,
-		History:  3,
-		Storage:  jetstream.MemoryStorage,
-		TTL:      4 * LockTimeout,
-		Replicas: 1,
+		Bucket:         lBucket,
+		Description:    fmt.Sprintf("%s Locks", bucket),
+		History:        1,
+		MaxBytes:       -1,
+		Storage:        jetstream.MemoryStorage,
+		LimitMarkerTTL: 3 * time.Minute, // Set a limit marker TTL to avoid stale locks
 	})
-	require.NoError(t, err)
+	if err != nil {
+		require.NoError(t, err)
+	}
 
-	n, err := New(zap.NewNop(), kv, bucket, 6*time.Second)
-	require.NoError(t, err)
+	n := NewWithKV(zap.NewNop(), kv, bucket, 6*time.Second)
 	return n
 }
 
@@ -38,16 +38,17 @@ func TestNats_LockUnlock(t *testing.T) {
 	natsServer := servers.NewNATSServer(t, true)
 	js := natsServer.GetJS()
 
-	n := getNatsClient(t, js, "basic")
+	ctx := t.Context()
+	n := getNatsClient(t, ctx, js, "basic")
 
 	lockKey := path.Join("acme", "example.com", "sites", "example.com")
 
-	err := n.Lock(context.Background(), lockKey)
+	err := n.Lock(ctx, lockKey)
 	if err != nil {
 		t.Errorf("Unlock() error = %v", err)
 	}
 
-	err = n.Unlock(context.Background(), lockKey)
+	err = n.Unlock(ctx, lockKey)
 	if err != nil {
 		t.Errorf("Unlock() error = %v", err)
 	}
@@ -59,34 +60,35 @@ func TestNats_MultipleLocks(t *testing.T) {
 
 	lockKey := path.Join("acme", "example.com", "sites", "example.com")
 
-	n1 := getNatsClient(t, js, "basic")
-	n2 := getNatsClient(t, js, "basic")
-	n3 := getNatsClient(t, js, "basic")
+	ctx := t.Context()
+	n1 := getNatsClient(t, ctx, js, "basic")
+	n2 := getNatsClient(t, ctx, js, "basic")
+	n3 := getNatsClient(t, ctx, js, "basic")
 
-	err := n1.Lock(context.Background(), lockKey)
+	err := n1.Lock(ctx, lockKey)
 	if err != nil {
 		t.Errorf("Lock() error = %v", err)
 	}
 
 	go func() {
 		time.Sleep(200 * time.Millisecond)
-		n1.Unlock(context.Background(), lockKey)
+		n1.Unlock(ctx, lockKey)
 	}()
 
-	err = n2.Lock(context.Background(), lockKey)
+	err = n2.Lock(ctx, lockKey)
 	if err != nil {
 		t.Errorf("Lock() error = %v", err)
 	}
 
-	n2.Unlock(context.Background(), lockKey)
+	n2.Unlock(ctx, lockKey)
 
 	time.Sleep(100 * time.Millisecond)
-	err = n3.Lock(context.Background(), lockKey)
+	err = n3.Lock(ctx, lockKey)
 	if err != nil {
 		t.Errorf("Lock() error = %v", err)
 	}
 
-	n3.Unlock(context.Background(), lockKey)
+	n3.Unlock(ctx, lockKey)
 
 	tracker := int32(0)
 	wg := sync.WaitGroup{}
@@ -95,10 +97,10 @@ func TestNats_MultipleLocks(t *testing.T) {
 		go func(i int) {
 			defer wg.Done()
 			<-time.After(time.Duration(200+rand.Float64()*(2000-200+1)) * time.Millisecond)
-			n := getNatsClient(t, js, "basic")
+			n := getNatsClient(t, ctx, js, "basic")
 			connName := fmt.Sprintf("nats-%d", i)
 
-			err := n.Lock(context.Background(), lockKey)
+			err := n.Lock(ctx, lockKey)
 			if err != nil {
 				t.Errorf("Lock() %s error = %v: %d", connName, err, n.getRev("LOCK."+lockKey))
 			}
@@ -112,7 +114,7 @@ func TestNats_MultipleLocks(t *testing.T) {
 
 			atomic.AddInt32(&tracker, -1)
 
-			err = n.Unlock(context.Background(), lockKey)
+			err = n.Unlock(ctx, lockKey)
 			if err != nil {
 				t.Errorf("Unlock() %s error = %v: %d", connName, err, n.getRev("LOCK."+lockKey))
 			}

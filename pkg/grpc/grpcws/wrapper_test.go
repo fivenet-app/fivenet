@@ -132,8 +132,8 @@ func (s *GrpcWebWrapperTestSuite) SetupTest() {
 	time.Sleep(10 * time.Millisecond)
 }
 
-func (s *GrpcWebWrapperTestSuite) ctxForTest() context.Context {
-	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
+func (s *GrpcWebWrapperTestSuite) timeoutCtxForTest(t *testing.T) context.Context {
+	ctx, _ := context.WithTimeout(t.Context(), 1*time.Second)
 	return ctx
 }
 
@@ -159,7 +159,7 @@ func (s *GrpcWebWrapperTestSuite) makeRequest(
 
 	url := fmt.Sprintf("https://%s%s", s.listener.Addr().String(), method)
 	req, err := http.NewRequest(verb, url, body)
-	req = req.WithContext(s.ctxForTest())
+	req = req.WithContext(s.timeoutCtxForTest(s.T()))
 	require.NoError(s.T(), err, "failed creating a request")
 	req.Header = headers
 
@@ -358,7 +358,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingList_NormalGrpcWorks() {
 	}
 	conn := s.getStandardGrpcClient()
 	client := testproto.NewTestServiceClient(conn)
-	pingListClient, err := client.PingList(s.ctxForTest(), &testproto.PingRequest{Value: "foo", ResponseCount: 10})
+	pingListClient, err := client.PingList(s.timeoutCtxForTest(s.T()), &testproto.PingRequest{Value: "foo", ResponseCount: 10})
 	require.NoError(s.T(), err, "no error during execution")
 	for {
 		_, err := pingListClient.Recv()
@@ -386,7 +386,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingStream_NormalGrpcWorks() {
 	}
 	conn := s.getStandardGrpcClient()
 	client := testproto.NewTestServiceClient(conn)
-	bidiClient, err := client.PingStream(s.ctxForTest())
+	bidiClient, err := client.PingStream(s.timeoutCtxForTest(s.T()))
 	require.NoError(s.T(), err, "no error during execution")
 	bidiClient.Send(&testproto.PingRequest{Value: "one"})
 	bidiClient.Send(&testproto.PingRequest{Value: "two"})

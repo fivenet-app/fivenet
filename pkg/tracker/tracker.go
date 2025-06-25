@@ -132,7 +132,7 @@ func (t *Tracker) ListTrackedJobs() []string {
 	seen := make(map[string]struct{})
 
 	t.userLocStore.Range(func(key string, _ *livemap.UserMarker) bool {
-		// key format = JOB.GRADE.USER_ID -> cut at first dot
+		// key format = JOB.GRADE.USER_ID → cut at first dot
 		if i := strings.IndexByte(key, '.'); i > 0 {
 			seen[key[:i]] = struct{}{}
 		}

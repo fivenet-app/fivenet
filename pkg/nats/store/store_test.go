@@ -1,7 +1,6 @@
 package store
 
 import (
-	"context"
 	"testing"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/tests"
@@ -18,7 +17,7 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 	defer shutdown()
 
 	logger := zaptest.NewLogger(t)
-	ctx := context.Background()
+	ctx := t.Context()
 
 	bucket := "test1"
 	store, err := New[tests.SimpleObject](ctx, logger, js, bucket)

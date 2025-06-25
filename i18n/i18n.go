@@ -11,7 +11,7 @@ import (
 type I18n struct {
 	fallbackLang   string
 	availableLangs []string
-	// Lang -> Keys
+	// Lang → Keys
 	translations map[string]map[string]any
 }
 

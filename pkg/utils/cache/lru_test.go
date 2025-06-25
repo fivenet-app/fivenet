@@ -49,7 +49,7 @@ func TestLRUCacheTTL(t *testing.T) {
 func TestLRUCacheJanitor(t *testing.T) {
 	cache := NewLRUCache[string, int](2)
 	cache.Put("a", 1, 10*time.Millisecond)
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cache.StartJanitor(ctx, 5*time.Millisecond)
 	time.Sleep(20 * time.Millisecond)
 	cancel()

@@ -15,7 +15,7 @@ Version `v2025.5.3` is the current latest release in this example.
 
 `v2025.5.x` releases will be supported until the next minor release `v2025.6.x` is released.
 
-Still should you be running an older patch release, you should consider upgrading to the latest patch release of the current minor version (e.g., `v2025.5.1` -> `v2025.5.3`).
+Still should you be running an older patch release, you should consider upgrading to the latest patch release of the current minor version (e.g., `v2025.5.1` → `v2025.5.3`).
 
 ## Reporting a Vulnerability
 

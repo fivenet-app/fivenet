@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"context"
 	"net/http"
 	"os"
 	"testing"
@@ -36,8 +35,7 @@ func TestFullAuthFlow(t *testing.T) {
 	dbServer := servers.NewDBServer(t, true)
 	natsServer := servers.NewNATSServer(t, true)
 
-	ctx, cancel := context.WithCancel(t.Context())
-	defer cancel()
+	ctx := t.Context()
 
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
 	require.NoError(t, err)

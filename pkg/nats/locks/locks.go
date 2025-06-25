@@ -1,16 +1,23 @@
-// Modified version of https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/nats.go#L114
-// which is licensed under [MIT License](https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/LICENSE)
+/*
+ * Modified version of https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/nats.go#L114
+ * which is licensed under [MIT License](https://github.com/HeavyHorst/certmagic-nats/blob/b27fd6c010166e396b6f9e1c651ba7b02ce6c01f/LICENSE)
+ *
+ * The code has been modified to use the per-key TTL feature of NATS JetStream KeyValue store that was added in NATS 2.11.0.
+ */
 package locks
 
 import (
 	"context"
-	"encoding/binary"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"math/rand"
 	"strings"
 	"sync"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -51,6 +58,8 @@ type Locks struct {
 	kv jetstream.KeyValue
 	// bucket name for locks
 	bucket string
+	// instanceName is the name of the instance using the locks
+	instanceName string
 
 	// maximum age for a lock before considered stale
 	maxLockAge time.Duration
@@ -61,20 +70,57 @@ type Locks struct {
 	maplock sync.RWMutex
 }
 
-// New creates a new Locks instance for a given bucket and max lock age.
-func New(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge time.Duration) (*Locks, error) {
-	l := &Locks{
-		logger: logger.Named("locks").With(zap.String("bucket", bucket)),
-		kv:     kv,
-		bucket: bucket,
+// New creates a new Locks instance for a given bucket and max lock age (`_locks` is automatically added to the bucket).
+func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, maxLockAge time.Duration) (*Locks, error) {
+	lBucket := fmt.Sprintf("%s_locks", bucket)
+	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		Bucket:         lBucket,
+		Description:    fmt.Sprintf("%s Locks", bucket),
+		History:        1,
+		MaxBytes:       -1,
+		Storage:        jetstream.MemoryStorage,
+		LimitMarkerTTL: maxLockAge, // Set a limit marker TTL to avoid stale locks
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return NewWithKV(logger, kv, bucket, maxLockAge), nil
+}
+
+// NewWithKV creates a new Locks instance using an existing KeyValue store.
+// This is useful for testing or when you already have a KeyValue store set up.
+func NewWithKV(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge time.Duration) *Locks {
+	lBucket := fmt.Sprintf("%s_locks", bucket)
+	if kv.Bucket() != lBucket {
+		logger.Warn("using Locks with a KeyValue store that does not match the expected bucket",
+			zap.String("expected_bucket", lBucket), zap.String("actual_bucket", kv.Bucket()))
+	}
+
+	return &Locks{
+		logger:       logger.Named("locks").With(zap.String("bucket", lBucket)),
+		kv:           kv,
+		bucket:       lBucket,
+		instanceName: instance.ID(),
 
 		maxLockAge: maxLockAge,
 
 		revMap:  map[string]uint64{},
 		maplock: sync.RWMutex{},
 	}
+}
 
-	return l, nil
+type lockInfo struct {
+	Owner string `json:"owner"` // Instance name
+	TS    int64  `json:"ts"`    // Unix-nanos
+}
+
+func (l *Locks) debugPayload() []byte {
+	b, _ := json.Marshal(lockInfo{
+		Owner: l.instanceName,
+		TS:    time.Now().UnixNano(),
+	})
+	return b
 }
 
 // Lock acquires the lock for key, blocking until the lock
@@ -101,43 +147,16 @@ func (l *Locks) Lock(ctx context.Context, key string) error {
 
 loop:
 	for {
-		// Check for existing lock
 		revision, err := l.kv.Get(ctx, lockKey)
 		if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 			return err
 		}
-
 		if revision == nil {
-			break // no lock exists, proceed to create
+			break // nobody holds the lock
 		}
 
-		// If lock is too old, clean it up
-		if time.Since(revision.Created()) > l.maxLockAge {
-			l.logger.Warn("cleaning up old lock", zap.String("key", lockKey))
-			if err := l.kv.Delete(ctx, lockKey, jetstream.LastRevision(revision.Revision())); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-				return err
-			}
-
-			continue
-		}
-
-		expires := time.Unix(0, int64(binary.LittleEndian.Uint64(revision.Value())))
-		// Lock exists, check if expired
-		if time.Now().After(expires) {
-			// the lock expired and can be deleted
-			// break and try to create a new one
-			l.setRev(lockKey, revision.Revision())
-			if err := l.Unlock(ctx, key); err != nil {
-				if isWrongSequence(err) {
-					goto loop
-				}
-				return err
-			}
-			break
-		}
-
+		// wait a little and retry
 		select {
-		// retry after a short period of time
 		case <-time.After(jitterDelay()):
 		case <-ctx.Done():
 			lockAcquireTotal.WithLabelValues(l.bucket, "fail").Inc()
@@ -146,9 +165,7 @@ loop:
 	}
 
 	// Lock doesn't exist, create it
-	contents := make([]byte, 8)
-	binary.LittleEndian.PutUint64(contents, uint64(time.Now().Add(time.Duration(5*time.Minute)).UnixNano()))
-	nrev, err := l.kv.Create(ctx, lockKey, contents)
+	nrev, err := l.kv.Create(ctx, lockKey, l.debugPayload(), jetstream.KeyTTL(l.maxLockAge))
 	if err != nil && isWrongSequence(err) {
 		// another process created the lock in the meantime
 		// try again
@@ -177,12 +194,11 @@ func (l *Locks) TryLock(ctx context.Context, key string) (bool, error) {
 		return false, err
 	}
 	if revision != nil {
-		return false, nil // lock already exists
+		return false, nil // someone else holds the lock
 	}
 
-	contents := make([]byte, 8)
-	binary.LittleEndian.PutUint64(contents, uint64(time.Now().Add(5*time.Minute).UnixNano()))
-	nrev, err := l.kv.Create(ctx, lockKey, contents)
+	// create the lock with TTL + debug payload in one shot
+	nrev, err := l.kv.Create(ctx, lockKey, l.debugPayload(), jetstream.KeyTTL(l.maxLockAge))
 	if err != nil {
 		if isWrongSequence(err) {
 			return false, nil

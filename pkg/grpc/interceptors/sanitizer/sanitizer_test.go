@@ -68,7 +68,7 @@ var tests = []struct {
 }
 
 func TestUnaryServerInterceptor(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 	interceptor := UnaryServerInterceptor()
 
 	for _, test := range tests {

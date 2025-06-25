@@ -137,20 +137,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 
 	// Create locks only if not overriden by option
 	if s.cl && s.l == nil {
-		lockBucket := fmt.Sprintf("%s_locks", bucket)
-
-		locksKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-			Bucket:      lockBucket,
-			Description: fmt.Sprintf("%s Store Locks", bucket),
-			History:     2,
-			Storage:     jetstream.MemoryStorage,
-			TTL:         5 * locks.LockTimeout,
-		})
-		if err != nil {
-			return nil, err
-		}
-
-		l, err := locks.New(logger, locksKV, lockBucket, 4*locks.LockTimeout)
+		l, err := locks.New(ctx, logger, js, bucket, 3*locks.LockTimeout)
 		if err != nil {
 			return nil, err
 		}
@@ -291,8 +278,8 @@ func (s *Store[T, U]) get(key string) (U, error) {
 // only "JOB.GRADE.USER_ID", not "JOB.GRADE2.X" or "JOB.GRADE_USER_ID".
 func (s *Store[T, U]) GetBySegmentOne(prefix string) (U, error) {
 	// ensure we only match whole segments:
-	//   "JOB.GRADE" -> "JOB.GRADE."
-	//   ""           -> ""  (no prefix => match everything)
+	//   "JOB.GRADE" → "JOB.GRADE."
+	//   ""          → "" (no prefix => match everything)
 	seg := prefix
 	if seg != "" && !strings.HasSuffix(seg, ".") {
 		seg = seg + "."
@@ -607,9 +594,21 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 		return fmt.Errorf("failed to marshal proto msg for key %s put. %w", key, err)
 	}
 
-	rev, err := s.kv.Put(ctx, key, data)
-	if err != nil {
-		return fmt.Errorf("failed to put value for key %s. %w", key, err)
+	// Attempt to create or update the key in the NATS KeyValue store.
+	var rev uint64
+	entry, err := s.kv.Get(ctx, key)
+	if err == nil {
+		// Key exists → optimistic CAS
+		rev, err = s.kv.Update(ctx, key, data, entry.Revision())
+		if err != nil {
+			return fmt.Errorf("failed to update value for key %s in put. %w", key, err)
+		}
+	} else if errors.Is(err, jetstream.ErrKeyNotFound) {
+		// brand-new key
+		rev, err = s.kv.Create(ctx, key, data)
+		if err != nil {
+			return fmt.Errorf("failed to create value for key %s in put. %w", key, err)
+		}
 	}
 
 	item := s.updateFromType(key, msg, true)
