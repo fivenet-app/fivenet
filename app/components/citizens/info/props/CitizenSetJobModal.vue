@@ -118,6 +118,7 @@ onBeforeMount(async () => listJobs());
                                 :options="jobs"
                                 by="label"
                                 :searchable-placeholder="$t('common.search_field')"
+                                :search-attributes="['label', 'name']"
                             >
                                 <template #label>
                                     <template v-if="state.job">

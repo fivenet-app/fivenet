@@ -1,0 +1,73 @@
+package housekeeper
+
+import (
+	"context"
+	"errors"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
+	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	"github.com/nats-io/nats.go/jetstream"
+	"go.uber.org/zap"
+)
+
+func (s *Housekeeper) runIdleWatcher(ctx context.Context) {
+	for {
+		if err := s.idleWatcher(ctx); err != nil {
+			if !errors.Is(err, context.Canceled) {
+				s.logger.Error("idle watcher stopped", zap.Error(err))
+			}
+		}
+
+		select {
+		case <-ctx.Done():
+			return
+
+		case <-time.After(2 * time.Second):
+		}
+	}
+}
+
+func (s *Housekeeper) idleWatcher(ctx context.Context) error {
+	watch, err := s.dispatches.IdleStore().Watch(ctx, "idle.*")
+	if err != nil {
+		return err
+	}
+
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+
+		case e := <-watch.Updates():
+			if e == nil || (e.Operation() != jetstream.KeyValueDelete &&
+				e.Operation() != jetstream.KeyValuePurge) {
+				continue // we only care about expiry events
+			}
+
+			idStr := strings.TrimPrefix(string(e.Key()), "idle.")
+			id, _ := strconv.ParseUint(idStr, 10, 64)
+
+			// double-check it is still open, then cancel & archive
+			dsp, err := s.dispatches.Get(ctx, id)
+			if err != nil || dsp == nil ||
+				centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+				continue // Already handled elsewhere
+			}
+
+			_, _ = s.dispatches.UpdateStatus(ctx, id, &centrum.DispatchStatus{
+				CreatedAt:  timestamp.Now(),
+				DispatchId: id,
+				Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			})
+			_ = s.dispatches.AddAttributeToDispatch(ctx, dsp,
+				centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD)
+
+			// remove from in-mem/kv so the UI gets the event
+			_ = s.dispatches.Delete(ctx, id, false)
+		}
+	}
+}

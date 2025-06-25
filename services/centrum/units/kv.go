@@ -42,35 +42,38 @@ func (s *UnitDB) List(ctx context.Context, jobs []string) []*centrum.Unit {
 		jobs = []string{""}
 	}
 
-	out := []*centrum.Unit{}
-
-	for _, job := range jobs {
-		keys := s.jobMapping.Keys(job)
-
-		us := []*centrum.Unit{}
-		for _, key := range keys {
-			uid, err := centrumutils.ExtractIDString(key)
-			if err != nil {
-				continue
+	keys := s.jobMapping.KeysFiltered("", func(key string) bool {
+		for _, job := range jobs {
+			if strings.HasPrefix(key, job+".") {
+				return true
 			}
-			unit, err := s.store.Get(uid)
-			if err != nil {
-				continue
-			}
-			if unit == nil {
-				continue
-			}
-			us = append(us, unit)
 		}
 
-		out = append(out, us...)
+		return false
+	})
+
+	us := []*centrum.Unit{}
+	for _, key := range keys {
+		uid, err := centrumutils.ExtractIDString(key)
+		if err != nil {
+			continue
+		}
+
+		unit, err := s.store.Get(uid)
+		if err != nil {
+			continue
+		}
+		if unit == nil {
+			continue
+		}
+		us = append(us, unit)
 	}
 
-	slices.SortFunc(out, func(a, b *centrum.Unit) int {
+	slices.SortFunc(us, func(a, b *centrum.Unit) int {
 		return strings.Compare(a.Name, b.Name)
 	})
 
-	return out
+	return us
 }
 
 func (s *UnitDB) Filter(ctx context.Context, jobs []string, statuses []centrum.StatusUnit, notStatuses []centrum.StatusUnit, filterFn func(unit *centrum.Unit) bool) []*centrum.Unit {

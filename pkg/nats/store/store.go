@@ -89,7 +89,7 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 }
 
 // Option is a functional option for configuring the Store.
-type Option[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U])
+type Option[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U], kvConfig *jetstream.KeyValueConfig)
 
 // OnUpdateFn is a callback for update events.
 type OnUpdateFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(ctx context.Context, s *Store[T, U], value U) (U, error)
@@ -117,17 +117,19 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 		data: xsync.NewMap[string, U](),
 	}
 
+	kvConfig := jetstream.KeyValueConfig{
+		Bucket:      bucket,
+		Description: fmt.Sprintf("%s Store", bucket),
+		History:     1,
+		Storage:     jetstream.MemoryStorage,
+	}
+
 	for _, opt := range opts {
-		opt(s)
+		opt(s, &kvConfig)
 	}
 
 	if s.kv == nil {
-		storeKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-			Bucket:      bucket,
-			Description: fmt.Sprintf("%s Store", bucket),
-			History:     1,
-			Storage:     jetstream.MemoryStorage,
-		})
+		storeKV, err := js.CreateOrUpdateKeyValue(ctx, kvConfig)
 		if err != nil {
 			return nil, fmt.Errorf("failed to create kv (bucket %s) for store. %w", bucket, err)
 		}
@@ -446,7 +448,7 @@ func (s *Store[T, U]) KeysFiltered(prefix string, filter func(string) bool) []st
 			return true
 		}
 
-		// strip off store.prefix so we return the “user” key
+		// strip off store.prefix so we return the "user" key
 		userKey := internalKey
 		if s.prefix != "" {
 			userKey = strings.TrimPrefix(internalKey, s.prefix)
@@ -507,7 +509,7 @@ func (s *Store[T, U]) ListFiltered(prefix string, filter func(key string, val U)
 			return true
 		}
 
-		// strip off store.prefix so we return the “user” key
+		// strip off store.prefix so we return the "user" key
 		userKey := internalKey
 		if s.prefix != "" {
 			userKey = strings.TrimPrefix(internalKey, s.prefix)
@@ -546,7 +548,7 @@ func (s *Store[T, U]) Range(fn func(key string, value U) bool) {
 	}
 
 	s.data.Range(func(internalKey string, _ U) bool {
-		// strip store prefix so we expose the “user key”
+		// strip store prefix so we expose the "user key"
 		userKey := internalKey
 		if s.prefix != "" {
 			userKey = strings.TrimPrefix(internalKey, s.prefix)
@@ -780,6 +782,10 @@ func (s *Store[T, U]) WatchAll(ctx context.Context) (chan *KeyValueEntry[T, U], 
 
 func (s *Store[T, U]) prefixed(key string) string {
 	return s.prefix + events.SanitizeKey(key)
+}
+
+func (s *Store[T, U]) KV() jetstream.KeyValue {
+	return s.kv
 }
 
 type KeyValueEntry[T any, U protoutils.ProtoMessageWithMerge[T]] struct {

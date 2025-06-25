@@ -127,7 +127,7 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 		return nil
 	}
 
-	// mark the current dispatch as “multiple” and add the references
+	// mark the current dispatch as "multiple" and add the references
 	if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE); err != nil {
 		return err
 	}

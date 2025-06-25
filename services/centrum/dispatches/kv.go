@@ -2,16 +2,24 @@ package dispatches
 
 import (
 	"context"
+	"errors"
 	"slices"
+	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
+	"github.com/nats-io/nats.go/jetstream"
 	"google.golang.org/protobuf/proto"
 )
 
 func (s *DispatchDB) Store() *store.Store[centrum.Dispatch, *centrum.Dispatch] {
 	return s.store
+}
+
+func (s *DispatchDB) IdleStore() jetstream.KeyValue {
+	return s.idleKV
 }
 
 func (s *DispatchDB) updateInKV(ctx context.Context, id uint64, dsp *centrum.Dispatch) error {
@@ -46,43 +54,46 @@ func (s *DispatchDB) Get(ctx context.Context, id uint64) (*centrum.Dispatch, err
 	return dsp, nil
 }
 
+// List returns all dispatches that match the given job prefixes.
+// If jobs is nil, it returns all dispatches.
 func (s *DispatchDB) List(ctx context.Context, jobs []string) []*centrum.Dispatch {
 	if jobs == nil {
 		jobs = []string{""}
 	}
 
-	out := []*centrum.Dispatch{}
-
-	for _, job := range jobs {
-		keys := s.jobMapping.Keys(job)
-
-		ds := []*centrum.Dispatch{}
-		for _, key := range keys {
-			did, err := centrumutils.ExtractIDString(key)
-			if err != nil {
-				continue
+	keys := s.jobMapping.KeysFiltered("", func(key string) bool {
+		for _, job := range jobs {
+			if strings.HasPrefix(key, job+".") {
+				return true
 			}
-			dsp, err := s.store.GetOrLoad(ctx, did)
-			if err != nil {
-				continue
-			}
-
-			// Skip any broken dispatches (e.g. missing job or ID)
-			if dsp.Id == 0 || len(dsp.Jobs.GetJobs()) == 0 {
-				continue
-			}
-
-			ds = append(ds, dsp)
 		}
 
-		out = append(out, ds...)
+		return false
+	})
+
+	ds := []*centrum.Dispatch{}
+	for _, key := range keys {
+		uid, err := centrumutils.ExtractIDString(key)
+		if err != nil {
+			continue
+		}
+
+		dsp, err := s.store.GetOrLoad(ctx, uid)
+		if err != nil {
+			continue
+		}
+		// Skip any broken dispatches (e.g. missing job or ID)
+		if dsp == nil || dsp.Id == 0 || len(dsp.Jobs.GetJobs()) == 0 {
+			continue
+		}
+		ds = append(ds, dsp)
 	}
 
-	slices.SortFunc(out, func(a, b *centrum.Dispatch) int {
+	slices.SortFunc(ds, func(a, b *centrum.Dispatch) int {
 		return int(a.Id - b.Id)
 	})
 
-	return out
+	return ds
 }
 
 func (s *DispatchDB) Filter(ctx context.Context, jobs []string, statuses []centrum.StatusDispatch, notStatuses []centrum.StatusDispatch) []*centrum.Dispatch {
@@ -121,6 +132,40 @@ func (s *DispatchDB) updateStatusInKV(ctx context.Context, id uint64, status *ce
 		return existing, true, nil
 	}); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+const (
+	InactiveTTL            = 60 * time.Minute // How long a Dispatch may stay idle/quiet
+	InactiveLimitMarkerTTL = 2 * time.Hour    // How long tombstones live
+
+)
+
+func (d *DispatchDB) TouchActivity(ctx context.Context, id uint64) error {
+	key := "idle." + centrumutils.IdKey(id)
+
+	// First try to create the timer key with TTL.
+	if _, err := d.idleKV.Create(
+		ctx, key, nil,
+		jetstream.KeyTTL(InactiveTTL),
+	); err != nil {
+		if !errors.Is(err, jetstream.ErrKeyExists) {
+			return err // a real failure
+		}
+
+		// Key already exists → refresh its TTL with Update.
+		// We need the current revision to comply with optimistic locking.
+		entry, err := d.idleKV.Get(ctx, key)
+		if err != nil {
+			return err
+		}
+
+		// Update resets the previously-set TTL back to the full 60 min.
+		if _, err = d.idleKV.Update(ctx, key, nil, entry.Revision()); err != nil {
+			return err
+		}
 	}
 
 	return nil

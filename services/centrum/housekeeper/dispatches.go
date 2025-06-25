@@ -196,6 +196,8 @@ func (s *Housekeeper) runDeleteOldDispatches(ctx context.Context, data *cron.Cro
 	return nil
 }
 
+// deleteOldDispatches deletes dispatches that are older than a certain number of days.
+// This can probably be moved into the general housekeeper service.
 func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 	tDispatch := table.FivenetCentrumDispatches
 

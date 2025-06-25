@@ -71,6 +71,7 @@ type DispatchDB struct {
 
 	store      *store.Store[centrum.Dispatch, *centrum.Dispatch]
 	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
+	idleKV     jetstream.KeyValue
 }
 
 type Params struct {
@@ -112,9 +113,21 @@ func New(p Params) *DispatchDB {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		idleKV, err := d.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
+			Bucket:         "centrum_dispatches_idle",
+			Description:    "Timer keys that expire when a dispatch is inactive",
+			Storage:        jetstream.MemoryStorage,
+			History:        1,
+			MaxBytes:       0,
+			TTL:            0,
+			LimitMarkerTTL: InactiveLimitMarkerTTL,
+		})
+		d.idleKV = idleKV
+
 		jobSt, err := store.New[common.IDMapping, *common.IDMapping](ctxCancel, logger, p.JS, "centrum_dispatches",
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
+			store.WithKVConfig[common.IDMapping, *common.IDMapping](jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour}),
 		)
 		if err != nil {
 			return err
@@ -127,12 +140,18 @@ func New(p Params) *DispatchDB {
 
 		st, err := store.New[centrum.Dispatch, *centrum.Dispatch](ctxCancel, logger, p.JS, "centrum_dispatches",
 			store.WithKVPrefix[centrum.Dispatch, *centrum.Dispatch]("id"),
+			// Make sure dispatches are removed from the store after 7 days of inactivity (if all other cleanup mechanisms fail)
+			store.WithKVConfig[centrum.Dispatch, *centrum.Dispatch](jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour}),
 			store.WithOnUpdateFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *store.Store[centrum.Dispatch, *centrum.Dispatch], dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
 				if dispatch == nil {
 					return nil, nil
 				}
 
 				var errs error
+				if err := d.TouchActivity(ctx, dispatch.Id); err != nil {
+					errs = multierr.Append(errs, fmt.Errorf("failed to touch activity for dispatch %d. %w", dispatch.Id, err))
+				}
+
 				for _, job := range dispatch.Jobs.GetJobStrings() {
 					if err := jobSt.Put(ctx, centrumutils.JobIdKey(job, dispatch.Id), &common.IDMapping{
 						Id: dispatch.Id,

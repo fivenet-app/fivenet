@@ -116,9 +116,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <USelectMenu
                                 v-model="state.job"
                                 :options="availableJobs"
-                                by="name"
                                 searchable
+                                by="label"
                                 :searchable-placeholder="$t('common.search_field')"
+                                :search-attributes="['label', 'name']"
                             >
                                 <template #label>
                                     <template v-if="state.job">

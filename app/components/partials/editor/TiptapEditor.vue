@@ -225,7 +225,7 @@ if (props.enableCollab && ydoc && yjsProvider) {
                     // returns nothing → no widget for your own cursor
                     return new HTMLElement();
                 }
-                // Otherwise build the “remote” cursor as normal:
+                // Otherwise build the "remote" cursor as normal:
                 const cursor = document.createElement('span');
                 cursor.classList.add('collaboration-cursor__caret');
                 cursor.setAttribute('style', `border-color: ${user.color}`);

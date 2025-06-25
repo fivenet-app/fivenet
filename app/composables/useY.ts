@@ -14,7 +14,7 @@ import { LOCAL_ORIGIN, useYBoolean, useYNumber, useYText, type YjsSyncOptions } 
 //  Primitive helpers & types
 // ---------------------------------------------------------------------------
 
-/** Only string, boolean or number are supported as “primitive” Y.Map values. */
+/** Only string, boolean or number are supported as "primitive" Y.Map values. */
 export type Primitive = string | boolean | number;
 
 /** A flat record or nested structure that can be mirrored into Yjs. */
@@ -240,7 +240,7 @@ export function useYArrayFiltered<T extends object>(
  * @param filter  - Optional {@link OptsKeyFilter} specifying which keys to include or exclude.
  *                  If neither `only` nor `omit` is provided, all keys of `state` are synced.
  * @param opts    - {@link YjsSyncOptions} controlling authoritative seeding and provider handling.
- *                  `opts.authoritative` (boolean) means “seed this map on empty.”
+ *                  `opts.authoritative` (boolean) means "seed this map on empty."
  *                  `opts.provider` should be a Yjs provider that emits a `"sync"` event.
  * @returns       The same `state` object, now kept in sync with `yMap`.
  */

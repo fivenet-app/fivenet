@@ -644,6 +644,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         searchable
                                         value-attribute="name"
                                         :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['label', 'name']"
                                     >
                                         <template #label>
                                             <template v-if="state.jobInfo.publicJobs.length">
@@ -677,6 +678,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         searchable
                                         value-attribute="name"
                                         :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['label', 'name']"
                                     >
                                         <template #label>
                                             <template v-if="state.jobInfo.hiddenJobs.length">
@@ -825,6 +827,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         searchable
                                         value-attribute="name"
                                         :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['label', 'name']"
                                     >
                                         <template #label>
                                             <template v-if="state.discord.ignoredJobs.length > 0">

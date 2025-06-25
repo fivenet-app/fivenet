@@ -164,35 +164,14 @@ func NewServer(p Params) (Result, error) {
 			return fmt.Errorf("failed to register stream. %w", err)
 		}
 
-		g, gctx := errgroup.WithContext(ctxStartup)
-		g.Go(func() error {
-			if err := s.settings.LoadFromDB(gctx, ""); err != nil {
-				return fmt.Errorf("failed to load settings from DB. %w", err)
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+
+			if err := s.loadData(ctxCancel); err != nil {
+				s.logger.Error("failed to load initial centrum data", zap.Error(err))
 			}
-			return nil
-		})
-
-		g.Go(func() error {
-			if err := s.dispatchers.LoadFromDB(ctxStartup, ""); err != nil {
-				return fmt.Errorf("failed to load dispatchers from DB. %w", err)
-			}
-			return nil
-		})
-
-		g.Go(func() error {
-			if err := s.units.LoadFromDB(ctxStartup, 0); err != nil {
-				return fmt.Errorf("failed to load units from DB. %w", err)
-			}
-			return nil
-		})
-
-		if err := g.Wait(); err != nil {
-			return fmt.Errorf("failed to load initial data. %w", err)
-		}
-
-		if err := s.dispatches.LoadFromDB(ctxStartup, nil); err != nil {
-			return fmt.Errorf("failed to load dispatches from DB. %w", err)
-		}
+		}()
 
 		return nil
 	}))
@@ -251,4 +230,38 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 
 func (s *Server) GetPermsRemap() map[string]string {
 	return pbcentrum.PermsRemap
+}
+
+func (s *Server) loadData(ctx context.Context) error {
+	g, gctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		if err := s.settings.LoadFromDB(gctx, ""); err != nil {
+			return fmt.Errorf("failed to load settings from DB. %w", err)
+		}
+		return nil
+	})
+
+	g.Go(func() error {
+		if err := s.dispatchers.LoadFromDB(ctx, ""); err != nil {
+			return fmt.Errorf("failed to load dispatchers from DB. %w", err)
+		}
+		return nil
+	})
+
+	g.Go(func() error {
+		if err := s.units.LoadFromDB(ctx, 0); err != nil {
+			return fmt.Errorf("failed to load units from DB. %w", err)
+		}
+		return nil
+	})
+
+	if err := g.Wait(); err != nil {
+		return fmt.Errorf("failed to load initial data. %w", err)
+	}
+
+	if err := s.dispatches.LoadFromDB(ctx, nil); err != nil {
+		return fmt.Errorf("failed to load dispatches from DB. %w", err)
+	}
+
+	return nil
 }
