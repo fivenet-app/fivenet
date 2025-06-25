@@ -4,49 +4,136 @@ All notable changes to this project will be documented in this file.
 
 ## [2025.6.4] - 2025-06-24
 
+### 🚀 Features
+
+- Rewrite centrum state to not be monolithic anymore
+- Add event type/states filter to audit log
+- Add card view for dispatch list
+- Introduce log level overrides for certain components
+- Change dispatch list time to badge
+- Migrate to protovalidate
+- Add username and external id search to account list
+
 ### 🐛 Bug Fixes
 
+- Livemap not sending markers for superuser
+- Re-gen proto files and improve dispatch deletion
+- Re-enable disabled cron fx opts
+- Improve jobs fallback logic for dispatches
+- Audit log state selector not showing label correctly
+- Split audit log search into two lines
+- Centrum streams for settings and dispatchers not working correctly
 - Switch to leader election for cron scheduler and add nats
+- Leader election not working due to missing limit marker ttl on kv
+- Centrum settings access not being stored/updated
+- Dispatch card view message/creator spacing
+- Job and grade being overwritten in settings logic
 
 ## [2025.6.3] - 2025-06-21
 
 ### 🚀 Features
 
+- Add grid overlay to livemap and fix access creation issues
+- Add plugin based grid to leaflet map
+- Start work on multi job dispatch center
+- Continue tracker rework and add dispatch heatmap
+- Add cronjob for dispatch heatmap generation
+- Add demo mode
+- Improve i18n errors and fix tracker issues
+- Rename notificator to notifications
+- Rename notificator to notifications and improve stream logic
+- *(ui)* Use permission and attribute objects for permission checks
+- Add useSearchForm to sync zod state between url and store
 - Make client app config into protobuf messages and add client view
 
 ### 🐛 Bug Fixes
 
+- Livemap stream issue
+- Setuserprops query destination issue
 - Filestore migration command skipping every job logo after one
+- Wiki page list not showing job logo
+- Avatar upload issue
 - Template clipboard selection for more than one with max spec
+- Tiptap editor image paste handler not falling back to default
+- Yjs content empty issue
+- Centrum getsettings call
 - Add log to tiptap editor sync event
+- Collab loading issue
+- Adjust empty paragraph handling for tiptap content
+- Move load content logic to synced event promise
+- External link for social login not working
+- Tweak vue lifecycle usage
+- Document access check in view
 - Adjust yjs content set logic and add context menu for calendar
+- Issues with citizen set user props and avatars
+- Update generated files
+- Grpc websocket ping message
+- Issues with tracker rework
+- Improve centrum sidebar
+- Improve centrum and livemap marker and list designs
+- Remove unused centrum events
+- Don't stop centrum stream on livemap switch to dispatch center
+- Improve error messages for debugging
+- Attempt to fix tracker nats stream issue
+- Add max dispatches to heatmap legend
+- Issues with demo mode and tweak settings button in map
+- Add more comments and fix nats store issues
+- Clear searches store on app version changes
+- Colleagues list labels search form issue
+- Colleague labels search and citizen labels returning empty
+- Update translations
+- Remove notifications list useSearchForm as it is interferring
+- Handle user info changed on client side
+- Add max old space to pnpm build
 
-## [2025.6.2] - 2025-06-21
+## [2025.6.1] - 2025-06-08
 
 ### 🚀 Features
 
-- Make client app config into protobuf messages and add client view
+- Update livemap-tiles layers
 
 ### 🐛 Bug Fixes
 
-- Filestore migration command skipping every job logo after one
-- Template clipboard selection for more than one with max spec
-- Add log to tiptap editor sync event
-- Adjust yjs content set logic and add context menu for calendar
-
-## [2025.6.1] - 2025-06-08
+- Changelog generation
+- Access to public qualifications
+- Wrong users table used in big rename
+- Jobprops guild id/channel id handling
+- Draft state not being propagated
+- Add history to document comments
+- "successfull" -> "successful" typo
+- Update default config
+- Adjust superuser job toggle logic order
+- Table name
+- Default icon in selector
+- Changelog release script
 
 ## [2025.6.0] - 2025-06-07
 
 ### 🚀 Features
 
+- Add basic opentelemetry client for frontend
+- Add discord channel list and format builder to job props discord tab
+- Add basic templateblock and templatevar nodes for tiptap
+- Add auto grade setting for qualifications (no function yet)
 - Add auto grading to qualifications
 - Store discord user token for guild list and other functionality in
+- Add env var expansion to otel attributes
+- Reduce mdi-vue3 import all icons impact
 
 ### 🐛 Bug Fixes
 
+- Otlp config
+- Otel metrics url
+- Otel trace endpoint url issue
+- Otlp trace endpoint issue for good
+- Adjust metrics for grpc server
 - Oauth2 tokens migration
+- Switch collab stream to interest-based retention policy
 - Image inserted as base64 when file upload is enabled and other
+- Add recommended otel attribute for k8s env
+- Set qualification auto grade mode to first valid option
+- Improve reconnect logic for collab sync
+- Tiptap editor users not passing the files array everywhere
 
 ### ⚙️ Miscellaneous Tasks
 
@@ -56,21 +143,80 @@ All notable changes to this project will be documented in this file.
 
 ### 🚀 Features
 
+- Add copy/paste for role perms/attrs to normal roles
+- Add document user pins and update the ui list
+- Collaborative document/wiki page editing
 - Add collab editor to wiki pages
+- Continue work on collaboration editing
+- Continue work on collaboration and file upload system
+- Continue improving yjs composables and migration to new filestore
+- Add tables for qualifications exam questions filestore
+- Add filestore to qualifications backend
+- Add draft field to qualifications
+- Add filestore housekeeper and improve db housekeeper logic
 - Add filestore migrations command and cleanup otlp usage
 
 ### 🐛 Bug Fixes
 
+- Lint issue in useDashboard caused by /settings url
 - Perms events issues by reducing amount of events
+- Rename fixes migration having a colon instead of a semi colon
+- Perms no need to ack the message
+- Catch invalid json in role paste
+- Improve jobs/roles list flex/grid use
+- Add documents draft index
+- Rewrite perms system to use all grpc objects
+- Role attr load table name
+- Rework max attributes to be loaded from the database
+- Some DELETE queries being broken due to using aliased tables
+- Move avatars to use files table where applicable
+- Issues with yjs array and primitive wrappers
 - Db migrations using "wrong" fivenet_users table when esxcompat
+- Migrations users table workaround
+- Rework logic of clipboard select to fix issues with requirements
+- Move doc refs/rels creation to server and fix issues with editor
+- Move exam editor question to use new filestore
+- Issues with editor load and sync behavior
+- Remove presigned url usage
+- Improve grpc websocket error handling
+- Wip drafts store types
+- Exam question editor files not being send to qualification
+- File upload issues with qualification editor
+- Improve exam editor image display
+- Db housekeeper soft delete test case
 
 ## [2025.5.4] - 2025-05-28
 
+### 🚀 Features
+
+- Add copy/paste for role perms/attrs to normal roles
+- Add document user pins and update the ui list
+
 ### 🐛 Bug Fixes
 
+- Lint issue in useDashboard caused by /settings url
 - Perms events issues by reducing amount of events
+- Rename fixes migration having a colon instead of a semi colon
+- Perms no need to ack the message
+- Catch invalid json in role paste
+- Improve jobs/roles list flex/grid use
+- Add documents draft index
+- Rewrite perms system to use all grpc objects
+- Role attr load table name
+- Rework max attributes to be loaded from the database
 
 ## [2025.5.3] - 2025-05-24
+
+### 🚀 Features
+
+- Remove bodycheckup quickbutton
+
+### 🐛 Bug Fixes
+
+- Colleague activity issues and correct sync api field name
+- Client side settings page overlapping, moved to /user-settings
+- Overflowing select menus in app config
+- Improve banner message handling
 
 ### ⚙️ Miscellaneous Tasks
 
@@ -80,19 +226,89 @@ All notable changes to this project will be documented in this file.
 
 ### 🚀 Features
 
+- Continue job cleanup logic
 - Add basic `fivenet tools sync status` subcommand
+- Add effective perms list for easier debugging of role perms
+- Hard delete now takes dependant tables into account
+- Change icon for effective perms view and add tooltips
+- Add more tooltips to buttons with (mostly) no label
 - Use NuxtImg for lazy loading images
+- Add and use attributes organizer
+- Added basic pull request template
+- Added accounts list with editing of enabled prop
+- Rework html content renderer to use render function
+- Rework limiter attribute logic and ui
+- Add check all button to role attr stringList and jobList
 - Rework index page
+- Add panic recover to croner agent
 - Add custom i18n logic for backend
+- Rework croner package and fix issues with scheduling
+- Further improve croner error and update logic
 - Citizen documents improvements
 - Cleanup naming schema of apis, perms and more
 
 ### 🐛 Bug Fixes
 
+- Clear job grade list of the other mode
+- Attribute limiter updating wrong value
+- Role view job grade list not showing selected job grade
+- Docstore createcategory not being renamed
+- Change perm id of job limit perms for category create
+- Add debug log to discord group sync
+- Load all guild members for guild
+- Perm attribute nil issues
+- Livemap duty state conflict for superuser
+- Colleague list not showing view colleague button
+- Wrong formfield name in job props
+- Correct user activity key field still being required
+- Waitgroup negativ done issue
+- Don't merge perm attr values, "override" them on store
+- Adjust fine grained toggle attr job select
+- Role list await job list call
 - Add validation for negative value/valid value in job grade list
+- Effective perms not correctly showing perm states
+- Update lock file and fix key attribute typo in units list
+- GetColleague nil panic caused by nil attrs returned
+- Colleague activity feed issue and colleague string list attr issue
+- Type issues
 - Document view issues caused by content rendered nuxtimg component
+- Attribute job grade list switching
+- Add missing checkbox tiptap editor button tooltip
+- Add missing editor checkbox button tooltip for real
+- Qualification result deletion query issue
+- Limiter attr view string list toggle not working
+- Correctly "space" job name in attr view
+- Disponents info being shown when dispatch center is disabled
+- Docstore auto reminder causing panic
+- Nil pointer dereference in handleUserOauth2 (#996)
 - Sync api error handling improvements
+- Centrum settings not being included in housekeeper tables list
+- Start soft deleting job data after 1 day
+- Add logic to delete job props after reaching end of tables list
+- Remove theme column from job props
+- Housekeeper nil issue in soft delete query creation
+- Test failures caused by test data inserting job prop theme column
+- Remove email internal flag
+- Issues with roles perms and attributes listing and add basic tests
+- Perms tests and update testdata rbac
+- Linit issue in CentrumSettings component
+- Centrum sidebar leaflet condition issue
+- Improve attrs/perms deletion cleanup
+- Limiter paste not working for both attrs and perms
 - Issues with html nuxtimg tag and citizen documents list
+- Split up perms attributes and permissions proto files
+- Show data error in specific account info tabs only
+- Attr view job grade list disabled on grade 0
+- Role view and attr disabled job select condition
+- Perms limiter not storing attributes correctly and lint issues
+- Tests failing due to missing nats connection
+- Push workflow not requiring node test for build-image step
+- Role view grade 0 causing toggle to be off
+- Grpc server perms check issue caused by renames
+- Perms logic for grpc stream requests too
+- Dispatch center not disabling correctly due to renames
+- Perms test attribute list assertions
+- Last issues with foreign key/index migrations
 
 ### 📚 Documentation
 
@@ -100,149 +316,3108 @@ All notable changes to this project will be documented in this file.
 
 ## [2025.5.1] - 2025-05-10
 
+### 🚀 Features
+
+- Add lbphone service channels dispatch conversion
+- Add AUTOMATIC dispatch attribute
+
 ### 🐛 Bug Fixes
 
+- Update go.mod
+- Update fivenet pkg version
+- Docstore workflow query syntax issues
 - Flatten role attributes returning all attributes and not just the
+- Log warning for discord user nickname change errors
+- Workaround generated sql table issue caused by unused time import
 - Job grades not being correctly "merged" on update from mstlystcdata
+- Add missing restore button to document categories modal
+
+## [2025.5.0] - 2025-05-09
+
+### 🚀 Features
+
+- Add webp image support
+- Add version number to error page
+- Add basic cron tasks list to rector
+- Add deleted_at timestamp to job props (removed theme field)
+- Add updated_at column for stvo points in user props
+- Add deleted_at column for document categories
+- Add job grade list fine grained option
+
+### 🐛 Bug Fixes
+
+- Git-cliff config skipping the wrong tags
+- Improve content available box in qualification view
+- Limiter copy/paste not working
+- Livemap showing disponents info when no perms
+- Color rename and fix law perms translations
+- Add missing min to type="number" inputs
+- Improve laws ui handling
+- Remove debug log from law table
+- Croner scheduler nil issue
+- Docstore perms issue
+- Cron not having event info
+- Issues with cron update logic
+- Show last cron event data in cron list
+- Cron execution after latest changes
+- Improve cron list expand
+- Croner type issues caused by cron event typo fix
+- Re-add data view to cron list expnad
+- Wiki list pages access check using wrong join field
+- Icon not displaying in template view
+- Tweak calendar list for client
+- Use mdi for nuxt ui icons that were missed
+- Cron data merge
+- Issues with job grade lists
+- Image showing tooltip
+- Wiki toc text being undefined
+- Include deleted categories when superuser
+- Mark deleted categories with icon and red color
+- Citizens labels translation and add basic userinfo nickname test
+- Userinfo nickname test case
+- Add description for fine grained job grade selection
+- Fallback to empty default for attr* methods
+- Use github pat for release-it checkout
 
 ## [2025.4.7] - 2025-04-22
 
 ### 🚀 Features
 
+- Continue to restrict citizens data
+- Add better Language Switcher
+- Start translation of Sidebar
+- Add job userprops support and add marker color to job props
+- Add get and set jobprops rector apis
+- Improve notificator logic
+- Automatically add Clipboard Users to Document
+- Continue work on audit log
+- Add audit logging to docstore
+- Sort most list descending by creation date
+- Add document delete button function
 - Add "basic" oauth2 client system
+- Finalize oauth2 client support
+- Set Citizen's Job
+- Add forgot password functionality
+- Rework pagination request and response usage
 - Improve audit logging
 - Use vueuse time ago function
+- Use i18n for more date time
+- Improve loading bar system
+- Started work on TemplateSchemaEditor
+- Translate fromSecondsToFormattedDuration output
+- TemplateSchemaEditor
+- Add basic notifications to template editor and view
+- Add JobGrade
+- Quality of life tweaks to pages
+- Overwrite nuxt default error page
+- Use different pattern background for herofull component
 - Add first draft of penalty calculator
+- Continue work on penalty calculator
+- Tweak penalty calculator style
+- Add fivenet open graph image
+- Add stgb penalties
+- Finalize document template job access management
+- Finalize document template job access management
+- Add content access to templates
+- Add user activity when user has been related to in a document
+- Add job props quick access buttons
+- Rename component buttons to quick buttons
+- Started looking into per job fields permissions
+- Use like for citizen name search (again)
+- Add pwa and robots.txt generation
+- Allow db connection options to be set via config file
+- Add category to template editor
+- Add reason to user props changes
+- Completely redone Design of RoleView
+- Add Description to RoleView
+- Remove pwa
+- Add filter to PenaltyCalculator
+- Tweak document templates
+- Rework permission system
+- Add get all attributes to GetPermissions method
+- Add Reason to CitizenActivityFeed
+- Begin work on RoleViewAttr
+- Done RoleViewAttr StringList
+- RoleViewAttr JobList Done
+- Begin work on JobGradeList
+- Update helm chart tweak perms attribute system
+- Completed JobGradeList (not tested)
+- Added Listbox to JobGradeList option
+- Make RoleViewAttr for JobGradeList better
+- Improve auth by using the database with a cache
+- Use normal sql search for document categories
+- Override attrs to default if superuser
+- Improve auth logic by using the notificator for token renewals
+- Start work on default permissions
+- Add default role perms logic
+- Add template weight
+- Add document template weight to frontend
+- Add bg to about page header
+- Add clear site data api endpoint
+- Filter JobList with ValidValues
+- Add Category filter to DocumentList
+- Pause livemap stream on focus loss after 5 seconds
+- Add api for searching documents by creator ids
+- Add opentelemetry based tracing
+- Add context to perms
+- Start translating backend errors
 - Use vee-validate i18n module instead of yup
+- Translate server error if is translateable
+- Use vee-validate nuxt integration for auto imports
+- Reduce permissions and start work for better docstore control
+- Switch to protobuf-ts for more typescript magic
+- Finalize move to protobuf-ts and fully type defineProps now
+- Add ID to DocumentView
+- Add copy to clipboard function to document id
+- Use tailwindcss for 100dvh class
+- Start work on event bus using nats
+- Add nats deps
+- Add image alignment to document editor
+- Continue work on nats based events system
+- Add image compression to document editor
+- Rework notifications to be actually i18n compatible
+- Add mark all read notifications button function
+- Add include read notifications toggle
+- Add from and to timestamp search to list documents
+- Improve sidebar experience with login and char selector items
+- Add advanced search to document list
+- Add character filter to document list
+- Add url auto detection to editor
+- Tweak audit log view
+- Remove underscores from vehicle type
+- Continue cleaning up backend errors
+- Merge notificator with notifications store
 - Start work on traffic infraction points
+- Switch to material icons for more variety
+- Rework attribute definition so attributes can be limited via acp
+- Continue attribute restriction work
+- Continue work on initial acp
+- Finalize acp attributes max values setting
+- Superuser can see more now I guess
+- Start work on laws acp apis
+- Add tables for laws
+- Allow superuser to see any visible job on livemap
+- Tweak documents list and comments viewing
+- Start work on command palette
 - Use more go generics in utils pkg
 - Change table pagination change previous/next buttons if disabled
+- Add pagination to citizen activity
+- Start design work on dispatch center (centrum)
+- Tweak job grade enrichment for setting userprops
+- Add search for citizens and documents to command palette
+- Tweak citizenstore search and continue centrum feature
+- Continue work on dispatch center
+- Add basic control of doc and doc comment deletion via attributes
+- Add toggle open/closed document status method
+- Change traffic points ui
+- Continue work on dispatch center
+- Continue work on unit management
+- Add open fine user prop
+- Add show html for document editor
+- Continue work on centrum service
+- Start work on control panel units management
+- Finalize units control panel
+- Load units from api for dispatch center
+- Sort units by status and name
+- Rework dispatch and units structure
+- Continue work on dispatch center
+- Continue work on centrum
+- Continue work on centrum
+- Continue work on centrum
+- Continue work on centrum features
+- Continue work on centrum
 - Continue centrum feature work
+- Continue work on dispatch and unit status feature
+- Remove in squad field and fix issues with centrum sync
+- Add dispatch unassigned status
+- Continue work on centrum
+- Rebuild proto files with newer protoc
+- Rework centrum permissions
+- Continue work on centrum feature
+- Rework dispatch center design doc
+- Tweak dispatch center design doc
+- Use uber-go/fx for easier di
+- Add user tracker logic with events
+- Tweak user tracker code
+- Continue work on centrum feature
+- Continue work on events
+- Move gen and build deps to .build dir
+- Replace @mdi/js and vue-icon with mdi-vue3 lib
+- Cleanup more centrum code and use more nats
+- Continue work on refining centrum
+- Start polishing centrum feature
+- Continue tweaking centrum feature
+- Continue polishing centrum feature
+- Refine centrum state storage logic
+- Continue polishing centrum feature
+- Fix some enum issues in centrum sidebar
+- Deduplicate code for dispatch and unit status modal
+- Continue work on centrum looking better now
+- Centrum is almost there
+- Remove duplicated livemap
+- Add signup disable option
 - Add licenses page
+- Add cookie consent
+- Tweak cookie banner and start rework of livemap logic
+- Continue work on livemap rework for centrum
+- Continue centrum and livemap state rework
+- Continue work on centrum
+- Add disponents info to dispatch center
 - Fix centrum components issues
+- Add nice license plates to vehicles list
+- Add simple confirm/cancel dialog
+- Continue work on livemap markers
+- Add ui for creating and deleting markers
 - Update generated protoc code and nuxt to latest 3.7
+- Start work on jobs pages
+- Add create and update logic for conduct entries
+- Add grpc sanitizer logic
+- Add call button to phone numbers
+- Use nice citizen/user info popover
 - Use citizen info popover more
+- Add audit log cleanup function
+- Add version to debug info
+- Add border around oauth2 connection avatar
+- Start work on auto mode for dispatch center
+- Tweak document view top layout
+- Add timeclock feature to jobs section
+- Add stats to jobs timeclock feature
+- Improve discord bot code
+- Tweak jobs nav design
+- Add cooldown to retry of dataerrorblock
+- Only load document comments when in view
 - Remove copied hasher code
+- Add fivenet discord command
+- Translate dispatch center feed
+- Add new status for dispatch accepted/declined
+- Add not in unit notification
+- Add STATUS access level to docstore
+- Continue work on jobs requests feature
+- Continue work on jobs requests feature
+- Add basic requests list layout
 - Show unit initials above player markers
+- Add splitpanes for dispatch center resizing
+- Use rector limiter to set which perms can be given to job roles
+- Tweak disponents info and add disponents list modal
+- Add disponents list to dispatch center start screen
+- Tweak sorting of units
+- Add footer links for imprint and privacy policy
+- Store search in hash
 - Rework details for centrum units and dispatches
+- Add dividers to document editor
+- Centrum join unit modal
+- Add new notification sound for centrum nudge
+- Fix attention unit check up sound
+- Centrum allow switching units
+- Highlight own unit in join unit modal
+- Add nui callback to close tablet
+- Tweak close tablet logic for nui callback
+- Deduplicate dispatches
+- Improve dispatch deduplication
+- Start work on local doc access checks
+- Improve centrum dispatch bot
+- Improve docstore references
+- Tweak notification durations
+- Use status buttons in status update modals
+- Split out discord bot as a separate sub command
+- Start adding custom metrics
+- Add presence to discord bot
+- Use color picker library
+- Allow setting discord group sync role color
+- Add last sync time to job props
+- Replace quill with jodit editor
+- Add user setting for doc editor dark theme
+- Add checkbox to document editor
+- Add focus toggling for most input fields
+- Show error for can create template when rendering
+- Add refresh button to pagination
+- Improve geolocation handling
+- Add daily pagination to timeclock
 - Improve timeclock daily pagination issues
+- Hide name in own timeclock list
+- Add metric for dispatch id
+- Add unit status color to player markers
 - Show dates in dispatch list
+- Switch around dispatches and units button on join center
+- Add log to guild setup for debug
+- Re-add info icon to unit button in sidebar
+- Increase unit check up reping time
 - Add basic s3 storage logic
+- Add basic filestore grpc service
+- Move registration to separate form
+- Split settings into separate panel in account info
+- Add username change functionality
 - Remove job roles and "employee" role
+- Remove job roles if user is no longer part of the job
+- Add discord sync settings to job props
+- Add basic body check up quick button
+- Add bmi calculator to body checkup
+- Add hints to overview
+- Add document editor dark mode hint
+- Move side tasks to worker
+- Animate selected body checkup circles
+- Add livemap marker icons
+- Add icons to livemap markers
+- Use strings instead of bigints to improve key performance
+- Use leaflet markcluster to try to improve performance
+- Use app config for basic config
+- Add basic nats async pending metric
+- Start changing tracker interface
+- Add nui debug info to account info
 - Add attributes to units
+- Add target user job to audit log
+- Start adding document activity structures
+- Continue work on jobs requests feature
+- Continue work on document activity
+- Improve doc activity updated diff view
+- Add diff for title, state and content to doc activity
+- Add doc updated diff component
+- Start work on improving templated docs access changes
+- Continue work on document actions requests
+- Add loading spinners for unit and dispatch status buttons
 - Add server time correction
+- Start working on docstore requestaction feature
+- Use erroring wrapping further
 - Add icon marker when creating new marker or dispatch
+- Continue work on doc requests feature
+- Add take document ownership button
+- Add radio frequency to job props
+- Continue work on doc requests
+- Add missing document access updated activity logging
+- Add on click logic for links in notifications
+- Enable doc owner change feature
+- Make discord employee role and format configurable
+- Improve discord sync settings job props api
+- Cleanup and polish document requests feature
+- Add simple snowflakes event during 21. to 26. December
+- Use mdi loading icon for spa loading spinner
+- Add template id to documents
+- Group centrum units by status
+- Add grouped sorting to dispatch unit assignment modal
+- Improve centrum unit assignment and unit and dispatch details
+- Face lift centrum dispatch and unit details views
+- Decrease margin for join unit modal
+- Allow going to centrum activity item if has location
+- Add goto events for unit details
+- Use custom zoom controls for livemap
+- Add livemap to dispatches list for easier finding
+- Rework documents view and list
+- Add page numbers to pagination
+- Add not same job toggle for discord role group sync
 - Take unit users location into account when auto assigning
+- Sort own dispatches by id
+- Cleanup document access request
+- Cleanup job service rename
+- Work on some requested centrum features
+- Use unit fields to store homePostal
+- Tweak citizen info layout and jobs pages
+- Add vue3-charts dep
+- Add connect to radio frequency button
+- Add graph to timeclock stats
+- Reverse timeclock weekly stats order
+- Improve dispatch and unit details status button size
+- Add markers list to dispatch center
+- Improve marker list and details
 - Add no dispatch auto assign unit attribute
+- Add details button to dispatch marker popup
+- Add assigned units to dispatch marker
+- Start design work on qualifications feature
+- Start work on basic qualifications design doc
+- Add more marker icons and add expires_at field to markers
+- Improve marker marker components structure
+- Persist active/inactive livemap overlay layers
+- Add another icon to livemap markers
+- Extend discord job sync options to allow custom rank format
+- Add more livemap marker icons
+- Only show radio frequency on click
+- Add blood type user prop
+- Allow multiple page perms to be set
+- Finalize job theme selector
+- Show total records in pagination
+- Add basic baddie pink theme
+- Add "baddie yellow" theme
+- Remove default values from attributes in favor of job perms
+- Finalize job attrs rework
+- Add per-user design override setting
+- Use per user theme in app
+- Generate and use generated perms types for frontend
+- Use vmaska for radio frequency in job props
+- Add simple motd view and set editor to jobs overview page
+- Start work on predefined dispatch/nit status ui parts
+- Remove mutex from postals coords
+- Add discord bot "unemployed role" sync with 2 modes
+- Parallize discord bot logic
 - Remove comma between first and last name
+- Allow template access to be required to be set
+- Add image proxy for improved privacy
+- Add proto user tracker event
+- Update config
+- Rewrite user tracker to use nats kv and events
+- Add icons to jobs menu bar
+- Add discord bot status log channel settings
+- Add status logging logic to user info discord bot module
+- Add discord bot sync starting log message
+- Start reworking livemap marker logic
+- Add event handling for livemap marker changes
+- Split up account info and settings into separate pages
+- Rework job props settings page
+- Improve rector laws list design
+- Continue work on filestore and split http server into fx modules
+- Add copy error for internal errors
+- Continue work on filestore logic
+- Continue work on filestore logic
+- Add note to conduct register types
+- Improve document activity diff logic to reduce used space
+- Continue work on filestore for jobs logo and basic user avatars
+- Finalize job logo functionality
+- Cleanup image display further and add job label to job props
+- Add basic mug shot functionality
+- Add finishing touches on mug shot feature
+- Continue work on employee self service
+- Continue work on absence date and self service
+- Add basic streamer mode
+- Start work on rector filestore
+- Optimize jpegs and pngs images and add rector file list logic
+- Add new jobs user activity types for future expansion
+- Add jobs grade changes for jobs user activity
+- Auto hide absence date when over the date
+- Use tailwind-scrollbar for scrollbar consistence across platforms
 - Add predefined status for dispatches and units
+- Improve predefined dispatch/unit reason layout
+- Create generic table and improve small screen table readability
 - Remove sentry from back- and frontend
+- Add jobs absence role sync to discord bot
+- Remove absence role from discord users who are not an employee
+- Add basic nui message support
+- Allow some non standard esx columns to be customized
+- Start work on fivenet settings page
+- Continue work on config restructure and reordering
+- Restart notificator stream once in 9 minutes
 - Improve storage system to use filehash to deduplicate files in
+- Add absent toggle to colleague list
+- Add transition to float and tweak small screen table layouts
+- Add duplicate dispatches field to centrum dispatch
 - Replace absence_date with absence_begin and absence_end
+- First generalized version of fivenet fivem plugin code
+- Start work on config logic rework
 - Add upload file function for "jobassets"
+- Work on basic dispatch references
+- Fix dispatch references to work
+- Use postal code short form in table
+- Rewrite images handling logic to be cleaner
+- Cleanup json logic for marshal/unmarshal to db
+- Use appconfig were applicable
+- Add more fivenet options
+- Continue improving app config feature
+- Add superuser licenses list
+- Use vee-validate file size and mimes validators
+- Add colleague activity feed to colleague list
+- Remove jobs requests feature
+- Use nats jetstream package
+- Improve server pagination
+- Add permission to list colleague activity types
+- Continue work on timeclock inactive colleague list api
+- Rework grpc server testing
+- Add query for inactive employees
+- Finish inactive timeclock page
+- Fix doc request access perms check not being applied
+- Jobs close menu on nav item click
+- Use mutexes for nats store logic
+- Start work on designing data objects for qualifications
+- Add refresh button to timeclock stats block
+- Continue work on jobs qualifications functionality
+- Add box shadow to in-game tablet style
+- Docstore owner change error fix
+- Continue work on qualifications feature
+- Continue work on qualifications feature
+- Update generated protobuf ts files
+- Continue work on qualifications calls
+- Split out qualifications service into separate directory
+- Continue refining qualifications ui
+- Continue tweaking qualifications feature
+- Continue improving qualification requests
+- Change notifications feature
+- Add notification for docstore comment added
+- Improve notificator logic
+- Continue work on qualifications feature
+- Send comment notifications only to users with access
+- Further cleanup qualifications service code
+- Add missing validation to qualification editor
+- Change livemap default settings
+- Add icons to no data blocks in qualifications ui
+- Add reason to jail player citizen activity feed
+- Make super user mode toggleable
+- Perms inheritance hint to roles list
+- Remove creator from templates and rely on job fully
+- Rework document template hint and use otlp tracing exporter
+- Move timeclock logic to fivem plugin code
+- Add discord settings to qualifications
+- Log discord role creation and group sync changes in bot
+- Add dispatch status breakdown
+- Add mark button to player marker
+- Start work on using nuxt ui pro
+- Continue nuxtui rework
+- Continue working on using nuxt ui
+- Continue rework to use nuxt ui
+- Continue rework to use nuxt ui
+- Move quick buttons to sidebar
+- Continue reworking more components
+- Continue nuxt ui rework
+- Continue nuxt ui rework
+- Continue nuxt ui rework
+- Continue nuxt ui rework - use button loading state
+- Rename centrum modals that are actually slideovers
+- Continue rework to use slideovers and modals separately
+- Rework modals and slideovers, and continue cleanup
+- Replace remaining Listboxes with USelectMenu
+- Continue refining design changes
+- Start using zod for form validation
+- Continue tweaking forms validation
+- Continue reworking form validation
+- Add gray color to user settings
+- Move more forms to new validation
+- Switch around slideover close button to the right
+- Continue fixing and adjusting layouts
+- Move last forms to zod validation
+- Improve leaflet controls theme integration
 - Use custom pagination component
+- Cleanup more layout and design related issues
+- Add basic nuxt content pages for help docs
+- Rework docs/help structure in app
+- Add more tracing logic to jetstream subscriptions
+- Center job logo in job props
+- Add custom cookie control
+- Make cookie control fixed position
+- Move fivenet website to be docs page
+- Improve website design
+- Change livemap reconnecting box text size
+- Add a basic dereferer page
+- Use nicer color picker
+- Add job and avatar to more centrum releated info
+- Add avatar to unit users list
 - Allow updating marker marker info
+- Add tooltip with long date to GenericTime component
+- Add basic group sync settings to ignore certain role ids
 - Restructure citizen info/profile layout
+- Add basic citizens attributes system
+- Rework citizen attributes completion and design
+- Add documents list style toggle
 - Rework citizen attributes to store the user/attributes in a table
+- Add basic centrum dispatch wait time with pulse animation
+- Add basic conduct view slideover
+- Add last_char field to fivenet_accounts table
 - Cleanup protobuf generator logic
+- Add some more icons to the livemap marker icons
+- Use lazy load doc editor again
+- Downgrade jodit editor again
+- Move qualifications out of the jobs pages
+- Continue work on improving qualifications
+- Continue improving qualifications feature
+- Re-add table "collapse" for citizen and conduct list
+- Add logic for qualification content check
+- Add text when qualification content is not shown
+- Add /auth index redirect page
+- Start work on calendar service
+- Continue work on calendar api basics
+- Add ignored jobs to discord app config
+- Add activity type filter to colleague activity
+- Continue work on calendar api
+- Add notifications to qualifications logic
+- Continue work on calendar ui components
+- Continue work on calendar ui
+- Continue work on calendar feature
+- Cleanup some more calendar issues
+- Fix some calendar ui isssues
+- Start work on find calendars system
+- Start work on adding calendar subscriptions
+- Continue working on calendar feature
+- Add finishing touches to calendar lists
+- Add basic char lock to login logic
+- Continue char lock logic for login
+- Add notification to calendar rsvp share
+- Continue tweaking calendar feature and finish char lock
+- Rename rsvp received status to invited
+- Fix issues with rsvp logic
+- Tweak char selector char lock style
+- Use cookies instead of local storage of auth token
 - Add basic notes field to colleague info and split the jobs user
+- Add refresh button to paginations
+- Add go to colleague button if citizen is colleague
+- Improve calendar ui
+- Further improve calendar page layout
+- Add toolbar to calendar
+- Add share button to calendar entry view
+- Fix oauth2 connect issues and persist selected tab via query param
+- Add ongoing icon to calendar entries
+- Start cleaning up notifications logic
+- Add notificator events for job props
+- Add dummy inbox page and components
+- Add inbox to overview page
+- Add calendar info to notifications
+- Add cookie for authed state
+- Rename mailer to messenger and continue design work
+- Continue work on designing messenger
+- Add links from clipboard modal to pages
+- Rewrite discord bot logic
+- Finalize discord bot rework changes
+- Continue work on messenger and get rid of grpc clients plugin
+- Continue work on messenger
+- Rename messenger to "conversations" in german
+- Add leave thread method for messenger
+- Tweak messenger message display and add grouping by date
+- Use skeleton component for some lists during loading
+- Use more skeleton in jobs components
+- Add documentinfopopover and tweak existing infopopovers
+- Start work on qualifications exam feature
+- Continue work on qualifcation exam feature
+- Remove identifier from user info where possible
+- Tweak qualifications exam feature design
+- Continue work on qualifications exam feature
+- Qualifications exam functioanlity tweaks
+- Add well known endpoints and tweak login page
+- Add pin/unpin documents logic as sidebar to document list
+- Add hover for lists and tables
+- Add grpc websocket transport
+- Enable nuxt 4 compability version
+- Remove grpc listen port
+- Make can and attr functions reactive
+- Use lazy loading for input and select menus
+- Use consola for logger
+- Add websocket info to debug info component
+- Adjust hero background gradient
+- Add unit status clean up task
+- Add button to add qualification result for any citizen
+- Add note to own activity feed
+- Start work on stream control
+- Add basic stats page
+- Add stats page toggle to fivenet settings
+- Clean up stats page logic and type="number" inputs
+- Add stats to landing layout page header
+- Add closed/open filter for citizen documents
+- Add delete faction to limiter jobs/roles list
 - Add image preview to rector file list and adjust dispatch time
+- Use global focusin/focusout listener instead of per element
+- Run gofumpt on code
+- Use plugin for chunk error detection in addition to nuxt built-in
+- Add additional "join unit" button for better ux
+- Add nats key sanitization function
 - Add color and icon fields to document category
+- Tweak citizen job props display by adding a wildcard to custom
+- Qualifications access entry
 - Clean up color select of tailwind css colors
+- Add discord help command
+- Replace discordgo with github.com/diamondburned/arikawa library
+- Add registration help to discord help command
+- Remove i18next-scanner
+- Move bot presence into app config
+- Add reduction slider to penalty calculator
+- Add password visibility toggle
+- Create streamer mode box with separate alert-based component
+- Change help command into simple command with string choices
+- Add trusted proxies list for http server
+- Start work on implementing centrum timings logic
+- Start work on calendar event notifications
+- Allow previous exam results to be seen
+- Add sorting to tables and some backend calls
+- Add sort button to documents
+- Add sorting to timeclock list for spent time and audit log
+- Rework timeclock
+- Add calendar event notifications client side
+- Continue work on cron system
+- Finalize distributed cron system
+- Translate grpc errors for deadline exceeded and cancelled
+- Add timings require_unit logic to centrum
+- Change default for all colleagues timeclock to day
+- Start work on basic single key nats cache
+- Use nats store for mstlystaticdata "caching"
+- Add auto role function for unemployed role
+- Add icon to document list closed/open search selector
+- Add timeclock clean up logic for old entries
+- Rework audit log search
+- Add option to set job grade start id/number
+- Rework can, attr, etc., into useAuth composable
+- Split discord bot into separate sub command (again)
+- Add view selection to calendar
+- Add exam question answer data and points
+- Start adding icons to search inputs
+- Add hint to laws
+- Increase law description length to 1024
+- Add role format to qualification discord sync settings directly
+- Add basic absence discord bot command
+- Add list docs and templates to audit log
+- Start work on wiki
+- Continue work on wiki system
+- Finalize first wiki version
+- Add wiki page activity logic
+- Add select menus to app config default perms select
+- Add search function to wiki
+- Add image element to exam questions
+- Add wiki translations
+- Adjust document creator job info and combine get perms
+- Add calculator
+- Make math calculator useable via keyboard input
+- Add external link derefering
+- Add generic access entry and manager system
+- Implement new generic access management everywhere
+- Rework qualification correction ui
+- Rename messenger to mailer
+- Work on mailer rework
+- Add code to absent command failed message
+- Add absent existing check to discord absent command
 - Improve category display and fix issue with qualification
+- Start complete email rework
+- Continue mail rework
+- Rework of mailer feature
+- Continue refining email rework
+- Continue tweaking email feature rework
+- Fix issues with email rework
+- Add qualification access logic
+- Fix issues with email rework
+- Add mailer template selector
+- Continue tweaking mailer ui
+- Fix issues with email creation and move it to separate page
+- Continue refinement of mailer UI
+- Add email last changed check
+- Add email last changed date to email create form
+- Improve mailer validation and tweak api for superuser
+- Improve mailer manage email list loading/error handling
+- Tweak dashboard panel
 - Remove timeclock handling cron
+- Add color and icons to document templates
+- Add basic client side address book
+- Use json for returning error messages to client
 - Add thread recipient email name to prevent email changes to be
+- Add unit access logic
+- Start work on basic workflow system for documents per template
+- Add back button to wiki page view
+- Use slightly customized protoc-gen-doc markdown template
+- Add updated_at column to user props
+- Sort wanted list by user props updated_at column
+- Sync email to user props and fix issues with mailer ui
 - Start work on internet feature
+- Send update event on role perm updates on job + grade subject
+- Record and show creator/sender email for threads/messages
+- Add card view to colleagues list
+- Add colleagues labels
+- Add basic pie chart about colleague label stats
+- Persist colleague list card view toggle
+- Improve set jobs user props labels
+- Default wiki page and qualification now includes highest rank edit
+- Add basic label sync to qualification result creation
+- Increase attributes/labels name length to 64 chars
 - Add document owner override hatch
+- Add qualification label removal to result deletion method
+- Improve qualification result label sync structure
+- Make sure wiki pages don't reference themselves
+- Start work on document workflow for auto close and reminders
+- Continue document workflow and fix wiki page list issue
+- Improve colleague info page and set jobs user props logic
+- Add ui for name prefix/suffix change to colleague activity feed
+- Move sort ref to query param and cleanup some naming
+- Add missing colleagues labels server side search logic
+- Add tooltips around table action buttons
+- Make colleague labels sortable with nice draggable list
+- Add error to DataErrorBlock for better error display
+- Change cookie code to use net/http cookie logic
+- Add basic table housekeeper to deleted data after x days
+- Continue internet idea
+- Improve websocket grpc stream reconnection logic
+- Change colleauge labels donut to bar chart
+- Check for emails on notificator start
+- Add email message search still work in progress
+- Allow email message to be clicked for highlight via query
+- Add email info popover
+- Add email copied notification
+- Continue work on internet feature
+- Make mail editor resizeable
+- Sync canSubmit for login/forgot pass forms
+- Add sound test button to user settings panel for notifications
+- Merge *ContentTypes into common enum
+- Start work on tiptap editor as a replacement for jodit
+- Continue work on tiptap editor component
+- Add basic dnb server notifications feature
+- Add min height for tiptap editors
+- Tweak tiptap editor comment mode
+- Remove jodit in favor of tiptap editor
+- Tweak content jsonnode structure
+- Add popover for table creation in editor
+- Add external link icon for external a hrefs
+- Remove dexie mailer db logic
+- Remove dexie from mailer and fix up auth redirect handling
+- Continue design work on internet feature
+- Add more tooltips to buttons
+- Make tiptap editor scrollable with overflow-y-hidden
+- Add tooltip to access manager/entry
+- Remove editor split screen and add modal for source code viewing
+- Change wiki page background color
+- Remove dexie from calendar system and fix date end of month issue
+- Add sort button to colleagues list card view
+- Add quick link for wiki pages
+- Add restore logic for second delete object call
 - Add "add image" feature to tiptap editor via modal
+- Change icon in editor image modal on load/submit
+- Add option to mark notifications as unread
+- Start work on dbsync idea
+- Add default lang to app config settings
+- Split out grpc sync server into own package
+- Allow grpc api traffic via the gin http server
+- Continue work on dbsync logic
+- Add esxcompat config option defaults to true
+- Allow fivenet to use own users, jobs, etc., tables
+- Continue work on dbsync and improve (Jobs)UserProps handling
+- Add register account api for dbsync
+- Add logic to set tablet colors via nui
+- Rework user activity structure
+- Add data handling to citizen activity feed
+- Add migration command for user activity changes
+- Add transfer account func to sync api
 - Add FIVENET_SKIP_DB_MIGRATIONS env to disable db migrations
 - Based on esx compat mode the users/fivnet_users table is switched
+- Continue work on internet feature
+- Finally switch protobuf jstype string to number
+- Add date of birth normalization and value mapping to dbsync
+- Add text color to char sex column
+- Continue internet feature structure
+- Add timeline to timeclock
+- Delete timeclock data older than 365 days automatically
+- Add tooltip to timeline date bar
+- Add timeclock range check for 6 months
+- Add job props settings for max absence begin/end days
+- Update comments on copied useFileSelection function
+- Improve not supported in tablet text by making it an alert
+- Move pinia stores to composition api
+- Update text in discord bot job props settings
+- Update protoc generated files and change content type to enum
 - Remove nickname regex bracket logic in favor of using the user's
+- Rewrite mstlystcdata to be more modular
+- Rework mstlystcdata modularity and add basic nats store test
+- Add basic internet search functionality
 - Start work for some smaller features
 - Continue work on email message attachments
+- Finalize email document attachments ui
+- Store tutor checked and points for question responses
+- Add wip sync command to discord bot
+- Add --version flag
+- Parse dsn to override parseTime parameter
+- Continue adding comments to proto files
+- Split discord bot sync settings into two sections
+- Add basic sync interval config to dbsync tables and global
+- Use presigned urls for s3 storage
+- Move away from getGRPC...Client functions to nuxt plugin
 - Joblist and jobgradelist are sent to the client and use custom
+- Improve leaflet custom layer selector
+- Split more proto files and use more enums
+- Cleanup protoc generated code
+- Add basic global banner message
+- Add basic htmldiffer tests
+- Add tooltips to dispatch center settings buttons
 - Improve livemap marker stream performance by using selective
 - Make sure a fallback access is added to wiki pages when none is
+- Remove OWNER access level from wiki page
+- Add option to make qualifications public
+- Allow nats to use nkey file
+- Add go to my location button to livemap controls
+- Add basic tests and cleanup some code
+- Add job and data field to fivenet vehicles table
+- Add job label to vehicles list if available
+- Add config reload logic for dbsync
+- Remove livemapJobs and adjust image proxy config
+- Add more tests
+- Add oauth2 api tests
+- Add basic dmv service tests
+- Add document updated access activity list
+- Remove qualification MANAGE access level as it is too confusing
+- Add basic test to tracker manager
+- Add sort_key column for mostly natural sorting in mysql
+- Add db port to non dsn db connection details
+- Update proto generated files
+- Add screenshot to readme
+- Add tooltips to editor and cleanup permissions
+- Require reason for document deletion
+- Add release-it for faster releases
 
 ### 🐛 Bug Fixes
 
+- Remove style from notification provider which isn't needed
+- Update go docker lib to 23.0.3
 - Notifications causing ambiguous import
+- Load locale from user settings
+- Removed unused lang.vue page
+- Job switcher not showing in top bar
+- Disable Autocomplete for Permission search
+- Fix job props change issues
+- Setjobprops color code not working
+- Setjobprops color input not working
+- Remove console.log from job props
+- Dataerror and datapending blocks i18n props issues
+- Fix login form displaying weird html
+- Wrong access role being saved in document editor
+- Notification translations from grpc errors
+- Fix condition for checking perms for wanted state
+- Remove nuxt image module
+- Add translator for missing documents lists items
+- Add notification to sidebar job switcher
+- Fix issue with wrong audit log state being saved
+- Show user short info on character selected in audit log
+- Translate citizen profile tabs
+- Add time to audit log entry copy function
+- Show all jobs to superuser in audit log
+- Comment deletion and setting wanted status
+- Improve document comment handling
+- Add missing required pagination in some docstore reqs
+- Delete document proto service returning nil response
+- Improve docstore get document view
+- Add missing oauth2 connections translations
+- Tweak oauth2 redirects
+- Generic oauth2 if no avatar is set
+- Auto setting Job
+- Changed from setJob to setJobName
+- SetRegToken to setRegCode
+- Rework setuserprops func
+- Fix form error message in create account and forgot pass forms
+- Fix issues with citizen relations in document editor
+- Re-add completor permissions
+- Tweak style for doc templates and document view
+- Remove console.log and add more translations
+- Tweak oauth2 login notifications
+- Required
+- Set min to 0 when not required
+- Fixup doc templates page permissions
+- Make Schema wrap
+- Use exact match for job grades completion
+- Add missing edit template button
+- Tweak document template schema protobufs
+- Tweak schema view
+- Tweak how the error message is displayed
+- Tweak loading bar error page interaction
+- Fix issues with oauth2 and discord provider
+- Sort permissions after login
+- Foreign key issue with auth choose character audit logging
+- Remove wrong vue directive used for testing
+- Attempt to fix discord oauth2 connect + login issues
+- Fix usage of i18n for date locale function
+- Not more than one job doc access for each job being allowed
+- Fix documents showing twice
+- Make sure docs access check is correct now
+- Rank roles not correctly showing in roles list
+- File serving for /
+- Breadcrumbs showing twice wehen ends in slash
+- Breadcrumbs showing twice wehen ends in slash
+- Remove duplicate translations
+- Tweak design of penalty calculator tables
+- Add translations for penaltycalculator
 - Correct query for retrieving user documents
+- Fix forgotpassword message
+- Superuser perm bypasses can checks
+- Access level enums module path
+- List templates function
+- Tweak and improve templates listing and saving
+- Don't send back err to user in docstore templates
+- Opening closed documents
+- Fix issues around doc clipboard requirement issues
+- Phone number not appearing in search
+- Issues with handling doc and template access changes
+- No redirect occuring when template is deleted
+- Setjob method to set user to the highest rank of the job
+- Correct db duplicate record checks
+- Fix job props not saving and tweak citizen info
+- Correctly set token char when set in user
+- Remove debug print in perm roles code
+- Show category of template
 - Remove pwa update logic not needed
+- Cards component showing one line items in all cases
+- Start cleanup of testdata
+- Clean up some open pwa things and add missing return type
+- Hopefully address active stack being too large issue
+- Debug info not correctly clearing store
+- Debug info calculation
+- Tweak citizen props api
+- Issues around activity feed display
+- Correct activity feed translation for removed doc relations
+- Potentially fix removed markers to correctly disappear
+- Add doc relation issues with user activity
+- Fix user activity saving rollback
+- Issues with citizen name completor and add template documentation
+- Make sure list documents doesn't break without pagination
+- Space out tags by new lines
+- Reorder document view tabs
+- Make Filter Case-Insensitive for PenalityCalculator
+- Docstore add relation issue
+- Remove debug logging
+- Tweak issues with permission rework
+- Tweak notificator service reconnect
+- Break Title if too long
+- Set user props wanted activity reason not saving
+- Perms get all attributes
+- Valid values return for attributes
+- Seconds to time duration issue and tweak attribute and perms setup
+- Tweak perm attributes value and raw value
+- Tweak issues with attr fields checks
+- Use less json parsing for attribute creation
+- RoleViewAttr JobRankList to JobGradeList
+- Tweak permify plugin
+- Remove unnecessary todos
+- Perms attr userInfo wrong type
+- Remove superuser permission
+- Tweak and fix issues caused by userinfo changes
+- Tweak livemap attributes handling
+- Notificator token renew
+- Clean up code around auth and notificator logic
+- Store reactivity is now working as expected
+- Fix issues with orderby in list vehicles
+- Reverse perm/role id
+- Improve rector attribute handling
+- Role view attribute and perms update condition
+- Use === instead of == for type safety
+- Use === everywhere instead of == in js/ts code
+- Remove debug sql log
+- Correctly position marker above point
+- Logger making crazy long lines and choose char after refresh
+- Job switcher not working
+- Resolve set user props issues
+- Start with empty default role perms list
+- Use gap-2 between attributes
+- Tweak access token retrieval in auth interceptor
+- Resolve makefile helm-docs target
+- Remove unused rbac table
+- Issues with closest role attribute retrieval
+- Add clear site data endpoint
+- Get document issue
+- Attr based perm checks in frontend
+- Issues with citizenstore job grade check
+- Perms and attrs save issues
+- Tweak promises for role view
+- Issues with perms inheritance
+- Tweak debounce for doc saving
+- Prevent checking user info if no char id is set in token
+- No perms shouldn't resolve in error
+- Resolve quick buttons not showing
+- Show error when trying to delete own role
+- Attrs nil issues
+- Category completion
+- Attrs retrieval and saving for role issue
+- Try to fix timeout function issue
+- Issues with getting user profiles that are restricted by attribute
+- Tweak language files
+- Improve character selector frontend parts
+- Nil issue for user perms func
+- Downgrade leaflet to 1.9.3
+- Attrs retrieval for default/ no attrs role
+- Docstoer issues related to size and rector perms issue
+- Remove focus check for livemap
+- Role attribute retrieval and job grade list grade display
+- Get user grades check
+- Restart stream on token renewal
+- Skip sql disabled err in traces
+- Add missing tracing to gin
+- Remove unused locale items
+- Nil issues with maps in perms system
+- Rector perms returning wrong role attributes
+- Load new saved RolePermission States
+- Add missing lang items
+- Vee validated form submissions
+- Livemap users cache size now configurable
+- Remove unused config option
+- Make livemap users cache size configurable
+- Tweak livemap and citizen info closed display
+- Enum display, now working easier with protobuf-ts
+- Errors in loadingbar and access entry
+- Issues with union type of role view attr
+- Update prettier config and format all files
+- Css generation for prod
+- Doc state bubble padding issue
+- Use prettier for formatting correctly in settings
+- Clear clibpoard and other on version change
+- Use 100dvh instead of 100vh
+- Tailwind not accepting the height extend
+- Use correct rpcerror type
+- Finalize foreign key cleanup
+- Remove some unused grpc fields
+- Rpc err code not being lower cased
+- Color codes in document content
 - Use bigint as we started having some issues
+- Read notifications proto validation
+- Add missing component import in notifications list
+- Hide notifications sidebar button when no char is selected
+- Advanced document search placeholder
+- Livemap longtitude and latitude mix up
+- Template editor saving issues
+- Add some basic unit tests
+- Cleanup sql testdata
+- Move config usages out from services code
+- Notifications bigint json serialization
+- Correct german translation
+- Mark all notifications as read
+- Add read_at index to notifications table
+- Clear active stack before promoting to active stack
+- Check if vnode is set in v-can directive
+- Clipboard active stack clear issue causing nothing in stack
+- Audit log table migration
+- Redirect to login page issue when token has expired
+- Promote only active stack to rel/ref managers
+- Promote only active stack to rel/ref managers
+- Test issues caused by database changes
+- Issues with non existant attributes
+- Issues with user activity feed
+- Tweak activity feed
+- Tweak handling of role attributes
+- Issues with saving limited perms
+- Tweak citizenstore activity feed
+- Tweak citizenstore traffic points logic
 - Clipboard issue after first doc creation
+- Correctly display error message in notifications
+- Use vee validate for citizen set user props actions
+- Doc ref and rel manager having issues with icons
+- Activity feed value display for traffic points
+- Acp limiter role access issue and other problems
+- Attribute default value for docstore
+- Issues with attrs not updating their valid or default value
+- Issues with setting role limits
+- Reorder doc rel and ref buttons in editor
+- Tweak icons for document view and editor
+- Role view not using max values
+- Livemap accessing wrong attribute for player access check
+- Add missing oauth2 connect notifications
+- Documents list layout issue
+- Tweak documents list entry margin
+- Attribute update causing max values to be nulled
+- Rector perms attrs validation issues
+- Docstore issue with generating and updating the doc summary
+- Rector issues and add command palette
+- Rector role attribute max values issue
+- Tweak perms attributes code
+- Tweak citizenstore and docstore feed response querying
 - Docstore user documents listing
+- Setting traffic points
+- Tweak command palette
+- Document clipboard code and use tailwindui for command palette
+- Template editor acess plus icon missing
+- Citizenstore user props job grade not being correctly checked
 - Some buttons not being correctly disabled
+- Start work on dispatch center
+- Tweak login and create error handling
+- Update document check access attributes
+- Clear clipboard store more often
+- Tweak docstore access checking
+- Sql tests
+- Citizen set traffic points defaults
+- Initialize max values for role view
+- Documents test sql data
+- Tweak notificator token update logic
+- Citizen info traffic points
+- Penalty calculator search and remove duplicate code
 - Move quick buttons more to bottom right
+- Citizenstore dateofbirth search requiring full birthdate
+- Add input masking for date of birth citizen search
+- Copy herofull-pattern css file for spa loading screen
+- Add missing audit log for units service
+- Logged in user not having dateofbirth
+- Notificator must also return user's dateofbirth
+- Update example config default role perms
+- Update lang files for centrum service
+- Initials i18n usage
+- Add more validation to proto
+- Don't use all columns
+- Template editor not validating on mount in our case
+- Reorder login form create acc and reset password buttons
+- Tweak centrum logic
+- Centrum converter
+- Format vue, js files again
+- Scrolling in centrum
+- Issues with user documents not showing up correctly
+- Centrum error overlay
+- Add perms check to frontend calls
+- Tweak mkcert plugin placement
+- Add backticks to raw sql queries
+- Work on fixing test issues due to uber-go/fx usage
+- Perms issues due to config usage
+- Tweak centrum layout
+- Tweak fx code and rework notifications code
+- Merge api and routes code pkg together
+- Remove dbname config option
+- Move around more pkgs
+- Add missing icon imports
+- Fix vehicle list owner name showing in citizen profile
+- Move jobs structs to users
+- Consistently make job size length 20 chars
+- Issues with centrum events
+- Polish centrum and fix db migration issues
+- Test issues and resolve smaller layout issues
+- Disponents loading
 - Issues with discord bot
+- Issues with licenses and phone message conversion disabled
+- Now I understand nats subscriptions and stream
+- Resolve some issues with dispatch center
+- StartStream must always be run async
+- Issues with template selection due to renamed emit event
+- Issues with minimum grade and citizen access name not showing
+- Issues with centrum mode in take dispatch logic
+- Tweak centrum mode check
 - Improve auth middleware a tad bit
+- Stopping the centrum and livemap streams
+- Create/update unit grpc call issue
+- Issues with perms ui
+- Usage of confirm dialog should now work
+- Tweak restart times for streams
+- Passthrough of errors during takecontrol call
+- Tweak centrum display and add word count to doc editor
+- Tweak markers display on livemap
+- Markers layer name
+- Resolve logout data reset issues
+- Replace zxcvbn with @zxcvbn-ts
+- Doc editor not scaling in height
 - Add state to template
+- Add missing state field to template preview
+- Takedispatch not sending event with updated assignments
+- Add missing set active dispatch to centrum sidebar
+- Issues with dispatches not disappearing after expiration
+- Tweak cleanup logic in centrum store
+- Tweak centrum background logic
+- Some formatting and status coloring issues in centrum
+- Tweak citizen info in dispathc details in centrum
+- Use inter font in leaflet map
+- Increase centrum cleanup intervals
+- Tweak centrum pending and own dispatches update logic
+- Make sure to stop ticker in centrum logic
+- Document update button not showing
+- Tweak text color logic
+- Start working on some centrum issues
 - Add missing delete dispatch function
+- Hopefully resolve the restarting stream flashing all the time
+- Fix livemapper service still flashing error
+- Some visual bugs with units
+- Doc closed/open state selector
+- Tweak char card flex
+- Updating doc templates issue caused by undefined state
+- Add some missing perms and attrs translations
 - Try to improve responsiveness for units assigned and unit users
+- Increase max async pending
+- Check if user is highest in his job for template deletion
+- Downgrade vue-i18n version
+- Try to fix vue-i18n issues
+- Disable debug logging for some components
+- Try another fix for the locale switching issue
+- Improve perms value check
+- Lang load/switch issues hopefully again
+- Char sex badge showing wrong icon
+- Update lang and tweak sidebar logic
+- Continue prototyping jobs feature
+- Issues with centrum state updates
 - Continue work on jobs conduct system
+- Add postal to centurm status
+- Add postal tracker for livemap and dispatches
+- Issues with conduct entries sorting
+- Frontend jobs service perms name wrong
+- Rename phone number partial
+- Rework centrum state store to use more ids
+- Tweak documents editor and view layout
+- Remove unused key in units details loop
+- Translate missed docstore error messages
+- Issues with attribute editing
+- Perms trying to sort by non-existant columns
+- Auth service username regex pattern
+- Make auth username regex case insensitive
+- Jobs routing
+- Jobs routing for good
+- Tweak conduct entries
+- Fix sanitze of tags
+- Issues with dispatch anon statuss
+- Add nuxt plugin to reload on chunk errors
+- Add nuxt-update plugin for version check
+- Improve version returned by api
+- Just rely on nuxt chunk error handling
+- Centrum always showing user left unit
+- Tweak centrum stream
+- Check perms before starting stream
+- Use commit for version check for now
+- Version info
+- Git in container
+- Try to improve update check
+- Tweak update client plugin log message
+- Resolve issues with centrum again
+- Use completorstore more often
+- Add throttled and toggled submit check to prevent button mashing
+- Cleanup some empty lines
+- Content center wrapper not correctly centering
+- Issues with perms and attrs for (new) roles not being propagated
+- Remove debug output
+- Remove frontnend debug output
+- Add ping response to notificator
+- Use ticker for notifications updates
+- Add notificator unknown oneOfKind logging
+- Debounce basemap resize observer
+- Tweak notificator handling of unknown data responses
+- Notifications blocking site
+- All notificator imports
+- Locale switching works again
+- Correct some color usages
+- Adjust template clipboard selection button when selected
+- Centrum dispatches to show as unassigned if "completed"
+- Start fixing enums
+- Add UNSPECIFIED to remaining enums
+- Add UNSPECIFIED to centrum helpers
+- Tweak document view
+- Document list entry not breaking title
+- Timeclock logic bugs
+- Discord bot regex issues
+- Add quill-smart-paste to editor
+- Timeclock sort by spent_time
+- Try to fix table pagination issue
+- Tests being broken because of mariadb
 - Dbmanager migration issue
+- Improve centrum responsiveness
+- Doc ref and rel numbers
+- Access entries list showing unspecified
+- Attempt to fix dispatch declined issue
+- Improve dispatch cleanup behavior
+- Cleanup code add spinner to submit buttons
+- Tweak document templates layout
+- Locale not being set in app on setup/load correctly
+- Sql testdata
+- Documents testdata sql
+- Language issue part 50
+- Tweak dispatch center scale and remove some wrong css classes
+- Tweak user experience for streams
+- Improve player tracker
+- Version being always unknown
+- Backend version having a single tick
+- Discord bot error handling
+- Conduct update causing new entry to be created
+- Conduct create or update modal
+- Oauth2 redirect to char selector issue
+- Rector law updates
+- Citizen info activity feed incorrectly showing reason enum
+- Citizen activity feed reason enum usage
+- Simpler fix for citizen activity feed entries
+- Tweak error handling in streams
+- Try to address some dispatch center issues
+- Add missing dispatch status translations
+- Tweak lang for update confirmation
 - Improve notification lang issue
+- Tweak dispatch status bg using computed
+- Tweak disponents handling in centrum store
+- Try to fix dispatch needs assistance notification sound
+- Centrum dispatch status being undefined issue
+- Try to fix dsp id breaking in marker
+- Dispatch marker text breaking on hyphen
+- Padding for overview cards
+- Attributes max values ui issue
+- Improve dispatch archival
+- Tweak centrum dispatches for simplified mode
+- Tweak base map boundaries
+- Document view not showing access
+- Docstore access margin and title display
+- Tweak forms to validate on mount
+- Add start page feature to account info
 - Job being shown where it shouldn't
+- New enrich info used at colleagues list and doc access
+- Make livemap dispatch and player search case insensitive
+- Typecheck issues
+- Job message conversion
+- Change TranslateItem type
+- Take dispatch issues with selected ids
+- Take dispatch tweaking
+- Attr issue
+- Job overview permissions
+- Re-gen proto
+- Attempt different fix for take dispatch issue
+- Dispatch display being too long
+- Improve centrum feed and dispatch message
+- Set units for dispatch status as well
+- Resolve units for activity feed
+- Unit feed
+- Unit status update nil
+- Centrum own dispatches not appearing on "late" join
+- Split centrum housekeeper tasks
+- Errors notifications item
+- Margin/padding on cards
+- Set postal for dispatches without a postal in db
+- Tweak centrum loader
+- Tweak dispatch and player marker
+- Sidebar status update
+- Take dispatch issues for simplified mode
+- Take dispatch issues for simplified mode
+- Issues with refresh not happening centrum settings
+- Player search not appearing
+- Issues with rector create role from superusers
+- Move confirm dialog to z-20
+- Tweak z-index usage and fix overview page permission
+- Tweak centrum state logic
+- Improve unit user assignment duplicate handling
+- Reduce duplicatecentrum events and delete old dispatches
+- Dispatch details wrong props
+- Translate N/A where possible
+- Show unknown for zero timeclock stats
+- Update natsmanager nats version
+- Remove old dispatches
+- Tweak unit list entry
+- Tweak dispatch feed item
+- Improve unit and user removal status
+- Rework perms const generation to separate package
+- Test issues caused by perms updates without nats stream setup
+- Z-index
+- Need to clean up z-index in the future once and for all
+- Z-index
+- Z-index for sidebar
+- Conduct list empty attributes causing error
+- Unit and dispatch status update
+- Cards list rounded corners
 - Use text-neutral instead of text-white for better theming in the
+- Change dispatch cancelled icon
+- Add close button to modals
+- Z-index part 5
+- Timeclock job info
+- Timeclock job info
+- Get rid of separate pagination variable
+- Tweak command palette
+- Remove unused publicurl
+- Remove unused config option from helm chart
+- Reverse timeclock list change
+- Remove conduct update modal description
+- Centrum unit list being reversed
+- Popup anchro for player marker
+- Nil in dispatch unit assignment cleanup
+- Tweak comment count handling
+- Timeclock stats condition being different
+- Dispatch units expire nil panic
+- Pinia auto imports being removed
+- "not part of dispatch" issue
+- Feedback for centrum sidebar and citizenstore job props issue
+- Cititzenstore get user job props issue
+- Try to use different ref for sidebar own unit
+- Attempt to fix own unit handling
+- Tweak sidebar livemap button for unit join
+- Livemap centrum sidebar pulse
+- Add expires at to unit info popover
+- Documents search
 - Improve unit user id mapping
+- Rework centrum state system
+- Double notification sound when dispatched is assigned
+- Improve centrum cleanup logic
+- Tweak auto centrum mode display
+- Centrum selected dispatch mark on radar
+- Loops for centrum unit and dispatch assignment
+- Allow hr in html sanitizer
+- Divider hr quill code
+- Document view hr not showing
+- Hr for quill editor now working in view as well
+- Centrum sidebar selected dispatch marking
+- Cards rounding
+- Improve centrum bot unit selection logic
+- Improve centrum bot logger
+- Adjust ux for centrum
+- Centrum manager housekeeper for unit status
+- Livemap and tracker show phone number
+- Bot manager stopping spam
+- Tweak bot manager
+- Attr view not showing max values
+- Centrum bot code
+- Increase join unit button text size
+- Start deduplicating more centrum code
+- Add notification for unit status check up
+- Centrum bot ignore completed dispatches
+- Tweak centrum error handling
+- Tweak document editor a bit
+- Json bigint stuff
+- Citizens vehicles list not showing copy vehicle button
+- Issues with json parser for pinia
+- Remove own from timeclock perm
+- Tweak zoom of map
+- Livemap maps file resolution issue causing wrong marker positions
+- Apply attribute limits on startup
+- Only show/add relations/references when user can
+- Registry maxvalues
+- Use autocomplete="off" for comboxbox inputs
+- Tweak some centrum sidebar ux aspects
+- Take dispatch not able to issue
+- Unit update logic
+- Units merge
+- Tweak centrum sidebar
+- Tweak unit info popover
+- Add quick button for dispatch list
+- Add popover to centrum feed
+- Centrum activity feed
+- Tweak centrum feeds
+- Alignment of member phone icon in unit info
+- Update xsync lib
+- Tweak centrum total dispatches display
+- Use template data as structure and not json string
+- Update nodejs to 20.8.1
+- Add unit details to player marker
+- Tweak centrum take dispatch
+- Centrum tweak feed
+- Use status instead of whole unit or dispatch
+- Add debug for centrum
+- Unit assignment
+- Tweak centrum state keeping
+- Centrum unit status set
+- Tweak centrum deduplication dispatch count
+- Deduplicate dispatches
+- Increase dispatch deduplication radius
+- Centrum dispatch housekeeper deduplication logic
+- Fix loader for dispatches
+- Loader dispatch status issue
+- Use new nui callback
+- Disable centrum sidebar x overflow
+- Archive dispatches
+- Dispatch marker animation and fill color responsiveness
+- Some centrum disponent nits
+- Documents clipboard template issue
+- Use enums for references and relations
+- Cleanup ref and rel managers
+- Rename vars in ref/rel manager
+- Time conversion for clipboard store
+- Vehicles clipboard issue
+- Use nui callback for clipboard access
+- Penaltycalculator description causing issues on smaller screens
+- Use attr and local doc access checks
+- Doc editor when creating new document
+- Frontend doc access checks
+- Set status after form submission
+- Improve centrum bot and cleanup logic
+- Centrum unit switch issues
+- Remove leftover debug log
+- Issues caused by splitting server and discordbot
+- Issues with helm chart and wrong words in log
+- Use normal mutex for coords
+- Readiness probe for discordbot
+- Add bot presence log to discord bot
+- Try to fix http server not starting in container
+- Housekeepr nil issue when adding a new unit
+- Unit update dialog being empty on second open
+- Add translation for discord last sync
+- Define component vue import
+- Tweak enrich job info logic
+- Add more elements to sanitzer allow
+- Tweak view template display
+- Remove quill editor helper classes
+- Remove test page
+- Tempaltes modal reqs checks
+- Invert prose for editor dark mode
+- Tweak prose config for text editor
+- Tweak clipboard user structure
+- Tweak job props sync time margin
+- Template issue
+- Remove debug output in unit status checkup
+- Html sanitizer tests
+- Add preliminary dispatches db list
+- Timeclock stats condition
+- Type issues during build
+- Change ordering on dispatches page
+- Command palette CIT-... not working
+- Job enrich grade condition check
+- Timeclock stats display structure
+- Deduplication of dispatches
+- Timeclock calculation issues
+- Tweak player and dispatch marker
+- Only ping again on checkup being older than 10 minutes
+- Add created at date to comments
+- Nui detection logic order
+- Increase start delay
+- Accepting dispatches filtering
+- Refine selected dispatch filtering
+- Color selection
+- Use less db transactions
+- Tweak dispatch and unit update logic
+- Dipatch details showing a line
+- Tweak some aspects about centrum sidebar
+- Auth tests
+- Show duplicate error when username already used in create account
+- Auth tests logger missing
+- Fix language file issues
+- Filestore grpc service name
+- I18n item on index and 404 page
+- Tweak user unit leave logic
+- Try to fix centrum unit and dispatch assignment issues
+- Centrum state issues
+- Tweak dispatch unit assignment logic
+- Try to fix adding more than one unit
+- Remove centrum data load loop
+- Use manual merging combined with proto.Merge instead of mergo
+- Tweak change username and password logic
+- Improve auth change username errors
+- Issues with attribute setting
+- Change job props logic for auth store
+- Centrum assignments are done in state and then sent out as status
+- Something in centrum status is blocking the start
+- Extreme long unit loading due to query
+- Update langs
+- Body checkup modal
+- Eslint issue in body check up
+- Add missing can submit logic to job props
+- Set status again after user added
+- Always set previous status when it was override by assignments
+- Centrum state
+- Bmi calculator
+- Use flex magic for quick buttons
+- Anon dispatch creator id null issue
+- Centrum dispatch removal wrong index
+- Mobile sidebar not having login/signup
+- Hints text
+- Command palette document search
+- Doc reference manager listdocuments call
+- Move more general centrum state functionality into the state
+- Centrum introduce lock for unit's users changes
+- Start rework of centrum state logic
+- Take dispatch resp enum issue in frontend
+- Update centrum state comment
+- Add parantheses around condition
+- Clone protobuf unit message
+- Eslint issue in body checkup
+- Tweak redirect on change username modal
+- Remove debug output
+- Anon dispatches not being too anon
+- Add debug log to dispatch assignment expiration
+- Use broker to send per job centrum updates
+- Performance degraded when using separate marker popup component
+- Use more async for heavy computations
+- Remove dispatch filter for now
+- Remove unused component
+- Don't additionally clear leafelet map
+- Law book requiring description when it shouldn't
+- Penaltycalculator issue
+- Separate livemap store lists
+- Remove user props mutation
+- Improve citizen profile info padding
+- Show grouped players longer
+- Adjust leaflet marker cluster config for players
+- Try to fix unit status not in sync issue
+- Show loading data stream for livemap and centrum
+- Try to fix nil issue in quadtree dispatch removal
+- Add more debug logging
+- Centrum store restart back off
+- Add more debug logging for event handling
+- Attempt to further address centrum handling issues
+- Try to fix clean up logic for unassigning dispatches
+- Centrum sidebar thinking user left unit
+- Clone dispatch object
+- Add more debug logging
+- Update frontend licenses
 - Notificator not restarting
+- Improve centrum cleanup logic
+- Use grpc server ping keepalive system
+- Add optimizer hint to list citizens count stmt
+- Only merge status into object if id is higher than current id
+- Issues if superuser accesses centrum with a job that can't stream
+- Start using wrapped errors and add tracing ratio to config
+- Listing dispatch/unit activity when none in database
+- Issues with set user props
+- Tweak handling of dispatch unit removals
+- Dispatch converter not checking context for stop
+- Use nats kv for centrum state storage
+- Try to improve performance for dispatch update actions
+- Improve performance of kv usage
+- Add missing job checks for dispatch and unit activity
+- Tweak logger names
+- Rework config structure
+- Update config
+- Re-add load dispatches logic
+- Discord bot settings query for bot logic
+- Nats kv store wrapper nil on not found
+- Add basic test setup for centrum test
+- Nats test issues
+- Discord bot not correctly ignoring ignored jobs during sync
+- Re-enable permission init logic
+- Improve discord job props retrieval
+- Remove unnecessary utility functions
+- Config plugin causing error page to not work
+- Converter message being too long
 - Issues with centrum state
+- Add helpers for units/users assignments state changes
+- Use custom natsutils for creating streams and kvs
+- Tweak tracker logic
+- Handle empty results in manager loader
+- Audit store cleanup running too often
+- Kv watch issues
+- Remove store keyprefix
+- Centrum test state creation
+- Issues with centrum logic
+- Centrum housekeepr units clean up logic
+- Centrum loader error handling
+- Dispatch ordering
+- Double assignments
+- Tweak centrum client state logic
+- Improve fivenet nui handling
+- Remove keepalive policy
+- Centrum status updates
+- Improve issues with timestamps
 - Clone state when computing update
+- Ignore user resolve issues when loading dispatches
+- Remove units from duplicate dispatches
+- Timeclock list being per day when looking up users
+- Coords
+- Unit attribute check
+- Dispatch created at timestamp
+- Attempt to fix dispatch staying unassigned issue
 - Try to improve unassigned dispatches not correctly being set to be
+- Setting unit attributes
+- Unit loader not loading attributes
+- Units attributes not being loaded
+- Adding attributes to units for good
+- Ui issue for selected attributes
+- Check creator job for the document with the current creator's job
+- Tweak doc activity listing
+- Data no data block margin/padding
+- Margin/padding issue with activity list disclosure
+- User info enabled check
+- Check if user in unit before setting nui waypoint
+- Add more tracing attributes
+- Add more trace attributes to services
+- Replace double brs when doing html diff
+- Use regex to remove double brs
+- Tweak document activity list entry
+- Tweak audit log service name
+- Audit log service method column
+- Timeclock stats not reflecting filtered list
+- Doc access check when creator is nil
+- Add missing command palette
+- No data block not using full width
+- Improve table readability
+- Move Document*Access to separate proto file
+- Dispatch list table
 - Add debug log to take dispatch entry to see why the timestamps
+- Make centrum sidebar ensure dispatch selected not async
+- Centrum old dispatches and units frontned state logic
+- Tweak markers code
+- Some nits
+- Improve marker marker
+- Attribute setting on dispatches
+- Dispatch duplication locations issue
+- Livemap hash not being parsed when empty
+- Issues with document requests
+- Error wrapping when there is no original error to wrap
+- Docs requests list
+- Continue doc request ui
+- Move notification on click to separate button
+- Change notificator type stuff
+- Document request deletion
+- Continue doc requests work
+- Requests doc activity type i18n usage
+- Auth error wrap being nil
+- Force em element to make text italic
+- Adjust lazy load data conditions
+- Adjust snowflakes event days
+- Timeclock issues caused by components renames
+- Cards list component imports
+- Docstore nil error wrapping
+- Snow flakes event condition
+- Unit info popover icon
+- Remove packageManager field from package.json
+- Delete bad dispatches from store
+- Adjust nui setRadioFrequency call
+- Add more focusTablet calls to inputs
+- Doc access citizen search
+- Footer copyright year not updating without translation being updated
+- Attempt to fix the nui/refreshapp query param issues
+- Improve selected dispatch function
+- Rename more components
+- Doc requests creation issues and improve icons for doc activities
+- Activity list disclouse panel margin issue
+- Rename more components
+- Remove v prefix from version
+- Package.json version
+- Doc activity list component import
+- Player marker color default fix
+- Docstore document creation
+- Notification for password reset
+- Fivenet_documents table template_id column struct tags
+- Some todos and add more features to readme
+- Tweak centrum units grouping
+- Centrum units sorting for users length
+- Add logging for failed dispatch location add
+- Cleanup some centrum style points
+- Import order
+- Dispatches list refreshing leaflet on list changes
+- Leaflet zoom in removed
+- Dispatches list not scrolling
+- Dispatches list order
+- Centrum dispatch and unit feed user id missing
+- Use logger instead of return for expired dispatches
+- Remove debug exit for worker cmd
+- Improve centrum housekeeper logic
+- Downgrade jodit editor to 4.0.2
+- Downgrade vue to 3.4.5 to workaround uselocaletimeago ref issue
+- Cleanup use same size for most icons, some docstore stuff
+- Record more status items for centrum feed
+- Some type errors
+- Documents search by category id
+- Tweak centrum housekeeper query
+- Load dispatches from db without postal code
+- Error page use of i18n funcs when it isn't available
+- Some general issues and tweak designs
+- Change format of config load condition
+- Make citizen id bade full width
+- Start improving  citizen info design
+- Conduct list even/odd background color
+- Enricher not respecting superuser access
+- Add debug log line to set discord nickname
 - Apply of job perms removing job grade perms completely
+- Jobs requests service missing translations
+- Tweak timeclock stats block
+- Timeclock stats in detail view
+- Timeclock stats condition
+- Dispatch need assistance sound repeating
+- Tracker nil issue
+- Some smaller bugs here and there
+- Timeclock wrong attribute category
+- Some centrum status retrieval issues
+- Some centrum issues
+- Timeclock all perm for good for real now
+- Markers count word missing
+- Improve centrum bot logs
+- Improve dispatch locations removal
 - Make sure dispatches are at least 5 seconds old before auto
+- Dispatch location check issue while loading
+- Type issues and use context in oauth2 user info retrieval
+- Manually fix some tailwind class orders
+- Make quick button modals persistent
+- Dispatch marker missing server time correction
+- Temporary marker staying up on livemap too long
+- Forgot password success notification
+- Smaller issues with document requests ui
+- Start fixing up close button bg and text color
+- Some doc requests ui issues
+- Discord duplicate role creation
+- Truncation of text in centrum sidebar
+- Reconnecting popup for livemap
+- Marker layers filtering missing
+- Marker circle opacity
+- Marker update modal close button
+- Audit log search not refreshing when users are selected
+- Jobs overview timeclock perm
+- Permify code gen comment file path order
+- Change marker icon size
+- Marker marker icon sizing
+- No perms erro on jobs overview if user has not timeclock access
+- Marker icon list search
+- Livemap markers jobs logic for super users
+- Livemap markers attr logic
+- Job props page perm issue
+- Job props radio frequency length
+- Some fields missing nui focus calls
+- Some marker deletion issues
+- Dispatch center sidebar stream always trying issue
+- Some marker popup perms checks
+- Markers deletion when none are left
+- Livemap markers delete returning wrong error
+- Add more debug to perms registry job perms apply logic
+- Marker marker not having a goto button
+- Attr issue when grade 1 role has the attr/perm removed
+- Type issue in centrum sidebar
+- New blood type user prop not being retrieved from database
+- Refined colors used in fivenet
+- Default theme logic in store
+- Job props default
+- Job props default of quick buttons
+- Mobile navigation default theme color
+- Purple theme
+- Job props defaulting
+- Remove gray bar on livemap when not in unit
+- Change pagination total translation
+- Add debug log to dispatch converter
+- Tweak used css classes
+- Marker popup color being static
+- Baddie yellow theme body color
+- Adjust yellow color of baddie yellow design
+- Add more debug logging for attribute issue
+- Attributes not correctly being checked against valid values
+- Attrs validation issue for string lists
+- Usage of active theme logic
+- Issue with per user theme override
+- Update eslint and prettier config
+- Rename more components and tweak spa loading template order
+- Disable eslint component name in layouts dir and error.vue age
+- Issues with conduct entry updates
+- Citizen user propss job override for user props
+- Dispatch list id search issue and remove close by dsps from locs
+- Move more centrum dispatch locations logic into state/manager
+- License plate year and tweak deduplicate logic
+- Discord userinfo sync issues and job props ui perms
+- Register discord bot commands on event
+- Remove duplicate bot commands
+- Coords replace
+- Issue with centrum state and discord bot command deduplication
+- Markers job and creator logic
+- Discord bot command deduplication
+- Improve discord bot commands logic
+- Discord bot command creation
+- Discord bot workaround for empty roles
+- Improve discord bot logic
+- Discord bot waitgroup issue
+- Hex color usage in job props, units, etc.
+- Centrum units list unit color
+- Test color issues
+- Template view and editor ui margin
+- Template access required not correctly showing
+- Overflow issues with dispatch sidebar
+- Tweak document editor and view code
+- Padding/gap for attributes and unit info badges
+- Job props type issue
+- Adjust logging of users added/removed in housekeeper
+- Jobs menu bar issue
+- Jobs and citizen info overflow for md screens
+- Template view required access checkmark not showing
+- Try to fix tracker manager starting too late
+- Improve doc requests perms check
+- Doc requests not being there
+- Doc requests modal frontend perms check
+- Allow style tag on img elements in sanitizer logic
+- Remove unused vars from user tracker
+- Add debug logging for livemap stream duration
+- Use clustered marker layer for dispatches
+- Remove clustered dispatches layer
+- Rework livemap to use maps instead of arrays
+- Make starting data stream screen visible till initiatedd
+- Improve livemap marker update logic
+- Optimize for speed
+- Another try to improve livemap marker performance
+- Hopefully final fix for users markers issues
+- Housekeeper loader using wrong context
+- Memory leak in user tracker store
+- Decrease livemap user markers sync time
 - Add ticker to update marker markers for now
+- Flickering of own player marker
+- Unnecessary import
+- Rework context for centrum bot
+- Tweak marker status color reactivity
+- Improve own dispatch entry flex layout for smaller screens
+- Use different unit accepted dispatch color
+- Missing percentage sign after volume
+- Player marker unit background color
+- Livemap not sending empty user markers list
+- Use slices.deletefunc for hopefully less nil issues
+- Image proxy not being enabled breaking http server
+- Timeclock logic issue and split logic into separate module
+- Make filestore superuser only till it is completed
+- Tweak hero content and add footer to 404 page
+- Typing issue with clipboard and file
+- Add basic file extensions check for uploaded files
+- Storage s3 not found handling
+- Adjust random chars generated and fix job props structure
+- Issues with avatar img component
+- Improve file upload structure
+- Citizen user props mugshot logic
+- Rename AvatarImg to ProfilePictureImg
+- Uploading job logo when none was set before
+- Hide new jobs container for non super users
+- Use separate db refresh time for user tracker
+- Updates to absence date in colleagues list
+- Hide account info and job props when streamer mode is enabled
+- Livemap employee search missing
+- Image resizing logic
+- Finish colleague info page
+- Colleague info conduct register tab
+- Colleague info tabs not being filter
+- Improve string to int32 conversion in user tracker
+- Get colleague attrs missing
+- Image optimize issue
+- Image optimization when no resize happened
+- Enable image popup for colleague list entries
+- Profile picture condition
+- Ignore Prof./Dr. in initials generator logic
+- Scroll bar appearing in secondary nav bars
 - Tweak picture modal button conditions and start work on predefined
+- Add missing desktop toggle
+- App html class theme concat
+- Tweak sidebar name and job text display
+- Job logo deletion when it's not specified
+- Job props logo url issue
+- Discord user info sync
+- Attempt to fix unemployed role assign sync issue
+- Logs in discord user info sync
+- Add avatar to conduct entries
+- Some issues for new fivenet instances
+- Auth for systems without "char*" for the identifier
+- Hide model search in vehicles list if no car has a modell
+- Add pages to redirect to imprint/privacy policy links
+- Remove unused interface in completor store
+- Colleague info absence date display
+- Citizen profile padding for profile page
+- Jobs absence date moddal validation
+- Perms issue with jobs self service
+- Esx tables migration check if `type` column exists in owned_vehicles table
+- Alt text wrong for profile picture and issue with colleague list
+- Rework dispatch references structure
+- Userinfo absence sync not checking begin date
+- Improve tablepagination behavior and uncomment userinfo code
+- Document comments overruning the line
+- Rewrite citizen activity to be using template magic
+- Dispatch references overflowing modal
+- Esxbasetables query
+- Esx basetables migration issue for good
+- Reason showing for a certain citizen activity feed entry type
+- Rename rector job props page to "job props" not just "props"
+- Mutex issue
+- Protoutils indent
+- Issues with filestore upload file logic
+- Improve filestore file list behavior
+- Tweak colleague list padding
+- Remove unused config options
+- Default role perms not being loaded during start
+- Protojson unmarshal
+- Go test appconfig issue
+- Typecheck issues
+- Fix colleague activity user search
+- Add missing translations for doc access request alert
+- Tweak char selector
+- Inactive colleagues timeclock list days input issue
+- Timeclock list formatiting
+- Try to improve nats store usage
+- Store state issue
+- Change order of jobs qualifications messages
+- Doc access entry jobs load
+- Change owner doc change needs to use the right attribute
+- Tweak citizen profile code
+- Doc access jobs issue
+- Colleauge list absent filter
+- Move auth errors to separate package
+- Conduct list types filter not being used
+- Reduze jobs qualifications list page size
+- Add translations for some more qualifications texts
+- Add pagination to qualifications lists
+- Move quick buttons to separate components dir
+- Qualification requests retrieval
+- Scan and value comments and add empty JobSettings
+- Emit rename issue
+- Issues with doc editor and qualification edit page
+- Some fields missing focus in/out
+- Issues with qualifications tutor lists
+- Issues with qualifications requests and results delete
+- Qualifications lists not refreshing on delete
+- Improve citizen activity feed entry
+- Add more trace context info
+- Add more trace context info
+- Tweak store locks timeout
+- Improve housekeeper dispatch assignment expiration error
+- Reduce take dispatch logic
+- Duplicate doc relation handling
+- Motd issue and show reconnecting for centrum as well
+- Image centering to be removed during html sanitization
+- Perms system not reacting to creation and deletion of roles
+- Move roles list perms hint below the list
+- Tweak size of superuser menu
+- Relation mention notification issue
+- Relation notification for good
+- Replace `setTimeout` with `useTimeoutFn` calls
+- Tweak jetstream replica counts and add nats store metric for data
+- Nats store metrics issues
+- Nats store data count metric
+- Use wrapper for nats create stream and kv
+- Nats js wrapper type
+- Tweak nats error handling
+- Add separate broker context
+- Reduce centrum latest state data amount
+- Tweak centrum events code
+- Broker stop/ctx
+- Don't return qualifications content for lists
+- Add more debug logs to centrum stream
+- Add creator job to document comments
+- Use filepath.IsLocal in combination with Clean
+- Reorder filestore http route function
+- Filestore react to HEAD requests
+- Improve templates access checks further
+- Allow document to be restored for superusers
+- Qualifications requests user id being wrong
+- Add jetstream consum err handler
+- Law editing for new laws
+- Timeclock inactive colleagues absence end
+- Remove debug logs
+- Try to restart stream when consumer errors
+- Law entry stvo points input field
+- Issue with tracer otlp exporter options
+- Disable trace for http requests to /images/*
+- Fix law entry number vs text input
+- Timeclock stats block empty text double translation
+- Missing transition to jobs NuxtPage
+- Remove experimental nuxt setting
+- Use a central jobs list for access entries
+- Change bg color of saving note in document editor
+- Job info label enrich index issue
+- Colleague list absent small screen display
 - Move consume err handler logic into events package
+- Superuser mode job props and label being wrong
+- Timeclock weekly stats concat
+- Timeclock stats block sorting via database only
+- Oauth2 connections not being removed on disconnect
+- Add new oauth2 status for if discord id is already used
+- Citizen set traffic points type issue
+- Page hang on invalid access token middleware redirect
+- Background in auth layout
+- Continue nuxt ui design rework
+- Command palette translation
+- Remove themes in favor of color changes
+- Rector filestore issues
+- UseRoute occuring due to auth store
+- Oauth2 connect button and clipboard link condition
+- Continue tweaking layouts
+- Move more forms to zod validation
+- Logout page translations
+- Tweak hero overlay coloring
+- Remove more old text color classes
+- Start working on resolving eslint issues
+- Re-add loading indicator styling
+- Issues with splitpanes in dispatch center
+- Tweak slideover width
+- Color class missing for some icons
+- Some misc issues and add custom sounds logic
 - Resolve units translation issue and use state for quick buttons
+- Resolve typecheck issues
+- Attempt to fix marker having white background issue
+- More layout, color and design issues
+- Tweak completor colleague list call
+- Spacing issues with hint key
+- Notifications list mark all as read button
+- Home page see what's new version button link
 - Tweak login and logout page behavior
+- Enable time picker for document search
+- Tweak some design points
+- Remove search from help pages
+- Tweak back buttons and add trace id haeders to jetstream wrapper
+- Add basic content to hel pages
 - Helm chart releaser issuer
+- Container build nuxt ui pro license key arg
+- Some issues with trailing menu icons
+- Improve stream lifecycle for centrum and livemap
+- Background color of stream reconnecting popup
+- Update available version
+- Move clipboard button outside of quick buttons
+- Jobs colleagues sub pages perms
+- Timeclock list error type
+- Make sure dark mode is preferred
+- Take dispatch modal opening on shortcut without being in unit
+- Background color setting translation
+- Some issues found during testing
+- Divide coloring
+- Split app config and job props into tabs
 - Disable ssr and help pages for now
+- Add i18n routing package to docs
+- Tweak website texts
+- Docs build command
+- Some type issues
+- Some design issues and wrong divides being used
+- Add community logos to website
+- Timeclock list date issues
+- Docs build for index page
+- Add nui check to help page
+- Dispatch details load
+- Get dispatch id stuff
+- Jobs qualifications sidebar link
 - "fix" splitpanes issue for now
+- Citizens list table header hidding/displaying
+- Tweak centrum sidebar and adjust temp marker logic
+- Adjust super user drop down check call
+- Use livemap store goto action instead of emit
 - Iconify to use local api at /api/icons
+- Job props form submit issues
+- Colleague list avatar display
+- Add id to resizeable sidebar to not spam unnecessary cookies
+- Make marker marker popup col span 2 again
+- Comments deletion issues
+- Improve checkboxes logic and styling in document view
+- Use vue sfc deep for scoped css
+- Document view scoped css targeting
+- App config and job props pages having flashing navbar
+- Role save button when no perms
+- Tweak citizen info style
+- Improve headers in citizen info sidebar
+- Some slight issues with attributes design
+- Citizen attributes dialog not being closed on submit
+- Rector getpermissions call not returning proper role perms/attrs
+- Remove debug logs
+- Role perms/attrs value render issue
+- Issue with cookie consent being reopened every new version
 - Change default gray color
+- Tweak default settings and increase update notification timeout
+- Improve absence date logic and fix create conduct entries
+- Unit info popover members list flex direction
+- Conduct list not updating on create/update of entries
+- Conduct create modal event name
+- Profile picture modal buttons not being in group correctly
+- Template editor issues
 - Downgrade jodit editor brokey
+- Attempt to load doc editor directly and not lazy
+- Downgrade jodit editor again
+- Take dispatch shortcut overlapping with fivem chat
+- Try to fix select and input menu issues
+- Rename some things
+- Change navigation styling
+- Slices difference test
 - `UInputMenu` and `USelectMenu`  recursive issue
+- User drop down missing translation
+- Fonts and tweak some centrul modals
+- Cards list margin on larger screens
+- Doc category selector
+- Document list category input menu
+- Condcut list expires at showing time but we don't track it anymore
+- Tweak centrum info popover buttons
+- Add missing focusin/focusout handlers for nui focus
+- Own dispatch entry overflow
+- Cleanup templates components
+- Add basic error for duplicate access issue for documents/templates
+- Reduce livemap input fields size
 - Replace NuxtLink with ULink
+- Add clearable to livemap inputs
+- Language switch not working
+- Use const for trace headers in js events wrapper
+- Clipboard template requirement max 0 causing it to be satisfied
+- Document view back button
+- Disable error logs for nats trace context missing
+- Add test page for timeclock
+- Tweak jobs pages
+- Unit status change not including unit
 - Use a custom DashboardSidebarLinks component till I know why the
+- Select menu stuff hopefully for now
+- Two icons not correctly appearing
+- Time clock list stats being too big by default
+- Marker create or update slideover not closing correctly
+- Input type file handling
+- Vscode frontend launch args
+- Citizen actions tool tip shortcut texts
+- Rector attr view not defaulting to denied
+- Job props save
+- Marker create/update modal not closing when opened via marker popup
+- Doc editor loading
+- Adjust error page retry func
+- Jobs pages definePageMeta warning
+- Add missing data to qualification view request and result
+- Change centrum dispatch created at text colors
+- Audit log condition
+- Add more loading state to input and select menus
+- Remove loading indicator again due to infinite loop issue
+- Citizen list job label not hidding on small screens
+- Tweak qualification tutor view
+- Conduct list expiresAt undefined chcek issue
+- Improve wrapRows logic to handle undefined data
+- Colleague list small screen display
+- Slight tweaks to file upload modal
+- Some issues with missing back buttons
+- Start fixing some issues with qualifications
+- Workaround citizens list wrapped table data copy of user issue
+- Char selector container issue
+- Char select page sign off button as well
+- Add some improvements to conduct list
+- Change badge color for request/result status
+- Add basic qualification closed check to request creation
+- Template editor category selection issue
+- Make livemap centrum sidebar open more consistently
+- Some qualifications issues and start work on a basic calendar
+- Renovate config issue
+- Player and dispatch markers not having their icons
+- Use mdi-vue3 for livemap markers
+- Leaflet center const issue
+- Generic time not correctly updating in table
+- Template access issue and start work on better small screen calendar
+- Calendar text not having spacing
+- Qualification tutor lists not refreshing accordingly
+- Missing user info for calendar and entries
+- Citizen info popover padding
+- Calendar translations for german language
+- Count statements not checking for no rows errors
+- Timeclok list dates being reversed
+- Try to fix centrum dispatch list issue
+- Timeclock inactive list days not causing refresh
+- Document access entry not showing citizen name
+- Livemap postal search postals file loading
+- Adjust centrum housekeeper old dispatch condition
+- Get qualification
+- Qualifications nil issue
+- Hint boxes issues and tweak calendar api
+- Implement missing user id for qualifications requests/results
+- Qualifications notification title missing
+- Some small inconsistencies with submitting rector role changes
+- Add loading state to rector attrs and roles list
+- Get calendar access retrieval query fixed
+- Remove debug logging
+- Remove calendar nav item from jobs section
+- Re-add perms to jobs menu item
+- Complete calls causing errors in documents
+- Perms for clipboard and jobs page in overview list
+- Some table actions issues
+- Re-add calendar entries subs table for future notification logic
+- Perms for edit and delete calendar/entry buttons
+- Calendar rsvp share insert query
+- Notification naming issues
+- Notifications List clicked event missing
+- Make dispatch id open details in dispatch marker popup
+- Calendar ui and backend logic for entries
+- Account id retrieval in userinfo
+- Remove click icon from char selector card
 - Jobs colleauges id page titles
+- Jobs GetSelf call query error
+- Redirect after choose character
 - Tweak token cookie times
+- Show activity type selector for colleague activity
+- Citizen list showing empty actions when user doesn't have perms
+- Auth service test
+- Char selector always showing char lock
+- Cookie same site for iframe used in plugin
+- Marker icon for new markers not correctly appearing
+- Typing issues from ci
+- Calendar refresh not being debounced
+- Add go to today button for smaller screens in calendar
+- Use dm sans font for vcalendar components
+- Tweak calendar time/date display for multi day events
+- Add notification type table changes
+- Calendar not updating on range change
+- Error returned by jobs colleagues service
+- Role view showing job grades that aren't available
+- Set colleagues user props for superusers
+- Char lock for superuser
+- Rework user event to contain notifications
+- Improve oauth2 reason codes for failures
+- Oauth2 login without cookie
+- Issues with logout logic
+- Messenger inbox types
+- Update i18n keys from inbox to messenger
+- Issues with userinfo sync not continuing on error of single user
+- Some bugs in calendar and qualifications feature
+- Job props validation for more fields
+- Remove discord bot where condition for testing
+- Uncomment discord sync code
+- Job props dry run toggle
+- Job selector in app config
+- Centrum feed and add version to discord embeds
+- Centurm slideovers overlay consistency
+- Nil issue in old dispatch kv deletion
+- Add missing messengerservice translations
+- Thread create/update form not having nui input block calls
+- Issues with messenger store and db
+- Text color for timeclock stats block
+- Tweak some ui elements
+- Adjust messenger thread query param logic
+- Adjust prose-invert usage
+- Tweak tables and lists
+- Remove locale files from wrong dir
+- Some qualification exam feature issues
+- Qualification exam ui issues
+- Issues with qualifications feature and add score calculation
+- Adjust qualifications results and requests deletion behavior
+- Exam view questions ref type issue
+- Move char selector card can submit state to char list
+- Prometheus metrics job label
+- Issues with identifier on user objects and marker description
+- Tweak no data block
+- Update overview screenshot and tweak some lists
+- Citizen list traffic point plural
+- Duration fields in app config
+- Oauth2 connect notification not appearing correctly
+- Attempt to fix duplicate dispatch references
+- Document template create modal none selected links
+- Some discord bot bugs
+- Rename __APP_VERSION__ to APP_VERSION
+- Remove --serve-frontend flag
+- Remove serve-frontend flag from debug launch
+- Auth grpc endpoint grpc calls
+- Close all websockets on logout
+- Improve discord bot errors and improve websocket grpc transport
+- Move grpc ws opened log to ws onconnected event
+- Downgrade nuxt to 3.11.2
+- Issues with websocket transport error handling
+- Remove left over debugger statements
+- Update nuxt/ui-pro
+- Increase marker icon search limit
+- Change marker icon search
+- Document list sidebar overflow issue
+- Timeclock stats block in tab issue and add prefixed logger
+- Tweak web socket status overlay
+- Document list entry having debug title
+- Can type in template
+- Type issues after can and attr changes
 - Livemap markers not updating their data
+- Grpcws certs path
+- Qualifications access entry job display issues
+- Websocket connect notification appear too often
+- Discord bot qualifications sync return
+- Display of errors in UAlert components
 - Centrum manager dispatch nil panic
+- Add translation for "OR" in login form
+- Calendar entries not updating issue
+- Remove console.log from calendar store
+- Dispatch details view not opening in dispatch archive
+- All current type check issues
+- Type issues in some rector components
+- Messenger access check issue
+- Discord bot guild select query
+- Some xsync use caused by new version changes
+- Discord bot guild count metrics
+- Improve errors for set super user mode call
+- Notifications not showing when in non default layout
+- Marker create or update marker slideover date issue
+- Clenaup notifications actions/onClick
+- Adjust stream control translations
+- Simpler self service absence button check
+- Discord sync issues
+- Oauth2 issue with hashtag sign in redirect url
+- Add account info button to char selector page
+- Move livemap marker colors to app config
+- Vmaska imports
+- Timestamp in security.txt and update js dep
 - Add user and password to docker-compose nats
+- Add missing iconify to docker-compose.yml
+- Add log for different identifier in choose char request
+- Auth issue for superuser
+- Issues with zod duration
+- Discord bot crashes
+- Duration zod format issues for good
+- Remove livemap tiles dir
+- Clone submodules for image build
+- Attempt to fix gitmodule issue
+- Re-add livemap-tiles submodule
+- Container build step for livemap tiles repo
+- Add missing recurring column to calendar service migrations
+- Cleanup some older code and fix container build issues with tiles
+- Move livemap dir to new public dir
+- Improve postals file load errors
+- Marker create or update icon label
+- Attempt to fix user marker color not changing correctly
+- Tweak nuxt config for fontaine use
 - App config not triggering updates in own instance
+- Missing closed/open check for citizen documents
+- Qualifications requests tutor listing
 - Date select popover mode for mobile
+- Limiter faction delete call
+- Tweak websocket status overlay and tracker
 - Use wrapped date picker popover to fix touch issue
+- Date picker null/undefined issue
+- Tweak optional fields mainly for qualifications
+- Slideover height issues using dvh unit
+- Try out modal wrap for some popovers on mobile
 - Add grpcws ping packet
+- Qualifications unique index issue and tweak map user marker padding
+- Use update dispatch instead of potentially sending status first
+- Dispatch time to text color logic
+- Tabs showing double icons
+- Redirect to char selector if last char id is undefined
+- Try to restart websocket streams
+- Icon issues with latest nuxt changes
 - Icon issue for good
+- Qualifications access entry not showing job/rank on load
+- Centrum manager stream issue
+- Some type issues
+- More type issues
+- Add missing role="list" to two `ul`s
+- Focusin/focusout removal and use central id route param regex
+- Adjust access check logic for ui helpers
+- Pinia persisted store changes
+- Qualifications exam issue
+- Remove double set of locale
+- Websocket channel issue
+- Remove unused grpcws code
+- Exam multiple choice question issue
+- Adjust session cookie SameSite mode
+- Use cookie SameSite mode None
+- Pinia persisted state plugin not using correct storage
+- Qualification requirements showing multiple times
+- Some type issues and centrum err wrapping
+- Tweak template editor layout
+- Clean up back buttons and doc categories
+- Improve grpcws cancel logic in frontend
+- Account info not showing notification on oauth2 connect
+- Add star to job badge when set via prop
+- Add workaround for spa loading screen disappearing too early
+- Discord userinfo sync not having single digit rank
+- Discord sync issue
+- Improve discord bot loop
+- Discord bot sync issues
+- Discord bot complaining about nick name for server owner
+- Doc category badge not using category color and icon
+- Issues with document categories color
+- Doc closed error code
+- Settings store not persisting as before
+- Discord bot not working
+- Type issues
 - Tweak login issues for servers not having char1:... identifier
+- Auth check for char id comparison
+- Appconfig update in db query
+- Add registrationToken query param for registration and forgot pass
+- Doc relation manager doc id wrong prop
+- Citizenstore activity for superuser
+- Docstore user activity relation entries
+- Dispatch layer not affected by layer changes
+- Grpcws data race and unit creation race condition
+- Discord bot fivenet command test
+- Adjust error page check
+- Complete last discord bot and tweak grpcws code
+- Update auth store comment
+- Cleanup some comments
+- Parse int for grade role in discord userinfo module
+- Remove box-shadow from color picker
+- Fill color picker modal with color picker
+- Add conduct entry id to audit log
+- Discord bot commands msg ids
+- Attempt to fix app config nats issue
+- Discord http error code handling
+- App config saving
+- Issues with discord bot color and perms sync
+- Tweak discord role update logic further
+- Update role color and perms only for roles bot can't update
+- Discord sync plan and calculate issues with colors and perms
+- Issues with discord bot not removing roles
 - Citizen info second back button and add audit log for delete
+- Adjust penalty calculator reduction slider size
 - Improve oauth2 connect experience
+- Improve small screen layout for penalty calculator
+- Slightly reorganize user settings order
+- Tweak account info social login layout
 - Unit creation issue for good
+- Add missing notification for unit creation/update
+- Tweak centrum logs on client side for latest state
+- Propagate grpc ws remote address to grpc requests
+- Remote ip being "wrong" for wrapped grpc server
+- Correct remote address override in wrapper grpc handling
+- Attempt to fix user tracker issues
+- Re-enable debug logging
+- Tracker manager using an unused transaction
+- Centrum load issues caused by mutex and accessing the locked key
+- A lot of issues found while using fivenet in-game
+- Colleague timeclock showing "global" timeclock
+- Sorting nil issue
+- Cleanup sort order by conversion
+- Sort button column change issue
+- Timeclock rank display
+- Js linter issues
+- Lint issues in date pickers
+- Lint errors in calendar store
+- Hmr update in messenger store
+- Cron stream creation only being in the main cron code
+- Add unlock logic on cron manager shutdown
+- Move in cron schedule in progress call below handler check
+- Rank not showing in timeclock list under certain conditions
+- Use accordion for timeclock stats in timeclock list
+- Db transaction not being used fully when opened
+- Centrum state settings data race on settings updates
+- Remove debug logs
+- Re-generate proto generated files
+- Add app timeout default flag value correctly
+- Centrum settings bug
+- Centrum bot issue
+- Add debug log for unemployed role issue
+- Change discord bot debug log
+- Adjust discord role removal logs for debugging
+- Rename cron to croner package
+- Nil issue in cron client
+- Add empty line between switch case statement
+- Rework exam result storing of question info
+- Qualifications exam response changes migration
+- Set default command perms for discord bot commands
+- Centrum tests by adding croner to test fx opts
+- Cron module for tests
+- Noop cron for tests
+- New cron return type
+- Only run cron agent in worker process
+- Userinfo module unknown event logging
+- Forgot password notification content
+- Grpcws error deduplication
+- Tweak UToggle positioning in some search bar form groups
+- Cancel/startup context issues
+- Discord bot added option to ignore role on user if not in sum
+- Nats store keys listing with prefix
+- Issues with super user job selection and discord bot
+- Store key prefix issue
+- Store prefix removal for listing keys
+- Add log level toggle to debug info
+- Improve nui focus handler logic
+- Superuser job selector being empty when it was closed/reopened
+- Adjust require unit timings notifications only when centrum sidebar
+- Issues with grpcws eating errors
+- Adjust discord bot timer code
+- Centrum take control eat the error
+- Dispatch center disponents info causing client freeze
+- Add debug output for nil issue in set user props
+- Adjust error message grammar in auth SetSuperUserMode
+- Tweak calendars creation logic
+- Conduct entry deletion sql error
+- Calendar create condition issues
+- Docker-compose discord bot flags
+- Rework attr check in create calendar modal
+- Adjust timeclock handling cron job name
+- Worker debug start flags
+- Jobs housekeeper tasks not being run on worker
+- Jobs timeclock housekeeper calculation
+- Cron scheduler duplicating logic
 - Display qualification content when exam is enabled and can take
+- Pinned documents translation issue in German
+- Active calendar changes not refreshing shown entries
+- Timeclock issue and add livemap usermarker hidden property
+- Only send require unit notification when user is on duty
+- Only display hint in rector law list when hint is set
+- Better jobs update logic
+- Timeclock issues when switching modes
+- User marker merge
+- Nats store keys not correctly getting values by key
+- Qualifications list count issue
+- Qualifications result needing summary
+- Qualifications results and requests count queries for good
+- Qualification discord sync not being toggleable
+- Qualifications update/delete issue
+- Add missing perms can check to absence discord bot command
+- Discord bot qualifications module being commented out
+- Discord qualifications role safety check
+- Qualification exam issues
+- Discord bot commands not being enabled
+- Adjust absent command return
+- Discord absent command not getting all deps
+- Discord bot not passing through perms to command params
+- Add code for discord bot absent perms issues
+- Discord absent command remove attr check not needed here
+- Calendar list checkbox truncate issue
+- Discord bot absent command perms check missing job grade
+- Slight adjustment to discord absent can check user info
+- Qualification dc role not being removed when result is deleted
+- Mstlystcdata cache not updating indexed data correctly
+- Qualification access levels manage and edit being confused
+- Audit log table/pagination scroll
+- Found issues with wiki feature
+- Make page search modal more wide
+- Improve wiki page search design
+- Wiki search not navigating to result on select
+- Enum used for wiki page activity and page view
+- Change wiki home breadcrumb icon
+- Issues around wiki nav list
+- Add data blocks for wiki list
+- Table expand
+- Page search width
+- Wiki parent id check
+- Wiki translation attribute missing
+- Wiki search bar on index page
+- Listing pages for superuser
+- Various reported issues
+- Wiki page view perm check
+- Colleague info tabs missing
+- Adjust timeclock job resolution
+- Page create button showing when no perms
+- Sorting of wikis
+- Wiki get page for public pages
+- Default toc wiki page value
+- Attempt to fix first wiki page creation
+- User access checks
+- Remove debug log
+- Add missing created and updated at time for wiki pages
+- Perms consolidation missing one
+- Default perms registration logic
+- Docstore perms issue mergers
+- Last remaining consolidated perm name issues
+- Add missing empty-state to tables
+- Calculator button
+- Most pages scroll hiding top menu bar
+- Add trash can icon to deleted pages in wiki
+- Persist position of calculator modal
 - Attempt to fix a discord role with KeepIfJobDifferent set being
+- Discord KeepIfJobDifferent condition
+- Croner lock issue
+- Discord role calculation conditon again
+- Dereferer for hash change hrefs
+- Editor pages not scrolling as intended
+- Notification list pagination scroll
 - Page view edit/delete perms not checked
+- Wiki page view complaining about invalid query selector
+- Attempt to fix notification counter being off
+- Attempt another way to fix scroll to hash in tablet
+- Add special quotes to slugify char list
+- Clean up documents clipboard/template modal design
+- Access manager entry issues with template content access
+- Tweak small screen display
+- AccessBadge using wrong translation key
+- Access badge i18n access level enum key
+- Discord absent time parsing condition issue
+- Discord absent date check
+- Discord absent command using wrong end date
+- Colleagues timeclock tab permission check
 - Qualification editor requirements causing request validation to
+- Change wiki pagination limit
+- Message list pagination
+- Update en translation
+- Continue tweaking mailer ui components
+- Tweak email changed too early error
+- Email deactivated handling in migration
 - Make sure to drop any messenger service perms in email rework
+- Issues with mail creation/posting
+- Restart notificator stream when creating/deleting emails
+- Tweak templates list icon display
+- Templates list hide icon prop
+- Don't duplicate address book items
+- Tweak error page handling
+- Grouped access logic
+- Adjust error var naming
+- Docstore updating template
+- Template icon color not showing in view and list correctly
+- Attempt to fix discord bot members listing issue
+- Tweak calendar owner check to include creator job
+- Discord members retrieval args
+- Ignore tab buttons for form submits
+- Document template pages scrolling header
+- Grpc tracing context being unused due to http server trace context
+- Issues with mathcalculator and use state for calc history
+- Grpc trace id issue and template edit access issue in ui
+- Unit ordering in centrum join unit slideover
+- Remove unused perm translation
+- Mail thread load on page mount
+- Internet tab idea calculation
+- Remove debug logs
+- Creator info for mailer threads and messages
+- Email message reply
+- Add tooltip to colleagues table actions
+- Colleague list card view buttons
+- Improve colleague list card view
+- Issues with colleague list card view
+- Auth get chars response issue
+- Tag updated activity feed icon
+- Grpc copy error date/timestamp issue
+- Jobs labels modal plus button
+- Set job user props labels issue
+- Colleague setjobsuserprops logic using wrong user id
+- Tweak doc requests owner change hatch check
+- Document workflow user state update
+- Document workflow user reminder creation
+- Document reminder modal issue
+- Issues with switch to colleague object for centrum
+- User/colleague retrieval in centrum manager
+- Centrum manager dispatch creator user need nil jobs user props
+- Remove route query reactive object logic for now
+- Colleague set labels empty logic
+- Bunch of issues
+- Document editor title for creating document
+- Data error block not unsetting error on props change
+- Centrum housekeepr cron schedules for cleanups and co
+- Cron data nil issue
+- Centrum dispatch creator data load issue
 - Citizen attributes, colleague labels create/update/delete check
+- Wrong icon for reminders in document view badges
+- New email address creation redirect to mail page
+- Return server unavailable error when web socket is not open
+- Don't send unavailable for unary grpc requests
+- Post message return message not having sender info set
+- Mailer notification and message handling issue
+- Remove debug output
+- Attempt to fix set read thread state for open thread
+- Make email thread slideover full width
+- Improve mailer ui logic
 - Unread email threads count issue by sending dummy state in thread
+- Manually update language files
+- Wiki pages to nav items mapping
+- Mailer overflow issues
+- Attempt to improve mailer thread state logic
+- Mailer decrease mark as read timer
+- Mailer thread mark as read timer "double delay"
+- Mailer thread recipients being centered
+- Issues with mailer and back button logic
+- Add logs to char selector for debugging
+- Adjust mailer logic for thread state
+- Change username modal form issue
+- Downgrade nuxt ui to workaround SelectMenu issue
+- Import issue for content type changes
+- Grpc request sanitization logic and generation
+- Add missing default font translation
+- Build issue caused by import.meta usage in template
+- Update german translations
+- Duplicate nil check in sanitizer generated code
+- Spacing issues with html to json and back logic
+- Html to json text spacing issues
+- Disable image extension for document comments
+- Tweak pagination breakpoint for text
+- Adjust mailer thread create modal editor height
+- Timeclock inactive list colleague name missing job user props
+- Jobs colleagues labels db migration
+- Centrum status issue when nil
+- Use checkbox component in html content renderer
+- Add dividers to tiptap editor buttons bar
+- Disable page break in tiptap editor
+- Content view for html content render
+- Lint issue
+- Mailer store unread count calculation
+- Mailer ui and event issues
+- Mailer message search link message id
+- Mailer thread order by
+- Livemap stream not ending on unmount
+- Further improve stream recovery logic
+- Added tooltip to dispatch-archive-button
+- Format in dispatch list
+- Add changeOrigin to /api proxy
+- Add tooltips to more buttons
+- Toc links generation for content
 - Inactive colleagues list actions not showing and continue internet
+- Adjust email creation query handling
+- Add tooltip to more buttons
+- Remove 3rd level of prose text scaling
+- Add tooltips to more buttons
+- Disable private calendar option if user already has one
+- Style attributes being broken by cleanup logic
+- Issues with content header id system
+- Cleanup some USelectMenus
+- Hide avatar overflow in colleagues card list view
+- Jobs get colleague labels perms issue
+- Confirm modal close/confirm button padding
+- Delete/restore buttons and fix wrong default access type
+- Remove debug print
+- Nui focustable not called for tiptap editor focus/blur
+- Add missing mailer shortcuts
+- Timeclock list showing raw response
+- Perms for colleagues labels stats button
 - Use modified useFileSelection function for editor image modal
+- Remove idParamRegex in favor of simpler id number checking
 - Downgrade nuxt to 3.14.59 for now
+- Esx base tables up owned_vehicles model index check
+- Issues with messenger removal migration
+- Empty placeholders for penalty calculator and wiki
+- Improve esx base tables migration and improve table struct gen
+- Issues with exam view questions not scrolling
+- Adjust exam view questions toolbar size
+- Don't check emails every interval
+- Locale switching issue
+- Mailer redirect for new email creation
+- Some issues and continue work on dbsync
+- Split users proto defs into multiple files and continue dbsync
+- Centrum state issues and continue sync api
+- Add debug logging to cron scheduler
+- Change unit/dispatch deletion order
+- Unit plural translation usage
+- Remove debug log in centrum
+- Tests by enabling esxcompat by default for them
+- Continue dbsync work and esxcompat logic
+- Issues found during testing and continue dbsync logic
+- Query issue with list colleagues
+- Cleanup some comments
+- List colleagues count issue
+- Issues with mailer design
+- Some todos in dbsync logic
+- Improve dbsync logic for initial sync
+- Primary color being included in color list
+- Lint issue in calendar nil condition
+- Sync stream api permission issue
+- Sync api register account logic
+- Remove generated server GetPermsMap func
+- Issue with role deletion event handling
+- Citizen labels text not showing when color is too bright
+- Adjust sync api for activities
+- Add Translation in centrum & added tooltips
+- User props handling nil issues
+- Tweak user location data sync
+- Add label to select menus without one
+- User activity creation issue missing data
+- Tweak absence date validation
+- Scroll for access list and disable dark reader
+- Filter empty access entries
+- Tweak char selector card style
+- Replace carousel in char selector due to nui html issues
+- Db tools user activity migration and remove old user activity columns
+- Citizen activity feed filter margin
+- Qualification exam question deletion issue
+- User activity migration query column name issue
+- Email list issue
+- Adjust notificator stream
+- Selected thread read state logic
+- Add more basic email patterns
+- Tweak dbsync timestamp type
+- Context issues with dbsync
+- Issues with dbsync grpc transport
+- Start work on data deletion api for dbsync
+- Go deps bleve version issue
+- Add sync data deletion
+- Sync get account query
+- Build issues due to nuxt content update
+- Select menu label issue
+- No rows error in account sync methods
+- Sync api account retrieval
+- Adjust foreign keys list in db migrations readme
+- Hide social login if no providers are configured
+- Disable darkreader meta tag
+- Issue with check emails logic for superusers
+- Issues with job grades dbsync
+- Notifications issue
+- Parse error
+- Update generated sql table structs
+- Oauth2 account external id type
 - Doc comments causing multiple notifications if an user created
 - Timeclock list issue caused by dynamic table columns causing
+- Continue internet feature work
+- Timeclock list sum display per time range
+- Add new tooltips to qualfications
+- Timeclock timeline tweaks
+- Adjust do not disturb icon
+- Hints list
 - Adjust start point for timeclock timeline point with start but no
+- Tweak setting locale logic
 - Timeclock floating accuracy issue
+- Use game unemployed job to hide/show char job grade info
+- Attempt to fix locale issues
 - Add userLocale getter to workaround app config and user locale
+- Add polyfill for array.tosorted due to fivem's nui chrome
+- Remove Array.prototype.toSorted and use typescript "native"
+- Slight change to timeclock condition
 - Housekeeper not running as expected for servers with cron agent
+- Timeclock active badge condition issue
+- Remove debug output in timeclock
+- Timeclock list count/order issue
 - Workaround corepack/pnpm install issue
+- Issue with mstlystatcdata cache refresh updates for jobs/grades
+- Cleanup roles and limiter ui lists
+- Cleanup document ref and rel managers and more
 - Replace some strconv.Atoi with strconv.ParseInt for int32
+- Attempt to use pnpm 10.2.0
+- Pnpm install in docker
+- Continue internet feature changes
+- Db migrations template null bytes issue
+- Colleague absence erroring on annulment/cancel
+- Pnpm deps install issue
+- Hide overlay option in websocket status overlay
+- Issue with completor jobs cache issue
+- Nats store list issue caused by range returning prefixed keys
+- Role attr job grade list toggle issue
+- Attempt to fix listThreads emailIds validation issue
+- Role list toggle issue for good
+- Issues with email archiving in ui
+- Html render not inheriting attributes
+- Citizenstore not using default grade from config file
+- Discord bot nickname apply logic
+- Discord userinfo user job props retrieval issue
 - Improve discord name construction to take 32 char limit into
+- Oauth2 connect button showing when connection already exists
+- Finalize mstlystcdata split for document categories funcs
+- Move internet page templates to pages folder
+- Internet search missing tld info
+- Email response attachments not being sent to server
+- Laws cache not being loaded on start
+- Ignore nil user changes events
+- Discord bot type issues
+- Dbsync dateofbirth output format
+- Tweak discord sync command translations
+- Add binary build to build image workflow
+- Phone number block hide na prop
+- Remove unused types/interface from stores
+- Reorganize discord commands to use fx
+- Discord bot guild query
+- Discord bot commands registration
+- Adjust discord command fx registration
+- Discord command fx params
+- Discord bot start issue
+- Discord fivenet command test issue caused by recent changes
+- Dbsync invoking croner and server component
+- Discord bot sync timer issues
+- Add missing discord sync command translations
+- Discord bot sync loop not working
+- Downgrade eslint-plugin-vue to v9.x
+- Adjust alert padding
+- Hide timeline tooltip when timeline mode isn't selected
+- Move derefer page code into onMounted
+- Improve some centrum/livemap code
+- Attempt to use SetHeader instead of SendHeader for cookies
+- Auth sending headers again when char could be auto chosen
+- Centrum/livemap streams not ending on route change/logout
+- Correctly use RWMutex for grpcws stream map
+- Layer control issue in dispatch center on small screens
+- Remove excessive z-index from layer controls popover
+- Banner message id not being saved
+- App config not setting system config into state
+- Improve grpcwc stream logic and reduce limits
+- Linter complaints
 - Add stream cancellation logic for websocket to be smarter
+- Move isCenter to separate centrum store state
+- Move abort null-ing further down
+- Access db condition issues
+- Qualification access issue
+- Centrum store isCenter state missing
+- Wrap load disponents error to debug context issue
+- Add option to disable s3 presigned urls
+- Load centrum data via goroutine
+- Qualification requirements can't reference themselves
+- Docstore access check issues
+- Access level check
 - Use jsoniter fastest for audit log and change croner scheduler
+- Issues with cron data updates and banner message not expiring
+- Makefile build-go target
+- Banner message expiresAt can be undefined
+- Move cookie button higher up
+- Use v-model.trim as a test for map user query
+- Remove notificator ping for now
+- Remove spa loading module in favor of spaLoadingTemplateLocation
+- Livemap not sending an initial user markers list
+- Cleanup and regen code
+- User documents and app config banner message issues
+- Centrum settings merging
+- Proto merge direction issues
+- Duplicated imports loggers in stores issue
+- Typecheck issues
+- User markers missing userid in user object
+- Remove default locale config option as appconfig controls it
+- Allow dsn to be constructed from config fields
+- Correctly trim prefix from storage paths
+- Set prefix accordingly in filesystem storage
+- Workaround i18n message-compiler issue
+- Croner data marshal issue
+- Colleague labels set issues
+- Job props update issue
+- Audit log methods param issue
+- Split up grpcws websocket code and tweak buffer size
+- Add can manage labels check to jobs labels
+- Add refresh button to jobs labels stats modal
+- Add data pending to job labels modal
+- Attempt to improve memory leak issue
+- Logic to write empty slice in grpc response
+- Workaround ws ch closed and fix memory leak
+- Issue with qualification update access level check
+- Update de translations
+- Continue improving grpcws and http server code
+- Data race in websocket channel
+- Attempt to fix timeclock timeline info tooltip
+- Bleve index used in worker by splitting stcdata jobs into search
+- Replace some regex usages with functions and fix vehicles sync
+- Attempt to workaround vehicles identifier/id issue
+- Issues with templates losing access on update
+- Job grade selection issue in roles/limiter
+- Password reset via sync
+- Util slices difference func test
+- Filepath empty path test
+- Improve centrum state nil dispatch delete handling
+- Add more tests
+- Current centrum test code
+- Auth tests
+- Icon issues by using the iconify api again
+- Dbmanager not setting parseTime=true in DSN
+- Issues with app shutdown in tests
+- Stop and start db again instead of truncating
+- Events key utils test case
+- App stop in service tests
+- Increase fx start timeout in tests
+- Reset nats after test
+- Natsmanager reset/stop logic
+- Further increase fx startup timeout
+- Add debug logs to perms registration
+- Introduce dev mode for perm system to reduce load times in tests
+- Rework db and nats servers for tests logic
+- Tweak test servers code
+- Error return bug in perms registry
+- Test rbac sql data
+- Double close channel in websocket channel logic
+- Doc template state field length
+- Concurrent map write issue in websocket channel
+- Issue with html renderer with ProseMirror class
+- Livemap updated at for marker logic
+- Filepath issue for file upload
+- File upload issues
+- Move fx start timeout to fx test helper function
+- Unit access changes not showing in ui
+- Increase tracker manager retry count for ci
+- Attempt to fix tracker manager test
+- Add debug logs to tracker manager for ci debug
+- Tracker manager issue caused by timezone
+- Update dbsync example config
+- Implement xsync v4 changes
+- Some code scan alerts
+- Viper env bind not working as expected
+- Add fivenet_users table to initial tables migration
+- Migration issue of attributes
+- Centrum stream issue
+- Dbsync issues
+- Dbsync vehicles and users NEW doesn't exist issue
 - Improve disable superuser mode flow and disabled dispatch center
+- Correctly work with empty paragraphs
+- Resolve some grpcws pkg todos
 - Use different user to run fivenet
+- Add missing USER statement in Dockerfile
+- Update bump_version.sh script
+- Finish perm merge/cleanup
+- Rename release draft workflow
+- Tweak release-it config
 
 ### 💼 Other
 
@@ -263,14 +3438,12 @@ All notable changes to this project will be documented in this file.
 - Use `navigateTo` instead of `useRouter()` + `push()`
 - Remove auto imported vue imports
 - Rework templates api
-- Update deps
 - Reorganize vue components
 - Cleanup prettier ignore config
 - Run prettier-plugin-tailwindcss
 - Use @raffaelesgarro/vue-use-sound as a replacement due to bug
 - Remove nuxt eslint module
 - Update js and go deps
-- Update js deps
 - Add missing grpcws localhost test certs
 - Downgrade vue to workaround v-calendar issue
 - Update go prot generated files
