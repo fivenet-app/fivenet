@@ -51,10 +51,7 @@ type Scheduler struct {
 }
 
 func NewScheduler(p SchedulerParams) (*Scheduler, error) {
-	nodeName, err := getNodeName(p.Cfg.HTTP.AdminListen)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get node name. %w", err)
-	}
+	nodeName := instance.ID() + "_cron_scheduler"
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
@@ -76,6 +73,7 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 			return err
 		}
 
+		var err error
 		s.le, err = leaderelection.New(
 			ctxCancel, s.logger, s.js,
 			"leader_election", // Bucket

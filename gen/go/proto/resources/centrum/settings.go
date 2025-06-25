@@ -117,6 +117,10 @@ func (x *JobList) Value() (driver.Value, error) {
 	return json.MarshalToString(x.GetJobStrings())
 }
 
+func (x *JobList) IsEmpty() bool {
+	return x == nil || len(x.Jobs) == 0
+}
+
 func (x *JobList) ContainsJob(job string) bool {
 	return slices.ContainsFunc(x.Jobs, func(in *Job) bool {
 		return in.Name == job

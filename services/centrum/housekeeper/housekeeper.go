@@ -3,7 +3,6 @@ package housekeeper
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -11,19 +10,18 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/croner"
+	"github.com/fivenet-app/fivenet/v2025/pkg/events"
+	"github.com/fivenet-app/fivenet/v2025/pkg/nats/leaderelection"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
-	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatches"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
-	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
-	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
@@ -48,6 +46,7 @@ type Housekeeper struct {
 	tracer  trace.Tracer
 	db      *sql.DB
 	tracker tracker.ITracker
+	le      *leaderelection.LeaderElector
 
 	helpers     *helpers.Helpers
 	settings    *settings.SettingsDB
@@ -64,6 +63,7 @@ type Params struct {
 	Logger  *zap.Logger
 	TP      *tracesdk.TracerProvider
 	DB      *sql.DB
+	JS      *events.JSWrapper
 	Config  *config.Config
 	Tracker tracker.ITracker
 
@@ -101,11 +101,27 @@ func New(p Params) Result {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.runUserChangesWatch()
-		}()
+		nodeName := instance.ID() + "_centrum_housekeeper"
+
+		var err error
+		s.le, err = leaderelection.New(
+			ctxCancel, s.logger, p.JS,
+			"leader_election",     // Bucket
+			"centrum_housekeeper", // Key
+			10*time.Second,        // TTL for the lock
+			5*time.Second,         // Heartbeat interval
+			func(ctx context.Context) {
+				s.logger.Info("scheduler started, running as leader", zap.String("node_name", nodeName))
+
+				s.start(ctx)
+			},
+			nil, // No on stopped function, context cancels the centrum housekeeper
+		)
+		if err != nil {
+			return fmt.Errorf("failed to create leader elector. %w", err)
+		}
+
+		s.le.Start()
 
 		s.wg.Add(1)
 		go func() {
@@ -133,6 +149,20 @@ func New(p Params) Result {
 	}
 }
 
+func (s *Housekeeper) start(ctx context.Context) {
+	s.wg.Add(1)
+	go func() {
+		defer s.wg.Done()
+		s.runUserChangesWatch(ctx)
+	}()
+
+	s.wg.Add(1)
+	go func() {
+		defer s.wg.Done()
+		s.runDispatchWatch(ctx)
+	}()
+}
+
 func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.manager_housekeeper.dispatch_assignment_expiration",
@@ -142,11 +172,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 		return err
 	}
 
-	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.manager_housekeeper.dispatch_deduplication",
-		Schedule: "*/2 * * * * * *", // Every 2 seconds
-		Timeout:  durationpb.New(5 * time.Second),
-	}); err != nil {
+	if err := registry.UnregisterCronjob(ctx, "centrum.manager_housekeeper.dispatch_deduplication"); err != nil {
 		return err
 	}
 
@@ -176,8 +202,16 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.manager_housekeeper.delete_old_dispatches",
-		Schedule: "*/2 * * * *", // Every 2 minutes
-		Timeout:  durationpb.New(15 * time.Second),
+		Schedule: "@hourly", // Hourly
+		Timeout:  durationpb.New(30 * time.Second),
+	}); err != nil {
+		return err
+	}
+
+	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
+		Name:     "centrum.manager_housekeeper.delete_old_dispatches_from_kv",
+		Schedule: "@always", // Every minute
+		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
 		return err
 	}
@@ -187,128 +221,11 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 
 func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
 	h.Add("centrum.manager_housekeeper.dispatch_assignment_expiration", s.runHandleDispatchAssignmentExpiration)
-	h.Add("centrum.manager_housekeeper.dispatch_deduplication", s.runDispatchDeduplication)
 	h.Add("centrum.manager_housekeeper.cleanup_units", s.runCleanupUnits)
 	h.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 	h.Add("centrum.manager_housekeeper.load_new_dispatches", s.loadNewDispatches)
 	h.Add("centrum.manager_housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
-
-	return nil
-}
-
-func (s *Housekeeper) runUserChangesWatch() {
-	for {
-		if err := s.watchUserChanges(s.ctx); err != nil {
-			if !errors.Is(err, context.Canceled) {
-				s.logger.Error("failed to watch user changes", zap.Error(err))
-			}
-		}
-
-		select {
-		case <-s.ctx.Done():
-			s.logger.Info("stopping user changes watcher")
-			return
-
-		case <-time.After(2 * time.Second):
-		}
-	}
-}
-
-func (s *Housekeeper) watchUserChanges(ctx context.Context) error {
-	userCh, err := s.tracker.Subscribe(ctx)
-	if err != nil {
-		return err
-	}
-
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-
-		case event := <-userCh:
-			if event == nil {
-				s.logger.Error("received nil user changes event, skipping")
-				continue
-			}
-
-			func() {
-				ctx, span := s.tracer.Start(ctx, "centrum.watch-users")
-				defer span.End()
-
-				if event.Operation() == jetstream.KeyValuePut {
-					userMarker, err := event.Value()
-					if err != nil {
-						s.logger.Error("failed to get user marker from event", zap.Error(err))
-						return
-					}
-
-					if _, err := s.tracker.GetUserMapping(userMarker.UserId); err != nil {
-						return
-					}
-
-					unitId, err := s.units.LoadUnitIDForUserID(ctx, userMarker.UserId)
-					if err != nil {
-						s.logger.Error("failed to load user unit id", zap.Error(err))
-						return
-					}
-
-					if err := s.tracker.SetUserMappingForUser(ctx, userMarker.UserId, &unitId); err != nil {
-						s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
-						return
-					}
-				} else if event.Operation() == jetstream.KeyValueDelete || event.Operation() == jetstream.KeyValuePurge {
-					userId, job, _, err := tracker.DecodeUserMarkerKey(event.Key())
-					if err != nil {
-						s.logger.Error("failed to decode user marker key", zap.Error(err), zap.String("key", string(event.Key())))
-						return
-					}
-
-					if err := s.handleRemovedUser(ctx, job, userId); err != nil {
-						s.logger.Error("failed to handle removed user", zap.Int32("user_id", userId), zap.Error(err))
-					}
-				}
-			}()
-		}
-	}
-}
-
-func (s *Housekeeper) handleRemovedUser(ctx context.Context, job string, userId int32) error {
-	var errs error
-	if s.helpers.CheckIfUserIsDispatcher(ctx, job, userId) {
-		if err := s.dispatchers.SetUserState(ctx, job, userId, false); err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to remove user from disponents. %w", err))
-		}
-	}
-
-	um, err := s.tracker.GetUserMapping(userId)
-	if err != nil {
-		errs = multierr.Append(errs, fmt.Errorf("failed to get user unit mapping. %w", err))
-		// User not in any unit, nothing to do
-		return errs
-	}
-
-	if um != nil && um.UnitId != nil && *um.UnitId > 0 {
-		if err := s.units.UpdateUnitAssignments(ctx, job, &userId, *um.UnitId, nil, []int32{userId}); err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("failed to remove user from unit. %w", err))
-		}
-	}
-
-	return errs
-}
-
-func (s *Housekeeper) deleteOldUnitStatus(ctx context.Context) error {
-	tUnitStatus := table.FivenetCentrumUnitsStatus
-
-	stmt := tUnitStatus.
-		DELETE().
-		WHERE(jet.AND(
-			tUnitStatus.CreatedAt.LT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(DeleteUnitDays, jet.DAY))),
-		)).
-		LIMIT(1500)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return fmt.Errorf("failed to delete old unit status. %w", err)
-	}
+	h.Add("centrum.manager_housekeeper.delete_old_dispatches_from_kv", s.runDeleteOldDispatchesFromKV)
 
 	return nil
 }

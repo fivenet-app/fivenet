@@ -62,6 +62,16 @@ func init() {
 			},
 		},
 	})
+
+	// Remove unit statuses after 14 days
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:    table.FivenetCentrumUnitsStatus,
+		IDColumn: table.FivenetCentrumUnitsStatus.ID,
+
+		TimestampColumn: table.FivenetCentrumUnitsStatus.CreatedAt,
+
+		MinDays: 14,
+	})
 }
 
 type Server struct {

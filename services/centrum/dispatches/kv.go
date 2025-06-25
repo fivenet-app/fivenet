@@ -5,9 +5,14 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	"google.golang.org/protobuf/proto"
 )
+
+func (s *DispatchDB) Store() *store.Store[centrum.Dispatch, *centrum.Dispatch] {
+	return s.store
+}
 
 func (s *DispatchDB) updateInKV(ctx context.Context, id uint64, dsp *centrum.Dispatch) error {
 	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {

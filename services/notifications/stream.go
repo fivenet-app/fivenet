@@ -22,6 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/userinfo"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	pbmailer "github.com/fivenet-app/fivenet/v2025/services/mailer"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
@@ -136,7 +137,9 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 					if gAccess != nil {
 						check, err := gAccess.CanUserAccessTarget(gctx, *clientView.Id, userInfo, 2)
 						if err != nil {
-							return errswrap.NewError(err, ErrFailedStream)
+							if !errors.Is(err, qrm.ErrNoRows) {
+								return errswrap.NewError(err, ErrFailedStream)
+							}
 						}
 
 						if !check {

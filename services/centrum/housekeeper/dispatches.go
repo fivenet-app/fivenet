@@ -3,7 +3,6 @@ package housekeeper
 import (
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
@@ -12,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/paulmach/orb"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
@@ -190,24 +188,12 @@ func (s *Housekeeper) runDeleteOldDispatches(ctx context.Context, data *cron.Cro
 	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-old-delete")
 	defer span.End()
 
-	errs := multierr.Combine()
-
 	if err := s.deleteOldDispatches(ctx); err != nil {
 		s.logger.Error("failed to remove old dispatches", zap.Error(err))
-		errs = multierr.Append(errs, err)
+		return err
 	}
 
-	if err := s.deleteOldDispatchesFromKV(ctx); err != nil {
-		s.logger.Error("failed to remove old dispatches from kv", zap.Error(err))
-		errs = multierr.Append(errs, err)
-	}
-
-	if err := s.deleteOldUnitStatus(ctx); err != nil {
-		s.logger.Error("failed to remove old unit status", zap.Error(err))
-		errs = multierr.Append(errs, err)
-	}
-
-	return errs
+	return nil
 }
 
 func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
@@ -246,6 +232,18 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 	return errs
 }
 
+func (s *Housekeeper) runDeleteOldDispatchesFromKV(ctx context.Context, data *cron.CronjobData) error {
+	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-old-delete-kv")
+	defer span.End()
+
+	if err := s.deleteOldDispatchesFromKV(ctx); err != nil {
+		s.logger.Error("failed to remove old dispatches from kv", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
 func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 	errs := multierr.Combine()
 
@@ -281,169 +279,4 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 	}
 
 	return errs
-}
-
-func (s *Housekeeper) runDispatchDeduplication(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(ctx, "centrum.dispatch-deduplicatation")
-	defer span.End()
-
-	if err := s.deduplicateDispatches(ctx); err != nil {
-		s.logger.Error("failed to deduplicate dispatches", zap.Error(err))
-	}
-
-	return nil
-}
-
-func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
-	wg := sync.WaitGroup{}
-
-	for _, settings := range s.settings.List(ctx) {
-		job := settings.Job
-		locs, ok := s.dispatches.GetLocations(job)
-		if locs == nil || !ok {
-			continue
-		}
-
-		wg.Add(1)
-		go func(job string) {
-			defer wg.Done()
-
-			dsps := s.dispatches.Filter(ctx, []string{job}, nil, []centrum.StatusDispatch{
-				centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-				centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-				centrum.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-				centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
-			})
-
-			if len(dsps) <= 1 {
-				return
-			}
-
-			removedCount := 0
-			dispatchIds := map[uint64]any{}
-			for _, dsp := range dsps {
-				// Skip handled dispatches
-				if _, ok := dispatchIds[dsp.Id]; ok {
-					continue
-				}
-
-				// Add the handled dispatch to the list
-				dispatchIds[dsp.Id] = nil
-
-				if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-					continue
-				}
-
-				// Iterate over close by dispatches and collect the active ones (if locations are available)
-				closestsDsp := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
-					return p.(*centrum.Dispatch).Id != dsp.Id
-				}, 45.0)
-				s.logger.Debug("deduplicating dispatches", zap.Strings("job", dsp.Jobs.GetJobStrings()), zap.Uint64("dispatch_id", dsp.Id), zap.Int("closeby_dsps", len(closestsDsp)))
-
-				var refs *centrum.DispatchReferences
-				if dsp.References != nil {
-					refs = dsp.References
-				} else {
-					refs = &centrum.DispatchReferences{}
-				}
-
-				activeDispatchesCloseBy := []*centrum.Dispatch{}
-				for _, dest := range closestsDsp {
-					if dest == nil {
-						continue
-					}
-
-					closeByDsp := dest.(*centrum.Dispatch)
-					if closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
-						continue
-					}
-
-					if closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) >= 3*time.Minute {
-						continue
-					}
-
-					// Skip dispatches that are marked as multiple or duplicate dispatches they have already been handled
-					if closeByDsp.Attributes != nil && (closeByDsp.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) || closeByDsp.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE)) {
-						continue
-					}
-
-					// Add close by dispatch as a reference
-					refs.Add(&centrum.DispatchReference{
-						TargetDispatchId: closeByDsp.Id,
-						ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
-					})
-
-					activeDispatchesCloseBy = append(activeDispatchesCloseBy, closeByDsp)
-				}
-
-				// Prevent unnecessary updates to the dispatch
-				if len(activeDispatchesCloseBy) == 0 {
-					continue
-				}
-
-				// Add "multiple" attribute when multiple dispatches close by
-				if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE); err != nil {
-					s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
-				}
-
-				// Set dispatch references on dispatch
-				if err := s.dispatches.AddReferencesToDispatch(ctx, dsp, refs.References...); err != nil {
-					s.logger.Error("failed to update duplicate dispatch references", zap.Error(err))
-				}
-
-				sourceDspRef := &centrum.DispatchReference{
-					TargetDispatchId: dsp.Id,
-					ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATE_OF,
-				}
-
-				for _, closeByDsp := range activeDispatchesCloseBy {
-					// Already took care of the dispatch
-					if _, ok := dispatchIds[closeByDsp.Id]; ok {
-						continue
-					}
-					dispatchIds[closeByDsp.Id] = nil
-
-					if closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
-						continue
-					}
-
-					if err := s.dispatches.AddAttributeToDispatch(ctx, closeByDsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE); err != nil {
-						s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
-					}
-
-					if err := s.dispatches.AddReferencesToDispatch(ctx, closeByDsp, sourceDspRef); err != nil {
-						s.logger.Error("failed to update duplicate dispatch references", zap.Error(err))
-					}
-
-					if _, err := s.dispatches.UpdateStatus(ctx, closeByDsp.Id, &centrum.DispatchStatus{
-						CreatedAt:  timestamp.Now(),
-						DispatchId: closeByDsp.Id,
-						Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-					}); err != nil {
-						s.logger.Error("failed to update duplicate dispatch status", zap.Error(err))
-						return
-					}
-
-					toRemove := []uint64{}
-					for _, ua := range closeByDsp.Units {
-						toRemove = append(toRemove, ua.UnitId)
-					}
-					if err := s.dispatches.UpdateAssignments(ctx, nil, closeByDsp.Id, nil, toRemove, time.Time{}); err != nil {
-						s.logger.Error("failed to remove assigned units from duplicate dispatch", zap.Error(err))
-						return
-					}
-
-					removedCount++
-
-					if removedCount >= MaxCancelledDispatchesPerRun {
-						break
-					}
-				}
-			}
-		}(job)
-	}
-
-	wg.Wait()
-
-	return nil
 }

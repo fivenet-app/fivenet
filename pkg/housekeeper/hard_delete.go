@@ -144,18 +144,21 @@ func (h *Housekeeper) deleteRows(ctx context.Context, parent *Table, table *Tabl
 			)
 		} else {
 			// Otherwise, use TimestampColumn or DeletedAtColumn.
-			var col jet.ColumnTimestamp
 			if table.TimestampColumn != nil {
-				col = table.TimestampColumn
+				condition = jet.AND(
+					table.TimestampColumn.IS_NOT_NULL(),
+					table.TimestampColumn.LT_EQ(
+						jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(minDays, jet.DAY)),
+					),
+				)
 			} else {
-				col = table.DeletedAtColumn
+				condition = jet.AND(
+					table.DeletedAtColumn.IS_NOT_NULL(),
+					table.DeletedAtColumn.LT_EQ(
+						jet.CURRENT_DATE().SUB(jet.INTERVAL(minDays, jet.DAY)),
+					),
+				)
 			}
-			condition = jet.AND(
-				col.IS_NOT_NULL(),
-				col.LT_EQ(
-					jet.CURRENT_DATE().SUB(jet.INTERVAL(minDays, jet.DAY)),
-				),
-			)
 		}
 	}
 
