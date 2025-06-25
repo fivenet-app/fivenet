@@ -1911,15 +1911,15 @@
             },
             "document_relation_mentioned": {
                 "title": "Dokument: Sie wurden erwähnt",
-                "content": "Sie wurden in Dokument \\\"{title}\\\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+                "content": "Sie wurden in Dokument \"{title}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
             },
             "document_request_added": {
                 "title": "Dokument: Anfrage wurde erstellt",
-                "content": "Eine Anfrage an ihr Dokument \\\"{title}\\\" wurde erstellt."
+                "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
             },
             "document_comment_added": {
                 "title": "Dokument: Neuer Kommentar",
-                "content": "Ein neuer Kommentar wurde im Dokument \\\"{title}\\\" veröffentlicht."
+                "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
             },
             "document_take_ownership": {
                 "title": "Dokument-Besitzer geändert",
