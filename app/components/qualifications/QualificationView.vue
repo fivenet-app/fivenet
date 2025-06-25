@@ -256,7 +256,10 @@ const accordionItems = computed(() =>
             <UCard>
                 <template #header>
                     <div class="mb-4">
-                        <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+                        <h1
+                            class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1"
+                            :class="!qualification.title ? 'italic' : ''"
+                        >
                             <template v-if="qualification.abbreviation">{{ qualification.abbreviation }}: </template>
                             {{ !qualification.title ? $t('common.untitled') : qualification.title }}
                         </h1>
