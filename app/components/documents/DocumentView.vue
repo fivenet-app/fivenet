@@ -121,6 +121,14 @@ function updateReminderTime(reminderTime?: Timestamp): void {
     doc.value.document.workflowUser.manualReminderTime = reminderTime;
 }
 
+async function toggleDocument(): Promise<void> {
+    if (!doc.value?.document) {
+        return;
+    }
+
+    doc.value.document!.closed = await documentsDocuments.toggleDocument(props.documentId, !doc.value.document?.closed);
+}
+
 const accordionItems = computed(() =>
     [
         { slot: 'relations', label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
@@ -244,7 +252,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                 block
                                 :icon="doc.document?.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
                                 :ui="{ icon: { base: doc.document?.closed ? 'text-success-500' : 'text-success-500' } }"
-                                @click="documentsDocuments.toggleDocument(documentId, !doc.document?.closed)"
+                                @click="toggleDocument()"
                             >
                                 <template v-if="doc.document?.closed">
                                     {{ $t('common.open', 1) }}

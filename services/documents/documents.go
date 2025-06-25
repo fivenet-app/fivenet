@@ -838,6 +838,15 @@ func (s *Server) ToggleDocument(ctx context.Context, req *pbdocuments.ToggleDocu
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
 
+	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
+		Type:      notifications.ObjectType_OBJECT_TYPE_DOCUMENT,
+		Id:        &doc.Id,
+		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+
+		UserId: &userInfo.UserId,
+		Job:    &userInfo.Job,
+	})
+
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
 	return &pbdocuments.ToggleDocumentResponse{}, nil
@@ -939,6 +948,15 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *pbdocuments.Chang
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocuments.ErrFailedQuery)
 	}
+
+	s.notifi.SendObjectEvent(ctx, &notifications.ObjectEvent{
+		Type:      notifications.ObjectType_OBJECT_TYPE_DOCUMENT,
+		Id:        &doc.Id,
+		EventType: notifications.ObjectEventType_OBJECT_EVENT_TYPE_UPDATED,
+
+		UserId: &userInfo.UserId,
+		Job:    &userInfo.Job,
+	})
 
 	auditEntry.State = audit.EventType_EVENT_TYPE_UPDATED
 
