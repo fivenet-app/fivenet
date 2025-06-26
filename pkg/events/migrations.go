@@ -39,7 +39,10 @@ type Migration struct {
 // it records the latest migration ID and does nothing else.
 func runMigrations(ctx context.Context, logger *zap.Logger, js *JSWrapper) error {
 	// 1) Ensure the migration tracking bucket exists
-	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{Bucket: migrationBucket})
+	kv, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		Bucket:      migrationBucket,
+		Description: "Tracks applied migrations",
+	})
 	if err != nil {
 		return fmt.Errorf("failed to ensure migration KV bucket. %w", err)
 	}

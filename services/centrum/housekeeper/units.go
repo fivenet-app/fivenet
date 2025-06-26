@@ -9,7 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
-	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -166,37 +165,11 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 				continue
 			}
 
-			toRemove := []int32{}
-			for i := range slices.Backward(unit.Users) {
-				if i > (len(unit.Users) - 1) {
-					break
-				}
-
-				userId := unit.Users[i].UserId
-				if userId == 0 {
-					s.logger.Warn("zero user id found during unit user checkup", zap.Uint64("unit_id", unit.Id))
-					continue
-				}
-
-				unitMapping, err := s.tracker.GetUserMapping(userId)
-				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-				if err == nil && unitMapping.UnitId != nil && unit.Id == *unitMapping.UnitId && s.tracker.IsUserOnDuty(userId) {
-					foundUserIds = append(foundUserIds, userId)
-					continue
-				}
-
-				toRemove = append(toRemove, userId)
+			foundUids, _, err := s.checkAndUpdateUnitUsers(ctx, unit)
+			if err != nil {
+				s.logger.Error("failed to check users in unit", zap.Error(err))
 			}
-
-			if len(toRemove) > 0 {
-				s.logger.Debug("removing off-duty users from unit",
-					zap.String("job", job), zap.Uint64("unit_id", unit.Id), zap.Int32s("to_remove", toRemove))
-
-				if err := s.units.UpdateUnitAssignments(ctx, job, nil, unit.Id, nil, toRemove); err != nil {
-					s.logger.Error("failed to remove off-duty users from unit",
-						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32s("user_ids", toRemove), zap.Error(err))
-				}
-			}
+			foundUserIds = append(foundUserIds, foundUids...)
 		}
 	}
 
@@ -205,7 +178,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 		return err
 	}
 
-	errs := multierr.Combine()
+	var errs error
 	for _, userUnit := range userUnitIds {
 		// Check if user id is part of an unit
 		if slices.Contains(foundUserIds, userUnit.UserId) {
@@ -225,4 +198,47 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 	}
 
 	return errs
+}
+
+func (s *Housekeeper) checkAndUpdateUnitUsers(ctx context.Context, unit *centrum.Unit) ([]int32, bool, error) {
+	if len(unit.Users) == 0 {
+		return nil, false, nil
+	}
+
+	toRemove := []int32{}
+	foundUserIds := []int32{}
+	for i := range slices.Backward(unit.Users) {
+		if i > (len(unit.Users) - 1) {
+			break
+		}
+
+		userId := unit.Users[i].UserId
+		if userId == 0 {
+			s.logger.Warn("zero user id found during unit user checkup", zap.Uint64("unit_id", unit.Id))
+			continue
+		}
+
+		unitMapping, err := s.tracker.GetUserMapping(userId)
+		// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
+		if err == nil && unitMapping.UnitId != nil && unit.Id == *unitMapping.UnitId && s.tracker.IsUserOnDuty(userId) {
+			foundUserIds = append(foundUserIds, userId)
+			continue
+		}
+
+		toRemove = append(toRemove, userId)
+	}
+
+	if len(toRemove) == 0 {
+		return nil, false, nil
+	}
+
+	s.logger.Debug("removing off-duty users from unit",
+		zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32s("to_remove", toRemove))
+
+	if err := s.units.UpdateUnitAssignments(ctx, unit.Job, nil, unit.Id, nil, toRemove); err != nil {
+		s.logger.Error("failed to remove off-duty users from unit",
+			zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32s("user_ids", toRemove), zap.Error(err))
+	}
+
+	return foundUserIds, true, nil
 }

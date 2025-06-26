@@ -27,9 +27,15 @@ import (
 	centrumutils "github.com/fivenet-app/fivenet/v2025/services/centrum/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
+)
+
+const (
+	PingTTL  = 8 * time.Second  // OFFLINE
+	EmptyTTL = 30 * time.Second // No crew → delete
 )
 
 type UnitDB struct {
@@ -45,6 +51,8 @@ type UnitDB struct {
 	jobMapping *store.Store[common.IDMapping, *common.IDMapping]
 
 	unitAccess *access.Grouped[centrum.UnitJobAccess, *centrum.UnitJobAccess, centrum.UnitUserAccess, *centrum.UnitUserAccess, centrum.UnitQualificationAccess, *centrum.UnitQualificationAccess, centrum.UnitAccessLevel]
+
+	KVPing jetstream.KeyValue
 }
 
 type Params struct {
@@ -130,6 +138,19 @@ func New(p Params) *UnitDB {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		storeLogger := logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentKVStore, p.Cfg.LogLevel)))
 
+		kvPing, err := d.js.CreateOrUpdateKeyValue(ctxStartup, jetstream.KeyValueConfig{
+			Bucket:         "unit_ping",
+			Description:    "Centrum Unit Ping Timers",
+			Storage:        jetstream.MemoryStorage,
+			History:        1,
+			TTL:            0,
+			LimitMarkerTTL: 2 * PingTTL, // Tombstones live 2× rule
+		})
+		if err != nil {
+			return fmt.Errorf("failed to create memory kv buckets. %w", err)
+		}
+		d.KVPing = kvPing
+
 		jobSt, err := store.New[common.IDMapping, *common.IDMapping](ctxCancel, storeLogger, p.JS, "centrum_units",
 			store.WithKVPrefix[common.IDMapping, *common.IDMapping]("job"),
 			store.WithLocks[common.IDMapping, *common.IDMapping](nil),
@@ -145,7 +166,7 @@ func New(p Params) *UnitDB {
 
 		st, err := store.New[centrum.Unit, *centrum.Unit](ctxCancel, storeLogger, p.JS, "centrum_units",
 			store.WithKVPrefix[centrum.Unit, *centrum.Unit]("id"),
-			store.WithOnUpdateFn[centrum.Unit, *centrum.Unit](func(ctx context.Context, _ *store.Store[centrum.Unit, *centrum.Unit], unit *centrum.Unit) (*centrum.Unit, error) {
+			store.WithOnUpdateFn[centrum.Unit, *centrum.Unit](func(ctx context.Context, _ *centrum.Unit, unit *centrum.Unit) (*centrum.Unit, error) {
 				if unit == nil {
 					return nil, nil
 				}
@@ -156,9 +177,14 @@ func New(p Params) *UnitDB {
 					return nil, fmt.Errorf("failed to update job %s mapping for unit %d. %w", unit.Job, unit.Id, err)
 				}
 
+				// Reset unit ping timer
+				if err := d.UpsertWithTTL(ctx, d.KVPing, fmt.Sprintf("ping.%d", unit.Id), PingTTL); err != nil {
+					return nil, fmt.Errorf("failed to upsert ping unit timer. %w", err)
+				}
+
 				return unit, nil
 			}),
-			store.WithOnDeleteFn(func(ctx context.Context, _ *store.Store[centrum.Unit, *centrum.Unit], _ string, unit *centrum.Unit) error {
+			store.WithOnDeleteFn(func(ctx context.Context, _ string, unit *centrum.Unit) error {
 				if unit == nil {
 					return nil
 				}
@@ -353,6 +379,10 @@ func (s *UnitDB) UpdateStatus(ctx context.Context, unitId uint64, in *centrum.Un
 		}
 	}
 
+	if in.CreatedAt == nil {
+		in.CreatedAt = timestamp.Now()
+	}
+
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -507,7 +537,7 @@ func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *
 	}
 
 	key := centrumutils.IdKey(unitId)
-	if err := s.store.ComputeUpdate(ctx, key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, key, func(key string, unit *centrum.Unit) (*centrum.Unit, bool, error) {
 		if len(toRemove) > 0 {
 			toAnnounce := []int32{}
 

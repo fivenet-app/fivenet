@@ -23,7 +23,7 @@ func (s *DispatchDB) IdleStore() jetstream.KeyValue {
 }
 
 func (s *DispatchDB) updateInKV(ctx context.Context, id uint64, dsp *centrum.Dispatch) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
 			return dsp, dsp != nil, nil
 		}
@@ -122,7 +122,7 @@ func (s *DispatchDB) Filter(ctx context.Context, jobs []string, statuses []centr
 }
 
 func (s *DispatchDB) updateStatusInKV(ctx context.Context, id uint64, status *centrum.DispatchStatus) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), true, func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if existing == nil {
 			return existing, false, nil
 		}

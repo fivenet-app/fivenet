@@ -672,7 +672,9 @@
         "no_versions": "No versions available.",
         "dispatchers": "Dispatcher | Dispatchers",
         "dispatcher": "No Dispatchers | {n} Dispatcher | {n} Dispatchers",
-        "heatmap": "Heatmap"
+        "heatmap": "Heatmap",
+        "meters": "Meter | Meters",
+        "meter": "0 Meters | 1 Meter | {n} Meters"
     },
     "components": {
         "partials": {
@@ -977,6 +979,13 @@
                 "access": {
                     "title": "Access",
                     "description": "Configure who can access the dispatch center and what permissions they have."
+                },
+                "deduplication": {
+                    "title": "Deduplication",
+                    "description": "Enable deduplication of dispatches. If enabled, dispatches with the same title and location will be merged into one.",
+                    "deduplication_duration": "Deduplication Duration (in seconds)",
+                    "deduplication_radius": "Deduplication Radius (in meters)",
+                    "deduplication_radius_description": "The radius in which dispatches will be deduplicated. If a new dispatch is created within this radius of an existing dispatch, it will be marked accordingly."
                 }
             }
         },

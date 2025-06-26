@@ -9,6 +9,7 @@ package centrum
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -136,6 +137,7 @@ type Settings struct {
 	PredefinedStatus *PredefinedStatus      `protobuf:"bytes,5,opt,name=predefined_status,json=predefinedStatus,proto3,oneof" json:"predefined_status,omitempty"`
 	Timings          *Timings               `protobuf:"bytes,6,opt,name=timings,proto3" json:"timings,omitempty"`
 	Access           *CentrumAccess         `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
+	Configuration    *Configuration         `protobuf:"bytes,10,opt,name=configuration,proto3" json:"configuration,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -229,6 +231,13 @@ func (x *Settings) GetTimings() *Timings {
 func (x *Settings) GetAccess() *CentrumAccess {
 	if x != nil {
 		return x.Access
+	}
+	return nil
+}
+
+func (x *Settings) GetConfiguration() *Configuration {
+	if x != nil {
+		return x.Configuration
 	}
 	return nil
 }
@@ -349,6 +358,67 @@ func (x *Timings) GetRequireUnitReminderSeconds() int64 {
 	return 0
 }
 
+// @dbscanner: json
+type Configuration struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	DeduplicationEnabled  bool                   `protobuf:"varint,1,opt,name=deduplication_enabled,json=deduplicationEnabled,proto3" json:"deduplication_enabled,omitempty"`
+	DeduplicationRadius   int64                  `protobuf:"varint,2,opt,name=deduplication_radius,json=deduplicationRadius,proto3" json:"deduplication_radius,omitempty"`
+	DeduplicationDuration *durationpb.Duration   `protobuf:"bytes,3,opt,name=deduplication_duration,json=deduplicationDuration,proto3,oneof" json:"deduplication_duration,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *Configuration) Reset() {
+	*x = Configuration{}
+	mi := &file_resources_centrum_settings_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Configuration) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Configuration) ProtoMessage() {}
+
+func (x *Configuration) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_centrum_settings_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Configuration.ProtoReflect.Descriptor instead.
+func (*Configuration) Descriptor() ([]byte, []int) {
+	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Configuration) GetDeduplicationEnabled() bool {
+	if x != nil {
+		return x.DeduplicationEnabled
+	}
+	return false
+}
+
+func (x *Configuration) GetDeduplicationRadius() int64 {
+	if x != nil {
+		return x.DeduplicationRadius
+	}
+	return 0
+}
+
+func (x *Configuration) GetDeduplicationDuration() *durationpb.Duration {
+	if x != nil {
+		return x.DeduplicationDuration
+	}
+	return nil
+}
+
 type JobList struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Jobs          []*Job                 `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty"`
@@ -358,7 +428,7 @@ type JobList struct {
 
 func (x *JobList) Reset() {
 	*x = JobList{}
-	mi := &file_resources_centrum_settings_proto_msgTypes[3]
+	mi := &file_resources_centrum_settings_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -370,7 +440,7 @@ func (x *JobList) String() string {
 func (*JobList) ProtoMessage() {}
 
 func (x *JobList) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_settings_proto_msgTypes[3]
+	mi := &file_resources_centrum_settings_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -383,7 +453,7 @@ func (x *JobList) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JobList.ProtoReflect.Descriptor instead.
 func (*JobList) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{3}
+	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *JobList) GetJobs() []*Job {
@@ -403,7 +473,7 @@ type Job struct {
 
 func (x *Job) Reset() {
 	*x = Job{}
-	mi := &file_resources_centrum_settings_proto_msgTypes[4]
+	mi := &file_resources_centrum_settings_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -415,7 +485,7 @@ func (x *Job) String() string {
 func (*Job) ProtoMessage() {}
 
 func (x *Job) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_centrum_settings_proto_msgTypes[4]
+	mi := &file_resources_centrum_settings_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -428,7 +498,7 @@ func (x *Job) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Job.ProtoReflect.Descriptor instead.
 func (*Job) Descriptor() ([]byte, []int) {
-	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{4}
+	return file_resources_centrum_settings_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *Job) GetName() string {
@@ -449,7 +519,7 @@ var File_resources_centrum_settings_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\n" +
-	" resources/centrum/settings.proto\x12\x11resources.centrum\x1a\x1eresources/centrum/access.proto\"\xff\x03\n" +
+	" resources/centrum/settings.proto\x12\x11resources.centrum\x1a\x1egoogle/protobuf/duration.proto\x1a\x1eresources/centrum/access.proto\"\xc7\x04\n" +
 	"\bSettings\x12\x19\n" +
 	"\x03job\x18\x01 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12\x18\n" +
 	"\aenabled\x18\x02 \x01(\bR\aenabled\x12<\n" +
@@ -459,7 +529,9 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\rfallback_mode\x18\x04 \x01(\x0e2\x1e.resources.centrum.CentrumModeB\b\xbaH\x05\x82\x01\x02\x10\x01R\ffallbackMode\x12U\n" +
 	"\x11predefined_status\x18\x05 \x01(\v2#.resources.centrum.PredefinedStatusH\x00R\x10predefinedStatus\x88\x01\x01\x124\n" +
 	"\atimings\x18\x06 \x01(\v2\x1a.resources.centrum.TimingsR\atimings\x128\n" +
-	"\x06access\x18\a \x01(\v2 .resources.centrum.CentrumAccessR\x06accessB\x14\n" +
+	"\x06access\x18\a \x01(\v2 .resources.centrum.CentrumAccessR\x06access\x12F\n" +
+	"\rconfiguration\x18\n" +
+	" \x01(\v2 .resources.centrum.ConfigurationR\rconfigurationB\x14\n" +
 	"\x12_predefined_status\"|\n" +
 	"\x10PredefinedStatus\x12/\n" +
 	"\vunit_status\x18\x01 \x03(\tB\x0e\xbaH\v\x92\x01\b\x10\x14\"\x04r\x02\x18@R\n" +
@@ -470,7 +542,12 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\xbaH\a\"\x05\x10\xf0. \x1eR\x0fdispatchMaxWait\x12!\n" +
 	"\frequire_unit\x18\x02 \x01(\bR\vrequireUnit\x12M\n" +
 	"\x1drequire_unit_reminder_seconds\x18\x03 \x01(\x03B\n" +
-	"\xbaH\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds\"?\n" +
+	"\xbaH\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds\"\xf6\x01\n" +
+	"\rConfiguration\x123\n" +
+	"\x15deduplication_enabled\x18\x01 \x01(\bR\x14deduplicationEnabled\x12>\n" +
+	"\x14deduplication_radius\x18\x02 \x01(\x03B\v\xbaH\b\"\x06\x10\xc0\x84= \x00R\x13deduplicationRadius\x12U\n" +
+	"\x16deduplication_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15deduplicationDuration\x88\x01\x01B\x19\n" +
+	"\x17_deduplication_duration\"?\n" +
 	"\aJobList\x124\n" +
 	"\x04jobs\x18\x01 \x03(\v2\x16.resources.centrum.JobB\b\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\x04jobs\"G\n" +
@@ -502,16 +579,18 @@ func file_resources_centrum_settings_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_centrum_settings_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_resources_centrum_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_resources_centrum_settings_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_resources_centrum_settings_proto_goTypes = []any{
-	(CentrumType)(0),         // 0: resources.centrum.CentrumType
-	(CentrumMode)(0),         // 1: resources.centrum.CentrumMode
-	(*Settings)(nil),         // 2: resources.centrum.Settings
-	(*PredefinedStatus)(nil), // 3: resources.centrum.PredefinedStatus
-	(*Timings)(nil),          // 4: resources.centrum.Timings
-	(*JobList)(nil),          // 5: resources.centrum.JobList
-	(*Job)(nil),              // 6: resources.centrum.Job
-	(*CentrumAccess)(nil),    // 7: resources.centrum.CentrumAccess
+	(CentrumType)(0),            // 0: resources.centrum.CentrumType
+	(CentrumMode)(0),            // 1: resources.centrum.CentrumMode
+	(*Settings)(nil),            // 2: resources.centrum.Settings
+	(*PredefinedStatus)(nil),    // 3: resources.centrum.PredefinedStatus
+	(*Timings)(nil),             // 4: resources.centrum.Timings
+	(*Configuration)(nil),       // 5: resources.centrum.Configuration
+	(*JobList)(nil),             // 6: resources.centrum.JobList
+	(*Job)(nil),                 // 7: resources.centrum.Job
+	(*CentrumAccess)(nil),       // 8: resources.centrum.CentrumAccess
+	(*durationpb.Duration)(nil), // 9: google.protobuf.Duration
 }
 var file_resources_centrum_settings_proto_depIdxs = []int32{
 	0, // 0: resources.centrum.Settings.type:type_name -> resources.centrum.CentrumType
@@ -519,13 +598,15 @@ var file_resources_centrum_settings_proto_depIdxs = []int32{
 	1, // 2: resources.centrum.Settings.fallback_mode:type_name -> resources.centrum.CentrumMode
 	3, // 3: resources.centrum.Settings.predefined_status:type_name -> resources.centrum.PredefinedStatus
 	4, // 4: resources.centrum.Settings.timings:type_name -> resources.centrum.Timings
-	7, // 5: resources.centrum.Settings.access:type_name -> resources.centrum.CentrumAccess
-	6, // 6: resources.centrum.JobList.jobs:type_name -> resources.centrum.Job
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	8, // 5: resources.centrum.Settings.access:type_name -> resources.centrum.CentrumAccess
+	5, // 6: resources.centrum.Settings.configuration:type_name -> resources.centrum.Configuration
+	9, // 7: resources.centrum.Configuration.deduplication_duration:type_name -> google.protobuf.Duration
+	7, // 8: resources.centrum.JobList.jobs:type_name -> resources.centrum.Job
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_resources_centrum_settings_proto_init() }
@@ -535,14 +616,15 @@ func file_resources_centrum_settings_proto_init() {
 	}
 	file_resources_centrum_access_proto_init()
 	file_resources_centrum_settings_proto_msgTypes[0].OneofWrappers = []any{}
-	file_resources_centrum_settings_proto_msgTypes[4].OneofWrappers = []any{}
+	file_resources_centrum_settings_proto_msgTypes[3].OneofWrappers = []any{}
+	file_resources_centrum_settings_proto_msgTypes[5].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_centrum_settings_proto_rawDesc), len(file_resources_centrum_settings_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

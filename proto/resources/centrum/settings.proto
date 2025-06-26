@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.centrum;
 
 import "buf/validate/validate.proto";
+import "google/protobuf/duration.proto";
 import "resources/centrum/access.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum;centrum";
@@ -31,6 +32,7 @@ message Settings {
   optional PredefinedStatus predefined_status = 5;
   Timings timings = 6;
   resources.centrum.CentrumAccess access = 7;
+  Configuration configuration = 10;
 }
 
 // @dbscanner: json
@@ -62,6 +64,16 @@ message Timings {
     gt: 30
     lt: 6000
   }];
+}
+
+// @dbscanner: json
+message Configuration {
+  bool deduplication_enabled = 1;
+  int64 deduplication_radius = 2 [(buf.validate.field).int64 = {
+    gt: 5
+    lt: 1000000
+  }];
+  optional google.protobuf.Duration deduplication_duration = 3;
 }
 
 message JobList {

@@ -111,7 +111,7 @@ func New(p Params) Result {
 			10*time.Second,        // TTL for the lock
 			5*time.Second,         // Heartbeat interval
 			func(ctx context.Context) {
-				s.logger.Info("scheduler started, running as leader", zap.String("node_name", nodeName))
+				s.logger.Info("housekeeper started", zap.String("node_name", nodeName))
 
 				s.start(ctx)
 			},
@@ -165,8 +165,13 @@ func (s *Housekeeper) start(ctx context.Context) {
 	s.wg.Add(1)
 	go func() {
 		defer s.wg.Done()
-
 		s.runIdleWatcher(ctx)
+	}()
+
+	s.wg.Add(1)
+	go func() {
+		defer s.wg.Done()
+		s.runTTLWatcher(s.units.KVPing, "ping", s.handleUnitKVPing)
 	}()
 }
 
@@ -193,7 +198,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
 		Name:     "centrum.manager_housekeeper.cleanup_units",
-		Schedule: "*/7 * * * * * *", // Every 7 seconds
+		Schedule: "15 * * * *", // Every hour at 15 minutes past the hour
 		Timeout:  durationpb.New(6 * time.Second),
 	}); err != nil {
 		return err

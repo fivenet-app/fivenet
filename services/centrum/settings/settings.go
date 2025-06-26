@@ -87,13 +87,16 @@ func (s *SettingsDB) LoadFromDB(ctx context.Context, job string) error {
 			tCentrumSettings.PredefinedStatus,
 			tCentrumSettings.Timings,
 			tCentrumSettings.Access,
+			tCentrumSettings.Configuration,
 		).
 		FROM(tCentrumSettings)
 
 	if job != "" {
-		stmt = stmt.WHERE(
-			tCentrumSettings.Job.EQ(jet.String(job)),
-		)
+		stmt = stmt.
+			WHERE(
+				tCentrumSettings.Job.EQ(jet.String(job)),
+			).
+			LIMIT(1)
 	}
 
 	var dest []*centrum.Settings
@@ -128,6 +131,7 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 			tCentrumSettings.PredefinedStatus,
 			tCentrumSettings.Timings,
 			tCentrumSettings.Access,
+			tCentrumSettings.Configuration,
 		).
 		VALUES(
 			job,
@@ -139,6 +143,7 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 			settings.PredefinedStatus,
 			settings.Timings,
 			settings.Access,
+			settings.Configuration,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tCentrumSettings.Enabled.SET(jet.Bool(settings.Enabled)),
@@ -149,6 +154,7 @@ func (s *SettingsDB) updateDB(ctx context.Context, job string, settings *centrum
 			tCentrumSettings.PredefinedStatus.SET(jet.StringExp(jet.Raw("VALUES(`predefined_status`)"))),
 			tCentrumSettings.Timings.SET(jet.StringExp(jet.Raw("VALUES(`timings`)"))),
 			tCentrumSettings.Access.SET(jet.StringExp(jet.Raw("VALUES(`access`)"))),
+			tCentrumSettings.Configuration.SET(jet.StringExp(jet.Raw("VALUES(`configuration`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

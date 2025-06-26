@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
@@ -74,52 +75,56 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 		return nil // already completed or cancelled, nothing to do
 	}
 
-	// Dispatches can belong to more than one job, only deduplicate when the dispatch belongs to a single job
-	if dsp.Jobs.IsEmpty() {
-		return nil // no jobs assigned, nothing to deduplicate
+	// Dispatches can belong to more than one job, don't duplicate when the dispatch belongs to no job or more than one job
+	if dsp.Jobs.IsEmpty() || len(dsp.Jobs.Jobs) > 1 {
+		return nil // No jobs assigned, nothing to deduplicate
 	}
 
-	// More than one job assigned, skip dispatch
-	if len(dsp.Jobs.Jobs) > 1 {
-		return nil
+	if dsp.Attributes != nil && (dsp.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) || dsp.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE)) {
+		return nil // Already marked as multiple or duplicate, no need to deduplicate
 	}
 
 	job := dsp.Jobs.Jobs[0].Name
-	locs, ok := s.dispatches.GetLocations(job)
-	if !ok || locs == nil {
+	locs := s.dispatches.GetLocations(job)
+	if locs == nil {
 		return nil // no spatial index yet
 	}
+
+	settings, err := s.settings.Get(ctx, job)
+	if err != nil {
+		return fmt.Errorf("failed to get settings for job %s: %w", job, err)
+	}
+	if !settings.Configuration.DeduplicationEnabled {
+		return nil
+	}
+
+	radius := float64(settings.Configuration.DeduplicationRadius)
+	duration := settings.Configuration.DeduplicationDuration.AsDuration()
 
 	// Search the spatial index for nearby active dispatches (same logic as before)
 	closeBy := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 		return p.(*centrum.Dispatch).Id != dsp.Id
-	}, 45.0) // metres
-
+	}, radius) // metres
 	if len(closeBy) == 0 {
 		return nil
 	}
 
-	refs := &centrum.DispatchReferences{}
 	active := []*centrum.Dispatch{}
-
 	for _, dest := range closeBy {
 		other := dest.(*centrum.Dispatch)
 		if other.Status != nil && centrumutils.IsStatusDispatchComplete(other.Status.Status) {
 			continue
 		}
-		if other.CreatedAt != nil && time.Since(other.CreatedAt.AsTime()) >= 3*time.Minute {
+		if other.CreatedAt != nil && time.Since(other.CreatedAt.AsTime()) >= duration {
 			continue
 		}
-		if other.Attributes != nil &&
-			(other.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) ||
-				other.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE)) {
-			continue
+		if other.Attributes != nil {
+			if other.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) {
+			} else if other.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE) {
+				continue // Already marked as duplicate, skip it
+			}
 		}
 
-		refs.Add(&centrum.DispatchReference{
-			TargetDispatchId: other.Id,
-			ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
-		})
 		active = append(active, other)
 	}
 
@@ -127,21 +132,51 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 		return nil
 	}
 
-	// mark the current dispatch as "multiple" and add the references
-	if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE); err != nil {
+	slices.SortFunc(active, func(a, b *centrum.Dispatch) int {
+		return int(a.Id - b.Id)
+	})
+	mainDsp := dsp
+	if len(active) > 0 && active[0].Id < mainDsp.Id {
+		mainDsp = active[0]
+		if len(active) > 1 {
+			active = active[1:]          // Remove the new main dispatch from the list of duplicates
+			active = append(active, dsp) // Add the original dispatch to the list of duplicates
+		} else {
+			active = []*centrum.Dispatch{dsp}
+		}
+	}
+
+	refs := &centrum.DispatchReferences{}
+	for _, dup := range active {
+		if dup.Id == mainDsp.Id {
+			continue // Skip the main dispatch itself
+		}
+
+		refs.Add(&centrum.DispatchReference{
+			TargetDispatchId: dup.Id,
+			ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
+		})
+	}
+
+	// Mark the current dispatch as "multiple" and add the references
+	if err := s.dispatches.AddAttributeToDispatch(ctx, mainDsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE); err != nil {
 		return err
 	}
-	if err := s.dispatches.AddReferencesToDispatch(ctx, dsp, refs.References...); err != nil {
+	if err := s.dispatches.AddReferencesToDispatch(ctx, mainDsp, refs.References...); err != nil {
 		return err
 	}
 
 	// Mark the close-by ones as duplicates & cancel them (same as original)
 	sourceRef := &centrum.DispatchReference{
-		TargetDispatchId: dsp.Id,
+		TargetDispatchId: mainDsp.Id,
 		ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATE_OF,
 	}
 
 	for _, dup := range active {
+		if dup.Id == mainDsp.Id {
+			continue // Skip the main dispatch itself
+		}
+
 		if err := s.dispatches.AddAttributeToDispatch(ctx, dup, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE); err != nil {
 			return err
 		}

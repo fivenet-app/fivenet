@@ -250,7 +250,8 @@ func (r *Retriever) setSuperuserStatus(dest *pbuserinfo.UserInfo) {
 	if dest == nil {
 		return
 	}
-	// Check if user is superuser by group or license (license may be nil)
+
+	// Check if user is superuser by group or license
 	isSuperGroup := slices.Contains(r.superuserGroups, dest.Group)
 	if isSuperGroup || slices.Contains(r.superuserUsers, dest.License) {
 		dest.CanBeSuperuser = true

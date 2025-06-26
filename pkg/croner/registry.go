@@ -175,7 +175,7 @@ func (r *Registry) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error
 		job.NextScheduleTime = timestamp.New(nextTime)
 	}
 
-	if err := r.store.ComputeUpdate(ctx, strings.ToLower(job.Name), true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+	if err := r.store.ComputeUpdate(ctx, strings.ToLower(job.Name), func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 		if existing == nil {
 			return job, true, nil
 		}

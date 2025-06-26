@@ -7,6 +7,23 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
 )
 
+func (m *Configuration) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: DeduplicationDuration
+	if m.DeduplicationDuration != nil {
+		if v, ok := any(m.GetDeduplicationDuration()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *Job) Sanitize() error {
 	if m == nil {
 		return nil
@@ -67,6 +84,15 @@ func (m *Settings) Sanitize() error {
 	// Field: Access
 	if m.Access != nil {
 		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Configuration
+	if m.Configuration != nil {
+		if v, ok := any(m.GetConfiguration()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

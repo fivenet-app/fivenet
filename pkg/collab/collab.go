@@ -71,7 +71,7 @@ func (s *CollabServer) Start(ctx context.Context) error {
 		Subjects:   []string{fmt.Sprintf("collab.%s.*", s.category)},
 		Storage:    jetstream.MemoryStorage,
 		Retention:  jetstream.InterestPolicy,
-		MaxAge:     15 * time.Minute,
+		MaxAge:     5 * time.Minute,
 		Discard:    jetstream.DiscardOld,
 		Duplicates: time.Minute,
 	}

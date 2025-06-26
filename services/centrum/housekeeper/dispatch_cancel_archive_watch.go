@@ -58,16 +58,21 @@ func (s *Housekeeper) idleWatcher(ctx context.Context) error {
 				continue // Already handled elsewhere
 			}
 
-			_, _ = s.dispatches.UpdateStatus(ctx, id, &centrum.DispatchStatus{
+			if _, err := s.dispatches.UpdateStatus(ctx, id, &centrum.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
 				DispatchId: id,
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			})
-			_ = s.dispatches.AddAttributeToDispatch(ctx, dsp,
-				centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD)
+			}); err != nil {
+				s.logger.Error("failed to update dispatch status to cancelled", zap.Uint64("dispatch_id", id), zap.Error(err))
+			}
+			if err := s.dispatches.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
+				s.logger.Error("failed to add too old attribute to cancelled dispatch", zap.Uint64("dispatch_id", id), zap.Error(err))
+			}
 
-			// remove from in-mem/kv so the UI gets the event
-			_ = s.dispatches.Delete(ctx, id, false)
+			// Remove from kv so the UI gets the event
+			if err := s.dispatches.Delete(ctx, id, false); err != nil {
+				s.logger.Error("failed to delete idle dispatch", zap.Uint64("dispatch_id", id), zap.Error(err))
+			}
 		}
 	}
 }

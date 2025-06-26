@@ -67,6 +67,11 @@ const schema = z.object({
     access: z.object({
         jobs: z.custom<CentrumJobAccess>().array().max(maxAccessEntries).default([]),
     }),
+    configuration: z.object({
+        deduplicationEnabled: z.coerce.boolean().default(true),
+        deduplicationRadius: z.coerce.number().min(5).max(1000000).default(45),
+        deduplicationDuration: z.coerce.number().max(1000000).positive().default(180),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -89,6 +94,11 @@ const state = reactive<Schema>({
     access: {
         jobs: [],
     },
+    configuration: {
+        deduplicationEnabled: true,
+        deduplicationRadius: 45,
+        deduplicationDuration: 180,
+    },
 });
 
 async function updateSettings(values: Schema): Promise<void> {
@@ -104,6 +114,14 @@ async function updateSettings(values: Schema): Promise<void> {
                 predefinedStatus: values.predefinedStatus,
                 timings: values.timings,
                 access: values.access,
+                configuration: {
+                    deduplicationEnabled: values.configuration?.deduplicationEnabled ?? true,
+                    deduplicationRadius: values.configuration?.deduplicationRadius ?? 45,
+                    deduplicationDuration: {
+                        seconds: values.configuration?.deduplicationDuration ?? 180,
+                        nanos: 0,
+                    },
+                },
             },
         });
         await call;
@@ -136,6 +154,11 @@ function setSettingsValues(): void {
         dispatchStatus: [],
     };
     state.access = settings.value.access ?? { jobs: [] };
+    state.configuration = {
+        deduplicationEnabled: settings.value.configuration?.deduplicationEnabled ?? true,
+        deduplicationRadius: settings.value.configuration?.deduplicationRadius ?? 45,
+        deduplicationDuration: settings.value.configuration?.deduplicationDuration?.seconds ?? 180,
+    };
 }
 
 watch(settings, () => setSettingsValues());
@@ -250,12 +273,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :label="$t('common.enabled')"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle
-                                        v-model="state.enabled"
-                                        name="enabled"
-                                        :disabled="!canSubmit"
-                                        :placeholder="$t('common.enabled')"
-                                    />
+                                    <UToggle v-model="state.enabled" name="enabled" :disabled="!canSubmit" />
                                 </UFormGroup>
 
                                 <UFormGroup
@@ -314,6 +332,63 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
+                                </UFormGroup>
+                            </UDashboardSection>
+
+                            <UDivider class="mb-4" />
+
+                            <UDashboardSection
+                                :title="$t('components.centrum.settings.deduplication.title')"
+                                :description="$t('components.centrum.settings.deduplication.description')"
+                            >
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="configuration.deduplicationEnabled"
+                                    :label="$t('common.enabled')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle v-model="state.configuration.deduplicationEnabled" :disabled="!canSubmit" />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="configuration.deduplicationDuration"
+                                    :label="$t('components.centrum.settings.deduplication.deduplication_duration')"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="state.configuration.deduplicationDuration"
+                                        type="number"
+                                        :min="30"
+                                        :placeholder="$t('common.time_ago.second', 2)"
+                                        trailing-icon="i-mdi-access-time"
+                                        :disabled="!canSubmit"
+                                    />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    name="configuration.deduplicationRadius"
+                                    :label="$t('components.centrum.settings.deduplication.deduplication_radius')"
+                                    :description="
+                                        $t('components.centrum.settings.deduplication.deduplication_radius_description')
+                                    "
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="state.configuration.deduplicationRadius"
+                                        type="number"
+                                        :min="5"
+                                        :placeholder="$t('common.meters', 2)"
+                                        :disabled="!canSubmit"
+                                        :ui="{ base: '!pr-16' }"
+                                    >
+                                        <template #trailing>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $t('common.meters', 2) }}
+                                            </span>
+                                        </template>
+                                    </UInput>
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>

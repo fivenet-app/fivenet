@@ -65,8 +65,8 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 
 	assert.EqualExportedValues(t, firstRetrieved, first)
 
-	// Check if load returns the correct result for a "locally cached" value
-	secondRetrieved, err := store.Load(ctx, "second")
+	// Check if Get returns the correct result for a "locally cached" value
+	secondRetrieved, err := store.Get("second")
 	assert.NoError(t, err)
 	assert.NotNil(t, secondRetrieved)
 
@@ -74,7 +74,7 @@ func TestBasicStoreCreateAndUse(t *testing.T) {
 
 	// Make sure that ComputeUpdate works as expected
 	newField1Val := "Hello World!"
-	err = store.ComputeUpdate(ctx, "second", false, func(key string, existing *tests.SimpleObject) (*tests.SimpleObject, bool, error) {
+	err = store.ComputeUpdate(ctx, "second", func(key string, existing *tests.SimpleObject) (*tests.SimpleObject, bool, error) {
 		existing.Field1 = newField1Val
 		existing.Field2 = false
 		return existing, true, nil

@@ -81,7 +81,7 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 			10*time.Second,    // TTL for the lock
 			5*time.Second,     // Heartbeat interval
 			func(ctx context.Context) {
-				s.logger.Info("scheduler started, running as leader", zap.String("node_name", s.nodeName))
+				s.logger.Info("scheduler started", zap.String("node_name", s.nodeName))
 
 				s.start(ctx)
 			},
@@ -152,7 +152,7 @@ func (s *Scheduler) start(ctx context.Context) {
 					go func() {
 						defer wg.Done()
 
-						if err := s.registry.store.ComputeUpdate(ctx, key, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+						if err := s.registry.store.ComputeUpdate(ctx, key, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 							if existing == nil {
 								return existing, false, nil
 							}
@@ -235,7 +235,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		s.logger.Error("failed to send in progress for cron completion msg", zap.String("subject", msg.Subject()), zap.String("job_name", event.Name), zap.Error(err))
 	}
 
-	if err := s.registry.store.ComputeUpdate(s.ctxCancel, event.Name, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+	if err := s.registry.store.ComputeUpdate(s.ctxCancel, event.Name, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 		// No need to update the job, probably doesn't exist anymore
 		if existing == nil {
 			return existing, false, nil

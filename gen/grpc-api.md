@@ -996,6 +996,21 @@ Dummy - DO NOT USE!
 ## resources/centrum/settings.proto
 
 
+### resources.centrum.Configuration
+@dbscanner: json
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `deduplication_enabled` | [bool](#bool) |  |  |
+| `deduplication_radius` | [int64](#int64) |  |  |
+| `deduplication_duration` | [google.protobuf.Duration](https://protobuf.dev/reference/protobuf/google.protobuf/#duration) | optional |  |
+
+
+
+
+
 ### resources.centrum.Job
 
 
@@ -1047,6 +1062,7 @@ Dummy - DO NOT USE!
 | `predefined_status` | [PredefinedStatus](#resourcescentrumPredefinedStatus) | optional |  |
 | `timings` | [Timings](#resourcescentrumTimings) |  |  |
 | `access` | [CentrumAccess](#resourcescentrumCentrumAccess) |  |  |
+| `configuration` | [Configuration](#resourcescentrumConfiguration) |  |  |
 
 
 

@@ -22,4 +22,5 @@ type FivenetCentrumSettings struct {
 	PredefinedStatus *string    `json:"predefined_status"`
 	Timings          *string    `json:"timings"`
 	Access           *string    `json:"access"`
+	Configuration    *string    `json:"configuration"`
 }

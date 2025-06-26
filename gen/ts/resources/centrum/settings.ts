@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Duration } from "../../google/protobuf/duration";
 import { CentrumAccess } from "./access";
 /**
  * @generated from protobuf message resources.centrum.Settings
@@ -52,6 +53,10 @@ export interface Settings {
      * @generated from protobuf field: resources.centrum.CentrumAccess access = 7
      */
     access?: CentrumAccess;
+    /**
+     * @generated from protobuf field: resources.centrum.Configuration configuration = 10
+     */
+    configuration?: Configuration;
 }
 /**
  * @dbscanner: json
@@ -90,6 +95,25 @@ export interface Timings {
      * @generated from protobuf field: int64 require_unit_reminder_seconds = 3
      */
     requireUnitReminderSeconds: number;
+}
+/**
+ * @dbscanner: json
+ *
+ * @generated from protobuf message resources.centrum.Configuration
+ */
+export interface Configuration {
+    /**
+     * @generated from protobuf field: bool deduplication_enabled = 1
+     */
+    deduplicationEnabled: boolean;
+    /**
+     * @generated from protobuf field: int64 deduplication_radius = 2
+     */
+    deduplicationRadius: number;
+    /**
+     * @generated from protobuf field: optional google.protobuf.Duration deduplication_duration = 3
+     */
+    deduplicationDuration?: Duration;
 }
 /**
  * @generated from protobuf message resources.centrum.JobList
@@ -167,7 +191,8 @@ class Settings$Type extends MessageType<Settings> {
             { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "buf.validate.field": { enum: { definedOnly: true } } } },
             { no: 5, name: "predefined_status", kind: "message", T: () => PredefinedStatus },
             { no: 6, name: "timings", kind: "message", T: () => Timings },
-            { no: 7, name: "access", kind: "message", T: () => CentrumAccess }
+            { no: 7, name: "access", kind: "message", T: () => CentrumAccess },
+            { no: 10, name: "configuration", kind: "message", T: () => Configuration }
         ]);
     }
     create(value?: PartialMessage<Settings>): Settings {
@@ -214,6 +239,9 @@ class Settings$Type extends MessageType<Settings> {
                 case /* resources.centrum.CentrumAccess access */ 7:
                     message.access = CentrumAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
+                case /* resources.centrum.Configuration configuration */ 10:
+                    message.configuration = Configuration.internalBinaryRead(reader, reader.uint32(), options, message.configuration);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -253,6 +281,9 @@ class Settings$Type extends MessageType<Settings> {
         /* bool public = 9; */
         if (message.public !== false)
             writer.tag(9, WireType.Varint).bool(message.public);
+        /* resources.centrum.Configuration configuration = 10; */
+        if (message.configuration)
+            Configuration.internalBinaryWrite(message.configuration, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -381,6 +412,68 @@ class Timings$Type extends MessageType<Timings> {
  * @generated MessageType for protobuf message resources.centrum.Timings
  */
 export const Timings = new Timings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Configuration$Type extends MessageType<Configuration> {
+    constructor() {
+        super("resources.centrum.Configuration", [
+            { no: 1, name: "deduplication_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "deduplication_radius", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { lt: "1000000", gt: "0" } } } },
+            { no: 3, name: "deduplication_duration", kind: "message", T: () => Duration }
+        ]);
+    }
+    create(value?: PartialMessage<Configuration>): Configuration {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.deduplicationEnabled = false;
+        message.deduplicationRadius = 0;
+        if (value !== undefined)
+            reflectionMergePartial<Configuration>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Configuration): Configuration {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool deduplication_enabled */ 1:
+                    message.deduplicationEnabled = reader.bool();
+                    break;
+                case /* int64 deduplication_radius */ 2:
+                    message.deduplicationRadius = reader.int64().toNumber();
+                    break;
+                case /* optional google.protobuf.Duration deduplication_duration */ 3:
+                    message.deduplicationDuration = Duration.internalBinaryRead(reader, reader.uint32(), options, message.deduplicationDuration);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Configuration, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool deduplication_enabled = 1; */
+        if (message.deduplicationEnabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.deduplicationEnabled);
+        /* int64 deduplication_radius = 2; */
+        if (message.deduplicationRadius !== 0)
+            writer.tag(2, WireType.Varint).int64(message.deduplicationRadius);
+        /* optional google.protobuf.Duration deduplication_duration = 3; */
+        if (message.deduplicationDuration)
+            Duration.internalBinaryWrite(message.deduplicationDuration, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.Configuration
+ */
+export const Configuration = new Configuration$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class JobList$Type extends MessageType<JobList> {
     constructor() {

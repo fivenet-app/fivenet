@@ -142,7 +142,7 @@ func New(p Params) *DispatchDB {
 			store.WithKVPrefix[centrum.Dispatch, *centrum.Dispatch]("id"),
 			// Make sure dispatches are removed from the store after 7 days of inactivity (if all other cleanup mechanisms fail)
 			store.WithKVConfig[centrum.Dispatch, *centrum.Dispatch](jetstream.KeyValueConfig{TTL: 7 * 24 * time.Hour}),
-			store.WithOnUpdateFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *store.Store[centrum.Dispatch, *centrum.Dispatch], dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
+			store.WithOnUpdateFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *centrum.Dispatch, dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
 				if dispatch == nil {
 					return nil, nil
 				}
@@ -163,7 +163,7 @@ func New(p Params) *DispatchDB {
 
 				return dispatch, nil
 			}),
-			store.WithOnDeleteFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, s *store.Store[centrum.Dispatch, *centrum.Dispatch], _ string, dispatch *centrum.Dispatch) error {
+			store.WithOnDeleteFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ string, dispatch *centrum.Dispatch) error {
 				if dispatch == nil {
 					return nil
 				}
@@ -178,29 +178,28 @@ func New(p Params) *DispatchDB {
 
 				return errs
 			}),
-			store.WithOnRemoteUpdatedFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *store.Store[centrum.Dispatch, *centrum.Dispatch], dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
+			store.WithOnRemoteUpdatedFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *centrum.Dispatch, dispatch *centrum.Dispatch) (*centrum.Dispatch, error) {
 				if dispatch == nil || dispatch.Jobs == nil {
 					return dispatch, nil
 				}
 
-				addLocation := dispatch.Status != nil && centrumutils.IsStatusDispatchComplete(dispatch.Status.Status)
+				removeLoc := dispatch.Status != nil && centrumutils.IsStatusDispatchComplete(dispatch.Status.Status)
 				// Ensure the dispatch has a valid ID
 				for _, job := range dispatch.Jobs.GetJobStrings() {
-					locs, ok := d.GetLocations(job)
-					if locs == nil || !ok {
+					locs := d.GetLocations(job)
+					if locs == nil {
 						continue
 					}
 
-					if addLocation {
+					if removeLoc {
 						if locs.Has(dispatch, centrum.DispatchPointMatchFn(dispatch.Id)) {
 							locs.Remove(dispatch, centrum.DispatchPointMatchFn(dispatch.Id))
 						}
 					} else {
-						if err := locs.Replace(dispatch, func(p orb.Pointer) bool {
-							return p.(*centrum.Dispatch).Id == dispatch.Id
-						}, func(p1, p2 orb.Pointer) bool {
-							return p1.Point().Equal(p2.Point())
-						}); err != nil {
+						if err := locs.Replace(dispatch, centrum.DispatchPointMatchFn(dispatch.Id),
+							func(p1, p2 orb.Pointer) bool {
+								return p1.Point().Equal(p2.Point())
+							}); err != nil {
 							d.logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dispatch.Id))
 						}
 					}
@@ -208,10 +207,10 @@ func New(p Params) *DispatchDB {
 
 				return dispatch, nil
 			}),
-			store.WithOnRemoteDeletedFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, _ *store.Store[centrum.Dispatch, *centrum.Dispatch], key string, dispatch *centrum.Dispatch) error {
+			store.WithOnRemoteDeletedFn[centrum.Dispatch, *centrum.Dispatch](func(ctx context.Context, key string, dispatch *centrum.Dispatch) error {
 				if dispatch != nil {
 					for _, job := range dispatch.Jobs.GetJobStrings() {
-						if locs, ok := d.GetLocations(job); ok && locs != nil {
+						if locs := d.GetLocations(job); locs != nil {
 							locs.Remove(nil, centrum.DispatchPointMatchFn(dispatch.Id))
 						}
 					}
@@ -233,7 +232,7 @@ func New(p Params) *DispatchDB {
 				}
 
 				for _, job := range d.GetLocationsJob() {
-					if locs, ok := d.GetLocations(job); ok && locs != nil {
+					if locs := d.GetLocations(job); locs != nil {
 						locs.Remove(nil, centrum.DispatchPointMatchFn(dspId))
 					}
 				}
@@ -410,6 +409,25 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) er
 		if _, err := s.Update(ctx, nil, dsps[i]); err != nil {
 			return err
 		}
+
+		for _, job := range dsps[i].Jobs.GetJobStrings() {
+			locs := s.GetLocations(job)
+			if locs == nil {
+				continue
+			}
+
+			if !locs.Has(dsps[i], centrum.DispatchPointMatchFn(dsps[i].Id)) {
+				locs.Add(dsps[i])
+			} else {
+				err := locs.Replace(dsps[i], centrum.DispatchPointMatchFn(dsps[i].Id),
+					func(p1, p2 orb.Pointer) bool {
+						return p1.Point().Equal(p2.Point())
+					})
+				if err != nil {
+					s.logger.Error("failed to replace dispatch in locations", zap.Uint64("dispatch_id", dsps[i].Id), zap.Error(err))
+				}
+			}
+		}
 	}
 
 	return nil
@@ -453,7 +471,7 @@ func (s *DispatchDB) LoadDispatchAssignments(ctx context.Context, dispatchId uin
 	return dest, nil
 }
 
-func (s *DispatchDB) GetLocations(job string) (*coords.Coords[*centrum.Dispatch], bool) {
+func (s *DispatchDB) GetLocations(job string) *coords.Coords[*centrum.Dispatch] {
 	s.dispatchLocationsMutex.Lock()
 	defer s.dispatchLocationsMutex.Unlock()
 
@@ -462,7 +480,7 @@ func (s *DispatchDB) GetLocations(job string) (*coords.Coords[*centrum.Dispatch]
 		locations = coords.New[*centrum.Dispatch]()
 		s.dispatchLocations[job] = locations
 	}
-	return locations, ok
+	return locations
 }
 
 func (s *DispatchDB) GetLocationsJob() []string {
@@ -479,7 +497,9 @@ func (s *DispatchDB) GetLocationsJob() []string {
 
 func (s *DispatchDB) Delete(ctx context.Context, id uint64, removeFromDB bool) error {
 	if err := s.deleteInKV(ctx, id); err != nil {
-		return err
+		if !errors.Is(err, jetstream.ErrKeyNotFound) {
+			return err
+		}
 	}
 
 	if removeFromDB {
@@ -541,6 +561,10 @@ func (s *DispatchDB) UpdateStatus(ctx context.Context, dspId uint64, in *centrum
 			in.Y = &um.Y
 			in.Postal = um.Postal
 		}
+	}
+
+	if in.CreatedAt == nil {
+		in.CreatedAt = timestamp.Now()
 	}
 
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
@@ -718,7 +742,7 @@ func (s *DispatchDB) UpdateAssignments(ctx context.Context, userId *int32, dspId
 	}
 
 	key := centrumutils.IdKey(dspId)
-	if err := s.store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, key, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if dsp == nil {
 			s.logger.Error("nil dispatch in computing dispatch assignment logic", zap.String("key", key), zap.Any("dsp", dsp))
 			return dsp, false, nil
@@ -1210,7 +1234,7 @@ func (s *DispatchDB) TakeDispatch(ctx context.Context, userJob string, userId in
 		}
 
 		key := centrumutils.IdKey(dspId)
-		if err := s.store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+		if err := s.store.ComputeUpdate(ctx, key, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 			// If dispatch is nil or completed, disallow to accept the dispatch
 			if dsp == nil || (dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status)) {
 				return nil, false, errorscentrum.ErrDispatchAlreadyCompleted

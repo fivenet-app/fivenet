@@ -139,34 +139,32 @@ func New(p Params) (*Manager, error) {
 		byID, err := store.New[livemap.UserMarker, *livemap.UserMarker](
 			ctxStartup, storeLogger, p.JS, tracker.BucketUserLocByID,
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
-			store.WithOnUpdateFn(func(ctx context.Context, _ *store.Store[livemap.UserMarker, *livemap.UserMarker],
-				um *livemap.UserMarker,
-			) (*livemap.UserMarker, error) {
-				if um == nil {
+			store.WithOnUpdateFn(func(ctx context.Context, _ *livemap.UserMarker, newValue *livemap.UserMarker) (*livemap.UserMarker, error) {
+				if newValue == nil {
 					return nil, nil
 				}
 
-				if !m.userMappingsStore.Has(tracker.UserIdKey(um.UserId)) {
+				if !m.userMappingsStore.Has(tracker.UserIdKey(newValue.UserId)) {
 					// Upsert mapping (unit_id may be nil/0 = no unit)
-					if err := m.userMappingsStore.Put(ctx, tracker.UserIdKey(um.UserId), &pbtracker.UserMapping{
-						UserId:    um.UserId,
-						UnitId:    um.UnitId,
-						Hidden:    um.Hidden,
+					if err := m.userMappingsStore.Put(ctx, tracker.UserIdKey(newValue.UserId), &pbtracker.UserMapping{
+						UserId:    newValue.UserId,
+						UnitId:    newValue.UnitId,
+						Hidden:    newValue.Hidden,
 						CreatedAt: timestamp.Now(),
 					}); err != nil {
 						return nil, fmt.Errorf("failed to upsert user unit mapping. %w", err)
 					}
 				}
 
-				if um.JobGrade != nil {
-					if err := m.userLocStore.Put(ctx, userMarkerKey(um.UserId, um.Job, *um.JobGrade), um); err != nil {
+				if newValue.JobGrade != nil {
+					if err := m.userLocStore.Put(ctx, userMarkerKey(newValue.UserId, newValue.Job, *newValue.JobGrade), newValue); err != nil {
 						return nil, fmt.Errorf("failed to upsert user marker in store. %w", err)
 					}
 				}
 
-				return um, nil
+				return newValue, nil
 			}),
-			store.WithOnDeleteFn(func(ctx context.Context, _ *store.Store[livemap.UserMarker, *livemap.UserMarker],
+			store.WithOnDeleteFn(func(ctx context.Context,
 				_ string, um *livemap.UserMarker,
 			) error {
 				if um == nil {

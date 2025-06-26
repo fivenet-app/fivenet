@@ -3,8 +3,10 @@ package centrum
 import (
 	"database/sql/driver"
 	"slices"
+	"time"
 
 	jsoniter "github.com/json-iterator/go"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -33,6 +35,14 @@ func (x *Settings) Default(job string) {
 	if x.Timings.RequireUnitReminderSeconds <= 0 {
 		x.Timings.RequireUnitReminderSeconds = 180
 	}
+
+	if x.Configuration == nil {
+		x.Configuration = &Configuration{
+			DeduplicationEnabled:  true,
+			DeduplicationRadius:   45,
+			DeduplicationDuration: durationpb.New(3 * time.Minute),
+		}
+	}
 }
 
 func (x *Settings) Merge(in *Settings) *Settings {
@@ -41,6 +51,8 @@ func (x *Settings) Merge(in *Settings) *Settings {
 
 	x.Mode = in.Mode
 	x.FallbackMode = in.FallbackMode
+
+	x.Public = in.Public
 
 	if in.PredefinedStatus == nil {
 		x.PredefinedStatus = &PredefinedStatus{}
@@ -60,7 +72,15 @@ func (x *Settings) Merge(in *Settings) *Settings {
 		x.Access = in.Access
 	}
 
-	x.Public = in.Public
+	if in.Configuration == nil {
+		x.Configuration = &Configuration{
+			DeduplicationEnabled:  true,
+			DeduplicationRadius:   45,
+			DeduplicationDuration: durationpb.New(3 * time.Minute),
+		}
+	} else {
+		x.Configuration = in.Configuration
+	}
 
 	return x
 }

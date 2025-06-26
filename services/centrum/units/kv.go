@@ -11,7 +11,7 @@ import (
 )
 
 func (s *UnitDB) updateInKV(ctx context.Context, id uint64, unit *centrum.Unit) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
 		if existing == nil {
 			return unit, unit != nil, nil
 		}
@@ -101,7 +101,7 @@ func (s *UnitDB) Filter(ctx context.Context, jobs []string, statuses []centrum.S
 }
 
 func (s *UnitDB) updateStatusInKV(ctx context.Context, id uint64, status *centrum.UnitStatus) error {
-	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), true, func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
+	if err := s.store.ComputeUpdate(ctx, centrumutils.IdKey(id), func(key string, existing *centrum.Unit) (*centrum.Unit, bool, error) {
 		if existing == nil {
 			return existing, false, nil
 		}
