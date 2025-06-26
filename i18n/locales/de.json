@@ -672,7 +672,9 @@
         "no_versions": "Keine Versionen verfügbar.",
         "dispatchers": "Dispatcher | Dispatcher",
         "dispatcher": "Keine Dispatcher | {n} Dispatcher | {n} Dispatcher",
-        "heatmap": "Heatmap"
+        "heatmap": "Heatmap",
+        "meters": "Meter | Meter",
+        "meter": "0 Meter | 1 Meter | {n} Meter"
     },
     "components": {
         "partials": {
@@ -977,6 +979,13 @@
                 "access": {
                     "title": "Zugriff",
                     "description": "Legen Sie fest, wer auf die Leitstelle zugreifen kann und welche Berechtigungen sie hat."
+                },
+                "deduplication": {
+                    "title": "Einsatz-Deduplizierung",
+                    "description": "Aktivieren Sie die Deduplizierung von Einsätzen. Wenn diese Option aktiviert ist, werden Einstäze im gleichen Radius als Duplikate makiert und abgebrochen.",
+                    "deduplication_duration": "Deduplizierungs-Zeitfenster (in Sekunden)",
+                    "deduplication_radius": "Deduplizierungs-Radius (in Metern)",
+                    "deduplication_radius_description": "Der Radius, in dem die Einsätze dedupliziert werden. Wenn ein neuer Einsatz innerhalb dieses Radius eines bestehenden Einsatz erstellt wird, wird der neue Einsatz entsprechend als Duplikat markiert und abgebrochen."
                 }
             }
         },
@@ -1911,15 +1920,15 @@
             },
             "document_relation_mentioned": {
                 "title": "Dokument: Sie wurden erwähnt",
-                "content": "Sie wurden in Dokument \"{title}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+                "content": "Sie wurden in Dokument \\\"{title}\\\" erwähnt. Klicke hier um zum Dokument zu gelangen."
             },
             "document_request_added": {
                 "title": "Dokument: Anfrage wurde erstellt",
-                "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
+                "content": "Eine Anfrage an ihr Dokument \\\"{title}\\\" wurde erstellt."
             },
             "document_comment_added": {
                 "title": "Dokument: Neuer Kommentar",
-                "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
+                "content": "Ein neuer Kommentar wurde im Dokument \\\"{title}\\\" veröffentlicht."
             },
             "document_take_ownership": {
                 "title": "Dokument-Besitzer geändert",
