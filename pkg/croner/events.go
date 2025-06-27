@@ -19,12 +19,13 @@ const (
 
 func registerCronStreams(ctx context.Context, js *events.JSWrapper) error {
 	if _, err := js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
-		Name:      CronScheduleStreamName,
-		Storage:   jetstream.MemoryStorage,
-		Retention: jetstream.InterestPolicy,
-		Subjects:  []string{fmt.Sprintf("%s.>", CronScheduleSubject)},
-		Discard:   jetstream.DiscardOld,
-		MaxAge:    30 * time.Second,
+		Name:        CronScheduleStreamName,
+		Description: "Cron schedule events stream",
+		Storage:     jetstream.MemoryStorage,
+		Retention:   jetstream.InterestPolicy,
+		Subjects:    []string{fmt.Sprintf("%s.>", CronScheduleSubject)},
+		Discard:     jetstream.DiscardOld,
+		MaxAge:      30 * time.Second,
 	}); err != nil {
 		return err
 	}

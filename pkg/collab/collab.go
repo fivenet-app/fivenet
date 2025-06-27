@@ -67,13 +67,14 @@ func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, category
 // Start creates or updates the JetStream stream for collaborative editing events for this server's category.
 func (s *CollabServer) Start(ctx context.Context) error {
 	cfg := jetstream.StreamConfig{
-		Name:       "COLLAB",
-		Subjects:   []string{fmt.Sprintf("collab.%s.*", s.category)},
-		Storage:    jetstream.MemoryStorage,
-		Retention:  jetstream.InterestPolicy,
-		MaxAge:     5 * time.Minute,
-		Discard:    jetstream.DiscardOld,
-		Duplicates: time.Minute,
+		Name:        "COLLAB",
+		Description: "Collaborative editing events stream",
+		Subjects:    []string{fmt.Sprintf("collab.%s.*", s.category)},
+		Storage:     jetstream.MemoryStorage,
+		Retention:   jetstream.InterestPolicy,
+		MaxAge:      5 * time.Minute,
+		Discard:     jetstream.DiscardOld,
+		Duplicates:  time.Minute,
 	}
 
 	if _, err := s.js.CreateOrUpdateStream(ctx, cfg); err != nil {
