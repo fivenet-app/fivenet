@@ -101,7 +101,7 @@ func NewRetriever(p Params) UserInfoRetriever {
 		}
 
 		// Run cache janitor to clean up old entries every 41 seconds
-		go userCache.StartJanitor(ctxCancel, 41)
+		go userCache.StartJanitor(ctxCancel, 41*time.Second)
 
 		return nil
 	}))

@@ -168,7 +168,7 @@ func New(p Params) (Permissions, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		go userCanCache.StartJanitor(ctxCancel, 31)
+		go userCanCache.StartJanitor(ctxCancel, 31*time.Second)
 
 		return ps.init(ctxCancel, ctxStartup, p)
 	}))

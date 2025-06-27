@@ -540,7 +540,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             "
                                         />
 
-                                        <span v-if="state.discordGuildId"> {{ state.discordGuildId }}</span>
+                                        <div v-if="state.discordGuildId" class="mt-2">{{ state.discordGuildId }}</div>
                                     </template>
                                     <USelectMenu
                                         v-else
