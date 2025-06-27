@@ -99,6 +99,7 @@ func (s *Server) Stream(srv pbnotifications.NotificationsService_StreamServer) e
 	if err != nil {
 		return fmt.Errorf("failed to create consumer. %w", err)
 	}
+	defer s.js.DeleteConsumer(ctx, notifi.StreamName, consCfg.Durable)
 
 	// Central pipe: all feeds push messages into outCh
 	outCh := make(chan *pbnotifications.StreamResponse, 256)
