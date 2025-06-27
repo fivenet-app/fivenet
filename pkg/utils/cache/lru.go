@@ -27,6 +27,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils"
 	"github.com/puzpuzpuz/xsync/v4"
 )
 
@@ -39,6 +40,7 @@ type pair[K comparable, V any] struct {
 }
 
 type LRUCache[K comparable, V any] struct {
+	_        utils.NoCopy                 // disallow copying of LRUCache
 	capacity int                          // max items retained by LRU policy
 	store    *xsync.Map[K, *list.Element] // key → *list.Element(pair)
 	list     *list.List                   // recency list; front == MRU
@@ -148,6 +150,7 @@ func (c *LRUCache[K, V]) StartJanitor(ctx context.Context, sweepInterval time.Du
 // concurrently with other API methods.
 func (c *LRUCache[K, V]) cleanupExpired() {
 	now := time.Now()
+	var stale []K
 
 	c.mu.Lock()
 	for elem := c.list.Back(); elem != nil; {
@@ -155,11 +158,16 @@ func (c *LRUCache[K, V]) cleanupExpired() {
 		p := elem.Value.(*pair[K, V])
 		if !p.expiresAt.IsZero() && p.expiresAt.Before(now) {
 			c.list.Remove(elem)
-			c.store.Delete(p.key)
+			stale = append(stale, p.key)
 		}
 		elem = prev
 	}
 	c.mu.Unlock()
+
+	// Do the map deletes outside the list lock.
+	for _, k := range stale {
+		c.store.Delete(k)
+	}
 }
 
 // deleteElement removes elem from both list and map. Callers need *not* hold
