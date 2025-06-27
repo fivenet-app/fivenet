@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2025.6.5] - 2025-06-27
+
+### 🚀 Features
+
+- Upgrade nats locks system to use per key ttls
+- Improve centrum housekeeper logic
+- Improve dispatch deduping and add dedupe settings
+
+### 🐛 Bug Fixes
+
+- Access attribute names
+- Remove debug log
+- Dispatch layer job grouping issue
+- Remove unused ref
+- Add missing jobs check to list dispatches
+- Migration for mariadb
+- Skip of mariadb incompatible json index
+- Disable locsk for job id mapping stores
+- Switch centrum housekeeper to a more event-based approach
+- App config from being incorrectly read in client due to json tags
+- German document title notifications showing \" as a result
+- Document not closing on toggle and missing object events
+- Centrum dispatches jobs migration for good
+- Correct italic usage in draft pages and qualifications
+
 ## [2025.6.4] - 2025-06-24
 
 ### 🚀 Features
