@@ -2,6 +2,7 @@ package collab
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"sync"
@@ -174,7 +175,7 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 	// Handle receiving
 	for {
 		msg, err := stream.Recv()
-		if err == io.EOF {
+		if err == io.EOF || errors.Is(err, context.Canceled) {
 			return nil
 		}
 		if err != nil {
@@ -183,18 +184,21 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 
 		switch m := msg.Msg.(type) {
 		case *collab.ClientPacket_SyncStep:
-			if m.SyncStep.Step == 1 {
+			switch m.SyncStep.Step {
+			case 1:
 				if m.SyncStep.ReceiverId != nil {
 					return status.Error(codes.InvalidArgument, "sync step 1 must not have a receiver ID")
 				}
 				room.BroadcastSyncStep1(clientId, m.SyncStep.Data)
-			} else if m.SyncStep.Step == 2 {
+
+			case 2:
 				if m.SyncStep.ReceiverId == nil {
 					return status.Error(codes.InvalidArgument, "sync step 2 must have a receiver ID")
 				}
 
 				room.ForwardSyncStep2ToClient(clientId, *m.SyncStep.ReceiverId, m.SyncStep.Data)
-			} else {
+
+			default:
 				return status.Error(codes.InvalidArgument, fmt.Sprintf("invalid sync step: %d", m.SyncStep.Step))
 			}
 

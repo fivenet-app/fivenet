@@ -9,13 +9,14 @@ import (
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
-	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
+
+const StreamName = "COLLAB"
 
 // metricTotalConnectedClients tracks the number of connected clients by category for Prometheus monitoring.
 var metricTotalConnectedClients = promauto.NewGaugeVec(prometheus.GaugeOpts{
@@ -60,8 +61,7 @@ func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js je
 	// Create consumer
 	subject := fmt.Sprintf("collab.%s.%d", category, roomId)
 
-	consumer, err := js.CreateOrUpdateConsumer(ctx, "COLLAB", jetstream.ConsumerConfig{
-		Durable:           instance.ID() + "_collab_" + category,
+	consumer, err := js.CreateOrUpdateConsumer(ctx, StreamName, jetstream.ConsumerConfig{
 		FilterSubject:     subject,
 		AckPolicy:         jetstream.AckExplicitPolicy,
 		InactiveThreshold: 5 * time.Second,
@@ -109,11 +109,11 @@ func (r *CollabRoom) Leave(clientId uint64) bool {
 	}
 	clientCount := len(r.clients)
 	empty := clientCount == 0
-	r.mu.Unlock()
 
 	if empty {
 		r.shutdown()
 	}
+	r.mu.Unlock()
 
 	r.logger.Debug("client left", zap.Uint64("client_id", clientId), zap.Int("clients", clientCount))
 
@@ -282,4 +282,11 @@ func (r *CollabRoom) SendTargetSaved() {
 func (r *CollabRoom) shutdown() {
 	r.logger.Debug("shutting down")
 	r.cancel() // Stop consumeLoop
+
+	defer func() {
+		// Use new context with timeout to ensure cleanup doesn't hang (r.ctx has to be canceled)
+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+		r.js.DeleteConsumer(ctx, StreamName, r.consumer.CachedInfo().Name) // Close the JetStream consumer
+	}()
 }
