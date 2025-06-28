@@ -96,7 +96,7 @@ export const License = new License$Type();
 class CitizensLicenses$Type extends MessageType<CitizensLicenses> {
     constructor() {
         super("resources.users.CitizensLicenses", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 2, name: "licenses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => License }
         ]);
     }

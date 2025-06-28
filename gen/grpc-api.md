@@ -1757,6 +1757,7 @@ Dummy - DO NOT USE!
 | `name` | [string](#string) |  | @sanitize |
 | `initials` | [string](#string) |  | @sanitize |
 | `color` | [string](#string) |  | @sanitize: method=StripTags |
+| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
 | `description` | [string](#string) | optional | @sanitize |
 | `status` | [UnitStatus](#resourcescentrumUnitStatus) | optional |  |
 | `users` | [UnitAssignment](#resourcescentrumUnitAssignment) | repeated |  |

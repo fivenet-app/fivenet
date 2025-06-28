@@ -58,6 +58,12 @@ export interface Unit {
      */
     color: string;
     /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string icon = 16
+     */
+    icon?: string;
+    /**
      * @sanitize
      *
      * @generated from protobuf field: optional string description = 8
@@ -238,6 +244,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "24" } } } },
             { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "2", maxLen: "4" } } } },
             { no: 7, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 16, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128", suffix: "Icon" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } },
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
             { no: 11, name: "users", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UnitAssignment },
@@ -286,6 +293,9 @@ class Unit$Type extends MessageType<Unit> {
                     break;
                 case /* string color */ 7:
                     message.color = reader.string();
+                    break;
+                case /* optional string icon */ 16:
+                    message.icon = reader.string();
                     break;
                 case /* optional string description */ 8:
                     message.description = reader.string();
@@ -359,6 +369,9 @@ class Unit$Type extends MessageType<Unit> {
         /* optional string job_label = 15; */
         if (message.jobLabel !== undefined)
             writer.tag(15, WireType.LengthDelimited).string(message.jobLabel);
+        /* optional string icon = 16; */
+        if (message.icon !== undefined)
+            writer.tag(16, WireType.LengthDelimited).string(message.icon);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

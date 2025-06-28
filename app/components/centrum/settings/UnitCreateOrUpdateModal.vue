@@ -4,6 +4,7 @@ import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { UnitAccessLevel, type UnitJobAccess, type UnitQualificationAccess } from '~~/gen/ts/resources/centrum/units_access';
@@ -36,6 +37,7 @@ const schema = z.object({
     initials: z.string().min(2).max(4),
     description: z.union([z.string().min(1).max(255), z.string().length(0).optional()]),
     color: z.string().length(7),
+    icon: z.string().max(128).optional(),
     homePostal: z.union([z.string().min(1).max(48), z.string().length(0).optional()]),
     attributes: z.nativeEnum(UnitAttribute).array().max(5).default([]),
     access: z.object({
@@ -51,6 +53,7 @@ const state = reactive<Schema>({
     initials: '',
     description: '',
     color: '#000000',
+    icon: 'MapMarkerIcon',
     attributes: [],
     access: {
         jobs: [],
@@ -73,6 +76,7 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
                 initials: values.initials,
                 description: values.description,
                 color: values.color,
+                icon: values.icon === '' ? undefined : values.icon,
                 attributes: {
                     list: values.attributes,
                 },
@@ -117,6 +121,7 @@ async function updateUnitInForm(): Promise<void> {
     state.initials = props.unit.initials;
     state.description = props.unit.description;
     state.color = props.unit.color;
+    state.icon = props.unit.icon;
     state.attributes = props.unit.attributes?.list ?? [];
     state.homePostal = props.unit.homePostal;
     state.access = {
@@ -196,6 +201,10 @@ watch(props, async () => updateUnitInForm());
 
                     <UFormGroup class="flex-1" name="color" :label="$t('common.color')">
                         <ColorPickerClient v-model="state.color" />
+                    </UFormGroup>
+
+                    <UFormGroup class="flex-1" name="icon" :label="$t('common.icon')">
+                        <IconSelectMenu v-model="state.icon" :color="state.color" />
                     </UFormGroup>
 
                     <UFormGroup

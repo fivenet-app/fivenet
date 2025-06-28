@@ -4,6 +4,7 @@ import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrU
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 
@@ -72,12 +73,16 @@ const columns = [
         label: t('common.description'),
     },
     {
-        key: 'attributes',
-        label: t('common.attributes'),
-    },
-    {
         key: 'color',
         label: t('common.color'),
+    },
+    {
+        key: 'icon',
+        label: t('common.icon'),
+    },
+    {
+        key: 'attributes',
+        label: t('common.attributes'),
     },
     {
         key: 'homePostal',
@@ -137,6 +142,14 @@ const columns = [
 
         <template #color-data="{ row: unit }">
             <ColorPickerClient v-model="unit.color" disabled hide-icon />
+        </template>
+
+        <template #icon-data="{ row: unit }">
+            <component
+                :is="availableIcons.find((item) => item.name === unit.icon)?.component ?? fallbackIcon.component"
+                class="size-5"
+                :fill="unit.color ?? 'currentColor'"
+            />
         </template>
 
         <template #homePostal-data="{ row: unit }">

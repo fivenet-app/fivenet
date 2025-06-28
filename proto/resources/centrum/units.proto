@@ -32,6 +32,11 @@ message Unit {
     len: 7
     pattern: "^#[A-Fa-f0-9]{6}$"
   }];
+  // @sanitize: method=StripTags
+  optional string icon = 16 [(buf.validate.field).string = {
+    max_len: 128
+    suffix: "Icon"
+  }];
   // @sanitize
   optional string description = 8 [(buf.validate.field).string.max_len = 255];
   optional UnitStatus status = 9;

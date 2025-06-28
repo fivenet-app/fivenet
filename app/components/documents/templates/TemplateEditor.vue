@@ -47,7 +47,7 @@ const schema = z.object({
     title: z.string().min(3).max(255),
     description: z.string().min(3).max(255),
     color: z.string().max(7),
-    icon: z.string().max(64).optional(),
+    icon: z.string().max(128).optional(),
     contentTitle: z.string().min(3).max(2048),
     content: z.string().min(3).max(1500000),
     contentState: z.union([z.string().min(1).max(512), z.string().length(0)]),

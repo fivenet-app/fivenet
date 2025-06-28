@@ -417,7 +417,7 @@ class Configuration$Type extends MessageType<Configuration> {
     constructor() {
         super("resources.centrum.Configuration", [
             { no: 1, name: "deduplication_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "deduplication_radius", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { lt: "1000000", gt: "0" } } } },
+            { no: 2, name: "deduplication_radius", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { int64: { lt: "1000000", gt: "5" } } } },
             { no: 3, name: "deduplication_duration", kind: "message", T: () => Duration }
         ]);
     }

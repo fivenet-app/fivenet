@@ -30,7 +30,7 @@ message MarkerMarker {
     max_len: 255
   }];
   // @sanitize
-  optional string description = 9;
+  optional string description = 9 [(buf.validate.field).string.max_len = 1024];
   // @sanitize: method=StripTags
   optional string postal = 10 [(buf.validate.field).string.max_len = 48];
   // @sanitize: method=StripTags

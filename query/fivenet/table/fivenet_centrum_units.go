@@ -25,6 +25,7 @@ type fivenetCentrumUnitsTable struct {
 	Name        mysql.ColumnString
 	Initials    mysql.ColumnString
 	Color       mysql.ColumnString
+	Icon        mysql.ColumnString
 	Description mysql.ColumnString
 	Attributes  mysql.ColumnString
 	HomePostal  mysql.ColumnString
@@ -77,11 +78,12 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		NameColumn        = mysql.StringColumn("name")
 		InitialsColumn    = mysql.StringColumn("initials")
 		ColorColumn       = mysql.StringColumn("color")
+		IconColumn        = mysql.StringColumn("icon")
 		DescriptionColumn = mysql.StringColumn("description")
 		AttributesColumn  = mysql.StringColumn("attributes")
 		HomePostalColumn  = mysql.StringColumn("home_postal")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, IconColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, IconColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
 		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
@@ -97,6 +99,7 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		Name:        NameColumn,
 		Initials:    InitialsColumn,
 		Color:       ColorColumn,
+		Icon:        IconColumn,
 		Description: DescriptionColumn,
 		Attributes:  AttributesColumn,
 		HomePostal:  HomePostalColumn,

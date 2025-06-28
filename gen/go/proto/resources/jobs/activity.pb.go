@@ -540,10 +540,10 @@ const file_resources_jobs_activity_proto_rawDesc = "" +
 	"\n" +
 	"created_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x122\n" +
-	"\x0esource_user_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00H\x01R\fsourceUserId\x88\x01\x01\x12Y\n" +
+	"\x0esource_user_id\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x01R\fsourceUserId\x88\x01\x01\x12Y\n" +
 	"\vsource_user\x18\x06 \x01(\v2\x19.resources.jobs.ColleagueB\x18\x9a\x84\x9e\x03\x13alias:\"source_user\"H\x02R\n" +
 	"sourceUser\x88\x01\x01\x12-\n" +
-	"\x0etarget_user_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\ftargetUserId\x12T\n" +
+	"\x0etarget_user_id\x18\a \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\ftargetUserId\x12T\n" +
 	"\vtarget_user\x18\b \x01(\v2\x19.resources.jobs.ColleagueB\x18\x9a\x84\x9e\x03\x13alias:\"target_user\"R\n" +
 	"targetUser\x12J\n" +
 	"\ractivity_type\x18\t \x01(\x0e2%.resources.jobs.ColleagueActivityTypeR\factivityType\x12 \n" +

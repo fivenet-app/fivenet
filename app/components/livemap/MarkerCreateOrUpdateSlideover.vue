@@ -34,13 +34,13 @@ defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 
 
 const schema = z.object({
     name: z.string().min(1).max(255),
-    description: z.union([z.string().min(6).max(512), z.string().length(0).optional()]),
+    description: z.union([z.string().min(3).max(1024), z.string().length(0).optional()]),
     expiresAt: z.date().optional(),
     color: z.string().length(7),
     markerType: z.nativeEnum(MarkerType),
     circleRadius: z.coerce.number().gte(5).lte(250),
     circleOpacity: z.coerce.number().gte(1).lte(75).optional(),
-    icon: z.string().max(64).optional(),
+    icon: z.string().max(128).optional(),
 });
 
 type Schema = z.output<typeof schema>;

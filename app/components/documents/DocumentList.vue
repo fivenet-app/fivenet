@@ -280,7 +280,7 @@ defineShortcuts({
                                                     <component
                                                         :is="
                                                             availableIcons.find((item) => item.name === category?.icon)
-                                                                ?.component ?? fallbackIcon
+                                                                ?.component ?? fallbackIcon.component
                                                         "
                                                         v-if="category.icon"
                                                         class="size-5"
@@ -297,7 +297,7 @@ defineShortcuts({
                                             <component
                                                 :is="
                                                     availableIcons.find((item) => item.name === option.icon)?.component ??
-                                                    fallbackIcon
+                                                    fallbackIcon.component
                                                 "
                                                 v-if="option.icon"
                                                 class="size-5"

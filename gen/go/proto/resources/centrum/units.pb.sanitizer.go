@@ -48,6 +48,12 @@ func (m *Unit) Sanitize() error {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
+	// Field: Icon
+
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
+	}
+
 	// Field: Initials
 	m.Initials = htmlsanitizer.Sanitize(m.Initials)
 

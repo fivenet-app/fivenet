@@ -31,7 +31,7 @@ const schema = z.object({
     name: z.string().min(3).max(128),
     description: z.union([z.string().min(0).max(255), z.string().optional()]),
     color: z.string().max(7),
-    icon: z.string().max(64).optional(),
+    icon: z.string().max(128).optional(),
 });
 
 type Schema = z.output<typeof schema>;

@@ -314,7 +314,7 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\a_avatarB\b\n" +
 	"\x06_email\"\xb2\x04\n" +
 	"\x0eColleagueProps\x12 \n" +
-	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12\x19\n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12\x19\n" +
 	"\x03job\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12B\n" +
 	"\n" +
 	"deleted_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tdeletedAt\x88\x01\x01\x12H\n" +

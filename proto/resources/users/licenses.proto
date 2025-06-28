@@ -15,6 +15,6 @@ message License {
 }
 
 message CitizensLicenses {
-  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  int32 user_id = 1 [(buf.validate.field).int32.gte = 0];
   repeated License licenses = 2;
 }

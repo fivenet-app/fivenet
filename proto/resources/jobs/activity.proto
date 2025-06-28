@@ -26,9 +26,9 @@ message ColleagueActivity {
   uint64 id = 1 [(tagger.tags) = "sql:\"primary_key\" alias:\"id\""];
   optional resources.timestamp.Timestamp created_at = 2;
   string job = 4 [(buf.validate.field).string.max_len = 20];
-  optional int32 source_user_id = 5 [(buf.validate.field).int32.gt = 0];
+  optional int32 source_user_id = 5 [(buf.validate.field).int32.gte = 0];
   optional Colleague source_user = 6 [(tagger.tags) = "alias:\"source_user\""];
-  int32 target_user_id = 7 [(buf.validate.field).int32.gt = 0];
+  int32 target_user_id = 7 [(buf.validate.field).int32.gte = 0];
   Colleague target_user = 8 [(tagger.tags) = "alias:\"target_user\""];
   ColleagueActivityType activity_type = 9;
   // @sanitize

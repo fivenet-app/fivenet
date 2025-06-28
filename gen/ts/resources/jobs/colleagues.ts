@@ -266,7 +266,7 @@ export const Colleague = new Colleague$Type();
 class ColleagueProps$Type extends MessageType<ColleagueProps> {
     constructor() {
         super("resources.jobs.ColleagueProps", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gt: 0 } } } },
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "20" } } } },
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "absence_begin", kind: "message", T: () => Timestamp },

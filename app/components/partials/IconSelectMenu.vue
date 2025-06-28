@@ -50,7 +50,7 @@ async function iconSearch(query: string): Promise<IconEntry[]> {
         >
             <template #label>
                 <component
-                    :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon"
+                    :is="availableIcons.find((item) => item.name === icon)?.component ?? fallbackIcon.component"
                     class="size-5"
                     :style="{ fill: color }"
                 />

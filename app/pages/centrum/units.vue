@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import UnitsList from '~/components/centrum/settings/UnitsList.vue';
+import UnitList from '~/components/centrum/settings/UnitList.vue';
 
 const { t } = useI18n();
 
@@ -17,7 +17,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UnitsList />
+            <UnitList />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

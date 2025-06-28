@@ -101,6 +101,8 @@ type Unit struct {
 	Initials string `protobuf:"bytes,6,opt,name=initials,proto3" json:"initials,omitempty"`
 	// @sanitize: method=StripTags
 	Color string `protobuf:"bytes,7,opt,name=color,proto3" json:"color,omitempty"`
+	// @sanitize: method=StripTags
+	Icon *string `protobuf:"bytes,16,opt,name=icon,proto3,oneof" json:"icon,omitempty"`
 	// @sanitize
 	Description   *string           `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Status        *UnitStatus       `protobuf:"bytes,9,opt,name=status,proto3,oneof" json:"status,omitempty"`
@@ -194,6 +196,13 @@ func (x *Unit) GetInitials() string {
 func (x *Unit) GetColor() string {
 	if x != nil {
 		return x.Color
+	}
+	return ""
+}
+
+func (x *Unit) GetIcon() string {
+	if x != nil && x.Icon != nil {
+		return *x.Icon
 	}
 	return ""
 }
@@ -523,7 +532,7 @@ var File_resources_centrum_units_proto protoreflect.FileDescriptor
 
 const file_resources_centrum_units_proto_rawDesc = "" +
 	"\n" +
-	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xba\x06\n" +
+	"\x1dresources/centrum/units.proto\x12\x11resources.centrum\x1a\"resources/centrum/attributes.proto\x1a$resources/centrum/units_access.proto\x1a\x1fresources/jobs/colleagues.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xec\x06\n" +
 	"\x04Unit\x121\n" +
 	"\x02id\x18\x01 \x01(\x04B!\x9a\x84\x9e\x03\x1csql:\"primary_key\" alias:\"id\"R\x02id\x12B\n" +
 	"\n" +
@@ -534,20 +543,22 @@ const file_resources_centrum_units_proto_rawDesc = "" +
 	"\tjob_label\x18\x0f \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\bjobLabel\x88\x01\x01\x12\x1d\n" +
 	"\x04name\x18\x05 \x01(\tB\t\xbaH\x06r\x04\x10\x03\x18\x18R\x04name\x12%\n" +
 	"\binitials\x18\x06 \x01(\tB\t\xbaH\x06r\x04\x10\x02\x18\x04R\binitials\x121\n" +
-	"\x05color\x18\a \x01(\tB\x1b\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12/\n" +
-	"\vdescription\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x03R\vdescription\x88\x01\x01\x12:\n" +
-	"\x06status\x18\t \x01(\v2\x1d.resources.centrum.UnitStatusH\x04R\x06status\x88\x01\x01\x127\n" +
+	"\x05color\x18\a \x01(\tB\x1b\xbaH\x18r\x162\x11^#[A-Fa-f0-9]{6}$\x98\x01\aR\x05color\x12'\n" +
+	"\x04icon\x18\x10 \x01(\tB\x0e\xbaH\vr\t\x18\x80\x01B\x04IconH\x03R\x04icon\x88\x01\x01\x12/\n" +
+	"\vdescription\x18\b \x01(\tB\b\xbaH\x05r\x03\x18\xff\x01H\x04R\vdescription\x88\x01\x01\x12:\n" +
+	"\x06status\x18\t \x01(\v2\x1d.resources.centrum.UnitStatusH\x05R\x06status\x88\x01\x01\x127\n" +
 	"\x05users\x18\v \x03(\v2!.resources.centrum.UnitAssignmentR\x05users\x12F\n" +
 	"\n" +
-	"attributes\x18\f \x01(\v2!.resources.centrum.UnitAttributesH\x05R\n" +
+	"attributes\x18\f \x01(\v2!.resources.centrum.UnitAttributesH\x06R\n" +
 	"attributes\x88\x01\x01\x12-\n" +
-	"\vhome_postal\x18\r \x01(\tB\a\xbaH\x04r\x02\x180H\x06R\n" +
+	"\vhome_postal\x18\r \x01(\tB\a\xbaH\x04r\x02\x180H\aR\n" +
 	"homePostal\x88\x01\x01\x125\n" +
 	"\x06access\x18\x0e \x01(\v2\x1d.resources.centrum.UnitAccessR\x06accessB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\f\n" +
 	"\n" +
-	"_job_labelB\x0e\n" +
+	"_job_labelB\a\n" +
+	"\x05_iconB\x0e\n" +
 	"\f_descriptionB\t\n" +
 	"\a_statusB\r\n" +
 	"\v_attributesB\x0e\n" +

@@ -56,6 +56,7 @@ const hasUnit = computed(() => props.showUnitNames && props.marker.unitId !== un
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 
+const icon = computed(() => unit.value?.icon ?? MapMarkerIcon);
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status ?? 0));
 </script>
 
@@ -83,7 +84,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                 >
                     {{ unit?.initials }}
                 </span>
-                <MapMarkerIcon class="size-full" :style="{ color: markerColor }" />
+                <component :is="icon" class="size-full" :style="{ color: markerColor }" />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">

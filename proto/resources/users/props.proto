@@ -12,7 +12,7 @@ import "tagger/tagger.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/users;users";
 
 message UserProps {
-  int32 user_id = 1 [(buf.validate.field).int32.gt = 0];
+  int32 user_id = 1 [(buf.validate.field).int32.gte = 0];
   optional resources.timestamp.Timestamp updated_at = 2;
   optional bool wanted = 3;
   optional string job_name = 4 [(tagger.tags) = "alias:\"job\""];

@@ -5,6 +5,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const DefaultUnitIcon = "MapMarkerIcon"
+
 func (x *Unit) SetJobLabel(in string) {
 	x.JobLabel = &in
 }
@@ -44,6 +46,13 @@ func (x *Unit) Merge(in *Unit) *Unit {
 
 	if x.Color != in.Color {
 		x.Color = in.Color
+	}
+
+	if in.Icon != nil && *in.Icon != "" {
+		x.Icon = in.Icon
+	} else if x.Icon == nil || *x.Icon == "" {
+		def := DefaultUnitIcon
+		x.Icon = &def
 	}
 
 	if in.Description != nil && (x.Description == nil || *x.Description != *in.Description) {

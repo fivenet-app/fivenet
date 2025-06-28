@@ -545,7 +545,7 @@ const file_resources_centrum_settings_proto_rawDesc = "" +
 	"\xbaH\a\"\x05\x10\xf0. \x1eR\x1arequireUnitReminderSeconds\"\xf6\x01\n" +
 	"\rConfiguration\x123\n" +
 	"\x15deduplication_enabled\x18\x01 \x01(\bR\x14deduplicationEnabled\x12>\n" +
-	"\x14deduplication_radius\x18\x02 \x01(\x03B\v\xbaH\b\"\x06\x10\xc0\x84= \x00R\x13deduplicationRadius\x12U\n" +
+	"\x14deduplication_radius\x18\x02 \x01(\x03B\v\xbaH\b\"\x06\x10\xc0\x84= \x05R\x13deduplicationRadius\x12U\n" +
 	"\x16deduplication_duration\x18\x03 \x01(\v2\x19.google.protobuf.DurationH\x00R\x15deduplicationDuration\x88\x01\x01B\x19\n" +
 	"\x17_deduplication_duration\"?\n" +
 	"\aJobList\x124\n" +

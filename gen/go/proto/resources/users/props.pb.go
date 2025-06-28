@@ -188,7 +188,7 @@ const file_resources_users_props_proto_rawDesc = "" +
 	"\n" +
 	"\x1bresources/users/props.proto\x12\x0fresources.users\x1a\x19resources/file/file.proto\x1a\x19resources/jobs/jobs.proto\x1a#resources/timestamp/timestamp.proto\x1a\x1cresources/users/labels.proto\x1a\x13tagger/tagger.proto\"\xad\b\n" +
 	"\tUserProps\x12 \n" +
-	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02 \x00R\x06userId\x12B\n" +
+	"\auser_id\x18\x01 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\x06userId\x12B\n" +
 	"\n" +
 	"updated_at\x18\x02 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tupdatedAt\x88\x01\x01\x12\x1b\n" +
 	"\x06wanted\x18\x03 \x01(\bH\x01R\x06wanted\x88\x01\x01\x120\n" +

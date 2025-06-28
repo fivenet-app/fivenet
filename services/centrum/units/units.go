@@ -238,6 +238,7 @@ func (s *UnitDB) LoadFromDB(ctx context.Context, id uint64) error {
 			tUnits.Name,
 			tUnits.Initials,
 			tUnits.Color,
+			tUnits.Icon,
 			tUnits.Description,
 			tUnits.Attributes,
 			tUnits.HomePostal,
@@ -669,6 +670,7 @@ func (s *UnitDB) CreateUnit(ctx context.Context, creatorJob string, unit *centru
 			tUnits.Name,
 			tUnits.Initials,
 			tUnits.Color,
+			tUnits.Icon,
 			tUnits.Description,
 			tUnits.Attributes,
 			tUnits.HomePostal,
@@ -678,6 +680,7 @@ func (s *UnitDB) CreateUnit(ctx context.Context, creatorJob string, unit *centru
 			unit.Name,
 			unit.Initials,
 			unit.Color,
+			unit.Icon,
 			unit.Description,
 			unit.Attributes,
 			unit.HomePostal,
@@ -722,11 +725,6 @@ func (s *UnitDB) CreateUnit(ctx context.Context, creatorJob string, unit *centru
 }
 
 func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit, error) {
-	description := ""
-	if unit.Description != nil {
-		description = *unit.Description
-	}
-
 	if unit.Access == nil {
 		unit.Access = &centrum.UnitAccess{}
 	}
@@ -747,6 +745,7 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit,
 			tUnits.Name,
 			tUnits.Initials,
 			tUnits.Color,
+			tUnits.Icon,
 			tUnits.Description,
 			tUnits.Attributes,
 			tUnits.HomePostal,
@@ -755,7 +754,8 @@ func (s *UnitDB) Update(ctx context.Context, unit *centrum.Unit) (*centrum.Unit,
 			unit.Name,
 			unit.Initials,
 			unit.Color,
-			description,
+			unit.Icon,
+			unit.Description,
 			unit.Attributes,
 			unit.HomePostal,
 		).

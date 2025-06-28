@@ -104,7 +104,7 @@ async function deleteMarker(id: number): Promise<void> {
                                 (icon) =>
                                     marker.data?.data.oneofKind === 'icon' &&
                                     icon.name === convertDynamicIconNameToComponent(marker.data?.data.icon.icon),
-                            )?.component ?? fallbackIcon.name
+                            )?.component ?? fallbackIcon.component
                         "
                         class="size-6"
                         :style="{ color: marker.color ?? 'currentColor' }"
