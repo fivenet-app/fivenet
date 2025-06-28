@@ -1,7 +1,7 @@
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
 github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/fivenet-app/fivenet/v2025 v2025.6.4 h1:/Vx0aoZapPxXGoNV/j4jC+vUfEdRhxgv2XfsP8XTHXg=
-github.com/fivenet-app/fivenet/v2025 v2025.6.4/go.mod h1:y8k5kUyYUsk+JgD7IEJ6Pd7bXBkCSoyxmedwgFAOI24=
+github.com/fivenet-app/fivenet/v2025 v2025.6.5 h1:Hn8YqfKA3Rh121VN0CNpsdb2c+/6YvPOMn87KPTvM+k=
+github.com/fivenet-app/fivenet/v2025 v2025.6.5/go.mod h1:TCEixAOpSnXOquq8UojAmWkM4MRSqvF8nODo/1D/mHI=
 github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
 github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
 github.com/gosimple/slug v1.15.0 h1:wRZHsRrRcs6b0XnxMUBM6WK1U1Vg5B0R7VkIf1Xzobo=
