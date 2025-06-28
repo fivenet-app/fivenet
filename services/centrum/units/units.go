@@ -432,7 +432,7 @@ func (s *UnitDB) UpdateStatus(ctx context.Context, unitId uint64, in *centrum.Un
 }
 
 func (s *UnitDB) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unitId uint64, toAdd []int32, toRemove []int32) error {
-	s.logger.Debug("updating unit assignments", zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
+	s.logger.Debug("updating unit assignments", zap.Uint64("unit_id", unitId), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
 
 	if len(toAdd) == 0 && len(toRemove) == 0 {
 		return nil

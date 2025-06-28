@@ -148,7 +148,7 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 			Attributes: map[string]string{},
 		}
 		if data.Data == nil {
-			data.Data = &anypb.Any{}
+			data.Data, _ = anypb.New(&cron.GenericCronData{})
 		}
 
 		// Unmarshal the cron data.
@@ -179,7 +179,7 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 			Attributes: map[string]string{},
 		}
 		if data.Data == nil {
-			data.Data = &anypb.Any{}
+			data.Data, _ = anypb.New(&cron.GenericCronData{})
 		}
 
 		// Unmarshal the cron data.

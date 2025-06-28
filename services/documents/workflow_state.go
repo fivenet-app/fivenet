@@ -103,8 +103,9 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		dest := &documents.WorkflowCronData{
 			LastDocId: 0,
 		}
+
 		if data.Data == nil {
-			data.Data = &anypb.Any{}
+			data.Data, _ = anypb.New(&documents.WorkflowCronData{})
 		}
 
 		if err := data.Data.UnmarshalTo(dest); err != nil {
@@ -130,7 +131,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 			LastDocId: 0,
 		}
 		if data.Data == nil {
-			data.Data = &anypb.Any{}
+			data.Data, _ = anypb.New(&documents.WorkflowCronData{})
 		}
 
 		if err := data.Data.UnmarshalTo(dest); err != nil {

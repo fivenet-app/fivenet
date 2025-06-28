@@ -22,6 +22,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -48,7 +50,10 @@ type Manager struct {
 	enricher *mstlystcdata.Enricher
 	postals  postals.Postals
 	appCfg   appconfig.IConfig
-	units    *units.UnitDB
+
+	units       *units.UnitDB
+	helpers     *helpers.Helpers
+	dispatchers *dispatchers.DispatchersDB
 
 	refreshTicker *time.Ticker
 
@@ -70,7 +75,10 @@ type Params struct {
 	Postals   postals.Postals
 	Cfg       *config.Config
 	AppConfig appconfig.IConfig
-	Units     *units.UnitDB
+
+	Units       *units.UnitDB
+	Helpers     *helpers.Helpers
+	Dispatchers *dispatchers.DispatchersDB
 }
 
 func New(p Params) (*Manager, error) {
@@ -86,7 +94,10 @@ func New(p Params) (*Manager, error) {
 		enricher: p.Enricher,
 		postals:  p.Postals,
 		appCfg:   p.AppConfig,
-		units:    p.Units,
+
+		units:       p.Units,
+		helpers:     p.Helpers,
+		dispatchers: p.Dispatchers,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -116,6 +127,20 @@ func New(p Params) (*Manager, error) {
 		userMappingsStore, err := store.New[pbtracker.UserMapping, *pbtracker.UserMapping](
 			ctxStartup, storeLogger, p.JS, tracker.BucketUserMappingsMap,
 			store.WithLocks[pbtracker.UserMapping, *pbtracker.UserMapping](nil),
+			store.WithOnDeleteFn(func(ctx context.Context, key string, um *pbtracker.UserMapping) error {
+				if um == nil {
+					return nil
+				}
+
+				// Remove user from unit if it has a unit_id
+				if um.UnitId != nil && *um.UnitId > 0 {
+					if err := m.units.UpdateUnitAssignments(ctx, "", &um.UserId, *um.UnitId, nil, []int32{um.UserId}); err != nil {
+						m.logger.Error("failed to remove user from unit", zap.Error(err))
+					}
+				}
+
+				return nil
+			}),
 		)
 		if err != nil {
 			return fmt.Errorf("failed to create user mappings store. %w", err)
@@ -165,21 +190,28 @@ func New(p Params) (*Manager, error) {
 				return newValue, nil
 			}),
 			store.WithOnDeleteFn(func(ctx context.Context,
-				_ string, um *livemap.UserMarker,
+				key string, um *livemap.UserMarker,
 			) error {
 				if um == nil {
 					return nil
 				}
 
-				// Remove mapping
-				if err := m.userMappingsStore.Delete(ctx, tracker.UserIdKey(um.UserId)); err != nil {
-					m.logger.Error("failed to remove user unit mapping", zap.Error(err))
-				}
-
 				// Remove user marker if we have the info we need
 				if um.JobGrade != nil {
 					if err := m.userLocStore.Delete(ctx, userMarkerKey(um.UserId, um.Job, *um.JobGrade)); err != nil {
-						m.logger.Error("failed to remove user marker from store", zap.Error(err))
+						m.logger.Error("failed to remove user marker from store", zap.Error(err), zap.Int32("user_id", um.UserId), zap.String("job", um.Job))
+					}
+				}
+
+				// Remove user mapping
+				if err := m.userMappingsStore.Delete(ctx, key); err != nil {
+					m.logger.Error("failed to remove user unit mapping", zap.Error(err), zap.Int32("user_id", um.UserId), zap.String("job", um.Job))
+				}
+
+				// Sign-off user from dispatchers
+				if m.helpers.CheckIfUserIsDispatcher(ctx, um.Job, um.UserId) {
+					if err := m.dispatchers.SetUserState(ctx, um.Job, um.UserId, false); err != nil {
+						m.logger.Error("failed to remove user from dispatchers", zap.Error(err), zap.Int32("user_id", um.UserId), zap.String("job", um.Job))
 					}
 				}
 

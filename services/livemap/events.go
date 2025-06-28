@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
+	"github.com/fivenet-app/fivenet/v2025/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -92,7 +93,7 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 			}
 
 			marker := &livemap.MarkerMarker{}
-			if err := proto.Unmarshal(msg.Data(), marker); err != nil {
+			if err := protoutils.UnmarshalPartialPJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
 				return
 			}
@@ -108,7 +109,7 @@ func (s *Server) watchForEventsFunc(msg jetstream.Msg) {
 			}
 
 			marker := &livemap.MarkerMarker{}
-			if err := proto.Unmarshal(msg.Data(), marker); err != nil {
+			if err := protoutils.UnmarshalPartialPJSON(msg.Data(), marker); err != nil {
 				s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
 				return
 			}
