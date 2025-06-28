@@ -26,8 +26,11 @@ http:
   origins:
     - "https://fivenet.example.com"
     #- "http://localhost:3000" # Only for development
+  # In case of a reverse proxy, this should be set to the IPs of the reverse proxy servers.
+  # In Kubernetes based on your cluster, it is easier to specify the cluster's IP range, e.g., `10.0.0.0/8`.
   trustedProxies: []
-    #- "127.0.0.1" # Only for development
+    #- "10.0.0.0/8" # Common Kubernetes cluster IP range
+    #- "127.0.0.1" # For development
   sessions:
     cookieSecret: "your_generated_cookie_secret"
     domain: "fivenet.example.com"
