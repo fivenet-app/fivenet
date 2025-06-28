@@ -156,6 +156,7 @@ export const useCentrumStore = defineStore(
                 existing.name = unit.name;
                 existing.initials = unit.initials;
                 existing.color = unit.color;
+                existing.icon = unit.icon;
                 existing.description = unit.description;
 
                 existing.users.length = 0;

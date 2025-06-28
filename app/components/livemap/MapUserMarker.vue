@@ -9,6 +9,7 @@ import UnitDetailsSlideover from '../centrum/units/UnitDetailsSlideover.vue';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 import { checkIfCanAccessColleague } from '../jobs/colleagues/helpers';
 import PhoneNumberBlock from '../partials/citizens/PhoneNumberBlock.vue';
+import { availableIcons } from '../partials/icons';
 
 const props = withDefaults(
     defineProps<{
@@ -39,25 +40,27 @@ const { goto } = useLivemapStore();
 const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
 
-const markerColor = computed(() => {
-    if (activeChar.value !== null && props.marker.userId === activeChar.value?.userId) {
-        return livemap.userMarkers.activeCharColor;
-    } else {
-        return props.marker.color ?? livemap.userMarkers.fallbackColor;
-    }
-});
+const markerColor = computed(() =>
+    activeChar.value !== null && props.marker.userId === activeChar.value?.userId
+        ? livemap.userMarkers.activeCharColor
+        : (props.marker.color ?? livemap.userMarkers.fallbackColor),
+);
 
 const unit = computed(() => (props.marker.unitId !== undefined ? units.value.get(props.marker.unitId) : undefined));
+const hasUnit = computed(() => props.showUnitNames && props.marker.unitId !== undefined);
 const unitInverseColor = computed(() => {
     return hexToRgb(unit.value?.color ?? livemap.userMarkers.fallbackColor, RGBBlack)!;
 });
 
-const hasUnit = computed(() => props.showUnitNames && props.marker.unitId !== undefined);
 const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
+const icon = computed(() =>
+    unit.value?.icon
+        ? (availableIcons.find((item) => item.name === unit.value?.icon)?.component ?? MapMarkerIcon)
+        : MapMarkerIcon,
+);
 
-const icon = computed(() => unit.value?.icon ?? MapMarkerIcon);
-const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status ?? 0));
+const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status));
 </script>
 
 <template>
@@ -91,7 +94,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                     <span
                         class="relative inset-0 inline-flex size-3 rounded-full border border-black/20"
                         :class="unitStatusColor"
-                    ></span>
+                    />
                 </span>
             </div>
         </LIcon>
@@ -157,7 +160,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                         />
 
                         <UButton
-                            v-if="hasUnit && unit"
+                            v-if="unit"
                             variant="link"
                             icon="i-mdi-group"
                             :padded="false"
