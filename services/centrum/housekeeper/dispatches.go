@@ -25,6 +25,9 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 	if data.Data == nil {
 		data.Data, _ = anypb.New(&cron.GenericCronData{})
 	}
+	if err := data.Data.UnmarshalTo(dest); err != nil {
+		s.logger.Error("failed to unmarshal centrum housekeeper cron data", zap.Error(err))
+	}
 
 	// Load dispatches with null postal field (they are considered "new")
 	dspCount, err := s.dispatches.LoadFromDB(ctx, tDispatch.Postal.IS_NULL())
@@ -43,7 +46,7 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 	dest.SetAttribute("loaded_dispatches", strconv.FormatInt(int64(count), 10))
 
 	if err := data.Data.MarshalFrom(dest); err != nil {
-		return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
+		return fmt.Errorf("failed to marshal updated centrum housekeeper cron data. %w", err)
 	}
 
 	return nil
@@ -273,9 +276,24 @@ func (s *Housekeeper) runDeleteOldDispatchesFromKV(ctx context.Context, data *cr
 func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 	errs := multierr.Combine()
 
-	dsps := s.dispatches.List(ctx, nil)
-	for _, dsp := range dsps {
-		if dsp == nil {
+	keyIter, err := s.dispatches.Store().KV().ListKeys(ctx)
+	if err != nil {
+		s.logger.Error("failed to list dispatches from KV", zap.Error(err))
+		return err
+	}
+	keysCh := keyIter.Keys()
+	for key := range keysCh {
+		if key == "" {
+			continue
+		}
+
+		dsp, err := s.dispatches.Store().Get(key)
+		if err != nil {
+			s.logger.Error("failed to get dispatch from KV", zap.String("key", key), zap.Error(err))
+
+			if err := s.dispatches.Store().Delete(ctx, key); err != nil {
+				s.logger.Error("failed to delete unavailable dispatch from KV", zap.String("key", key), zap.Error(err))
+			}
 			continue
 		}
 

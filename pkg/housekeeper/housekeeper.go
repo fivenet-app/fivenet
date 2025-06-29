@@ -150,18 +150,21 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		if data.Data == nil {
 			data.Data, _ = anypb.New(&cron.GenericCronData{})
 		}
-
-		// Unmarshal the cron data.
 		if err := data.Data.UnmarshalTo(dest); err != nil {
 			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
-		// Run the soft delete job logic.
+		// Unmarshal the cron data
+		if err := data.Data.UnmarshalTo(dest); err != nil {
+			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
+		}
+
+		// Run the soft delete job logic
 		if err := h.runJobSoftDelete(ctx, dest); err != nil {
 			return fmt.Errorf("error during housekeeper (soft delete). %w", err)
 		}
 
-		// Marshal the updated cron data.
+		// Marshal the updated cron data
 		if err := data.Data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated housekeeper (soft delete) cron data. %w", err)
 		}
@@ -174,25 +177,24 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		ctx, span := h.tracer.Start(ctx, "housekeeper.hard_delete")
 		defer span.End()
 
-		// Prepare the cron data structure.
+		// Prepare the cron data structure
 		dest := &cron.GenericCronData{
 			Attributes: map[string]string{},
 		}
 		if data.Data == nil {
 			data.Data, _ = anypb.New(&cron.GenericCronData{})
 		}
-
-		// Unmarshal the cron data.
+		// Unmarshal the cron data
 		if err := data.Data.UnmarshalTo(dest); err != nil {
 			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
-		// Run the hard delete job logic.
+		// Run the hard delete job logic
 		if err := h.runHardDelete(ctx, dest); err != nil {
 			return fmt.Errorf("error during housekeeper (hard delete). %w", err)
 		}
 
-		// Marshal the updated cron data.
+		// Marshal the updated cron data
 		if err := data.Data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated housekeeper (hard delete) cron data. %w", err)
 		}

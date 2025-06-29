@@ -103,11 +103,9 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		dest := &documents.WorkflowCronData{
 			LastDocId: 0,
 		}
-
 		if data.Data == nil {
 			data.Data, _ = anypb.New(&documents.WorkflowCronData{})
 		}
-
 		if err := data.Data.UnmarshalTo(dest); err != nil {
 			w.logger.Warn("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
@@ -116,6 +114,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 			return fmt.Errorf("error during documents workflow handling. %w", err)
 		}
 
+		// Marshal the updated cron data
 		if err := data.Data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
 		}
@@ -133,7 +132,6 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		if data.Data == nil {
 			data.Data, _ = anypb.New(&documents.WorkflowCronData{})
 		}
-
 		if err := data.Data.UnmarshalTo(dest); err != nil {
 			w.logger.Error("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
@@ -142,6 +140,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 			return fmt.Errorf("error during documents workflow handling. %w", err)
 		}
 
+		// Marshal the updated cron data
 		if err := data.Data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
 		}

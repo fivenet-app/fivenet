@@ -120,6 +120,9 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		if data.Data == nil {
 			data.Data, _ = anypb.New(&cron.GenericCronData{})
 		}
+		if err := data.Data.UnmarshalTo(dest); err != nil {
+			h.logger.Warn("failed to unmarshal filestore housekeeper cron data", zap.Error(err))
+		}
 
 		deletions, err := h.Run(ctx)
 		if err != nil {
@@ -128,13 +131,17 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		}
 
 		if dest.HasAttribute("deleted_files") {
-			cc, err := strconv.ParseInt(dest.GetAttribute("loaded_dispatches"), 10, 64)
+			cc, err := strconv.ParseInt(dest.GetAttribute("deleted_files"), 10, 64)
 			if err != nil {
 				cc = 0
 			}
 			deletions += cc
 		}
 		dest.SetAttribute("loaded_dispatches", strconv.FormatInt(deletions, 10))
+
+		if err := data.Data.MarshalFrom(dest); err != nil {
+			return fmt.Errorf("failed to marshal updated filestore housekeeper cron data. %w", err)
+		}
 
 		return nil
 	})

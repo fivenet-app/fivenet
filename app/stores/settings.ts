@@ -98,10 +98,9 @@ export const useSettingsStore = defineStore(
             }
 
             const current = livemapLayerCategories.value[idx]!;
-            if (current.label !== category.label) {
+            if (category.label && current.label !== category.label) {
                 current.label = category.label;
             }
-            current.label = category.label;
             current.order = category.order;
         };
         const addOrUpdateLivemapLayer = (layer: LivemapLayer): void => {
@@ -113,7 +112,7 @@ export const useSettingsStore = defineStore(
             }
 
             const current = livemapLayers.value[idx]!;
-            if (current.label !== layer.label) {
+            if (layer.label && current.label !== layer.label) {
                 current.label = layer.label;
             }
             current.category = layer.category;
