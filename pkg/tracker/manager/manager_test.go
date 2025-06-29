@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/tracker"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/dispatchers"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/helpers"
+	"github.com/fivenet-app/fivenet/v2025/services/centrum/settings"
 	"github.com/fivenet-app/fivenet/v2025/services/centrum/units"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/sethvargo/go-retry"
@@ -46,6 +47,7 @@ func TestRefreshUserLocations(t *testing.T) {
 			fx.Provide(tracker.NewForTests),
 			fx.Provide(dispatchers.New),
 			fx.Provide(helpers.New),
+			fx.Provide(settings.New),
 			fx.Provide(units.New),
 			fx.Provide(New),
 			fx.Invoke(func(m *Manager) {
