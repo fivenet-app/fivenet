@@ -25,6 +25,9 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 	if data.Data == nil {
 		data.Data, _ = anypb.New(&cron.GenericCronData{})
 	}
+	if dest.Attributes == nil {
+		dest.Attributes = make(map[string]string)
+	}
 
 	// Load dispatches with null postal field (they are considered "new")
 	count, err := s.dispatches.LoadFromDB(ctx, tDispatch.Postal.IS_NULL())
