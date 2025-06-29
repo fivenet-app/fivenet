@@ -137,7 +137,8 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 			}
 			deletions += cc
 		}
-		dest.SetAttribute("loaded_dispatches", strconv.FormatInt(deletions, 10))
+		dest.SetAttribute("deleted_files", strconv.FormatInt(deletions, 10))
+		dest.DeleteAttribute("loaded_dispatches")
 
 		if err := data.Data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated filestore housekeeper cron data. %w", err)

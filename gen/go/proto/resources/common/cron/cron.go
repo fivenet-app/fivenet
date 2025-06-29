@@ -80,3 +80,11 @@ func (x *GenericCronData) SetAttribute(key string, value string) {
 
 	x.Attributes[key] = value
 }
+
+func (x *GenericCronData) DeleteAttribute(key string) {
+	if x.Attributes == nil {
+		return
+	}
+
+	delete(x.Attributes, key)
+}
