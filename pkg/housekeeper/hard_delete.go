@@ -26,11 +26,13 @@ func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronD
 	}
 
 	// Determine which table to process next based on last processed key.
-	lastTblKey, ok := data.Attributes[lastTableMapIndex]
-	if !ok {
+	var lastTblKey string
+	if !data.HasAttribute(lastTableMapIndex) {
 		// Take first table
 		lastTblKey = keys[0]
 	} else {
+		lastTblKey = data.GetAttribute(lastTableMapIndex)
+
 		idx := slices.Index(keys, lastTblKey)
 		if idx == -1 || len(keys) <= idx+1 {
 			h.logger.Debug("last table key not found in keys, starting from the beginning again")
@@ -54,7 +56,7 @@ func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronD
 
 	// Only update the last table key if less than the limit rows were affected
 	if rowsAffected < DefaultDeleteLimit {
-		data.Attributes[lastTableMapIndex] = lastTblKey
+		data.SetAttribute(lastTableMapIndex, lastTblKey)
 	}
 
 	return nil
