@@ -298,22 +298,14 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 		}
 
 		if (
-		// Created dispatches older than the delete dispatch days amount
-		dsp.CreatedAt != nil && time.Since(dsp.CreatedAt.AsTime()) > DeleteDispatchDays*24*time.Hour) ||
+		// Dispatches older than 3 hours will be removed from the KV store (not the database)
+		dsp.CreatedAt != nil && time.Since(dsp.CreatedAt.AsTime()) > 3*time.Hour) ||
 			// Remove nil status dispatches
 			dsp.Status == nil ||
 			// "Completed" dispatches with their status being older than 15 minutes
 			(centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
 				time.Since(dsp.Status.CreatedAt.AsTime()) > 15*time.Minute) {
 			s.logger.Debug("old dispatch deleted from kv", zap.Uint64("dispatch_id", dsp.Id))
-
-			if _, err := s.dispatches.UpdateStatus(ctx, dsp.Id, &centrum.DispatchStatus{
-				CreatedAt:  timestamp.Now(),
-				DispatchId: dsp.Id,
-				Status:     centrum.StatusDispatch_STATUS_DISPATCH_DELETED,
-			}); err != nil {
-				s.logger.Error("failed to update dispatch status to deleted", zap.Uint64("dispatch_id", dsp.Id), zap.Error(err))
-			}
 
 			if err := s.dispatches.Delete(ctx, dsp.Id, false); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to delete dispatch from KV. %w", err))
