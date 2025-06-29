@@ -25,25 +25,22 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 	if data.Data == nil {
 		data.Data, _ = anypb.New(&cron.GenericCronData{})
 	}
-	if dest.Attributes == nil {
-		dest.Attributes = make(map[string]string)
-	}
 
 	// Load dispatches with null postal field (they are considered "new")
-	count, err := s.dispatches.LoadFromDB(ctx, tDispatch.Postal.IS_NULL())
+	dspCount, err := s.dispatches.LoadFromDB(ctx, tDispatch.Postal.IS_NULL())
 	if err != nil {
 		s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
 	}
+	count := int64(dspCount)
 
-	if c, ok := dest.Attributes["loaded_dispatches"]; ok {
-		cc, err := strconv.ParseInt(c, 10, 64)
+	if dest.HasAttribute("loaded_dispatches") {
+		cc, err := strconv.ParseInt(dest.GetAttribute("loaded_dispatches"), 10, 64)
 		if err != nil {
 			cc = 0
 		}
-		dest.Attributes["loaded_dispatches"] = strconv.FormatInt(cc+int64(count), 10)
-	} else {
-		dest.Attributes["loaded_dispatches"] = strconv.FormatInt(int64(count), 10)
+		count += cc
 	}
+	dest.SetAttribute("loaded_dispatches", strconv.FormatInt(int64(count), 10))
 
 	if err := data.Data.MarshalFrom(dest); err != nil {
 		return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)

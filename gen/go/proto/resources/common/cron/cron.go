@@ -55,3 +55,28 @@ func (x *CronjobData) Merge(in *CronjobData) *CronjobData {
 
 	return x
 }
+
+func (x *GenericCronData) HasAttribute(key string) bool {
+	if x.Attributes == nil {
+		return false
+	}
+
+	_, ok := x.Attributes[key]
+	return ok
+}
+
+func (x *GenericCronData) GetAttribute(key string) string {
+	if x.Attributes == nil {
+		return ""
+	}
+
+	return x.Attributes[key]
+}
+
+func (x *GenericCronData) SetAttribute(key string, value string) {
+	if x.Attributes == nil {
+		x.Attributes = make(map[string]string)
+	}
+
+	x.Attributes[key] = value
+}

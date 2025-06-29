@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/common/cron"
@@ -16,6 +17,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -114,10 +116,25 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		ctx, span := h.tracer.Start(ctx, "filestore.housekeeper")
 		defer span.End()
 
-		if err := h.Run(ctx); err != nil {
+		dest := &cron.GenericCronData{}
+		if data.Data == nil {
+			data.Data, _ = anypb.New(&cron.GenericCronData{})
+		}
+
+		deletions, err := h.Run(ctx)
+		if err != nil {
 			h.logger.Error("failed to run filestore housekeeper job", zap.Error(err))
 			return err
 		}
+
+		if dest.HasAttribute("deleted_files") {
+			cc, err := strconv.ParseInt(dest.GetAttribute("loaded_dispatches"), 10, 64)
+			if err != nil {
+				cc = 0
+			}
+			deletions += cc
+		}
+		dest.SetAttribute("loaded_dispatches", strconv.FormatInt(deletions, 10))
 
 		return nil
 	})
@@ -127,7 +144,7 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 
 // Run executes the housekeeping process, deleting expired or orphaned files from storage and the database.
 // It processes files in batches, using a transaction for each batch, and updates the Prometheus metric for deleted files.
-func (h *Housekeeper) Run(ctx context.Context) error {
+func (h *Housekeeper) Run(ctx context.Context) (int64, error) {
 	cutoff := time.Now().Add(-h.gracePeriod)
 	maxDeletes := 200
 	deletes := 0
@@ -186,7 +203,7 @@ func (h *Housekeeper) Run(ctx context.Context) error {
 			LIMIT(h.batchSize).
 			QueryContext(ctx, h.db, &files)
 		if err != nil {
-			return fmt.Errorf("failed to select candidates %w", err)
+			return 0, fmt.Errorf("failed to select candidates %w", err)
 		}
 
 		// If no more candidates, we’re done
@@ -197,7 +214,7 @@ func (h *Housekeeper) Run(ctx context.Context) error {
 		// 3) Process each candidate in this batch in one transaction
 		tx, err := h.db.BeginTx(ctx, nil)
 		if err != nil {
-			return fmt.Errorf("failed to begin tx. %w", err)
+			return 0, fmt.Errorf("failed to begin tx. %w", err)
 		}
 
 		deletes += len(files)
@@ -215,13 +232,13 @@ func (h *Housekeeper) Run(ctx context.Context) error {
 				WHERE(tFiles.ID.EQ(jet.Uint64(c.Id))).
 				ExecContext(ctx, tx); err != nil {
 				tx.Rollback()
-				return fmt.Errorf("delete fivenet_files id=%d. %w", c.Id, err)
+				return 0, fmt.Errorf("delete fivenet_files id=%d. %w", c.Id, err)
 			}
 			h.logger.Debug("deleted file", zap.Uint64("file_id", c.Id), zap.String("file_path", c.FilePath))
 		}
 
 		if err := tx.Commit(); err != nil {
-			return fmt.Errorf("failed to commit tx. %w", err)
+			return 0, fmt.Errorf("failed to commit tx. %w", err)
 		}
 
 		// If we haven't reached the maximum yet loop again to pick up the next batch. The cutoff and conditions remain the same.
@@ -232,5 +249,5 @@ func (h *Housekeeper) Run(ctx context.Context) error {
 
 	metricDeletedFiles.Set(float64(deletes))
 
-	return nil
+	return int64(deletes), nil
 }
