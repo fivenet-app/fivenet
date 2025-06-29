@@ -261,7 +261,7 @@ func New(p Params) *DispatchDB {
 	return d
 }
 
-func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) error {
+func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) (int, error) {
 	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus.AS("dispatch_status")
 
@@ -338,12 +338,12 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) er
 	dsps := []*centrum.Dispatch{}
 	if err := stmt.QueryContext(ctx, s.db, &dsps); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return 0, err
 		}
 	}
 
 	if len(dsps) == 0 {
-		return nil
+		return 0, nil
 	}
 
 	publicJobs := s.appCfg.Get().JobInfo.PublicJobs
@@ -351,13 +351,13 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) er
 		var err error
 		dsps[i].Units, err = s.LoadDispatchAssignments(ctx, dsps[i].Id)
 		if err != nil {
-			return err
+			return 0, err
 		}
 
 		if dsps[i].CreatorId != nil && *dsps[i].CreatorId > 0 {
 			dsps[i].Creator, err = users.RetrieveUserById(ctx, s.db, *dsps[i].CreatorId)
 			if err != nil {
-				return err
+				return 0, err
 			}
 
 			if dsps[i].Creator != nil {
@@ -386,7 +386,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) er
 				Y:          &dsps[i].Y,
 			}, false, nil)
 			if err != nil {
-				return err
+				return 0, err
 			}
 		}
 
@@ -407,7 +407,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) er
 
 		// Update dispatch in db and in kv
 		if _, err := s.Update(ctx, nil, dsps[i]); err != nil {
-			return err
+			return 0, err
 		}
 
 		for _, job := range dsps[i].Jobs.GetJobStrings() {
@@ -430,7 +430,7 @@ func (s *DispatchDB) LoadFromDB(ctx context.Context, cond jet.BoolExpression) er
 		}
 	}
 
-	return nil
+	return len(dsps), nil
 }
 
 func (s *DispatchDB) LoadDispatchAssignments(ctx context.Context, dispatchId uint64) ([]*centrum.DispatchAssignment, error) {

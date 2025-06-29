@@ -3,6 +3,7 @@ package housekeeper
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/centrum"
@@ -13,13 +14,36 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobData) error {
 	tDispatch := table.FivenetCentrumDispatches.AS("dispatch")
+	s.logger.Debug("loading new dispatches from DB")
+
+	dest := &cron.GenericCronData{}
+	if data.Data == nil {
+		data.Data, _ = anypb.New(&cron.GenericCronData{})
+	}
+
 	// Load dispatches with null postal field (they are considered "new")
-	if err := s.dispatches.LoadFromDB(ctx, tDispatch.Postal.IS_NULL()); err != nil {
+	count, err := s.dispatches.LoadFromDB(ctx, tDispatch.Postal.IS_NULL())
+	if err != nil {
 		s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
+	}
+
+	if c, ok := dest.Attributes["loaded_dispatches"]; ok {
+		cc, err := strconv.ParseInt(c, 10, 64)
+		if err != nil {
+			cc = 0
+		}
+		dest.Attributes["loaded_dispatches"] = strconv.FormatInt(cc+int64(count), 10)
+	} else {
+		dest.Attributes["loaded_dispatches"] = strconv.FormatInt(int64(count), 10)
+	}
+
+	if err := data.Data.MarshalFrom(dest); err != nil {
+		return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
 	}
 
 	return nil

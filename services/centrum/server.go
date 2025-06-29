@@ -259,7 +259,7 @@ func (s *Server) loadData(ctx context.Context) error {
 		return fmt.Errorf("failed to load initial data. %w", err)
 	}
 
-	if err := s.dispatches.LoadFromDB(ctx, nil); err != nil {
+	if _, err := s.dispatches.LoadFromDB(ctx, nil); err != nil {
 		return fmt.Errorf("failed to load dispatches from DB. %w", err)
 	}
 
