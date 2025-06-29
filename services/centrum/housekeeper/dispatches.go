@@ -276,7 +276,7 @@ func (s *Housekeeper) runDeleteOldDispatchesFromKV(ctx context.Context, data *cr
 func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 	errs := multierr.Combine()
 
-	keyIter, err := s.dispatches.Store().KV().ListKeys(ctx)
+	keyIter, err := s.dispatches.Store().KV().ListKeysFiltered(ctx, "id.*")
 	if err != nil {
 		s.logger.Error("failed to list dispatches from KV", zap.Error(err))
 		return err
@@ -287,7 +287,14 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 			continue
 		}
 
-		dsp, err := s.dispatches.Store().Get(key)
+		dspId, err := centrumutils.ExtractIDString(key)
+		if err != nil {
+			s.logger.Error("failed to extract dispatch ID from key", zap.String("key", key), zap.Error(err))
+			errs = multierr.Append(errs, fmt.Errorf("failed to extract dispatch ID from key %q: %w", key, err))
+			continue
+		}
+
+		dsp, err := s.dispatches.Store().Get(dspId)
 		if err != nil {
 			s.logger.Error("failed to get dispatch from KV", zap.String("key", key), zap.Error(err))
 

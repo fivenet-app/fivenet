@@ -154,7 +154,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 }
 
 func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
-	watcher, err := s.kv.Watch(ctx, s.prefix+">")
+	watcher, err := s.kv.Watch(ctx, s.prefix+"*")
 	if err != nil {
 		return fmt.Errorf("failed to start store kv. %w", err)
 	}
@@ -165,6 +165,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	wg.Add(1)
 	go func() {
 		updateCh := watcher.Updates()
+
 		for {
 			select {
 			case <-ctx.Done():

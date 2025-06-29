@@ -22,6 +22,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -675,10 +676,15 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *pbcentrum.DeleteDispat
 
 	dsp, err := s.dispatches.Get(ctx, req.Id)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		if !errors.Is(err, jetstream.ErrKeyNotFound) {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
 	}
-	if !slices.Contains(dsp.Jobs.GetJobStrings(), userInfo.Job) {
-		return nil, errorscentrum.ErrNotPartOfDispatch
+
+	if !userInfo.Superuser {
+		if dsp == nil || !slices.Contains(dsp.Jobs.GetJobStrings(), userInfo.Job) {
+			return nil, errorscentrum.ErrNotPartOfDispatch
+		}
 	}
 
 	if err := s.dispatches.Delete(ctx, req.Id, true); err != nil {
