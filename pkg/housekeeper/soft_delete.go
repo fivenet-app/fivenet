@@ -18,10 +18,9 @@ import (
 func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCronData) error {
 	tJobProps := table.FivenetJobProps
 
+	// Query jobs that are marked for deletion
 	stmt := tJobProps.
-		SELECT(
-			tJobProps.Job,
-		).
+		SELECT(tJobProps.Job).
 		WHERE(jet.AND(
 			tJobProps.DeletedAt.IS_NOT_NULL(),
 			tJobProps.DeletedAt.LT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(1, jet.DAY))),
@@ -29,10 +28,8 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 		ORDER_BY(tJobProps.Job.ASC())
 
 	var jobs []string
-	if err := stmt.QueryContext(ctx, h.db, &jobs); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return fmt.Errorf("failed to query jobs. %w", err)
-		}
+	if err := stmt.QueryContext(ctx, h.db, &jobs); err != nil && !errors.Is(err, qrm.ErrNoRows) {
+		return fmt.Errorf("failed to query jobs: %w", err)
 	}
 
 	if len(jobs) == 0 {
@@ -40,73 +37,70 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 		return nil
 	}
 
-	tablesList := h.getTablesListFn()
+	jobName := jobs[0]
 
-	keys := []string{}
-	for key := range tablesList {
-		keys = append(keys, key)
+	tablesList := h.getTablesListFn()
+	if len(tablesList) == 0 {
+		return nil
+	}
+
+	keys := make([]string, 0, len(tablesList))
+	for k := range tablesList {
+		keys = append(keys, k)
 	}
 	slices.Sort(keys)
-	if len(keys) == 0 {
-		return nil
+
+	// Reset table progress if job changed
+	if prevJob := data.GetAttribute(lastJobName); prevJob != jobName {
+		h.logger.Debug("job name changed, starting from beginning", zap.String("job", jobName))
+		data.SetAttribute(lastJobName, jobName)
+		data.SetAttribute(lastTableMapIndex, keys[0])
 	}
 
-	jobName := jobs[0]
-	var lastJob string
-	if data.HasAttribute(lastJobName) {
-		lastJob = data.GetAttribute(lastJobName)
-		if lastJob != jobName {
-			h.logger.Debug("job name changed, starting from the beginning again")
-			data.SetAttribute(lastJobName, jobName)
-			data.SetAttribute(lastTableMapIndex, keys[0])
-		}
+	lastTblKey := data.GetAttribute(lastTableMapIndex)
+	currentIdx := slices.Index(keys, lastTblKey)
+	if currentIdx == -1 {
+		currentIdx = 0
 	}
 
-	var lastTblKey string
-	if !data.HasAttribute(lastTableMapIndex) {
-		// Take first table
-		lastTblKey = keys[0]
-	} else {
-		lastTblKey = data.GetAttribute(lastTableMapIndex)
-
-		idx := slices.Index(keys, lastTblKey)
-		if idx == -1 || len(keys) <= idx+1 {
-			h.logger.Debug("next table key not found in keys, starting from the beginning again")
-			lastTblKey = keys[0]
-
-			// All job's data should be deleted now, delete the job props
-			stmt := tJobProps.
-				DELETE().
-				WHERE(tJobProps.Job.EQ(jet.String(jobName))).
-				LIMIT(1)
-
-			if !h.dryRun {
-				if _, err := stmt.ExecContext(ctx, h.db); err != nil {
-					return fmt.Errorf("failed to delete job %s. %w", jobName, err)
-				}
-			} else {
-				h.logger.Debug("dry run delete job props statement", zap.String("query", stmt.DebugSql()))
-			}
-		} else {
-			lastTblKey = keys[idx+1]
-		}
-	}
-
-	tbl, ok := tablesList[lastTblKey]
-	if !ok {
-		return nil
+	nextTblKey := keys[currentIdx]
+	tbl := tablesList[nextTblKey]
+	if tbl == nil {
+		return fmt.Errorf("no table found for key: %s", nextTblKey)
 	}
 
 	rowsAffected, err := h.SoftDeleteJobData(ctx, tbl, jobName)
 	if err != nil {
-		return fmt.Errorf("failed to soft delete rows for table %s (job: %s). %w", tbl.Table.TableName(), jobName, err)
+		return fmt.Errorf("failed to soft delete rows for table %s (job: %s): %w", tbl.Table.TableName(), jobName, err)
 	}
 
 	metricSoftDeleteAffectedRows.Set(float64(rowsAffected))
 
-	// Only update the last table key if less than the limit rows were affected
+	// Advance table key only if this table had no more rows to delete
 	if rowsAffected < DefaultDeleteLimit {
-		data.SetAttribute(lastTableMapIndex, lastTblKey)
+		// If we've reached the end of the table list, delete the job prop
+		if currentIdx+1 >= len(keys) {
+			if !h.dryRun {
+				delStmt := tJobProps.
+					DELETE().
+					WHERE(tJobProps.Job.EQ(jet.String(jobName))).
+					LIMIT(1)
+
+				if _, err := delStmt.ExecContext(ctx, h.db); err != nil {
+					return fmt.Errorf("failed to delete job %s: %w", jobName, err)
+				}
+			} else {
+				h.logger.Debug("dry run: delete job props", zap.String("query", tJobProps.DELETE().
+					WHERE(tJobProps.Job.EQ(jet.String(jobName))).
+					LIMIT(1).
+					DebugSql()))
+			}
+			// Clear progress
+			data.SetAttribute(lastJobName, "")
+			data.SetAttribute(lastTableMapIndex, "")
+		} else {
+			data.SetAttribute(lastTableMapIndex, keys[currentIdx+1])
+		}
 	}
 
 	return nil

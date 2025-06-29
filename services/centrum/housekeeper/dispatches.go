@@ -14,7 +14,6 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/anypb"
 )
 
 func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobData) error {
@@ -22,10 +21,7 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 	s.logger.Debug("loading new dispatches from DB")
 
 	dest := &cron.GenericCronData{}
-	if data.Data == nil {
-		data.Data, _ = anypb.New(&cron.GenericCronData{})
-	}
-	if err := data.Data.UnmarshalTo(dest); err != nil {
+	if err := data.Unmarshal(dest); err != nil {
 		s.logger.Error("failed to unmarshal centrum housekeeper cron data", zap.Error(err))
 	}
 
@@ -34,19 +30,18 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 	if err != nil {
 		s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
 	}
+
 	count := int64(dspCount)
 
-	if dest.HasAttribute("loaded_dispatches") {
-		cc, err := strconv.ParseInt(dest.GetAttribute("loaded_dispatches"), 10, 64)
-		if err != nil {
-			cc = 0
+	if val := dest.GetAttribute("loaded_dispatches"); val != "" {
+		if cc, err := strconv.ParseInt(val, 10, 64); err == nil {
+			count += cc
 		}
-		count += cc
 	}
 	dest.SetAttribute("loaded_dispatches", strconv.FormatInt(int64(count), 10))
 
-	if err := data.Data.MarshalFrom(dest); err != nil {
-		return fmt.Errorf("failed to marshal updated centrum housekeeper cron data. %w", err)
+	if err := data.MarshalFrom(dest); err != nil {
+		s.logger.Error("failed to marshal updated centrum housekeeper cron data", zap.Error(err))
 	}
 
 	return nil

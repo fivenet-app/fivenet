@@ -20,31 +20,29 @@ func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronD
 	for key := range tablesList {
 		keys = append(keys, key)
 	}
-	slices.Sort(keys)
 	if len(keys) == 0 {
 		return nil
 	}
+	slices.Sort(keys)
 
-	// Determine which table to process next based on last processed key.
-	var lastTblKey string
-	if !data.HasAttribute(lastTableMapIndex) {
-		// Take first table
-		lastTblKey = keys[0]
-	} else {
-		lastTblKey = data.GetAttribute(lastTableMapIndex)
+	// Determine next table to process
+	var currentIdx int
+	lastKey := data.GetAttribute(lastTableMapIndex)
 
-		idx := slices.Index(keys, lastTblKey)
-		if idx == -1 || len(keys) <= idx+1 {
-			h.logger.Debug("last table key not found in keys, starting from the beginning again")
-			lastTblKey = keys[0]
+	if lastKey != "" {
+		if idx := slices.Index(keys, lastKey); idx != -1 {
+			currentIdx = (idx + 1) % len(keys)
 		} else {
-			lastTblKey = keys[idx+1]
+			// Unknown key, start from the beginning
+			currentIdx = 0
 		}
 	}
 
-	tbl, ok := tablesList[lastTblKey]
+	nextKey := keys[currentIdx]
+
+	tbl, ok := tablesList[nextKey]
 	if !ok {
-		return nil
+		return fmt.Errorf("no table config for key: %s", nextKey)
 	}
 
 	rowsAffected, err := h.HardDelete(ctx, tbl)
@@ -56,7 +54,7 @@ func (h *Housekeeper) runHardDelete(ctx context.Context, data *cron.GenericCronD
 
 	// Only update the last table key if less than the limit rows were affected
 	if rowsAffected < DefaultDeleteLimit {
-		data.SetAttribute(lastTableMapIndex, lastTblKey)
+		data.SetAttribute(lastTableMapIndex, nextKey)
 	}
 
 	return nil
