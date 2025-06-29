@@ -94,6 +94,7 @@ func New(
 
 // Start begins the leader election process. Non-blocking. Can be called multiple times.
 func (le *LeaderElector) Start() {
+	le.logger.Info("starting leader election", zap.String("key", le.key), zap.String("id", le.id))
 	le.mu.Lock()
 	if le.running {
 		le.mu.Unlock()
