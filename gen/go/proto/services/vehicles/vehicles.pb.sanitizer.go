@@ -57,3 +57,37 @@ func (m *ListVehiclesResponse) Sanitize() error {
 
 	return nil
 }
+
+func (m *SetVehiclePropsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *SetVehiclePropsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

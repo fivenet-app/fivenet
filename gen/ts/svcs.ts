@@ -82,6 +82,7 @@
 // source: resources/users/licenses.proto
 // source: resources/users/props.proto
 // source: resources/users/users.proto
+// source: resources/vehicles/activity.proto
 // source: resources/vehicles/vehicles.proto
 // source: resources/wiki/access.proto
 // source: resources/wiki/activity.proto
@@ -357,6 +358,7 @@ export const grpcMethods = [
 	'sync.SyncService/DeleteData',
 	'sync.SyncService/Stream',
 	'vehicles.VehiclesService/ListVehicles',
+	'vehicles.VehiclesService/SetVehicleProps',
 	'wiki.CollabService/JoinRoom',
 	'wiki.WikiService/ListPages',
 	'wiki.WikiService/GetPage',

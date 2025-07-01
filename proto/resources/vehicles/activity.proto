@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package resources.vehicles;
+
+import "buf/validate/validate.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "tagger/tagger.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/vehicles;vehicles";
+
+enum VehicleActivityType {
+  VEHICLE_ACTIVITY_TYPE_UNSPECIFIED = 0;
+  // Types for `VehicleActivityData`
+  VEHICLE_ACTIVITY_TYPE_WANTED = 1;
+}
+
+message VehicleActivity {
+  uint64 id = 1 [(tagger.tags) = "alias:\"vehicle_activity.id\""];
+  optional resources.timestamp.Timestamp created_at = 2 [(tagger.tags) = "alias:\"user_activity.created_at\""];
+  string plate = 3 [(buf.validate.field).string.max_len = 32];
+  VehicleActivityType activity_type = 4 [
+    (buf.validate.field).enum.defined_only = true,
+    (tagger.tags) = "alias:\"vehicle_activity.type\""
+  ];
+  optional int32 creator_id = 5 [(buf.validate.field).int32.gt = 0];
+  optional resources.users.UserShort creator = 6 [(tagger.tags) = "alias:\"creator\""];
+  string creator_job = 7 [(buf.validate.field).string.max_len = 20];
+  optional string creator_job_label = 8 [(buf.validate.field).string.max_len = 50];
+  // @sanitize
+  optional string reason = 9 [
+    (buf.validate.field).string.max_len = 255,
+    (tagger.tags) = "alias:\"user_activity.reason\""
+  ];
+  VehicleActivityData data = 10;
+}
+
+// @dbscanner: json
+message VehicleActivityData {}

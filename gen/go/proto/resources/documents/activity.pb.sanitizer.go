@@ -3,6 +3,10 @@
 
 package documents
 
+import (
+	"github.com/fivenet-app/fivenet/v2025/pkg/html/htmlsanitizer"
+)
+
 func (m *DocAccessJobsDiff) Sanitize() error {
 	if m == nil {
 		return nil
@@ -155,6 +159,12 @@ func (m *DocActivity) Sanitize() error {
 				return err
 			}
 		}
+	}
+
+	// Field: Reason
+
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
 	}
 
 	return nil

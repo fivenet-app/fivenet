@@ -2814,7 +2814,7 @@
                     "key": "Bürger-Eigenschaften festlegen",
                     "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
                     "attrs": {
-                        "Wanted": "Gesuchter Status",
+                        "Wanted": "Gesuchten Status",
                         "Job": "Job",
                         "TrafficInfractionPoints": "Verkehrspunkte",
                         "Labels": "Labels",
@@ -2870,6 +2870,16 @@
                 "ListVehicles": {
                     "key": "Fahrzeuge suchen",
                     "description": "Suchen und Finden von Fahrzeugen von Bürgern."
+                },
+                "SetVehicleProps": {
+                    "key": "Fahrzeug-Eigenschaften festlegen",
+                    "description": "Fahrzeug-Eigenschaften festlegen (z.B. Kennzeichen, Farbe).",
+                    "attrs": {
+                        "Wanted": "Gesuchten Status"
+                    },
+                    "attrs_types": {
+                        "Fields": "Fahrzeug Eigenschaften"
+                    }
                 }
             }
         },

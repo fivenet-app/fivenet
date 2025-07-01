@@ -160,6 +160,94 @@ func (x *ListVehiclesResponse) GetVehicles() []*vehicles.Vehicle {
 	return nil
 }
 
+type SetVehiclePropsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Props         *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetVehiclePropsRequest) Reset() {
+	*x = SetVehiclePropsRequest{}
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetVehiclePropsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetVehiclePropsRequest) ProtoMessage() {}
+
+func (x *SetVehiclePropsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetVehiclePropsRequest.ProtoReflect.Descriptor instead.
+func (*SetVehiclePropsRequest) Descriptor() ([]byte, []int) {
+	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *SetVehiclePropsRequest) GetProps() *vehicles.VehicleProps {
+	if x != nil {
+		return x.Props
+	}
+	return nil
+}
+
+type SetVehiclePropsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Props         *vehicles.VehicleProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SetVehiclePropsResponse) Reset() {
+	*x = SetVehiclePropsResponse{}
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetVehiclePropsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetVehiclePropsResponse) ProtoMessage() {}
+
+func (x *SetVehiclePropsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_vehicles_vehicles_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetVehiclePropsResponse.ProtoReflect.Descriptor instead.
+func (*SetVehiclePropsResponse) Descriptor() ([]byte, []int) {
+	return file_services_vehicles_vehicles_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *SetVehiclePropsResponse) GetProps() *vehicles.VehicleProps {
+	if x != nil {
+		return x.Props
+	}
+	return nil
+}
+
 var File_services_vehicles_vehicles_proto protoreflect.FileDescriptor
 
 const file_services_vehicles_vehicles_proto_rawDesc = "" +
@@ -182,9 +270,14 @@ const file_services_vehicles_vehicles_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseR\n" +
 	"pagination\x127\n" +
-	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles2r\n" +
+	"\bvehicles\x18\x02 \x03(\v2\x1b.resources.vehicles.VehicleR\bvehicles\"X\n" +
+	"\x16SetVehiclePropsRequest\x12>\n" +
+	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsB\x06\xbaH\x03\xc8\x01\x01R\x05props\"Q\n" +
+	"\x17SetVehiclePropsResponse\x126\n" +
+	"\x05props\x18\x01 \x01(\v2 .resources.vehicles.VehiclePropsR\x05props2\xdc\x01\n" +
 	"\x0fVehiclesService\x12_\n" +
-	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
+	"\fListVehicles\x12&.services.vehicles.ListVehiclesRequest\x1a'.services.vehicles.ListVehiclesResponse\x12h\n" +
+	"\x0fSetVehicleProps\x12).services.vehicles.SetVehiclePropsRequest\x1a*.services.vehicles.SetVehiclePropsResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/vehicles;vehiclesb\x06proto3"
 
 var (
 	file_services_vehicles_vehicles_proto_rawDescOnce sync.Once
@@ -198,27 +291,34 @@ func file_services_vehicles_vehicles_proto_rawDescGZIP() []byte {
 	return file_services_vehicles_vehicles_proto_rawDescData
 }
 
-var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_services_vehicles_vehicles_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_services_vehicles_vehicles_proto_goTypes = []any{
 	(*ListVehiclesRequest)(nil),         // 0: services.vehicles.ListVehiclesRequest
 	(*ListVehiclesResponse)(nil),        // 1: services.vehicles.ListVehiclesResponse
-	(*database.PaginationRequest)(nil),  // 2: resources.common.database.PaginationRequest
-	(*database.Sort)(nil),               // 3: resources.common.database.Sort
-	(*database.PaginationResponse)(nil), // 4: resources.common.database.PaginationResponse
-	(*vehicles.Vehicle)(nil),            // 5: resources.vehicles.Vehicle
+	(*SetVehiclePropsRequest)(nil),      // 2: services.vehicles.SetVehiclePropsRequest
+	(*SetVehiclePropsResponse)(nil),     // 3: services.vehicles.SetVehiclePropsResponse
+	(*database.PaginationRequest)(nil),  // 4: resources.common.database.PaginationRequest
+	(*database.Sort)(nil),               // 5: resources.common.database.Sort
+	(*database.PaginationResponse)(nil), // 6: resources.common.database.PaginationResponse
+	(*vehicles.Vehicle)(nil),            // 7: resources.vehicles.Vehicle
+	(*vehicles.VehicleProps)(nil),       // 8: resources.vehicles.VehicleProps
 }
 var file_services_vehicles_vehicles_proto_depIdxs = []int32{
-	2, // 0: services.vehicles.ListVehiclesRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	3, // 1: services.vehicles.ListVehiclesRequest.sort:type_name -> resources.common.database.Sort
-	4, // 2: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	5, // 3: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
-	0, // 4: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
-	1, // 5: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse
-	5, // [5:6] is the sub-list for method output_type
-	4, // [4:5] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	4, // 0: services.vehicles.ListVehiclesRequest.pagination:type_name -> resources.common.database.PaginationRequest
+	5, // 1: services.vehicles.ListVehiclesRequest.sort:type_name -> resources.common.database.Sort
+	6, // 2: services.vehicles.ListVehiclesResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	7, // 3: services.vehicles.ListVehiclesResponse.vehicles:type_name -> resources.vehicles.Vehicle
+	8, // 4: services.vehicles.SetVehiclePropsRequest.props:type_name -> resources.vehicles.VehicleProps
+	8, // 5: services.vehicles.SetVehiclePropsResponse.props:type_name -> resources.vehicles.VehicleProps
+	0, // 6: services.vehicles.VehiclesService.ListVehicles:input_type -> services.vehicles.ListVehiclesRequest
+	2, // 7: services.vehicles.VehiclesService.SetVehicleProps:input_type -> services.vehicles.SetVehiclePropsRequest
+	1, // 8: services.vehicles.VehiclesService.ListVehicles:output_type -> services.vehicles.ListVehiclesResponse
+	3, // 9: services.vehicles.VehiclesService.SetVehicleProps:output_type -> services.vehicles.SetVehiclePropsResponse
+	8, // [8:10] is the sub-list for method output_type
+	6, // [6:8] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_services_vehicles_vehicles_proto_init() }
@@ -233,7 +333,7 @@ func file_services_vehicles_vehicles_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_services_vehicles_vehicles_proto_rawDesc), len(file_services_vehicles_vehicles_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -2870,6 +2870,16 @@
                 "ListVehicles": {
                     "key": "Search Vehicles",
                     "description": "Search and find citizen's vehicles."
+                },
+                "SetVehicleProps": {
+                    "key": "Set Vehicle Properties",
+                    "description": "Set vehicle properties (e.g., wanted state).",
+                    "attrs": {
+                        "Wanted": "Wanted Status"
+                    },
+                    "attrs_types": {
+                        "Fields": "Vehicle Properties Fields"
+                    }
                 }
             }
         },

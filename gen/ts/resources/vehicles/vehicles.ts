@@ -66,6 +66,10 @@ export interface VehicleProps {
      * @generated from protobuf field: optional bool wanted = 3
      */
     wanted?: boolean;
+    /**
+     * @generated from protobuf field: optional string wanted_reason = 4
+     */
+    wantedReason?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Vehicle$Type extends MessageType<Vehicle> {
@@ -170,7 +174,8 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
         super("resources.vehicles.VehicleProps", [
             { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "32" } } } },
             { no: 2, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "wanted_reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<VehicleProps>): VehicleProps {
@@ -194,6 +199,9 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
                 case /* optional bool wanted */ 3:
                     message.wanted = reader.bool();
                     break;
+                case /* optional string wanted_reason */ 4:
+                    message.wantedReason = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -215,6 +223,9 @@ class VehicleProps$Type extends MessageType<VehicleProps> {
         /* optional bool wanted = 3; */
         if (message.wanted !== undefined)
             writer.tag(3, WireType.Varint).bool(message.wanted);
+        /* optional string wanted_reason = 4; */
+        if (message.wantedReason !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.wantedReason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

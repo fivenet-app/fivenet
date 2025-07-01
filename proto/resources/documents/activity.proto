@@ -45,6 +45,7 @@ message DocActivity {
   optional resources.users.UserShort creator = 6 [(tagger.tags) = "alias:\"creator\""];
   string creator_job = 7 [(buf.validate.field).string.max_len = 20];
   optional string creator_job_label = 8 [(buf.validate.field).string.max_len = 50];
+  // @sanitize
   optional string reason = 9 [(buf.validate.field).string.max_len = 255];
   DocActivityData data = 10;
 }

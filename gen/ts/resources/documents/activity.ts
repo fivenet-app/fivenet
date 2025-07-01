@@ -53,6 +53,8 @@ export interface DocActivity {
      */
     creatorJobLabel?: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string reason = 9
      */
     reason?: string;

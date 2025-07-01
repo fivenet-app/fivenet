@@ -18,5 +18,11 @@ func init() {
 			Attrs:    []perms.Attr{},
 			Order:    0,
 		},
+		{
+			Category: permkeys.VehiclesServicePerm,
+			Name:     permkeys.VehiclesServiceSetVehiclePropsPerm,
+			Attrs:    []perms.Attr{},
+			Order:    0,
+		},
 	})
 }

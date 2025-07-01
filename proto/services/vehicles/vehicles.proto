@@ -23,7 +23,18 @@ message ListVehiclesResponse {
   repeated resources.vehicles.Vehicle vehicles = 2;
 }
 
+message SetVehiclePropsRequest {
+  resources.vehicles.VehicleProps props = 1 [(buf.validate.field).required = true];
+}
+
+message SetVehiclePropsResponse {
+  resources.vehicles.VehicleProps props = 1;
+}
+
 service VehiclesService {
   // @perm
   rpc ListVehicles(ListVehiclesRequest) returns (ListVehiclesResponse);
+
+  // @perm
+  rpc SetVehicleProps(SetVehiclePropsRequest) returns (SetVehiclePropsResponse);
 }

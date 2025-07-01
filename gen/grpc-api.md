@@ -2958,7 +2958,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
 | `creator_job` | [string](#string) |  |  |
 | `creator_job_label` | [string](#string) | optional |  |
-| `reason` | [string](#string) | optional |  |
+| `reason` | [string](#string) | optional | @sanitize |
 | `data` | [DocActivityData](#resourcesdocumentsDocActivityData) |  |  |
 
 
@@ -3449,6 +3449,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `plate` | [string](#string) |  |  |
 | `updated_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
 | `wanted` | [bool](#bool) | optional |  |
+| `wanted_reason` | [string](#string) | optional |  |
 
 
 
@@ -6087,6 +6088,55 @@ Connect an identifier/license to the provider with the specified external id (e.
 | `USER_ACTIVITY_TYPE_DOCUMENT` | 11 |  |
 | `USER_ACTIVITY_TYPE_JAIL` | 12 |  |
 | `USER_ACTIVITY_TYPE_FINE` | 13 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+## resources/vehicles/activity.proto
+
+
+### resources.vehicles.VehicleActivity
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resourcestimestampTimestamp) | optional |  |
+| `plate` | [string](#string) |  |  |
+| `activity_type` | [VehicleActivityType](#resourcesvehiclesVehicleActivityType) |  |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.UserShort](#resourcesusersUserShort) | optional |  |
+| `creator_job` | [string](#string) |  |  |
+| `creator_job_label` | [string](#string) | optional |  |
+| `reason` | [string](#string) | optional | @sanitize |
+| `data` | [VehicleActivityData](#resourcesvehiclesVehicleActivityData) |  |  |
+
+
+
+
+
+### resources.vehicles.VehicleActivityData
+@dbscanner: json
+
+
+
+
+
+ <!-- end messages -->
+
+
+### resources.vehicles.VehicleActivityType
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `VEHICLE_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
+| `VEHICLE_ACTIVITY_TYPE_WANTED` | 1 | Types for `VehicleActivityData` |
 
 
  <!-- end enums -->
@@ -11688,6 +11738,28 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 
 
+
+### services.vehicles.SetVehiclePropsRequest
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `props` | [resources.vehicles.VehicleProps](#resourcesvehiclesVehicleProps) |  |  |
+
+
+
+
+
+### services.vehicles.SetVehiclePropsResponse
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `props` | [resources.vehicles.VehicleProps](#resourcesvehiclesVehicleProps) |  |  |
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -11700,6 +11772,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | `ListVehicles` | [ListVehiclesRequest](#servicesvehiclesListVehiclesRequest) | [ListVehiclesResponse](#servicesvehiclesListVehiclesResponse) |@perm |
+| `SetVehicleProps` | [SetVehiclePropsRequest](#servicesvehiclesSetVehiclePropsRequest) | [SetVehiclePropsResponse](#servicesvehiclesSetVehiclePropsResponse) |@perm |
 
  <!-- end services -->
 

@@ -10,5 +10,6 @@ import (
 const (
 	VehiclesServicePerm perms.Category = "vehicles.VehiclesService"
 
-	VehiclesServiceListVehiclesPerm perms.Name = "ListVehicles"
+	VehiclesServiceListVehiclesPerm    perms.Name = "ListVehicles"
+	VehiclesServiceSetVehiclePropsPerm perms.Name = "SetVehicleProps"
 )

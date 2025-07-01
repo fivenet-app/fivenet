@@ -137,10 +137,11 @@ type DocActivity struct {
 	Creator         *users.UserShort       `protobuf:"bytes,6,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`
 	CreatorJob      string                 `protobuf:"bytes,7,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string                `protobuf:"bytes,8,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
-	Reason          *string                `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Data            *DocActivityData       `protobuf:"bytes,10,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// @sanitize
+	Reason        *string          `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	Data          *DocActivityData `protobuf:"bytes,10,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DocActivity) Reset() {

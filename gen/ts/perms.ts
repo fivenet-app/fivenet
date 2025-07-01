@@ -82,6 +82,7 @@
 // source: resources/users/licenses.proto
 // source: resources/users/props.proto
 // source: resources/users/users.proto
+// source: resources/vehicles/activity.proto
 // source: resources/vehicles/vehicles.proto
 // source: resources/wiki/access.proto
 // source: resources/wiki/activity.proto
@@ -191,6 +192,7 @@ export type Perms =
 	| 'settings.SettingsService/UpdateRolePerms'
 	| 'settings.SettingsService/ViewAuditLog'
 	| 'vehicles.VehiclesService/ListVehicles'
+	| 'vehicles.VehiclesService/SetVehicleProps'
 	| 'wiki.WikiService/DeletePage'
 	| 'wiki.WikiService/ListPageActivity'
 	| 'wiki.WikiService/ListPages'

@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	VehiclesService_ListVehicles_FullMethodName = "/services.vehicles.VehiclesService/ListVehicles"
+	VehiclesService_ListVehicles_FullMethodName    = "/services.vehicles.VehiclesService/ListVehicles"
+	VehiclesService_SetVehicleProps_FullMethodName = "/services.vehicles.VehiclesService/SetVehicleProps"
 )
 
 // VehiclesServiceClient is the client API for VehiclesService service.
@@ -28,6 +29,8 @@ const (
 type VehiclesServiceClient interface {
 	// @perm
 	ListVehicles(ctx context.Context, in *ListVehiclesRequest, opts ...grpc.CallOption) (*ListVehiclesResponse, error)
+	// @perm
+	SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error)
 }
 
 type vehiclesServiceClient struct {
@@ -48,12 +51,24 @@ func (c *vehiclesServiceClient) ListVehicles(ctx context.Context, in *ListVehicl
 	return out, nil
 }
 
+func (c *vehiclesServiceClient) SetVehicleProps(ctx context.Context, in *SetVehiclePropsRequest, opts ...grpc.CallOption) (*SetVehiclePropsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetVehiclePropsResponse)
+	err := c.cc.Invoke(ctx, VehiclesService_SetVehicleProps_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // VehiclesServiceServer is the server API for VehiclesService service.
 // All implementations must embed UnimplementedVehiclesServiceServer
 // for forward compatibility.
 type VehiclesServiceServer interface {
 	// @perm
 	ListVehicles(context.Context, *ListVehiclesRequest) (*ListVehiclesResponse, error)
+	// @perm
+	SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error)
 	mustEmbedUnimplementedVehiclesServiceServer()
 }
 
@@ -66,6 +81,9 @@ type UnimplementedVehiclesServiceServer struct{}
 
 func (UnimplementedVehiclesServiceServer) ListVehicles(context.Context, *ListVehiclesRequest) (*ListVehiclesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListVehicles not implemented")
+}
+func (UnimplementedVehiclesServiceServer) SetVehicleProps(context.Context, *SetVehiclePropsRequest) (*SetVehiclePropsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetVehicleProps not implemented")
 }
 func (UnimplementedVehiclesServiceServer) mustEmbedUnimplementedVehiclesServiceServer() {}
 func (UnimplementedVehiclesServiceServer) testEmbeddedByValue()                         {}
@@ -106,6 +124,24 @@ func _VehiclesService_ListVehicles_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _VehiclesService_SetVehicleProps_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetVehiclePropsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(VehiclesServiceServer).SetVehicleProps(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: VehiclesService_SetVehicleProps_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(VehiclesServiceServer).SetVehicleProps(ctx, req.(*SetVehiclePropsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // VehiclesService_ServiceDesc is the grpc.ServiceDesc for VehiclesService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +152,10 @@ var VehiclesService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListVehicles",
 			Handler:    _VehiclesService_ListVehicles_Handler,
+		},
+		{
+			MethodName: "SetVehicleProps",
+			Handler:    _VehiclesService_SetVehicleProps_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
