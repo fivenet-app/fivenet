@@ -28,6 +28,12 @@ var metricTotalCollabRooms = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Help:      "Number of active collaborative rooms.",
 }, []string{"category"})
 
+const (
+	kvBucket = "COLLAB_STATE"
+	keyTTL   = 3 * time.Second // key expires if not touched
+	hbEvery  = 2 * time.Second // heartbeat period (< keyTTL)
+)
+
 // CollabServer manages collaborative editing rooms and client connections.
 type CollabServer struct {
 	// ctx is the base context for the server and rooms.
@@ -44,6 +50,9 @@ type CollabServer struct {
 	mu sync.Mutex
 	// rooms maps target IDs to active CollabRoom instances.
 	rooms map[uint64]*CollabRoom
+
+	// Key-Value store for state management
+	stateKV jetstream.KeyValue
 }
 
 // New creates and returns a new CollabServer for the given category, logger, and JetStream wrapper.
@@ -67,6 +76,18 @@ func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, category
 
 // Start creates or updates the JetStream stream for collaborative editing events for this server's category.
 func (s *CollabServer) Start(ctx context.Context) error {
+	stateKV, err := s.js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		Bucket:         kvBucket,
+		TTL:            keyTTL,
+		History:        1,
+		LimitMarkerTTL: 2 * keyTTL,
+		Storage:        jetstream.MemoryStorage,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create or update state key-value store. %w", err)
+	}
+	s.stateKV = stateKV
+
 	cfg := jetstream.StreamConfig{
 		Name:        "COLLAB",
 		Description: "Collaborative editing events stream",
@@ -131,7 +152,7 @@ func (s *CollabServer) getOrCreateRoom(targetId uint64) (*CollabRoom, bool, erro
 	// Get or create the document room
 	room, exists := s.rooms[targetId]
 	if !exists {
-		room, err = NewCollabRoom(s.ctx, s.logger, targetId, s.js.JetStream, s.category)
+		room, err = NewCollabRoom(s.ctx, s.logger, s.stateKV, targetId, s.js.JetStream, s.category)
 		if err != nil {
 			return nil, false, err
 		}
@@ -156,7 +177,7 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 		return status.Error(codes.Internal, err.Error())
 	}
 
-	client := NewClient(s.logger.Named("client"), clientId, targetId, userId, role, stream)
+	client := NewClient(s.logger.Named("client"), clientId, room, userId, role, stream)
 	room.Join(client)
 	defer func() {
 		// If the room is empty after the client leaves, remove it

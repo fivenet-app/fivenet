@@ -50,23 +50,11 @@ const { maxAccessEntries } = useAppConfig();
 
 const maxEntries = computed(() => props.totalLimit || maxAccessEntries);
 
-const emit = defineEmits<{
-    (e: 'update:jobs', jobs: JobsT[]): void;
-    (e: 'update:users', users: UsersT[]): void;
-    (e: 'update:qualifications', qualifications: QualiT[]): void;
-}>();
-
 const { t } = useI18n();
 
-const jobsAccess = useVModel(props, 'jobs', emit, {
-    deep: true,
-});
-const usersAccess = useVModel(props, 'users', emit, {
-    deep: true,
-});
-const qualificationsAccess = useVModel(props, 'qualifications', emit, {
-    deep: true,
-});
+const jobsAccess = defineModel<JobsT[]>('jobs', { default: () => [] });
+const usersAccess = defineModel<UsersT[]>('users', { default: () => [] });
+const qualificationsAccess = defineModel<QualiT[]>('qualifications', { default: () => [] });
 
 const defaultAccessTypes = [
     { type: 'user', name: t('common.citizen', 2) },
@@ -114,12 +102,23 @@ function syncAccessFromProps() {
     const merged: MixedAccessEntry[] = [];
 
     jobsAccess.value.forEach((a) => {
+        if (!a.id) {
+            // Assign a new ID if none is set
+            a.id = lastId--;
+        }
         merged.push({ ...a, type: 'job' });
     });
     usersAccess.value.forEach((a) => {
+        if (!a.id) {
+            a.id = lastId--;
+        }
         merged.push({ ...a, type: 'user' });
     });
     qualificationsAccess.value.forEach((a) => {
+        if (!a.id) {
+            // Assign a new ID if none is set
+            a.id = lastId--;
+        }
         merged.push({ ...a, type: 'qualification' });
     });
 
@@ -196,7 +195,7 @@ function syncPropsFromAccess() {
 }
 
 // Sync from props on mount and when any prop changes
-onBeforeMount(syncAccessFromProps);
+onBeforeMount(() => syncAccessFromProps());
 watch([jobsAccess, usersAccess, qualificationsAccess], syncAccessFromProps, { deep: true });
 
 // Sync from access to props when access changes

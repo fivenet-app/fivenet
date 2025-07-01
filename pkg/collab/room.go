@@ -48,6 +48,8 @@ type CollabRoom struct {
 	// consumer is the JetStream consumer for this room.
 	consumer jetstream.Consumer
 
+	stateKV jetstream.KeyValue
+
 	// ctx is the context for the room's lifecycle.
 	ctx context.Context
 	// cancel is the cancel function for the room's context.
@@ -55,11 +57,11 @@ type CollabRoom struct {
 }
 
 // NewCollabRoom wires the room to NATS JetStream using the modern API and starts the consume loop.
-func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js jetstream.JetStream, category string) (*CollabRoom, error) {
+func NewCollabRoom(ctx context.Context, logger *zap.Logger, stateKV jetstream.KeyValue, roomId uint64, js jetstream.JetStream, category string) (*CollabRoom, error) {
 	ctx, cancel := context.WithCancel(ctx)
 
 	// Create consumer
-	subject := fmt.Sprintf("collab.%s.%d.%d", category, roomId, roomId)
+	subject := fmt.Sprintf("collab.%s.%d", category, roomId)
 
 	consumer, err := js.CreateOrUpdateConsumer(ctx, StreamName, jetstream.ConsumerConfig{
 		FilterSubject:     subject,
@@ -80,8 +82,10 @@ func NewCollabRoom(ctx context.Context, logger *zap.Logger, roomId uint64, js je
 		js:       js,
 		consumer: consumer,
 		subject:  subject,
-		ctx:      ctx,
-		cancel:   cancel,
+		stateKV:  stateKV,
+
+		ctx:    ctx,
+		cancel: cancel,
 	}
 
 	go room.consumeLoop()
@@ -95,6 +99,9 @@ func (r *CollabRoom) Join(c *Client) {
 	r.clients[c.Id] = c
 	clientCount := len(r.clients)
 	r.mu.Unlock()
+
+	c.StartPresence(r.ctx)
+
 	metricTotalConnectedClients.WithLabelValues(r.category).Inc()
 	r.logger.Debug("client joined", zap.Uint64("client_id", c.Id), zap.Int("clients", clientCount))
 }
@@ -105,6 +112,8 @@ func (r *CollabRoom) Leave(clientId uint64) bool {
 	r.mu.Lock()
 	if c, ok := r.clients[clientId]; ok {
 		close(c.SendCh)
+
+		c.StopPresence()
 		delete(r.clients, clientId)
 	}
 	clientCount := len(r.clients)
@@ -276,6 +285,15 @@ func (r *CollabRoom) SendTargetSaved() {
 			},
 		},
 	})
+}
+
+func (r *CollabRoom) notifyFirst(id uint64) {
+	if c := r.clients[id]; c != nil {
+		pkt := &collab.ServerPacket{
+			Msg: &collab.ServerPacket_Promote{Promote: &collab.FirstPromote{}},
+		}
+		c.Send(pkt)
+	}
 }
 
 // shutdown gracefully tears down the room and stops the consume loop.

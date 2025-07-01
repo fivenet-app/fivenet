@@ -104,13 +104,8 @@ export default class GrpcProvider extends ObservableV2<Events> {
 
                 if (msg.msg.handshake.first) {
                     this.authoritative = true;
-                    this.synced = true;
 
-                    // Emit sync event after a short delay to ensure all initial updates are processed
-                    logger.info('Provider sync emit');
-                    this.emit('sync', [true, this.ydoc]);
-                    this.ydoc.emit('sync', [true, this.ydoc]);
-                    logger.info('Post sync emit');
+                    this.syncDocToServer();
                 } else {
                     const sv = Y.encodeStateVector(this.ydoc);
                     this.authoritative = false;
@@ -199,6 +194,19 @@ export default class GrpcProvider extends ObservableV2<Events> {
                     logger.info('Received target saved message', msg.msg.targetSaved);
 
                     this.emit('saved', []);
+                    break;
+                }
+
+                case 'promote': {
+                    logger.info('Received promote: we are the new first client');
+
+                    // Only act if we were *not* authoritative so far.
+                    if (!this.authoritative) {
+                        this.authoritative = true;
+
+                        this.syncDocToServer(); // Step-0: seed the room (again)
+                    }
+                    break;
                 }
             }
         });
@@ -222,6 +230,18 @@ export default class GrpcProvider extends ObservableV2<Events> {
         const delay = this.opts.reconnectDelay?.(this.reconnectAttempt) ?? Math.min(1000 * 2 ** this.reconnectAttempt, 32000);
         this.reconnectAttempt++;
         useTimeoutFn(() => this.connect(), delay);
+    }
+
+    private syncDocToServer() {
+        // If we were still waiting for sync, flip the flag and emit events
+        if (!this.synced) {
+            this.synced = true;
+
+            logger.info('Provider sync emit');
+            this.ydoc.emit('sync', [true, this.ydoc]);
+            this.emit('sync', [true, this.ydoc]);
+            logger.info('Post sync emit');
+        }
     }
 
     // Yjs to Server

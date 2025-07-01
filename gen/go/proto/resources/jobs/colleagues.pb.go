@@ -285,7 +285,7 @@ var File_resources_jobs_colleagues_proto protoreflect.FileDescriptor
 
 const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"\n" +
-	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\x83\x06\n" +
+	"\x1fresources/jobs/colleagues.proto\x12\x0eresources.jobs\x1a\x1bresources/jobs/labels.proto\x1a#resources/timestamp/timestamp.proto\x1a\x13tagger/tagger.proto\"\xfa\x05\n" +
 	"\tColleague\x12/\n" +
 	"\auser_id\x18\x01 \x01(\x05B\x16\x9a\x84\x9e\x03\n" +
 	"alias:\"id\"\xbaH\x04\x1a\x02 \x00R\x06userId\x12,\n" +
@@ -293,8 +293,8 @@ const file_resources_jobs_colleagues_proto_rawDesc = "" +
 	"identifier\x18\x02 \x01(\tB\a\xbaH\x04r\x02\x18@H\x00R\n" +
 	"identifier\x88\x01\x01\x12\x19\n" +
 	"\x03job\x18\x03 \x01(\tB\a\xbaH\x04r\x02\x18\x14R\x03job\x12)\n" +
-	"\tjob_label\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12-\n" +
-	"\tjob_grade\x18\x05 \x01(\x05B\x10\xbaH\r\x1a\v \xff\xff\xff\xff\xff\xff\xff\xff\xff\x01R\bjobGrade\x124\n" +
+	"\tjob_label\x18\x04 \x01(\tB\a\xbaH\x04r\x02\x182H\x01R\bjobLabel\x88\x01\x01\x12$\n" +
+	"\tjob_grade\x18\x05 \x01(\x05B\a\xbaH\x04\x1a\x02(\x00R\bjobGrade\x124\n" +
 	"\x0fjob_grade_label\x18\x06 \x01(\tB\a\xbaH\x04r\x02\x182H\x02R\rjobGradeLabel\x88\x01\x01\x12'\n" +
 	"\tfirstname\x18\a \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\tfirstname\x12%\n" +
 	"\blastname\x18\b \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\blastname\x12*\n" +

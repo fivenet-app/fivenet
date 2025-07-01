@@ -51,7 +51,7 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
-const query = useSearchForm('jobs_colleagues_activity', schema);
+const query = useSearchForm('jobs_colleagues_activity' + !props.userId ? '' : '_individual', schema);
 
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
 
@@ -93,10 +93,6 @@ const accessAttrs = attrStringList('jobs.JobsService/GetColleague', 'Access');
 const colleagueSearchAttrs = ['Own', 'Lower_Rank', 'Same_Rank', 'Any'];
 
 watch(props, async () => refresh());
-watchDebounced(query, async () => refresh(), {
-    debounce: 500,
-    maxWait: 1250,
-});
 </script>
 
 <template>

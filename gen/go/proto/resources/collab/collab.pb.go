@@ -388,6 +388,8 @@ type ServerPacket struct {
 	//	*ServerPacket_YjsUpdate
 	//	*ServerPacket_Awareness
 	//	*ServerPacket_TargetSaved
+	//	*ServerPacket_Promote
+	//	*ServerPacket_ClientUpdate
 	Msg           isServerPacket_Msg `protobuf_oneof:"msg"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -482,6 +484,24 @@ func (x *ServerPacket) GetTargetSaved() *TargetSaved {
 	return nil
 }
 
+func (x *ServerPacket) GetPromote() *FirstPromote {
+	if x != nil {
+		if x, ok := x.Msg.(*ServerPacket_Promote); ok {
+			return x.Promote
+		}
+	}
+	return nil
+}
+
+func (x *ServerPacket) GetClientUpdate() *ClientUpdate {
+	if x != nil {
+		if x, ok := x.Msg.(*ServerPacket_ClientUpdate); ok {
+			return x.ClientUpdate
+		}
+	}
+	return nil
+}
+
 type isServerPacket_Msg interface {
 	isServerPacket_Msg()
 }
@@ -506,6 +526,14 @@ type ServerPacket_TargetSaved struct {
 	TargetSaved *TargetSaved `protobuf:"bytes,6,opt,name=target_saved,json=targetSaved,proto3,oneof"`
 }
 
+type ServerPacket_Promote struct {
+	Promote *FirstPromote `protobuf:"bytes,7,opt,name=promote,proto3,oneof"`
+}
+
+type ServerPacket_ClientUpdate struct {
+	ClientUpdate *ClientUpdate `protobuf:"bytes,8,opt,name=client_update,json=clientUpdate,proto3,oneof"`
+}
+
 func (*ServerPacket_Handshake) isServerPacket_Msg() {}
 
 func (*ServerPacket_SyncStep) isServerPacket_Msg() {}
@@ -515,6 +543,10 @@ func (*ServerPacket_YjsUpdate) isServerPacket_Msg() {}
 func (*ServerPacket_Awareness) isServerPacket_Msg() {}
 
 func (*ServerPacket_TargetSaved) isServerPacket_Msg() {}
+
+func (*ServerPacket_Promote) isServerPacket_Msg() {}
+
+func (*ServerPacket_ClientUpdate) isServerPacket_Msg() {}
 
 type CollabHandshake struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -612,6 +644,102 @@ func (x *TargetSaved) GetTargetId() uint64 {
 	return 0
 }
 
+type FirstPromote struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *FirstPromote) Reset() {
+	*x = FirstPromote{}
+	mi := &file_resources_collab_collab_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FirstPromote) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FirstPromote) ProtoMessage() {}
+
+func (x *FirstPromote) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_collab_collab_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FirstPromote.ProtoReflect.Descriptor instead.
+func (*FirstPromote) Descriptor() ([]byte, []int) {
+	return file_resources_collab_collab_proto_rawDescGZIP(), []int{8}
+}
+
+type ClientUpdate struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Joined        bool                   `protobuf:"varint,1,opt,name=joined,proto3" json:"joined,omitempty"`
+	ClientId      uint64                 `protobuf:"varint,2,opt,name=client_id,json=clientId,proto3" json:"client_id,omitempty"`
+	Label         *string                `protobuf:"bytes,3,opt,name=label,proto3,oneof" json:"label,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientUpdate) Reset() {
+	*x = ClientUpdate{}
+	mi := &file_resources_collab_collab_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientUpdate) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientUpdate) ProtoMessage() {}
+
+func (x *ClientUpdate) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_collab_collab_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientUpdate.ProtoReflect.Descriptor instead.
+func (*ClientUpdate) Descriptor() ([]byte, []int) {
+	return file_resources_collab_collab_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *ClientUpdate) GetJoined() bool {
+	if x != nil {
+		return x.Joined
+	}
+	return false
+}
+
+func (x *ClientUpdate) GetClientId() uint64 {
+	if x != nil {
+		return x.ClientId
+	}
+	return 0
+}
+
+func (x *ClientUpdate) GetLabel() string {
+	if x != nil && x.Label != nil {
+		return *x.Label
+	}
+	return ""
+}
+
 var File_resources_collab_collab_proto protoreflect.FileDescriptor
 
 const file_resources_collab_collab_proto_rawDesc = "" +
@@ -636,7 +764,7 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"\tYjsUpdate\x12\x12\n" +
 	"\x04data\x18\x01 \x01(\fR\x04data\"#\n" +
 	"\rAwarenessPing\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\"\x83\x03\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\"\x86\x04\n" +
 	"\fServerPacket\x12$\n" +
 	"\tsender_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\bsenderId\x12A\n" +
 	"\thandshake\x18\x02 \x01(\v2!.resources.collab.CollabHandshakeH\x00R\thandshake\x129\n" +
@@ -644,13 +772,21 @@ const file_resources_collab_collab_proto_rawDesc = "" +
 	"\n" +
 	"yjs_update\x18\x04 \x01(\v2\x1b.resources.collab.YjsUpdateH\x00R\tyjsUpdate\x12?\n" +
 	"\tawareness\x18\x05 \x01(\v2\x1f.resources.collab.AwarenessPingH\x00R\tawareness\x12B\n" +
-	"\ftarget_saved\x18\x06 \x01(\v2\x1d.resources.collab.TargetSavedH\x00R\vtargetSavedB\f\n" +
+	"\ftarget_saved\x18\x06 \x01(\v2\x1d.resources.collab.TargetSavedH\x00R\vtargetSaved\x12:\n" +
+	"\apromote\x18\a \x01(\v2\x1e.resources.collab.FirstPromoteH\x00R\apromote\x12E\n" +
+	"\rclient_update\x18\b \x01(\v2\x1e.resources.collab.ClientUpdateH\x00R\fclientUpdateB\f\n" +
 	"\x03msg\x12\x05\xbaH\x02\b\x01\"D\n" +
 	"\x0fCollabHandshake\x12\x1b\n" +
 	"\tclient_id\x18\x01 \x01(\x04R\bclientId\x12\x14\n" +
 	"\x05first\x18\x02 \x01(\bR\x05first\"3\n" +
 	"\vTargetSaved\x12$\n" +
-	"\ttarget_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\btargetId*Y\n" +
+	"\ttarget_id\x18\x01 \x01(\x04B\a\xbaH\x042\x02 \x00R\btargetId\"\x0e\n" +
+	"\fFirstPromote\"{\n" +
+	"\fClientUpdate\x12\x16\n" +
+	"\x06joined\x18\x01 \x01(\bR\x06joined\x12$\n" +
+	"\tclient_id\x18\x02 \x01(\x04B\a\xbaH\x042\x02 \x00R\bclientId\x12#\n" +
+	"\x05label\x18\x03 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01H\x00R\x05label\x88\x01\x01B\b\n" +
+	"\x06_label*Y\n" +
 	"\n" +
 	"ClientRole\x12\x1b\n" +
 	"\x17CLIENT_ROLE_UNSPECIFIED\x10\x00\x12\x16\n" +
@@ -670,7 +806,7 @@ func file_resources_collab_collab_proto_rawDescGZIP() []byte {
 }
 
 var file_resources_collab_collab_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_resources_collab_collab_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_resources_collab_collab_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_resources_collab_collab_proto_goTypes = []any{
 	(ClientRole)(0),         // 0: resources.collab.ClientRole
 	(*ClientPacket)(nil),    // 1: resources.collab.ClientPacket
@@ -681,22 +817,26 @@ var file_resources_collab_collab_proto_goTypes = []any{
 	(*ServerPacket)(nil),    // 6: resources.collab.ServerPacket
 	(*CollabHandshake)(nil), // 7: resources.collab.CollabHandshake
 	(*TargetSaved)(nil),     // 8: resources.collab.TargetSaved
+	(*FirstPromote)(nil),    // 9: resources.collab.FirstPromote
+	(*ClientUpdate)(nil),    // 10: resources.collab.ClientUpdate
 }
 var file_resources_collab_collab_proto_depIdxs = []int32{
-	2, // 0: resources.collab.ClientPacket.hello:type_name -> resources.collab.CollabInit
-	3, // 1: resources.collab.ClientPacket.sync_step:type_name -> resources.collab.SyncStep
-	4, // 2: resources.collab.ClientPacket.yjs_update:type_name -> resources.collab.YjsUpdate
-	5, // 3: resources.collab.ClientPacket.awareness:type_name -> resources.collab.AwarenessPing
-	7, // 4: resources.collab.ServerPacket.handshake:type_name -> resources.collab.CollabHandshake
-	3, // 5: resources.collab.ServerPacket.sync_step:type_name -> resources.collab.SyncStep
-	4, // 6: resources.collab.ServerPacket.yjs_update:type_name -> resources.collab.YjsUpdate
-	5, // 7: resources.collab.ServerPacket.awareness:type_name -> resources.collab.AwarenessPing
-	8, // 8: resources.collab.ServerPacket.target_saved:type_name -> resources.collab.TargetSaved
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	2,  // 0: resources.collab.ClientPacket.hello:type_name -> resources.collab.CollabInit
+	3,  // 1: resources.collab.ClientPacket.sync_step:type_name -> resources.collab.SyncStep
+	4,  // 2: resources.collab.ClientPacket.yjs_update:type_name -> resources.collab.YjsUpdate
+	5,  // 3: resources.collab.ClientPacket.awareness:type_name -> resources.collab.AwarenessPing
+	7,  // 4: resources.collab.ServerPacket.handshake:type_name -> resources.collab.CollabHandshake
+	3,  // 5: resources.collab.ServerPacket.sync_step:type_name -> resources.collab.SyncStep
+	4,  // 6: resources.collab.ServerPacket.yjs_update:type_name -> resources.collab.YjsUpdate
+	5,  // 7: resources.collab.ServerPacket.awareness:type_name -> resources.collab.AwarenessPing
+	8,  // 8: resources.collab.ServerPacket.target_saved:type_name -> resources.collab.TargetSaved
+	9,  // 9: resources.collab.ServerPacket.promote:type_name -> resources.collab.FirstPromote
+	10, // 10: resources.collab.ServerPacket.client_update:type_name -> resources.collab.ClientUpdate
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_resources_collab_collab_proto_init() }
@@ -717,14 +857,17 @@ func file_resources_collab_collab_proto_init() {
 		(*ServerPacket_YjsUpdate)(nil),
 		(*ServerPacket_Awareness)(nil),
 		(*ServerPacket_TargetSaved)(nil),
+		(*ServerPacket_Promote)(nil),
+		(*ServerPacket_ClientUpdate)(nil),
 	}
+	file_resources_collab_collab_proto_msgTypes[9].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_collab_collab_proto_rawDesc), len(file_resources_collab_collab_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

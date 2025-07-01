@@ -57,6 +57,14 @@ func (m *ClientPacket) Sanitize() error {
 	return nil
 }
 
+func (m *ClientUpdate) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *CollabHandshake) Sanitize() error {
 	if m == nil {
 		return nil
@@ -66,6 +74,14 @@ func (m *CollabHandshake) Sanitize() error {
 }
 
 func (m *CollabInit) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *FirstPromote) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -88,8 +104,24 @@ func (m *ServerPacket) Sanitize() error {
 			}
 		}
 
+		// Field: ClientUpdate
+	case *ServerPacket_ClientUpdate:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 		// Field: Handshake
 	case *ServerPacket_Handshake:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Promote
+	case *ServerPacket_Promote:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err

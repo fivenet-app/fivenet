@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
-import type { Extensions, Range } from '@tiptap/core';
+import { generateJSON, getSchema, type Extensions, type Range } from '@tiptap/core';
 import { Blockquote } from '@tiptap/extension-blockquote';
 import { Bold } from '@tiptap/extension-bold';
 import { BulletList } from '@tiptap/extension-bullet-list';
@@ -39,13 +39,15 @@ import { Text } from '@tiptap/extension-text';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
+import type { Schema } from '@tiptap/pm/model';
 import FontSize from 'tiptap-extension-font-size';
+import { initProseMirrorDoc, prosemirrorJSONToYDoc } from 'y-prosemirror';
 // @ts-expect-error doesn't have types
 import UniqueId from 'tiptap-unique-id';
-import type * as Y from 'yjs';
+import * as Y from 'yjs';
 import { CheckboxStandalone } from '~/composables/tiptap/extensions/CheckboxStandalone';
 import { DeleteImageTracker } from '~/composables/tiptap/extensions/DeleteImageTracker';
-import { EnhancedImageResize } from '~/composables/tiptap/extensions/EnhancedImageResize';
+import { EnhancedImage } from '~/composables/tiptap/extensions/EnhancedImage';
 import { imageUploadPlugin } from '~/composables/tiptap/extensions/ImageUploadPlugin';
 import SearchAndReplace from '~/composables/tiptap/extensions/SearchAndReplace';
 import type { UploadNamespaces } from '~/composables/useFileUploader';
@@ -119,7 +121,7 @@ const modal = useModal();
 const modelValue = defineModel<string>({ required: true });
 const files = defineModel<FileGrpc[]>('files', { default: () => [] });
 
-const extensions: Extensions = [
+const extensions = [
     UniqueId.configure({
         attributeName: 'id',
         types: ['heading'],
@@ -198,10 +200,42 @@ const extensions: Extensions = [
     }),
 ];
 
+if (!props.disableImages) {
+    extensions.push(
+        EnhancedImage.configure({
+            inline: false,
+            allowBase64: true,
+        }),
+        DeleteImageTracker.configure({
+            onRemoved: (ids) =>
+                ids.forEach((id) => {
+                    if (hasFileById(files.value, id)) {
+                        const idx = files.value.findIndex((f) => f.id === id);
+                        if (idx > -1) files.value.splice(idx, 1);
+                    }
+                }),
+        }),
+    );
+}
+
 const ydoc = inject<Y.Doc | undefined>('yjsDoc', undefined);
 const yjsProvider = inject<GrpcProvider | undefined>('yjsProvider', undefined);
 
 const loading = ref(props.enableCollab && ydoc !== undefined && yjsProvider !== undefined);
+
+function seedDocument(schema: Schema, value: string): void {
+    if (value === '') return;
+
+    // HTML → ProseMirror JSON
+    const json = generateJSON(value, extensions);
+    // ProseMirror JSON → Yjs update in-place
+    const seedDoc = prosemirrorJSONToYDoc(schema, json, 'content');
+
+    // Merge that doc's state into the live document
+    Y.applyUpdate(ydoc!, Y.encodeStateAsUpdate(seedDoc));
+}
+
+let yjsSchema: Schema | undefined = undefined;
 
 if (props.enableCollab && ydoc && yjsProvider) {
     const ourName = `${activeChar.value?.firstname} ${activeChar.value?.lastname}`;
@@ -211,10 +245,16 @@ if (props.enableCollab && ydoc && yjsProvider) {
         color: stringToColor(ourName),
     };
 
+    yjsSchema = getSchema(extensions);
+
+    const yXml = ydoc.getXmlFragment('content');
+    const { mapping } = initProseMirrorDoc(yXml, yjsSchema!);
+
     extensions.push(
         Collaboration.configure({
             document: ydoc,
             field: 'content',
+            ySyncOptions: { mapping },
         }),
         CollaborationCursor.configure({
             provider: yjsProvider,
@@ -262,7 +302,7 @@ if (props.enableCollab && ydoc && yjsProvider) {
 
         // Only set initial content if authoritative and Yjs doc is empty
         if (yjsProvider.isAuthoritative) {
-            unref(editor)?.commands.setContent(modelValue.value);
+            seedDocument(yjsSchema!, modelValue.value);
         }
 
         useTimeoutFn(() => (loading.value = false), 250);
@@ -277,24 +317,6 @@ if (props.enableCollab && ydoc && yjsProvider) {
 function hasFileById(files: FileGrpc[] | undefined | null, id: number): boolean {
     if (!files || !id) return false;
     return files.some((f) => f.id === id);
-}
-
-if (!props.disableImages) {
-    extensions.push(
-        EnhancedImageResize.configure({
-            inline: false,
-            allowBase64: true,
-        }),
-        DeleteImageTracker.configure({
-            onRemoved: (ids) =>
-                ids.forEach((id) => {
-                    if (hasFileById(files.value, id)) {
-                        const idx = files.value.findIndex((f) => f.id === id);
-                        if (idx > -1) files.value.splice(idx, 1);
-                    }
-                }),
-        }),
-    );
 }
 
 const disabled = computed(() => props.disabled || loading.value);
@@ -397,13 +419,21 @@ const stopWatch = watch(modelValue, (value) => {
     // If not authoritative, don't set the content
     if (props.enableCollab && ydoc && yjsProvider && !yjsProvider.isAuthoritative) return;
 
-    unref(editor)?.commands.setContent(value, true);
+    if (props.enableCollab && ydoc && yjsProvider) {
+        seedDocument && seedDocument(yjsSchema!, value);
+    } else {
+        unref(editor)?.commands.setContent(value, true);
+    }
+
     if (props.enableCollab && ydoc && yjsProvider && yjsProvider.isAuthoritative) {
         stopWatch();
     }
 });
 
-watch(disabled, () => unref(editor)?.setEditable(!disabled.value));
+watch(disabled, () => {
+    unref(editor)?.setEditable(!disabled.value);
+    unref(editor)?.view.updateState(unref(editor)!.view.state);
+});
 
 const linkState = reactive({
     url: '',

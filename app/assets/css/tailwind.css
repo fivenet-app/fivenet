@@ -53,6 +53,7 @@ html {
             }
         }
     }
+
     /* Collaboration */
     /* Give a remote user a caret */
     .collaboration-cursor__caret {
@@ -207,7 +208,7 @@ html {
         border: 1px dashed rgb(var(--color-primary-500));
     }
 
-    .template-var[data-hidden="true"] {
+    .template-var[data-hidden='true'] {
         display: none;
     }
 }

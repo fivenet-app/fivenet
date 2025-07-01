@@ -136,6 +136,18 @@ export interface ServerPacket {
          */
         targetSaved: TargetSaved;
     } | {
+        oneofKind: "promote";
+        /**
+         * @generated from protobuf field: resources.collab.FirstPromote promote = 7
+         */
+        promote: FirstPromote;
+    } | {
+        oneofKind: "clientUpdate";
+        /**
+         * @generated from protobuf field: resources.collab.ClientUpdate client_update = 8
+         */
+        clientUpdate: ClientUpdate;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -160,6 +172,28 @@ export interface TargetSaved {
      * @generated from protobuf field: uint64 target_id = 1
      */
     targetId: number;
+}
+/**
+ * @generated from protobuf message resources.collab.FirstPromote
+ */
+export interface FirstPromote {
+}
+/**
+ * @generated from protobuf message resources.collab.ClientUpdate
+ */
+export interface ClientUpdate {
+    /**
+     * @generated from protobuf field: bool joined = 1
+     */
+    joined: boolean;
+    /**
+     * @generated from protobuf field: uint64 client_id = 2
+     */
+    clientId: number;
+    /**
+     * @generated from protobuf field: optional string label = 3
+     */
+    label?: string;
 }
 /**
  * @generated from protobuf enum resources.collab.ClientRole
@@ -470,7 +504,9 @@ class ServerPacket$Type extends MessageType<ServerPacket> {
             { no: 3, name: "sync_step", kind: "message", oneof: "msg", T: () => SyncStep },
             { no: 4, name: "yjs_update", kind: "message", oneof: "msg", T: () => YjsUpdate },
             { no: 5, name: "awareness", kind: "message", oneof: "msg", T: () => AwarenessPing },
-            { no: 6, name: "target_saved", kind: "message", oneof: "msg", T: () => TargetSaved }
+            { no: 6, name: "target_saved", kind: "message", oneof: "msg", T: () => TargetSaved },
+            { no: 7, name: "promote", kind: "message", oneof: "msg", T: () => FirstPromote },
+            { no: 8, name: "client_update", kind: "message", oneof: "msg", T: () => ClientUpdate }
         ]);
     }
     create(value?: PartialMessage<ServerPacket>): ServerPacket {
@@ -519,6 +555,18 @@ class ServerPacket$Type extends MessageType<ServerPacket> {
                         targetSaved: TargetSaved.internalBinaryRead(reader, reader.uint32(), options, (message.msg as any).targetSaved)
                     };
                     break;
+                case /* resources.collab.FirstPromote promote */ 7:
+                    message.msg = {
+                        oneofKind: "promote",
+                        promote: FirstPromote.internalBinaryRead(reader, reader.uint32(), options, (message.msg as any).promote)
+                    };
+                    break;
+                case /* resources.collab.ClientUpdate client_update */ 8:
+                    message.msg = {
+                        oneofKind: "clientUpdate",
+                        clientUpdate: ClientUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.msg as any).clientUpdate)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -549,6 +597,12 @@ class ServerPacket$Type extends MessageType<ServerPacket> {
         /* resources.collab.TargetSaved target_saved = 6; */
         if (message.msg.oneofKind === "targetSaved")
             TargetSaved.internalBinaryWrite(message.msg.targetSaved, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.collab.FirstPromote promote = 7; */
+        if (message.msg.oneofKind === "promote")
+            FirstPromote.internalBinaryWrite(message.msg.promote, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.collab.ClientUpdate client_update = 8; */
+        if (message.msg.oneofKind === "clientUpdate")
+            ClientUpdate.internalBinaryWrite(message.msg.clientUpdate, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -661,3 +715,103 @@ class TargetSaved$Type extends MessageType<TargetSaved> {
  * @generated MessageType for protobuf message resources.collab.TargetSaved
  */
 export const TargetSaved = new TargetSaved$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class FirstPromote$Type extends MessageType<FirstPromote> {
+    constructor() {
+        super("resources.collab.FirstPromote", []);
+    }
+    create(value?: PartialMessage<FirstPromote>): FirstPromote {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<FirstPromote>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FirstPromote): FirstPromote {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: FirstPromote, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.collab.FirstPromote
+ */
+export const FirstPromote = new FirstPromote$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ClientUpdate$Type extends MessageType<ClientUpdate> {
+    constructor() {
+        super("resources.collab.ClientUpdate", [
+            { no: 1, name: "joined", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "client_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "buf.validate.field": { uint64: { gt: "0" } } } },
+            { no: 3, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "128" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ClientUpdate>): ClientUpdate {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.joined = false;
+        message.clientId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ClientUpdate>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ClientUpdate): ClientUpdate {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool joined */ 1:
+                    message.joined = reader.bool();
+                    break;
+                case /* uint64 client_id */ 2:
+                    message.clientId = reader.uint64().toNumber();
+                    break;
+                case /* optional string label */ 3:
+                    message.label = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ClientUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool joined = 1; */
+        if (message.joined !== false)
+            writer.tag(1, WireType.Varint).bool(message.joined);
+        /* uint64 client_id = 2; */
+        if (message.clientId !== 0)
+            writer.tag(2, WireType.Varint).uint64(message.clientId);
+        /* optional string label = 3; */
+        if (message.label !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.label);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.collab.ClientUpdate
+ */
+export const ClientUpdate = new ClientUpdate$Type();

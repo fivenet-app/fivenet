@@ -2213,6 +2213,19 @@ Dummy - DO NOT USE!
 
 
 
+### resources.collab.ClientUpdate
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `joined` | [bool](#bool) |  |  |
+| `client_id` | [uint64](#uint64) |  |  |
+| `label` | [string](#string) | optional |  |
+
+
+
+
+
 ### resources.collab.CollabHandshake
 
 
@@ -2236,6 +2249,12 @@ Dummy - DO NOT USE!
 
 
 
+### resources.collab.FirstPromote
+
+
+
+
+
 ### resources.collab.ServerPacket
 
 
@@ -2247,6 +2266,8 @@ Dummy - DO NOT USE!
 | `yjs_update` | [YjsUpdate](#resourcescollabYjsUpdate) |  |  |
 | `awareness` | [AwarenessPing](#resourcescollabAwarenessPing) |  |  |
 | `target_saved` | [TargetSaved](#resourcescollabTargetSaved) |  |  |
+| `promote` | [FirstPromote](#resourcescollabFirstPromote) |  |  |
+| `client_update` | [ClientUpdate](#resourcescollabClientUpdate) |  |  |
 
 
 

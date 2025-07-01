@@ -58,6 +58,8 @@ message ServerPacket {
     YjsUpdate yjs_update = 4;
     AwarenessPing awareness = 5;
     TargetSaved target_saved = 6;
+    FirstPromote promote = 7;
+    ClientUpdate client_update = 8;
   }
 }
 
@@ -68,4 +70,12 @@ message CollabHandshake {
 
 message TargetSaved {
   uint64 target_id = 1 [(buf.validate.field).uint64.gt = 0];
+}
+
+message FirstPromote {}
+
+message ClientUpdate {
+  bool joined = 1;
+  uint64 client_id = 2 [(buf.validate.field).uint64.gt = 0];
+  optional string label = 3 [(buf.validate.field).string.max_len = 128];
 }

@@ -251,7 +251,7 @@ const contentAccessTypes: AccessType[] = [
                             </h3>
                             <div class="my-2">
                                 <ul
-                                    class="mb-2 max-w-md list-inside list-disc space-y-1 text-sm font-medium text-gray-100 dark:text-gray-300"
+                                    class="mb-2 max-w-md list-inside space-y-1 text-sm font-medium text-gray-100 dark:text-gray-300"
                                 >
                                     <li v-if="reqs.users">
                                         <TemplateRequirementsList name="User" :specs="reqs.users!" />

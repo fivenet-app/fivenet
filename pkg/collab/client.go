@@ -1,7 +1,12 @@
 package collab
 
 import (
+	"context"
+	"strconv"
+	"time"
+
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/collab"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 )
@@ -12,6 +17,8 @@ type Client struct {
 	logger *zap.Logger
 	// Id is the unique client identifier.
 	Id uint64
+	// Room is a reference to the CollabRoom this client is connected to.
+	room *CollabRoom
 	// UserId is the user ID associated with this client.
 	UserId int32
 	// Role is the role of the client in the collaboration session.
@@ -22,19 +29,56 @@ type Client struct {
 	Stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]
 	// SendCh is a buffered channel for outgoing server packets.
 	SendCh chan *collab.ServerPacket
+
+	presenceKey string
+	firstKey    string
+	hbCancel    context.CancelFunc
 }
 
 // NewClient creates and returns a new Client instance with the provided parameters and a buffered send channel.
-func NewClient(logger *zap.Logger, clientId uint64, roomId uint64, UserId int32, role collab.ClientRole, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) *Client {
+func NewClient(logger *zap.Logger, clientId uint64, room *CollabRoom, UserId int32, role collab.ClientRole, stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) *Client {
 	return &Client{
 		logger: logger,
 		Id:     clientId,
 		Role:   role,
-		RoomId: roomId,
+		room:   room,
+		RoomId: room.Id,
 		Stream: stream,
 		// Buffered channel
 		SendCh: make(chan *collab.ServerPacket, 32),
 	}
+}
+
+func (c *Client) StartPresence(ctx context.Context) {
+	stateKV := c.room.stateKV
+
+	cid := strconv.FormatUint(c.Id, 10)
+	roomId := strconv.FormatUint(c.RoomId, 10)
+	c.presenceKey = "presence." + roomId + "." + cid
+	c.firstKey = "first." + roomId
+
+	// Announce this client
+	stateKV.Put(ctx, c.presenceKey, nil)
+
+	// Try to become FIRST (atomic Create)
+	if _, err := stateKV.Create(ctx, c.firstKey, []byte(cid), jetstream.KeyTTL(keyTTL)); err == nil {
+		c.room.notifyFirst(c.Id) // tell browser it must seed the doc
+	}
+
+	// Launch heartbeat + watcher
+	hbCtx, cancel := context.WithCancel(ctx)
+	c.hbCancel = cancel
+	go hbLoop(hbCtx, c.room.stateKV, c.presenceKey, c.firstKey, cid)
+	go firstWatch(hbCtx, c.room.stateKV, c.room, c.firstKey, cid, c.Id)
+}
+
+func (c *Client) StopPresence() {
+	if c.hbCancel != nil {
+		c.hbCancel()
+	}
+	kv := c.room.stateKV
+	kv.Delete(context.Background(), c.presenceKey)
+	kv.Delete(context.Background(), c.firstKey)
 }
 
 // Send attempts to enqueue a message for the client. If the channel is full, the message is dropped and a debug log is emitted.
@@ -58,4 +102,49 @@ func (c *Client) SendLoop() error {
 	}
 
 	return nil
+}
+
+// hbLoop – resets TTL every 2 s
+func hbLoop(ctx context.Context, kv jetstream.KeyValue, pKey, fKey, cid string) {
+	t := time.NewTicker(hbEvery)
+	defer t.Stop()
+
+	for {
+		select {
+		case <-t.C:
+			// presence
+			if _, err := kv.Put(ctx, pKey, nil); err != nil {
+			}
+
+			// safe refresh of “first” (compare-and-swap)
+			if e, _ := kv.Get(ctx, fKey); e != nil && string(e.Value()) == cid {
+				kv.Update(ctx, fKey, []byte(cid), e.Revision())
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
+}
+
+// firstWatch – auto-promotion when “first” key disappears
+func firstWatch(ctx context.Context, kv jetstream.KeyValue, room *CollabRoom,
+	fKey, cid string, myID uint64,
+) {
+	sub, _ := kv.Watch(ctx, fKey, jetstream.UpdatesOnly())
+	for {
+		select {
+		case upd := <-sub.Updates():
+			if upd == nil {
+				continue
+			} // catch-up barrier
+
+			if upd.Operation() == jetstream.KeyValueDelete {
+				if _, err := kv.Create(ctx, fKey, []byte(cid), jetstream.KeyTTL(keyTTL)); err == nil {
+					room.notifyFirst(myID)
+				}
+			}
+		case <-ctx.Done():
+			return
+		}
+	}
 }

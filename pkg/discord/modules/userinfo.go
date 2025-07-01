@@ -159,7 +159,7 @@ func (g *UserInfo) planRoles(job *jobs.Job) (types.Roles, error) {
 
 	if settings.UserInfoSyncSettings.EmployeeRoleEnabled {
 		g.employeeRole = &types.Role{
-			Name:   strings.ReplaceAll(strings.ReplaceAll(settings.UserInfoSyncSettings.EmployeeRoleFormat, "%job%", job.Label), "%s", job.Name),
+			Name:   strings.ReplaceAll(strings.ReplaceAll(settings.UserInfoSyncSettings.EmployeeRoleFormat, "%job%", job.Label), "%s", job.Label),
 			Module: userInfoRoleModuleEmployee,
 			Job:    g.job,
 		}
