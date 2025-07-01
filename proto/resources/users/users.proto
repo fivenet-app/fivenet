@@ -17,25 +17,28 @@ message UserShort {
   optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
   string job = 3 [
     (buf.validate.field).string.max_len = 20,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
   int32 job_grade = 5 [
     (buf.validate.field).int32.gte = 0,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
   string firstname = 7 [(buf.validate.field).string = {
     min_len: 1
     max_len: 50
   }];
-  string lastname = 8 [(buf.validate.field).string = {
-    min_len: 1
-    max_len: 50
-  }];
+  string lastname = 8 [
+    (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE,
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 50
+    }
+  ];
   string dateofbirth = 9 [
     (buf.validate.field).string.len = 10,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   optional string phone_number = 12 [(buf.validate.field).string.max_len = 20];
   optional uint64 avatar_file_id = 17;
@@ -50,25 +53,28 @@ message User {
   optional string identifier = 2 [(buf.validate.field).string.max_len = 64];
   string job = 3 [
     (buf.validate.field).string.max_len = 20,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   optional string job_label = 4 [(buf.validate.field).string.max_len = 50];
   int32 job_grade = 5 [
     (buf.validate.field).int32.gte = 0,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   optional string job_grade_label = 6 [(buf.validate.field).string.max_len = 50];
   string firstname = 7 [(buf.validate.field).string = {
     min_len: 1
     max_len: 50
   }];
-  string lastname = 8 [(buf.validate.field).string = {
-    min_len: 1
-    max_len: 50
-  }];
+  string lastname = 8 [
+    (buf.validate.field).string = {
+      min_len: 1
+      max_len: 50
+    },
+    (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
+  ];
   string dateofbirth = 9 [
     (buf.validate.field).string.len = 10,
-    (buf.validate.field).ignore = IGNORE_IF_UNPOPULATED
+    (buf.validate.field).ignore = IGNORE_IF_DEFAULT_VALUE
   ];
   optional string sex = 10 [(buf.validate.field).string = {
     min_len: 1
