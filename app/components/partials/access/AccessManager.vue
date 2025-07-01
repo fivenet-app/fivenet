@@ -36,7 +36,7 @@ const props = withDefaults(
         users: () => [],
         qualifications: () => [],
         accessTypes: undefined,
-        defaultAccess: 2, // All `AccessLevel` should have 0 = UNSPECIFIED, 1 = BLOCKED, 2 = VIEW
+        defaultAccess: 2, // All `AccessLevel` should have 0 = UNSPECIFIED, 1 = BLOCKED, 2 = VIEW levels
         disabled: false,
         showRequired: false,
         defaultAccessType: 'job',
@@ -110,6 +110,7 @@ function syncAccessFromProps() {
     });
     usersAccess.value.forEach((a) => {
         if (!a.id) {
+            // Assign a new ID if none is set
             a.id = lastId--;
         }
         merged.push({ ...a, type: 'user' });

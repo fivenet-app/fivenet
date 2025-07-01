@@ -126,7 +126,10 @@ setFromProps();
 watch(props, setFromProps);
 
 async function createOrUpdateEmail(values: Schema): Promise<undefined> {
-    values.access.users.forEach((user) => user.id < 0 && (user.id = 0));
+    values.access.users.forEach((user) => {
+        if (user.id < 0) user.id = 0;
+        user.user = undefined; // Clear user object to avoid sending unnecessary data
+    });
     values.access.jobs.forEach((job) => job.id < 0 && (job.id = 0));
     values.access.qualifications.forEach((quali) => quali.id < 0 && (quali.id = 0));
 

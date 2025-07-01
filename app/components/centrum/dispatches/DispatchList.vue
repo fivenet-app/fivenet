@@ -209,7 +209,7 @@ const columns = [
                                     () =>
                                         dispatchTimeToBadge(
                                             dispatch.createdAt,
-                                            dispatch.status.status,
+                                            dispatch.status?.status,
                                             settings?.timings?.dispatchMaxWait,
                                         )
                                 "
