@@ -25,7 +25,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/anypb"
 )
 
 var tWorkflow = table.FivenetDocumentsWorkflowState.AS("workflow_state")
@@ -103,10 +102,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		dest := &documents.WorkflowCronData{
 			LastDocId: 0,
 		}
-		if data.Data == nil {
-			data.Data, _ = anypb.New(&documents.WorkflowCronData{})
-		}
-		if err := data.Data.UnmarshalTo(dest); err != nil {
+		if err := data.Unmarshal(dest); err != nil {
 			w.logger.Warn("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
 
@@ -115,7 +111,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		}
 
 		// Marshal the updated cron data
-		if err := data.Data.MarshalFrom(dest); err != nil {
+		if err := data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
 		}
 
@@ -129,10 +125,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		dest := &documents.WorkflowCronData{
 			LastDocId: 0,
 		}
-		if data.Data == nil {
-			data.Data, _ = anypb.New(&documents.WorkflowCronData{})
-		}
-		if err := data.Data.UnmarshalTo(dest); err != nil {
+		if err := data.Unmarshal(dest); err != nil {
 			w.logger.Error("failed to unmarshal document workflow cron data", zap.Error(err))
 		}
 
@@ -141,7 +134,7 @@ func (w *Workflow) RegisterCronjobHandlers(h *croner.Handlers) error {
 		}
 
 		// Marshal the updated cron data
-		if err := data.Data.MarshalFrom(dest); err != nil {
+		if err := data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
 		}
 

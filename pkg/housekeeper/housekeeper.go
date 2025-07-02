@@ -14,7 +14,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -143,19 +142,11 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		ctx, span := h.tracer.Start(ctx, "housekeeper.soft_delete_job")
 		defer span.End()
 
-		// Prepare the cron data structure.
+		// Prepare and unmarshal the cron data structure
 		dest := &cron.GenericCronData{
 			Attributes: map[string]string{},
 		}
-		if data.Data == nil {
-			data.Data, _ = anypb.New(&cron.GenericCronData{})
-		}
-		if err := data.Data.UnmarshalTo(dest); err != nil {
-			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
-		}
-
-		// Unmarshal the cron data
-		if err := data.Data.UnmarshalTo(dest); err != nil {
+		if err := data.Unmarshal(dest); err != nil {
 			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
@@ -165,7 +156,7 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		}
 
 		// Marshal the updated cron data
-		if err := data.Data.MarshalFrom(dest); err != nil {
+		if err := data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated housekeeper (soft delete) cron data. %w", err)
 		}
 
@@ -177,15 +168,11 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		ctx, span := h.tracer.Start(ctx, "housekeeper.hard_delete")
 		defer span.End()
 
-		// Prepare the cron data structure
+		// Prepare and unmarshal the cron data structure
 		dest := &cron.GenericCronData{
 			Attributes: map[string]string{},
 		}
-		if data.Data == nil {
-			data.Data, _ = anypb.New(&cron.GenericCronData{})
-		}
-		// Unmarshal the cron data
-		if err := data.Data.UnmarshalTo(dest); err != nil {
+		if err := data.Unmarshal(dest); err != nil {
 			h.logger.Warn("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
@@ -195,7 +182,7 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		}
 
 		// Marshal the updated cron data
-		if err := data.Data.MarshalFrom(dest); err != nil {
+		if err := data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated housekeeper (hard delete) cron data. %w", err)
 		}
 

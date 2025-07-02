@@ -17,7 +17,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -117,10 +116,7 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		defer span.End()
 
 		dest := &cron.GenericCronData{}
-		if data.Data == nil {
-			data.Data, _ = anypb.New(&cron.GenericCronData{})
-		}
-		if err := data.Data.UnmarshalTo(dest); err != nil {
+		if err := data.Unmarshal(dest); err != nil {
 			h.logger.Warn("failed to unmarshal filestore housekeeper cron data", zap.Error(err))
 		}
 
@@ -138,6 +134,7 @@ func (h *Housekeeper) RegisterCronjobHandlers(hand *croner.Handlers) error {
 		dest.SetAttribute("deleted_files", strconv.FormatInt(deletions, 10))
 		dest.DeleteAttribute("loaded_dispatches")
 
+		// Marshal the updated cron data
 		if err := data.MarshalFrom(dest); err != nil {
 			return fmt.Errorf("failed to marshal updated filestore housekeeper cron data. %w", err)
 		}
