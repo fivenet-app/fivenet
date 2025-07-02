@@ -54,7 +54,7 @@ export const webSocket = useWebSocket(
         protocols: ['grpc-websocket-channel'],
         heartbeat: {
             message: heartbeatMsg,
-            interval: 45_000,
+            interval: 35_000,
             pongTimeout: 1_500,
         },
 

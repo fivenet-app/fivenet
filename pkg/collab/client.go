@@ -2,6 +2,7 @@ package collab
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"time"
 
@@ -65,8 +66,8 @@ func (c *Client) StartPresence(ctx context.Context) {
 	// Launch heartbeat + watcher
 	hbCtx, cancel := context.WithCancel(ctx)
 	c.hbCancel = cancel
-	go hbLoop(hbCtx, c.room.stateKV, c.presenceKey, c.firstKey, cid)
-	go firstWatch(hbCtx, c.room.stateKV, c.room, c.firstKey, cid, c.Id)
+	go hbLoop(hbCtx, c.room, c.presenceKey, c.firstKey, cid)
+	go firstWatch(hbCtx, c.room, c.firstKey, cid, c.Id)
 }
 
 func (c *Client) StopPresence() {
@@ -102,49 +103,76 @@ func (c *Client) SendLoop() error {
 }
 
 // hbLoop – resets TTL every 2 s
-func hbLoop(ctx context.Context, kv jetstream.KeyValue, pKey, fKey, cid string) {
+func hbLoop(ctx context.Context, room *CollabRoom, pKey, fKey, cid string) {
 	t := time.NewTicker(hbEvery)
 	defer t.Stop()
 
 	for {
 		select {
-		case <-t.C:
-			// Presence
-			kv.Put(ctx, pKey, nil)
+		case <-ctx.Done():
+			room.logger.Debug("hbLoop: context cancelled, exiting")
+			return
 
-			// Safe refresh of “first” (compare-and-swap)
-			if e, _ := kv.Get(ctx, fKey); e != nil && string(e.Value()) == cid {
-				if _, err := kv.Update(ctx, fKey, []byte(cid), e.Revision()); err != nil {
-					// If the update fails, it means another client has taken over as "first"
-					continue
-				}
+		case <-t.C:
+			// Refresh our presence key
+			if _, err := room.stateKV.Put(ctx, pKey, nil); err != nil {
+				room.logger.Warn("hbLoop: failed to refresh presence key", zap.String("key", pKey), zap.Error(err))
+				continue
 			}
 
-		case <-ctx.Done():
-			return
+			// Refresh the “first” key only if we still own it
+			entry, err := room.stateKV.Get(ctx, fKey)
+			if err != nil {
+				if !errors.Is(err, jetstream.ErrKeyNotFound) {
+					room.logger.Warn("hbLoop: error fetching first key", zap.String("key", fKey), zap.Error(err))
+				}
+				// Either not found or error → skip update this round
+				continue
+			}
+			if string(entry.Value()) != cid {
+				// Someone else owns it now
+				continue
+			}
+			if _, err := room.stateKV.Update(ctx, fKey, []byte(cid), entry.Revision()); err != nil {
+				room.logger.Warn("hbLoop: failed to refresh first-owner key", zap.String("key", fKey), zap.Error(err))
+			}
 		}
 	}
 }
 
-// firstWatch – auto-promotion when “first” key disappears
-func firstWatch(ctx context.Context, kv jetstream.KeyValue, room *CollabRoom,
+// firstWatch – auto-promotion when "first" key disappears
+func firstWatch(ctx context.Context, room *CollabRoom,
 	fKey, cid string, myID uint64,
 ) {
-	sub, _ := kv.Watch(ctx, fKey, jetstream.UpdatesOnly())
+	sub, err := room.stateKV.Watch(ctx, fKey, jetstream.UpdatesOnly())
+	if err != nil {
+		room.logger.Error("failed to watch first key", zap.Error(err))
+		return
+	}
+
 	for {
 		select {
-		case upd := <-sub.Updates():
+		case <-ctx.Done():
+			room.logger.Debug("firstWatch: context cancelled, exiting")
+			return
+
+		case upd, ok := <-sub.Updates():
+			if !ok {
+				room.logger.Info("firstWatcher: Updates channel closed")
+				return
+			}
 			if upd == nil {
 				continue
 			} // catch-up barrier
 
 			if upd.Operation() == jetstream.KeyValueDelete {
-				if _, err := kv.Create(ctx, fKey, []byte(cid), jetstream.KeyTTL(keyTTL)); err == nil {
+				// Try to re-CAS this key
+				if _, err := room.stateKV.Create(ctx, fKey, []byte(cid), jetstream.KeyTTL(keyTTL)); err == nil {
 					room.notifyFirst(myID)
+				} else {
+					room.logger.Debug("firstWatcher: CAS failed, another owner exists", zap.Error(err))
 				}
 			}
-		case <-ctx.Done():
-			return
 		}
 	}
 }

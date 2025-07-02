@@ -224,7 +224,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	// GRPC-web and websocket handling
 	wrapperGrpc := grpcws.WrapServer(p.GRPCSrv,
 		grpcws.WithAllowedRequestHeaders(allowedHeaders),
-		grpcws.WithWebsocketsMessageReadLimit(4*1024*1024), // 4 MB in bytes
+		grpcws.WithWebsocketsMessageReadLimit(1*1024*1024), // 1 MB
 	)
 	e.GET("/api/grpcws", func(c *gin.Context) {
 		// Check if the request has a session cookie
