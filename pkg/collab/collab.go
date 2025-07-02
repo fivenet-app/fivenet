@@ -104,7 +104,7 @@ func (s *CollabServer) Start(ctx context.Context) error {
 		return fmt.Errorf("failed to create/update stream. %w", err)
 	}
 
-	if err := s.js.DeleteKeyValue(ctx, "COLALB_STATE"); err != nil && !errors.Is(err, jetstream.ErrBucketNotFound) {
+	if err := s.js.DeleteKeyValue(ctx, "COLLAB_STATE"); err != nil && !errors.Is(err, jetstream.ErrBucketNotFound) {
 		return fmt.Errorf("failed to delete old collab state key-value store. %w", err)
 	}
 
