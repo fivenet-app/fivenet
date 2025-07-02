@@ -72,6 +72,16 @@ func init() {
 
 		MinDays: 14,
 	})
+
+	// Remove heatmaps of deleted jobs
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:     table.FivenetCentrumDispatchesHeatmaps,
+		JobColumn: table.FivenetCentrumDispatchesHeatmaps.Job,
+
+		TimestampColumn: table.FivenetCentrumDispatchesHeatmaps.GeneratedAt,
+
+		MinDays: 14,
+	})
 }
 
 type Server struct {

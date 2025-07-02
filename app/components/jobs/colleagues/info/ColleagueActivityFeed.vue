@@ -59,6 +59,10 @@ type Schema = z.output<typeof schema>;
 
 const query = useSearchForm('jobs_colleagues_activity' + !props.userId ? '' : '_individual', schema);
 
+if (props.userId) {
+    query.colleagues = [props.userId];
+}
+
 const {
     data,
     pending: loading,

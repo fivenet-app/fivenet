@@ -33,7 +33,7 @@ const (
 	DeleteUnitDays     = 14
 )
 
-var Module = fx.Module("centrum_manager_housekeeper",
+var Module = fx.Module("centrum_housekeeper",
 	fx.Provide(
 		New,
 	))
@@ -176,12 +176,22 @@ func (s *Housekeeper) start(ctx context.Context) {
 }
 
 func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IRegistry) error {
-	if err := registry.UnregisterCronjob(ctx, "centrum.manager_housekeeper.dispatch_deduplication"); err != nil {
-		return err
+	for _, c := range []string{
+		"centrum.manager_housekeeper.dispatch_deduplication",
+		"centrum.manager_housekeeper.load_new_dispatches",
+		"centrum.manager_housekeeper.dispatch_assignment_expiration",
+		"centrum.manager_housekeeper.cleanup_units",
+		"centrum.manager_housekeeper.cancel_old_dispatches",
+		"centrum.manager_housekeeper.delete_old_dispatches",
+		"centrum.manager_housekeeper.delete_old_dispatches_from_kv",
+	} {
+		if err := registry.UnregisterCronjob(ctx, c); err != nil {
+			return err
+		}
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.manager_housekeeper.load_new_dispatches",
+		Name:     "centrum.housekeeper.load_new_dispatches",
 		Schedule: "*/4 * * * * * *", // Every 4 seconds
 		Timeout:  durationpb.New(3 * time.Second),
 	}); err != nil {
@@ -189,7 +199,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.manager_housekeeper.dispatch_assignment_expiration",
+		Name:     "centrum.housekeeper.dispatch_assignment_expiration",
 		Schedule: "*/2 * * * * * *", // Every 2 seconds
 		Timeout:  durationpb.New(3 * time.Second),
 	}); err != nil {
@@ -197,7 +207,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.manager_housekeeper.cleanup_units",
+		Name:     "centrum.housekeeper.cleanup_units",
 		Schedule: "15 * * * *", // Every hour at 15 minutes past the hour
 		Timeout:  durationpb.New(6 * time.Second),
 	}); err != nil {
@@ -205,7 +215,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
+		Name:     "centrum.housekeeper.cancel_old_dispatches",
 		Schedule: "*/12 * * * * * *", // Every 12 hours
 		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
@@ -213,7 +223,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.manager_housekeeper.delete_old_dispatches",
+		Name:     "centrum.housekeeper.delete_old_dispatches",
 		Schedule: "@hourly", // Hourly
 		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
@@ -221,7 +231,7 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 	}
 
 	if err := registry.RegisterCronjob(ctx, &cron.Cronjob{
-		Name:     "centrum.manager_housekeeper.delete_old_dispatches_from_kv",
+		Name:     "centrum.housekeeper.delete_old_dispatches_from_kv",
 		Schedule: "@always", // Every minute
 		Timeout:  durationpb.New(30 * time.Second),
 	}); err != nil {
@@ -232,12 +242,12 @@ func (s *Housekeeper) RegisterCronjobs(ctx context.Context, registry croner.IReg
 }
 
 func (s *Housekeeper) RegisterCronjobHandlers(h *croner.Handlers) error {
-	h.Add("centrum.manager_housekeeper.load_new_dispatches", s.loadNewDispatches)
-	h.Add("centrum.manager_housekeeper.dispatch_assignment_expiration", s.runHandleDispatchAssignmentExpiration)
-	h.Add("centrum.manager_housekeeper.cleanup_units", s.runCleanupUnits)
-	h.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
-	h.Add("centrum.manager_housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
-	h.Add("centrum.manager_housekeeper.delete_old_dispatches_from_kv", s.runDeleteOldDispatchesFromKV)
+	h.Add("centrum.housekeeper.load_new_dispatches", s.loadNewDispatches)
+	h.Add("centrum.housekeeper.dispatch_assignment_expiration", s.runHandleDispatchAssignmentExpiration)
+	h.Add("centrum.housekeeper.cleanup_units", s.runCleanupUnits)
+	h.Add("centrum.housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
+	h.Add("centrum.housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
+	h.Add("centrum.housekeeper.delete_old_dispatches_from_kv", s.runDeleteOldDispatchesFromKV)
 
 	return nil
 }

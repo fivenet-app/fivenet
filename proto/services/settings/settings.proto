@@ -181,6 +181,12 @@ message DeleteJobLogoRequest {}
 
 message DeleteJobLogoResponse {}
 
+message GetStatusRequest {}
+
+message GetStatusResponse {
+  // TODO
+}
+
 service SettingsService {
   // @perm
   rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
@@ -228,4 +234,7 @@ service SettingsService {
   rpc UploadJobLogo(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
   // @perm: Name=SetJobProps
   rpc DeleteJobLogo(DeleteJobLogoRequest) returns (DeleteJobLogoResponse);
+
+  // @perm: Name=Superuser
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
 }
