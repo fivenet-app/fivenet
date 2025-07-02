@@ -38,6 +38,7 @@ package leaderelection
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/events"
@@ -189,7 +190,7 @@ func (le *LeaderElector) tryAcquire() {
 		le.promote()
 		return
 	}
-	if err != jetstream.ErrKeyExists {
+	if !errors.Is(err, jetstream.ErrKeyExists) {
 		le.logger.Warn("tryAcquire", zap.Error(err))
 	}
 }
