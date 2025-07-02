@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import type { GroupedUnits } from '~/components/centrum/helpers';
-import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
+import { type GroupedUnits, statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
-import type { Unit } from '~~/gen/ts/resources/centrum/units';
-import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
     dispatchId: number;

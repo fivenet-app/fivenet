@@ -11,8 +11,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
-import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { type Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
     defineProps<{

@@ -2,8 +2,7 @@
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ActivityPageUpdatedDiff from '~/components/wiki/activity/ActivityPageUpdatedDiff.vue';
-import type { PageActivity } from '~~/gen/ts/resources/wiki/activity';
-import { PageActivityType } from '~~/gen/ts/resources/wiki/activity';
+import { type PageActivity, PageActivityType } from '~~/gen/ts/resources/wiki/activity';
 import { getPageAtivityIcon } from './helpers';
 
 defineProps<{

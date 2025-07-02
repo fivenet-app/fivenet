@@ -7,8 +7,7 @@ import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.cli
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/stores/livemap';
 import type { Coordinate } from '~/types/livemap';
-import type { MarkerMarker } from '~~/gen/ts/resources/livemap/marker_marker';
-import { MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
+import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/marker_marker';
 
 const props = defineProps<{
     location?: Coordinate;

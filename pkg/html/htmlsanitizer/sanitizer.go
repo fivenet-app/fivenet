@@ -27,6 +27,9 @@ var (
 var (
 	// colorRegex matches valid color values for style attributes.
 	colorRegex = regexp.MustCompile(`(?mi)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
+	// fontFamilyRegex matches valid font family names for style attributes.
+	fontFamilyRegex = regexp.MustCompile(`(?mi)^(arial,\shelvetica,\ssans-serif|times new roman,\stimes,\sserif|Comic Sans MS,\sComic Sans|serif|monospace|DM Sans)$`)
+
 	// prosemirrorClassRegex matches ProseMirror class names for editor compatibility.
 	prosemirrorClassRegex = regexp.MustCompile(`(?m)^ProseMirror-[A-Za-z]+$`)
 
@@ -73,6 +76,7 @@ func setupSanitizer() {
 
 	// Allow the 'color' property with valid RGB(A) hex values only (on any element allowed a 'style' attribute)
 	sanitizer.AllowStyles("color").Matching(colorRegex).Globally()
+	sanitizer.AllowStyles("font-family").Matching(fontFamilyRegex).Globally()
 	sanitizer.AllowStyles("text-align").Globally()
 	sanitizer.AllowStyles("font-weight").Globally()
 	sanitizer.AllowStyles("font-size").Globally()

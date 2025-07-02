@@ -4,8 +4,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/stores/auth';
 import { getUser, useClipboardStore } from '~/stores/clipboard';
-import type { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
-import { DocRelation } from '~~/gen/ts/resources/documents/documents';
+import { type DocumentRelation, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { User } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{

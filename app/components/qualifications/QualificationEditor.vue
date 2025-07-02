@@ -3,22 +3,22 @@ import type { UForm } from '#components';
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
+import { type AccessType, enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
 import type { Content } from '~/types/history';
 import type { File } from '~~/gen/ts/resources/file/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { QualificationJobAccess } from '~~/gen/ts/resources/qualifications/access';
-import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
+import { type QualificationJobAccess, AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
-import type {
-    Qualification,
-    QualificationExamSettings,
-    QualificationRequirement,
-    QualificationShort,
+import {
+    type Qualification,
+    type QualificationExamSettings,
+    type QualificationRequirement,
+    type QualificationShort,
+    AutoGradeMode,
+    QualificationExamMode,
 } from '~~/gen/ts/resources/qualifications/qualifications';
-import { AutoGradeMode, QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UpdateQualificationRequest, UpdateQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import BackButton from '../partials/BackButton.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';

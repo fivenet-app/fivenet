@@ -2,8 +2,7 @@
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideover.vue';
 import { RGBBlack } from '~/utils/color';
-import type { Unit } from '~~/gen/ts/resources/centrum/units';
-import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
     unit: Unit;

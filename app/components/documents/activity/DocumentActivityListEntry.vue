@@ -4,8 +4,7 @@ import ActivityDocUpdatedDiff from '~/components/documents/activity/ActivityDocU
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
-import type { DocActivity } from '~~/gen/ts/resources/documents/activity';
-import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
+import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { getDocAtivityIcon } from '../helpers';
 import ActivityAccessUpdated from './ActivityAccessUpdated.vue';
 

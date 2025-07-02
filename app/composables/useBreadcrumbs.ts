@@ -1,8 +1,15 @@
 // Based upon https://github.com/harlan-zw/nuxt-seo-kit/blob/8517ccf0fedefdb93af869f813e44a58e944d848/layer/composables/breacrumbs.ts
 // Licensed under MIT License © 2022-PRESENT Harlan Wilton, see https://github.com/harlan-zw/nuxt-seo-kit/blob/8517ccf0fedefdb93af869f813e44a58e944d848/README.md#license
 
-import type { ParsedURL } from 'ufo';
-import { hasTrailingSlash, parseURL, stringifyParsedURL, withBase, withTrailingSlash, withoutTrailingSlash } from 'ufo';
+import {
+    type ParsedURL,
+    hasTrailingSlash,
+    parseURL,
+    stringifyParsedURL,
+    withBase,
+    withTrailingSlash,
+    withoutTrailingSlash,
+} from 'ufo';
 import type { RouteRecord } from 'vue-router';
 
 function createInternalLinkResolver(absolute?: boolean) {

@@ -10,8 +10,7 @@ import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerP
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/stores/completor';
-import type { AuditEntry } from '~~/gen/ts/resources/audit/audit';
-import { EventType } from '~~/gen/ts/resources/audit/audit';
+import { type AuditEntry, EventType } from '~~/gen/ts/resources/audit/audit';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/settings/settings';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';

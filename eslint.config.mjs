@@ -27,6 +27,13 @@ export default withNuxt(
             ],
             '@typescript-eslint/unified-signatures': 'off',
             '@typescript-eslint/no-unused-expressions': 'off',
+            'import/consistent-type-specifier-style': 'off',
+            'import/no-duplicates': [
+                'error',
+                {
+                    'prefer-inline': true,
+                },
+            ],
         },
     },
     {

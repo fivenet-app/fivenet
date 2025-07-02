@@ -7,8 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { CentrumAccessLevel, type CentrumJobAccess } from '~~/gen/ts/resources/centrum/access';
-import type { Settings } from '~~/gen/ts/resources/centrum/settings';
-import { CentrumMode, CentrumType } from '~~/gen/ts/resources/centrum/settings';
+import { CentrumMode, CentrumType, type Settings } from '~~/gen/ts/resources/centrum/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();

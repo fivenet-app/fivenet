@@ -1,8 +1,7 @@
 import type { BadgeColor, BadgeVariant } from '#ui/types';
 import type { CentrumAccess, CentrumAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import type { Unit } from '~~/gen/ts/resources/centrum/units';
-import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
+import { type Unit, StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import type { UnitAccess, UnitAccessLevel } from '~~/gen/ts/resources/centrum/units_access';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
