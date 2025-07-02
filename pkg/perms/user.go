@@ -83,6 +83,11 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 		return false
 	}
 
+	// Don't check permissions for superusers and don't cache the result
+	if userInfo.Superuser {
+		return true
+	}
+
 	cacheKey := userCacheKey{
 		userId: userInfo.UserId,
 		permId: permId,
@@ -92,11 +97,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 		return result
 	}
 
-	if userInfo.Superuser {
-		result = true
-	} else {
-		result = p.checkIfCan(permId, userInfo)
-	}
+	result = p.checkIfCan(permId, userInfo)
 
 	p.userCanCache.Put(cacheKey, result, p.userCanCacheTTL)
 

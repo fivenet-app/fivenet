@@ -236,6 +236,9 @@ type OAuth2Mapping struct {
 type Auth struct {
 	SuperuserGroups []string `yaml:"superuserGroups"`
 	SuperuserUsers  []string `yaml:"superuserUsers"`
+
+	PermsCacheSize int           `default:"1024" yaml:"permsCacheSize"`
+	PermsCacheTTL  time.Duration `default:"30s" yaml:"permsCacheTTL"`
 }
 
 type DispatchCenter struct {

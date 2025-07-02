@@ -92,7 +92,7 @@ func (s *Housekeeper) tryDeduplicate(ctx context.Context, dsp *centrum.Dispatch)
 
 	settings, err := s.settings.Get(ctx, job)
 	if err != nil {
-		return fmt.Errorf("failed to get settings for job %s: %w", job, err)
+		return fmt.Errorf("failed to get settings for job %s. %w", job, err)
 	}
 	if !settings.Configuration.DeduplicationEnabled {
 		return nil

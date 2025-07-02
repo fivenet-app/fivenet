@@ -137,7 +137,7 @@ type Params struct {
 func New(p Params) (Permissions, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	userCanCache := cache.NewLRUCache[userCacheKey, bool](1024)
+	userCanCache := cache.NewLRUCache[userCacheKey, bool](p.Cfg.Auth.PermsCacheSize)
 
 	logger := p.Logger.WithOptions(zap.IncreaseLevel(p.Cfg.LogLevelOverrides.Get(config.LoggingComponentPerms, p.Cfg.LogLevel)))
 
@@ -163,12 +163,12 @@ func New(p Params) (Permissions, error) {
 		attrsRoleMap:  xsync.NewMap[uint64, *xsync.Map[uint64, *cacheRoleAttr]](),
 		attrsPermsMap: xsync.NewMap[uint64, *xsync.Map[string, uint64]](),
 
-		userCanCacheTTL: 30 * time.Second,
+		userCanCacheTTL: p.Cfg.Auth.PermsCacheTTL,
 		userCanCache:    userCanCache,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		go userCanCache.StartJanitor(ctxCancel, 31*time.Second)
+		go userCanCache.StartJanitor(ctxCancel, p.Cfg.Auth.PermsCacheTTL+1*time.Second)
 
 		return ps.init(ctxCancel, ctxStartup, p)
 	}))

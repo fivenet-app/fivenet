@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UPopover v-model:open="open">
         <UTooltip :text="$t('components.partials.TiptapEditor.image')" :popper="{ placement: 'top' }">
-            <UButton icon="i-mdi-image" color="white" variant="ghost" />
+            <UButton icon="i-mdi-image" color="white" variant="ghost" :disabled="disabled" />
         </UTooltip>
 
         <template #panel>
@@ -127,8 +127,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         block
                         icon="i-mdi-images"
                         :label="$t('components.partials.TiptapEditor.file_list')"
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
+                        :disabled="disabled || !canSubmit"
+                        :loading="disabled || !canSubmit"
                         @click="$emit('openFileList')"
                     />
                 </UButtonGroup>
@@ -146,8 +146,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             type="submit"
                             icon="i-mdi-image"
                             :label="$t('common.insert')"
-                            :disabled="!canSubmit || !imageState.url"
-                            :loading="!canSubmit"
+                            :disabled="disabled || !canSubmit || !imageState.url"
+                            :loading="disabled || !canSubmit"
                         />
                     </UButtonGroup>
                 </UForm>
@@ -163,7 +163,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <div class="flex flex-col items-center justify-center pb-4 pt-3">
                                 <UIcon
                                     class="size-14"
-                                    :class="!canSubmit && 'animate-spin'"
+                                    :class="(disabled || !canSubmit) && 'animate-spin'"
                                     :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
                                 />
 

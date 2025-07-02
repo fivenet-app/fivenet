@@ -23,8 +23,6 @@ type Client struct {
 	UserId int32
 	// Role is the role of the client in the collaboration session.
 	Role collab.ClientRole
-	// RoomId is the ID of the room the client is connected to.
-	RoomId uint64
 	// Stream is the bidirectional gRPC stream for client-server communication.
 	Stream grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]
 	// SendCh is a buffered channel for outgoing server packets.
@@ -42,7 +40,6 @@ func NewClient(logger *zap.Logger, clientId uint64, room *CollabRoom, UserId int
 		Id:     clientId,
 		Role:   role,
 		room:   room,
-		RoomId: room.Id,
 		Stream: stream,
 		// Buffered channel
 		SendCh: make(chan *collab.ServerPacket, 32),
@@ -53,7 +50,7 @@ func (c *Client) StartPresence(ctx context.Context) {
 	stateKV := c.room.stateKV
 
 	cid := strconv.FormatUint(c.Id, 10)
-	roomId := strconv.FormatUint(c.RoomId, 10)
+	roomId := strconv.FormatUint(c.room.Id, 10)
 	c.presenceKey = "presence." + roomId + "." + cid
 	c.firstKey = "first." + roomId
 
@@ -112,14 +109,17 @@ func hbLoop(ctx context.Context, kv jetstream.KeyValue, pKey, fKey, cid string) 
 	for {
 		select {
 		case <-t.C:
-			// presence
-			if _, err := kv.Put(ctx, pKey, nil); err != nil {
+			// Presence
+			kv.Put(ctx, pKey, nil)
+
+			// Safe refresh of “first” (compare-and-swap)
+			if e, _ := kv.Get(ctx, fKey); e != nil && string(e.Value()) == cid {
+				if _, err := kv.Update(ctx, fKey, []byte(cid), e.Revision()); err != nil {
+					// If the update fails, it means another client has taken over as "first"
+					continue
+				}
 			}
 
-			// safe refresh of “first” (compare-and-swap)
-			if e, _ := kv.Get(ctx, fKey); e != nil && string(e.Value()) == cid {
-				kv.Update(ctx, fKey, []byte(cid), e.Revision())
-			}
 		case <-ctx.Done():
 			return
 		}

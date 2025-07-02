@@ -285,7 +285,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 		dspId, err := centrumutils.ExtractIDString(key)
 		if err != nil {
 			s.logger.Error("failed to extract dispatch ID from key", zap.String("key", key), zap.Error(err))
-			errs = multierr.Append(errs, fmt.Errorf("failed to extract dispatch ID from key %q: %w", key, err))
+			errs = multierr.Append(errs, fmt.Errorf("failed to extract dispatch ID from key %q. %w", key, err))
 			continue
 		}
 

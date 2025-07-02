@@ -30,7 +30,7 @@ func registerStreams(ctx context.Context, js *events.JSWrapper) error {
 		Retention:   jetstream.InterestPolicy,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, pollStreamCfg); err != nil {
-		return fmt.Errorf("failed to create/update stream %s: %w", PollStreamName, err)
+		return fmt.Errorf("failed to create/update stream %s. %w", PollStreamName, err)
 	}
 
 	// Stream for userinfo diffs
@@ -41,7 +41,7 @@ func registerStreams(ctx context.Context, js *events.JSWrapper) error {
 		Retention:   jetstream.InterestPolicy,
 	}
 	if _, err := js.CreateOrUpdateStream(ctx, userinfoStreamCfg); err != nil {
-		return fmt.Errorf("failed to create/update stream %s: %w", UserInfoStreamName, err)
+		return fmt.Errorf("failed to create/update stream %s. %w", UserInfoStreamName, err)
 	}
 
 	return nil

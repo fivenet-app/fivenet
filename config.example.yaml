@@ -117,6 +117,8 @@ auth:
     - projektleiter
     - teamleitung
   superuserUsers: []
+  #permsCacheSize: 1024
+  #permsCacheTTL: 30s
 
 dispatchCenter:
   type: "gksphone"

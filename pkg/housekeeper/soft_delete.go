@@ -29,7 +29,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 
 	var jobs []string
 	if err := stmt.QueryContext(ctx, h.db, &jobs); err != nil && !errors.Is(err, qrm.ErrNoRows) {
-		return fmt.Errorf("failed to query jobs: %w", err)
+		return fmt.Errorf("failed to query jobs. %w", err)
 	}
 
 	if len(jobs) == 0 {
@@ -71,7 +71,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 
 	rowsAffected, err := h.SoftDeleteJobData(ctx, tbl, jobName)
 	if err != nil {
-		return fmt.Errorf("failed to soft delete rows for table %s (job: %s): %w", tbl.Table.TableName(), jobName, err)
+		return fmt.Errorf("failed to soft delete rows for table %s (job: %s). %w", tbl.Table.TableName(), jobName, err)
 	}
 
 	metricSoftDeleteAffectedRows.Set(float64(rowsAffected))
@@ -87,7 +87,7 @@ func (h *Housekeeper) runJobSoftDelete(ctx context.Context, data *cron.GenericCr
 					LIMIT(1)
 
 				if _, err := delStmt.ExecContext(ctx, h.db); err != nil {
-					return fmt.Errorf("failed to delete job %s: %w", jobName, err)
+					return fmt.Errorf("failed to delete job %s. %w", jobName, err)
 				}
 			} else {
 				h.logger.Debug("dry run: delete job props", zap.String("query", tJobProps.DELETE().

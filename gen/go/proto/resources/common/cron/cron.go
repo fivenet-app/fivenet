@@ -103,13 +103,13 @@ func (x *CronjobData) Unmarshal(dest proto.Message) error {
 	if x.Data != nil && x.Data.TypeUrl == expectedTypeURL {
 		// Valid type - attempt to unmarshal
 		if err := x.Data.UnmarshalTo(dest); err != nil {
-			return fmt.Errorf("failed to unmarshal cron data: %w", err)
+			return fmt.Errorf("failed to unmarshal cron data. %w", err)
 		}
 	} else {
 		// Reset to empty message of expected type
 		anyMsg, err := anypb.New(dest)
 		if err != nil {
-			return fmt.Errorf("failed to create new Any for cron data: %w", err)
+			return fmt.Errorf("failed to create new Any for cron data. %w", err)
 		}
 		x.Data = anyMsg
 	}
@@ -124,7 +124,7 @@ func (x *CronjobData) MarshalFrom(src proto.Message) error {
 
 	anyMsg, err := anypb.New(src)
 	if err != nil {
-		return fmt.Errorf("failed to marshal cron data into Any: %w", err)
+		return fmt.Errorf("failed to marshal cron data into Any. %w", err)
 	}
 
 	x.Data = anyMsg

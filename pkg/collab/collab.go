@@ -29,7 +29,7 @@ var metricTotalCollabRooms = promauto.NewGaugeVec(prometheus.GaugeOpts{
 }, []string{"category"})
 
 const (
-	kvBucket = "COLLAB_STATE"
+	kvBucket = "collab_state"
 	keyTTL   = 3 * time.Second // key expires if not touched
 	hbEvery  = 2 * time.Second // heartbeat period (< keyTTL)
 )
@@ -78,6 +78,7 @@ func New(ctx context.Context, logger *zap.Logger, js *events.JSWrapper, category
 func (s *CollabServer) Start(ctx context.Context) error {
 	stateKV, err := s.js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:         kvBucket,
+		Description:    "Collab state Store",
 		TTL:            keyTTL,
 		History:        1,
 		LimitMarkerTTL: 2 * keyTTL,
@@ -101,6 +102,10 @@ func (s *CollabServer) Start(ctx context.Context) error {
 
 	if _, err := s.js.CreateOrUpdateStream(ctx, cfg); err != nil {
 		return fmt.Errorf("failed to create/update stream. %w", err)
+	}
+
+	if err := s.js.DeleteKeyValue(ctx, "collab_state"); err != nil && !errors.Is(err, jetstream.ErrBucketNotFound) {
+		return fmt.Errorf("failed to delete old collab state key-value store. %w", err)
 	}
 
 	return nil
