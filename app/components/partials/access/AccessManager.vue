@@ -135,6 +135,7 @@ function syncAccessFromProps() {
 
 // Helper to update a reactive array in-place (add, update, remove)
 function syncArray<T extends { id: number }>(source: T[], target: T[]) {
+    console.log('syncArray', source, target);
     // Remove items not in target
     for (let i = source.length - 1; i >= 0; i--) {
         if (!target.find((t) => t.id === source[i]!.id)) {

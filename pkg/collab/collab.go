@@ -30,8 +30,10 @@ var metricTotalCollabRooms = promauto.NewGaugeVec(prometheus.GaugeOpts{
 
 const (
 	kvBucket = "collab_state"
-	keyTTL   = 3 * time.Second // key expires if not touched
-	hbEvery  = 2 * time.Second // heartbeat period (< keyTTL)
+	// key expires if not touched
+	keyTTL = 3 * time.Second
+	// heartbeat period (< keyTTL)
+	hbEvery = time.Duration(1.5 * float64(time.Second))
 )
 
 // CollabServer manages collaborative editing rooms and client connections.
@@ -183,7 +185,7 @@ func (s *CollabServer) HandleClient(ctx context.Context, targetId uint64, userId
 	}
 
 	client := NewClient(s.logger.Named("client"), clientId, room, userId, role, stream)
-	room.Join(client)
+	room.Join(ctx, client)
 	defer func() {
 		// If the room is empty after the client leaves, remove it
 		if room.Leave(clientId) {

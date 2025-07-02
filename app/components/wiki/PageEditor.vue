@@ -216,7 +216,11 @@ function setFromProps(): void {
 const onSync = (s: boolean) => {
     if (!s) return;
 
-    setFromProps();
+    if (ydoc.getXmlFragment('content').length === 0) {
+        logger.info('PageEditor - Content is empty, setting from props');
+        // If the content is empty, we need to set it from the props
+        setFromProps();
+    }
     provider.off('sync', onSync);
 };
 provider.on('sync', onSync);

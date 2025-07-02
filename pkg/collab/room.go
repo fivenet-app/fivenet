@@ -94,13 +94,13 @@ func NewCollabRoom(ctx context.Context, logger *zap.Logger, stateKV jetstream.Ke
 }
 
 // Join adds a client to the room and increments the connected client metric.
-func (r *CollabRoom) Join(c *Client) {
+func (r *CollabRoom) Join(ctx context.Context, c *Client) {
 	r.mu.Lock()
 	r.clients[c.Id] = c
 	clientCount := len(r.clients)
 	r.mu.Unlock()
 
-	c.StartPresence(r.ctx)
+	c.StartPresence(ctx)
 
 	metricTotalConnectedClients.WithLabelValues(r.category).Inc()
 	r.logger.Debug("client joined", zap.Uint64("client_id", c.Id), zap.Int("clients", clientCount))

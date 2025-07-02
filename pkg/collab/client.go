@@ -168,8 +168,10 @@ func firstWatch(ctx context.Context, room *CollabRoom, fKey, cid string, myID ui
 				// Try to re-CAS this key
 				if _, err := room.stateKV.Create(ctx, fKey, []byte(cid), jetstream.KeyTTL(keyTTL)); err == nil {
 					room.notifyFirst(myID)
-				} else {
+				} else if errors.Is(err, jetstream.ErrKeyExists) {
 					room.logger.Debug("firstWatcher: CAS failed, another owner exists", zap.Error(err))
+				} else {
+					room.logger.Error("firstWatcher: failed to re-CAS first key", zap.Error(err))
 				}
 			}
 		}

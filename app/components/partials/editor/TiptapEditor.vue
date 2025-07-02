@@ -308,7 +308,14 @@ if (props.enableCollab && ydoc && yjsProvider) {
         useTimeoutFn(() => (loading.value = false), 250);
     };
     yjsProvider.on('sync', onSync);
-    onBeforeUnmount(() => yjsProvider.off('sync', onSync));
+
+    const onLoading = (state: boolean) => (loading.value = state);
+    yjsProvider.on('loading', onLoading);
+
+    onBeforeUnmount(() => {
+        yjsProvider.off('sync', onSync);
+        yjsProvider.off('loading', onLoading);
+    });
     onMounted(() => yjsProvider.connect());
 } else {
     extensions.push(History);

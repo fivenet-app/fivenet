@@ -79,7 +79,11 @@ const onSync = (s: boolean) => {
     if (!s) return;
     logger.debug('DocumentEditor - Sync received, setting state from props', s);
 
-    setFromProps();
+    if (ydoc.getXmlFragment('content').length === 0) {
+        logger.info('DocumentEditor - Content is empty, setting from props');
+        // If the content is empty, we need to set it from the props
+        setFromProps();
+    }
     provider.off('sync', onSync);
 };
 provider.on('sync', onSync);

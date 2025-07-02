@@ -22,6 +22,7 @@ interface GrpcProviderOpts {
 type Events = {
     sync(synced: boolean, doc: Y.Doc): void;
     saved(): void;
+    loading(loading: boolean): void;
 };
 
 export default class GrpcProvider extends ObservableV2<Events> {
@@ -222,7 +223,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
         });
 
         this.emit('sync', [false, this.ydoc]);
-        this.synced = false;
+        this.emit('loading', [true]);
 
         const delay = this.opts.reconnectDelay?.(this.reconnectAttempt) ?? Math.min(1000 * 2 ** this.reconnectAttempt, 32000);
         this.reconnectAttempt++;
@@ -239,6 +240,8 @@ export default class GrpcProvider extends ObservableV2<Events> {
             this.emit('sync', [true, this.ydoc]);
             logger.info('Post sync emit');
         }
+
+        this.emit('loading', [false]);
     }
 
     // Yjs to Server

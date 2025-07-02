@@ -121,7 +121,7 @@ export function useYArray<T extends object | Primitive>(
     };
 
     if (provider) {
-        provider.on('sync', onSync);
+        provider.once('sync', onSync);
     } else {
         init();
     }
@@ -222,7 +222,7 @@ export function useYArrayFiltered<T extends object>(
     };
 
     if (provider) {
-        provider.on('sync', onSync);
+        provider.once('sync', onSync);
     } else {
         init();
     }
@@ -344,7 +344,7 @@ export function useYMap<T extends Record<string, any>>(
     };
 
     if (provider) {
-        provider.on('sync', onSync);
+        provider.once('sync', onSync);
     } else {
         init();
     }
@@ -500,7 +500,7 @@ function useYArrayOfObjects(yarr: Y.Array<Y.Map<unknown>>, list: Ref<YStateMap[]
     };
 
     if (provider) {
-        provider.on('sync', onSync);
+        provider.once('sync', onSync);
     } else {
         init();
     }
@@ -646,7 +646,7 @@ export function useYObject<T extends Record<string, any>>(
 
     // Wait for provider "sync" event before init, or init immediately if no provider
     if (provider) {
-        provider.on('sync', onSync);
+        provider.once('sync', onSync);
     } else {
         init();
     }

@@ -114,7 +114,7 @@ export function useYText(yText: Y.Text, textRef?: Ref<string>, opts: YjsSyncOpti
     };
 
     if (provider) {
-        provider.on('sync', onSync);
+        provider.once('sync', onSync);
     } else {
         init();
     }
@@ -207,7 +207,7 @@ export function useYBoolean(
     };
 
     if (provider) {
-        provider.on('sync', onSync);
+        provider.once('sync', onSync);
     } else {
         init();
     }
@@ -272,7 +272,7 @@ export function useYNumber(yMap: Y.Map<unknown>, key: string, numRef?: Ref<numbe
     };
 
     if (provider) {
-        provider.on('sync', onSync);
+        provider.once('sync', onSync);
     } else {
         init();
     }
