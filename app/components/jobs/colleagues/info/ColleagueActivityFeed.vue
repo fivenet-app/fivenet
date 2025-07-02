@@ -57,9 +57,9 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = useSearchForm('jobs_colleagues_activity' + !props.userId ? '' : '_individual', schema);
+const query = useSearchForm('jobs_colleagues_activity' + (props.userId !== undefined ? '' : '_individual'), schema);
 
-if (props.userId) {
+if (props.userId !== undefined) {
     query.colleagues = [props.userId];
 }
 
@@ -80,7 +80,7 @@ async function listColleagueActivity(values: Schema): Promise<ListColleagueActiv
                 offset: calculateOffset(values.page, data.value?.pagination),
             },
             sort: values.sort,
-            userIds: props.userId ? [props.userId] : values.colleagues,
+            userIds: values.colleagues,
             activityTypes: values.types,
         });
         const { response } = await call;
