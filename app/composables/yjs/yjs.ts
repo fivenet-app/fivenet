@@ -166,11 +166,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                     } else if (msg.msg.syncStep.step === 2) {
                         Y.applyUpdate(this.ydoc, msg.msg.syncStep.data);
 
-                        if (!this.synced) {
-                            this.synced = true;
-                            this.ydoc.emit('sync', [true, this.ydoc]);
-                            this.emit('sync', [true, this.ydoc]);
-                        }
+                        this.triggerSync();
                     }
 
                     break;
@@ -204,7 +200,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                     if (!this.authoritative) {
                         this.authoritative = true;
 
-                        this.triggerSync(true); // Step-0: seed the room (again), force sync
+                        this.triggerSync(); // Step-0: seed the room (again), force sync
                     }
                     break;
                 }
@@ -233,9 +229,9 @@ export default class GrpcProvider extends ObservableV2<Events> {
         useTimeoutFn(() => this.connect(), delay);
     }
 
-    private triggerSync(force?: boolean) {
+    private triggerSync() {
         // If we were still waiting for sync, flip the flag and emit events
-        if (!this.synced || force) {
+        if (!this.synced) {
             this.synced = true;
 
             logger.info('Provider sync emit');
