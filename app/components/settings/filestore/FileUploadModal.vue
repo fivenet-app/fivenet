@@ -4,7 +4,7 @@ import { z } from 'zod';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
 import type { File } from '~~/gen/ts/resources/file/file';
-import type { UploadResponse } from '~~/gen/ts/resources/file/filestore';
+import type { UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const emit = defineEmits<{
@@ -38,7 +38,7 @@ const state = reactive({
 
 const categories = ['jobassets'];
 
-async function upload(values: Schema): Promise<UploadResponse | undefined> {
+async function upload(values: Schema): Promise<UploadFileResponse | undefined> {
     if (!values.file[0]) {
         return;
     }

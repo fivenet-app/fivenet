@@ -13,8 +13,8 @@ import type { ListFilesResponse } from "./filestore";
 import type { ListFilesRequest } from "./filestore";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { UploadResponse } from "../../resources/file/filestore";
-import type { UploadPacket } from "../../resources/file/filestore";
+import type { UploadFileResponse } from "../../resources/file/filestore";
+import type { UploadFileRequest } from "../../resources/file/filestore";
 import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
@@ -23,10 +23,13 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 export interface IFilestoreServiceClient {
     /**
      * @perm: Name=Superuser
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: Upload
      */
-    upload(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse>;
+    upload(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
      * @perm: Name=Superuser
      *
@@ -57,12 +60,15 @@ export class FilestoreServiceClient implements IFilestoreServiceClient, ServiceI
     }
     /**
      * @perm: Name=Superuser
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: Upload
      */
-    upload(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse> {
+    upload(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UploadPacket, UploadResponse>("clientStreaming", this._transport, method, opt);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
      * @perm: Name=Superuser

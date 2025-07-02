@@ -8,7 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
-	errorsdocuments "github.com/fivenet-app/fivenet/v2025/services/documents/errors"
+	errorswiki "github.com/fivenet-app/fivenet/v2025/services/wiki/errors"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -33,10 +33,10 @@ func (s *Server) JoinRoom(srv pbdocuments.CollabService_JoinRoomServer) error {
 
 	check, err := s.access.CanUserAccessTarget(ctx, pageId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_ACCESS)
 	if err != nil {
-		return errswrap.NewError(err, errorsdocuments.ErrNotFoundOrNoPerms)
+		return errswrap.NewError(err, errorswiki.ErrPageDenied)
 	}
 	if !check && !userInfo.Superuser {
-		return errorsdocuments.ErrDocViewDenied
+		return errorswiki.ErrPageDenied
 	}
 
 	return s.collabServer.HandleClient(ctx, pageId, userInfo.UserId, clientId, pbcollab.ClientRole_CLIENT_ROLE_WRITER, srv)

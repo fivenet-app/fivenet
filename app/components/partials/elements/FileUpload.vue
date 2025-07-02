@@ -2,7 +2,7 @@
 import type { ClientStreamingCall, RpcOptions, UnaryCall } from '@protobuf-ts/runtime-rpc';
 import { z } from 'zod';
 import type { File as FileGRPC } from '~~/gen/ts/resources/file/file';
-import type { UploadPacket, UploadResponse } from '~~/gen/ts/resources/file/filestore';
+import type { UploadFileRequest, UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import ConfirmModal from '../ConfirmModal.vue';
 import NotSupportedTabletBlock from '../NotSupportedTabletBlock.vue';
@@ -15,7 +15,7 @@ const props = defineProps<{
     modelValue: MaybeFileLike;
     disabled?: boolean;
 
-    uploadFn: (opts?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>;
+    uploadFn: (opts?: RpcOptions) => ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     deleteFn: () => UnaryCall<any, any>;
 }>();

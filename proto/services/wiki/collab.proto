@@ -7,6 +7,9 @@ import "resources/collab/collab.proto";
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wiki";
 
 service CollabService {
-  // @perm: Name=wiki.WikiService/ListPages
+  // @perm: Name=wiki.WikiService/UpdatePage
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
   rpc JoinRoom(stream resources.collab.ClientPacket) returns (stream resources.collab.ServerPacket);
 }

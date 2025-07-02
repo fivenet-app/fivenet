@@ -21,8 +21,6 @@ const schema = z.object({
 
 const query = useSearchForm('qualifications_list', schema);
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
-
 const {
     data,
     pending: loading,
@@ -34,7 +32,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
         const call = $grpc.qualifications.qualifications.listQualifications({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
             sort: query.sort,
             search: query.search,
@@ -48,7 +46,6 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
     }
 }
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 </script>
 

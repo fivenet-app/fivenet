@@ -152,6 +152,7 @@ defineShortcuts({
                     doc.value.document?.creator,
                     AccessLevel.STATUS,
                     'documents.DocumentsService/ToggleDocument',
+                    doc.value?.document?.creatorJob,
                 )
             )
         ) {
@@ -170,6 +171,7 @@ defineShortcuts({
                     doc.value.document?.creator,
                     AccessLevel.EDIT,
                     'documents.DocumentsService/ToggleDocument',
+                    doc.value?.document?.creatorJob,
                 )
             )
         ) {
@@ -241,6 +243,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                     doc.document?.creator,
                                     AccessLevel.STATUS,
                                     'documents.DocumentsService/ToggleDocument',
+                                    doc?.document?.creatorJob,
                                 )
                             "
                             class="flex-1"
@@ -271,6 +274,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                     doc.document?.creator,
                                     AccessLevel.ACCESS,
                                     'documents.DocumentsService/UpdateDocument',
+                                    doc?.document?.creatorJob,
                                 )
                             "
                             class="flex-1"
@@ -377,6 +381,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                     doc?.document?.creator,
                                     AccessLevel.EDIT,
                                     'documents.DocumentsService/ChangeDocumentOwner',
+                                    doc?.document?.creatorJob,
                                 )
                             "
                             class="flex-1"
@@ -405,6 +410,7 @@ const scrollRef = useTemplateRef('scrollRef');
                                     doc.document?.creator,
                                     AccessLevel.EDIT,
                                     'documents.DocumentsService/DeleteDocument',
+                                    doc?.document?.creatorJob,
                                 )
                             "
                             class="flex-1"

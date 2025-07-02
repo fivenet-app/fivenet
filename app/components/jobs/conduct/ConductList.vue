@@ -54,8 +54,6 @@ const schema = z.object({
 
 const query = useSearchForm('jobs_conduct', schema);
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
-
 const {
     data,
     pending: loading,
@@ -79,7 +77,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
     try {
         const call = $grpc.jobs.conduct.listConductEntries({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
             sort: query.sort,
             types: query.types,
@@ -108,7 +106,6 @@ async function deleteConductEntry(id: number): Promise<void> {
     }
 }
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const usersLoading = ref(false);

@@ -12,7 +12,6 @@ const { $grpc } = useNuxtApp();
 const { attr, can } = useAuth();
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const {
     data,
@@ -26,7 +25,7 @@ const {
 async function listDocumentPins(): Promise<ListDocumentPinsResponse> {
     const call = $grpc.documents.documents.listDocumentPins({
         pagination: {
-            offset: offset.value,
+            offset: calculateOffset(page.value, data.value?.pagination),
         },
     });
     const { response } = await call;

@@ -58,8 +58,6 @@ const statesOptions = eventTypes.map((eventType) => ({ eventType: eventType }));
 
 const usersLoading = ref(false);
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
-
 const {
     data,
     pending: loading,
@@ -73,7 +71,7 @@ const {
 async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     const req: ViewAuditLogRequest = {
         pagination: {
-            offset: offset.value,
+            offset: calculateOffset(query.page, data.value?.pagination),
         },
         sort: query.sort,
         userIds: query.users,
@@ -103,7 +101,6 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     }
 }
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), {
     debounce: 200,
     maxWait: 1250,

@@ -29,10 +29,6 @@ const schema = z.object({
 
 const query = useSearchForm('settings_accounts', schema);
 
-const offset = computed(() =>
-    accounts.value?.pagination?.pageSize ? accounts.value?.pagination?.pageSize * (query.page - 1) : 0,
-);
-
 const {
     data: accounts,
     pending: loading,
@@ -47,7 +43,7 @@ async function listAccounts(): Promise<ListAccountsResponse> {
     try {
         const call = $grpc.settings.accounts.listAccounts({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(query.page, accounts.value?.pagination),
             },
             sort: query.sort,
             enabled: query.enabled,
@@ -64,7 +60,6 @@ async function listAccounts(): Promise<ListAccountsResponse> {
     }
 }
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 async function deleteAccount(id: number): Promise<void> {

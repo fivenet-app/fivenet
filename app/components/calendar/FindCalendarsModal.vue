@@ -16,14 +16,13 @@ const calendarStore = useCalendarStore();
 const { currentDate } = storeToRefs(calendarStore);
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending: loading, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
     const response = await calendarStore.listCalendars({
         pagination: {
-            offset: offset.value,
+            offset: calculateOffset(page.value, data.value?.pagination),
         },
         onlyPublic: true,
     });

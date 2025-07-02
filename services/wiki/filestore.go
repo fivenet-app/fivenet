@@ -16,7 +16,7 @@ import (
 
 const MaxFilesPerPage = 5
 
-func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (s *Server) UploadFile(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

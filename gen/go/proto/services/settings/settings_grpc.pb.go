@@ -77,7 +77,10 @@ type SettingsServiceClient interface {
 	// @perm: Name=SetJobProps
 	ListUserGuilds(ctx context.Context, in *ListUserGuildsRequest, opts ...grpc.CallOption) (*ListUserGuildsResponse, error)
 	// @perm: Name=SetJobProps
-	UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 	// @perm: Name=SetJobProps
 	DeleteJobLogo(ctx context.Context, in *DeleteJobLogoRequest, opts ...grpc.CallOption) (*DeleteJobLogoResponse, error)
 }
@@ -250,18 +253,18 @@ func (c *settingsServiceClient) ListUserGuilds(ctx context.Context, in *ListUser
 	return out, nil
 }
 
-func (c *settingsServiceClient) UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+func (c *settingsServiceClient) UploadJobLogo(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &SettingsService_ServiceDesc.Streams[0], SettingsService_UploadJobLogo_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SettingsService_UploadJobLogoClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+type SettingsService_UploadJobLogoClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
 
 func (c *settingsServiceClient) DeleteJobLogo(ctx context.Context, in *DeleteJobLogoRequest, opts ...grpc.CallOption) (*DeleteJobLogoResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -310,7 +313,10 @@ type SettingsServiceServer interface {
 	// @perm: Name=SetJobProps
 	ListUserGuilds(context.Context, *ListUserGuildsRequest) (*ListUserGuildsResponse, error)
 	// @perm: Name=SetJobProps
-	UploadJobLogo(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadJobLogo(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	// @perm: Name=SetJobProps
 	DeleteJobLogo(context.Context, *DeleteJobLogoRequest) (*DeleteJobLogoResponse, error)
 	mustEmbedUnimplementedSettingsServiceServer()
@@ -371,7 +377,7 @@ func (UnimplementedSettingsServiceServer) ListDiscordChannels(context.Context, *
 func (UnimplementedSettingsServiceServer) ListUserGuilds(context.Context, *ListUserGuildsRequest) (*ListUserGuildsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserGuilds not implemented")
 }
-func (UnimplementedSettingsServiceServer) UploadJobLogo(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (UnimplementedSettingsServiceServer) UploadJobLogo(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadJobLogo not implemented")
 }
 func (UnimplementedSettingsServiceServer) DeleteJobLogo(context.Context, *DeleteJobLogoRequest) (*DeleteJobLogoResponse, error) {
@@ -687,11 +693,11 @@ func _SettingsService_ListUserGuilds_Handler(srv interface{}, ctx context.Contex
 }
 
 func _SettingsService_UploadJobLogo_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(SettingsServiceServer).UploadJobLogo(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+	return srv.(SettingsServiceServer).UploadJobLogo(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type SettingsService_UploadJobLogoServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+type SettingsService_UploadJobLogoServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
 
 func _SettingsService_DeleteJobLogo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteJobLogoRequest)

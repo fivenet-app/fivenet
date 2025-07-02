@@ -67,9 +67,6 @@ const selectedTab = computed({
 });
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() =>
-    threads.value?.pagination?.pageSize ? threads.value?.pagination?.pageSize * (page.value - 1) : 0,
-);
 
 const { pending: loading, refresh: refresh } = useLazyAsyncData(`mailer-thread:${page.value}`, () => loadThreads(), {
     immediate: false,
@@ -87,7 +84,7 @@ async function loadThreads(): Promise<ListThreadsResponse | undefined> {
 
     const resp = await mailerStore.listThreads({
         pagination: {
-            offset: offset.value,
+            offset: calculateOffset(page.value, threads.value?.pagination),
         },
         emailIds: [selectedEmail.value.id],
         unread: selectedTab.value === 1 ? true : undefined,

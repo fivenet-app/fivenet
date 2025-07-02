@@ -12,6 +12,7 @@ export function checkDocAccess(
     creator: UserShort | undefined,
     level: AccessLevel,
     perm?: Perms,
+    creatorJob?: string,
 ): boolean {
     const { activeChar, isSuperuser } = useAuth();
     if (isSuperuser.value) {
@@ -22,7 +23,7 @@ export function checkDocAccess(
         return false;
     }
 
-    if (!checkBaseDocAccess(activeChar.value, docAccess, creator, level)) {
+    if (!checkBaseDocAccess(activeChar.value, docAccess, creator, level, creatorJob)) {
         return false;
     }
 
@@ -38,8 +39,9 @@ function checkBaseDocAccess(
     access: DocumentAccess | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
+    creatorJob?: string,
 ): boolean {
-    return checkAccess(activeChar, access, creator, level);
+    return checkAccess(activeChar, access, creator, level, creatorJob);
 }
 
 function checkIfCanAccessOwnJobDocument(activeChar: UserShort, creator: UserShort, perm: Perms): boolean {

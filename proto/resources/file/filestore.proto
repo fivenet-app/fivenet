@@ -7,7 +7,7 @@ import "resources/file/file.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/file;file";
 
-message UploadPacket {
+message UploadFileRequest {
   oneof payload {
     UploadMeta meta = 1;
     // Raw bytes <= 128 KiB each, browsers should only read 64 KiB at a time, but this is a buffer just in case
@@ -32,7 +32,7 @@ message UploadMeta {
   ];
 }
 
-message UploadResponse {
+message UploadFileResponse {
   uint64 id = 1; // Unique ID for the uploaded file
   string url = 2; // URL to the uploaded file
   File file = 3; // File info

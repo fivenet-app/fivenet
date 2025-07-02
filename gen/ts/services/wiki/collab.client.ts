@@ -15,7 +15,10 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICollabServiceClient {
     /**
-     * @perm: Name=wiki.WikiService/ListPages
+     * @perm: Name=wiki.WikiService/UpdatePage
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: JoinRoom
      */
@@ -31,7 +34,10 @@ export class CollabServiceClient implements ICollabServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Name=wiki.WikiService/ListPages
+     * @perm: Name=wiki.WikiService/UpdatePage
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: JoinRoom
      */

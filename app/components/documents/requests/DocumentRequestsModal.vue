@@ -118,13 +118,25 @@ const canDo = computed(() => ({
         props.doc.creatorId !== activeChar.value?.userId &&
         availableRequestTypes.value.length > 0 &&
         can('documents.DocumentsService/CreateDocumentReq').value &&
-        checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW),
+        checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW, undefined, props.doc?.creatorJob),
     update:
         can('documents.DocumentsService/CreateDocumentReq').value &&
-        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'documents.DocumentsService/CreateDocumentReq'),
+        checkDocAccess(
+            props.access,
+            props.doc.creator,
+            AccessLevel.EDIT,
+            'documents.DocumentsService/CreateDocumentReq',
+            props.doc?.creatorJob,
+        ),
     delete:
         can('documents.DocumentsService/DeleteDocumentReq').value &&
-        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'documents.DocumentsService/DeleteDocumentReq'),
+        checkDocAccess(
+            props.access,
+            props.doc.creator,
+            AccessLevel.EDIT,
+            'documents.DocumentsService/DeleteDocumentReq',
+            props.doc?.creatorJob,
+        ),
 }));
 
 const canSubmit = ref(true);

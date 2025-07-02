@@ -2,7 +2,7 @@
 import type { ClientStreamingCall, RpcOptions } from '@protobuf-ts/runtime-rpc';
 import pica from 'pica';
 import { canEncodeWebp } from '~/utils/canEncodeWebp';
-import { UploadMeta, UploadPacket, type UploadResponse } from '~~/gen/ts/resources/file/filestore';
+import { UploadFileRequest, UploadMeta, type UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 
 const MAX_READ_SIZE = 128 * 1024; // 128 KB
 
@@ -12,7 +12,7 @@ export type UploadNamespaces = 'documents' | 'qualifications' | 'qualifications-
  * Factory that returns resize + upload helpers bound to a parent record.
  */
 export function useFileUploader(
-    filestore: (options?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>,
+    filestore: (options?: RpcOptions) => ClientStreamingCall<UploadFileRequest, UploadFileResponse>,
     namespace: UploadNamespaces,
     parentId: number,
 ) {
@@ -60,7 +60,7 @@ export function useFileUploader(
 
     // 2. gRPC streaming upload
     const upload = (blob: Blob, originalName: string, mime?: string, reason?: string) =>
-        new Promise<UploadResponse>((resolve, reject) => {
+        new Promise<UploadFileResponse>((resolve, reject) => {
             const stream = filestore({});
             stream.response
                 .then((resp) => resolve(resp))
@@ -82,7 +82,7 @@ export function useFileUploader(
 
             meta.reason = reason ?? '';
 
-            const metaPkt = UploadPacket.create({
+            const metaPkt = UploadFileRequest.create({
                 payload: {
                     oneofKind: 'meta',
                     meta: meta,
@@ -98,7 +98,7 @@ export function useFileUploader(
 
                     const { value, done } = await reader.read(buffer);
                     if (done) break;
-                    const pkt = UploadPacket.create({
+                    const pkt = UploadFileRequest.create({
                         payload: {
                             oneofKind: 'data',
                             data: value,

@@ -105,7 +105,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                 if (msg.msg.handshake.first) {
                     this.authoritative = true;
 
-                    this.syncDocToServer();
+                    this.triggerSync();
                 } else {
                     const sv = Y.encodeStateVector(this.ydoc);
                     this.authoritative = false;
@@ -204,7 +204,7 @@ export default class GrpcProvider extends ObservableV2<Events> {
                     if (!this.authoritative) {
                         this.authoritative = true;
 
-                        this.syncDocToServer(); // Step-0: seed the room (again)
+                        this.triggerSync(true); // Step-0: seed the room (again), force sync
                     }
                     break;
                 }
@@ -226,15 +226,16 @@ export default class GrpcProvider extends ObservableV2<Events> {
         });
 
         this.emit('sync', [false, this.ydoc]);
+        this.synced = false;
 
         const delay = this.opts.reconnectDelay?.(this.reconnectAttempt) ?? Math.min(1000 * 2 ** this.reconnectAttempt, 32000);
         this.reconnectAttempt++;
         useTimeoutFn(() => this.connect(), delay);
     }
 
-    private syncDocToServer() {
+    private triggerSync(force?: boolean) {
         // If we were still waiting for sync, flip the flag and emit events
-        if (!this.synced) {
+        if (!this.synced || force) {
             this.synced = true;
 
             logger.info('Provider sync emit');

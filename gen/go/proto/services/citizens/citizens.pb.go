@@ -805,15 +805,15 @@ const file_services_citizens_citizens_proto_rawDesc = "" +
 	"\x13ManageLabelsRequest\x12.\n" +
 	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels\"F\n" +
 	"\x14ManageLabelsResponse\x12.\n" +
-	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xd9\x06\n" +
+	"\x06labels\x18\x01 \x03(\v2\x16.resources.users.LabelR\x06labels2\xeb\x06\n" +
 	"\x0fCitizensService\x12_\n" +
 	"\fListCitizens\x12&.services.citizens.ListCitizensRequest\x1a'.services.citizens.ListCitizensResponse\x12P\n" +
 	"\aGetUser\x12!.services.citizens.GetUserRequest\x1a\".services.citizens.GetUserResponse\x12k\n" +
 	"\x10ListUserActivity\x12*.services.citizens.ListUserActivityRequest\x1a+.services.citizens.ListUserActivityResponse\x12_\n" +
-	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\x12N\n" +
-	"\fUploadAvatar\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01\x12_\n" +
-	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\x12O\n" +
-	"\rUploadMugshot\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01\x12b\n" +
+	"\fSetUserProps\x12&.services.citizens.SetUserPropsRequest\x1a'.services.citizens.SetUserPropsResponse\x12W\n" +
+	"\fUploadAvatar\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12_\n" +
+	"\fDeleteAvatar\x12&.services.citizens.DeleteAvatarRequest\x1a'.services.citizens.DeleteAvatarResponse\x12X\n" +
+	"\rUploadMugshot\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12b\n" +
 	"\rDeleteMugshot\x12'.services.citizens.DeleteMugshotRequest\x1a(.services.citizens.DeleteMugshotResponse\x12_\n" +
 	"\fManageLabels\x12&.services.citizens.ManageLabelsRequest\x1a'.services.citizens.ManageLabelsResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/citizens;citizensb\x06proto3"
 
@@ -853,8 +853,8 @@ var file_services_citizens_citizens_proto_goTypes = []any{
 	(*users.UserActivity)(nil),          // 19: resources.users.UserActivity
 	(*users.UserProps)(nil),             // 20: resources.users.UserProps
 	(*users.Label)(nil),                 // 21: resources.users.Label
-	(*file.UploadPacket)(nil),           // 22: resources.file.UploadPacket
-	(*file.UploadResponse)(nil),         // 23: resources.file.UploadResponse
+	(*file.UploadFileRequest)(nil),      // 22: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 23: resources.file.UploadFileResponse
 }
 var file_services_citizens_citizens_proto_depIdxs = []int32{
 	14, // 0: services.citizens.ListCitizensRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -875,18 +875,18 @@ var file_services_citizens_citizens_proto_depIdxs = []int32{
 	2,  // 15: services.citizens.CitizensService.GetUser:input_type -> services.citizens.GetUserRequest
 	4,  // 16: services.citizens.CitizensService.ListUserActivity:input_type -> services.citizens.ListUserActivityRequest
 	6,  // 17: services.citizens.CitizensService.SetUserProps:input_type -> services.citizens.SetUserPropsRequest
-	22, // 18: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadPacket
+	22, // 18: services.citizens.CitizensService.UploadAvatar:input_type -> resources.file.UploadFileRequest
 	8,  // 19: services.citizens.CitizensService.DeleteAvatar:input_type -> services.citizens.DeleteAvatarRequest
-	22, // 20: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadPacket
+	22, // 20: services.citizens.CitizensService.UploadMugshot:input_type -> resources.file.UploadFileRequest
 	10, // 21: services.citizens.CitizensService.DeleteMugshot:input_type -> services.citizens.DeleteMugshotRequest
 	12, // 22: services.citizens.CitizensService.ManageLabels:input_type -> services.citizens.ManageLabelsRequest
 	1,  // 23: services.citizens.CitizensService.ListCitizens:output_type -> services.citizens.ListCitizensResponse
 	3,  // 24: services.citizens.CitizensService.GetUser:output_type -> services.citizens.GetUserResponse
 	5,  // 25: services.citizens.CitizensService.ListUserActivity:output_type -> services.citizens.ListUserActivityResponse
 	7,  // 26: services.citizens.CitizensService.SetUserProps:output_type -> services.citizens.SetUserPropsResponse
-	23, // 27: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadResponse
+	23, // 27: services.citizens.CitizensService.UploadAvatar:output_type -> resources.file.UploadFileResponse
 	9,  // 28: services.citizens.CitizensService.DeleteAvatar:output_type -> services.citizens.DeleteAvatarResponse
-	23, // 29: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadResponse
+	23, // 29: services.citizens.CitizensService.UploadMugshot:output_type -> resources.file.UploadFileResponse
 	11, // 30: services.citizens.CitizensService.DeleteMugshot:output_type -> services.citizens.DeleteMugshotResponse
 	13, // 31: services.citizens.CitizensService.ManageLabels:output_type -> services.citizens.ManageLabelsResponse
 	23, // [23:32] is the sub-list for method output_type

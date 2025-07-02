@@ -215,5 +215,5 @@ service QualificationsService {
   rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse);
 
   // @perm: Name=UpdateQualification
-  rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
 }

@@ -2,8 +2,8 @@
 // @generated from protobuf file "services/wiki/wiki.proto" (package "services.wiki", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { UploadResponse } from "../../resources/file/filestore";
-import { UploadPacket } from "../../resources/file/filestore";
+import { UploadFileResponse } from "../../resources/file/filestore";
+import { UploadFileRequest } from "../../resources/file/filestore";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
@@ -788,5 +788,5 @@ export const WikiService = new ServiceType("services.wiki.WikiService", [
     { name: "UpdatePage", options: {}, I: UpdatePageRequest, O: UpdatePageResponse },
     { name: "DeletePage", options: {}, I: DeletePageRequest, O: DeletePageResponse },
     { name: "ListPageActivity", options: {}, I: ListPageActivityRequest, O: ListPageActivityResponse },
-    { name: "UploadFile", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse }
+    { name: "UploadFile", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse }
 ]);

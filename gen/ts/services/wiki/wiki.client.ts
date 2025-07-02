@@ -5,8 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { WikiService } from "./wiki";
-import type { UploadResponse } from "../../resources/file/filestore";
-import type { UploadPacket } from "../../resources/file/filestore";
+import type { UploadFileResponse } from "../../resources/file/filestore";
+import type { UploadFileRequest } from "../../resources/file/filestore";
 import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { ListPageActivityResponse } from "./wiki";
 import type { ListPageActivityRequest } from "./wiki";
@@ -68,7 +68,7 @@ export interface IWikiServiceClient {
      *
      * @generated from protobuf rpc: UploadFile
      */
-    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse>;
+    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
 }
 /**
  * @generated from protobuf service services.wiki.WikiService
@@ -138,8 +138,8 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
      *
      * @generated from protobuf rpc: UploadFile
      */
-    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse> {
+    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
         const method = this.methods[6], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UploadPacket, UploadResponse>("clientStreaming", this._transport, method, opt);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
 }

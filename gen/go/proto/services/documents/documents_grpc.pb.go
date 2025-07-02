@@ -136,7 +136,7 @@ type DocumentsServiceClient interface {
 	// @perm
 	SetDocumentReminder(ctx context.Context, in *SetDocumentReminderRequest, opts ...grpc.CallOption) (*SetDocumentReminderResponse, error)
 	// @perm: Name=UpdateDocument
-	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 }
 
 type documentsServiceClient struct {
@@ -507,18 +507,18 @@ func (c *documentsServiceClient) SetDocumentReminder(ctx context.Context, in *Se
 	return out, nil
 }
 
-func (c *documentsServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+func (c *documentsServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &DocumentsService_ServiceDesc.Streams[0], DocumentsService_UploadFile_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type DocumentsService_UploadFileClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+type DocumentsService_UploadFileClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
 
 // DocumentsServiceServer is the server API for DocumentsService service.
 // All implementations must embed UnimplementedDocumentsServiceServer
@@ -597,7 +597,7 @@ type DocumentsServiceServer interface {
 	// @perm
 	SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error)
 	// @perm: Name=UpdateDocument
-	UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	mustEmbedUnimplementedDocumentsServiceServer()
 }
 
@@ -716,7 +716,7 @@ func (UnimplementedDocumentsServiceServer) ToggleDocumentPin(context.Context, *T
 func (UnimplementedDocumentsServiceServer) SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetDocumentReminder not implemented")
 }
-func (UnimplementedDocumentsServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (UnimplementedDocumentsServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedDocumentsServiceServer) mustEmbedUnimplementedDocumentsServiceServer() {}
@@ -1389,11 +1389,11 @@ func _DocumentsService_SetDocumentReminder_Handler(srv interface{}, ctx context.
 }
 
 func _DocumentsService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(DocumentsServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+	return srv.(DocumentsServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type DocumentsService_UploadFileServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+type DocumentsService_UploadFileServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
 
 // DocumentsService_ServiceDesc is the grpc.ServiceDesc for DocumentsService service.
 // It's only intended for direct use with grpc.RegisterService,

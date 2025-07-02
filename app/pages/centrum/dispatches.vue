@@ -35,7 +35,6 @@ const schema = z.object({
 const query = useSearchForm('centrum_dispatches_archive', schema);
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending: loading, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
 
@@ -43,7 +42,7 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
     try {
         const req: ListDispatchesRequest = {
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(page.value, data.value?.pagination),
             },
             notStatus: [],
             status: [],
@@ -64,8 +63,6 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
         throw e;
     }
 }
-
-watch(offset, async () => refresh());
 
 watchDebounced(query, async () => refresh(), {
     debounce: 200,

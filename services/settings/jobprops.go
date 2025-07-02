@@ -129,7 +129,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbsettings.SetJobPropsReq
 	}, nil
 }
 
-func (s *Server) UploadJobLogo(srv grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (s *Server) UploadJobLogo(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

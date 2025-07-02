@@ -3627,23 +3627,7 @@ Dummy - DO NOT USE!
 
 
 
-### resources.file.UploadMeta
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `parent_id` | [uint64](#uint64) |  |  |
-| `namespace` | [string](#string) |  | "documents", "wiki", … |
-| `original_name` | [string](#string) |  |  |
-| `content_type` | [string](#string) |  | optional – server re-validates |
-| `size` | [int64](#int64) |  | Size in bytes |
-| `reason` | [string](#string) |  | @sanitize |
-
-
-
-
-
-### resources.file.UploadPacket
+### resources.file.UploadFileRequest
 
 
 | Field | Type | Label | Description |
@@ -3655,7 +3639,7 @@ Dummy - DO NOT USE!
 
 
 
-### resources.file.UploadResponse
+### resources.file.UploadFileResponse
 
 
 | Field | Type | Label | Description |
@@ -3663,6 +3647,22 @@ Dummy - DO NOT USE!
 | `id` | [uint64](#uint64) |  | Unique ID for the uploaded file |
 | `url` | [string](#string) |  | URL to the uploaded file |
 | `file` | [File](#resourcesfileFile) |  | File info |
+
+
+
+
+
+### resources.file.UploadMeta
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `parent_id` | [uint64](#uint64) |  |  |
+| `namespace` | [string](#string) |  | "documents", "wiki", … |
+| `original_name` | [string](#string) |  |  |
+| `content_type` | [string](#string) |  | optional – server re-validates |
+| `size` | [int64](#int64) |  | Size in bytes |
+| `reason` | [string](#string) |  | @sanitize |
 
 
 
@@ -7795,9 +7795,9 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `GetUser` | [GetUserRequest](#servicescitizensGetUserRequest) | [GetUserResponse](#servicescitizensGetUserResponse) |@perm: Attrs=Jobs/JobGradeList |
 | `ListUserActivity` | [ListUserActivityRequest](#servicescitizensListUserActivityRequest) | [ListUserActivityResponse](#servicescitizensListUserActivityResponse) |@perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"} |
 | `SetUserProps` | [SetUserPropsRequest](#servicescitizensSetUserPropsRequest) | [SetUserPropsResponse](#servicescitizensSetUserPropsResponse) |@perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"} |
-| `UploadAvatar` | [.resources.file.UploadPacket](#resourcesfileUploadPacket) stream | [.resources.file.UploadResponse](#resourcesfileUploadResponse) |@perm: Name=Any |
+| `UploadAvatar` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=Any buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `DeleteAvatar` | [DeleteAvatarRequest](#servicescitizensDeleteAvatarRequest) | [DeleteAvatarResponse](#servicescitizensDeleteAvatarResponse) |@perm: Name=Any |
-| `UploadMugshot` | [.resources.file.UploadPacket](#resourcesfileUploadPacket) stream | [.resources.file.UploadResponse](#resourcesfileUploadResponse) |@perm: Name=SetUserProps |
+| `UploadMugshot` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=SetUserProps buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `DeleteMugshot` | [DeleteMugshotRequest](#servicescitizensDeleteMugshotRequest) | [DeleteMugshotResponse](#servicescitizensDeleteMugshotResponse) |@perm: Name=SetUserProps |
 | `ManageLabels` | [ManageLabelsRequest](#servicescitizensManageLabelsRequest) | [ManageLabelsResponse](#servicescitizensManageLabelsResponse) |@perm |
 
@@ -7952,7 +7952,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |@perm: Name=documents.DocumentsService/ListDocuments |
+| `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |@perm: Name=documents.DocumentsService/UpdateDocument buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 
  <!-- end services -->
 
@@ -8791,7 +8791,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `ListDocumentPins` | [ListDocumentPinsRequest](#servicesdocumentsListDocumentPinsRequest) | [ListDocumentPinsResponse](#servicesdocumentsListDocumentPinsResponse) |@perm: Name=ListDocuments |
 | `ToggleDocumentPin` | [ToggleDocumentPinRequest](#servicesdocumentsToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#servicesdocumentsToggleDocumentPinResponse) |@perm: Attrs=Types/StringList:[]string{"JobWide"} |
 | `SetDocumentReminder` | [SetDocumentReminderRequest](#servicesdocumentsSetDocumentReminderRequest) | [SetDocumentReminderResponse](#servicesdocumentsSetDocumentReminderResponse) |@perm |
-| `UploadFile` | [.resources.file.UploadPacket](#resourcesfileUploadPacket) stream | [.resources.file.UploadResponse](#resourcesfileUploadResponse) |@perm: Name=UpdateDocument |
+| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=UpdateDocument |
 
  <!-- end services -->
 
@@ -8851,7 +8851,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `Upload` | [.resources.file.UploadPacket](#resourcesfileUploadPacket) stream | [.resources.file.UploadResponse](#resourcesfileUploadResponse) |@perm: Name=Superuser |
+| `Upload` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=Superuser buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `ListFiles` | [ListFilesRequest](#servicesfilestoreListFilesRequest) | [ListFilesResponse](#servicesfilestoreListFilesResponse) |@perm: Name=Superuser |
 | `DeleteFile` | [.resources.file.DeleteFileRequest](#resourcesfileDeleteFileRequest) | [.resources.file.DeleteFileResponse](#resourcesfileDeleteFileResponse) |@perm: Name=Superuser |
 | `DeleteFileByPath` | [DeleteFileByPathRequest](#servicesfilestoreDeleteFileByPathRequest) | [DeleteFileByPathResponse](#servicesfilestoreDeleteFileByPathResponse) |@perm: Name=Superuser |
@@ -10759,7 +10759,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `TakeExam` | [TakeExamRequest](#servicesqualificationsTakeExamRequest) | [TakeExamResponse](#servicesqualificationsTakeExamResponse) |@perm: Name=ListQualifications |
 | `SubmitExam` | [SubmitExamRequest](#servicesqualificationsSubmitExamRequest) | [SubmitExamResponse](#servicesqualificationsSubmitExamResponse) |@perm: Name=ListQualifications |
 | `GetUserExam` | [GetUserExamRequest](#servicesqualificationsGetUserExamRequest) | [GetUserExamResponse](#servicesqualificationsGetUserExamResponse) |@perm: Name=ListQualifications |
-| `UploadFile` | [.resources.file.UploadPacket](#resourcesfileUploadPacket) stream | [.resources.file.UploadResponse](#resourcesfileUploadResponse) |@perm: Name=UpdateQualification |
+| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=UpdateQualification |
 
  <!-- end services -->
 
@@ -11472,7 +11472,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `DeleteFaction` | [DeleteFactionRequest](#servicessettingsDeleteFactionRequest) | [DeleteFactionResponse](#servicessettingsDeleteFactionResponse) |@perm: Name=Superuser |
 | `ListDiscordChannels` | [ListDiscordChannelsRequest](#servicessettingsListDiscordChannelsRequest) | [ListDiscordChannelsResponse](#servicessettingsListDiscordChannelsResponse) |@perm: Name=SetJobProps |
 | `ListUserGuilds` | [ListUserGuildsRequest](#servicessettingsListUserGuildsRequest) | [ListUserGuildsResponse](#servicessettingsListUserGuildsResponse) |@perm: Name=SetJobProps |
-| `UploadJobLogo` | [.resources.file.UploadPacket](#resourcesfileUploadPacket) stream | [.resources.file.UploadResponse](#resourcesfileUploadResponse) |@perm: Name=SetJobProps |
+| `UploadJobLogo` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=SetJobProps buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `DeleteJobLogo` | [DeleteJobLogoRequest](#servicessettingsDeleteJobLogoRequest) | [DeleteJobLogoResponse](#servicessettingsDeleteJobLogoResponse) |@perm: Name=SetJobProps |
 
  <!-- end services -->
@@ -11791,7 +11791,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |@perm: Name=wiki.WikiService/ListPages |
+| `JoinRoom` | [.resources.collab.ClientPacket](#resourcescollabClientPacket) stream | [.resources.collab.ServerPacket](#resourcescollabServerPacket) stream |@perm: Name=wiki.WikiService/UpdatePage buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 
  <!-- end services -->
 
@@ -11952,7 +11952,7 @@ Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instan
 | `UpdatePage` | [UpdatePageRequest](#serviceswikiUpdatePageRequest) | [UpdatePageResponse](#serviceswikiUpdatePageResponse) |@perm: Attrs=Fields/StringList:[]string{"Public"} |
 | `DeletePage` | [DeletePageRequest](#serviceswikiDeletePageRequest) | [DeletePageResponse](#serviceswikiDeletePageResponse) |@perm |
 | `ListPageActivity` | [ListPageActivityRequest](#serviceswikiListPageActivityRequest) | [ListPageActivityResponse](#serviceswikiListPageActivityResponse) |@perm |
-| `UploadFile` | [.resources.file.UploadPacket](#resourcesfileUploadPacket) stream | [.resources.file.UploadResponse](#resourcesfileUploadResponse) |@perm: Name=UpdatePage |
+| `UploadFile` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=UpdatePage |
 
  <!-- end services -->
 

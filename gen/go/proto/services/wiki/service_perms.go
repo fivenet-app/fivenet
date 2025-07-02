@@ -12,7 +12,7 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: wiki.CollabService
-	"wiki.CollabService/JoinRoom": "wiki.WikiService/ListPages",
+	"wiki.CollabService/JoinRoom": "wiki.WikiService/UpdatePage",
 
 	// Service: wiki.WikiService
 	"wiki.WikiService/CreatePage": "wiki.WikiService/UpdatePage",

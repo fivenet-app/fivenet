@@ -13,20 +13,19 @@ const props = defineProps<{
 const { $grpc } = useNuxtApp();
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`wiki-page:${props.pageId}-${page.value}`, () => listPageActivity());
+} = useLazyAsyncData(`wiki-page:${props.pageId}-${page.value}-${page.value}`, () => listPageActivity());
 
 async function listPageActivity(): Promise<ListPageActivityResponse> {
     try {
         const call = $grpc.wiki.wiki.listPageActivity({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(page.value, data.value?.pagination),
             },
             pageId: props.pageId,
         });
@@ -38,8 +37,6 @@ async function listPageActivity(): Promise<ListPageActivityResponse> {
         throw e;
     }
 }
-
-watch(offset, async () => refresh());
 </script>
 
 <template>

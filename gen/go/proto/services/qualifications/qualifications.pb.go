@@ -1834,7 +1834,7 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\x04exam\x18\x01 \x01(\v2'.resources.qualifications.ExamQuestionsR\x04exam\x12?\n" +
 	"\texam_user\x18\x02 \x01(\v2\".resources.qualifications.ExamUserR\bexamUser\x12E\n" +
 	"\tresponses\x18\x03 \x01(\v2'.resources.qualifications.ExamResponsesR\tresponses\x12?\n" +
-	"\agrading\x18\x04 \x01(\v2%.resources.qualifications.ExamGradingR\agrading2\xaa\x10\n" +
+	"\agrading\x18\x04 \x01(\v2%.resources.qualifications.ExamGradingR\agrading2\xb3\x10\n" +
 	"\x15QualificationsService\x12}\n" +
 	"\x12ListQualifications\x122.services.qualifications.ListQualificationsRequest\x1a3.services.qualifications.ListQualificationsResponse\x12w\n" +
 	"\x10GetQualification\x120.services.qualifications.GetQualificationRequest\x1a1.services.qualifications.GetQualificationResponse\x12\x80\x01\n" +
@@ -1851,9 +1851,9 @@ const file_services_qualifications_qualifications_proto_rawDesc = "" +
 	"\bTakeExam\x12(.services.qualifications.TakeExamRequest\x1a).services.qualifications.TakeExamResponse\x12e\n" +
 	"\n" +
 	"SubmitExam\x12*.services.qualifications.SubmitExamRequest\x1a+.services.qualifications.SubmitExamResponse\x12h\n" +
-	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponse\x12L\n" +
+	"\vGetUserExam\x12+.services.qualifications.GetUserExamRequest\x1a,.services.qualifications.GetUserExamResponse\x12U\n" +
 	"\n" +
-	"UploadFile\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01BZZXgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01BZZXgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/qualifications;qualificationsb\x06proto3"
 
 var (
 	file_services_qualifications_qualifications_proto_rawDescOnce sync.Once
@@ -1919,8 +1919,8 @@ var file_services_qualifications_qualifications_proto_goTypes = []any{
 	(*qualifications.ExamQuestions)(nil),               // 47: resources.qualifications.ExamQuestions
 	(*qualifications.ExamResponses)(nil),               // 48: resources.qualifications.ExamResponses
 	(*durationpb.Duration)(nil),                        // 49: google.protobuf.Duration
-	(*file.UploadPacket)(nil),                          // 50: resources.file.UploadPacket
-	(*file.UploadResponse)(nil),                        // 51: resources.file.UploadResponse
+	(*file.UploadFileRequest)(nil),                     // 50: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),                    // 51: resources.file.UploadFileResponse
 }
 var file_services_qualifications_qualifications_proto_depIdxs = []int32{
 	34, // 0: services.qualifications.ListQualificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -1972,7 +1972,7 @@ var file_services_qualifications_qualifications_proto_depIdxs = []int32{
 	28, // 46: services.qualifications.QualificationsService.TakeExam:input_type -> services.qualifications.TakeExamRequest
 	30, // 47: services.qualifications.QualificationsService.SubmitExam:input_type -> services.qualifications.SubmitExamRequest
 	32, // 48: services.qualifications.QualificationsService.GetUserExam:input_type -> services.qualifications.GetUserExamRequest
-	50, // 49: services.qualifications.QualificationsService.UploadFile:input_type -> resources.file.UploadPacket
+	50, // 49: services.qualifications.QualificationsService.UploadFile:input_type -> resources.file.UploadFileRequest
 	1,  // 50: services.qualifications.QualificationsService.ListQualifications:output_type -> services.qualifications.ListQualificationsResponse
 	3,  // 51: services.qualifications.QualificationsService.GetQualification:output_type -> services.qualifications.GetQualificationResponse
 	5,  // 52: services.qualifications.QualificationsService.CreateQualification:output_type -> services.qualifications.CreateQualificationResponse
@@ -1988,7 +1988,7 @@ var file_services_qualifications_qualifications_proto_depIdxs = []int32{
 	29, // 62: services.qualifications.QualificationsService.TakeExam:output_type -> services.qualifications.TakeExamResponse
 	31, // 63: services.qualifications.QualificationsService.SubmitExam:output_type -> services.qualifications.SubmitExamResponse
 	33, // 64: services.qualifications.QualificationsService.GetUserExam:output_type -> services.qualifications.GetUserExamResponse
-	51, // 65: services.qualifications.QualificationsService.UploadFile:output_type -> resources.file.UploadResponse
+	51, // 65: services.qualifications.QualificationsService.UploadFile:output_type -> resources.file.UploadFileResponse
 	50, // [50:66] is the sub-list for method output_type
 	34, // [34:50] is the sub-list for method input_type
 	34, // [34:34] is the sub-list for extension type_name

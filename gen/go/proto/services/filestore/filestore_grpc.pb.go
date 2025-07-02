@@ -31,7 +31,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FilestoreServiceClient interface {
 	// @perm: Name=Superuser
-	Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 	// @perm: Name=Superuser
 	ListFiles(ctx context.Context, in *ListFilesRequest, opts ...grpc.CallOption) (*ListFilesResponse, error)
 	// @perm: Name=Superuser
@@ -48,18 +51,18 @@ func NewFilestoreServiceClient(cc grpc.ClientConnInterface) FilestoreServiceClie
 	return &filestoreServiceClient{cc}
 }
 
-func (c *filestoreServiceClient) Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+func (c *filestoreServiceClient) Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &FilestoreService_ServiceDesc.Streams[0], FilestoreService_Upload_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type FilestoreService_UploadClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+type FilestoreService_UploadClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
 
 func (c *filestoreServiceClient) ListFiles(ctx context.Context, in *ListFilesRequest, opts ...grpc.CallOption) (*ListFilesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -96,7 +99,10 @@ func (c *filestoreServiceClient) DeleteFileByPath(ctx context.Context, in *Delet
 // for forward compatibility.
 type FilestoreServiceServer interface {
 	// @perm: Name=Superuser
-	Upload(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	Upload(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	// @perm: Name=Superuser
 	ListFiles(context.Context, *ListFilesRequest) (*ListFilesResponse, error)
 	// @perm: Name=Superuser
@@ -113,7 +119,7 @@ type FilestoreServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedFilestoreServiceServer struct{}
 
-func (UnimplementedFilestoreServiceServer) Upload(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (UnimplementedFilestoreServiceServer) Upload(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Upload not implemented")
 }
 func (UnimplementedFilestoreServiceServer) ListFiles(context.Context, *ListFilesRequest) (*ListFilesResponse, error) {
@@ -147,11 +153,11 @@ func RegisterFilestoreServiceServer(s grpc.ServiceRegistrar, srv FilestoreServic
 }
 
 func _FilestoreService_Upload_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(FilestoreServiceServer).Upload(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+	return srv.(FilestoreServiceServer).Upload(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type FilestoreService_UploadServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+type FilestoreService_UploadServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
 
 func _FilestoreService_ListFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListFilesRequest)

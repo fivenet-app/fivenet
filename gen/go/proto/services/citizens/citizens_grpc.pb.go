@@ -44,11 +44,17 @@ type CitizensServiceClient interface {
 	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 	// @perm: Name=Any
-	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 	// @perm: Name=Any
 	DeleteAvatar(ctx context.Context, in *DeleteAvatarRequest, opts ...grpc.CallOption) (*DeleteAvatarResponse, error)
 	// @perm: Name=SetUserProps
-	UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 	// @perm: Name=SetUserProps
 	DeleteMugshot(ctx context.Context, in *DeleteMugshotRequest, opts ...grpc.CallOption) (*DeleteMugshotResponse, error)
 	// @perm
@@ -103,18 +109,18 @@ func (c *citizensServiceClient) SetUserProps(ctx context.Context, in *SetUserPro
 	return out, nil
 }
 
-func (c *citizensServiceClient) UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+func (c *citizensServiceClient) UploadAvatar(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &CitizensService_ServiceDesc.Streams[0], CitizensService_UploadAvatar_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CitizensService_UploadAvatarClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+type CitizensService_UploadAvatarClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
 
 func (c *citizensServiceClient) DeleteAvatar(ctx context.Context, in *DeleteAvatarRequest, opts ...grpc.CallOption) (*DeleteAvatarResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -126,18 +132,18 @@ func (c *citizensServiceClient) DeleteAvatar(ctx context.Context, in *DeleteAvat
 	return out, nil
 }
 
-func (c *citizensServiceClient) UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+func (c *citizensServiceClient) UploadMugshot(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &CitizensService_ServiceDesc.Streams[1], CitizensService_UploadMugshot_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CitizensService_UploadMugshotClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+type CitizensService_UploadMugshotClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
 
 func (c *citizensServiceClient) DeleteMugshot(ctx context.Context, in *DeleteMugshotRequest, opts ...grpc.CallOption) (*DeleteMugshotResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -172,11 +178,17 @@ type CitizensServiceServer interface {
 	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "Mugshot", "Labels"}
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	// @perm: Name=Any
-	UploadAvatar(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadAvatar(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	// @perm: Name=Any
 	DeleteAvatar(context.Context, *DeleteAvatarRequest) (*DeleteAvatarResponse, error)
 	// @perm: Name=SetUserProps
-	UploadMugshot(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	UploadMugshot(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	// @perm: Name=SetUserProps
 	DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error)
 	// @perm
@@ -203,13 +215,13 @@ func (UnimplementedCitizensServiceServer) ListUserActivity(context.Context, *Lis
 func (UnimplementedCitizensServiceServer) SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetUserProps not implemented")
 }
-func (UnimplementedCitizensServiceServer) UploadAvatar(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (UnimplementedCitizensServiceServer) UploadAvatar(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadAvatar not implemented")
 }
 func (UnimplementedCitizensServiceServer) DeleteAvatar(context.Context, *DeleteAvatarRequest) (*DeleteAvatarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteAvatar not implemented")
 }
-func (UnimplementedCitizensServiceServer) UploadMugshot(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (UnimplementedCitizensServiceServer) UploadMugshot(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadMugshot not implemented")
 }
 func (UnimplementedCitizensServiceServer) DeleteMugshot(context.Context, *DeleteMugshotRequest) (*DeleteMugshotResponse, error) {
@@ -312,11 +324,11 @@ func _CitizensService_SetUserProps_Handler(srv interface{}, ctx context.Context,
 }
 
 func _CitizensService_UploadAvatar_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(CitizensServiceServer).UploadAvatar(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+	return srv.(CitizensServiceServer).UploadAvatar(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CitizensService_UploadAvatarServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+type CitizensService_UploadAvatarServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
 
 func _CitizensService_DeleteAvatar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteAvatarRequest)
@@ -337,11 +349,11 @@ func _CitizensService_DeleteAvatar_Handler(srv interface{}, ctx context.Context,
 }
 
 func _CitizensService_UploadMugshot_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(CitizensServiceServer).UploadMugshot(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+	return srv.(CitizensServiceServer).UploadMugshot(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type CitizensService_UploadMugshotServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+type CitizensService_UploadMugshotServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
 
 func _CitizensService_DeleteMugshot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteMugshotRequest)

@@ -66,7 +66,7 @@ func (s *Server) ListFiles(ctx context.Context, req *pbfilestore.ListFilesReques
 	return resp, nil
 }
 
-func (s *Server) Upload(srv grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (s *Server) Upload(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

@@ -11,7 +11,6 @@ const { t } = useI18n();
 const internetStore = useInternetStore();
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending: loading, refresh } = useLazyAsyncData(`internet-domain-list-${page.value}`, () => listDomains());
 
@@ -19,7 +18,7 @@ async function listDomains(): Promise<ListDomainsResponse> {
     try {
         const call = $grpc.internet.domain.listDomains({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(page.value, data.value?.pagination),
             },
         });
         const { response } = await call;

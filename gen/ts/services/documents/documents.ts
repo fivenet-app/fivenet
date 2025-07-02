@@ -2,8 +2,8 @@
 // @generated from protobuf file "services/documents/documents.proto" (package "services.documents", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { UploadResponse } from "../../resources/file/filestore";
-import { UploadPacket } from "../../resources/file/filestore";
+import { UploadFileResponse } from "../../resources/file/filestore";
+import { UploadFileRequest } from "../../resources/file/filestore";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
@@ -4647,5 +4647,5 @@ export const DocumentsService = new ServiceType("services.documents.DocumentsSer
     { name: "ListDocumentPins", options: {}, I: ListDocumentPinsRequest, O: ListDocumentPinsResponse },
     { name: "ToggleDocumentPin", options: {}, I: ToggleDocumentPinRequest, O: ToggleDocumentPinResponse },
     { name: "SetDocumentReminder", options: {}, I: SetDocumentReminderRequest, O: SetDocumentReminderResponse },
-    { name: "UploadFile", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse }
+    { name: "UploadFile", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse }
 ]);

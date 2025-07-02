@@ -40,8 +40,6 @@ const schema = z.object({
 
 const query = useSearchForm('citizen_activity', schema);
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
-
 const {
     data,
     pending: loading,
@@ -55,7 +53,7 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
     try {
         const call = $grpc.citizens.citizens.listUserActivity({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
             sort: query.sort,
             userId: props.userId,
@@ -70,7 +68,6 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
     }
 }
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), {
     debounce: 500,
     maxWait: 1250,

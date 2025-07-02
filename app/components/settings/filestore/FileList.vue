@@ -20,7 +20,6 @@ const { streamerMode } = storeToRefs(settingsStore);
 const prefix = ref('');
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (files.value?.pagination?.pageSize ? files.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const {
     data: files,
@@ -33,7 +32,7 @@ async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
         const { response } = $grpc.filestore.filestore.listFiles({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(page.value, files.value?.pagination),
             },
             path: prefix,
         });
@@ -44,8 +43,6 @@ async function listFiles(prefix: string): Promise<ListFilesResponse> {
         throw e;
     }
 }
-
-watch(offset, async () => refresh());
 
 async function deleteFile(path: string): Promise<DeleteFileResponse> {
     try {

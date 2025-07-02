@@ -21,7 +21,7 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-func (s *Server) UploadAvatar(srv grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (s *Server) UploadAvatar(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -89,7 +89,7 @@ func (s *Server) DeleteAvatar(ctx context.Context, req *pbcitizens.DeleteAvatarR
 	return &pbcitizens.DeleteAvatarResponse{}, nil
 }
 
-func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (s *Server) UploadMugshot(srv grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	ctx := srv.Context()
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

@@ -13,9 +13,9 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { File } from "./file";
 /**
- * @generated from protobuf message resources.file.UploadPacket
+ * @generated from protobuf message resources.file.UploadFileRequest
  */
-export interface UploadPacket {
+export interface UploadFileRequest {
     /**
      * @generated from protobuf oneof: payload
      */
@@ -69,9 +69,9 @@ export interface UploadMeta {
     reason: string;
 }
 /**
- * @generated from protobuf message resources.file.UploadResponse
+ * @generated from protobuf message resources.file.UploadFileResponse
  */
-export interface UploadResponse {
+export interface UploadFileResponse {
     /**
      * @generated from protobuf field: uint64 id = 1
      */
@@ -104,21 +104,21 @@ export interface DeleteFileRequest {
 export interface DeleteFileResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class UploadPacket$Type extends MessageType<UploadPacket> {
+class UploadFileRequest$Type extends MessageType<UploadFileRequest> {
     constructor() {
-        super("resources.file.UploadPacket", [
+        super("resources.file.UploadFileRequest", [
             { no: 1, name: "meta", kind: "message", oneof: "payload", T: () => UploadMeta },
             { no: 2, name: "data", kind: "scalar", oneof: "payload", T: 12 /*ScalarType.BYTES*/, options: { "buf.validate.field": { bytes: { maxLen: "131072" } } } }
         ]);
     }
-    create(value?: PartialMessage<UploadPacket>): UploadPacket {
+    create(value?: PartialMessage<UploadFileRequest>): UploadFileRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.payload = { oneofKind: undefined };
         if (value !== undefined)
-            reflectionMergePartial<UploadPacket>(this, message, value);
+            reflectionMergePartial<UploadFileRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UploadPacket): UploadPacket {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UploadFileRequest): UploadFileRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -146,7 +146,7 @@ class UploadPacket$Type extends MessageType<UploadPacket> {
         }
         return message;
     }
-    internalBinaryWrite(message: UploadPacket, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: UploadFileRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.file.UploadMeta meta = 1; */
         if (message.payload.oneofKind === "meta")
             UploadMeta.internalBinaryWrite(message.payload.meta, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -160,9 +160,9 @@ class UploadPacket$Type extends MessageType<UploadPacket> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.file.UploadPacket
+ * @generated MessageType for protobuf message resources.file.UploadFileRequest
  */
-export const UploadPacket = new UploadPacket$Type();
+export const UploadFileRequest = new UploadFileRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UploadMeta$Type extends MessageType<UploadMeta> {
     constructor() {
@@ -251,23 +251,23 @@ class UploadMeta$Type extends MessageType<UploadMeta> {
  */
 export const UploadMeta = new UploadMeta$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UploadResponse$Type extends MessageType<UploadResponse> {
+class UploadFileResponse$Type extends MessageType<UploadFileResponse> {
     constructor() {
-        super("resources.file.UploadResponse", [
+        super("resources.file.UploadFileResponse", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "file", kind: "message", T: () => File }
         ]);
     }
-    create(value?: PartialMessage<UploadResponse>): UploadResponse {
+    create(value?: PartialMessage<UploadFileResponse>): UploadFileResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.url = "";
         if (value !== undefined)
-            reflectionMergePartial<UploadResponse>(this, message, value);
+            reflectionMergePartial<UploadFileResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UploadResponse): UploadResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UploadFileResponse): UploadFileResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -292,7 +292,7 @@ class UploadResponse$Type extends MessageType<UploadResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: UploadResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: UploadFileResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -309,9 +309,9 @@ class UploadResponse$Type extends MessageType<UploadResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.file.UploadResponse
+ * @generated MessageType for protobuf message resources.file.UploadFileResponse
  */
-export const UploadResponse = new UploadResponse$Type();
+export const UploadFileResponse = new UploadFileResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteFileRequest$Type extends MessageType<DeleteFileRequest> {
     constructor() {

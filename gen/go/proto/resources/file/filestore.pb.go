@@ -21,31 +21,31 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type UploadPacket struct {
+type UploadFileRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Payload:
 	//
-	//	*UploadPacket_Meta
-	//	*UploadPacket_Data
-	Payload       isUploadPacket_Payload `protobuf_oneof:"payload"`
+	//	*UploadFileRequest_Meta
+	//	*UploadFileRequest_Data
+	Payload       isUploadFileRequest_Payload `protobuf_oneof:"payload"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UploadPacket) Reset() {
-	*x = UploadPacket{}
+func (x *UploadFileRequest) Reset() {
+	*x = UploadFileRequest{}
 	mi := &file_resources_file_filestore_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UploadPacket) String() string {
+func (x *UploadFileRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UploadPacket) ProtoMessage() {}
+func (*UploadFileRequest) ProtoMessage() {}
 
-func (x *UploadPacket) ProtoReflect() protoreflect.Message {
+func (x *UploadFileRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_file_filestore_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -57,52 +57,52 @@ func (x *UploadPacket) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadPacket.ProtoReflect.Descriptor instead.
-func (*UploadPacket) Descriptor() ([]byte, []int) {
+// Deprecated: Use UploadFileRequest.ProtoReflect.Descriptor instead.
+func (*UploadFileRequest) Descriptor() ([]byte, []int) {
 	return file_resources_file_filestore_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UploadPacket) GetPayload() isUploadPacket_Payload {
+func (x *UploadFileRequest) GetPayload() isUploadFileRequest_Payload {
 	if x != nil {
 		return x.Payload
 	}
 	return nil
 }
 
-func (x *UploadPacket) GetMeta() *UploadMeta {
+func (x *UploadFileRequest) GetMeta() *UploadMeta {
 	if x != nil {
-		if x, ok := x.Payload.(*UploadPacket_Meta); ok {
+		if x, ok := x.Payload.(*UploadFileRequest_Meta); ok {
 			return x.Meta
 		}
 	}
 	return nil
 }
 
-func (x *UploadPacket) GetData() []byte {
+func (x *UploadFileRequest) GetData() []byte {
 	if x != nil {
-		if x, ok := x.Payload.(*UploadPacket_Data); ok {
+		if x, ok := x.Payload.(*UploadFileRequest_Data); ok {
 			return x.Data
 		}
 	}
 	return nil
 }
 
-type isUploadPacket_Payload interface {
-	isUploadPacket_Payload()
+type isUploadFileRequest_Payload interface {
+	isUploadFileRequest_Payload()
 }
 
-type UploadPacket_Meta struct {
+type UploadFileRequest_Meta struct {
 	Meta *UploadMeta `protobuf:"bytes,1,opt,name=meta,proto3,oneof"`
 }
 
-type UploadPacket_Data struct {
+type UploadFileRequest_Data struct {
 	// Raw bytes <= 128 KiB each, browsers should only read 64 KiB at a time, but this is a buffer just in case
 	Data []byte `protobuf:"bytes,2,opt,name=data,proto3,oneof"`
 }
 
-func (*UploadPacket_Meta) isUploadPacket_Payload() {}
+func (*UploadFileRequest_Meta) isUploadFileRequest_Payload() {}
 
-func (*UploadPacket_Data) isUploadPacket_Payload() {}
+func (*UploadFileRequest_Data) isUploadFileRequest_Payload() {}
 
 type UploadMeta struct {
 	state        protoimpl.MessageState `protogen:"open.v1"`
@@ -189,7 +189,7 @@ func (x *UploadMeta) GetReason() string {
 	return ""
 }
 
-type UploadResponse struct {
+type UploadFileResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`    // Unique ID for the uploaded file
 	Url           string                 `protobuf:"bytes,2,opt,name=url,proto3" json:"url,omitempty"`   // URL to the uploaded file
@@ -198,20 +198,20 @@ type UploadResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UploadResponse) Reset() {
-	*x = UploadResponse{}
+func (x *UploadFileResponse) Reset() {
+	*x = UploadFileResponse{}
 	mi := &file_resources_file_filestore_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UploadResponse) String() string {
+func (x *UploadFileResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UploadResponse) ProtoMessage() {}
+func (*UploadFileResponse) ProtoMessage() {}
 
-func (x *UploadResponse) ProtoReflect() protoreflect.Message {
+func (x *UploadFileResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_resources_file_filestore_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -223,26 +223,26 @@ func (x *UploadResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UploadResponse.ProtoReflect.Descriptor instead.
-func (*UploadResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use UploadFileResponse.ProtoReflect.Descriptor instead.
+func (*UploadFileResponse) Descriptor() ([]byte, []int) {
 	return file_resources_file_filestore_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *UploadResponse) GetId() uint64 {
+func (x *UploadFileResponse) GetId() uint64 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *UploadResponse) GetUrl() string {
+func (x *UploadFileResponse) GetUrl() string {
 	if x != nil {
 		return x.Url
 	}
 	return ""
 }
 
-func (x *UploadResponse) GetFile() *File {
+func (x *UploadFileResponse) GetFile() *File {
 	if x != nil {
 		return x.File
 	}
@@ -341,8 +341,8 @@ var File_resources_file_filestore_proto protoreflect.FileDescriptor
 
 const file_resources_file_filestore_proto_rawDesc = "" +
 	"\n" +
-	"\x1eresources/file/filestore.proto\x12\x0eresources.file\x1a\x19resources/file/file.proto\"l\n" +
-	"\fUploadPacket\x120\n" +
+	"\x1eresources/file/filestore.proto\x12\x0eresources.file\x1a\x19resources/file/file.proto\"q\n" +
+	"\x11UploadFileRequest\x120\n" +
 	"\x04meta\x18\x01 \x01(\v2\x1a.resources.file.UploadMetaH\x00R\x04meta\x12\x1f\n" +
 	"\x04data\x18\x02 \x01(\fB\t\xbaH\x06z\x04\x18\x80\x80\bH\x00R\x04dataB\t\n" +
 	"\apayload\"\xdd\x01\n" +
@@ -354,8 +354,8 @@ const file_resources_file_filestore_proto_rawDesc = "" +
 	"\fcontent_type\x18\x04 \x01(\tR\vcontentType\x12\x1b\n" +
 	"\x04size\x18\x05 \x01(\x03B\a\xbaH\x04\"\x02 \x00R\x04size\x12%\n" +
 	"\x06reason\x18\x06 \x01(\tB\r\xbaH\n" +
-	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"\\\n" +
-	"\x0eUploadResponse\x12\x0e\n" +
+	"\xd8\x01\x01r\x05\x10\x03\x18\xff\x01R\x06reason\"`\n" +
+	"\x12UploadFileResponse\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x10\n" +
 	"\x03url\x18\x02 \x01(\tR\x03url\x12(\n" +
 	"\x04file\x18\x03 \x01(\v2\x14.resources.file.FileR\x04file\"[\n" +
@@ -378,16 +378,16 @@ func file_resources_file_filestore_proto_rawDescGZIP() []byte {
 
 var file_resources_file_filestore_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_file_filestore_proto_goTypes = []any{
-	(*UploadPacket)(nil),       // 0: resources.file.UploadPacket
+	(*UploadFileRequest)(nil),  // 0: resources.file.UploadFileRequest
 	(*UploadMeta)(nil),         // 1: resources.file.UploadMeta
-	(*UploadResponse)(nil),     // 2: resources.file.UploadResponse
+	(*UploadFileResponse)(nil), // 2: resources.file.UploadFileResponse
 	(*DeleteFileRequest)(nil),  // 3: resources.file.DeleteFileRequest
 	(*DeleteFileResponse)(nil), // 4: resources.file.DeleteFileResponse
 	(*File)(nil),               // 5: resources.file.File
 }
 var file_resources_file_filestore_proto_depIdxs = []int32{
-	1, // 0: resources.file.UploadPacket.meta:type_name -> resources.file.UploadMeta
-	5, // 1: resources.file.UploadResponse.file:type_name -> resources.file.File
+	1, // 0: resources.file.UploadFileRequest.meta:type_name -> resources.file.UploadMeta
+	5, // 1: resources.file.UploadFileResponse.file:type_name -> resources.file.File
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -402,8 +402,8 @@ func file_resources_file_filestore_proto_init() {
 	}
 	file_resources_file_file_proto_init()
 	file_resources_file_filestore_proto_msgTypes[0].OneofWrappers = []any{
-		(*UploadPacket_Meta)(nil),
-		(*UploadPacket_Data)(nil),
+		(*UploadFileRequest_Meta)(nil),
+		(*UploadFileRequest_Data)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{

@@ -24,7 +24,6 @@ const props = withDefaults(
 const { $grpc } = useNuxtApp();
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'abbreviation',
@@ -52,7 +51,7 @@ async function listQualificationsResults(
     try {
         const call = $grpc.qualifications.qualifications.listQualificationsResults({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(page.value, data.value?.pagination),
             },
             sort: sort.value,
             qualificationId: qualificationId,
@@ -67,8 +66,6 @@ async function listQualificationsResults(
         throw e;
     }
 }
-
-watch(offset, async () => refresh());
 </script>
 
 <template>

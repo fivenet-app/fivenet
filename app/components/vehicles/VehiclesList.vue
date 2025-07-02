@@ -49,8 +49,6 @@ const schema = z.object({
 
 const query = useSearchForm('vehicles', schema);
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
-
 const hideVehicleModell = ref(false);
 
 const {
@@ -64,7 +62,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
         const call = $grpc.vehicles.vehicles.listVehicles({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
             sort: query.sort,
             licensePlate: query.licensePlate,
@@ -90,7 +88,6 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
 
 const usersLoading = ref(false);
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), {
     debounce: 200,
     maxWait: 1250,

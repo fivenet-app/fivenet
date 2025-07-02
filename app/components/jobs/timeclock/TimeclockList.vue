@@ -94,8 +94,6 @@ watch(props, setFromProps);
 
 const usersLoading = ref(false);
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
-
 const {
     data,
     pending: loading,
@@ -114,7 +112,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
 
         const req: ListTimeclockRequest = {
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
             sort: query.sort,
             userMode: query.userMode,
@@ -145,7 +143,6 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     }
 }
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const entries = computed(() => {

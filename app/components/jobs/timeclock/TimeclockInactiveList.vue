@@ -30,7 +30,6 @@ const state = reactive<Schema>({
 });
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'rank',
@@ -54,7 +53,7 @@ async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmploy
     try {
         const call = $grpc.jobs.timeclock.listInactiveEmployees({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(page.value, data.value?.pagination),
             },
             sort: sort.value,
             days: values.days,
@@ -79,7 +78,6 @@ watchDebounced(
     },
     { debounce: 200, maxWait: 1250 },
 );
-watch(offset, async () => refresh());
 
 const columns = [
     {

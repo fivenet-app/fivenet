@@ -104,12 +104,18 @@ service CitizensService {
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 
   // @perm: Name=Any
-  rpc UploadAvatar(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc UploadAvatar(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
   // @perm: Name=Any
   rpc DeleteAvatar(DeleteAvatarRequest) returns (DeleteAvatarResponse);
 
   // @perm: Name=SetUserProps
-  rpc UploadMugshot(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc UploadMugshot(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
   // @perm: Name=SetUserProps
   rpc DeleteMugshot(DeleteMugshotRequest) returns (DeleteMugshotResponse);
 

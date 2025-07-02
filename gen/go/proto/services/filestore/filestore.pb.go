@@ -225,9 +225,9 @@ const file_services_filestore_filestore_proto_rawDesc = "" +
 	"\x05files\x18\x02 \x03(\v2\x14.resources.file.FileR\x05files\"7\n" +
 	"\x17DeleteFileByPathRequest\x12\x1c\n" +
 	"\x04path\x18\x01 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x01R\x04path\"\x1a\n" +
-	"\x18DeleteFileByPathResponse2\xfa\x02\n" +
-	"\x10FilestoreService\x12H\n" +
-	"\x06Upload\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01\x12X\n" +
+	"\x18DeleteFileByPathResponse2\x83\x03\n" +
+	"\x10FilestoreService\x12Q\n" +
+	"\x06Upload\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12X\n" +
 	"\tListFiles\x12$.services.filestore.ListFilesRequest\x1a%.services.filestore.ListFilesResponse\x12S\n" +
 	"\n" +
 	"DeleteFile\x12!.resources.file.DeleteFileRequest\x1a\".resources.file.DeleteFileResponse\x12m\n" +
@@ -254,20 +254,20 @@ var file_services_filestore_filestore_proto_goTypes = []any{
 	(*database.PaginationRequest)(nil),  // 4: resources.common.database.PaginationRequest
 	(*database.PaginationResponse)(nil), // 5: resources.common.database.PaginationResponse
 	(*file.File)(nil),                   // 6: resources.file.File
-	(*file.UploadPacket)(nil),           // 7: resources.file.UploadPacket
+	(*file.UploadFileRequest)(nil),      // 7: resources.file.UploadFileRequest
 	(*file.DeleteFileRequest)(nil),      // 8: resources.file.DeleteFileRequest
-	(*file.UploadResponse)(nil),         // 9: resources.file.UploadResponse
+	(*file.UploadFileResponse)(nil),     // 9: resources.file.UploadFileResponse
 	(*file.DeleteFileResponse)(nil),     // 10: resources.file.DeleteFileResponse
 }
 var file_services_filestore_filestore_proto_depIdxs = []int32{
 	4,  // 0: services.filestore.ListFilesRequest.pagination:type_name -> resources.common.database.PaginationRequest
 	5,  // 1: services.filestore.ListFilesResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	6,  // 2: services.filestore.ListFilesResponse.files:type_name -> resources.file.File
-	7,  // 3: services.filestore.FilestoreService.Upload:input_type -> resources.file.UploadPacket
+	7,  // 3: services.filestore.FilestoreService.Upload:input_type -> resources.file.UploadFileRequest
 	0,  // 4: services.filestore.FilestoreService.ListFiles:input_type -> services.filestore.ListFilesRequest
 	8,  // 5: services.filestore.FilestoreService.DeleteFile:input_type -> resources.file.DeleteFileRequest
 	2,  // 6: services.filestore.FilestoreService.DeleteFileByPath:input_type -> services.filestore.DeleteFileByPathRequest
-	9,  // 7: services.filestore.FilestoreService.Upload:output_type -> resources.file.UploadResponse
+	9,  // 7: services.filestore.FilestoreService.Upload:output_type -> resources.file.UploadFileResponse
 	1,  // 8: services.filestore.FilestoreService.ListFiles:output_type -> services.filestore.ListFilesResponse
 	10, // 9: services.filestore.FilestoreService.DeleteFile:output_type -> resources.file.DeleteFileResponse
 	3,  // 10: services.filestore.FilestoreService.DeleteFileByPath:output_type -> services.filestore.DeleteFileByPathResponse

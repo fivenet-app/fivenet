@@ -28,12 +28,13 @@ export function checkAccess<L = number>(
         | undefined,
     creator: UserLike | undefined,
     level: L,
+    creatorJob?: string,
 ): boolean {
     if (access === undefined) {
         return false;
     }
 
-    if (creator !== undefined && activeChar.userId === creator.userId) {
+    if (creator !== undefined && activeChar.userId === creator.userId && activeChar.job === (creatorJob ?? creator.job)) {
         return true;
     }
 

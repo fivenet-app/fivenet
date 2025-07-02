@@ -27,7 +27,10 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CollabServiceClient interface {
-	// @perm: Name=documents.DocumentsService/ListDocuments
+	// @perm: Name=documents.DocumentsService/UpdateDocument
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	JoinRoom(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[collab.ClientPacket, collab.ServerPacket], error)
 }
 
@@ -56,7 +59,10 @@ type CollabService_JoinRoomClient = grpc.BidiStreamingClient[collab.ClientPacket
 // All implementations must embed UnimplementedCollabServiceServer
 // for forward compatibility.
 type CollabServiceServer interface {
-	// @perm: Name=documents.DocumentsService/ListDocuments
+	// @perm: Name=documents.DocumentsService/UpdateDocument
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
 	JoinRoom(grpc.BidiStreamingServer[collab.ClientPacket, collab.ServerPacket]) error
 	mustEmbedUnimplementedCollabServiceServer()
 }

@@ -23,18 +23,7 @@ func (m *DeleteFileResponse) Sanitize() error {
 	return nil
 }
 
-func (m *UploadMeta) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Reason
-	m.Reason = htmlsanitizer.Sanitize(m.Reason)
-
-	return nil
-}
-
-func (m *UploadPacket) Sanitize() error {
+func (m *UploadFileRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -42,7 +31,7 @@ func (m *UploadPacket) Sanitize() error {
 	// Field: Data
 	switch v := m.Payload.(type) {
 
-	case *UploadPacket_Data:
+	case *UploadFileRequest_Data:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -50,7 +39,7 @@ func (m *UploadPacket) Sanitize() error {
 		}
 
 		// Field: Meta
-	case *UploadPacket_Meta:
+	case *UploadFileRequest_Meta:
 		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -62,7 +51,7 @@ func (m *UploadPacket) Sanitize() error {
 	return nil
 }
 
-func (m *UploadResponse) Sanitize() error {
+func (m *UploadFileResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -75,6 +64,17 @@ func (m *UploadResponse) Sanitize() error {
 			}
 		}
 	}
+
+	return nil
+}
+
+func (m *UploadMeta) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Reason
+	m.Reason = htmlsanitizer.Sanitize(m.Reason)
 
 	return nil
 }

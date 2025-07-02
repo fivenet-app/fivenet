@@ -1844,7 +1844,7 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x16ListUserGuildsResponse\x120\n" +
 	"\x06guilds\x18\x01 \x03(\v2\x18.resources.discord.GuildR\x06guilds\"\x16\n" +
 	"\x14DeleteJobLogoRequest\"\x17\n" +
-	"\x15DeleteJobLogoResponse2\x90\x0e\n" +
+	"\x15DeleteJobLogoResponse2\x99\x0e\n" +
 	"\x0fSettingsService\x12\\\n" +
 	"\vGetJobProps\x12%.services.settings.GetJobPropsRequest\x1a&.services.settings.GetJobPropsResponse\x12\\\n" +
 	"\vSetJobProps\x12%.services.settings.SetJobPropsRequest\x1a&.services.settings.SetJobPropsResponse\x12S\n" +
@@ -1863,8 +1863,8 @@ const file_services_settings_settings_proto_rawDesc = "" +
 	"\x0fUpdateJobLimits\x12).services.settings.UpdateJobLimitsRequest\x1a*.services.settings.UpdateJobLimitsResponse\x12b\n" +
 	"\rDeleteFaction\x12'.services.settings.DeleteFactionRequest\x1a(.services.settings.DeleteFactionResponse\x12t\n" +
 	"\x13ListDiscordChannels\x12-.services.settings.ListDiscordChannelsRequest\x1a..services.settings.ListDiscordChannelsResponse\x12e\n" +
-	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\x12O\n" +
-	"\rUploadJobLogo\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01\x12b\n" +
+	"\x0eListUserGuilds\x12(.services.settings.ListUserGuildsRequest\x1a).services.settings.ListUserGuildsResponse\x12X\n" +
+	"\rUploadJobLogo\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01\x12b\n" +
 	"\rDeleteJobLogo\x12'.services.settings.DeleteJobLogoRequest\x1a(.services.settings.DeleteJobLogoResponseBNZLgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/settings;settingsb\x06proto3"
 
 var (
@@ -1930,8 +1930,8 @@ var file_services_settings_settings_proto_goTypes = []any{
 	(*audit.AuditEntry)(nil),                // 46: resources.audit.AuditEntry
 	(*discord.Channel)(nil),                 // 47: resources.discord.Channel
 	(*discord.Guild)(nil),                   // 48: resources.discord.Guild
-	(*file.UploadPacket)(nil),               // 49: resources.file.UploadPacket
-	(*file.UploadResponse)(nil),             // 50: resources.file.UploadResponse
+	(*file.UploadFileRequest)(nil),          // 49: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),         // 50: resources.file.UploadFileResponse
 }
 var file_services_settings_settings_proto_depIdxs = []int32{
 	36, // 0: services.settings.GetJobPropsResponse.job_props:type_name -> resources.jobs.JobProps
@@ -1982,7 +1982,7 @@ var file_services_settings_settings_proto_depIdxs = []int32{
 	28, // 45: services.settings.SettingsService.DeleteFaction:input_type -> services.settings.DeleteFactionRequest
 	30, // 46: services.settings.SettingsService.ListDiscordChannels:input_type -> services.settings.ListDiscordChannelsRequest
 	32, // 47: services.settings.SettingsService.ListUserGuilds:input_type -> services.settings.ListUserGuildsRequest
-	49, // 48: services.settings.SettingsService.UploadJobLogo:input_type -> resources.file.UploadPacket
+	49, // 48: services.settings.SettingsService.UploadJobLogo:input_type -> resources.file.UploadFileRequest
 	34, // 49: services.settings.SettingsService.DeleteJobLogo:input_type -> services.settings.DeleteJobLogoRequest
 	1,  // 50: services.settings.SettingsService.GetJobProps:output_type -> services.settings.GetJobPropsResponse
 	3,  // 51: services.settings.SettingsService.SetJobProps:output_type -> services.settings.SetJobPropsResponse
@@ -2000,7 +2000,7 @@ var file_services_settings_settings_proto_depIdxs = []int32{
 	29, // 63: services.settings.SettingsService.DeleteFaction:output_type -> services.settings.DeleteFactionResponse
 	31, // 64: services.settings.SettingsService.ListDiscordChannels:output_type -> services.settings.ListDiscordChannelsResponse
 	33, // 65: services.settings.SettingsService.ListUserGuilds:output_type -> services.settings.ListUserGuildsResponse
-	50, // 66: services.settings.SettingsService.UploadJobLogo:output_type -> resources.file.UploadResponse
+	50, // 66: services.settings.SettingsService.UploadJobLogo:output_type -> resources.file.UploadFileResponse
 	35, // 67: services.settings.SettingsService.DeleteJobLogo:output_type -> services.settings.DeleteJobLogoResponse
 	50, // [50:68] is the sub-list for method output_type
 	32, // [32:50] is the sub-list for method input_type

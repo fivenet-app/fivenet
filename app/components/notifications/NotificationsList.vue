@@ -35,8 +35,6 @@ type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>(schema.parse({}));
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
-
 const {
     data,
     pending: loading,
@@ -48,7 +46,7 @@ async function getNotifications(): Promise<GetNotificationsResponse> {
     try {
         const call = $grpc.notifications.notifications.getNotifications({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(query.page, data.value?.pagination),
             },
             includeRead: query.includeRead,
             categories: query.categories,
@@ -96,7 +94,6 @@ function notificationCategoriesToLabel(categories: NotificationCategory[]): stri
     return categories.map((c) => t(`enums.notifications.NotificationCategory.${NotificationCategory[c ?? 0]}`)).join(', ');
 }
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 500, maxWait: 1500 });
 
 const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });

@@ -4,8 +4,8 @@
 // @ts-nocheck
 import { DeleteFileResponse } from "../../resources/file/filestore";
 import { DeleteFileRequest } from "../../resources/file/filestore";
-import { UploadResponse } from "../../resources/file/filestore";
-import { UploadPacket } from "../../resources/file/filestore";
+import { UploadFileResponse } from "../../resources/file/filestore";
+import { UploadFileRequest } from "../../resources/file/filestore";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
@@ -255,7 +255,7 @@ export const DeleteFileByPathResponse = new DeleteFileByPathResponse$Type();
  * @generated ServiceType for protobuf service services.filestore.FilestoreService
  */
 export const FilestoreService = new ServiceType("services.filestore.FilestoreService", [
-    { name: "Upload", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse },
+    { name: "Upload", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
     { name: "ListFiles", options: {}, I: ListFilesRequest, O: ListFilesResponse },
     { name: "DeleteFile", options: {}, I: DeleteFileRequest, O: DeleteFileResponse },
     { name: "DeleteFileByPath", options: {}, I: DeleteFileByPathRequest, O: DeleteFileByPathResponse }

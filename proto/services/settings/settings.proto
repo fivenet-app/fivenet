@@ -222,7 +222,10 @@ service SettingsService {
   rpc ListUserGuilds(ListUserGuildsRequest) returns (ListUserGuildsResponse);
 
   // @perm: Name=SetJobProps
-  rpc UploadJobLogo(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc UploadJobLogo(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
   // @perm: Name=SetJobProps
   rpc DeleteJobLogo(DeleteJobLogoRequest) returns (DeleteJobLogoResponse);
 }

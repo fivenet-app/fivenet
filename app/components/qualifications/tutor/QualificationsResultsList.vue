@@ -37,7 +37,6 @@ const { t } = useI18n();
 const modal = useModal();
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'createdAt',
@@ -64,7 +63,7 @@ async function listQualificationsResults(
     try {
         const call = $grpc.qualifications.qualifications.listQualificationsResults({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(page.value, data.value?.pagination),
             },
             sort: sort.value,
             qualificationId: qualificationId,
@@ -78,8 +77,6 @@ async function listQualificationsResults(
         throw e;
     }
 }
-
-watch(offset, async () => refresh());
 
 async function deleteQualificationResult(resultId: number): Promise<DeleteQualificationResultResponse> {
     try {
@@ -224,7 +221,15 @@ defineExpose({
                             </UTooltip>
 
                             <UTooltip
-                                v-if="checkQualificationAccess(qualification.access, qualification.creator, AccessLevel.EDIT)"
+                                v-if="
+                                    checkQualificationAccess(
+                                        qualification.access,
+                                        qualification.creator,
+                                        AccessLevel.EDIT,
+                                        undefined,
+                                        qualification?.creatorJob,
+                                    )
+                                "
                                 :text="$t('common.delete')"
                             >
                                 <UButton

@@ -27,7 +27,10 @@ message DeleteFileByPathResponse {}
 
 service FilestoreService {
   // @perm: Name=Superuser
-  rpc Upload(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc Upload(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
 
   // @perm: Name=Superuser
   rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);

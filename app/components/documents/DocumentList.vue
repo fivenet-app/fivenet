@@ -64,8 +64,6 @@ const query = useSearchForm('documents', schema);
 
 const usersLoading = ref(false);
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
-
 const {
     data,
     pending: loading,
@@ -76,7 +74,7 @@ const {
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const req: ListDocumentsRequest = {
         pagination: {
-            offset: offset.value,
+            offset: calculateOffset(query.page, data.value?.pagination),
         },
         sort: query.sort,
         search: query.title ?? '',
@@ -107,7 +105,6 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     return documentsDocuments.listDocuments(req);
 }
 
-watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const categoriesLoading = ref(false);

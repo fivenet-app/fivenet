@@ -40,7 +40,6 @@ const calendarStore = useCalendarStore();
 const ownEntry = useVModel(props, 'modelValue', emit);
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const {
     data,
@@ -53,7 +52,7 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
     try {
         const response = await calendarStore.listCalendarEntryRSVP({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(page.value, data.value?.pagination),
             },
             entryId: props.entryId,
         });

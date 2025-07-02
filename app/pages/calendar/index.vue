@@ -36,9 +36,6 @@ const { activeCalendarIds, currentDate, view, calendars, entries, hasEditAccessT
 const calRef = useTemplateRef('calRef');
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() =>
-    calendarsData.value?.pagination?.pageSize ? calendarsData.value?.pagination?.pageSize * (page.value - 1) : 0,
-);
 
 const {
     data: calendarsData,
@@ -50,7 +47,7 @@ const {
 async function listCalendars(): Promise<ListCalendarsResponse> {
     const response = await calendarStore.listCalendars({
         pagination: {
-            offset: offset.value,
+            offset: calculateOffset(page.value, calendarsData.value?.pagination),
         },
         onlyPublic: false,
     });

@@ -517,6 +517,14 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	check, err := s.access.CanUserAccessTarget(ctx, req.Page.Id, userInfo, wiki.AccessLevel_ACCESS_LEVEL_EDIT)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errorswiki.ErrPageDenied
+	}
+
 	if req.Page.ParentId == nil || *req.Page.ParentId <= 0 {
 		stmt := tPage.
 			SELECT(
@@ -568,14 +576,6 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 			// If the parent ID is not set, we can set it to nil
 			req.Page.ParentId = nil
 		}
-	}
-
-	check, err := s.access.CanUserAccessTarget(ctx, req.Page.Id, userInfo, wiki.AccessLevel_ACCESS_LEVEL_EDIT)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-	if !check {
-		return nil, errorswiki.ErrPageDenied
 	}
 
 	oldPage, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)

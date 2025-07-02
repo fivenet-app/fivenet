@@ -7,8 +7,8 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { SettingsService } from "./settings";
 import type { DeleteJobLogoResponse } from "./settings";
 import type { DeleteJobLogoRequest } from "./settings";
-import type { UploadResponse } from "../../resources/file/filestore";
-import type { UploadPacket } from "../../resources/file/filestore";
+import type { UploadFileResponse } from "../../resources/file/filestore";
+import type { UploadFileRequest } from "../../resources/file/filestore";
 import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { ListUserGuildsResponse } from "./settings";
 import type { ListUserGuildsRequest } from "./settings";
@@ -147,10 +147,13 @@ export interface ISettingsServiceClient {
     listUserGuilds(input: ListUserGuildsRequest, options?: RpcOptions): UnaryCall<ListUserGuildsRequest, ListUserGuildsResponse>;
     /**
      * @perm: Name=SetJobProps
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: UploadJobLogo
      */
-    uploadJobLogo(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse>;
+    uploadJobLogo(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
      * @perm: Name=SetJobProps
      *
@@ -313,12 +316,15 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
     }
     /**
      * @perm: Name=SetJobProps
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: UploadJobLogo
      */
-    uploadJobLogo(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse> {
+    uploadJobLogo(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
         const method = this.methods[16], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UploadPacket, UploadResponse>("clientStreaming", this._transport, method, opt);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
      * @perm: Name=SetJobProps

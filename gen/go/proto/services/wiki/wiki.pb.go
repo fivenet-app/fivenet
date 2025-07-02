@@ -669,7 +669,7 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"\n" +
 	"pagination\x18\x01 \x01(\v2-.resources.common.database.PaginationResponseB\x06\xbaH\x03\xc8\x01\x01R\n" +
 	"pagination\x128\n" +
-	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityR\bactivity2\xd3\x04\n" +
+	"\bactivity\x18\x02 \x03(\v2\x1c.resources.wiki.PageActivityR\bactivity2\xdc\x04\n" +
 	"\vWikiService\x12N\n" +
 	"\tListPages\x12\x1f.services.wiki.ListPagesRequest\x1a .services.wiki.ListPagesResponse\x12H\n" +
 	"\aGetPage\x12\x1d.services.wiki.GetPageRequest\x1a\x1e.services.wiki.GetPageResponse\x12Q\n" +
@@ -679,9 +679,9 @@ const file_services_wiki_wiki_proto_rawDesc = "" +
 	"UpdatePage\x12 .services.wiki.UpdatePageRequest\x1a!.services.wiki.UpdatePageResponse\x12Q\n" +
 	"\n" +
 	"DeletePage\x12 .services.wiki.DeletePageRequest\x1a!.services.wiki.DeletePageResponse\x12c\n" +
-	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponse\x12L\n" +
+	"\x10ListPageActivity\x12&.services.wiki.ListPageActivityRequest\x1a'.services.wiki.ListPageActivityResponse\x12U\n" +
 	"\n" +
-	"UploadFile\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01BFZDgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/wiki;wikib\x06proto3"
 
 var (
 	file_services_wiki_wiki_proto_rawDescOnce sync.Once
@@ -716,8 +716,8 @@ var file_services_wiki_wiki_proto_goTypes = []any{
 	(*wiki.Page)(nil),                   // 16: resources.wiki.Page
 	(content.ContentType)(0),            // 17: resources.common.content.ContentType
 	(*wiki.PageActivity)(nil),           // 18: resources.wiki.PageActivity
-	(*file.UploadPacket)(nil),           // 19: resources.file.UploadPacket
-	(*file.UploadResponse)(nil),         // 20: resources.file.UploadResponse
+	(*file.UploadFileRequest)(nil),      // 19: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),     // 20: resources.file.UploadFileResponse
 }
 var file_services_wiki_wiki_proto_depIdxs = []int32{
 	12, // 0: services.wiki.ListPagesRequest.pagination:type_name -> resources.common.database.PaginationRequest
@@ -737,14 +737,14 @@ var file_services_wiki_wiki_proto_depIdxs = []int32{
 	6,  // 14: services.wiki.WikiService.UpdatePage:input_type -> services.wiki.UpdatePageRequest
 	8,  // 15: services.wiki.WikiService.DeletePage:input_type -> services.wiki.DeletePageRequest
 	10, // 16: services.wiki.WikiService.ListPageActivity:input_type -> services.wiki.ListPageActivityRequest
-	19, // 17: services.wiki.WikiService.UploadFile:input_type -> resources.file.UploadPacket
+	19, // 17: services.wiki.WikiService.UploadFile:input_type -> resources.file.UploadFileRequest
 	1,  // 18: services.wiki.WikiService.ListPages:output_type -> services.wiki.ListPagesResponse
 	3,  // 19: services.wiki.WikiService.GetPage:output_type -> services.wiki.GetPageResponse
 	5,  // 20: services.wiki.WikiService.CreatePage:output_type -> services.wiki.CreatePageResponse
 	7,  // 21: services.wiki.WikiService.UpdatePage:output_type -> services.wiki.UpdatePageResponse
 	9,  // 22: services.wiki.WikiService.DeletePage:output_type -> services.wiki.DeletePageResponse
 	11, // 23: services.wiki.WikiService.ListPageActivity:output_type -> services.wiki.ListPageActivityResponse
-	20, // 24: services.wiki.WikiService.UploadFile:output_type -> resources.file.UploadResponse
+	20, // 24: services.wiki.WikiService.UploadFile:output_type -> resources.file.UploadFileResponse
 	18, // [18:25] is the sub-list for method output_type
 	11, // [11:18] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name

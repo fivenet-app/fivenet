@@ -10,6 +10,7 @@ export function checkQualificationAccess(
     creator: UserShort | undefined,
     level: AccessLevel,
     perm?: Perms,
+    creatorJob?: string,
 ): boolean {
     const { activeChar, isSuperuser } = useAuth();
     if (isSuperuser.value) {
@@ -20,7 +21,7 @@ export function checkQualificationAccess(
         return false;
     }
 
-    if (!checkBaseQualificationAccess(activeChar.value, qualiAccess, creator, level)) {
+    if (!checkBaseQualificationAccess(activeChar.value, qualiAccess, creator, level, creatorJob)) {
         return false;
     }
 
@@ -36,8 +37,9 @@ function checkBaseQualificationAccess(
     access: QualificationAccess | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
+    creatorJob?: string,
 ): boolean {
-    return checkAccess(activeChar, access, creator, level);
+    return checkAccess(activeChar, access, creator, level, creatorJob);
 }
 
 function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShort, perm: Perms): boolean {

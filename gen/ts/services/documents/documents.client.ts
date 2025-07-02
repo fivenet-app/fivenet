@@ -5,8 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { DocumentsService } from "./documents";
-import type { UploadResponse } from "../../resources/file/filestore";
-import type { UploadPacket } from "../../resources/file/filestore";
+import type { UploadFileResponse } from "../../resources/file/filestore";
+import type { UploadFileRequest } from "../../resources/file/filestore";
 import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { SetDocumentReminderResponse } from "./documents";
 import type { SetDocumentReminderRequest } from "./documents";
@@ -308,7 +308,7 @@ export interface IDocumentsServiceClient {
      *
      * @generated from protobuf rpc: UploadFile
      */
-    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse>;
+    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
 }
 /**
  * @generated from protobuf service services.documents.DocumentsService
@@ -648,8 +648,8 @@ export class DocumentsServiceClient implements IDocumentsServiceClient, ServiceI
      *
      * @generated from protobuf rpc: UploadFile
      */
-    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse> {
+    uploadFile(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
         const method = this.methods[36], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UploadPacket, UploadResponse>("clientStreaming", this._transport, method, opt);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
 }

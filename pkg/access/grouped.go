@@ -176,7 +176,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 		return targetIds, nil
 	}
 
-	stmt := g.GetAccessQuery(userInfo, targetIds, access)
+	stmt := g.getAccessQuery(userInfo, targetIds, access)
 
 	dest := &canAccessIdsHelper{}
 	if err := stmt.QueryContext(ctx, g.db, &dest.IDs); err != nil {
@@ -188,8 +188,8 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 	return dest.IDs, nil
 }
 
-// GetAccessQuery constructs a query to check user access for given target IDs.
-func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuery(userInfo *pbuserinfo.UserInfo, targetIds []uint64, access V) jet.SelectStatement {
+// getAccessQuery constructs a query to check user access for given target IDs.
+func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) getAccessQuery(userInfo *pbuserinfo.UserInfo, targetIds []uint64, access V) jet.SelectStatement {
 	ids := make([]jet.Expression, len(targetIds))
 	for i := range targetIds {
 		ids[i] = jet.Uint64(targetIds[i])

@@ -2,8 +2,8 @@
 // @generated from protobuf file "services/citizens/citizens.proto" (package "services.citizens", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { UploadResponse } from "../../resources/file/filestore";
-import { UploadPacket } from "../../resources/file/filestore";
+import { UploadFileResponse } from "../../resources/file/filestore";
+import { UploadFileRequest } from "../../resources/file/filestore";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
@@ -956,9 +956,9 @@ export const CitizensService = new ServiceType("services.citizens.CitizensServic
     { name: "GetUser", options: {}, I: GetUserRequest, O: GetUserResponse },
     { name: "ListUserActivity", options: {}, I: ListUserActivityRequest, O: ListUserActivityResponse },
     { name: "SetUserProps", options: {}, I: SetUserPropsRequest, O: SetUserPropsResponse },
-    { name: "UploadAvatar", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse },
+    { name: "UploadAvatar", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteAvatar", options: {}, I: DeleteAvatarRequest, O: DeleteAvatarResponse },
-    { name: "UploadMugshot", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse },
+    { name: "UploadMugshot", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteMugshot", options: {}, I: DeleteMugshotRequest, O: DeleteMugshotResponse },
     { name: "ManageLabels", options: {}, I: ManageLabelsRequest, O: ManageLabelsResponse }
 ]);

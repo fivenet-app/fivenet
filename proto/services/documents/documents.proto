@@ -486,5 +486,5 @@ service DocumentsService {
   rpc SetDocumentReminder(SetDocumentReminderRequest) returns (SetDocumentReminderResponse);
 
   // @perm: Name=UpdateDocument
-  rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
 }

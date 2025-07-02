@@ -11,8 +11,8 @@ import type { DeleteMugshotResponse } from "./citizens";
 import type { DeleteMugshotRequest } from "./citizens";
 import type { DeleteAvatarResponse } from "./citizens";
 import type { DeleteAvatarRequest } from "./citizens";
-import type { UploadResponse } from "../../resources/file/filestore";
-import type { UploadPacket } from "../../resources/file/filestore";
+import type { UploadFileResponse } from "../../resources/file/filestore";
+import type { UploadFileRequest } from "../../resources/file/filestore";
 import type { ClientStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { SetUserPropsResponse } from "./citizens";
 import type { SetUserPropsRequest } from "./citizens";
@@ -55,10 +55,13 @@ export interface ICitizensServiceClient {
     setUserProps(input: SetUserPropsRequest, options?: RpcOptions): UnaryCall<SetUserPropsRequest, SetUserPropsResponse>;
     /**
      * @perm: Name=Any
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: UploadAvatar
      */
-    uploadAvatar(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse>;
+    uploadAvatar(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
      * @perm: Name=Any
      *
@@ -67,10 +70,13 @@ export interface ICitizensServiceClient {
     deleteAvatar(input: DeleteAvatarRequest, options?: RpcOptions): UnaryCall<DeleteAvatarRequest, DeleteAvatarResponse>;
     /**
      * @perm: Name=SetUserProps
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: UploadMugshot
      */
-    uploadMugshot(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse>;
+    uploadMugshot(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     /**
      * @perm: Name=SetUserProps
      *
@@ -131,12 +137,15 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
     }
     /**
      * @perm: Name=Any
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: UploadAvatar
      */
-    uploadAvatar(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse> {
+    uploadAvatar(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UploadPacket, UploadResponse>("clientStreaming", this._transport, method, opt);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
      * @perm: Name=Any
@@ -149,12 +158,15 @@ export class CitizensServiceClient implements ICitizensServiceClient, ServiceInf
     }
     /**
      * @perm: Name=SetUserProps
+     * buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+     * buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+     * buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
      *
      * @generated from protobuf rpc: UploadMugshot
      */
-    uploadMugshot(options?: RpcOptions): ClientStreamingCall<UploadPacket, UploadResponse> {
+    uploadMugshot(options?: RpcOptions): ClientStreamingCall<UploadFileRequest, UploadFileResponse> {
         const method = this.methods[6], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UploadPacket, UploadResponse>("clientStreaming", this._transport, method, opt);
+        return stackIntercept<UploadFileRequest, UploadFileResponse>("clientStreaming", this._transport, method, opt);
     }
     /**
      * @perm: Name=SetUserProps

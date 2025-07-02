@@ -3840,7 +3840,7 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0e_reminder_timeB\n" +
 	"\n" +
 	"\b_message\"\x1d\n" +
-	"\x1bSetDocumentReminderResponse2\xfd\x1f\n" +
+	"\x1bSetDocumentReminderResponse2\x86 \n" +
 	"\x10DocumentsService\x12d\n" +
 	"\rListTemplates\x12(.services.documents.ListTemplatesRequest\x1a).services.documents.ListTemplatesResponse\x12^\n" +
 	"\vGetTemplate\x12&.services.documents.GetTemplateRequest\x1a'.services.documents.GetTemplateResponse\x12g\n" +
@@ -3877,9 +3877,9 @@ const file_services_documents_documents_proto_rawDesc = "" +
 	"\x0eDeleteCategory\x12).services.documents.DeleteCategoryRequest\x1a*.services.documents.DeleteCategoryResponse\x12m\n" +
 	"\x10ListDocumentPins\x12+.services.documents.ListDocumentPinsRequest\x1a,.services.documents.ListDocumentPinsResponse\x12p\n" +
 	"\x11ToggleDocumentPin\x12,.services.documents.ToggleDocumentPinRequest\x1a-.services.documents.ToggleDocumentPinResponse\x12v\n" +
-	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponse\x12L\n" +
+	"\x13SetDocumentReminder\x12..services.documents.SetDocumentReminderRequest\x1a/.services.documents.SetDocumentReminderResponse\x12U\n" +
 	"\n" +
-	"UploadFile\x12\x1c.resources.file.UploadPacket\x1a\x1e.resources.file.UploadResponse(\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
+	"UploadFile\x12!.resources.file.UploadFileRequest\x1a\".resources.file.UploadFileResponse(\x01BPZNgithub.com/fivenet-app/fivenet/v2025/gen/go/proto/services/documents;documentsb\x06proto3"
 
 var (
 	file_services_documents_documents_proto_rawDescOnce sync.Once
@@ -3990,8 +3990,8 @@ var file_services_documents_documents_proto_goTypes = []any{
 	(documents.DocRelation)(0),              // 92: resources.documents.DocRelation
 	(*documents.Category)(nil),              // 93: resources.documents.Category
 	(*documents.DocumentPin)(nil),           // 94: resources.documents.DocumentPin
-	(*file.UploadPacket)(nil),               // 95: resources.file.UploadPacket
-	(*file.UploadResponse)(nil),             // 96: resources.file.UploadResponse
+	(*file.UploadFileRequest)(nil),          // 95: resources.file.UploadFileRequest
+	(*file.UploadFileResponse)(nil),         // 96: resources.file.UploadFileResponse
 }
 var file_services_documents_documents_proto_depIdxs = []int32{
 	72, // 0: services.documents.ListTemplatesResponse.templates:type_name -> resources.documents.TemplateShort
@@ -4089,7 +4089,7 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	66, // 92: services.documents.DocumentsService.ListDocumentPins:input_type -> services.documents.ListDocumentPinsRequest
 	68, // 93: services.documents.DocumentsService.ToggleDocumentPin:input_type -> services.documents.ToggleDocumentPinRequest
 	70, // 94: services.documents.DocumentsService.SetDocumentReminder:input_type -> services.documents.SetDocumentReminderRequest
-	95, // 95: services.documents.DocumentsService.UploadFile:input_type -> resources.file.UploadPacket
+	95, // 95: services.documents.DocumentsService.UploadFile:input_type -> resources.file.UploadFileRequest
 	1,  // 96: services.documents.DocumentsService.ListTemplates:output_type -> services.documents.ListTemplatesResponse
 	3,  // 97: services.documents.DocumentsService.GetTemplate:output_type -> services.documents.GetTemplateResponse
 	5,  // 98: services.documents.DocumentsService.CreateTemplate:output_type -> services.documents.CreateTemplateResponse
@@ -4126,7 +4126,7 @@ var file_services_documents_documents_proto_depIdxs = []int32{
 	67, // 129: services.documents.DocumentsService.ListDocumentPins:output_type -> services.documents.ListDocumentPinsResponse
 	69, // 130: services.documents.DocumentsService.ToggleDocumentPin:output_type -> services.documents.ToggleDocumentPinResponse
 	71, // 131: services.documents.DocumentsService.SetDocumentReminder:output_type -> services.documents.SetDocumentReminderResponse
-	96, // 132: services.documents.DocumentsService.UploadFile:output_type -> resources.file.UploadResponse
+	96, // 132: services.documents.DocumentsService.UploadFile:output_type -> resources.file.UploadFileResponse
 	96, // [96:133] is the sub-list for method output_type
 	59, // [59:96] is the sub-list for method input_type
 	59, // [59:59] is the sub-list for extension type_name

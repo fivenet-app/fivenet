@@ -12,7 +12,7 @@ import (
 
 var PermsRemap = map[string]string{
 	// Service: documents.CollabService
-	"documents.CollabService/JoinRoom": "documents.DocumentsService/ListDocuments",
+	"documents.CollabService/JoinRoom": "documents.DocumentsService/UpdateDocument",
 
 	// Service: documents.DocumentsService
 	"documents.DocumentsService/CreateDocument":          "documents.DocumentsService/UpdateDocument",

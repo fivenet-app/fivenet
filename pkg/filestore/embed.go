@@ -108,7 +108,7 @@ func (h *Handler[P]) AwaitHandshake(srv pbfilestore.FilestoreService_UploadServe
 }
 
 // UploadFile streams file data from the gRPC server to storage, then records metadata and associations in the database.
-func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, size int64, ctype string, srv pbfilestore.FilestoreService_UploadServer) (*file.UploadResponse, error) {
+func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, size int64, ctype string, srv pbfilestore.FilestoreService_UploadServer) (*file.UploadFileResponse, error) {
 	if h.sizeLimit > 0 && size > h.sizeLimit {
 		return nil, ErrUploadFileTooLarge(map[string]any{"maxSize": h.sizeLimit / 8}) // Convert bytes to megabytes
 	}
@@ -174,7 +174,7 @@ func (h *Handler[P]) UploadFile(ctx context.Context, parentID P, key string, siz
 		return nil, err
 	}
 
-	resp := &file.UploadResponse{
+	resp := &file.UploadFileResponse{
 		Id:  fileID,
 		Url: full,
 		File: &file.File{
@@ -194,7 +194,7 @@ func (h *Handler[P]) UploadFromMeta(
 	meta *file.UploadMeta,
 	parentID P,
 	srv pbfilestore.FilestoreService_UploadServer,
-) (*file.UploadResponse, error) {
+) (*file.UploadFileResponse, error) {
 	key := buildKey(meta.GetNamespace(), SanitizeFileName(meta.GetOriginalName()))
 	ctype := sniff(meta.GetContentType(), key)
 

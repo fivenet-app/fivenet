@@ -2,8 +2,8 @@
 // @generated from protobuf file "services/qualifications/qualifications.proto" (package "services.qualifications", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { UploadResponse } from "../../resources/file/filestore";
-import { UploadPacket } from "../../resources/file/filestore";
+import { UploadFileResponse } from "../../resources/file/filestore";
+import { UploadFileRequest } from "../../resources/file/filestore";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
@@ -2219,5 +2219,5 @@ export const QualificationsService = new ServiceType("services.qualifications.Qu
     { name: "TakeExam", options: {}, I: TakeExamRequest, O: TakeExamResponse },
     { name: "SubmitExam", options: {}, I: SubmitExamRequest, O: SubmitExamResponse },
     { name: "GetUserExam", options: {}, I: GetUserExamRequest, O: GetUserExamResponse },
-    { name: "UploadFile", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse }
+    { name: "UploadFile", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse }
 ]);

@@ -37,7 +37,6 @@ const notifications = useNotificationsStore();
 const historyStore = useHistoryStore();
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const {
     data,
@@ -52,8 +51,7 @@ async function getComments(): Promise<GetCommentsResponse> {
     try {
         const call = $grpc.documents.documents.getComments({
             pagination: {
-                offset: offset.value,
-                pageSize: 5,
+                offset: calculateOffset(page.value, data.value?.pagination),
             },
             documentId: props.documentId,
         });
@@ -192,8 +190,6 @@ const commentsEl = useTemplateRef('commentsEl');
 const isVisible = useElementVisibility(commentsEl);
 
 watchOnce(isVisible, async () => refresh());
-
-watch(offset, async () => refresh());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {

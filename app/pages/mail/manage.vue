@@ -40,15 +40,15 @@ const isMailerPanelOpen = computed({
 });
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (pagination.value?.pageSize ?? 20) * (page.value - 1));
+
 const pagination = ref<PaginationResponse | undefined>();
 
 async function listEmails(): Promise<void> {
-    const response = await mailerStore.listEmails(isSuperuser.value, offset.value);
+    const response = await mailerStore.listEmails(isSuperuser.value, calculateOffset(page.value, pagination.value));
     pagination.value = response.pagination;
 }
 
-watch(offset, async () => await listEmails());
+watch(page, async () => await listEmails());
 
 const route = useRoute();
 

@@ -42,7 +42,11 @@ const activityTypes = Object.keys(ColleagueActivityType)
     .map((aType) => ColleagueActivityType[aType as keyof typeof ColleagueActivityType]);
 
 const schema = z.object({
-    colleagues: z.coerce.number().array().max(10).default([]),
+    colleagues: z.coerce
+        .number()
+        .array()
+        .max(10)
+        .default(props.userId ? [props.userId] : []),
     types: z.nativeEnum(ColleagueActivityType).array().max(typesAttrs.length).default(activityTypes),
     sort: z.custom<TableSortable>().default({
         column: 'createdAt',
@@ -51,9 +55,9 @@ const schema = z.object({
     page: pageNumberSchema,
 });
 
-const query = useSearchForm('jobs_colleagues_activity' + !props.userId ? '' : '_individual', schema);
+type Schema = z.output<typeof schema>;
 
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (query.page - 1) : 0));
+const query = useSearchForm('jobs_colleagues_activity' + !props.userId ? '' : '_individual', schema);
 
 const {
     data,
@@ -61,22 +65,19 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-colleague-${query.sort.column}:${query.sort.direction}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}`,
-    () => listColleagueActivity(query.colleagues, query.types),
+    `jobs-colleague-${query.sort.column}:${query.sort.direction}-${query.page}-${query.colleagues.join(',')}-${query.types.join(':')}-${props.userId}`,
+    () => listColleagueActivity(query),
 );
 
-async function listColleagueActivity(
-    userIds: number[],
-    activityTypes: ColleagueActivityType[],
-): Promise<ListColleagueActivityResponse> {
+async function listColleagueActivity(values: Schema): Promise<ListColleagueActivityResponse> {
     try {
         const call = $grpc.jobs.jobs.listColleagueActivity({
             pagination: {
-                offset: offset.value,
+                offset: calculateOffset(values.page, data.value?.pagination),
             },
-            sort: query.sort,
-            userIds: userIds,
-            activityTypes: activityTypes,
+            sort: values.sort,
+            userIds: props.userId ? [props.userId] : values.colleagues,
+            activityTypes: values.types,
         });
         const { response } = await call;
 
@@ -87,7 +88,7 @@ async function listColleagueActivity(
     }
 }
 
-watch(offset, async () => refresh());
+watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const accessAttrs = attrStringList('jobs.JobsService/GetColleague', 'Access');
 const colleagueSearchAttrs = ['Own', 'Lower_Rank', 'Same_Rank', 'Any'];

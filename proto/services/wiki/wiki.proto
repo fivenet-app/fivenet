@@ -83,5 +83,5 @@ service WikiService {
   rpc ListPageActivity(ListPageActivityRequest) returns (ListPageActivityResponse);
 
   // @perm: Name=UpdatePage
-  rpc UploadFile(stream resources.file.UploadPacket) returns (resources.file.UploadResponse);
+  rpc UploadFile(stream resources.file.UploadFileRequest) returns (resources.file.UploadFileResponse);
 }

@@ -46,7 +46,7 @@ type WikiServiceClient interface {
 	// @perm
 	ListPageActivity(ctx context.Context, in *ListPageActivityRequest, opts ...grpc.CallOption) (*ListPageActivityResponse, error)
 	// @perm: Name=UpdatePage
-	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error)
+	UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error)
 }
 
 type wikiServiceClient struct {
@@ -117,18 +117,18 @@ func (c *wikiServiceClient) ListPageActivity(ctx context.Context, in *ListPageAc
 	return out, nil
 }
 
-func (c *wikiServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse], error) {
+func (c *wikiServiceClient) UploadFile(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &WikiService_ServiceDesc.Streams[0], WikiService_UploadFile_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[file.UploadPacket, file.UploadResponse]{ClientStream: stream}
+	x := &grpc.GenericClientStream[file.UploadFileRequest, file.UploadFileResponse]{ClientStream: stream}
 	return x, nil
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type WikiService_UploadFileClient = grpc.ClientStreamingClient[file.UploadPacket, file.UploadResponse]
+type WikiService_UploadFileClient = grpc.ClientStreamingClient[file.UploadFileRequest, file.UploadFileResponse]
 
 // WikiServiceServer is the server API for WikiService service.
 // All implementations must embed UnimplementedWikiServiceServer
@@ -147,7 +147,7 @@ type WikiServiceServer interface {
 	// @perm
 	ListPageActivity(context.Context, *ListPageActivityRequest) (*ListPageActivityResponse, error)
 	// @perm: Name=UpdatePage
-	UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error
+	UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error
 	mustEmbedUnimplementedWikiServiceServer()
 }
 
@@ -176,7 +176,7 @@ func (UnimplementedWikiServiceServer) DeletePage(context.Context, *DeletePageReq
 func (UnimplementedWikiServiceServer) ListPageActivity(context.Context, *ListPageActivityRequest) (*ListPageActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListPageActivity not implemented")
 }
-func (UnimplementedWikiServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]) error {
+func (UnimplementedWikiServiceServer) UploadFile(grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method UploadFile not implemented")
 }
 func (UnimplementedWikiServiceServer) mustEmbedUnimplementedWikiServiceServer() {}
@@ -309,11 +309,11 @@ func _WikiService_ListPageActivity_Handler(srv interface{}, ctx context.Context,
 }
 
 func _WikiService_UploadFile_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(WikiServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadPacket, file.UploadResponse]{ServerStream: stream})
+	return srv.(WikiServiceServer).UploadFile(&grpc.GenericServerStream[file.UploadFileRequest, file.UploadFileResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type WikiService_UploadFileServer = grpc.ClientStreamingServer[file.UploadPacket, file.UploadResponse]
+type WikiService_UploadFileServer = grpc.ClientStreamingServer[file.UploadFileRequest, file.UploadFileResponse]
 
 // WikiService_ServiceDesc is the grpc.ServiceDesc for WikiService service.
 // It's only intended for direct use with grpc.RegisterService,

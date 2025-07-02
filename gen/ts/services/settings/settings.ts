@@ -2,8 +2,8 @@
 // @generated from protobuf file "services/settings/settings.proto" (package "services.settings", syntax proto3)
 // tslint:disable
 // @ts-nocheck
-import { UploadResponse } from "../../resources/file/filestore";
-import { UploadPacket } from "../../resources/file/filestore";
+import { UploadFileResponse } from "../../resources/file/filestore";
+import { UploadFileRequest } from "../../resources/file/filestore";
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
@@ -2226,6 +2226,6 @@ export const SettingsService = new ServiceType("services.settings.SettingsServic
     { name: "DeleteFaction", options: {}, I: DeleteFactionRequest, O: DeleteFactionResponse },
     { name: "ListDiscordChannels", options: {}, I: ListDiscordChannelsRequest, O: ListDiscordChannelsResponse },
     { name: "ListUserGuilds", options: {}, I: ListUserGuildsRequest, O: ListUserGuildsResponse },
-    { name: "UploadJobLogo", clientStreaming: true, options: {}, I: UploadPacket, O: UploadResponse },
+    { name: "UploadJobLogo", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
     { name: "DeleteJobLogo", options: {}, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse }
 ]);

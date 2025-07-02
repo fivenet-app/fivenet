@@ -55,7 +55,7 @@ import type GrpcProvider from '~/composables/yjs/yjs';
 import { fontColors, highlightColors } from '~/types/editor';
 import type { Content, Version } from '~/types/history';
 import type { File as FileGrpc } from '~~/gen/ts/resources/file/file';
-import type { UploadPacket, UploadResponse } from '~~/gen/ts/resources/file/filestore';
+import type { UploadFileRequest, UploadFileResponse } from '~~/gen/ts/resources/file/filestore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import FileListModal from './FileListModal.vue';
 import TiptapEditorImagePopover from './TiptapEditorImagePopover.vue';
@@ -81,7 +81,7 @@ const props = withDefaults(
 
         targetId?: number;
         filestoreNamespace?: UploadNamespaces;
-        filestoreService?: (options?: RpcOptions) => ClientStreamingCall<UploadPacket, UploadResponse>;
+        filestoreService?: (options?: RpcOptions) => ClientStreamingCall<UploadFileRequest, UploadFileResponse>;
     }>(),
     {
         wrapperClass: '',
