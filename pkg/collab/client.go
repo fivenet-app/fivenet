@@ -52,8 +52,8 @@ func (c *Client) StartPresence(ctx context.Context) {
 
 	cid := strconv.FormatUint(c.Id, 10)
 	roomId := strconv.FormatUint(c.room.Id, 10)
-	c.presenceKey = "presence." + roomId + "." + cid
-	c.firstKey = "first." + roomId
+	c.presenceKey = "presence." + c.room.category + "." + roomId + "." + cid
+	c.firstKey = "first." + c.room.category + "." + roomId
 
 	// Announce this client
 	stateKV.Put(ctx, c.presenceKey, nil)
@@ -84,6 +84,7 @@ func (c *Client) Send(msg *collab.ServerPacket) {
 	select {
 	case c.SendCh <- msg:
 		// Message enqueued successfully
+
 	default:
 		c.logger.Debug("dropping message for client", zap.Int32("user_id", c.UserId))
 	}
