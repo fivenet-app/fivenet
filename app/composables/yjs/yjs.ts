@@ -65,10 +65,10 @@ export default class GrpcProvider extends ObservableV2<Events> {
         // Clear local user state
         this.clientId && removeAwarenessStates(this.awareness, [this.clientId], 'app closed');
 
-        useTimeoutFn(() => {
+        setTimeout(() => {
+            this.stream?.requests.complete();
             this.ydoc.off('update', this.handleDocUpdate);
             this.awareness.off('update', this.handleAwarenessUpdate);
-            this.stream?.requests.complete();
         }, 0);
 
         super.destroy();
