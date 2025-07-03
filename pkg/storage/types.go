@@ -19,6 +19,7 @@ var (
 )
 
 // IStorage defines the interface for a storage backend.
+// Storage defines the interface for a storage backend.
 type IStorage interface {
 	// WithPrefix returns a storage instance with the given prefix transparently added to all calls.
 	WithPrefix(prefix string) (IStorage, error)
@@ -34,6 +35,9 @@ type IStorage interface {
 
 	// List returns a list of files by offset and page size.
 	List(ctx context.Context, key string, offset int, pageSize int) ([]*FileInfo, error)
+
+	// GetSpaceUsage returns the total space used in storage.
+	GetSpaceUsage(ctx context.Context) (int64, error)
 }
 
 // IObject defines the interface for a storage object, supporting read, seek, and random access.

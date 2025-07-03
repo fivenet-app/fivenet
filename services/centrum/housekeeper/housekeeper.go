@@ -136,6 +136,7 @@ func New(p Params) Result {
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		s.le.Stop()
 		cancel()
 
 		s.wg.Wait()

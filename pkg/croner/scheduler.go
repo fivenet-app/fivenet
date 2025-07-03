@@ -97,6 +97,7 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		s.le.Stop()
 		cancel()
 
 		return nil

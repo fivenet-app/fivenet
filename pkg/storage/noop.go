@@ -55,3 +55,7 @@ func (s *Noop) Delete(ctx context.Context, filePath string) error {
 func (s *Noop) List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error) {
 	return nil, nil
 }
+
+func (s *Noop) GetSpaceUsage(ctx context.Context) (int64, error) {
+	return 0, nil
+}

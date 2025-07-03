@@ -156,6 +156,9 @@ type Storage struct {
 	Type       StorageType       `default:"filesystem" yaml:"type"`
 	Filesystem FilesystemStorage `yaml:"filesystem"`
 	S3         S3Storage         `yaml:"s3"`
+
+	MetricsEnabled  bool          `default:"true" yaml:"metricsEnabled"`
+	MetricsInterval time.Duration `default:"15m" yaml:"metricsInterval"`
 }
 
 type FilesystemStorage struct {

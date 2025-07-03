@@ -186,3 +186,29 @@ func (s *Filesystem) List(ctx context.Context, keyIn string, offset int, pageSiz
 
 	return files, nil
 }
+
+// GetSpaceUsage calculates the total space used by files in the filesystem.
+// It walks the directory tree and sums the sizes of all files.
+// Returns the total size in bytes or an error if the directory cannot be read.
+func (s *Filesystem) GetSpaceUsage(ctx context.Context) (int64, error) {
+	var totalSize int64
+
+	err := filepath.Walk(filepath.Join(s.basePath, s.prefix), func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
+
+		if !info.IsDir() {
+			totalSize += info.Size()
+		}
+		return nil
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return totalSize, nil
+}

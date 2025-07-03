@@ -246,3 +246,23 @@ func (s *S3) List(ctx context.Context, keyIn string, offset int, pageSize int) (
 
 	return files, nil
 }
+
+// GetSpaceUsage calculates the total space used by objects in the S3 bucket.
+// It iterates through all objects, summing their sizes.
+// Returns the total size in bytes or an error if listing fails.
+func (s *S3) GetSpaceUsage(ctx context.Context) (int64, error) {
+	var totalSize int64
+
+	opts := minio.ListObjectsOptions{
+		Recursive: true,
+		Prefix:    s.prefix,
+	}
+	for object := range s.s3.ListObjects(ctx, s.bucketName, opts) {
+		if object.Err != nil {
+			return 0, object.Err
+		}
+		totalSize += object.Size
+	}
+
+	return totalSize, nil
+}
