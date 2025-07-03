@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/cmd/envs"
 	"github.com/fivenet-app/fivenet/v2025/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/filestore"
 	"github.com/fivenet-app/fivenet/v2025/pkg/storage"
 	"github.com/fivenet-app/fivenet/v2025/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -97,7 +98,7 @@ func (c *FilestoreCmd) migrateJobLogos(ctx context.Context) error {
 
 	var errs error
 	for _, row := range rows {
-		row.LogoURL = strings.TrimPrefix(row.LogoURL, "/api/filestore")
+		row.LogoURL = strings.TrimPrefix(row.LogoURL, filestore.Path)
 
 		objectInfo, err := c.storage.Stat(ctx, row.LogoURL)
 		if err != nil {
@@ -181,7 +182,7 @@ func (c FilestoreCmd) migrateAvatars(ctx context.Context) error {
 	}
 
 	for _, row := range rows {
-		row.Avatar = strings.TrimPrefix(row.Avatar, "/api/filestore")
+		row.Avatar = strings.TrimPrefix(row.Avatar, filestore.Path)
 
 		objectInfo, err := c.storage.Stat(ctx, row.Avatar)
 		if err != nil {
@@ -263,7 +264,7 @@ func (c FilestoreCmd) migrateMugshots(ctx context.Context) error {
 	}
 
 	for _, row := range rows {
-		row.Mugshot = strings.TrimPrefix(row.Mugshot, "/api/filestore")
+		row.Mugshot = strings.TrimPrefix(row.Mugshot, filestore.Path)
 
 		objectInfo, err := c.storage.Stat(ctx, row.Mugshot)
 		if err != nil {

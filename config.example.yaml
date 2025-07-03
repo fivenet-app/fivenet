@@ -83,7 +83,6 @@ storage:
 
 imageProxy:
   enabled: true
-  url: "/api/image_proxy/"
   cachePrefix: "images/"
   options:
     allowHosts: []

@@ -177,7 +177,6 @@ type S3Storage struct {
 
 type ImageProxy struct {
 	Enabled     bool              `default:"true" yaml:"enabled"`
-	URL         string            `default:"/api/image_proxy/" yaml:"url"`
 	CachePrefix string            `default:"images/" yaml:"cachePrefix"`
 	Options     ImageProxyOptions `yaml:"options"`
 }

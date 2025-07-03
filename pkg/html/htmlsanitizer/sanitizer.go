@@ -1,6 +1,7 @@
 package htmlsanitizer
 
 import (
+	"encoding/base64"
 	"html"
 	"net/url"
 	"regexp"
@@ -8,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
+	imageproxy "github.com/fivenet-app/fivenet/v2025/pkg/server/images"
 	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 )
@@ -127,7 +129,7 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 
 	// Use Image Proxy if enabled
 	if cfg.ImageProxy.Enabled {
-		proxyUrl, err := url.Parse(cfg.ImageProxy.URL)
+		proxyUrl, err := url.Parse(imageproxy.Path)
 		if err != nil {
 			return nil, err
 		}
@@ -147,6 +149,9 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 				u.Host = proxyUrl.Host
 			}
 			if !strings.HasPrefix(u.Path, proxyUrl.Path) && !strings.HasPrefix(u.Path, "/api/filestore/") {
+				// Base64 encode the image URL to ensure it is safe for use in the proxy path
+				imgUrl = base64.RawURLEncoding.EncodeToString([]byte(imgUrl))
+
 				u.Path = proxyUrl.Path + imgUrl
 			}
 			u.RawQuery = ""

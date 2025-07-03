@@ -11,6 +11,8 @@ import (
 	"willnorris.com/go/imageproxy"
 )
 
+const Path = "/api/image_proxy"
+
 // ImageProxy provides an HTTP image proxy handler using the imageproxy package.
 type ImageProxy struct {
 	// logger is used for logging proxy activity and errors.
@@ -48,6 +50,8 @@ func (p *ImageProxy) RegisterHTTP(e *gin.Engine) {
 	proxy.ContentTypes = []string{"image/*"}
 	proxy.ScaleUp = false
 
-	// Example URL: http://localhost:3000/api/image_proxy/500/https://octodex.github.com/images/codercat.jpg
-	e.GET("/api/image_proxy/*url", gin.WrapH(http.StripPrefix("/api/image_proxy", proxy)))
+	// Example URLs:
+	// - http://localhost:3000/api/image_proxy/500/https://octodex.github.com/images/codercat.jpg
+	// - http://localhost:3000/api/image_proxy/x/aHR0cHM6Ly9vY3RvZGV4LmdpdGh1Yi5jb20vaW1hZ2VzL2NvZGVyY2F0LmpwZw
+	e.GET(Path+"/*url", gin.WrapH(http.StripPrefix(Path, proxy)))
 }

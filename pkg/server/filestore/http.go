@@ -16,6 +16,8 @@ import (
 	cachecontrol "go.eigsys.de/gin-cachecontrol/v2"
 )
 
+const Path = "/api/filestore"
+
 // FilestoreHTTP provides HTTP handlers for file storage operations (GET/HEAD) via Gin.
 type FilestoreHTTP struct {
 	// st is the storage backend implementing IStorage.
@@ -35,7 +37,7 @@ func New(st storage.IStorage, tm *auth.TokenMgr) *FilestoreHTTP {
 // RegisterHTTP registers the HTTP endpoints for the filestore on the provided Gin engine.
 // It sets up GET and HEAD routes with cache control middleware.
 func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
-	g := e.Group("/api/filestore", cachecontrol.New(cachecontrol.Config{
+	g := e.Group(Path, cachecontrol.New(cachecontrol.Config{
 		MustRevalidate:       true,
 		NoCache:              false,
 		NoStore:              false,

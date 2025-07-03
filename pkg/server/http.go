@@ -13,6 +13,8 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
 	"github.com/fivenet-app/fivenet/v2025/pkg/grpc/auth"
 	grpcws "github.com/fivenet-app/fivenet/v2025/pkg/grpc/grpcws"
+	"github.com/fivenet-app/fivenet/v2025/pkg/server/filestore"
+	imageproxy "github.com/fivenet-app/fivenet/v2025/pkg/server/images"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -203,8 +205,8 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 			fullPath := c.FullPath()
 			return !strings.HasPrefix(fullPath, "/images/") &&
 				!strings.HasPrefix(fullPath, "/api/grpc") &&
-				!strings.HasPrefix(fullPath, "/api/image_proxy") &&
-				!strings.HasPrefix(fullPath, "/api/filestore")
+				!strings.HasPrefix(fullPath, imageproxy.Path) &&
+				!strings.HasPrefix(fullPath, filestore.Path)
 		}),
 	))
 	e.Use(InjectToHeaders(p.TP))
