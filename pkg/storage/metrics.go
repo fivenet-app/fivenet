@@ -12,12 +12,11 @@ import (
 	"github.com/fivenet-app/fivenet/v2025/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/v2025/pkg/utils/instance"
 	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-var metricSpaceUsage = promauto.NewGauge(prometheus.GaugeOpts{
+var metricSpaceUsage = prometheus.NewGauge(prometheus.GaugeOpts{
 	Namespace: admin.MetricsNamespace,
 	Subsystem: "storage",
 	Name:      "space_usage_total_bytes",
@@ -50,6 +49,8 @@ func NewMetricsCollector(p MetricsCollectorParams) *MetricsCollector {
 		p.Logger.Info("Metrics collection is disabled in configuration")
 		return nil
 	}
+
+	prometheus.DefaultRegisterer.MustRegister(metricSpaceUsage)
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
