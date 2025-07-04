@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/fivenet-app/fivenet/v2025/pkg/config"
@@ -91,18 +92,22 @@ func NewMetricsCollector(p MetricsCollectorParams) *MetricsCollector {
 
 func (mc *MetricsCollector) start(ctx context.Context, interval time.Duration) error {
 	mc.logger.Info("Starting metrics collector")
-	// Initialize any metrics collection logic here
+
+	// Wait for a random delay before collecting the first metrics
+	delay := time.Duration(1+rand.Intn(15)) * time.Second
+	time.Sleep(delay)
 
 	for {
+		// Collect space usage regularly
+		if err := mc.CollectMetrics(ctx); err != nil {
+			mc.logger.Error("Failed to collect metrics", zap.Error(err))
+		}
+
 		select {
 		case <-ctx.Done():
 			return nil
 
 		case <-time.After(interval):
-			// Collect space usage regularly
-			if err := mc.CollectMetrics(ctx); err != nil {
-				mc.logger.Error("Failed to collect metrics", zap.Error(err))
-			}
 		}
 	}
 }
