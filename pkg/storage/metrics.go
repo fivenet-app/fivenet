@@ -23,6 +23,10 @@ var metricSpaceUsage = promauto.NewGauge(prometheus.GaugeOpts{
 	Help:      "Total space used by files in the storage.",
 })
 
+var MetricsCollectorModule = fx.Module("storage.metrics_collector",
+	fx.Provide(NewMetricsCollector),
+)
+
 type MetricsCollector struct {
 	logger  *zap.Logger
 	le      *leaderelection.LeaderElector

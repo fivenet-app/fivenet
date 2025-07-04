@@ -137,6 +137,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		server.HTTPEngineModule,
 		server.HTTPServerModule,
 		storage.Module,
+		storage.MetricsCollectorModule,
 		housekeeper.Module,
 		dbsync.Module,
 		fx.Provide(pkgfilestore.NewHousekeeper),
