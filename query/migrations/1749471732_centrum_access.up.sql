@@ -2,7 +2,7 @@ BEGIN;
 
 RENAME TABLE `fivenet_centrum_disponents` TO `fivenet_centrum_dispatchers`;
 ALTER TABLE `fivenet_centrum_dispatchers` DROP FOREIGN KEY `fk_fivenet_centrum_disponents_user_id`;
-ALTER TABLE `fivenet_centrum_dispatchers` ADD CONSTRAINT `fk_fivenet_centrum_dispatchers_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `fivenet_centrum_dispatchers` ADD CONSTRAINT `fk_fivenet_centrum_dispatchers_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Table: `fivenet_centrum_settings`
 ALTER TABLE `fivenet_centrum_settings` ADD COLUMN `type` mediumint(2) DEFAULT 0 NULL AFTER `enabled`;

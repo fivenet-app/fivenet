@@ -40,7 +40,7 @@ func (t *templateFile) Read(p []byte) (int, error) {
 	}
 
 	// Migration-specific logic: set UsersTableName for pre-big_rename migrations if not ESXCompat.
-	if migrationNumber < 1748173399 && !t.data["ESXCompat"].(bool) { // big_rename migration
+	if migrationNumber <= 1747999113 && !t.data["ESXCompat"].(bool) { // big_rename migration
 		t.data["UsersTableName"] = "fivenet_users"
 	}
 
