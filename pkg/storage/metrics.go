@@ -55,7 +55,8 @@ func NewMetricsCollector(p MetricsCollectorParams) *MetricsCollector {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	mc := &MetricsCollector{
-		logger: p.Logger.Named("storage.metrics"),
+		logger:  p.Logger.Named("storage.metrics"),
+		storage: p.Storage,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
