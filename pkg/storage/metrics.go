@@ -78,6 +78,7 @@ func NewMetricsCollector(p MetricsCollectorParams) *MetricsCollector {
 		if err != nil {
 			return fmt.Errorf("failed to create leader elector. %w", err)
 		}
+		mc.le.Start()
 
 		return nil
 	}))
