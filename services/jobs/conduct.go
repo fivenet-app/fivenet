@@ -293,16 +293,12 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
-	if req.Entry.Type == 0 {
+	if req.Entry.Type <= 0 {
 		req.Entry.Type = entry.Type
-	}
-	if req.Entry.TargetUser == nil {
-		req.Entry.TargetUser = entry.TargetUser
 	}
 	if req.Entry.TargetUserId == 0 {
 		req.Entry.TargetUserId = entry.TargetUserId
 	}
-
 	req.Entry.Job = userInfo.Job
 
 	tConduct := table.FivenetJobConduct
@@ -314,15 +310,16 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *pbjobs.UpdateCondu
 			tConduct.TargetUserID,
 		).
 		SET(
-			int16(entry.Type),
+			req.Entry.Type,
 			req.Entry.Message,
 			req.Entry.ExpiresAt,
 			req.Entry.TargetUserId,
 		).
 		WHERE(jet.AND(
-			tConduct.Job.EQ(jet.String(userInfo.Job)),
+			tConduct.Job.EQ(jet.String(req.Entry.Job)),
 			tConduct.ID.EQ(jet.Uint64(req.Entry.Id)),
-		))
+		)).
+		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)

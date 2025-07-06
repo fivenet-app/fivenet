@@ -8,7 +8,7 @@ import { type ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import ColleagueName from '../colleagues/ColleagueName.vue';
-import { conductTypesToBGColor } from './helpers';
+import { conductTypesToBadgeColor } from './helpers';
 
 const props = defineProps<{
     entry?: ConductEntry;
@@ -152,16 +152,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             value-attribute="status"
                                             :searchable-placeholder="$t('common.search_field')"
                                         >
-                                            <template #label>
-                                                <span class="truncate">{{
-                                                    $t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`)
-                                                }}</span>
+                                            <template #label="{ selected }">
+                                                <UBadge :color="conductTypesToBadgeColor(selected.status)" truncate>
+                                                    {{ $t(`enums.jobs.ConductType.${ConductType[selected.status ?? 0]}`) }}
+                                                </UBadge>
                                             </template>
 
                                             <template #option="{ option }">
-                                                <span class="truncate" :class="conductTypesToBGColor(option.status)">{{
-                                                    $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`)
-                                                }}</span>
+                                                <UBadge :color="conductTypesToBadgeColor(option.status)" truncate>
+                                                    {{ $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`) }}
+                                                </UBadge>
                                             </template>
 
                                             <template #empty>
