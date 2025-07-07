@@ -11309,6 +11309,20 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 
 
 
+### services.settings.GetStatusRequest
+
+
+
+
+
+### services.settings.GetStatusResponse
+TODO
+
+
+
+
+
+
 ### services.settings.ListDiscordChannelsRequest
 
 
@@ -11474,6 +11488,7 @@ A roll-up of the entire USERLOC bucket. Published every N seconds on `$KV.user_l
 | `ListUserGuilds` | [ListUserGuildsRequest](#servicessettingsListUserGuildsRequest) | [ListUserGuildsResponse](#servicessettingsListUserGuildsResponse) |@perm: Name=SetJobProps |
 | `UploadJobLogo` | [.resources.file.UploadFileRequest](#resourcesfileUploadFileRequest) stream | [.resources.file.UploadFileResponse](#resourcesfileUploadFileResponse) |@perm: Name=SetJobProps buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE buf:lint:ignore RPC_REQUEST_STANDARD_NAME buf:lint:ignore RPC_RESPONSE_STANDARD_NAME |
 | `DeleteJobLogo` | [DeleteJobLogoRequest](#servicessettingsDeleteJobLogoRequest) | [DeleteJobLogoResponse](#servicessettingsDeleteJobLogoResponse) |@perm: Name=SetJobProps |
+| `GetStatus` | [GetStatusRequest](#servicessettingsGetStatusRequest) | [GetStatusResponse](#servicessettingsGetStatusResponse) |@perm: Name=Superuser |
 
  <!-- end services -->
 

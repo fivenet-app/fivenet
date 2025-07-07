@@ -413,6 +413,18 @@ export interface DeleteJobLogoRequest {
  */
 export interface DeleteJobLogoResponse {
 }
+/**
+ * @generated from protobuf message services.settings.GetStatusRequest
+ */
+export interface GetStatusRequest {
+}
+/**
+ * TODO
+ *
+ * @generated from protobuf message services.settings.GetStatusResponse
+ */
+export interface GetStatusResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class GetJobPropsRequest$Type extends MessageType<GetJobPropsRequest> {
     constructor() {
@@ -2206,6 +2218,82 @@ class DeleteJobLogoResponse$Type extends MessageType<DeleteJobLogoResponse> {
  * @generated MessageType for protobuf message services.settings.DeleteJobLogoResponse
  */
 export const DeleteJobLogoResponse = new DeleteJobLogoResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetStatusRequest$Type extends MessageType<GetStatusRequest> {
+    constructor() {
+        super("services.settings.GetStatusRequest", []);
+    }
+    create(value?: PartialMessage<GetStatusRequest>): GetStatusRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetStatusRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetStatusRequest): GetStatusRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.GetStatusRequest
+ */
+export const GetStatusRequest = new GetStatusRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
+    constructor() {
+        super("services.settings.GetStatusResponse", []);
+    }
+    create(value?: PartialMessage<GetStatusResponse>): GetStatusResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetStatusResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetStatusResponse): GetStatusResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.settings.GetStatusResponse
+ */
+export const GetStatusResponse = new GetStatusResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.settings.SettingsService
  */
@@ -2227,5 +2315,6 @@ export const SettingsService = new ServiceType("services.settings.SettingsServic
     { name: "ListDiscordChannels", options: {}, I: ListDiscordChannelsRequest, O: ListDiscordChannelsResponse },
     { name: "ListUserGuilds", options: {}, I: ListUserGuildsRequest, O: ListUserGuildsResponse },
     { name: "UploadJobLogo", clientStreaming: true, options: {}, I: UploadFileRequest, O: UploadFileResponse },
-    { name: "DeleteJobLogo", options: {}, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse }
+    { name: "DeleteJobLogo", options: {}, I: DeleteJobLogoRequest, O: DeleteJobLogoResponse },
+    { name: "GetStatus", options: {}, I: GetStatusRequest, O: GetStatusResponse }
 ]);

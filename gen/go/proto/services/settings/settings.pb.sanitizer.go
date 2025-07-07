@@ -359,6 +359,22 @@ func (m *GetRolesResponse) Sanitize() error {
 	return nil
 }
 
+func (m *GetStatusRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetStatusResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *ListDiscordChannelsRequest) Sanitize() error {
 	if m == nil {
 		return nil

@@ -1390,7 +1390,7 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\n" +
 	"#resources/qualifications/exam.proto\x12\x18resources.qualifications\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\"_\n" +
 	"\rExamQuestions\x12N\n" +
-	"\tquestions\x18\x01 \x03(\v2&.resources.qualifications.ExamQuestionB\b\xbaH\x05\x92\x01\x02\x102R\tquestions\"\xa5\x04\n" +
+	"\tquestions\x18\x01 \x03(\v2&.resources.qualifications.ExamQuestionB\b\xbaH\x05\x92\x01\x02\x10dR\tquestions\"\xa5\x04\n" +
 	"\fExamQuestion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12)\n" +
 	"\x10qualification_id\x18\x02 \x01(\x04R\x0fqualificationId\x12B\n" +
@@ -1462,7 +1462,7 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\rExamResponses\x12)\n" +
 	"\x10qualification_id\x18\x01 \x01(\x04R\x0fqualificationId\x12\x17\n" +
 	"\auser_id\x18\x02 \x01(\x05R\x06userId\x12N\n" +
-	"\tresponses\x18\x03 \x03(\v2&.resources.qualifications.ExamResponseB\b\xbaH\x05\x92\x01\x02\x102R\tresponses\"\xd4\x01\n" +
+	"\tresponses\x18\x03 \x03(\v2&.resources.qualifications.ExamResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses\"\xd4\x01\n" +
 	"\fExamResponse\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\x04R\n" +
 	"questionId\x12\x17\n" +
@@ -1487,7 +1487,7 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\achoices\x18\x01 \x03(\tB\b\xbaH\x05\x92\x01\x02\x10\n" +
 	"R\achoices\"d\n" +
 	"\vExamGrading\x12U\n" +
-	"\tresponses\x18\x01 \x03(\v2-.resources.qualifications.ExamGradingResponseB\b\xbaH\x05\x92\x01\x02\x102R\tresponses\"\x8a\x01\n" +
+	"\tresponses\x18\x01 \x03(\v2-.resources.qualifications.ExamGradingResponseB\b\xbaH\x05\x92\x01\x02\x10dR\tresponses\"\x8a\x01\n" +
 	"\x13ExamGradingResponse\x12\x1f\n" +
 	"\vquestion_id\x18\x01 \x01(\x04R\n" +
 	"questionId\x12'\n" +

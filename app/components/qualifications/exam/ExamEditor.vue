@@ -27,7 +27,7 @@ const schema = z.object({
         autoGradeMode: z.nativeEnum(AutoGradeMode).default(AutoGradeMode.STRICT),
         minimumPoints: z.coerce.number().min(0).default(0),
     }),
-    questions: z.custom<ExamQuestion>().array().max(50).default([]),
+    questions: z.custom<ExamQuestion>().array().max(100).default([]),
 });
 
 if (!settings.value.time) {

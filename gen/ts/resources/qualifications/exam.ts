@@ -412,7 +412,7 @@ export interface ExamGradingResponse {
 class ExamQuestions$Type extends MessageType<ExamQuestions> {
     constructor() {
         super("resources.qualifications.ExamQuestions", [
-            { no: 1, name: "questions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamQuestion, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } }
+            { no: 1, name: "questions", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamQuestion, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
         ]);
     }
     create(value?: PartialMessage<ExamQuestions>): ExamQuestions {
@@ -1122,7 +1122,7 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
         super("resources.qualifications.ExamResponses", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamResponse, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } }
+            { no: 3, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamResponse, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponses>): ExamResponses {
@@ -1568,7 +1568,7 @@ export const ExamResponseMultipleChoice = new ExamResponseMultipleChoice$Type();
 class ExamGrading$Type extends MessageType<ExamGrading> {
     constructor() {
         super("resources.qualifications.ExamGrading", [
-            { no: 1, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamGradingResponse, options: { "buf.validate.field": { repeated: { maxItems: "50" } } } }
+            { no: 1, name: "responses", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExamGradingResponse, options: { "buf.validate.field": { repeated: { maxItems: "100" } } } }
         ]);
     }
     create(value?: PartialMessage<ExamGrading>): ExamGrading {

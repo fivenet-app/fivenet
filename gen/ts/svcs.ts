@@ -349,6 +349,7 @@ export const grpcMethods = [
 	'settings.SettingsService/ListUserGuilds',
 	'settings.SettingsService/UploadJobLogo',
 	'settings.SettingsService/DeleteJobLogo',
+	'settings.SettingsService/GetStatus',
 	'stats.StatsService/GetStats',
 	'sync.SyncService/GetStatus',
 	'sync.SyncService/AddActivity',

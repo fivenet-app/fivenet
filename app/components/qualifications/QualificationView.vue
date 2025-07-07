@@ -88,6 +88,7 @@ async function deleteQualification(qualificationId: number): Promise<DeleteQuali
 }
 
 const qualification = computed(() => data.value?.qualification);
+
 const canDo = computed(() => ({
     request: checkQualificationAccess(
         qualification.value?.access,
@@ -211,12 +212,18 @@ const accordionItems = computed(() =>
     />
 
     <template v-else>
-        <UDashboardToolbar v-if="canDo.edit || qualification.result?.status !== ResultStatus.SUCCESSFUL">
+        <UDashboardToolbar
+            v-if="
+                canDo.edit ||
+                (qualification.result !== undefined && qualification.result?.status !== ResultStatus.SUCCESSFUL) ||
+                canDo.request
+            "
+        >
             <template #default>
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                     <template v-if="!canDo.edit">
                         <UButton
-                            v-if="qualification.examMode !== QualificationExamMode.ENABLED"
+                            v-if="canDo.request && qualification.examMode !== QualificationExamMode.ENABLED"
                             :disabled="
                                 qualification.closed ||
                                 !requirementsFullfilled(qualification.requirements) ||
@@ -428,7 +435,7 @@ const accordionItems = computed(() =>
 
                 <div>
                     <UAlert
-                        v-if="!canDo.grade"
+                        v-if="!canDo.grade && qualification.content?.content === undefined"
                         icon="i-mdi-info"
                         :description="$t('components.qualifications.content_unavailable')"
                     />

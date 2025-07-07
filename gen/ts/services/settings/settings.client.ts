@@ -5,6 +5,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { SettingsService } from "./settings";
+import type { GetStatusResponse } from "./settings";
+import type { GetStatusRequest } from "./settings";
 import type { DeleteJobLogoResponse } from "./settings";
 import type { DeleteJobLogoRequest } from "./settings";
 import type { UploadFileResponse } from "../../resources/file/filestore";
@@ -160,6 +162,12 @@ export interface ISettingsServiceClient {
      * @generated from protobuf rpc: DeleteJobLogo
      */
     deleteJobLogo(input: DeleteJobLogoRequest, options?: RpcOptions): UnaryCall<DeleteJobLogoRequest, DeleteJobLogoResponse>;
+    /**
+     * @perm: Name=Superuser
+     *
+     * @generated from protobuf rpc: GetStatus
+     */
+    getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse>;
 }
 /**
  * @generated from protobuf service services.settings.SettingsService
@@ -334,5 +342,14 @@ export class SettingsServiceClient implements ISettingsServiceClient, ServiceInf
     deleteJobLogo(input: DeleteJobLogoRequest, options?: RpcOptions): UnaryCall<DeleteJobLogoRequest, DeleteJobLogoResponse> {
         const method = this.methods[17], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteJobLogoRequest, DeleteJobLogoResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Superuser
+     *
+     * @generated from protobuf rpc: GetStatus
+     */
+    getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse> {
+        const method = this.methods[18], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetStatusRequest, GetStatusResponse>("unary", this._transport, method, opt, input);
     }
 }
