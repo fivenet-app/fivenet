@@ -316,7 +316,9 @@ watch(
 
 <template>
     <UForm v-if="question" class="flex items-center gap-2" :schema="schema" :state="question">
-        <UIcon class="size-7" name="i-mdi-drag-horizontal" />
+        <UTooltip :text="$t('common.draggable')">
+            <UIcon class="size-7" name="i-mdi-drag-horizontal" />
+        </UTooltip>
 
         <UFormGroup name="data.data.oneofKind">
             <ClientOnly>
@@ -468,7 +470,10 @@ watch(
                                     :key="idx"
                                     class="inline-flex items-center gap-2"
                                 >
-                                    <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                                    <UTooltip :text="$t('common.draggable')">
+                                        <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                                    </UTooltip>
+
                                     <URadio
                                         v-model="question.answer!.answer.singleChoice.choice"
                                         :value="question.data!.data.singleChoice.choices[idx]"
@@ -527,7 +532,10 @@ watch(
                                     :key="idx"
                                     class="inline-flex items-center gap-2"
                                 >
-                                    <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                                    <UTooltip :text="$t('common.draggable')">
+                                        <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                                    </UTooltip>
+
                                     <UCheckbox
                                         v-model="question.answer!.answer.multipleChoice.choices"
                                         :value="question.data!.data.multipleChoice.choices[idx]"

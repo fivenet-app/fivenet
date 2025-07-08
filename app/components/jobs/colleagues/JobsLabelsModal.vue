@@ -104,7 +104,9 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                     <div class="flex flex-col gap-1">
                         <VueDraggable v-model="state.labels" class="flex flex-col gap-2">
                             <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
-                                <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                                <UTooltip :text="$t('common.draggable')">
+                                    <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                                </UTooltip>
 
                                 <UFormGroup class="flex-1" :name="`labels.${idx}.name`">
                                     <UInput

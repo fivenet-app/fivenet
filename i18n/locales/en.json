@@ -674,7 +674,8 @@
         "dispatcher": "No Dispatchers | {n} Dispatcher | {n} Dispatchers",
         "heatmap": "Heatmap",
         "meters": "Meter | Meters",
-        "meter": "0 Meters | 1 Meter | {n} Meters"
+        "meter": "0 Meters | 1 Meter | {n} Meters",
+        "draggable": "Draggable"
     },
     "components": {
         "partials": {

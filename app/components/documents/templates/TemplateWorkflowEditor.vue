@@ -73,7 +73,9 @@ const workflow = useVModel(props, 'modelValue', emit);
                         :key="idx"
                         class="flex items-center gap-1"
                     >
-                        <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                        <UTooltip :text="$t('common.draggable')">
+                            <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                        </UTooltip>
 
                         <UFormGroup
                             class="grid grid-cols-1 items-center"
