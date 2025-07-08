@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import type { WatchStopHandle } from 'vue';
-import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useSettingsStore } from '~/stores/settings';
 import type { File } from '~~/gen/ts/resources/file/file';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
+import QuestionMutipleChoice from './QuestionMutipleChoice.vue';
+import QuestionSingleChoice from './QuestionSingleChoice.vue';
 
 const props = defineProps<{
     qualificationId: number;
@@ -247,12 +248,23 @@ function changeQuestionType(qt: string): void {
             };
             break;
 
-        case 'singleChoice':
+        case 'singleChoice': {
+            const choices = [];
+            if (
+                question.value.data?.data.oneofKind === 'multipleChoice' &&
+                question.value.data.data.multipleChoice.choices.length > 0
+            ) {
+                choices.push(...question.value.data.data.multipleChoice.choices);
+            } else {
+                choices.push(''); // Start with an empty choice
+            }
+            console.log('singleChoice', choices);
+
             question.value.data = {
                 data: {
                     oneofKind: 'singleChoice',
                     singleChoice: {
-                        choices: [''],
+                        choices: choices,
                     },
                 },
             };
@@ -266,13 +278,25 @@ function changeQuestionType(qt: string): void {
                 },
             };
             break;
+        }
 
-        case 'multipleChoice':
+        case 'multipleChoice': {
+            const choices = [];
+            if (
+                question.value.data?.data.oneofKind === 'singleChoice' &&
+                question.value.data.data.singleChoice.choices.length > 0
+            ) {
+                choices.push(...question.value.data.data.singleChoice.choices);
+            } else {
+                choices.push(''); // Start with an empty choice
+            }
+            console.log('multipleChoice', choices);
+
             question.value.data = {
                 data: {
                     oneofKind: 'multipleChoice',
                     multipleChoice: {
-                        choices: [''],
+                        choices: choices,
                         limit: 3,
                     },
                 },
@@ -287,6 +311,7 @@ function changeQuestionType(qt: string): void {
                 },
             };
             break;
+        }
 
         case 'separator':
         default:
@@ -390,7 +415,7 @@ watch(
         <UFormGroup name="data.data.oneofKind">
             <ClientOnly>
                 <USelectMenu
-                    v-model="question.data!.data.oneofKind"
+                    :model-value="question.data!.data.oneofKind"
                     class="w-40 max-w-40"
                     :options="questionTypes"
                     searchable
@@ -533,65 +558,7 @@ watch(
                         question.data!.data.oneofKind === 'singleChoice' && question.answer!.answer.oneofKind === 'singleChoice'
                     "
                 >
-                    <div class="flex flex-col gap-2">
-                        <UFormGroup
-                            class="flex-1"
-                            name="data.data.singleChoices.choices"
-                            :label="$t('common.option', 2)"
-                            required
-                        >
-                            <VueDraggable
-                                v-model="question.data!.data.singleChoice.choices"
-                                class="flex flex-col gap-2"
-                                :disabled="disabled"
-                                handle=".handle-choice"
-                            >
-                                <div
-                                    v-for="(_, idx) in question.data!.data.singleChoice?.choices"
-                                    :key="idx"
-                                    class="inline-flex items-center gap-2"
-                                >
-                                    <UTooltip :text="$t('common.draggable')">
-                                        <UIcon class="handle-choice size-6 cursor-move" name="i-mdi-drag-horizontal" />
-                                    </UTooltip>
-
-                                    <URadio
-                                        v-model="question.answer!.answer.singleChoice.choice"
-                                        :value="question.data!.data.singleChoice.choices[idx]"
-                                        :disabled="disabled"
-                                    />
-                                    <UFormGroup :name="`data.data.singleChoices.choices.${idx}`">
-                                        <UInput
-                                            v-model="question.data!.data.singleChoice.choices[idx]"
-                                            class="w-full"
-                                            type="text"
-                                            :disabled="disabled"
-                                        />
-                                    </UFormGroup>
-
-                                    <UTooltip :text="$t('components.qualifications.remove_option')">
-                                        <UButton
-                                            class="flex-initial"
-                                            icon="i-mdi-close"
-                                            :ui="{ rounded: 'rounded-full' }"
-                                            :disabled="disabled"
-                                            @click="question.data!.data.singleChoice.choices.splice(idx, 1)"
-                                        />
-                                    </UTooltip>
-                                </div>
-                            </VueDraggable>
-
-                            <UTooltip :text="$t('components.qualifications.add_option')">
-                                <UButton
-                                    :class="question.data!.data.singleChoice.choices.length ? 'mt-2' : ''"
-                                    icon="i-mdi-plus"
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    :disabled="disabled"
-                                    @click="question.data!.data.singleChoice.choices.push('')"
-                                />
-                            </UTooltip>
-                        </UFormGroup>
-                    </div>
+                    <QuestionSingleChoice v-model="question" :disabled="disabled" />
                 </template>
 
                 <template
@@ -600,69 +567,7 @@ watch(
                         question.answer!.answer.oneofKind === 'multipleChoice'
                     "
                 >
-                    <div class="flex flex-col gap-2">
-                        <UFormGroup name="data.data.multipleChoice.limit" :label="$t('common.max')">
-                            <UInput
-                                v-model="question.data!.data.multipleChoice.limit"
-                                type="number"
-                                :min="1"
-                                :max="question.data!.data.multipleChoice.choices.length"
-                                :disabled="disabled"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup class="flex-1" :label="$t('common.option', 2)" required>
-                            <VueDraggable
-                                v-model="question.data!.data.multipleChoice.choices"
-                                class="flex flex-col gap-2"
-                                :disabled="disabled"
-                                handle=".handle-choice"
-                            >
-                                <div
-                                    v-for="(_, idx) in question.data!.data.multipleChoice?.choices"
-                                    :key="idx"
-                                    class="inline-flex items-center gap-2"
-                                >
-                                    <UTooltip :text="$t('common.draggable')">
-                                        <UIcon class="handle-choice size-6 cursor-move" name="i-mdi-drag-horizontal" />
-                                    </UTooltip>
-
-                                    <UCheckbox
-                                        v-model="question.answer!.answer.multipleChoice.choices"
-                                        :value="question.data!.data.multipleChoice.choices[idx]"
-                                        :disabled="disabled"
-                                    />
-                                    <UInput
-                                        v-model="question.data!.data.multipleChoice.choices[idx]"
-                                        class="w-full"
-                                        type="text"
-                                        block
-                                        :disabled="disabled"
-                                    />
-
-                                    <UTooltip :text="$t('components.qualifications.remove_option')">
-                                        <UButton
-                                            class="flex-initial"
-                                            icon="i-mdi-close"
-                                            :ui="{ rounded: 'rounded-full' }"
-                                            :disabled="disabled"
-                                            @click="question.data!.data.multipleChoice.choices.splice(idx, 1)"
-                                        />
-                                    </UTooltip>
-                                </div>
-                            </VueDraggable>
-
-                            <UTooltip :text="$t('components.qualifications.add_option')">
-                                <UButton
-                                    :class="question.data!.data.multipleChoice.choices.length ? 'mt-2' : ''"
-                                    icon="i-mdi-plus"
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    :disabled="disabled"
-                                    @click="question.data!.data.multipleChoice.choices.push('')"
-                                />
-                            </UTooltip>
-                        </UFormGroup>
-                    </div>
+                    <QuestionMutipleChoice v-model="question" :disabled="disabled" />
                 </template>
 
                 <div
