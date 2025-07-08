@@ -86,6 +86,9 @@ func New(p Params) (res Result, err error) {
 		}
 
 		connOpts = append(connOpts, nKeyOpt)
+	} else if p.Config.NATS.Creds != nil {
+		// Use NATS credentials file if provided
+		connOpts = append(connOpts, nats.UserCredentials(*p.Config.NATS.Creds))
 	}
 
 	// Connect to NATS

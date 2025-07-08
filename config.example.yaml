@@ -64,6 +64,9 @@ nats:
   # If you change the NATS username or password, below `nats:` config section
   url: "nats://fivenet:fivenet_topsecret@nats:4222"
   replicas: 1
+  # Other NATS authentication options:
+  #nKey: null
+  #creds: null
 
 storage:
   type: "filesystem"

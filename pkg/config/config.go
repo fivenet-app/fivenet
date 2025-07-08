@@ -138,6 +138,7 @@ type NATS struct {
 	URL      string  `default:"nats://localhost:4222" yaml:"url"`
 	Replicas int     `default:"1" yaml:"replicas"`
 	NKey     *string `yaml:"nKey"`
+	Creds    *string `yaml:"creds"`
 }
 
 type JWT struct {
