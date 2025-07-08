@@ -4,6 +4,7 @@ import type { zWorkflowSchema } from './types';
 
 const props = defineProps<{
     modelValue: zWorkflowSchema;
+    disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -11,6 +12,8 @@ const emit = defineEmits<{
 }>();
 
 const workflow = useVModel(props, 'modelValue', emit);
+
+const { moveUp, moveDown } = useListReorder(toRef(() => workflow.value.reminders.reminderSettings.reminders));
 </script>
 
 <template>
@@ -67,15 +70,33 @@ const workflow = useVModel(props, 'modelValue', emit);
             :description="$t('components.documents.TemplateWorkflowEditor.reminder.description')"
         >
             <div class="flex flex-col gap-1">
-                <VueDraggable v-model="workflow.reminders.reminderSettings.reminders" class="flex flex-col gap-2">
+                <VueDraggable
+                    v-model="workflow.reminders.reminderSettings.reminders"
+                    :disabled="disabled"
+                    class="flex flex-col gap-2"
+                    handle=".handle"
+                >
                     <div
                         v-for="(_, idx) in workflow.reminders.reminderSettings.reminders"
                         :key="idx"
                         class="flex items-center gap-1"
                     >
-                        <UTooltip :text="$t('common.draggable')">
-                            <UIcon class="size-6" name="i-mdi-drag-horizontal" />
-                        </UTooltip>
+                        <div class="inline-flex items-center gap-1">
+                            <UTooltip :text="$t('common.draggable')">
+                                <UIcon class="handle size-6 cursor-move" name="i-mdi-drag-horizontal" />
+                            </UTooltip>
+
+                            <UButtonGroup>
+                                <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-up" @click="moveUp(idx)" />
+                                <UButton
+                                    size="xs"
+                                    variant="link"
+                                    :padded="false"
+                                    icon="i-mdi-arrow-down"
+                                    @click="moveDown(idx)"
+                                />
+                            </UButtonGroup>
+                        </div>
 
                         <UFormGroup
                             class="grid grid-cols-1 items-center"

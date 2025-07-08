@@ -23,9 +23,11 @@ const response = useVModel(props, 'modelValue', emit);
     <div v-if="modelValue?.question" class="flex flex-1 justify-between gap-2 py-4">
         <div v-if="modelValue?.question.data!.data.oneofKind === 'separator'">
             <UDivider class="mb-2 mt-2 text-xl">
-                <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
-                    {{ modelValue?.question.title }}
-                </h4>
+                <template v-if="modelValue?.question.title !== ''" #default>
+                    <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
+                        {{ modelValue?.question.title }}
+                    </h4>
+                </template>
             </UDivider>
 
             <p>{{ modelValue?.question.description }}</p>

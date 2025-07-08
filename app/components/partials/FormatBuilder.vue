@@ -165,6 +165,8 @@ function ensureTrailingTextBlock() {
         });
     }
 }
+
+const { moveUp, moveDown } = useListReorder(blocks);
 </script>
 
 <template>
@@ -210,7 +212,7 @@ function ensureTrailingTextBlock() {
                             />
 
                             <UButton
-                                class="drag-handle cursor-move opacity-60"
+                                class="drag-handle cursor-move select-none opacity-60"
                                 type="button"
                                 icon="i-mdi-drag"
                                 size="xs"
@@ -238,16 +240,37 @@ function ensureTrailingTextBlock() {
                                 @click="removeBlock(index)"
                             />
 
-                            <UButton
-                                class="drag-handle cursor-move opacity-60"
-                                type="button"
-                                icon="i-mdi-drag"
-                                size="xs"
-                                variant="link"
-                                tabindex="-1"
-                                :disabled="disabled"
-                                :padded="false"
-                            />
+                            <div class="inline-flex items-center gap-1">
+                                <UButtonGroup>
+                                    <UButton
+                                        size="xs"
+                                        variant="link"
+                                        :padded="false"
+                                        icon="i-mdi-arrow-left"
+                                        @click="moveUp(index)"
+                                    />
+                                    <UButton
+                                        size="xs"
+                                        variant="link"
+                                        :padded="false"
+                                        icon="i-mdi-arrow-right"
+                                        @click="moveDown(index)"
+                                    />
+                                </UButtonGroup>
+
+                                <UTooltip :text="$t('common.draggable')">
+                                    <UButton
+                                        class="drag-handle cursor-move select-none opacity-60"
+                                        type="button"
+                                        icon="i-mdi-drag"
+                                        size="xs"
+                                        variant="link"
+                                        tabindex="-1"
+                                        :disabled="disabled"
+                                        :padded="false"
+                                    />
+                                </UTooltip>
+                            </div>
                         </UBadge>
                     </template>
                 </div>
@@ -282,9 +305,3 @@ function ensureTrailingTextBlock() {
         </div>
     </div>
 </template>
-
-<style scoped>
-.drag-handle {
-    user-select: none;
-}
-</style>

@@ -725,6 +725,7 @@ const formRef = useTemplateRef<typeof UForm>('formRef');
                         v-else
                         v-model:settings="state.examSettings"
                         v-model:questions="state.exam"
+                        :disabled="!canDo.edit"
                         class="overflow-y-auto"
                         :qualification-id="props.qualificationId"
                         @file-uploaded="(file) => state.files.push(file)"

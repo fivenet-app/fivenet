@@ -37,7 +37,8 @@ func (s *Server) getExamQuestions(ctx context.Context, tx qrm.DB, qualificationI
 		FROM(tExamQuestions).
 		WHERE(jet.AND(
 			tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
-		))
+		)).
+		LIMIT(100)
 
 	var dest qualifications.ExamQuestions
 	if err := stmt.QueryContext(ctx, tx, &dest.Questions); err != nil {

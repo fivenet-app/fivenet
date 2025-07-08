@@ -81,6 +81,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 watch(labels, () => (state.labels = labels.value?.labels ?? []));
+
+const { moveUp, moveDown } = useListReorder(toRef(state, 'labels'));
 </script>
 
 <template>
@@ -102,11 +104,35 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
 
                 <UFormGroup v-else class="grid items-center gap-2" name="list" :ui="{ container: '' }">
                     <div class="flex flex-col gap-1">
-                        <VueDraggable v-model="state.labels" class="flex flex-col gap-2">
+                        <VueDraggable
+                            v-model="state.labels"
+                            class="flex flex-col gap-2"
+                            :disabled="!canSubmit"
+                            handle=".handle"
+                        >
                             <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
-                                <UTooltip :text="$t('common.draggable')">
-                                    <UIcon class="size-6" name="i-mdi-drag-horizontal" />
-                                </UTooltip>
+                                <div class="inline-flex items-center gap-1">
+                                    <UTooltip :text="$t('common.draggable')">
+                                        <UIcon class="handle size-6 cursor-move" name="i-mdi-drag-horizontal" />
+                                    </UTooltip>
+
+                                    <UButtonGroup>
+                                        <UButton
+                                            size="xs"
+                                            variant="link"
+                                            :padded="false"
+                                            icon="i-mdi-arrow-up"
+                                            @click="moveUp(idx)"
+                                        />
+                                        <UButton
+                                            size="xs"
+                                            variant="link"
+                                            :padded="false"
+                                            icon="i-mdi-arrow-down"
+                                            @click="moveDown(idx)"
+                                        />
+                                    </UButtonGroup>
+                                </div>
 
                                 <UFormGroup class="flex-1" :name="`labels.${idx}.name`">
                                     <UInput

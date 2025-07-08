@@ -10,6 +10,7 @@ const props = defineProps<{
     settings: QualificationExamSettings;
     questions: ExamQuestions;
     qualificationId: number;
+    disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -41,6 +42,8 @@ const modes = ref<{ mode: AutoGradeMode; selected?: boolean }[]>([
     { mode: AutoGradeMode.STRICT, selected: true },
     { mode: AutoGradeMode.PARTIAL_CREDIT },
 ]);
+
+const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
 </script>
 
 <template>
@@ -122,10 +125,12 @@ const modes = ref<{ mode: AutoGradeMode; selected?: boolean }[]>([
 
             <h3>{{ $t('common.question', 2) }}</h3>
 
-            <UContainer>
+            <UContainer class="mb-4">
                 <VueDraggable
                     v-model="questions.questions"
                     class="flex flex-col gap-4 divide-y divide-gray-100 dark:divide-gray-800"
+                    :disabled="disabled"
+                    handle=".handle"
                 >
                     <ExamEditorQuestion
                         v-for="(question, idx) in questions?.questions"
@@ -133,8 +138,11 @@ const modes = ref<{ mode: AutoGradeMode; selected?: boolean }[]>([
                         v-model="questions.questions[idx]"
                         :qualification-id="props.qualificationId"
                         :question="question"
+                        :disabled="disabled"
                         @delete="questions.questions.splice(idx, 1)"
                         @file-uploaded="(file) => $emit('fileUploaded', file)"
+                        @move-up="moveUp(idx)"
+                        @move-down="moveDown(idx)"
                     />
                 </VueDraggable>
 

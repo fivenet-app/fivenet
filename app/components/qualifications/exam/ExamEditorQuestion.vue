@@ -11,12 +11,15 @@ import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 const props = defineProps<{
     qualificationId: number;
     modelValue?: ExamQuestion;
+    disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: ExamQuestion): void;
     (e: 'delete'): void;
     (e: 'fileUploaded', file: File): void;
+    (e: 'move-down'): void;
+    (e: 'move-up'): void;
 }>();
 
 const question = useVModel(props, 'modelValue', emit);
@@ -30,7 +33,7 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 
 const schema = z.object({
     id: z.coerce.number(),
-    title: z.string().min(3).max(512),
+    title: z.string().min(0).max(512),
     description: z.string().max(1024).optional(),
     data: z.object({
         data: z.union([
@@ -76,7 +79,7 @@ const schema = z.object({
     points: z.coerce.number().min(0).max(99999),
 });
 
-watch(question, () => {
+function handleQuestionChange(): void {
     if (question.value === undefined) {
         question.value = {
             id: 0,
@@ -90,15 +93,72 @@ watch(question, () => {
             },
         };
     }
-    if (question.value.answer === undefined) {
-        question.value.answer = {
-            answerKey: '',
-            answer: {
-                oneofKind: undefined,
-            },
-        };
+
+    if (question.value.answer?.answer.oneofKind === undefined) {
+        switch (question.value.data?.data.oneofKind) {
+            case 'yesno':
+                question.value.answer = {
+                    answerKey: '',
+                    answer: {
+                        oneofKind: 'yesno',
+                        yesno: {
+                            value: false,
+                        },
+                    },
+                };
+                break;
+
+            case 'freeText':
+                question.value.answer = {
+                    answerKey: '',
+                    answer: {
+                        oneofKind: 'freeText',
+                        freeText: {
+                            text: '',
+                        },
+                    },
+                };
+                break;
+
+            case 'singleChoice':
+                question.value.answer = {
+                    answerKey: '',
+                    answer: {
+                        oneofKind: 'singleChoice',
+                        singleChoice: {
+                            choice: '__UNDEFINED__', // Placeholder for an undefined choice
+                        },
+                    },
+                };
+                break;
+
+            case 'multipleChoice':
+                question.value.answer = {
+                    answerKey: '',
+                    answer: {
+                        oneofKind: 'multipleChoice',
+                        multipleChoice: {
+                            choices: [],
+                        },
+                    },
+                };
+                break;
+
+            case 'separator':
+            default:
+                question.value.answer = {
+                    answerKey: '',
+                    answer: {
+                        oneofKind: undefined,
+                    },
+                };
+                break;
+        }
     }
-});
+}
+
+watch(question, () => handleQuestionChange());
+handleQuestionChange();
 
 const { resizeAndUpload } = useFileUploader(
     (opts) => $grpc.qualifications.qualifications.uploadFile(opts),
@@ -316,9 +376,16 @@ watch(
 
 <template>
     <UForm v-if="question" class="flex items-center gap-2" :schema="schema" :state="question">
-        <UTooltip :text="$t('common.draggable')">
-            <UIcon class="size-7" name="i-mdi-drag-horizontal" />
-        </UTooltip>
+        <div class="inline-flex items-center gap-1">
+            <UTooltip :text="$t('common.draggable')">
+                <UIcon class="handle size-7 cursor-move" name="i-mdi-drag-horizontal" />
+            </UTooltip>
+
+            <UButtonGroup>
+                <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-up" @click="$emit('move-up')" />
+                <UButton size="xs" variant="link" :padded="false" icon="i-mdi-arrow-down" @click="$emit('move-down')" />
+            </UButtonGroup>
+        </div>
 
         <UFormGroup name="data.data.oneofKind">
             <ClientOnly>
@@ -328,6 +395,7 @@ watch(
                     :options="questionTypes"
                     searchable
                     :searchable-placeholder="$t('common.search_field')"
+                    :disabled="disabled"
                     @update:model-value="changeQuestionType($event)"
                 >
                     <template #label>
@@ -364,13 +432,16 @@ watch(
                         :rows="3"
                         resize
                         :placeholder="$t('common.description')"
+                        :disabled="disabled"
                     />
                 </UFormGroup>
             </div>
             <div class="flex-1">
                 <template v-if="question.data!.data.oneofKind === 'separator'">
                     <UDivider class="mb-2 mt-2 text-xl">
-                        <h4 class="text-xl">{{ question.title }}</h4>
+                        <template v-if="question.title !== ''" #default>
+                            <h4 class="text-xl">{{ question.title }}</h4>
+                        </template>
                     </UDivider>
 
                     <p class="mb-2">{{ question.description }}</p>
@@ -384,6 +455,7 @@ watch(
                                 type="file"
                                 :accept="appConfig.fileUpload.types.images.join(',')"
                                 :placeholder="$t('common.image')"
+                                :disabled="disabled"
                                 @change="handleImage($event)"
                             />
                         </template>
@@ -411,6 +483,7 @@ watch(
                                 color="green"
                                 :label="$t('common.yes')"
                                 :variant="question.answer!.answer.yesno.value ? 'solid' : 'outline'"
+                                :disabled="disabled"
                                 @click="question.answer!.answer.yesno.value = true"
                             />
                             <UButton
@@ -418,6 +491,7 @@ watch(
                                 color="error"
                                 :label="$t('common.no')"
                                 :variant="!question.answer!.answer.yesno.value ? 'solid' : 'outline'"
+                                :disabled="disabled"
                                 @click="question.answer!.answer.yesno.value = false"
                             />
                         </UButtonGroup>
@@ -435,6 +509,7 @@ watch(
                                     type="number"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
+                                    :disabled="disabled"
                                 />
                             </UFormGroup>
 
@@ -444,11 +519,12 @@ watch(
                                     type="number"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
+                                    :disabled="disabled"
                                 />
                             </UFormGroup>
                         </div>
 
-                        <UTextarea v-model="question.answer!.answer.freeText.text" :rows="5" resize />
+                        <UTextarea v-model="question.answer!.answer.freeText.text" :rows="5" resize :disabled="disabled" />
                     </div>
                 </template>
 
@@ -464,25 +540,32 @@ watch(
                             :label="$t('common.option', 2)"
                             required
                         >
-                            <VueDraggable v-model="question.data!.data.singleChoice.choices" class="flex flex-col gap-2">
+                            <VueDraggable
+                                v-model="question.data!.data.singleChoice.choices"
+                                class="flex flex-col gap-2"
+                                :disabled="disabled"
+                                handle=".handle-choice"
+                            >
                                 <div
                                     v-for="(_, idx) in question.data!.data.singleChoice?.choices"
                                     :key="idx"
                                     class="inline-flex items-center gap-2"
                                 >
                                     <UTooltip :text="$t('common.draggable')">
-                                        <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                                        <UIcon class="handle-choice size-6 cursor-move" name="i-mdi-drag-horizontal" />
                                     </UTooltip>
 
                                     <URadio
                                         v-model="question.answer!.answer.singleChoice.choice"
                                         :value="question.data!.data.singleChoice.choices[idx]"
+                                        :disabled="disabled"
                                     />
                                     <UFormGroup :name="`data.data.singleChoices.choices.${idx}`">
                                         <UInput
                                             v-model="question.data!.data.singleChoice.choices[idx]"
                                             class="w-full"
                                             type="text"
+                                            :disabled="disabled"
                                         />
                                     </UFormGroup>
 
@@ -491,6 +574,7 @@ watch(
                                             class="flex-initial"
                                             icon="i-mdi-close"
                                             :ui="{ rounded: 'rounded-full' }"
+                                            :disabled="disabled"
                                             @click="question.data!.data.singleChoice.choices.splice(idx, 1)"
                                         />
                                     </UTooltip>
@@ -502,6 +586,7 @@ watch(
                                     :class="question.data!.data.singleChoice.choices.length ? 'mt-2' : ''"
                                     icon="i-mdi-plus"
                                     :ui="{ rounded: 'rounded-full' }"
+                                    :disabled="disabled"
                                     @click="question.data!.data.singleChoice.choices.push('')"
                                 />
                             </UTooltip>
@@ -522,29 +607,37 @@ watch(
                                 type="number"
                                 :min="1"
                                 :max="question.data!.data.multipleChoice.choices.length"
+                                :disabled="disabled"
                             />
                         </UFormGroup>
 
                         <UFormGroup class="flex-1" :label="$t('common.option', 2)" required>
-                            <VueDraggable v-model="question.data!.data.multipleChoice.choices" class="flex flex-col gap-2">
+                            <VueDraggable
+                                v-model="question.data!.data.multipleChoice.choices"
+                                class="flex flex-col gap-2"
+                                :disabled="disabled"
+                                handle=".handle-choice"
+                            >
                                 <div
                                     v-for="(_, idx) in question.data!.data.multipleChoice?.choices"
                                     :key="idx"
                                     class="inline-flex items-center gap-2"
                                 >
                                     <UTooltip :text="$t('common.draggable')">
-                                        <UIcon class="size-6" name="i-mdi-drag-horizontal" />
+                                        <UIcon class="handle-choice size-6 cursor-move" name="i-mdi-drag-horizontal" />
                                     </UTooltip>
 
                                     <UCheckbox
                                         v-model="question.answer!.answer.multipleChoice.choices"
                                         :value="question.data!.data.multipleChoice.choices[idx]"
+                                        :disabled="disabled"
                                     />
                                     <UInput
                                         v-model="question.data!.data.multipleChoice.choices[idx]"
                                         class="w-full"
                                         type="text"
                                         block
+                                        :disabled="disabled"
                                     />
 
                                     <UTooltip :text="$t('components.qualifications.remove_option')">
@@ -552,6 +645,7 @@ watch(
                                             class="flex-initial"
                                             icon="i-mdi-close"
                                             :ui="{ rounded: 'rounded-full' }"
+                                            :disabled="disabled"
                                             @click="question.data!.data.multipleChoice.choices.splice(idx, 1)"
                                         />
                                     </UTooltip>
@@ -563,6 +657,7 @@ watch(
                                     :class="question.data!.data.multipleChoice.choices.length ? 'mt-2' : ''"
                                     icon="i-mdi-plus"
                                     :ui="{ rounded: 'rounded-full' }"
+                                    :disabled="disabled"
                                     @click="question.data!.data.multipleChoice.choices.push('')"
                                 />
                             </UTooltip>
@@ -580,6 +675,7 @@ watch(
                             :placeholder="$t('common.answer_key')"
                             :rows="2"
                             resize
+                            :disabled="disabled"
                         />
                     </UFormGroup>
 
@@ -590,6 +686,7 @@ watch(
                             name="points"
                             :min="0"
                             :placeholder="$t('common.points', 2)"
+                            :disabled="disabled"
                         />
                     </UFormGroup>
                 </div>
