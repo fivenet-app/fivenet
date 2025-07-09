@@ -678,7 +678,8 @@
         "draggable": "Draggable",
         "set_wanted": "Set Wanted",
         "revoke_wanted": "Revoke Wanted",
-        "only_wanted": "Only Wanted"
+        "only_wanted": "Only Wanted",
+        "no_actions_available": "No actions available."
     },
     "components": {
         "partials": {

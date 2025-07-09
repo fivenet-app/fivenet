@@ -16,7 +16,7 @@ const { can } = useAuth();
 
         <template #panel>
             <div class="p-4">
-                <div class="grid grid-cols-2 gap-2">
+                <div class="grid grid-cols-1 gap-2">
                     <UTooltip
                         v-if="can('vehicles.VehiclesService/SetVehicleProps').value"
                         :text="vehicle?.props?.wanted ? $t('common.revoke_wanted') : $t('common.set_wanted')"
@@ -37,9 +37,11 @@ const { can } = useAuth();
                             "
                         />
                     </UTooltip>
+
+                    <p v-else class="font-semibold">{{ $t('common.no_actions_available') }}</p>
                 </div>
 
-                <ul role="list">
+                <ul v-if="vehicle.props" role="list" class="mt-1">
                     <li v-if="vehicle.props?.updatedAt">
                         <span class="font-semibold">{{ $t('common.last_updated') }}:</span>
                         <GenericTime class="ml-1" :value="vehicle.props?.updatedAt" />
@@ -50,6 +52,8 @@ const { can } = useAuth();
                         {{ vehicle.props?.wantedReason ?? $t('common.na') }}
                     </li>
                 </ul>
+
+                <p v-else>{{ $t('common.not_found', [$t('common.propertie', 2)]) }}</p>
             </div>
         </template>
     </UPopover>

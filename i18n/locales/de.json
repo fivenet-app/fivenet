@@ -678,7 +678,8 @@
         "draggable": "Halten & Verschieben",
         "set_wanted": "Als Gesucht markieren",
         "revoke_wanted": "Gesuchten-Status entfernen",
-        "only_wanted": "Nur Gesuchte"
+        "only_wanted": "Nur Gesuchte",
+        "no_actions_available": "Keine Aktionen verfügbar."
     },
     "components": {
         "partials": {
