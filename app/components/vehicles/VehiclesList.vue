@@ -261,7 +261,7 @@ defineShortcuts({
     >
         <template #plate-data="{ row: vehicle }">
             <div class="inline-flex items-center gap-1">
-                <LicensePlate :plate="vehicle.plate" />
+                <LicensePlate :plate="vehicle.plate" class="sm:min-w-40 md:min-w-48" />
             </div>
         </template>
 
