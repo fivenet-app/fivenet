@@ -26,6 +26,7 @@ type fivenetQualificationsExamQuestionsTable struct {
 	Data            mysql.ColumnString
 	Answer          mysql.ColumnString
 	Points          mysql.ColumnInteger
+	Order           mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -76,9 +77,10 @@ func newFivenetQualificationsExamQuestionsTableImpl(schemaName, tableName, alias
 		DataColumn            = mysql.StringColumn("data")
 		AnswerColumn          = mysql.StringColumn("answer")
 		PointsColumn          = mysql.IntegerColumn("points")
-		allColumns            = mysql.ColumnList{IDColumn, QualificationIDColumn, CreatedAtColumn, UpdatedAtColumn, TitleColumn, DescriptionColumn, DataColumn, AnswerColumn, PointsColumn}
-		mutableColumns        = mysql.ColumnList{QualificationIDColumn, CreatedAtColumn, UpdatedAtColumn, TitleColumn, DescriptionColumn, DataColumn, AnswerColumn, PointsColumn}
-		defaultColumns        = mysql.ColumnList{CreatedAtColumn, PointsColumn}
+		OrderColumn           = mysql.IntegerColumn("order")
+		allColumns            = mysql.ColumnList{IDColumn, QualificationIDColumn, CreatedAtColumn, UpdatedAtColumn, TitleColumn, DescriptionColumn, DataColumn, AnswerColumn, PointsColumn, OrderColumn}
+		mutableColumns        = mysql.ColumnList{QualificationIDColumn, CreatedAtColumn, UpdatedAtColumn, TitleColumn, DescriptionColumn, DataColumn, AnswerColumn, PointsColumn, OrderColumn}
+		defaultColumns        = mysql.ColumnList{CreatedAtColumn, PointsColumn, OrderColumn}
 	)
 
 	return fivenetQualificationsExamQuestionsTable{
@@ -94,6 +96,7 @@ func newFivenetQualificationsExamQuestionsTableImpl(schemaName, tableName, alias
 		Data:            DataColumn,
 		Answer:          AnswerColumn,
 		Points:          PointsColumn,
+		Order:           OrderColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

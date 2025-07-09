@@ -114,7 +114,7 @@ const correctCount = ref(0);
                                 question.question.question?.data?.data.oneofKind !== 'separator' &&
                                 getGradingIndex(question.question.questionId) > -1
                             "
-                            class="flex flex-col gap-2"
+                            class="flex flex-row gap-2"
                         >
                             <div class="flex flex-col gap-2 md:flex-row">
                                 <UFormGroup :label="$t('common.corrected')">
@@ -138,11 +138,18 @@ const correctCount = ref(0);
                                     />
                                 </UFormGroup>
                             </div>
+                        </div>
+                    </template>
 
-                            <div v-if="question.question.question?.answer?.answerKey" class="inline-flex flex-col gap-2">
-                                <p class="text-sm font-semibold">{{ $t('common.answer_key') }}:</p>
-                                <p class="text-sm">{{ question.question.question?.answer?.answerKey }}</p>
-                            </div>
+                    <template #question-below="{ question }">
+                        <div
+                            v-if="data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey"
+                            class="flex flex-col gap-2"
+                        >
+                            <p class="text-sm font-semibold">{{ $t('common.answer_key') }}:</p>
+                            <p class="text-sm">
+                                {{ data.exam?.questions.find((q) => q.id === question.question.questionId)?.answer?.answerKey }}
+                            </p>
                         </div>
                     </template>
                 </ExamViewResult>

@@ -92,6 +92,7 @@ function handleQuestionChange(): void {
                     oneofKind: undefined,
                 },
             },
+            order: 0,
         };
     }
 

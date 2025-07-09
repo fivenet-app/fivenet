@@ -257,7 +257,15 @@ const accordionItems = computed(() =>
                                 (qualification.examMode === QualificationExamMode.REQUEST_NEEDED &&
                                     qualification.request?.status !== RequestStatus.ACCEPTED)
                             "
-                            :to="{ name: 'qualifications-id-exam', params: { id: qualification.id } }"
+                            :to="
+                                qualification.closed ||
+                                !requirementsFullfilled(qualification.requirements) ||
+                                qualification.request?.status === RequestStatus.EXAM_GRADING ||
+                                (qualification.examMode === QualificationExamMode.REQUEST_NEEDED &&
+                                    qualification.request?.status !== RequestStatus.ACCEPTED)
+                                    ? undefined
+                                    : { name: 'qualifications-id-exam', params: { id: qualification.id } }
+                            "
                         >
                             {{ $t('components.qualifications.take_test') }}
                         </UButton>

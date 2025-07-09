@@ -270,12 +270,13 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             examMode: values.examMode,
             examSettings: values.examSettings,
             exam: {
-                questions: values.exam.questions.slice().map((q) => {
+                questions: values.exam.questions.slice().map((q, idx) => {
                     if (q.answer?.answer.oneofKind === 'singleChoice') {
                         if (q.answer.answer.singleChoice.choice === '__UNDEFINED__') {
                             q.answer.answer.singleChoice.choice = '';
                         }
                     }
+                    q.order = idx + 1; // Ensure order is set correctly
                     return q;
                 }),
             },

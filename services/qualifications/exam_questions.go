@@ -38,6 +38,7 @@ func (s *Server) getExamQuestions(ctx context.Context, tx qrm.DB, qualificationI
 		WHERE(jet.AND(
 			tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
 		)).
+		ORDER_BY(tExamQuestions.Order.DESC()).
 		LIMIT(100)
 
 	var dest qualifications.ExamQuestions
@@ -115,6 +116,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 				tExamQuestions.Data,
 				tExamQuestions.Answer,
 				tExamQuestions.Points,
+				tExamQuestions.Order,
 			).
 			VALUES(
 				qualificationId,
@@ -123,6 +125,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 				question.Data,
 				question.Answer,
 				question.Points,
+				question.Order,
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -149,6 +152,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 				tExamQuestions.Data,
 				tExamQuestions.Answer,
 				tExamQuestions.Points,
+				tExamQuestions.Order,
 			).
 			SET(
 				question.Title,
@@ -156,6 +160,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx *sql.Tx, qua
 				question.Data,
 				question.Answer,
 				question.Points,
+				question.Order,
 			).
 			WHERE(jet.AND(
 				tExamQuestions.ID.EQ(jet.Uint64(question.Id)),

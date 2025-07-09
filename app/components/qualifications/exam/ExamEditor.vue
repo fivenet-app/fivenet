@@ -168,6 +168,7 @@ const { moveUp, moveDown } = useListReorder(toRef(questions.value.questions));
                                 },
                             },
                             points: 0,
+                            order: questions.questions.length + 1,
                         })
                     "
                 />

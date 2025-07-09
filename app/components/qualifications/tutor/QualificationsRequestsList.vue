@@ -99,6 +99,11 @@ async function deleteQualificationRequest(qualificationId: number, userId: numbe
 
 const columns = [
     {
+        key: 'actions',
+        label: t('common.action', 2),
+        sortable: false,
+    },
+    {
         key: 'citizen',
         label: t('common.citizen'),
     },
@@ -124,11 +129,6 @@ const columns = [
     {
         key: 'approver',
         label: t('common.approver'),
-    },
-    {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
     },
 ];
 

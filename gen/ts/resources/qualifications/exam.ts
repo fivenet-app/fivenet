@@ -68,6 +68,10 @@ export interface ExamQuestion {
      * @generated from protobuf field: optional int32 points = 9
      */
     points?: number;
+    /**
+     * @generated from protobuf field: int32 order = 10
+     */
+    order: number;
 }
 /**
  * @dbscanner: json
@@ -463,11 +467,12 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
             { no: 2, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "512" } } } },
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "buf.validate.field": { string: { maxLen: "1024" } } } },
             { no: 7, name: "data", kind: "message", T: () => ExamQuestionData, options: { "buf.validate.field": { required: true } } },
             { no: 8, name: "answer", kind: "message", T: () => ExamQuestionAnswerData },
-            { no: 9, name: "points", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } }
+            { no: 9, name: "points", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { gte: 0 } } } },
+            { no: 10, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "buf.validate.field": { int32: { lte: 1000, gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<ExamQuestion>): ExamQuestion {
@@ -475,6 +480,7 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         message.id = 0;
         message.qualificationId = 0;
         message.title = "";
+        message.order = 0;
         if (value !== undefined)
             reflectionMergePartial<ExamQuestion>(this, message, value);
         return message;
@@ -510,6 +516,9 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
                     break;
                 case /* optional int32 points */ 9:
                     message.points = reader.int32();
+                    break;
+                case /* int32 order */ 10:
+                    message.order = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -550,6 +559,9 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         /* optional int32 points = 9; */
         if (message.points !== undefined)
             writer.tag(9, WireType.Varint).int32(message.points);
+        /* int32 order = 10; */
+        if (message.order !== 0)
+            writer.tag(10, WireType.Varint).int32(message.order);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

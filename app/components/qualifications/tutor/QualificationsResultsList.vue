@@ -96,6 +96,11 @@ async function deleteQualificationResult(resultId: number): Promise<DeleteQualif
 
 const columns = [
     {
+        key: 'actions',
+        label: t('common.action', 2),
+        sortable: false,
+    },
+    {
         key: 'citizen',
         label: t('common.citizen'),
     },
@@ -120,11 +125,6 @@ const columns = [
     {
         key: 'creator',
         label: t('common.creator'),
-    },
-    {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
     },
 ];
 

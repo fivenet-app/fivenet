@@ -1220,6 +1220,7 @@ Dummy - DO NOT USE!
 | `data` | [ExamQuestionData](#resourcesqualificationsExamQuestionData) |  |  |
 | `answer` | [ExamQuestionAnswerData](#resourcesqualificationsExamQuestionAnswerData) | optional |  |
 | `points` | [int32](#int32) | optional |  |
+| `order` | [int32](#int32) |  |  |
 
 
 

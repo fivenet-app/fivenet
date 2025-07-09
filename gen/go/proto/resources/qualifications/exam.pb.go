@@ -80,6 +80,7 @@ type ExamQuestion struct {
 	Data          *ExamQuestionData       `protobuf:"bytes,7,opt,name=data,proto3" json:"data,omitempty"`
 	Answer        *ExamQuestionAnswerData `protobuf:"bytes,8,opt,name=answer,proto3,oneof" json:"answer,omitempty"`
 	Points        *int32                  `protobuf:"varint,9,opt,name=points,proto3,oneof" json:"points,omitempty"`
+	Order         int32                   `protobuf:"varint,10,opt,name=order,proto3" json:"order,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -173,6 +174,13 @@ func (x *ExamQuestion) GetAnswer() *ExamQuestionAnswerData {
 func (x *ExamQuestion) GetPoints() int32 {
 	if x != nil && x.Points != nil {
 		return *x.Points
+	}
+	return 0
+}
+
+func (x *ExamQuestion) GetOrder() int32 {
+	if x != nil {
+		return x.Order
 	}
 	return 0
 }
@@ -1390,20 +1398,22 @@ const file_resources_qualifications_exam_proto_rawDesc = "" +
 	"\n" +
 	"#resources/qualifications/exam.proto\x12\x18resources.qualifications\x1a\x19resources/file/file.proto\x1a#resources/timestamp/timestamp.proto\"_\n" +
 	"\rExamQuestions\x12N\n" +
-	"\tquestions\x18\x01 \x03(\v2&.resources.qualifications.ExamQuestionB\b\xbaH\x05\x92\x01\x02\x10dR\tquestions\"\xa5\x04\n" +
+	"\tquestions\x18\x01 \x03(\v2&.resources.qualifications.ExamQuestionB\b\xbaH\x05\x92\x01\x02\x10dR\tquestions\"\xc5\x04\n" +
 	"\fExamQuestion\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x04R\x02id\x12)\n" +
 	"\x10qualification_id\x18\x02 \x01(\x04R\x0fqualificationId\x12B\n" +
 	"\n" +
 	"created_at\x18\x03 \x01(\v2\x1e.resources.timestamp.TimestampH\x00R\tcreatedAt\x88\x01\x01\x12B\n" +
 	"\n" +
-	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12 \n" +
-	"\x05title\x18\x05 \x01(\tB\n" +
-	"\xbaH\ar\x05\x10\x03\x18\x80\x04R\x05title\x12/\n" +
+	"updated_at\x18\x04 \x01(\v2\x1e.resources.timestamp.TimestampH\x01R\tupdatedAt\x88\x01\x01\x12\x1e\n" +
+	"\x05title\x18\x05 \x01(\tB\b\xbaH\x05r\x03\x18\x80\x04R\x05title\x12/\n" +
 	"\vdescription\x18\x06 \x01(\tB\b\xbaH\x05r\x03\x18\x80\bH\x02R\vdescription\x88\x01\x01\x12F\n" +
 	"\x04data\x18\a \x01(\v2*.resources.qualifications.ExamQuestionDataB\x06\xbaH\x03\xc8\x01\x01R\x04data\x12M\n" +
 	"\x06answer\x18\b \x01(\v20.resources.qualifications.ExamQuestionAnswerDataH\x03R\x06answer\x88\x01\x01\x12$\n" +
-	"\x06points\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x04R\x06points\x88\x01\x01B\r\n" +
+	"\x06points\x18\t \x01(\x05B\a\xbaH\x04\x1a\x02(\x00H\x04R\x06points\x88\x01\x01\x12 \n" +
+	"\x05order\x18\n" +
+	" \x01(\x05B\n" +
+	"\xbaH\a\x1a\x05\x18\xe8\a(\x00R\x05orderB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\x0e\n" +
 	"\f_descriptionB\t\n" +

@@ -23,6 +23,9 @@ defineProps<{
                     <template #question-after>
                         <slot name="question-after" :question="{ question }" />
                     </template>
+                    <template #question-below>
+                        <slot name="question-below" :question="{ question }" />
+                    </template>
                 </ExamViewQuestion>
             </div>
         </UContainer>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
+import ColleagueName from '~/components/jobs/colleagues/ColleagueName.vue';
 import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
 import QualificationsRequestsList from '~/components/qualifications/tutor/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
